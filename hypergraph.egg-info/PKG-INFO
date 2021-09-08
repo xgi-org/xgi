@@ -1,0 +1,13 @@
+Metadata-Version: 2.1
+Name: hypergraph
+Version: 0.0
+Summary: Hypergraph is a Python library for hypergraphs.
+Home-page: UNKNOWN
+Author: Nicholas Landry
+License: 3-Clause BSD license
+Description: UNKNOWN
+Platform: UNKNOWN
+Provides-Extra: testing
+Provides-Extra: tutorials
+Provides-Extra: documentation
+Provides-Extra: all
