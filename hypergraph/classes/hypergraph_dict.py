@@ -1,7 +1,7 @@
 from collections import defaultdict
-from exception import HypergraphError, HypergraphException
+from hypergraph.exception import HypergraphError, HypergraphException
 
-class FastHypergraph:
+class HypergraphDict:
     def __init__(self, data=None, name=""):
         self._name = name
         # self.edges = {id : {members : set(), attributes}}
@@ -44,7 +44,7 @@ class FastHypergraph:
             self._nodes = {}
             self._edges = {}
 
-        if isinstance(data, FastHypergraph):
+        if isinstance(data, HypergraphDict):
             # copy hypergraph
             self._nodes = data._nodes
             self._edges = data._edges

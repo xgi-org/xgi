@@ -1,5 +1,5 @@
 from hypergraph.utils.utilities import HypergraphCounter
-from exception import HypergraphError
+from hypergraph.exception import HypergraphError
 from collections import defaultdict
 
 __all__ = ["Entity", "EntitySet"]

@@ -1,6 +1,12 @@
 import numpy as np
 
-def incidence_matrix(H, sparse=True, index=False):
+__all__ = [
+    "incidence_matrix",
+    "adjacency_matrix",
+    "clique_motif_matrix",
+]
+
+def incidence_matrix(H, sparse=True, index=False, weight = lambda node, edge, H : 1):
     
     if sparse:
         from scipy.sparse import coo_matrix
@@ -27,7 +33,7 @@ def incidence_matrix(H, sparse=True, index=False):
             for edge in H.edges:
                 members = H.edges[edge]
                 for node in members:
-                    data.append(1)
+                    data.append(weight(node, edge, H))
                     rows.append(node_dict[node])
                     cols.append(edge_dict[edge])
             I = coo_matrix((data, (rows, cols)))
@@ -37,7 +43,7 @@ def incidence_matrix(H, sparse=True, index=False):
             for edge in H.edges:
                 members = H.edges[edge]
                 for node in members:
-                    I[node_dict[node], edge_dict[edge]] = 1
+                    I[node_dict[node], edge_dict[edge]] = weight(node, edge, H)
         if index:
             return I, rowdict, coldict
         else:
@@ -50,11 +56,37 @@ def incidence_matrix(H, sparse=True, index=False):
 
 
 def adjacency_matrix(H, sparse=True, index=False):
-    if index == True:
+    if index:
         I, row_dict, col_dict = incidence_matrix(H, sparse=sparse, index=True)
-        A = I*I.T
-        return A, row_dict, col_dict
     else:
         I = incidence_matrix(H, sparse=sparse, index=False)
-        A = I*(I.T)
+
+    A = I.dot(I.T)
+    if sparse:
+        A.setdiag(0)
+        A.eliminate_zeros()
+    else:
+        np.fill_diagonal(A, 0)
+    
+    if index:
+        return A, row_dict, col_dict
+    else:
         return A
+
+def clique_motif_matrix(H, sparse=True, index=False):
+    if index:
+        I, row_dict, col_dict = incidence_matrix(H, sparse=sparse, index=True)
+    else:
+        I = incidence_matrix(H, sparse=sparse, index=False)
+
+    W = I.dot(I.T)
+    if sparse:
+        W.setdiag(0)
+        W.eliminate_zeros()
+    else:
+        np.fill_diagonal(W, 0)
+    
+    if index:
+        return W, row_dict, col_dict
+    else:
+        return W
