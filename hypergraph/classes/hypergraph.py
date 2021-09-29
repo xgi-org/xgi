@@ -185,6 +185,10 @@ class Hypergraph:
         """
         return self.adj[n]
 
+    @property
+    def shape(self):
+        return len(self._node), len(self._edge)
+
     def add_node(self, node_for_adding, **attr):
         """Add a single node `node_for_adding` and update node attributes.
 
@@ -227,7 +231,6 @@ class Hypergraph:
         if node_for_adding not in self._node:
             if node_for_adding is None:
                 raise ValueError("None cannot be a node")
-            self._adj[node_for_adding] = self.adjlist_inner_dict_factory()
             attr_dict = self._node[node_for_adding] = self.node_attr_dict_factory()
             attr_dict.update(attr)
         else:  # update attr even if node already exists
@@ -289,7 +292,6 @@ class Hypergraph:
             if newnode:
                 if n is None:
                     raise ValueError("None cannot be a node")
-                self._adj[n] = self.adjlist_inner_dict_factory()
                 self._node[n] = self.node_attr_dict_factory()
             self._node[n].update(newdict)
 
@@ -323,15 +325,13 @@ class Hypergraph:
         []
 
         """
-        adj = self._adj
         try:
-            nbrs = list(adj[n])  # list handles self-loops (allows mutation)
+            edge_neighbors = self.nodes[n]  # list handles self-loops (allows mutation)
             del self._node[n]
         except KeyError as e:  # NetworkXError if n not in self
             raise HypergraphError(f"The node {n} is not in the graph.") from e
-        for u in nbrs:
-            del adj[u][n]  # remove all edges n-u in graph
-        del adj[n]  # now remove node
+        for edge in edge_neighbors:
+            self._edges[edge]["members"].remove(n)  # remove all edges n-u in graph
 
     def remove_nodes_from(self, nodes):
         """Remove multiple nodes.
@@ -358,15 +358,15 @@ class Hypergraph:
         []
 
         """
-        adj = self._adj
         for n in nodes:
             try:
+                edge_neighbors = self.nodes[n]  # list handles self-loops (allows mutation)
                 del self._node[n]
-                for u in list(adj[n]):  # list handles self-loops
-                    del adj[u][n]  # (allows mutation of dict in loop)
-                del adj[n]
-            except KeyError:
+                for edge in edge_neighbors:
+                    self._edges[edge]["members"].remove(n)  # remove all edges n-u in graph
+            except KeyError as e:  # NetworkXError if n not in self
                 pass
+        
 
     @property
     def nodes(self):
@@ -671,7 +671,7 @@ class Hypergraph:
         >>> H = nx.Graph()  # or DiGraph, MultiGraph, MultiDiGraph, etc
         >>> H.add_weighted_edges_from([(0, 1, 3.0), (1, 2, 7.5)])
         """
-        self.add_edges_from(((u, v, {weight: d}) for u, v, d in ebunch_to_add), **attr)
+        self.add_edges_from(((edge, {weight: w}) for edge, w in ebunch_to_add), **attr)
 
     def remove_edge(self, id):
         """Remove a hyperedge with a given id.
@@ -854,7 +854,7 @@ class Hypergraph:
             raise HypergraphError("update needs nodes or edges input")
 
     def has_edge(self, u, v):
-        """Returns True if the edge (u, v) is in the graph.
+        """Returns True if the edge id is in the hypergraph.
 
         This is the same as `v in H[u]` without KeyError exceptions.
 
@@ -890,52 +890,52 @@ class Hypergraph:
 
         """
         try:
-            return v in self._adj[u]
+            return v in self._node
         except KeyError:
             return False
 
-    def neighbors(self, n):
-        """Returns an iterator over all neighbors of node n.
+    # def neighbors(self, n):
+    #     """Returns an iterator over all neighbors of node n.
 
-        This is identical to `iter(H[n])`
+    #     This is identical to `iter(H[n])`
 
-        Parameters
-        ----------
-        n : node
-           A node in the graph
+    #     Parameters
+    #     ----------
+    #     n : node
+    #        A node in the graph
 
-        Returns
-        -------
-        neighbors : iterator
-            An iterator over all neighbors of node n
+    #     Returns
+    #     -------
+    #     neighbors : iterator
+    #         An iterator over all neighbors of node n
 
-        Raises
-        ------
-        NetworkXError
-            If the node n is not in the graph.
+    #     Raises
+    #     ------
+    #     NetworkXError
+    #         If the node n is not in the graph.
 
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> [n for n in H.neighbors(0)]
-        [1]
+    #     Examples
+    #     --------
+    #     >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
+    #     >>> [n for n in H.neighbors(0)]
+    #     [1]
 
-        Notes
-        -----
-        Alternate ways to access the neighbors are ``H.adj[n]`` or ``H[n]``:
+    #     Notes
+    #     -----
+    #     Alternate ways to access the neighbors are ``H.adj[n]`` or ``H[n]``:
 
-        >>> H = nx.Graph()  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.add_edge("a", "b", weight=7)
-        >>> H["a"]
-        AtlasView({'b': {'weight': 7}})
-        >>> H = nx.path_graph(4)
-        >>> [n for n in H[0]]
-        [1]
-        """
-        try:
-            return iter(self._adj[n])
-        except KeyError as e:
-            raise HypergraphError(f"The node {n} is not in the graph.") from e
+    #     >>> H = nx.Graph()  # or DiGraph, MultiGraph, MultiDiGraph, etc
+    #     >>> H.add_edge("a", "b", weight=7)
+    #     >>> H["a"]
+    #     AtlasView({'b': {'weight': 7}})
+    #     >>> H = nx.path_graph(4)
+    #     >>> [n for n in H[0]]
+    #     [1]
+    #     """
+    #     try:
+    #         return iter(self._adj[n])
+    #     except KeyError as e:
+    #         raise HypergraphError(f"The node {n} is not in the graph.") from e
 
     @property
     def edges(self):
@@ -1039,26 +1039,6 @@ class Hypergraph:
             return self.edges.data
         except KeyError:
             return default
-
-    # def adjacency(self):
-    #     """Returns an iterator over (node, adjacency dict) tuples for all nodes.
-
-    #     For directed graphs, only outgoing neighbors/adjacencies are included.
-
-    #     Returns
-    #     -------
-    #     adj_iter : iterator
-    #        An iterator over (node, adjacency dictionary) for all nodes in
-    #        the graph.
-
-    #     Examples
-    #     --------
-    #     >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-    #     >>> [(n, nbrdict) for n, nbrdict in H.adjacency()]
-    #     [(0, {1: {}}), (1, {0: {}, 2: {}}), (2, {1: {}, 3: {}}), (3, {2: {}})]
-
-    #     """
-    #     return iter(self._adj.items())
 
     @property
     def node_degree(self):
@@ -1275,7 +1255,7 @@ class Hypergraph:
         )
         return H
 
-    # def subgraph(self, nodes):
+    # def subhypergraph(self, nodes, shrink_edges=False):
     #     """Returns a SubGraph view of the subgraph induced on `nodes`.
 
     #     The induced subgraph of the graph contains the nodes in `nodes`
@@ -1332,9 +1312,9 @@ class Hypergraph:
     #     >>> list(H.edges)
     #     [(0, 1), (1, 2)]
     #     """
-    #     induced_nodes = nx.filters.show_nodes(self.nbunch_iter(nodes))
+    #     induced_nodes = hg.filters.show_nodes(self.nbunch_iter(nodes))
     #     # if already a subgraph, don't make a chain
-    #     subgraph = nx.graphviews.subgraph_view
+    #     subgraph = hg.graphviews.subgraph_view
     #     if hasattr(self, "_NODE_OK"):
     #         return subgraph(self._graph, induced_nodes, self._EDGE_OK)
     #     return subgraph(self, induced_nodes)
@@ -1378,49 +1358,6 @@ class Hypergraph:
 
     #     """
     #     return nx.edge_subgraph(self, edges)
-
-    # def size(self, weight=None):
-    #     """Returns the number of edges or total of all edge weights.
-
-    #     Parameters
-    #     ----------
-    #     weight : string or None, optional (default=None)
-    #         The edge attribute that holds the numerical value used
-    #         as a weight. If None, then each edge has weight 1.
-
-    #     Returns
-    #     -------
-    #     size : numeric
-    #         The number of edges or
-    #         (if weight keyword is provided) the total weight sum.
-
-    #         If weight is None, returns an int. Otherwise a float
-    #         (or more general numeric if the weights are more general).
-
-    #     See Also
-    #     --------
-    #     number_of_edges
-
-    #     Examples
-    #     --------
-    #     >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-    #     >>> H.size()
-    #     3
-
-    #     >>> H = nx.Graph()  # or DiGraph, MultiGraph, MultiDiGraph, etc
-    #     >>> H.add_edge("a", "b", weight=2)
-    #     >>> H.add_edge("b", "c", weight=4)
-    #     >>> H.size()
-    #     2
-    #     >>> H.size(weight="weight")
-    #     6.0
-    #     """
-    #     s = sum(d for v, d in self.degree(weight=weight))
-    #     # If `weight` is None, the sum of the degrees is guaranteed to be
-    #     # even, so we can perform integer division and hence return an
-    #     # integer. Otherwise, the sum of the weighted degrees is not
-    #     # guaranteed to be an integer, so we perform "real" division.
-    #     return s // 2 if weight is None else s / 2
 
     def number_of_edges(self):
         """Returns the number of edges between two nodes.
@@ -1519,12 +1456,12 @@ class Hypergraph:
     #                 exc, message = e, e.args[0]
     #                 # capture error for non-sequence/iterator nbunch.
     #                 if "iter" in message:
-    #                     exc = NetworkXError(
+    #                     exc = HypergraphError(
     #                         "nbunch is not a node or a sequence of nodes."
     #                     )
     #                 # capture error for unhashable node.
     #                 if "hashable" in message:
-    #                     exc = NetworkXError(
+    #                     exc = HypergraphError(
     #                         f"Node {n} in sequence nbunch is not a valid node."
     #                     )
     #                 raise exc

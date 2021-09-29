@@ -1,8 +1,5 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
-/hypergraph/__pycache__/
-; classes/__pycache__/
-; classes/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -81,7 +78,6 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 .ipynb_checkpoints/
-.ipynb
 
 # IPython
 profile_default/
