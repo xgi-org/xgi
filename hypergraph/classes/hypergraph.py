@@ -23,8 +23,6 @@ class Hypergraph:
 
     node_dict_factory = dict
     node_attr_dict_factory = dict
-    adjlist_outer_dict_factory = dict
-    adjlist_inner_dict_factory = dict
     hyperedge_dict_factory = dict
     hyperedge_attr_dict_factory = dict
     hypergraph_attr_dict_factory = dict
@@ -49,14 +47,13 @@ class Hypergraph:
         self.hypergraph_attr_dict_factory = self.hypergraph_attr_dict_factory
         self.node_dict_factory = self.node_dict_factory
         self.node_attr_dict_factory = self.node_attr_dict_factory
-        self.adjlist_outer_dict_factory = self.adjlist_outer_dict_factory
-        self.adjlist_inner_dict_factory = self.adjlist_inner_dict_factory
         self.hyperedge_attr_dict_factory = self.hyperedge_attr_dict_factory
 
         self.hypergraph = self.hypergraph_attr_dict_factory()  # dictionary for graph attributes
         self._node = self.node_dict_factory()  # empty node attribute dict
+        self._node_attr = self.node_attr_dict_factory()
         self._edge = self.hyperedge_dict_factory() 
-        self._adj = self.adjlist_outer_dict_factory()  # empty adjacency dict
+        self._edge_attr = self.hyperedge_attr_dict_factory()  # empty adjacency dict
         # attempt to load graph with data
         if incoming_hypergraph_data is not None:
             # convert.to_networkx_graph(incoming_hypergraph_data, create_using=self)
@@ -231,10 +228,10 @@ class Hypergraph:
         if node_for_adding not in self._node:
             if node_for_adding is None:
                 raise ValueError("None cannot be a node")
-            attr_dict = self._node[node_for_adding] = self.node_attr_dict_factory()
-            attr_dict.update(attr)
+            self._node[node_for_adding] = set()
+            self._node_attr[node_for_adding] = self.node_attr_dict_factory()
         else:  # update attr even if node already exists
-            self._node[node_for_adding].update(attr)
+            self._node_attr[node_for_adding].update(attr)
 
     def add_nodes_from(self, nodes_for_adding, **attr):
         """Add multiple nodes.
@@ -292,8 +289,9 @@ class Hypergraph:
             if newnode:
                 if n is None:
                     raise ValueError("None cannot be a node")
-                self._node[n] = self.node_attr_dict_factory()
-            self._node[n].update(newdict)
+                self._node[n] = set()
+                self._node_attr[n] = self.node_attr_dict_factory()
+            self._node_attr[n].update(newdict)
 
     def remove_node(self, n):
         """Remove node n.
@@ -328,10 +326,13 @@ class Hypergraph:
         try:
             edge_neighbors = self.nodes[n]  # list handles self-loops (allows mutation)
             del self._node[n]
+            del self._node_attr[n]
         except KeyError as e:  # NetworkXError if n not in self
             raise HypergraphError(f"The node {n} is not in the graph.") from e
         for edge in edge_neighbors:
-            self._edges[edge]["members"].remove(n)  # remove all edges n-u in graph
+            self._edge[edge].remove(n)  # remove all edges n-u in graph
+            if len(self._edge[edge]) == 0:
+                del self._edge[edge]
 
     def remove_nodes_from(self, nodes):
         """Remove multiple nodes.
@@ -362,8 +363,12 @@ class Hypergraph:
             try:
                 edge_neighbors = self.nodes[n]  # list handles self-loops (allows mutation)
                 del self._node[n]
+                del self._node_attr[n]
                 for edge in edge_neighbors:
-                    self._edges[edge]["members"].remove(n)  # remove all edges n-u in graph
+                    self._edge[edge].remove(n)  # remove all edges n-u in graph
+                    # delete empty edges
+                    if len(self._edge[edge]) == 0:
+                        del self._edge[edge]
             except KeyError as e:  # NetworkXError if n not in self
                 pass
         
@@ -583,22 +588,23 @@ class Hypergraph:
         >>> H[1][2].update({0: 5})
         >>> H.edges[1, 2].update({0: 5})
         """
+        uid = self._edge_uid()
         for node in edge:
             if node not in self._node:
                 if node is None:
                     raise ValueError("None cannot be a node")
-                self._node[node] = self.node_attr_dict_factory()
+                self._node[node] = set()
+                self._node_attr[node] = self.node_attr_dict_factory()
+            self._node[node].add(uid)
 
-        uid = self._edge_uid()
-        self._edge[uid] = self.hyperedge_dict_factory()
         try:
-            self._edge[uid]["members"] = set(edge)
+            self._edge[uid] = set(edge)
+            self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
         except:
             raise HypergraphError("The edge cannot be cast to a set.")
-        # add the edge
-        # datadict = self._edge.get(uid, self.hyperedge_dict_factory())
-        # datadict.update(attr)
-        self._edge[uid].update(attr)
+
+        self._edge_attr[uid].update(attr)
+
 
     def add_edges_from(self, ebunch_to_add, **attr):
         """Add all the edges in ebunch_to_add.
@@ -701,7 +707,7 @@ class Hypergraph:
         """
         try:
             for node in self.edges[id]:
-                self._node[node]["members"].remove(id)
+                self._node[node].remove(id)
             del self._edge[id]
         except KeyError as e:
             raise HypergraphError(f"Edge {id} is not in the graph") from e
@@ -732,7 +738,7 @@ class Hypergraph:
         for id in ebunch:
             try:
                 for node in self.edges[id]:
-                    self._node[node]["members"].remove(id)
+                    self._node[node].remove(id)
                 del self._edge[id]
             except:
                 pass

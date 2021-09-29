@@ -1,18 +1,16 @@
-from pandas.core.algorithms import isin
 import hypergraph as hg
 from hypergraph.exception import HypergraphException, HypergraphError
 from collections import defaultdict
 import pandas as pd
+from scipy.sparse import coo_matrix, csr_matrix, csc_matrix, lil_matrix
+from numpy import ndarray, matrix
 
 __all__ = [
     "convert_to_hypergraph",
-    "from_list_of_lists",
+    "from_hyperedge_list",
     "from_bipartite_pandas_dataframe",
-    "to_dict_of_dicts",
-    "from_dict_of_lists",
-    "to_dict_of_lists",
-    "from_edgelist",
-    "to_edgelist",
+    "from_hyperedge_list",
+    "from_incidence_matrix"
 ]
 
 
@@ -46,46 +44,53 @@ def convert_to_hypergraph(data, create_using=None):
     """
         
     if data is None:
+        print("1")
         hg.empty_hypergraph(create_using)
 
-    if isinstance(data, hg.Hypergraph):
+    elif isinstance(data, hg.Hypergraph):
+        print("2")
         H = hg.empty_hypergraph(create_using)
         # copy hypergraph
         H._node = data._node.copy()
+        H._node_attr = data._node_attr.copy()
         H._edge = data._edge.copy()
+        H._edge_attr = data._edge_attr.copy()
         H.hypergraph = data.hypergraph.copy()
 
     elif isinstance(data, list):
         # edge list
-        from_list_of_lists(data, create_using)
+        from_hyperedge_list(data, create_using)
 
     elif isinstance(data, pd.DataFrame):
         from_bipartite_pandas_dataframe(data, create_using)
 
-    # elif isinstance(data, dict):
-    #     # edge dict in the form we need
-    #     _edges = data._edges
-    #     _nodes = dict()
-    #     for uid, edge in _edges.items():
-    #         for node in edge["members"]:
-    #             try:
-    #                 _nodes[node]["members"].add(uid)
-    #             except:
-    #                 _nodes[node] = {"members": {uid}}
+    elif isinstance(data, dict):
+        # edge dict in the form we need
+        from_hyperedge_dict(data, create_using)
 
-    # return _nodes, _edges
+    elif isinstance(data, (ndarray, matrix, csr_matrix, csc_matrix, coo_matrix, lil_matrix)):
+        from_incidence_matrix(data, create_using)
 
 
-def from_list_of_lists(d, create_using=None, weighted=False):
+def from_hyperedge_list(d, create_using=None, weighted=False):
     H = hg.empty_hypergraph(create_using)
     H.add_edges_from(d)
+    return H
+
+def from_hyperedge_dict(d, create_using=None, weighted=False):
+    H = hg.empty_hypergraph(create_using)
+    H._edge = d
+    H._node = get_dual(d)
+    return H
 
 def from_bipartite_pandas_dataframe(df, create_using=None, node_column=0, edge_column=1):
     """
     Pandas dataframe. If two columns, assume it's a bipartite edge list, otherwise it's an incidence matrix
     """
-    nodes = dict()
-    edges = dict()
+    nodes = hg.Hypergraph.node_dict_factory()
+    node_attrs = hg.Hypergraph.node_attr_dict_factory()
+    edges = hg.Hypergraph.hyperedge_dict_factory()
+    edge_attrs = hg.Hypergraph.hyperedge_attr_dict_factory()
 
     # try to get by labels first
     try:
@@ -103,29 +108,54 @@ def from_bipartite_pandas_dataframe(df, create_using=None, node_column=0, edge_c
         edge = line[1]
         
         try:
-            nodes[node]["members"].add(edge)
+            nodes[node].add(edge)
         except:
-            nodes[node] = {"members" : {edge}}
+            nodes[node] =  {edge}
+            node_attrs[node] = {}
         
         try:
-            edges[edge]["members"].add(node)
+            edges[edge].add(node)
         except:
-            edges[edge] = {"members" : {node}}
+            edges[edge] = {node}
+            edge_attrs[edge] = {}
 
     H = hg.empty_hypergraph(create_using)
     H._node = nodes
+    H._node = node_attrs
     H._edge = edges
+    H._edge_attr = edge_attrs
+    return H
 
-def from_dict_of_lists(d, create_using=None):
-    """
-    Pandas dataframe. If two columns, assume it's a bipartite edge list, otherwise it's an incidence matrix
-    """
+def from_incidence_matrix(d, create_using=None):
+    I = coo_matrix(d)
+    nodes = hg.Hypergraph.node_dict_factory()
+    node_attrs = hg.Hypergraph.node_attr_dict_factory()
+    edges = hg.Hypergraph.hyperedge_dict_factory()
+    edge_attrs = hg.Hypergraph.hyperedge_attr_dict_factory()
+
+    for node, edge in zip(I.row, I.col):        
+        try:
+            nodes[node].add(edge)
+        except:
+            nodes[node] =  {edge}
+            node_attrs[node] = {}
+        
+        try:
+            edges[edge].add(node)
+        except:
+            edges[edge] = {node}
+            edge_attrs[edge] = {}
     H = hg.empty_hypergraph(create_using)
-    H.add_edges_from(d.values())
+    H._node = nodes
+    H._node = node_attrs
+    H._edge = edges
+    H._edge_attr = edge_attrs
+    return H
 
-def from_numpy_array(H):
-    print("Under dev")
-
-# From incidence matrix, numpy/scipy
-# From edge dictionary
-# From bipartite network
+def get_dual(edge_dict):
+    node_dict = defaultdict(set)
+    for edge_id, members in edge_dict.items():
+        for node in members:
+            node_dict[node].add(edge_id)
+        
+    return node_dict

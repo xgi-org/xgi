@@ -150,7 +150,7 @@ class NodeView(Mapping, Set):
     False
     """
 
-    __slots__ = ("_nodes",)
+    __slots__ = ("_nodes","_node_attrs")
 
     def __getstate__(self):
         return {"_nodes": self._nodes}
@@ -160,6 +160,7 @@ class NodeView(Mapping, Set):
 
     def __init__(self, hypergraph):
         self._nodes = hypergraph._node
+        self._node_attrs = hypergraph._node_attr
 
     # Mapping methods
     def __len__(self):
@@ -174,7 +175,7 @@ class NodeView(Mapping, Set):
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
             )
-        return self._nodes[n]["members"]
+        return self._nodes[n]
 
     # Set methods
     def __contains__(self, n):
@@ -254,7 +255,7 @@ class NodeView(Mapping, Set):
         """
         if data is False:
             return self
-        return NodeDataView(self._nodes, data, default)
+        return NodeDataView(self._node_attrs, data, default)
 
     def __str__(self):
         return str(list(self))
@@ -263,7 +264,7 @@ class NodeView(Mapping, Set):
         return f"{self.__class__.__name__}({tuple(self)})"
 
     def members(self, n):
-        return self._nodes[n]["members"]
+        return self._nodes[n]
 
 
 class NodeDataView(Set):
@@ -284,18 +285,18 @@ class NodeDataView(Set):
     default : object (default=None)
     """
 
-    __slots__ = ("_nodes", "_data", "_default")
+    __slots__ = ("_node_attrs", "_data", "_default")
 
     def __getstate__(self):
-        return {"_nodes": self._nodes, "_data": self._data, "_default": self._default}
+        return {"_node_attrs": self._nodes, "_data": self._data, "_default": self._default}
 
     def __setstate__(self, state):
-        self._nodes = state["_nodes"]
+        self._node_attrs = state["_node_attrs"]
         self._data = state["_data"]
         self._default = state["_default"]
 
     def __init__(self, nodedict, data=False, default=None):
-        self._nodes = nodedict
+        self._node_attrs = nodedict
         self._data = data
         self._default = default
 
@@ -310,32 +311,32 @@ class NodeDataView(Set):
             raise
 
     def __len__(self):
-        return len(self._nodes)
+        return len(self._node_attrs)
 
     def __iter__(self):
         data = self._data
         if data is False:
-            return iter(self._nodes)
+            return iter(self._node_attrs)
         if data is True:
-            return iter(self._nodes.items())
+            return iter(self._node_attrs.items())
         return (
             (n, dd[data] if data in dd else self._default)
-            for n, dd in self._nodes.items()
+            for n, dd in self._node_attrs.items()
         )
 
     def __contains__(self, n):
         try:
-            node_in = n in self._nodes
+            node_in = n in self._node_attrs
         except TypeError:
             n, d = n
-            return n in self._nodes and self[n] == d
+            return n in self._node_attrs and self[n] == d
         if node_in is True:
             return node_in
         try:
             n, d = n
         except (TypeError, ValueError):
             return False
-        return n in self._nodes and self[n] == d
+        return n in self._node_attrs and self[n] == d
 
     def __getitem__(self, n):
         if isinstance(n, slice):
@@ -343,7 +344,7 @@ class NodeDataView(Set):
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes.data())[{n.start}:{n.stop}:{n.step}]"
             )
-        ddict = self._nodes[n]
+        ddict = self._node_attrs[n]
         data = self._data
         if data is False or data is True:
             return ddict
@@ -510,17 +511,17 @@ class EdgeDegreeView:
     def __getitem__(self, e):
         weight = self._weight
         if weight is None:
-            return len(self._edges.members(e))
-        return sum(self._nodes[dd].get(weight, 1) for dd in self._edges.members(e))
+            return len(self._edges(e))
+        return sum(self._nodes[dd].get(weight, 1) for dd in self._edges(e))
 
     def __iter__(self):
         weight = self._weight
         if weight is None:
             for e in self._edges:
-                yield (e, len(self._edges.members(e)))
+                yield (e, len(self._edges(e)))
         else:
             for e in self._edges:
-                elements = self._edges.members(e)
+                elements = self._edges(e)
                 deg = sum(self._nodes[dd].get(weight, 1) for dd in elements)
                 yield (e, deg)
 
@@ -700,7 +701,7 @@ class EdgeView(Set, Mapping):
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
             )
-        return self._edges[e]["members"]
+        return self._edges[e]
 
     # get edge members
     def __call__(self, e):
@@ -709,10 +710,10 @@ class EdgeView(Set, Mapping):
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
             )
-        return self._edges[e]["members"]
+        return self._edges[e]
 
     def members(self, e):
-        return self._edges[e]["members"]
+        return self._edges[e]
 
     def data(self, data=True, default=None, nbunch=None):
         """

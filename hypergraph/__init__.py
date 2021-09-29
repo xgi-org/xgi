@@ -1,3 +1,4 @@
+from hypergraph import classes
 from hypergraph.classes import *
 
 from hypergraph import generators
@@ -10,4 +11,9 @@ from hypergraph import readwrite
 from hypergraph.readwrite import *
 
 from hypergraph import utils
-from hypergraph.utils import *
+
+from hypergraph import convert
+from hypergraph.convert import *
+
+from hypergraph import algorithms
+from hypergraph.algorithms import *
