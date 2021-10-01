@@ -1252,14 +1252,101 @@ class Hypergraph:
         # if as_view is True:
         #     return nx.graphviews.generic_graph_view(self)
         H = self.__class__()
-        H.hypergraph.update(self.hypergraph)
-        H.add_nodes_from((n, d.copy()) for n, d in self._node.items())
-        H.add_edges_from(
-            (u, v, datadict.copy())
-            for u, nbrs in self._adj.items()
-            for v, datadict in nbrs.items()
-        )
+        H.hypergraph = deepcopy(self.hypergraph)
+        H._node = deepcopy(self._node)
+        H._node_attr = deepcopy(self._node_attr)
+        H._edge = deepcopy(self._edge)
+        H._edge_attr = deepcopy(self._edge_attr)
         return H
+
+    def dual(self, as_view=False):
+        """Returns a copy of the graph.
+
+        The copy method by default returns an independent shallow copy
+        of the graph and attributes. That is, if an attribute is a
+        container, that container is shared by the original an the copy.
+        Use Python's `copy.deepcopy` for new containers.
+
+        If `as_view` is True then a view is returned instead of a copy.
+
+        Notes
+        -----
+        All copies reproduce the graph structure, but data attributes
+        may be handled in different ways. There are four types of copies
+        of a graph that people might want.
+
+        Deepcopy -- A "deepcopy" copies the graph structure as well as
+        all data attributes and any objects they might contain.
+        The entire graph object is new so that changes in the copy
+        do not affect the original object. (see Python's copy.deepcopy)
+
+        Data Reference (Shallow) -- For a shallow copy the graph structure
+        is copied but the edge, node and graph attribute dicts are
+        references to those in the original graph. This saves
+        time and memory but could cause confusion if you change an attribute
+        in one graph and it changes the attribute in the other.
+        NetworkX does not provide this level of shallow copy.
+
+        Independent Shallow -- This copy creates new independent attribute
+        dicts and then does a shallow copy of the attributes. That is, any
+        attributes that are containers are shared between the new graph
+        and the original. This is exactly what `dict.copy()` provides.
+        You can obtain this style copy using:
+
+            >>> H = nx.path_graph(5)
+            >>> H = H.copy()
+            >>> H = H.copy(as_view=False)
+            >>> H = nx.Graph(H)
+            >>> H = H.__class__(H)
+
+        Fresh Data -- For fresh data, the graph structure is copied while
+        new empty data attribute dicts are created. The resulting graph
+        is independent of the original and it has no edge, node or graph
+        attributes. Fresh copies are not enabled. Instead use:
+
+            >>> H = H.__class__()
+            >>> H.add_nodes_from(H)
+            >>> H.add_edges_from(H.edges)
+
+        View -- Inspired by dict-views, graph-views act like read-only
+        versions of the original graph, providing a copy of the original
+        structure without requiring any memory for copying the information.
+
+        See the Python copy module for more information on shallow
+        and deep copies, https://docs.python.org/3/library/copy.html.
+
+        Parameters
+        ----------
+        as_view : bool, optional (default=False)
+            If True, the returned graph-view provides a read-only view
+            of the original graph without actually copying any data.
+
+        Returns
+        -------
+        H : Graph
+            A copy of the graph.
+
+        See Also
+        --------
+        to_directed: return a directed copy of the graph.
+
+        Examples
+        --------
+        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
+        >>> H = H.copy()
+
+        """
+        # if as_view is True:
+        #     return nx.graphviews.generic_graph_view(self)
+        H = self.__class__()
+        H.hypergraph = deepcopy(self.hypergraph)
+        H._node = deepcopy(self._edge)
+        H._node_attr = deepcopy(self._edge_attr)
+        H._edge = deepcopy(self._node)
+        H._edge_attr = deepcopy(self._node_attr)
+        return H
+
+
 
     # def subhypergraph(self, nodes, shrink_edges=False):
     #     """Returns a SubGraph view of the subgraph induced on `nodes`.
@@ -1407,70 +1494,70 @@ class Hypergraph:
         """
         return len(self._edge)
 
-    # def nbunch_iter(self, nbunch=None):
-    #     """Returns an iterator over nodes contained in nbunch that are
-    #     also in the graph.
+    def nbunch_iter(self, nbunch=None):
+        """Returns an iterator over nodes contained in nbunch that are
+        also in the graph.
 
-    #     The nodes in nbunch are checked for membership in the graph
-    #     and if not are silently ignored.
+        The nodes in nbunch are checked for membership in the graph
+        and if not are silently ignored.
 
-    #     Parameters
-    #     ----------
-    #     nbunch : single node, container, or all nodes (default= all nodes)
-    #         The view will only report edges incident to these nodes.
+        Parameters
+        ----------
+        nbunch : single node, container, or all nodes (default= all nodes)
+            The view will only report edges incident to these nodes.
 
-    #     Returns
-    #     -------
-    #     niter : iterator
-    #         An iterator over nodes in nbunch that are also in the graph.
-    #         If nbunch is None, iterate over all nodes in the graph.
+        Returns
+        -------
+        niter : iterator
+            An iterator over nodes in nbunch that are also in the graph.
+            If nbunch is None, iterate over all nodes in the graph.
 
-    #     Raises
-    #     ------
-    #     NetworkXError
-    #         If nbunch is not a node or sequence of nodes.
-    #         If a node in nbunch is not hashable.
+        Raises
+        ------
+        NetworkXError
+            If nbunch is not a node or sequence of nodes.
+            If a node in nbunch is not hashable.
 
-    #     See Also
-    #     --------
-    #     Graph.__iter__
+        See Also
+        --------
+        Graph.__iter__
 
-    #     Notes
-    #     -----
-    #     When nbunch is an iterator, the returned iterator yields values
-    #     directly from nbunch, becoming exhausted when nbunch is exhausted.
+        Notes
+        -----
+        When nbunch is an iterator, the returned iterator yields values
+        directly from nbunch, becoming exhausted when nbunch is exhausted.
 
-    #     To test whether nbunch is a single node, one can use
-    #     "if nbunch in self:", even after processing with this routine.
+        To test whether nbunch is a single node, one can use
+        "if nbunch in self:", even after processing with this routine.
 
-    #     If nbunch is not a node or a (possibly empty) sequence/iterator
-    #     or None, a :exc:`NetworkXError` is raised.  Also, if any object in
-    #     nbunch is not hashable, a :exc:`NetworkXError` is raised.
-    #     """
-    #     if nbunch is None:  # include all nodes via iterator
-    #         bunch = iter(self._adj)
-    #     elif nbunch in self:  # if nbunch is a single node
-    #         bunch = iter([nbunch])
-    #     else:  # if nbunch is a sequence of nodes
+        If nbunch is not a node or a (possibly empty) sequence/iterator
+        or None, a :exc:`NetworkXError` is raised.  Also, if any object in
+        nbunch is not hashable, a :exc:`NetworkXError` is raised.
+        """
+        if nbunch is None:  # include all nodes via iterator
+            bunch = iter(self._node)
+        elif nbunch in self:  # if nbunch is a single node
+            bunch = iter([nbunch])
+        else:  # if nbunch is a sequence of nodes
 
-    #         def bunch_iter(nlist, adj):
-    #             try:
-    #                 for n in nlist:
-    #                     if n in adj:
-    #                         yield n
-    #             except TypeError as e:
-    #                 exc, message = e, e.args[0]
-    #                 # capture error for non-sequence/iterator nbunch.
-    #                 if "iter" in message:
-    #                     exc = HypergraphError(
-    #                         "nbunch is not a node or a sequence of nodes."
-    #                     )
-    #                 # capture error for unhashable node.
-    #                 if "hashable" in message:
-    #                     exc = HypergraphError(
-    #                         f"Node {n} in sequence nbunch is not a valid node."
-    #                     )
-    #                 raise exc
+            def bunch_iter(nlist, nodes):
+                try:
+                    for n in nlist:
+                        if n in nodes:
+                            yield n
+                except TypeError as e:
+                    exc, message = e, e.args[0]
+                    # capture error for non-sequence/iterator nbunch.
+                    if "iter" in message:
+                        exc = HypergraphError(
+                            "nbunch is not a node or a sequence of nodes."
+                        )
+                    # capture error for unhashable node.
+                    if "hashable" in message:
+                        exc = HypergraphError(
+                            f"Node {n} in sequence nbunch is not a valid node."
+                        )
+                    raise exc
 
-    #         bunch = bunch_iter(nbunch, self._adj)
-    #     return bunch
+            bunch = bunch_iter(nbunch, self._node)
+        return bunch

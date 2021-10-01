@@ -4,12 +4,15 @@ from collections import defaultdict
 import pandas as pd
 from scipy.sparse import coo_matrix, csr_matrix, csc_matrix, lil_matrix
 from numpy import ndarray, matrix
+from copy import deepcopy
 
 __all__ = [
     "convert_to_hypergraph",
     "from_hyperedge_list",
+    "to_hyperedge_list",
+    "from_hyperedge_dict",
+    "to_hyperedge_dict",
     "from_bipartite_pandas_dataframe",
-    "from_hyperedge_list",
     "from_incidence_matrix"
 ]
 
@@ -51,11 +54,11 @@ def convert_to_hypergraph(data, create_using=None):
         print("2")
         H = hg.empty_hypergraph(create_using)
         # copy hypergraph
-        H._node = data._node.copy()
-        H._node_attr = data._node_attr.copy()
-        H._edge = data._edge.copy()
-        H._edge_attr = data._edge_attr.copy()
-        H.hypergraph = data.hypergraph.copy()
+        H._node = deepcopy(data._node)
+        H._node_attr = deepcopy(data._node_attr)
+        H._edge = deepcopy(data._edge)
+        H._edge_attr = deepcopy(data._edge_attr)
+        H.hypergraph = deepcopy(data.hypergraph)
 
     elif isinstance(data, list):
         # edge list
@@ -77,11 +80,19 @@ def from_hyperedge_list(d, create_using=None, weighted=False):
     H.add_edges_from(d)
     return H
 
+def to_hyperedge_list(H):
+    return [list(H.edges[edge_id]) for edge_id in H.edges]
+
 def from_hyperedge_dict(d, create_using=None, weighted=False):
     H = hg.empty_hypergraph(create_using)
     H._edge = d
+    H._edge_attr = {id : dict() for id in H.edges}
     H._node = get_dual(d)
+    H._node = {id : dict() for id in H.nodes}
     return H
+
+def to_hyperedge_dict(H):
+    return deepcopy(H._edge)
 
 def from_bipartite_pandas_dataframe(df, create_using=None, node_column=0, edge_column=1):
     """
