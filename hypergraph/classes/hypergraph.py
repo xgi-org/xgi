@@ -49,7 +49,7 @@ class Hypergraph:
         self.node_attr_dict_factory = self.node_attr_dict_factory
         self.hyperedge_attr_dict_factory = self.hyperedge_attr_dict_factory
 
-        self.hypergraph = self.hypergraph_attr_dict_factory()  # dictionary for graph attributes
+        self._hypergraph = self.hypergraph_attr_dict_factory()  # dictionary for graph attributes
         self._node = self.node_dict_factory()  # empty node attribute dict
         self._node_attr = self.node_attr_dict_factory()
         self._edge = self.hyperedge_dict_factory() 
@@ -59,21 +59,21 @@ class Hypergraph:
             # convert.to_networkx_graph(incoming_hypergraph_data, create_using=self)
             convert.convert_to_hypergraph(incoming_hypergraph_data, create_using=self)
         # load graph attributes (must be after convert)
-        self.hypergraph.update(attr)
+        self._hypergraph.update(attr)
 
     @property
     def name(self):
         """String identifier of the hypergraph.
 
-        This hypergraph attribute appears in the attribute dict H.hypergraph
+        This hypergraph attribute appears in the attribute dict H._hypergraph
         keyed by the string `"name"`. as well as an attribute (technically
         a property) `H.name`. This is entirely user controlled.
         """
-        return self.hypergraph.get("name", "")
+        return self._hypergraph.get("name", "")
 
     @name.setter
     def name(self, s):
-        self.hypergraph["name"] = s
+        self._hypergraph["name"] = s
 
     def __str__(self):
         """Returns a short summary of the graph.
@@ -853,7 +853,7 @@ class Hypergraph:
                 else:  # edges is Graph-like
                     self.add_nodes_from(graph_nodes.data())
                     self.add_edges_from(graph_edges.data())
-                    self.hypergraph.update(edges.hypergraph)
+                    self._hypergraph.update(edges.hypergraph)
         elif nodes is not None:
             self.add_nodes_from(nodes)
         else:
@@ -899,49 +899,6 @@ class Hypergraph:
             return v in self._node
         except KeyError:
             return False
-
-    # def neighbors(self, n):
-    #     """Returns an iterator over all neighbors of node n.
-
-    #     This is identical to `iter(H[n])`
-
-    #     Parameters
-    #     ----------
-    #     n : node
-    #        A node in the graph
-
-    #     Returns
-    #     -------
-    #     neighbors : iterator
-    #         An iterator over all neighbors of node n
-
-    #     Raises
-    #     ------
-    #     NetworkXError
-    #         If the node n is not in the graph.
-
-    #     Examples
-    #     --------
-    #     >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-    #     >>> [n for n in H.neighbors(0)]
-    #     [1]
-
-    #     Notes
-    #     -----
-    #     Alternate ways to access the neighbors are ``H.adj[n]`` or ``H[n]``:
-
-    #     >>> H = nx.Graph()  # or DiGraph, MultiGraph, MultiDiGraph, etc
-    #     >>> H.add_edge("a", "b", weight=7)
-    #     >>> H["a"]
-    #     AtlasView({'b': {'weight': 7}})
-    #     >>> H = nx.path_graph(4)
-    #     >>> [n for n in H[0]]
-    #     [1]
-    #     """
-    #     try:
-    #         return iter(self._adj[n])
-    #     except KeyError as e:
-    #         raise HypergraphError(f"The node {n} is not in the graph.") from e
 
     @property
     def edges(self):
@@ -1146,7 +1103,7 @@ class Hypergraph:
         """
         self._node.clear()
         self._edge.clear()
-        self.hypergraph.clear()
+        self._hypergraph.clear()
 
     def clear_edges(self):
         """Remove all edges from the graph without altering nodes.
@@ -1252,7 +1209,7 @@ class Hypergraph:
         # if as_view is True:
         #     return nx.graphviews.generic_graph_view(self)
         H = self.__class__()
-        H.hypergraph = deepcopy(self.hypergraph)
+        H._hypergraph = deepcopy(self._hypergraph)
         H._node = deepcopy(self._node)
         H._node_attr = deepcopy(self._node_attr)
         H._edge = deepcopy(self._edge)
@@ -1339,7 +1296,7 @@ class Hypergraph:
         # if as_view is True:
         #     return nx.graphviews.generic_graph_view(self)
         H = self.__class__()
-        H.hypergraph = deepcopy(self.hypergraph)
+        H._hypergraph = deepcopy(self._hypergraph)
         H._node = deepcopy(self._edge)
         H._node_attr = deepcopy(self._edge_attr)
         H._edge = deepcopy(self._node)

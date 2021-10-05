@@ -5,7 +5,7 @@ import pandas as pd
 from scipy.sparse import coo_matrix, csr_matrix, csc_matrix, lil_matrix
 from numpy import ndarray, matrix
 from copy import deepcopy
-
+from hypergraph.utils.utilities import get_dual
 __all__ = [
     "convert_to_hypergraph",
     "from_hyperedge_list",
@@ -163,10 +163,3 @@ def from_incidence_matrix(d, create_using=None):
     H._edge_attr = edge_attrs
     return H
 
-def get_dual(edge_dict):
-    node_dict = defaultdict(set)
-    for edge_id, members in edge_dict.items():
-        for node in members:
-            node_dict[node].add(edge_id)
-        
-    return node_dict

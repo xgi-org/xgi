@@ -154,10 +154,11 @@ class NodeView(Mapping, Set):
     __slots__ = ("_nodes","_node_attrs")
 
     def __getstate__(self):
-        return {"_nodes": self._nodes}
+        return {"_nodes": self._nodes, "_node_attrs": self._node_attrs}
 
     def __setstate__(self, state):
         self._nodes = state["_nodes"]
+        self._node_attrs = state["_node_attrs"]
 
     def __init__(self, hypergraph):
         self._nodes = hypergraph._node
@@ -289,7 +290,7 @@ class NodeDataView(Set):
     __slots__ = ("_node_attrs", "_data", "_default")
 
     def __getstate__(self):
-        return {"_node_attrs": self._nodes, "_data": self._data, "_default": self._default}
+        return {"_node_attrs": self._node_attrs, "_data": self._data, "_default": self._default}
 
     def __setstate__(self, state):
         self._node_attrs = state["_node_attrs"]
@@ -537,78 +538,83 @@ class EdgeDegreeView:
 
 # EdgeDataViews
 class EdgeDataView:
-    """EdgeDataView for outward edges of DiHypergraph; See EdgeDataView"""
+    """EdgeDataView for edges of Hypergraph"""
 
-    __slots__ = (
-        "_viewer",
-        "_nbunch",
-        "_data",
-        "_default",
-        "_nodes_nbrs",
-        "_report",
-    )
+    __slots__ = ("_edge_attrs", "_data", "_default")
 
     def __getstate__(self):
-        return {
-            "viewer": self._viewer,
-            "nbunch": self._nbunch,
-            "data": self._data,
-            "default": self._default,
-        }
+        return {"_edge_attrs": self._edge_attrs, "_data": self._data, "_default": self._default}
 
     def __setstate__(self, state):
-        self.__init__(**state)
+        self._edge_attrs = state["_edge_attrs"]
+        self._data = state["_data"]
+        self._default = state["_default"]
 
-    def __init__(self, viewer, nbunch=None, data=False, default=None):
-        self._viewer = viewer
-        adjdict = self._adjdict = viewer._adjdict
-        if nbunch is None:
-            self._nodes_nbrs = adjdict.items
-        else:
-            # dict retains order of nodes but acts like a set
-            nbunch = dict.fromkeys(viewer._hypergraph.nbunch_iter(nbunch))
-            self._nodes_nbrs = lambda: [(n, adjdict[n]) for n in nbunch]
-        self._nbunch = nbunch
+    def __init__(self, edgedict, data=False, default=None):
+        self._edge_attrs = edgedict
         self._data = data
         self._default = default
-        # Set _report based on data and default
-        if data is True:
-            self._report = lambda n, nbr, dd: (n, nbr, dd)
-        elif data is False:
-            self._report = lambda n, nbr, dd: (n, nbr)
-        else:  # data is attribute name
-            self._report = (
-                lambda n, nbr, dd: (n, nbr, dd[data])
-                if data in dd
-                else (n, nbr, default)
-            )
+
+    @classmethod
+    def _from_iterable(cls, it):
+        try:
+            return set(it)
+        except TypeError as err:
+            if "unhashable" in str(err):
+                msg = " : Could be b/c data=True or your values are unhashable"
+                raise TypeError(str(err) + msg) from err
+            raise
 
     def __len__(self):
-        return sum(len(nbrs) for n, nbrs in self._nodes_nbrs())
+        return len(self._edge_attrs)
 
     def __iter__(self):
+        data = self._data
+        if data is False:
+            return iter(self._edge_attrs)
+        if data is True:
+            return iter(self._edge_attrs.items())
         return (
-            self._report(n, nbr, dd)
-            for n, nbrs in self._nodes_nbrs()
-            for nbr, dd in nbrs.items()
+            (n, dd[data] if data in dd else self._default)
+            for n, dd in self._edge_attrs.items()
         )
 
-    def __contains__(self, e):
-        u, v = e[:2]
-        if self._nbunch is not None and u not in self._nbunch:
-            return False  # this edge doesn't start in nbunch
+    def __contains__(self, n):
         try:
-            ddict = self._adjdict[u][v]
-        except KeyError:
+            edge_in = n in self._edge_attrs
+        except TypeError:
+            n, d = n
+            return n in self._edge_attrs and self[n] == d
+        if edge_in is True:
+            return edge_in
+        try:
+            n, d = n
+        except (TypeError, ValueError):
             return False
-        return e == self._report(u, v, ddict)
+        return n in self._edge_attrs and self[n] == d
+
+    def __getitem__(self, n):
+        if isinstance(n, slice):
+            raise hg.HypergraphError(
+                f"{type(self).__name__} does not support slicing, "
+                f"try list(H.nodes.data())[{n.start}:{n.stop}:{n.step}]"
+            )
+        ddict = self._edge_attrs[n]
+        data = self._data
+        if data is False or data is True:
+            return ddict
+        return ddict[data] if data in ddict else self._default
 
     def __str__(self):
         return str(list(self))
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({list(self)})"
-
+        name = self.__class__.__name__
+        if self._data is False:
+            return f"{name}({tuple(self)})"
+        if self._data is True:
+            return f"{name}({dict(self)})"
+        return f"{name}({dict(self)}, data={self._data!r})"
 
 # EdgeViews    have set operations and no data reported
 class EdgeView(Set, Mapping):
