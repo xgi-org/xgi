@@ -188,10 +188,13 @@ class NodeView(Mapping, Set):
         return set(it)
 
     # DataView method
-    def __call__(self, data=False, default=None):
-        if data is False:
-            return self
-        return NodeDataView(self._nodes, data, default)
+    def __call__(self, n):
+        if isinstance(n, slice):
+            raise hg.HypergraphError(
+                f"{type(self).__name__} does not support slicing, "
+                f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
+            )
+        return self._nodes[n]
 
     def data(self, data=True, default=None):
         """
@@ -402,12 +405,13 @@ class NodeDegreeView:
     >>> DVnbunch = H.degree(nbunch=(1, 2))
     >>> assert len(list(DVnbunch)) == 2  # iteration over nbunch only
     """
-    __slots__ = ("_hypergraph","_nodes","_edges", "_weight")
+    __slots__ = ("_hypergraph", "_nodes", "_edges", "_edge_attrs", "_weight")
 
     def __init__(self, H, nbunch=None, weight=None):
         self._hypergraph = H
         self._nodes = H.nodes if nbunch is None else {id : val for id, val in H.nodes.items() if id in nbunch}
         self._edges = H.edges
+        self._edge_attrs = H._edge_attr
         self._weight = weight
 
     def __call__(self, nbunch=None, weight=None):
@@ -428,7 +432,7 @@ class NodeDegreeView:
         weight = self._weight
         if weight is None:
             return len(self._nodes(n))
-        return sum(self._edges[dd].get(weight, 1) for dd in self._nodes(n))
+        return sum(self._edge_attrs[dd].get(weight, 1) for dd in self._nodes(n))
 
     def __iter__(self):
         weight = self._weight
@@ -436,9 +440,9 @@ class NodeDegreeView:
             for n in self._nodes:
                 yield (n, len(self._nodes(n)))
         else:
-            for n in self.nodes:
+            for n in self._nodes:
                 elements = self._nodes(n)
-                deg = sum(self._edges[dd].get(weight, 1) for dd in elements)
+                deg = sum(self._edge_attrs[dd].get(weight, 1) for dd in elements)
                 yield (n, deg)
 
     def __len__(self):
@@ -488,12 +492,13 @@ class EdgeDegreeView:
     >>> DVnbunch = H.degree(nbunch=(1, 2))
     >>> assert len(list(DVnbunch)) == 2  # iteration over nbunch only
     """
-    __slots__ = ("_hypergraph","_nodes","_edges", "_weight")
+    __slots__ = ("_hypergraph", "_edges", "_nodes", "_node_attrs", "_weight")
 
     def __init__(self, H, nbunch=None, weight=None):
         self._hypergraph = H
         self._edges = H.edges if nbunch is None else {id : val for id, val in H.edges.items() if id in nbunch}
         self._nodes = H.nodes
+        self._node_attrs = H._node_attr
         self._weight = weight
 
     def __call__(self, nbunch=None, weight=None):
@@ -514,7 +519,7 @@ class EdgeDegreeView:
         weight = self._weight
         if weight is None:
             return len(self._edges(e))
-        return sum(self._nodes[dd].get(weight, 1) for dd in self._edges(e))
+        return sum(self._node_attrs[dd].get(weight, 1) for dd in self._edges(e))
 
     def __iter__(self):
         weight = self._weight
@@ -524,7 +529,7 @@ class EdgeDegreeView:
         else:
             for e in self._edges:
                 elements = self._edges(e)
-                deg = sum(self._nodes[dd].get(weight, 1) for dd in elements)
+                deg = sum(self._node_attrs[dd].get(weight, 1) for dd in elements)
                 yield (e, deg)
 
     def __len__(self):

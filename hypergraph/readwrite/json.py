@@ -4,7 +4,14 @@ from hypergraph.classes.hypergraph import Hypergraph
 from hypergraph.exception import HypergraphError
 from hypergraph.utils.utilities import get_dual
 
-def to_hypergraph_json(H, filename):
+
+__all__ = [
+    "write_hypergraph_json",
+    "read_hypergraph_json"
+]
+
+
+def write_hypergraph_json(H, path):
 
     # initialize empty data
     data = dict()
@@ -24,12 +31,12 @@ def to_hypergraph_json(H, filename):
 
     datastring = json.dumps(data)
 
-    with open(filename, "w") as output_file:
+    with open(path, "w") as output_file:
         output_file.write(datastring)
 
 
-def from_hypergraph_json(filename):
-    with open(filename) as file:
+def read_hypergraph_json(path):
+    with open(path) as file:
         data = json.loads(file.read())
     H = hg.empty_hypergraph()
     try:
