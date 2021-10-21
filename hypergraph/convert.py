@@ -6,6 +6,7 @@ from scipy.sparse import coo_matrix, csr_matrix, csc_matrix, lil_matrix
 from numpy import ndarray, matrix
 from copy import deepcopy
 from hypergraph.utils.utilities import get_dual
+
 __all__ = [
     "convert_to_hypergraph",
     "from_hyperedge_list",
@@ -13,7 +14,7 @@ __all__ = [
     "from_hyperedge_dict",
     "to_hyperedge_dict",
     "from_bipartite_pandas_dataframe",
-    "from_incidence_matrix"
+    "from_incidence_matrix",
 ]
 
 
@@ -45,7 +46,7 @@ def convert_to_hypergraph(data, create_using=None):
         If data and create_using are both multigraphs then create
         a multigraph from a multigraph.
     """
-        
+
     if data is None:
         print("1")
         hg.empty_hypergraph(create_using)
@@ -71,7 +72,9 @@ def convert_to_hypergraph(data, create_using=None):
         # edge dict in the form we need
         from_hyperedge_dict(data, create_using)
 
-    elif isinstance(data, (ndarray, matrix, csr_matrix, csc_matrix, coo_matrix, lil_matrix)):
+    elif isinstance(
+        data, (ndarray, matrix, csr_matrix, csc_matrix, coo_matrix, lil_matrix)
+    ):
         from_incidence_matrix(data, create_using)
 
 
@@ -80,21 +83,27 @@ def from_hyperedge_list(d, create_using=None, weighted=False):
     H.add_edges_from(d)
     return H
 
+
 def to_hyperedge_list(H):
     return [list(H.edges[edge_id]) for edge_id in H.edges]
+
 
 def from_hyperedge_dict(d, create_using=None, weighted=False):
     H = hg.empty_hypergraph(create_using)
     H._edge = d
-    H._edge_attr = {id : dict() for id in H.edges}
+    H._edge_attr = {id: dict() for id in H.edges}
     H._node = get_dual(d)
-    H._node = {id : dict() for id in H.nodes}
+    H._node = {id: dict() for id in H.nodes}
     return H
+
 
 def to_hyperedge_dict(H):
     return deepcopy(H._edge)
 
-def from_bipartite_pandas_dataframe(df, create_using=None, node_column=0, edge_column=1):
+
+def from_bipartite_pandas_dataframe(
+    df, create_using=None, node_column=0, edge_column=1
+):
     """
     Pandas dataframe. If two columns, assume it's a bipartite edge list, otherwise it's an incidence matrix
     """
@@ -117,13 +126,13 @@ def from_bipartite_pandas_dataframe(df, create_using=None, node_column=0, edge_c
     for line in d.itertuples(index=False):
         node = line[0]
         edge = line[1]
-        
+
         try:
             nodes[node].add(edge)
         except:
-            nodes[node] =  {edge}
+            nodes[node] = {edge}
             node_attrs[node] = {}
-        
+
         try:
             edges[edge].add(node)
         except:
@@ -136,6 +145,7 @@ def from_bipartite_pandas_dataframe(df, create_using=None, node_column=0, edge_c
     H._edge = edges
     H._edge_attr = edge_attrs
     return H
+
 
 def from_incidence_matrix(d, create_using=None):
     I = coo_matrix(d)
@@ -144,13 +154,13 @@ def from_incidence_matrix(d, create_using=None):
     edges = hg.Hypergraph.hyperedge_dict_factory()
     edge_attrs = hg.Hypergraph.hyperedge_attr_dict_factory()
 
-    for node, edge in zip(I.row, I.col):        
+    for node, edge in zip(I.row, I.col):
         try:
             nodes[node].add(edge)
         except:
-            nodes[node] =  {edge}
+            nodes[node] = {edge}
             node_attrs[node] = {}
-        
+
         try:
             edges[edge].add(node)
         except:
@@ -162,4 +172,3 @@ def from_incidence_matrix(d, create_using=None):
     H._edge = edges
     H._edge_attr = edge_attrs
     return H
-

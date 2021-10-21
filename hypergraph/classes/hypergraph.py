@@ -10,7 +10,12 @@ For directed graphs see DiGraph and MultiDiGraph.
 from copy import deepcopy
 
 # from hypergraph.classes.coreviews import AdjacencyView
-from hypergraph.classes.reportviews import NodeView, EdgeView, NodeDegreeView, EdgeDegreeView
+from hypergraph.classes.reportviews import (
+    NodeView,
+    EdgeView,
+    NodeDegreeView,
+    EdgeDegreeView,
+)
 from hypergraph.exception import HypergraphError, HypergraphException
 import hypergraph.convert as convert
 import numpy as np
@@ -50,10 +55,12 @@ class Hypergraph:
         self.node_attr_dict_factory = self.node_attr_dict_factory
         self.hyperedge_attr_dict_factory = self.hyperedge_attr_dict_factory
 
-        self._hypergraph = self.hypergraph_attr_dict_factory()  # dictionary for graph attributes
+        self._hypergraph = (
+            self.hypergraph_attr_dict_factory()
+        )  # dictionary for graph attributes
         self._node = self.node_dict_factory()  # empty node attribute dict
         self._node_attr = self.node_attr_dict_factory()
-        self._edge = self.hyperedge_dict_factory() 
+        self._edge = self.hyperedge_dict_factory()
         self._edge_attr = self.hyperedge_attr_dict_factory()  # empty adjacency dict
         # attempt to load graph with data
         if incoming_hypergraph_data is not None:
@@ -362,7 +369,9 @@ class Hypergraph:
         """
         for n in nodes:
             try:
-                edge_neighbors = self.nodes[n]  # list handles self-loops (allows mutation)
+                edge_neighbors = self.nodes[
+                    n
+                ]  # list handles self-loops (allows mutation)
                 del self._node[n]
                 del self._node_attr[n]
                 for edge in edge_neighbors:
@@ -372,7 +381,6 @@ class Hypergraph:
                         del self._edge[edge]
             except KeyError as e:  # NetworkXError if n not in self
                 pass
-        
 
     @property
     def nodes(self):
@@ -605,7 +613,6 @@ class Hypergraph:
             raise HypergraphError("The edge cannot be cast to a set.")
 
         self._edge_attr[uid].update(attr)
-
 
     def add_edges_from(self, ebunch_to_add, **attr):
         """Add all the edges in ebunch_to_add.
@@ -1307,8 +1314,6 @@ class Hypergraph:
         H._edge_attr = deepcopy(self._node_attr)
         return H
 
-
-
     def subhypergraph(self, nodes):
         """Returns a SubGraph view of the subgraph induced on `nodes`.
 
@@ -1452,14 +1457,12 @@ class Hypergraph:
         subgraph = hg.hypergraphviews.subhypergraph_view
         return subgraph(self, nodes, edges)
 
-    
-
     def number_of_edges(self):
         """Returns the number of edges between two nodes.
 
         Parameters
         ----------
-        
+
         Returns
         -------
         nedges : int

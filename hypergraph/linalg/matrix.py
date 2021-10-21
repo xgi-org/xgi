@@ -6,8 +6,9 @@ __all__ = [
     "clique_motif_matrix",
 ]
 
-def incidence_matrix(H, sparse=True, index=False, weight = lambda node, edge, H : 1):
-    
+
+def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1):
+
     if sparse:
         from scipy.sparse import coo_matrix
 
@@ -67,11 +68,12 @@ def adjacency_matrix(H, sparse=True, index=False):
         A.eliminate_zeros()
     else:
         np.fill_diagonal(A, 0)
-    
+
     if index:
         return A, row_dict, col_dict
     else:
         return A
+
 
 def clique_motif_matrix(H, sparse=True, index=False):
     if index:
@@ -85,7 +87,7 @@ def clique_motif_matrix(H, sparse=True, index=False):
         W.eliminate_zeros()
     else:
         np.fill_diagonal(W, 0)
-    
+
     if index:
         return W, row_dict, col_dict
     else:

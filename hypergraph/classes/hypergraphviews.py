@@ -46,20 +46,31 @@ def generic_hypergraph_view(H, create_using=None):
     newH._edge_attr = H._edge_attr
     return newH
 
+
 def subhypergraph_view(H, filtered_nodes=None, filtered_edges=None):
     newH = hg.freeze(H.__class__())
 
     # create view by assigning attributes from G
     newH._hypergraph = H._hypergraph
     # intersection of the selected nodes and edges with the existing edges
-    nodes = H.nodes if filtered_nodes is None else {node for node in filtered_nodes if node in H.nodes}
-    edges = H.edges if filtered_edges is None else {edge for edge in filtered_edges if edge in H.edges}
+    nodes = (
+        H.nodes
+        if filtered_nodes is None
+        else {node for node in filtered_nodes if node in H.nodes}
+    )
+    edges = (
+        H.edges
+        if filtered_edges is None
+        else {edge for edge in filtered_edges if edge in H.edges}
+    )
 
     # Add edges that are a subset of the filtered nodes
-    newH._edge = {edge : H._edge[edge] for edge in edges if H._edge[edge].issubset(nodes)}
-    newH._edge_attr = {edge : H._edge_attr[edge] for edge in newH._edge}
+    newH._edge = {
+        edge: H._edge[edge] for edge in edges if H._edge[edge].issubset(nodes)
+    }
+    newH._edge_attr = {edge: H._edge_attr[edge] for edge in newH._edge}
 
     # Add the filtered nodes with connections to the remaining edges after filtering
-    newH._node = {node : H._node[node].intersection(newH._edge.keys()) for node in nodes}
-    newH._node_attr = {node : H._node_attr[node] for node in nodes}
+    newH._node = {node: H._node[node].intersection(newH._edge.keys()) for node in nodes}
+    newH._node_attr = {node: H._node_attr[node] for node in nodes}
     return newH

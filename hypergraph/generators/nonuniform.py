@@ -92,7 +92,9 @@ def chung_lu_hypergraph(k1, k2):
     m = len(k2)
 
     if sum(k1.values()) != sum(k2.values()):
-        warnings.warn("The sum of the degree sequence does not match the sum of the size sequence")
+        warnings.warn(
+            "The sum of the degree sequence does not match the sum of the size sequence"
+        )
 
     S = sum(k1.values())
 
@@ -233,4 +235,3 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
 
     df = pd.DataFrame(bipartite_edges)
     return Hypergraph(df)
-

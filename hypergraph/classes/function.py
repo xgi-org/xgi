@@ -22,7 +22,7 @@ __all__ = [
     "get_node_attributes",
     "set_edge_attributes",
     "get_edge_attributes",
-    "is_empty"
+    "is_empty",
 ]
 
 
@@ -149,6 +149,7 @@ def is_frozen(H):
         return H.frozen
     except AttributeError:
         return False
+
 
 def create_empty_copy(H, with_data=True):
     """Returns a copy of the hypergraph H with all of the edges removed.

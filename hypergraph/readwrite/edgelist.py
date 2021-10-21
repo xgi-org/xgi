@@ -30,28 +30,63 @@ def generate_edgelist(H, delimiter=" ", data=True):
             yield delimiter.join(map(str, e))
 
 
-def write_edgelist(H, path, delimiter=' ', data=True, encoding='utf-8'):
+def write_edgelist(H, path, delimiter=" ", data=True, encoding="utf-8"):
     with open(path, "wb") as file:
         for line in generate_edgelist(H, delimiter, data):
             line += "\n"
             file.write(line.encode(encoding))
 
 
-def write_weighted_edgelist(H, path, delimiter=' ', encoding='utf-8'):
+def write_weighted_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     write_edgelist(H, path, delimiter=delimiter, data=("weight",), encoding=encoding)
 
 
-def read_weighted_edgelist(path, comments='#', delimiter=None, create_using=None, nodetype=None, encoding='utf-8'):
-    return read_edgelist(path, comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype, data=(("weight", float),), encoding=encoding)
+def read_weighted_edgelist(
+    path,
+    comments="#",
+    delimiter=None,
+    create_using=None,
+    nodetype=None,
+    encoding="utf-8",
+):
+    return read_edgelist(
+        path,
+        comments=comments,
+        delimiter=delimiter,
+        create_using=create_using,
+        nodetype=nodetype,
+        data=(("weight", float),),
+        encoding=encoding,
+    )
 
 
-def read_edgelist(path, comments='#', delimiter=None, create_using=None, nodetype=None, data=True, edgetype=None, encoding='utf-8'):
+def read_edgelist(
+    path,
+    comments="#",
+    delimiter=None,
+    create_using=None,
+    nodetype=None,
+    data=True,
+    edgetype=None,
+    encoding="utf-8",
+):
     with open(path, "rb") as file:
-        lines = (line if isinstance(line, str) else line.decode(encoding) for line in file)
-        return parse_edgelist(lines, comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype, data=data)
+        lines = (
+            line if isinstance(line, str) else line.decode(encoding) for line in file
+        )
+        return parse_edgelist(
+            lines,
+            comments=comments,
+            delimiter=delimiter,
+            create_using=create_using,
+            nodetype=nodetype,
+            data=data,
+        )
 
 
-def parse_edgelist(lines, comments='#', delimiter=None, create_using=None, nodetype=None, data=True):
+def parse_edgelist(
+    lines, comments="#", delimiter=None, create_using=None, nodetype=None, data=True
+):
     H = hg.empty_graph(create_using)
     for line in lines:
         if comments is not None:
@@ -79,8 +114,8 @@ def parse_edgelist(lines, comments='#', delimiter=None, create_using=None, nodet
                 ) from e
         else:
             try:
-                d = s[-len(data):]
-                edge = s[:-len(data)]
+                d = s[-len(data) :]
+                edge = s[: -len(data)]
             except:
                 raise HypergraphError("Too many data columns specified.")
             edgedata = {}
@@ -93,15 +128,12 @@ def parse_edgelist(lines, comments='#', delimiter=None, create_using=None, nodet
                         f"to type {edge_type}."
                     ) from e
                 edgedata.update({edge_key: edge_value})
-        
 
         if nodetype is not None:
             try:
                 edge = [nodetype(node) for node in edge]
             except Exception as e:
-                raise TypeError(
-                    f"Failed to convert nodes to type {nodetype}."
-                ) from e
+                raise TypeError(f"Failed to convert nodes to type {nodetype}.") from e
 
         H.add_edge(edge, **edgedata)
     return H

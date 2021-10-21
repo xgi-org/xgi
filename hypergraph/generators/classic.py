@@ -16,6 +16,7 @@ __all__ = [
     "empty_hypergraph",
 ]
 
+
 def empty_hypergraph(create_using=None, default=Hypergraph):
     """Returns the empty graph with n nodes and zero edges.
     Parameters

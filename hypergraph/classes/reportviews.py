@@ -151,7 +151,7 @@ class NodeView(Mapping, Set):
     False
     """
 
-    __slots__ = ("_nodes","_node_attrs")
+    __slots__ = ("_nodes", "_node_attrs")
 
     def __getstate__(self):
         return {"_nodes": self._nodes, "_node_attrs": self._node_attrs}
@@ -293,7 +293,11 @@ class NodeDataView(Set):
     __slots__ = ("_node_attrs", "_data", "_default")
 
     def __getstate__(self):
-        return {"_node_attrs": self._node_attrs, "_data": self._data, "_default": self._default}
+        return {
+            "_node_attrs": self._node_attrs,
+            "_data": self._data,
+            "_default": self._default,
+        }
 
     def __setstate__(self, state):
         self._node_attrs = state["_node_attrs"]
@@ -405,11 +409,16 @@ class NodeDegreeView:
     >>> DVnbunch = H.degree(nbunch=(1, 2))
     >>> assert len(list(DVnbunch)) == 2  # iteration over nbunch only
     """
+
     __slots__ = ("_hypergraph", "_nodes", "_edges", "_edge_attrs", "_weight")
 
     def __init__(self, H, nbunch=None, weight=None):
         self._hypergraph = H
-        self._nodes = H.nodes if nbunch is None else {id : val for id, val in H.nodes.items() if id in nbunch}
+        self._nodes = (
+            H.nodes
+            if nbunch is None
+            else {id: val for id, val in H.nodes.items() if id in nbunch}
+        )
         self._edges = H.edges
         self._edge_attrs = H._edge_attr
         self._weight = weight
@@ -454,6 +463,7 @@ class NodeDegreeView:
     def __repr__(self):
         return f"{self.__class__.__name__}({dict(self)})"
 
+
 # DegreeViews
 class EdgeDegreeView:
     """A View class for degree of edges in a Hypergraph
@@ -492,11 +502,16 @@ class EdgeDegreeView:
     >>> DVnbunch = H.degree(nbunch=(1, 2))
     >>> assert len(list(DVnbunch)) == 2  # iteration over nbunch only
     """
+
     __slots__ = ("_hypergraph", "_edges", "_nodes", "_node_attrs", "_weight")
 
     def __init__(self, H, nbunch=None, weight=None):
         self._hypergraph = H
-        self._edges = H.edges if nbunch is None else {id : val for id, val in H.edges.items() if id in nbunch}
+        self._edges = (
+            H.edges
+            if nbunch is None
+            else {id: val for id, val in H.edges.items() if id in nbunch}
+        )
         self._nodes = H.nodes
         self._node_attrs = H._node_attr
         self._weight = weight
@@ -541,6 +556,7 @@ class EdgeDegreeView:
     def __repr__(self):
         return f"{self.__class__.__name__}({dict(self)})"
 
+
 # EdgeDataViews
 class EdgeDataView:
     """EdgeDataView for edges of Hypergraph"""
@@ -548,7 +564,11 @@ class EdgeDataView:
     __slots__ = ("_edge_attrs", "_data", "_default")
 
     def __getstate__(self):
-        return {"_edge_attrs": self._edge_attrs, "_data": self._data, "_default": self._default}
+        return {
+            "_edge_attrs": self._edge_attrs,
+            "_data": self._data,
+            "_default": self._default,
+        }
 
     def __setstate__(self, state):
         self._edge_attrs = state["_edge_attrs"]
@@ -621,11 +641,12 @@ class EdgeDataView:
             return f"{name}({dict(self)})"
         return f"{name}({dict(self)}, data={self._data!r})"
 
+
 # EdgeViews    have set operations and no data reported
 class EdgeView(Set, Mapping):
     """A EdgeView class for outward edges of a Hypergraph"""
 
-    __slots__ = ("_edges")
+    __slots__ = "_edges"
 
     def __getstate__(self):
         return {"_edges": self._edges}
