@@ -1,27 +1,15 @@
-"""View of Graphs as SubGraph or read-only.
+"""View of Hypergraphs as a subhypergraph or read-only.
 
 In some algorithms it is convenient to temporarily morph
-a graph to exclude some nodes or edges. It should be better
-to do that via a view than to remove and then re-add.
-In other algorithms it is convenient to temporarily morph
-a graph to reverse directed edges, or treat a directed graph
-as undirected, etc. This module provides those graph views.
+a hypergraph to exclude some nodes or edges. It should be better
+to do that via a view than to remove and then re-add. This module provides those graph views.
 
 The resulting views are essentially read-only graphs that
-report data from the orignal graph object. We provide an
-attribute G._graph which points to the underlying graph object.
+report data from the original graph object. 
 
-Note: Since graphviews look like graphs, one can end up with
+Note: Since hypergraphviews look like hypergraphs, one can end up with
 view-of-view-of-view chains. Be careful with chains because
-they become very slow with about 15 nested views.
-For the common simple case of node induced subgraphs created
-from the graph class, we short-cut the chain by returning a
-subgraph of the original graph directly rather than a subgraph
-of a subgraph. We are careful not to disrupt any edge filter in
-the middle subgraph. In general, determining how to short-cut
-the chain is tricky and much harder with restricted_views than
-with induced subgraphs.
-Often it is easiest to use .copy() to avoid chains.
+they become very slow with about 15 nested views. Often it is easiest to use .copy() to avoid chains.
 """
 
 from hypergraph.exception import HypergraphError
@@ -48,6 +36,28 @@ def generic_hypergraph_view(H, create_using=None):
 
 
 def subhypergraph_view(H, filtered_nodes=None, filtered_edges=None):
+    """View of `H` applying a filter on nodes and edges.
+    `subhypergraph_view` provides a read-only view of the induced subhypergraph that 
+    includes nodes, edges, or both based on what the user specifies. This function
+    automatically filters out edges that are not subsets of the nodes. This function 
+    may create isolated nodes.
+
+    Parameters
+    ----------
+    H : hypergraph.Hypergraph
+        A hypergraph
+    filtered_nodes : list or set, default: None
+        A list of the nodes desired for the subhypergraph. If None, uses all the nodes.
+    filtered_edges : list or set, default: None
+        A list of the edges desired for the subhypergraph. If None, uses all the edges.
+    Returns
+    -------
+    newH : hypergraph.Hypergraph
+        A read-only hypergraph view of the input hypergraph.
+    Examples
+    --------
+    >>>
+    """
     newH = hg.freeze(H.__class__())
 
     # create view by assigning attributes from G
