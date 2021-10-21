@@ -15,6 +15,7 @@ from hypergraph.exception import HypergraphError, HypergraphException
 import hypergraph.convert as convert
 import numpy as np
 from hypergraph.utils import HypergraphCounter
+import hypergraph as hg
 
 __all__ = ["Hypergraph"]
 
@@ -1102,7 +1103,9 @@ class Hypergraph:
 
         """
         self._node.clear()
+        self._node_attr.clear()
         self._edge.clear()
+        self._edge_attr.clear()
         self._hypergraph.clear()
 
     def clear_edges(self):
@@ -1118,8 +1121,9 @@ class Hypergraph:
         []
         """
         for node in self.nodes:
-            self._node[node]["members"] = {}
+            self._node[node] = {}
         self._edge.clear()
+        self._edge_attr.clear()
 
     def is_multigraph(self):
         """Returns True if graph is a multigraph, False otherwise."""
@@ -1206,8 +1210,8 @@ class Hypergraph:
         >>> H = H.copy()
 
         """
-        # if as_view is True:
-        #     return nx.graphviews.generic_graph_view(self)
+        if as_view is True:
+            return hg.hypergraphviews.generic_hypergraph_view(self)
         H = self.__class__()
         H._hypergraph = deepcopy(self._hypergraph)
         H._node = deepcopy(self._node)
@@ -1293,8 +1297,8 @@ class Hypergraph:
         >>> H = H.copy()
 
         """
-        # if as_view is True:
-        #     return nx.graphviews.generic_graph_view(self)
+        if as_view is True:
+            return hg.hypergraphviews.generic_hypergraph_view(self)
         H = self.__class__()
         H._hypergraph = deepcopy(self._hypergraph)
         H._node = deepcopy(self._edge)
@@ -1305,109 +1309,150 @@ class Hypergraph:
 
 
 
-    # def subhypergraph(self, nodes, shrink_edges=False):
-    #     """Returns a SubGraph view of the subgraph induced on `nodes`.
+    def subhypergraph(self, nodes):
+        """Returns a SubGraph view of the subgraph induced on `nodes`.
 
-    #     The induced subgraph of the graph contains the nodes in `nodes`
-    #     and the edges between those nodes.
+        The induced subgraph of the graph contains the nodes in `nodes`
+        and the edges between those nodes.
 
-    #     Parameters
-    #     ----------
-    #     nodes : list, iterable
-    #         A container of nodes which will be iterated through once.
+        Parameters
+        ----------
+        nodes : list, iterable
+            A container of nodes which will be iterated through once.
 
-    #     Returns
-    #     -------
-    #     H : SubGraph View
-    #         A subgraph view of the graph. The graph structure cannot be
-    #         changed but node/edge attributes can and are shared with the
-    #         original graph.
+        Returns
+        -------
+        H : SubGraph View
+            A subgraph view of the graph. The graph structure cannot be
+            changed but node/edge attributes can and are shared with the
+            original graph.
 
-    #     Notes
-    #     -----
-    #     The graph, edge and node attributes are shared with the original graph.
-    #     Changes to the graph structure is ruled out by the view, but changes
-    #     to attributes are reflected in the original graph.
+        Notes
+        -----
+        The graph, edge and node attributes are shared with the original graph.
+        Changes to the graph structure is ruled out by the view, but changes
+        to attributes are reflected in the original graph.
 
-    #     To create a subgraph with its own copy of the edge/node attributes use:
-    #     H.subgraph(nodes).copy()
+        To create a subgraph with its own copy of the edge/node attributes use:
+        H.subgraph(nodes).copy()
 
-    #     For an inplace reduction of a graph to a subgraph you can remove nodes:
-    #     H.remove_nodes_from([n for n in H if n not in set(nodes)])
+        For an inplace reduction of a graph to a subgraph you can remove nodes:
+        H.remove_nodes_from([n for n in H if n not in set(nodes)])
 
-    #     Subgraph views are sometimes NOT what you want. In most cases where
-    #     you want to do more than simply look at the induced edges, it makes
-    #     more sense to just create the subgraph as its own graph with code like:
+        Subgraph views are sometimes NOT what you want. In most cases where
+        you want to do more than simply look at the induced edges, it makes
+        more sense to just create the subgraph as its own graph with code like:
 
-    #     ::
+        ::
 
-    #         # Create a subgraph SG based on a (possibly multigraph) H
-    #         SG = H.__class__()
-    #         SG.add_nodes_from((n, H.nodes[n]) for n in largest_wcc)
-    #         if SG.is_multigraph():
-    #             SG.add_edges_from((n, nbr, key, d)
-    #                 for n, nbrs in H.adj.items() if n in largest_wcc
-    #                 for nbr, keydict in nbrs.items() if nbr in largest_wcc
-    #                 for key, d in keydict.items())
-    #         else:
-    #             SG.add_edges_from((n, nbr, d)
-    #                 for n, nbrs in H.adj.items() if n in largest_wcc
-    #                 for nbr, d in nbrs.items() if nbr in largest_wcc)
-    #         SG.graph.update(H.graph)
+            # Create a subgraph SG based on a (possibly multigraph) H
+            SG = H.__class__()
+            SG.add_nodes_from((n, H.nodes[n]) for n in largest_wcc)
+            if SG.is_multigraph():
+                SG.add_edges_from((n, nbr, key, d)
+                    for n, nbrs in H.adj.items() if n in largest_wcc
+                    for nbr, keydict in nbrs.items() if nbr in largest_wcc
+                    for key, d in keydict.items())
+            else:
+                SG.add_edges_from((n, nbr, d)
+                    for n, nbrs in H.adj.items() if n in largest_wcc
+                    for nbr, d in nbrs.items() if nbr in largest_wcc)
+            SG.graph.update(H.graph)
 
-    #     Examples
-    #     --------
-    #     >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-    #     >>> H = H.subgraph([0, 1, 2])
-    #     >>> list(H.edges)
-    #     [(0, 1), (1, 2)]
-    #     """
-    #     induced_nodes = hg.filters.show_nodes(self.nbunch_iter(nodes))
-    #     # if already a subgraph, don't make a chain
-    #     subgraph = hg.graphviews.subgraph_view
-    #     if hasattr(self, "_NODE_OK"):
-    #         return subgraph(self._graph, induced_nodes, self._EDGE_OK)
-    #     return subgraph(self, induced_nodes)
+        Examples
+        --------
+        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
+        >>> H = H.subgraph([0, 1, 2])
+        >>> list(H.edges)
+        [(0, 1), (1, 2)]
+        """
+        induced_nodes = self.nbunch_iter(nodes)
+        subgraph = hg.hypergraphviews.subhypergraph_view
+        return subgraph(self, induced_nodes, None)
 
-    # def edge_subgraph(self, edges):
-    #     """Returns the subgraph induced by the specified edges.
+    def edge_subhypergraph(self, edges):
+        """Returns the subgraph induced by the specified edges.
 
-    #     The induced subgraph contains each edge in `edges` and each
-    #     node incident to any one of those edges.
+        The induced subgraph contains each edge in `edges` and each
+        node incident to any one of those edges.
 
-    #     Parameters
-    #     ----------
-    #     edges : iterable
-    #         An iterable of edges in this graph.
+        Parameters
+        ----------
+        edges : iterable
+            An iterable of edges in this graph.
 
-    #     Returns
-    #     -------
-    #     H : Graph
-    #         An edge-induced subgraph of this graph with the same edge
-    #         attributes.
+        Returns
+        -------
+        H : Graph
+            An edge-induced subgraph of this graph with the same edge
+            attributes.
 
-    #     Notes
-    #     -----
-    #     The graph, edge, and node attributes in the returned subgraph
-    #     view are references to the corresponding attributes in the original
-    #     graph. The view is read-only.
+        Notes
+        -----
+        The graph, edge, and node attributes in the returned subgraph
+        view are references to the corresponding attributes in the original
+        graph. The view is read-only.
 
-    #     To create a full graph version of the subgraph with its own copy
-    #     of the edge or node attributes, use::
+        To create a full graph version of the subgraph with its own copy
+        of the edge or node attributes, use::
 
-    #         H.edge_subgraph(edges).copy()
+            H.edge_subgraph(edges).copy()
 
-    #     Examples
-    #     --------
-    #     >>> H = nx.path_graph(5)
-    #     >>> H = H.edge_subgraph([(0, 1), (3, 4)])
-    #     >>> list(H.nodes)
-    #     [0, 1, 3, 4]
-    #     >>> list(H.edges)
-    #     [(0, 1), (3, 4)]
+        Examples
+        --------
+        >>> H = nx.path_graph(5)
+        >>> H = H.edge_subgraph([(0, 1), (3, 4)])
+        >>> list(H.nodes)
+        [0, 1, 3, 4]
+        >>> list(H.edges)
+        [(0, 1), (3, 4)]
 
-    #     """
-    #     return nx.edge_subgraph(self, edges)
+        """
+        subgraph = hg.hypergraphviews.subhypergraph_view
+        return subgraph(self, None, edges)
+
+    def arbitrary_subhypergraph(self, nodes, edges):
+        """Returns the subgraph induced by the specified edges.
+
+        The induced subgraph contains each edge in `edges` and each
+        node incident to any one of those edges.
+
+        Parameters
+        ----------
+        edges : iterable
+            An iterable of edges in this graph.
+
+        Returns
+        -------
+        H : Graph
+            An edge-induced subgraph of this graph with the same edge
+            attributes.
+
+        Notes
+        -----
+        The graph, edge, and node attributes in the returned subgraph
+        view are references to the corresponding attributes in the original
+        graph. The view is read-only.
+
+        To create a full graph version of the subgraph with its own copy
+        of the edge or node attributes, use::
+
+            H.edge_subgraph(edges).copy()
+
+        Examples
+        --------
+        >>> H = nx.path_graph(5)
+        >>> H = H.edge_subgraph([(0, 1), (3, 4)])
+        >>> list(H.nodes)
+        [0, 1, 3, 4]
+        >>> list(H.edges)
+        [(0, 1), (3, 4)]
+
+        """
+        subgraph = hg.hypergraphviews.subhypergraph_view
+        return subgraph(self, nodes, edges)
+
+    
 
     def number_of_edges(self):
         """Returns the number of edges between two nodes.

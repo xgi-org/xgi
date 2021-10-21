@@ -1,6 +1,7 @@
 import csv
 import hypergraph as hg
 from hypergraph.exception import HypergraphError
+from ast import literal_eval
 
 __all__ = [
     "read_edgelist",
@@ -50,10 +51,7 @@ def read_edgelist(path, comments='#', delimiter=None, create_using=None, nodetyp
         return parse_edgelist(lines, comments=comments, delimiter=delimiter, create_using=create_using, nodetype=nodetype, data=data)
 
 
-
 def parse_edgelist(lines, comments='#', delimiter=None, create_using=None, nodetype=None, data=True):
-    from ast import literal_eval
-
     H = hg.empty_graph(create_using)
     for line in lines:
         if comments is not None:
