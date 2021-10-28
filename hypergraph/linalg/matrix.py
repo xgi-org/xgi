@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.sparse import csr_matrix
 
 __all__ = [
     "incidence_matrix",
@@ -8,9 +9,37 @@ __all__ = [
 
 
 def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1):
+    """
+    A function to generate a weighted incidence matrix from a Hypergraph object,
+    where the rows correspond to nodes and the columns correspond to edges.
 
-    if sparse:
-        from scipy.sparse import coo_matrix
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+    sparse: bool, default: True
+        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
+    index: bool, default: False
+        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+    weight: lambda function, default=lambda function outputting 1
+        A function specifying the weight, given a node and edge
+
+    Returns
+    -------
+    if index is True:
+        return I, rowdict, coldict
+    else:
+        return I
+
+    Example
+    -------
+        >>> import hypergraph as hg
+        >>> n = 1000
+        >>> m = n
+        >>> p = 0.01
+        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
+        >>> I = hg.incidence_matrix(H)
+    """
 
     edge_ids = H.edges
     node_ids = H.nodes
@@ -37,7 +66,7 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
                     data.append(weight(node, edge, H))
                     rows.append(node_dict[node])
                     cols.append(edge_dict[edge])
-            I = coo_matrix((data, (rows, cols)))
+            I = csr_matrix((data, (rows, cols)))
         else:
             # Create an np.matrix
             I = np.zeros((num_nodes, num_edges), dtype=int)
@@ -56,18 +85,44 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
             return np.zeros(1)
 
 
-def adjacency_matrix(H, sparse=True, index=False):
-    if index:
-        I, row_dict, col_dict = incidence_matrix(H, sparse=sparse, index=True)
+def adjacency_matrix(H, s=1, index=False):
+    """
+    A function to generate an unweighted adjacency matrix from a Hypergraph object.
+
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+    sparse: bool, default: True
+        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
+    index: bool, default: False
+        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+
+    Returns
+    -------
+    if index is True:
+        return A, rowdict, coldict
     else:
-        I = incidence_matrix(H, sparse=sparse, index=False)
+        return A
+
+    Example
+    -------
+        >>> import hypergraph as hg
+        >>> n = 1000
+        >>> m = n
+        >>> p = 0.01
+        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
+        >>> A = hg.adjacency_matrix(H)
+    """
+
+    if index:
+        I, row_dict, col_dict = incidence_matrix(H, index=True)
+    else:
+        I = incidence_matrix(H, index=False)
 
     A = I.dot(I.T)
-    if sparse:
-        A.setdiag(0)
-        A.eliminate_zeros()
-    else:
-        np.fill_diagonal(A, 0)
+    A.setdiag(0)
+    A = (A >= s) * 1
 
     if index:
         return A, row_dict, col_dict
@@ -75,18 +130,47 @@ def adjacency_matrix(H, sparse=True, index=False):
         return A
 
 
-def clique_motif_matrix(H, sparse=True, index=False):
-    if index:
-        I, row_dict, col_dict = incidence_matrix(H, sparse=sparse, index=True)
+def clique_motif_matrix(H, index=False):
+    """
+    A function to generate a weighted clique motif matrix as described in
+
+    "Higher-order organization of complex networks"
+    by Austin Benson, David Gleich, and Jure Leskovic
+    https://doi.org/10.1126/science.aad9029
+
+    from a Hypergraph object.
+
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+    index: bool, default: False
+        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+
+    Returns
+    -------
+    if index is True:
+        return W, rowdict, coldict
     else:
-        I = incidence_matrix(H, sparse=sparse, index=False)
+        return W
+
+    Example
+    -------
+        >>> import hypergraph as hg
+        >>> n = 1000
+        >>> m = n
+        >>> p = 0.01
+        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
+        >>> W = hg.clique_motif_matrix(H)
+    """
+    if index:
+        I, row_dict, col_dict = incidence_matrix(H, index=True)
+    else:
+        I = incidence_matrix(H, index=False)
 
     W = I.dot(I.T)
-    if sparse:
-        W.setdiag(0)
-        W.eliminate_zeros()
-    else:
-        np.fill_diagonal(W, 0)
+    W.setdiag(0)
+    W.eliminate_zeros()
 
     if index:
         return W, row_dict, col_dict

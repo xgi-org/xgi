@@ -98,12 +98,7 @@ __all__ = [
 
 # NodeViews
 class NodeView(Mapping, Set):
-    """A NodeView class to act as H.nodes for a NetworkX Hypergraph
-
-    Set operations act on the nodes without considering data.
-    Iteration is over nodes. Node data can be looked up like a dict.
-    Use NodeDataView to iterate over node data or to specify a data
-    attribute for lookup. NodeDataView is created by calling the NodeView.
+    """A NodeView class to act as H.nodes for a Hypergraph
 
     Parameters
     ----------
@@ -304,8 +299,8 @@ class NodeDataView(Set):
         self._data = state["_data"]
         self._default = state["_default"]
 
-    def __init__(self, nodedict, data=False, default=None):
-        self._node_attrs = nodedict
+    def __init__(self, node_attrs, data=False, default=None):
+        self._node_attrs = node_attrs
         self._data = data
         self._default = default
 
@@ -392,22 +387,6 @@ class NodeDegreeView:
 
     Examples
     --------
-    >>> H = nx.path_graph(3)
-    >>> DV = H.degree()
-    >>> assert DV[2] == 1
-    >>> assert sum(deg for n, deg in DV) == 4
-
-    >>> DVweight = H.degree(weight="span")
-    >>> H.add_edge(1, 2, span=34)
-    >>> DVweight[2]
-    34
-    >>> DVweight[0]  #  default edge weight is 1
-    1
-    >>> sum(span for n, span in DVweight)  # sum weighted degrees
-    70
-
-    >>> DVnbunch = H.degree(nbunch=(1, 2))
-    >>> assert len(list(DVnbunch)) == 2  # iteration over nbunch only
     """
 
     __slots__ = ("_hypergraph", "_nodes", "_edges", "_edge_attrs", "_weight")
@@ -423,7 +402,7 @@ class NodeDegreeView:
         self._edge_attrs = H._edge_attr
         self._weight = weight
 
-    def __call__(self, nbunch=None, weight=None):
+    def __call__(self, nbunch=None, order=None, weight=None):
         if nbunch is None:
             if weight == self._weight:
                 return self
@@ -485,22 +464,6 @@ class EdgeDegreeView:
 
     Examples
     --------
-    >>> H = nx.path_graph(3)
-    >>> DV = H.degree()
-    >>> assert DV[2] == 1
-    >>> assert sum(deg for n, deg in DV) == 4
-
-    >>> DVweight = H.degree(weight="span")
-    >>> H.add_edge(1, 2, span=34)
-    >>> DVweight[2]
-    34
-    >>> DVweight[0]  #  default edge weight is 1
-    1
-    >>> sum(span for n, span in DVweight)  # sum weighted degrees
-    70
-
-    >>> DVnbunch = H.degree(nbunch=(1, 2))
-    >>> assert len(list(DVnbunch)) == 2  # iteration over nbunch only
     """
 
     __slots__ = ("_hypergraph", "_edges", "_nodes", "_node_attrs", "_weight")
@@ -725,47 +688,9 @@ class EdgeView(Set, Mapping):
         See Also
         --------
         EdgeDataView
-        OutEdgeDataView
-        MultiEdgeDataView
-        OutMultiEdgeDataView
 
         Examples
         --------
-        >>> H = nx.Hypergraph()
-        >>> H.add_edges_from([
-        ...     (0, 1, {"dist": 3, "capacity": 20}),
-        ...     (1, 2, {"dist": 4}),
-        ...     (2, 0, {"dist": 5})
-        ... ])
-
-        Accessing edge data with ``data=True`` (the default) returns an
-        edge data view object listing each edge with all of its attributes:
-
-        >>> H.edges.data()
-        EdgeDataView([(0, 1, {'dist': 3, 'capacity': 20}), (0, 2, {'dist': 5}), (1, 2, {'dist': 4})])
-
-        If `data` represents a key in the edge attribute dict, a dataview listing
-        each edge with its value for that specific key is returned:
-
-        >>> H.edges.data("dist")
-        EdgeDataView([(0, 1, 3), (0, 2, 5), (1, 2, 4)])
-
-        `nbunch` can be used to limit the edges:
-
-        >>> H.edges.data("dist", nbunch=[0])
-        EdgeDataView([(0, 1, 3), (0, 2, 5)])
-
-        If a specific key is not found in an edge attribute dict, the value
-        specified by `default` is used:
-
-        >>> H.edges.data("capacity")
-        EdgeDataView([(0, 1, 20), (0, 2, None), (1, 2, None)])
-
-        Note that there is no check that the `data` key is present in any of
-        the edge attribute dictionaries:
-
-        >>> H.edges.data("speed")
-        EdgeDataView([(0, 1, None), (0, 2, None), (1, 2, None)])
         """
         if nbunch is None and data is False:
             return self

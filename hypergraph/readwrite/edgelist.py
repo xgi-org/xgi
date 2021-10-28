@@ -12,6 +12,22 @@ __all__ = [
 
 
 def generate_edgelist(H, delimiter=" ", data=True):
+    """
+    A helper function to generate a hyperedge list from a Hypergraph object.
+
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+    delimiter: char, default: space (" ")
+        Specifies the delimiter between hyperedge members
+    data: bool, default: True
+        Specifies whether to output the edge attributes
+
+    Returns
+    -------
+    A iterator of strings
+    """
     if data is True:
         for id in H.edges:
             e = *list(H.edges[id]), dict(H._edge_attr[id])
@@ -31,6 +47,36 @@ def generate_edgelist(H, delimiter=" ", data=True):
 
 
 def write_edgelist(H, path, delimiter=" ", data=True, encoding="utf-8"):
+    """
+    A function to output a file containing a hyperedge list from a Hypergraph object.
+
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+    path: string
+        The path of the file to write to
+    delimiter: char, default: space (" ")
+        Specifies the delimiter between hyperedge members
+    data: bool, default: True
+        Specifies whether to output the edge attributes
+    encoding: string, default: "utf-8"
+        Encoding of the file
+
+    Returns
+    -------
+    A file containing a hyperedge list
+
+    Example
+    -------
+
+        >>> import hypergraph as hg
+        >>> n = 1000
+        >>> m = n
+        >>> p = 0.01
+        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
+        >>> hg.write_edgelist(H, "test.csv", delimiter=",")
+    """
     with open(path, "wb") as file:
         for line in generate_edgelist(H, delimiter, data):
             line += "\n"
@@ -38,26 +84,35 @@ def write_edgelist(H, path, delimiter=" ", data=True, encoding="utf-8"):
 
 
 def write_weighted_edgelist(H, path, delimiter=" ", encoding="utf-8"):
+    """
+    A function to output a file containing a weighted hyperedge list from a
+    Hypergraph object using the "weight" attribute.
+
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+    path: string
+        The path of the file to write to
+    delimiter: char, default: space (" ")
+        Specifies the delimiter between hyperedge members
+    encoding: string, default: "utf-8"
+        Encoding of the file
+
+    Returns
+    -------
+    A file containing a hyperedge list
+
+    Example
+    -------
+        >>> import hypergraph as hg
+        >>> n = 1000
+        >>> m = n
+        >>> p = 0.01
+        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
+        >>> hg.write_weighted_edgelist(H, "test.csv", delimiter=",")
+    """
     write_edgelist(H, path, delimiter=delimiter, data=("weight",), encoding=encoding)
-
-
-def read_weighted_edgelist(
-    path,
-    comments="#",
-    delimiter=None,
-    create_using=None,
-    nodetype=None,
-    encoding="utf-8",
-):
-    return read_edgelist(
-        path,
-        comments=comments,
-        delimiter=delimiter,
-        create_using=create_using,
-        nodetype=nodetype,
-        data=(("weight", float),),
-        encoding=encoding,
-    )
 
 
 def read_edgelist(
@@ -66,10 +121,38 @@ def read_edgelist(
     delimiter=None,
     create_using=None,
     nodetype=None,
-    data=True,
-    edgetype=None,
+    data=False,
     encoding="utf-8",
 ):
+    """
+    A function to read a file containing a hyperedge list and
+    convert it to a Hypergraph object.
+
+    Parameters
+    ----------
+    path: string
+        The path of the file to read from
+    comments: string, default: "#"
+        The token that denotes comments in the file
+    delimiter: char, default: space (" ")
+        Specifies the delimiter between hyperedge members
+    create_using:
+    nodetype: type
+        type that the node labels will be cast to
+    data: bool, default: False
+        Specifies whether there is a dictionary of data at the end of the line.
+    encoding: string, default: "utf-8"
+        Encoding of the file
+
+    Returns
+    -------
+    A Hypergraph object
+
+    Example
+    -------
+        >>> import hypergraph as hg
+        >>> H = hg.read_edgelist("test.csv", delimiter=",")
+    """
     with open(path, "rb") as file:
         lines = (
             line if isinstance(line, str) else line.decode(encoding) for line in file
@@ -84,9 +167,77 @@ def read_edgelist(
         )
 
 
-def parse_edgelist(
-    lines, comments="#", delimiter=None, create_using=None, nodetype=None, data=True
+def read_weighted_edgelist(
+    path,
+    comments="#",
+    delimiter=None,
+    create_using=None,
+    nodetype=None,
+    encoding="utf-8",
 ):
+    """
+    A function to read a file containing a weighted hyperedge list and
+    convert it to a Hypergraph object using the "weight" attribute.
+
+    Parameters
+    ----------
+    path: string
+        The path of the file to read from
+    comments: string, default: "#"
+        The token that denotes comments in the file
+    delimiter: char, default: space (" ")
+        Specifies the delimiter between hyperedge members
+    create_using:
+    nodetype: type
+        type that the node labels will be cast to
+    encoding: string, default: "utf-8"
+        Encoding of the file
+
+    Returns
+    -------
+    A Hypergraph object
+
+    Example
+    -------
+        >>> import hypergraph as hg
+        >>> H = hg.read_weighted_edgelist("test.csv", delimiter=",")
+    """
+    return read_edgelist(
+        path,
+        comments=comments,
+        delimiter=delimiter,
+        create_using=create_using,
+        nodetype=nodetype,
+        data=(("weight", float),),
+        encoding=encoding,
+    )
+
+
+def parse_edgelist(
+    lines, comments="#", delimiter=None, create_using=None, nodetype=None, data=False
+):
+    """
+    A helper function to read a iterable of strings containing a hyperedge list and
+    convert it to a Hypergraph object.
+
+    Parameters
+    ----------
+    lines: iterable of strings
+        Lines where each line is an edge
+    comments: string, default: "#"
+        The token that denotes comments to ignore
+    delimiter: char, default: space (" ")
+        Specifies the delimiter between hyperedge members
+    create_using:
+    nodetype: type
+        type that the node labels will be cast to
+    data: bool, default: False
+        Specifies whether there is a dictionary of data at the end of the line.
+
+    Returns
+    -------
+    A Hypergraph object
+    """
     H = hg.empty_graph(create_using)
     for line in lines:
         if comments is not None:

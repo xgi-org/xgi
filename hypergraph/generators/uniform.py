@@ -5,30 +5,63 @@ import warnings
 
 
 def uniform_hypergraph_configuration_model(k, m):
+    """
+    A function to generate an m-uniform configuration model as described in
+    "The effect of heterogeneity on hypergraph contagion models"
+    by Nicholas W. Landry and Juan G. Restrepo
+    https://doi.org/10.1063/5.0020034
+
+    Parameters
+    ----------
+    k : dictionary
+        This is a dictionary where the keys are node ids and the values are node degrees.
+    m : int
+        specifies the hyperedge size
+
+    Returns
+    -------
+    Hypergraph object
+
+    Notes
+    -----
+    Creates multi-edges and self-loops. The Hypergraph class will remove
+    the self-loops which will make this not strictly uniform.
+
+    Example
+    -------
+        >>> import hypergraph as hg
+        >>> import numpy as np
+        >>> n = 1000
+        >>> k = {i: random.randint(10, 20) for i in range(n)}
+        >>> H = hg.uniform_configuration_model(k, m)
+    """
     # Making sure we have the right number of stubs
-    if (sum(k) % m) != 0:
+    remainder = sum(k.values()) % m
+    if remainder != 0:
         warnings.warn(
             "This degree sequence is not realizable. Increasing the degree of random nodes so that it is."
         )
-        remainder = sum(k) % m
-        for i in range(int(round(m - remainder))):
-            j = random.randrange(len(k))
-            k[j] = k[j] + 1
+        stubs_added = 0
+        while stubs_added < range(int(round(m - remainder))):
+            id = random.choice(k.keys())
+            k[id] = k[id] + 1
+            stubs_added += 1
 
     stubs = []
-    edgelist = []
     # Creating the list to index through
-    for index in range(len(k)):
-        stubs.extend([index] * int(k[index]))
+    for id in k:
+        stubs.extend([id] * int(k[id]))
+
+    H = hg.empty_hypergraph()
 
     while len(stubs) != 0:
         u = random.sample(range(len(stubs)), m)
         edge = []
         for index in u:
             edge.append(stubs[index])
-        edgelist.append(edge)
+        H.add_edge(edge)
 
         for index in sorted(u, reverse=True):
             del stubs[index]
 
-    return hg.Hypergraph(edgelist)
+    return H

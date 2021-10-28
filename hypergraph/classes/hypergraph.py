@@ -1,11 +1,9 @@
-"""Base class for undirected graphs.
+"""Base class for undirected hypergraphs.
 
-The Graph class allows any hashable object as a node
+The Hypergraph class allows any hashable object as a node
 and can associate key/value attribute pairs with each undirected edge.
 
-Self-loops are allowed but multiple edges are not (see MultiGraph).
-
-For directed graphs see DiGraph and MultiDiGraph.
+Multiedges are allowed but self-loops are not allowed.
 """
 from copy import deepcopy
 
@@ -34,19 +32,18 @@ class Hypergraph:
     hypergraph_attr_dict_factory = dict
 
     def __init__(self, incoming_hypergraph_data=None, **attr):
-        """Initialize a graph with edges, name, or graph attributes.
+        """Initialize a hypergraph with hypergraph data and arbitrary hypergraph attributes.
 
         Parameters
         ----------
-        incoming_graph_data : input hypergraph (optional, default: None)
-            Data to initialize graph. If None (default) an empty
-            graph is created.  The data can be an edge list, or any
-            NetworkX graph object.  If the corresponding optional Python
-            packages are installed the data can also be a NumPy matrix
-            or 2d ndarray, a SciPy sparse matrix, or a PyGraphviz graph.
+        incoming_hypergraph_data : input hypergraph (optional, default: None)
+            Data to initialize the hypergraph. If None (default), an empty
+            hypergraph is created.  The data can be an edge list, an edge
+            dictionary, a 2-column Pandas dataframe, or a Scipy/Numpy incidence
+            matrix, or a Hypergraph object.
 
-        attr : keyword arguments, optional (default= no attributes)
-            Attributes to add to graph as key=value pairs.
+        attr : keyword arguments, optional (default=no attributes)
+            Attributes to add to the hypergraph as key=value pairs.
         """
         self._edge_uid = HypergraphCounter()
 
@@ -84,7 +81,7 @@ class Hypergraph:
         self._hypergraph["name"] = s
 
     def __str__(self):
-        """Returns a short summary of the graph.
+        """Returns a short summary of the hypergraph.
 
         Returns
         -------
@@ -97,15 +94,11 @@ class Hypergraph:
         >>> str(H)
         "Hypergraph named 'foo' with 0 nodes and 0 edges"
 
-        >>> H = nx.path_graph(3)
-        >>> str(H)
-        'Hypergraph with 3 nodes and 2 edges'
-
         """
         return "".join(
             [
                 type(self).__name__,
-                f" named {self.name!r}" if self.name else "",
+                f" named {self.name!r}",
                 f" with {self.number_of_nodes()} nodes and {self.number_of_edges()} hyperedges",
             ]
         )
@@ -120,11 +113,6 @@ class Hypergraph:
 
         Examples
         --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> [n for n in H]
-        [0, 1, 2, 3]
-        >>> list(H)
-        [0, 1, 2, 3]
         """
         return iter(self._node)
 
@@ -133,9 +121,6 @@ class Hypergraph:
 
         Examples
         --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> 1 in H
-        True
         """
         try:
             return n in self._node
@@ -143,12 +128,12 @@ class Hypergraph:
             return False
 
     def __len__(self):
-        """Returns the number of nodes in the graph. Use: 'len(H)'.
+        """Returns the number of nodes in the hypergraph. Use: 'len(H)'.
 
         Returns
         -------
         nnodes : int
-            The number of nodes in the graph.
+            The number of nodes in the hypergraph.
 
         See Also
         --------
@@ -157,38 +142,30 @@ class Hypergraph:
 
         Examples
         --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> len(H)
-        4
-
         """
         return len(self._node)
 
     def __getitem__(self, n):
-        """Returns a dict of neighbors of node n.  Use: 'H[n]'.
+        """Returns a set of neighboring edge IDs of node n.  Use: 'H[n]'.
 
         Parameters
         ----------
         n : node
-           A node in the graph.
+           A node in the hypergraph.
 
         Returns
         -------
-        adj_dict : dictionary
-           The adjacency dictionary for nodes connected to n.
+        neighbors : set
+           A set of the neighbors
 
         Notes
         -----
-        H[n] is the same as H.adj[n] and similar to H.neighbors(n)
-        (which is an iterator over H.adj[n])
+        H[n] is the same as H.nodes[n]
 
         Examples
         --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H[0]
-        AtlasView({1: {}})
         """
-        return self.adj[n]
+        return self._node[n]
 
     @property
     def shape(self):
@@ -210,28 +187,6 @@ class Hypergraph:
 
         Examples
         --------
-        >>> H = nx.Graph()  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.add_node(1)
-        >>> H.add_node("Hello")
-        >>> K3 = nx.Graph([(0, 1), (1, 2), (2, 0)])
-        >>> H.add_node(K3)
-        >>> H.number_of_nodes()
-        3
-
-        Use keywords set/change node attributes:
-
-        >>> H.add_node(1, size=10)
-        >>> H.add_node(3, weight=0.4, UTM=("13S", 382871, 3972649))
-
-        Notes
-        -----
-        A hashable object is one that can be used as a key in a Python
-        dictionary. This includes strings, numbers, tuples of strings
-        and numbers, etc.
-
-        On many platforms hashable items also include mutables such as
-        NetworkX Graphs, though one should be careful that the hash
-        doesn't change on mutables.
         """
         if node_for_adding not in self._node:
             if node_for_adding is None:
@@ -262,28 +217,6 @@ class Hypergraph:
 
         Examples
         --------
-        >>> H = nx.Graph()  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.add_nodes_from("Hello")
-        >>> K3 = nx.Graph([(0, 1), (1, 2), (2, 0)])
-        >>> H.add_nodes_from(K3)
-        >>> sorted(H.nodes(), key=str)
-        [0, 1, 2, 'H', 'e', 'l', 'o']
-
-        Use keywords to update specific node attributes for every node.
-
-        >>> H.add_nodes_from([1, 2], size=10)
-        >>> H.add_nodes_from([3, 4], weight=0.4)
-
-        Use (node, attrdict) tuples to update attributes for specific nodes.
-
-        >>> H.add_nodes_from([(1, dict(size=11)), (2, {"color": "blue"})])
-        >>> H.nodes[1]["size"]
-        11
-        >>> H = nx.Graph()
-        >>> H.add_nodes_from(H.nodes(data=True))
-        >>> H.nodes[1]["size"]
-        11
-
         """
         for n in nodes_for_adding:
             try:
@@ -304,18 +237,18 @@ class Hypergraph:
     def remove_node(self, n):
         """Remove node n.
 
-        Removes the node n and all adjacent edges.
+        Removes the node n and all adjacent hyperedges.
         Attempting to remove a non-existent node will raise an exception.
 
         Parameters
         ----------
         n : node
-           A node in the graph
+           A node in the hypergraph
 
         Raises
         ------
-        NetworkXError
-           If n is not in the graph.
+        HypergraphError
+           If n is not in the hypergraph.
 
         See Also
         --------
@@ -323,13 +256,6 @@ class Hypergraph:
 
         Examples
         --------
-        >>> H = nx.path_graph(3)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> list(H.edges)
-        [(0, 1), (1, 2)]
-        >>> H.remove_node(1)
-        >>> list(H.edges)
-        []
-
         """
         try:
             edge_neighbors = self.nodes[n]  # list handles self-loops (allows mutation)

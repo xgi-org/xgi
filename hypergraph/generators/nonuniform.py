@@ -27,7 +27,8 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
     -------
     Hypergraph object
 
-    Example::
+    Example
+    -------
         >>> import hypergraph as hg
         >>> n = 1000
         >>> m = n
@@ -65,9 +66,9 @@ def chung_lu_hypergraph(k1, k2):
     Parameters
     ----------
     k1 : dictionary
-        This a dictionary where the keys are node ids and the values are node degrees.
+        This is a dictionary where the keys are node ids and the values are node degrees.
     k2 : dictionary
-        This a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.
+        This is a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.
     Returns
     -------
     Hypergraph object
@@ -76,7 +77,8 @@ def chung_lu_hypergraph(k1, k2):
     -----
     The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.
     The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.
-    Example::
+    Example
+    -------
         >>> import hypergraph as hg
         >>> import random
         >>> n = 100
@@ -130,9 +132,9 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     Parameters
     ----------
     k1 : dictionary
-        This a dictionary where the keys are node ids and the values are node degrees.
+        This is a dictionary where the keys are node ids and the values are node degrees.
     k2 : dictionary
-        This a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.
+        This is a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.
     g1 : dictionary
         This a dictionary where the keys are node ids and the values are the group ids to which the node belongs.
         The keys must match the keys of k1.
@@ -153,7 +155,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     The sum of k1 (and k2) and omega should be the same. If they are not the same, this function returns a warning
     but still runs and the number of entries in the incidence matrix is determined by the omega matrix.
     The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.
-    Example::
+    Example
+    -------
         >>> import hypergraph as hg
         >>> n = 100
         >>> k1 = {i : random.randint(1, 100) for i in range(n)}
