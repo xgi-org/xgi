@@ -1,6 +1,6 @@
-===============
+=======
 Hypergraph
-===============
+=======
 
 Description
 -----------
@@ -8,16 +8,28 @@ Description
 The `Hypergraph`_ library provides data structures and algorithms for modeling and analyzing
 hypergraphs.
 
-Contents
---------
+.. raw:: latex
+
+   \part{About}
 
 .. toctree::
-   core.rst
+   :maxdepth: 1
+   :caption: About
+   
+   about
 
 
-Indices and tables
-==================
+.. raw:: latex
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   \part{API}
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API
+
+   Classes <api/classes/classes.rst>
+   Algorithms <api/algorithms/algorithms.rst>
+   Generative Modules <api/generators/generators.rst>
+   Linear Algebra <api/linalg/linalg.rst>
+   Read/Write <api/readwrite/readwrite.rst>
+   Utilities <api/utils/utils.rst>

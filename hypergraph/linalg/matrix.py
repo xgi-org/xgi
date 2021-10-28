@@ -93,8 +93,8 @@ def adjacency_matrix(H, s=1, index=False):
     ----------
     H: Hypergraph object
         The hypergraph of interest
-    sparse: bool, default: True
-        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
+    s: int, default: 1
+        Specifies the number of overlapping edges to be considered connected.
     index: bool, default: False
         Specifies whether to output disctionaries mapping the node and edge IDs to indices
 

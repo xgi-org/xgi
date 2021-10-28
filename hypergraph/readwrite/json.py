@@ -9,7 +9,28 @@ __all__ = ["write_hypergraph_json", "read_hypergraph_json"]
 
 
 def write_hypergraph_json(H, path):
+    """
+    A function to write a file in a standardized JSON format.
 
+    Parameters
+    ----------
+    H: Hypergraph object
+        The specified hypergraph object
+    path: string
+        The path of the file to read from
+
+    Returns
+    -------
+    
+    Example
+    -------
+        >>> import hypergraph as hg
+        >>> n = 1000
+        >>> m = n
+        >>> p = 0.01
+        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
+        >>> hg.write_hypergraph_json(H, "test.json")
+    """
     # initialize empty data
     data = dict()
 
@@ -33,6 +54,23 @@ def write_hypergraph_json(H, path):
 
 
 def read_hypergraph_json(path):
+    """
+    A function to read a file in a standardized JSON format.
+
+    Parameters
+    ----------
+    path: string
+        The path of the file to read from
+
+    Returns
+    -------
+    A Hypergraph object
+
+    Example
+    -------
+        >>> import hypergraph as hg
+        >>> H = hg.read_hypergraph_json("test.json")
+    """
     with open(path) as file:
         data = json.loads(file.read())
     H = hg.empty_hypergraph()
