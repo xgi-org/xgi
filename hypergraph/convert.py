@@ -105,7 +105,7 @@ def from_bipartite_pandas_dataframe(
     df, create_using=None, node_column=0, edge_column=1
 ):
     """
-    Pandas dataframe. If two columns, assume it's a bipartite edge list, otherwise it's an incidence matrix
+    Pandas dataframe assuming it's a bipartite edge list.
     """
     nodes = hg.Hypergraph.node_dict_factory()
     node_attrs = hg.Hypergraph.node_attr_dict_factory()

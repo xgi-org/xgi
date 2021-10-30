@@ -30,10 +30,11 @@ def uniform_hypergraph_configuration_model(k, m):
     Example
     -------
         >>> import hypergraph as hg
-        >>> import numpy as np
+        >>> import random
         >>> n = 1000
+        >>> m = 3
         >>> k = {i: random.randint(10, 20) for i in range(n)}
-        >>> H = hg.uniform_configuration_model(k, m)
+        >>> H = hg.uniform_hypergraph_configuration_model(k, m)
     """
     # Making sure we have the right number of stubs
     remainder = sum(k.values()) % m
@@ -41,11 +42,9 @@ def uniform_hypergraph_configuration_model(k, m):
         warnings.warn(
             "This degree sequence is not realizable. Increasing the degree of random nodes so that it is."
         )
-        stubs_added = 0
-        while stubs_added < range(int(round(m - remainder))):
-            id = random.choice(k.keys())
+        random_ids = random.sample(list(k.keys()), int(round(m - remainder)))
+        for id in random_ids:    
             k[id] = k[id] + 1
-            stubs_added += 1
 
     stubs = []
     # Creating the list to index through

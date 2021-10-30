@@ -52,7 +52,7 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
             v = v + math.floor(math.log(r) / math.log(1 - p))
             if v < m:
                 # add vertex hyperedge pair
-                bipartite_edges.append((get_edge_label(v), get_node_label(u)))
+                bipartite_edges.append((get_edge_label(u), get_node_label(v)))
                 v = v + 1
 
     df = pd.DataFrame(bipartite_edges)
@@ -76,7 +76,7 @@ def chung_lu_hypergraph(k1, k2):
     Notes
     -----
     The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.
-    The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.
+    The output currently is a Hypergraph object.
     Example
     -------
         >>> import hypergraph as hg
@@ -116,7 +116,7 @@ def chung_lu_hypergraph(k1, k2):
                 r = random.random()
                 if r < q / p:
                     # no duplicates
-                    bipartite_edges.append((v, u))
+                    bipartite_edges.append((u, v))
 
                 p = q
                 j = j + 1
@@ -158,6 +158,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     Example
     -------
         >>> import hypergraph as hg
+        >>> import random
         >>> n = 100
         >>> k1 = {i : random.randint(1, 100) for i in range(n)}
         >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
@@ -231,7 +232,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
                         r = random.random()
                         if r < q / p:
                             # no duplicates
-                            bipartite_edges.append((v, u))
+                            bipartite_edges.append((u, v))
 
                             p = q
                             j = j + 1
