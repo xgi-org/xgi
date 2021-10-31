@@ -37,9 +37,9 @@ def generic_hypergraph_view(H, create_using=None):
 
 def subhypergraph_view(H, filtered_nodes=None, filtered_edges=None):
     """View of `H` applying a filter on nodes and edges.
-    `subhypergraph_view` provides a read-only view of the induced subhypergraph that 
+    `subhypergraph_view` provides a read-only view of the induced subhypergraph that
     includes nodes, edges, or both based on what the user specifies. This function
-    automatically filters out edges that are not subsets of the nodes. This function 
+    automatically filters out edges that are not subsets of the nodes. This function
     may create isolated nodes.
 
     Parameters

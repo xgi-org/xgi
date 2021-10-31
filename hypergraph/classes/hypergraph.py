@@ -37,10 +37,10 @@ class Hypergraph:
         ----------
         incoming_hypergraph_data : input hypergraph data (optional, default: None)
             Data to initialize the hypergraph. If None (default), an empty
-            hypergraph is created. 
+            hypergraph is created.
             The data can be in the following formats:
-            edge list 
-            edge dictionary
+            hyperedge list
+            hyperedge dictionary
             2-column Pandas dataframe (bipartite edges)
             Scipy/Numpy incidence matrix
             Hypergraph object.
@@ -166,7 +166,7 @@ class Hypergraph:
 
     @property
     def shape(self):
-        """ Return the number of nodes and edges as a tuple.
+        """Return the number of nodes and edges as a tuple.
 
         Returns
         -------
@@ -746,7 +746,7 @@ class Hypergraph:
         return EdgeDegreeView(self)
 
     def unique_edge_sizes(self, return_counts=False):
-        """ A function that returns the unique edge sizes.
+        """A function that returns the unique edge sizes.
 
         Parameters
         ----------
@@ -781,9 +781,7 @@ class Hypergraph:
         self._hypergraph.clear()
 
     def clear_edges(self):
-        """Remove all edges from the graph without altering nodes.
-
-        """
+        """Remove all edges from the graph without altering nodes."""
         for node in self.nodes:
             self._node[node] = {}
         self._edge.clear()
@@ -861,7 +859,6 @@ class Hypergraph:
         dual._edge_attr = deepcopy(self._node_attr)
         return dual
 
-
     def subhypergraph(self, nodes):
         """Returns a SubHypergraph view of the subhypergraph induced on `nodes`.
 
@@ -933,7 +930,7 @@ class Hypergraph:
         ----------
         nodes : list, iterable
             A container of nodes which will be iterated through once.
-        
+
         edges : list, iterable
             A container of edge ids which will be iterated through once.
 
