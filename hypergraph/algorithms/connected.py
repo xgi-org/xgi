@@ -4,6 +4,7 @@ from hypergraph.exception import HypergraphError
 import scipy.sparse as sparse
 import random
 
+
 def is_connected(H, s=1):
     """
     A function to determine whether a hypergraph is s-connected.
@@ -14,7 +15,7 @@ def is_connected(H, s=1):
         The hypergraph of interest
     s: int, default: 1
         Specifies the s-connected level
-    
+
     Returns
     -------
     is_connected: boolean
@@ -45,7 +46,7 @@ def connected_components(H, s=1):
         The hypergraph of interest
     s: int, default: 1
         Specifies the s-connected level
-    
+
     Returns
     -------
     components: iteratble of lists
@@ -76,7 +77,7 @@ def number_connected_components(H, s=1):
         The hypergraph of interest
     s: int, default: 1
         Specifies the s-connected level
-    
+
     Returns
     -------
     num_components: int
@@ -107,7 +108,7 @@ def node_connected_component(H, n, s=1):
         Node label
     s: int, default: 1
         Specifies the s-connected level
-    
+
     Returns
     -------
     component: list
@@ -128,6 +129,7 @@ def node_connected_component(H, n, s=1):
     cols = data[1]
     return nx.node_connected_component(nx.Graph(zip(rows, cols)), n)
 
+
 def is_connected_bfs(H):
     """
     A function to determine whether a hypergraph is connected.
@@ -136,7 +138,7 @@ def is_connected_bfs(H):
     ----------
     H: Hypergraph object
         The hypergraph of interest
-    
+
     Returns
     -------
     is_connected: boolean
@@ -156,6 +158,7 @@ def is_connected_bfs(H):
     This currently does not check for s-connectedness.
     """
     return len(_plain_bfs(H, random.choice(list(H.nodes)))) == len(H)
+
 
 def _plain_bfs(H, source):
     """A fast BFS node generator"""

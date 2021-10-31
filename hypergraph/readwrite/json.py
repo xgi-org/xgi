@@ -21,7 +21,7 @@ def write_hypergraph_json(H, path):
 
     Returns
     -------
-    
+
     Example
     -------
         >>> import hypergraph as hg

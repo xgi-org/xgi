@@ -42,7 +42,7 @@ def uniform_hypergraph_configuration_model(k, m):
             "This degree sequence is not realizable. Increasing the degree of random nodes so that it is."
         )
         random_ids = random.sample(list(k.keys()), int(round(m - remainder)))
-        for id in random_ids:    
+        for id in random_ids:
             k[id] = k[id] + 1
 
     stubs = []
