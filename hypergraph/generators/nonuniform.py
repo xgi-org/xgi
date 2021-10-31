@@ -6,6 +6,12 @@ import numpy as np
 import pandas as pd
 from hypergraph import Hypergraph
 
+__all__ = [
+    "erdos_renyi_hypergraph",
+    "chung_lu_hypergraph",
+    "dcsbm_hypergraph",
+]
+
 
 def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
     """

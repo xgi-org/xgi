@@ -15,6 +15,7 @@ __all__ = [
     "to_hyperedge_dict",
     "from_bipartite_pandas_dataframe",
     "from_incidence_matrix",
+    "to_incidence_matrix",
 ]
 
 
@@ -78,14 +79,14 @@ def convert_to_hypergraph(data, create_using=None):
         from_incidence_matrix(data, create_using)
 
 
-def from_hyperedge_list(d, create_using=None, weighted=False):
+def from_hyperedge_list(d, create_using=None):
     H = hg.empty_hypergraph(create_using)
     H.add_edges_from(d)
     return H
 
 
 def to_hyperedge_list(H):
-    return [list(H.edges[edge_id]) for edge_id in H.edges]
+    return list(H.edges.values())
 
 
 def from_hyperedge_dict(d, create_using=None, weighted=False):
@@ -107,11 +108,7 @@ def from_bipartite_pandas_dataframe(
     """
     Pandas dataframe assuming it's a bipartite edge list.
     """
-    nodes = hg.Hypergraph.node_dict_factory()
-    node_attrs = hg.Hypergraph.node_attr_dict_factory()
-    edges = hg.Hypergraph.hyperedge_dict_factory()
-    edge_attrs = hg.Hypergraph.hyperedge_attr_dict_factory()
-
+    H = hg.empty_hypergraph(create_using)
     # try to get by labels first
     try:
         d = df[[node_column, edge_column]]
@@ -126,49 +123,38 @@ def from_bipartite_pandas_dataframe(
     for line in d.itertuples(index=False):
         node = line[0]
         edge = line[1]
+        H.add_node_to_edge(edge, node)
 
-        try:
-            nodes[node].add(edge)
-        except:
-            nodes[node] = {edge}
-            node_attrs[node] = {}
-
-        try:
-            edges[edge].add(node)
-        except:
-            edges[edge] = {node}
-            edge_attrs[edge] = {}
-
-    H = hg.empty_hypergraph(create_using)
-    H._node = nodes
-    H._node = node_attrs
-    H._edge = edges
-    H._edge_attr = edge_attrs
     return H
 
 
-def from_incidence_matrix(d, create_using=None):
+def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None):
     I = coo_matrix(d)
-    nodes = hg.Hypergraph.node_dict_factory()
-    node_attrs = hg.Hypergraph.node_attr_dict_factory()
-    edges = hg.Hypergraph.hyperedge_dict_factory()
-    edge_attrs = hg.Hypergraph.hyperedge_attr_dict_factory()
+    n, m = I.shape
+
+    if nodelabels is None:
+        nodedict = dict(zip(range(n), range(n)))
+    elif nodelabels is not None and len(nodelabels) != n:
+        raise HypergraphError("Node dictionary is the wrong size.")
+    else:
+        nodedict = dict(zip(range(n), nodelabels))
+
+    if edgelabels is None:
+        edgedict = dict(zip(range(m), range(m)))
+    elif edgelabels is not None and len(edgelabels) != m:
+        raise HypergraphError("Edge dictionary is the wrong size.")
+    else:
+        edgedict = dict(zip(range(m), edgelabels))
+
+    H = hg.empty_hypergraph(create_using)
 
     for node, edge in zip(I.row, I.col):
-        try:
-            nodes[node].add(edge)
-        except:
-            nodes[node] = {edge}
-            node_attrs[node] = {}
-
-        try:
-            edges[edge].add(node)
-        except:
-            edges[edge] = {node}
-            edge_attrs[edge] = {}
-    H = hg.empty_hypergraph(create_using)
-    H._node = nodes
-    H._node = node_attrs
-    H._edge = edges
-    H._edge_attr = edge_attrs
+        node = nodedict[node]
+        edge = edgedict[edge]
+        H.add_node_to_edge(edge, node)
+    
     return H
+
+
+def to_incidence_matrix(H, sparse=True, index=False):
+    return hg.incidence_matrix(H, sparse=sparse, index=index)

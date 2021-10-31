@@ -30,15 +30,15 @@ def generate_edgelist(H, delimiter=" ", data=True):
     """
     if data is True:
         for id in H.edges:
-            e = *list(H.edges[id]), dict(H._edge_attr[id])
+            e = *H.edges[id], dict(H._edge_attr[id])
             yield delimiter.join(map(str, e))
     elif data is False:
         for id in H.edges:
-            e = list(H.edges[id])
+            e = H.edges[id]
             yield delimiter.join(map(str, e))
     else:
         for id in H.edges:
-            e = list(H.edges[id])
+            e = H.edges[id]
             try:
                 e.extend([H._edge_attr[id][k] for k in data])
             except KeyError:
@@ -46,7 +46,7 @@ def generate_edgelist(H, delimiter=" ", data=True):
             yield delimiter.join(map(str, e))
 
 
-def write_edgelist(H, path, delimiter=" ", data=True, encoding="utf-8"):
+def write_edgelist(H, path, delimiter=" ", data=False, encoding="utf-8"):
     """
     A function to output a file containing a hyperedge list from a Hypergraph object.
 
@@ -238,7 +238,7 @@ def parse_edgelist(
     -------
     A Hypergraph object
     """
-    H = hg.empty_graph(create_using)
+    H = hg.empty_hypergraph(create_using)
     for line in lines:
         if comments is not None:
             p = line.find(comments)
@@ -250,8 +250,11 @@ def parse_edgelist(
 
         if data is False:
             # no data or data type specified
+            edge = s
             edgedata = {}
         elif data is True:
+            edge = s[:-1]
+            d = s[-1]
             # no edge types specified
             try:  # try to evaluate as dictionary
                 if delimiter == ",":

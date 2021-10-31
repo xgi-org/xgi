@@ -304,6 +304,7 @@ class Hypergraph:
                     self._edge[edge].remove(n)  # remove all edges n-u in graph
                     # delete empty edges
                     if len(self._edge[edge]) == 0:
+                        del self._edge_attr[edge]
                         del self._edge[edge]
             except KeyError as e:  # NetworkXError if n not in self
                 pass
@@ -470,6 +471,20 @@ class Hypergraph:
         for e in ebunch_to_add:
             self.add_edge(e, **attr)
 
+    def add_node_to_edge(self, edge, node):
+
+        if edge not in self._edge:
+            self._edge[edge] = [node]
+            self._edge_attr[edge] = self.hyperedge_attr_dict_factory()
+        else:
+            self._edge[edge].append(node)
+
+        if node not in self._node:
+            self._node[node] = [edge]
+            self._node_attr[node] = self.node_attr_dict_factory()
+        else:
+            self._node[node].append(edge)
+
     def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
         """Add weighted edges in `ebunch_to_add` with specified weight attr
 
@@ -534,7 +549,7 @@ class Hypergraph:
 
         Notes
         -----
-        Will fail silently if an edge in ebunch is not in the graph.
+        Will fail silently if an edge in ebunch is not in the hypergraph.
         """
         for id in ebunch:
             try:
@@ -543,6 +558,15 @@ class Hypergraph:
                 del self._edge[id]
             except:
                 pass
+
+    def remove_node_from_edge(self, edge, node):
+        try:
+            self._edge[edge].remove(node)
+            self._node[node].remove(edge)
+            if len(self._edge[edge]) == 0:
+                del self._edge[edge]
+        except KeyError as e:
+            raise HypergraphError(f"Edge or node is not in the hypergraph") from e
 
     def update(self, edges=None, nodes=None):
         """Update the graph using nodes/edges/graphs as input.

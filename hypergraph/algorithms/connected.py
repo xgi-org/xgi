@@ -4,6 +4,14 @@ from hypergraph.exception import HypergraphError
 import scipy.sparse as sparse
 import random
 
+__all__ = [
+    "is_connected",
+    "connected_components",
+    "number_connected_components",
+    "node_connected_component",
+    "is_connected_bfs",
+]
+
 
 def is_connected(H, s=1):
     """

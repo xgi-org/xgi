@@ -3,6 +3,8 @@ from hypergraph.exception import HypergraphError
 import random
 import warnings
 
+__all__ = ["uniform_hypergraph_configuration_model"]
+
 
 def uniform_hypergraph_configuration_model(k, m):
     """
