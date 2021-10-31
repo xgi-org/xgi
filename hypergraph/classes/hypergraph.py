@@ -3,11 +3,10 @@
 The Hypergraph class allows any hashable object as a node
 and can associate key/value attribute pairs with each undirected edge.
 
-Multiedges are allowed but self-loops are not allowed.
+Multiedges and self-loops are allowed.
 """
 from copy import deepcopy
 
-# from hypergraph.classes.coreviews import AdjacencyView
 from hypergraph.classes.reportviews import (
     NodeView,
     EdgeView,
@@ -36,11 +35,15 @@ class Hypergraph:
 
         Parameters
         ----------
-        incoming_hypergraph_data : input hypergraph (optional, default: None)
+        incoming_hypergraph_data : input hypergraph data (optional, default: None)
             Data to initialize the hypergraph. If None (default), an empty
-            hypergraph is created.  The data can be an edge list, an edge
-            dictionary, a 2-column Pandas dataframe, or a Scipy/Numpy incidence
-            matrix, or a Hypergraph object.
+            hypergraph is created. 
+            The data can be in the following formats:
+            edge list 
+            edge dictionary
+            2-column Pandas dataframe (bipartite edges)
+            Scipy/Numpy incidence matrix
+            Hypergraph object.
 
         attr : keyword arguments, optional (default=no attributes)
             Attributes to add to the hypergraph as key=value pairs.
@@ -61,9 +64,8 @@ class Hypergraph:
         self._edge_attr = self.hyperedge_attr_dict_factory()  # empty adjacency dict
         # attempt to load graph with data
         if incoming_hypergraph_data is not None:
-            # convert.to_networkx_graph(incoming_hypergraph_data, create_using=self)
             convert.convert_to_hypergraph(incoming_hypergraph_data, create_using=self)
-        # load graph attributes (must be after convert)
+        # load hypergraph attributes (must be after convert)
         self._hypergraph.update(attr)
 
     @property
@@ -146,17 +148,12 @@ class Hypergraph:
         return len(self._node)
 
     def __getitem__(self, n):
-        """Returns a set of neighboring edge IDs of node n.  Use: 'H[n]'.
-
-        Parameters
-        ----------
-        n : node
-           A node in the hypergraph.
+        """Returns a list of neighboring edge IDs of node n.  Use: 'H[n]'.
 
         Returns
         -------
-        neighbors : set
-           A set of the neighbors
+        neighbors : list
+           A list of the edges of which the specified node is a part.
 
         Notes
         -----
@@ -169,7 +166,30 @@ class Hypergraph:
 
     @property
     def shape(self):
+        """ Return the number of nodes and edges as a tuple.
+
+        Returns
+        -------
+        n_nodes, n_edges : tuple
+           A tuple of the number of nodes and edges respectively.
+
+        """
         return len(self._node), len(self._edge)
+
+    def neighbors(self, n):
+        """Find the neighbors of a specified node.
+
+        Parameters
+        ----------
+        n : node
+            Node to find neighbors of.
+
+        Returns
+        -------
+        neighbors : set
+            A set of the neighboring nodes
+        """
+        return {i for e in self._node[n] for i in self._edge[e]}
 
     def add_node(self, node_for_adding, **attr):
         """Add a single node `node_for_adding` and update node attributes.
@@ -184,14 +204,11 @@ class Hypergraph:
         See Also
         --------
         add_nodes_from
-
-        Examples
-        --------
         """
         if node_for_adding not in self._node:
             if node_for_adding is None:
                 raise ValueError("None cannot be a node")
-            self._node[node_for_adding] = set()
+            self._node[node_for_adding] = list()
             self._node_attr[node_for_adding] = self.node_attr_dict_factory()
         else:  # update attr even if node already exists
             self._node_attr[node_for_adding].update(attr)
@@ -214,9 +231,6 @@ class Hypergraph:
         See Also
         --------
         add_node
-
-        Examples
-        --------
         """
         for n in nodes_for_adding:
             try:
@@ -230,7 +244,7 @@ class Hypergraph:
             if newnode:
                 if n is None:
                     raise ValueError("None cannot be a node")
-                self._node[n] = set()
+                self._node[n] = list()
                 self._node_attr[n] = self.node_attr_dict_factory()
             self._node_attr[n].update(newdict)
 
@@ -253,9 +267,6 @@ class Hypergraph:
         See Also
         --------
         remove_nodes_from
-
-        Examples
-        --------
         """
         try:
             edge_neighbors = self.nodes[n]  # list handles self-loops (allows mutation)
@@ -281,17 +292,6 @@ class Hypergraph:
         See Also
         --------
         remove_node
-
-        Examples
-        --------
-        >>> H = nx.path_graph(3)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> e = list(H.nodes)
-        >>> e
-        [0, 1, 2]
-        >>> H.remove_nodes_from(e)
-        >>> list(H.nodes)
-        []
-
         """
         for n in nodes:
             try:
@@ -351,53 +351,6 @@ class Hypergraph:
         -----
         If your node data is not needed, it is simpler and equivalent
         to use the expression ``for n in H``, or ``list(H)``.
-
-        Examples
-        --------
-        There are two simple ways of getting a list of all nodes in the graph:
-
-        >>> H = nx.path_graph(3)
-        >>> list(H.nodes)
-        [0, 1, 2]
-        >>> list(H)
-        [0, 1, 2]
-
-        To get the node data along with the nodes:
-
-        >>> H.add_node(1, time="5pm")
-        >>> H.nodes[0]["foo"] = "bar"
-        >>> list(H.nodes(data=True))
-        [(0, {'foo': 'bar'}), (1, {'time': '5pm'}), (2, {})]
-        >>> list(H.nodes.data())
-        [(0, {'foo': 'bar'}), (1, {'time': '5pm'}), (2, {})]
-
-        >>> list(H.nodes(data="foo"))
-        [(0, 'bar'), (1, None), (2, None)]
-        >>> list(H.nodes.data("foo"))
-        [(0, 'bar'), (1, None), (2, None)]
-
-        >>> list(H.nodes(data="time"))
-        [(0, None), (1, '5pm'), (2, None)]
-        >>> list(H.nodes.data("time"))
-        [(0, None), (1, '5pm'), (2, None)]
-
-        >>> list(H.nodes(data="time", default="Not Available"))
-        [(0, 'Not Available'), (1, '5pm'), (2, 'Not Available')]
-        >>> list(H.nodes.data("time", default="Not Available"))
-        [(0, 'Not Available'), (1, '5pm'), (2, 'Not Available')]
-
-        If some of your nodes have an attribute and the rest are assumed
-        to have a default attribute value you can create a dictionary
-        from node/attribute pairs using the `default` keyword argument
-        to guarantee the value is never None::
-
-            >>> H = nx.Graph()
-            >>> H.add_node(0)
-            >>> H.add_node(1, weight=2)
-            >>> H.add_node(2, weight=3)
-            >>> dict(H.nodes(data="weight", default=1))
-            {0: 1, 1: 2, 2: 3}
-
         """
         nodes = NodeView(self)
         # Lazy View creation: overload the (class) property on the instance
@@ -418,12 +371,6 @@ class Hypergraph:
         --------
         order: identical method
         __len__: identical method
-
-        Examples
-        --------
-        >>> H = nx.path_graph(3)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.number_of_nodes()
-        3
         """
         return len(self._node)
 
@@ -439,12 +386,6 @@ class Hypergraph:
         --------
         number_of_nodes: identical method
         __len__: identical method
-
-        Examples
-        --------
-        >>> H = nx.path_graph(3)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.order()
-        3
         """
         return len(self._node)
 
@@ -456,18 +397,6 @@ class Hypergraph:
         Parameters
         ----------
         n : node
-
-        Examples
-        --------
-        >>> H = nx.path_graph(3)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.has_node(0)
-        True
-
-        It is more readable and simpler to use
-
-        >>> 0 in H
-        True
-
         """
         try:
             return n in self._node
@@ -498,45 +427,21 @@ class Hypergraph:
         Notes
         -----
         Adding an edge that already exists updates the edge data.
-
-        Many NetworkX algorithms designed for weighted graphs use
-        an edge attribute (by default `weight`) to hold a numerical value.
-
-        Examples
-        --------
-        The following all add the edge e=(1, 2) to graph H:
-
-        >>> H = nx.Graph()  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> e = (1, 2)
-        >>> H.add_edge(1, 2)  # explicit two-node form
-        >>> H.add_edge(*e)  # single edge as tuple of two nodes
-        >>> H.add_edges_from([(1, 2)])  # add edges from iterable container
-
-        Associate data to edges using keywords:
-
-        >>> H.add_edge(1, 2, weight=3)
-        >>> H.add_edge(1, 3, weight=7, capacity=15, length=342.7)
-
-        For non-string attribute keys, use subscript notation.
-
-        >>> H.add_edge(1, 2)
-        >>> H[1][2].update({0: 5})
-        >>> H.edges[1, 2].update({0: 5})
         """
         uid = self._edge_uid()
         for node in edge:
             if node not in self._node:
                 if node is None:
                     raise ValueError("None cannot be a node")
-                self._node[node] = set()
+                self._node[node] = list()
                 self._node_attr[node] = self.node_attr_dict_factory()
-            self._node[node].add(uid)
+            self._node[node].append(uid)
 
         try:
-            self._edge[uid] = set(edge)
+            self._edge[uid] = list(edge)
             self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
         except:
-            raise HypergraphError("The edge cannot be cast to a set.")
+            raise HypergraphError("The edge cannot be cast to a list.")
 
         self._edge_attr[uid].update(attr)
 
@@ -560,23 +465,7 @@ class Hypergraph:
 
         Notes
         -----
-        Adding the same edge twice has no effect but any edge data
-        will be updated when each duplicate edge is added.
-
-        Edge attributes specified in an ebunch take precedence over
-        attributes specified via keyword arguments.
-
-        Examples
-        --------
-        >>> H = nx.Graph()  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.add_edges_from([(0, 1), (1, 2)])  # using a list of edge tuples
-        >>> e = zip(range(0, 3), range(1, 4))
-        >>> H.add_edges_from(e)  # Add the path graph 0-1-2-3
-
-        Associate data to edges
-
-        >>> H.add_edges_from([(1, 2), (2, 3)], weight=3)
-        >>> H.add_edges_from([(3, 4), (1, 4)], label="WN2898")
+        Adding the same edge twice will create a multi-edge.
         """
         for e in ebunch_to_add:
             self.add_edge(e, **attr)
@@ -602,14 +491,7 @@ class Hypergraph:
 
         Notes
         -----
-        Adding the same edge twice for Graph/DiGraph simply updates
-        the edge data. For MultiGraph/MultiDiGraph, duplicate edges
-        are stored.
-
-        Examples
-        --------
-        >>> H = nx.Graph()  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.add_weighted_edges_from([(0, 1, 3.0), (1, 2, 7.5)])
+        Adding the same edge twice creates a multiedge.
         """
         self.add_edges_from(((edge, {weight: w}) for edge, w in ebunch_to_add), **attr)
 
@@ -629,15 +511,6 @@ class Hypergraph:
         See Also
         --------
         remove_edges_from : remove a collection of edges
-
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, etc
-        >>> H.remove_edge(0, 1)
-        >>> e = (1, 2)
-        >>> H.remove_edge(*e)  # unpacks e from an edge tuple
-        >>> e = (2, 3, {"weight": 7})  # an edge with attribute data
-        >>> H.remove_edge(*e[:2])  # select first part of edge tuple
         """
         try:
             for node in self.edges[id]:
@@ -662,12 +535,6 @@ class Hypergraph:
         Notes
         -----
         Will fail silently if an edge in ebunch is not in the graph.
-
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> ebunch = [(1, 2), (2, 3)]
-        >>> H.remove_edges_from(ebunch)
         """
         for id in ebunch:
             try:
@@ -680,7 +547,7 @@ class Hypergraph:
     def update(self, edges=None, nodes=None):
         """Update the graph using nodes/edges/graphs as input.
 
-        Like dict.update, this method takes a graph as input, adding the
+        Like dict.update, this method takes a hypergraph as input, adding the
         graph's nodes and edges to this graph. It can also take two inputs:
         edges and nodes. Finally it can take either edges or nodes.
         To specify only nodes the keyword `nodes` must be used.
@@ -691,7 +558,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        edges : Graph object, collection of edges, or None
+        edges : Hypergraph object, collection of edges, or None
             The first parameter can be a graph or some edges. If it has
             attributes `nodes` and `edges`, then it is taken to be a
             Graph-like object and those attributes are used as collections
@@ -704,68 +571,6 @@ class Hypergraph:
             to be added to the graph unless it is None.
             If `edges is None` and `nodes is None` an exception is raised.
             If the first parameter is a Graph, then `nodes` is ignored.
-
-        Examples
-        --------
-        >>> H = nx.path_graph(5)
-        >>> H.update(nx.complete_graph(range(4, 10)))
-        >>> from itertools import combinations
-        >>> edges = (
-        ...     (u, v, {"power": u * v})
-        ...     for u, v in combinations(range(10, 20), 2)
-        ...     if u * v < 225
-        ... )
-        >>> nodes = [1000]  # for singleton, use a container
-        >>> H.update(edges, nodes)
-
-        Notes
-        -----
-        It you want to update the graph using an adjacency structure
-        it is straightforward to obtain the edges/nodes from adjacency.
-        The following examples provide common cases, your adjacency may
-        be slightly different and require tweaks of these examples::
-
-        >>> # dict-of-set/list/tuple
-        >>> adj = {1: {2, 3}, 2: {1, 3}, 3: {1, 2}}
-        >>> e = [(u, v) for u, nbrs in adj.items() for v in nbrs]
-        >>> H.update(edges=e, nodes=adj)
-
-        >>> DG = nx.DiGraph()
-        >>> # dict-of-dict-of-attribute
-        >>> adj = {1: {2: 1.3, 3: 0.7}, 2: {1: 1.4}, 3: {1: 0.7}}
-        >>> e = [
-        ...     (u, v, {"weight": d})
-        ...     for u, nbrs in adj.items()
-        ...     for v, d in nbrs.items()
-        ... ]
-        >>> DG.update(edges=e, nodes=adj)
-
-        >>> # dict-of-dict-of-dict
-        >>> adj = {1: {2: {"weight": 1.3}, 3: {"color": 0.7, "weight": 1.2}}}
-        >>> e = [
-        ...     (u, v, {"weight": d})
-        ...     for u, nbrs in adj.items()
-        ...     for v, d in nbrs.items()
-        ... ]
-        >>> DG.update(edges=e, nodes=adj)
-
-        >>> # predecessor adjacency (dict-of-set)
-        >>> pred = {1: {2, 3}, 2: {3}, 3: {3}}
-        >>> e = [(v, u) for u, nbrs in pred.items() for v in nbrs]
-
-        >>> # MultiGraph dict-of-dict-of-dict-of-attribute
-        >>> MDG = nx.MultiDiGraph()
-        >>> adj = {
-        ...     1: {2: {0: {"weight": 1.3}, 1: {"weight": 1.2}}},
-        ...     3: {2: {0: {"weight": 0.7}}},
-        ... }
-        >>> e = [
-        ...     (u, v, ekey, d)
-        ...     for u, nbrs in adj.items()
-        ...     for v, keydict in nbrs.items()
-        ...     for ekey, d in keydict.items()
-        ... ]
-        >>> MDG.update(edges=e)
 
         See Also
         --------
@@ -793,50 +598,29 @@ class Hypergraph:
         else:
             raise HypergraphError("update needs nodes or edges input")
 
-    def has_edge(self, u, v):
+    def has_edge(self, id):
         """Returns True if the edge id is in the hypergraph.
 
-        This is the same as `v in H[u]` without KeyError exceptions.
+        This is the same as `v in H.edges` without KeyError exceptions.
 
         Parameters
         ----------
-        u, v : nodes
-            Nodes can be, for example, strings or numbers.
-            Nodes must be hashable (and not None) Python objects.
+        id : hashable
+            Edge id
 
         Returns
         -------
         edge_ind : bool
-            True if edge is in the graph, False otherwise.
-
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.has_edge(0, 1)  # using two nodes
-        True
-        >>> e = (0, 1)
-        >>> H.has_edge(*e)  #  e is a 2-tuple (u, v)
-        True
-        >>> e = (0, 1, {"weight": 7})
-        >>> H.has_edge(*e[:2])  # e is a 3-tuple (u, v, data_dictionary)
-        True
-
-        The following syntax are equivalent:
-
-        >>> H.has_edge(0, 1)
-        True
-        >>> 1 in H[0]  # though this gives KeyError if 0 not in H
-        True
-
+            True if edge is in the hypergraph, False otherwise.
         """
         try:
-            return v in self._node
+            return id in self._edge
         except KeyError:
             return False
 
     @property
     def edges(self):
-        """An EdgeView of the Graph as H.edges or H.edges().
+        """An EdgeView of the Hyperraph as H.edges or H.edges().
 
         edges(self, nbunch=None, data=False, default=None)
 
@@ -871,30 +655,14 @@ class Hypergraph:
 
         Notes
         -----
-        Nodes in nbunch that are not in the graph will be (quietly) ignored.
-        For directed graphs this returns the out-edges.
-
-        Examples
-        --------
-        >>> H = nx.path_graph(3)  # or MultiGraph, etc
-        >>> H.add_edge(2, 3, weight=5)
-        >>> [e for e in H.edges]
-        [(0, 1), (1, 2), (2, 3)]
-        >>> H.edges.data()  # default data is {} (empty dict)
-        EdgeDataView([(0, 1, {}), (1, 2, {}), (2, 3, {'weight': 5})])
-        >>> H.edges.data("weight", default=1)
-        EdgeDataView([(0, 1, 1), (1, 2, 1), (2, 3, 5)])
-        >>> H.edges([0, 3])  # only edges incident to these nodes
-        EdgeDataView([(0, 1), (3, 2)])
-        >>> H.edges(0)  # only edges incident to a single node (use H.adj[0]?)
-        EdgeDataView([(0, 1)])
+        Nodes in nbunch that are not in the hypergraph will be (quietly) ignored.
         """
         return EdgeView(self)
 
-    def get_edge_data(self, u, v, default=None):
-        """Returns the attribute dictionary associated with edge (u, v).
+    def get_edge_data(self, id, default=None):
+        """Returns the attribute dictionary associated with edge id.
 
-        This is identical to `H[u][v]` except the default is returned
+        This is identical to `H._edge_attr[id]` except the default is returned
         instead of an exception if the edge doesn't exist.
 
         Parameters
@@ -907,33 +675,9 @@ class Hypergraph:
         -------
         edge_dict : dictionary
             The edge attribute dictionary.
-
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H[0][1]
-        {}
-
-        Warning: Assigning to `H[u][v]` is not permitted.
-        But it is safe to assign attributes `H[u][v]['foo']`
-
-        >>> H[0][1]["weight"] = 7
-        >>> H[0][1]["weight"]
-        7
-        >>> H[1][0]["weight"]
-        7
-
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.get_edge_data(0, 1)  # default edge data is {}
-        {}
-        >>> e = (0, 1)
-        >>> H.get_edge_data(*e)  # tuple form
-        {}
-        >>> H.get_edge_data("a", "b", default=0)  # edge not in graph, return 0
-        0
         """
         try:
-            return self.edges.data
+            return self.edges.data[id]
         except KeyError:
             return default
 
@@ -966,14 +710,6 @@ class Hypergraph:
 
         OR if multiple nodes are requested
         nd_view : A NodeDegreeView object capable of iterating (node, degree) pairs
-
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.node_degree[0]  # node 0 has degree 1
-        1
-        >>> list(H.degree([0, 1, 2]))
-        [(0, 1), (1, 2), (2, 2)]
         """
         return NodeDegreeView(self)
 
@@ -981,12 +717,12 @@ class Hypergraph:
     def edge_degree(self):
         """A EdgeDegreeView for the Hypergraph as H.edge_degree or H.edge_degree().
 
-        The node degree is the number of edges adjacent to the node.
-        The weighted node degree is the sum of the edge weights for
-        edges incident to that node.
+        The edge degree is the number of nodes in that edge, or the edge size.
+        The weighted edge degree is the sum of the node weights for
+        nodes in that edge.
 
-        This object provides an iterator for (node, degree) as well as
-        lookup for the degree for a single node.
+        This object provides an iterator for (edge, degree) as well as
+        lookup for the degree for a single edge.
 
         Parameters
         ----------
@@ -1005,35 +741,38 @@ class Hypergraph:
             Degree of the node
 
         OR if multiple nodes are requested
-        nd_view : An EdgeDegreeView object capable of iterating (node, degree) pairs
-
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.degree[0]  # node 0 has degree 1
-        1
-        >>> list(H.degree([0, 1, 2]))
-        [(0, 1), (1, 2), (2, 2)]
+        nd_view : An EdgeDegreeView object capable of iterating (edge, degree) pairs
         """
         return EdgeDegreeView(self)
 
     def unique_edge_sizes(self, return_counts=False):
+        """ A function that returns the unique edge sizes.
+
+        Parameters
+        ----------
+        return_counts : bool, default: False
+            Specifies whether to include the number of occurences of that edge size
+
+        Returns
+        -------
+        if return_counts:
+            unique_edge_sizes, counts
+                Numpy arrays of the unique edge sizes and the number of each size respectively
+        else:
+            unique_edge_sizes
+                A numpy array of the unique edge sizes
+        deg : int
+            Degree of the node
+
+        OR if multiple nodes are requested
+        nd_view : An EdgeDegreeView object capable of iterating (edge, degree) pairs
+        """
         return np.unique(list(self.edge_degree), return_counts=return_counts)
 
     def clear(self):
         """Remove all nodes and edges from the graph.
 
         This also removes the name, and all graph, node, and edge attributes.
-
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.clear()
-        >>> list(H.nodes)
-        []
-        >>> list(H.edges)
-        []
-
         """
         self._node.clear()
         self._node_attr.clear()
@@ -1044,76 +783,31 @@ class Hypergraph:
     def clear_edges(self):
         """Remove all edges from the graph without altering nodes.
 
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H.clear_edges()
-        >>> list(H.nodes)
-        [0, 1, 2, 3]
-        >>> list(H.edges)
-        []
         """
         for node in self.nodes:
             self._node[node] = {}
         self._edge.clear()
         self._edge_attr.clear()
 
-    def is_multigraph(self):
-        """Returns True if graph is a multigraph, False otherwise."""
-        return False
-
-    def is_directed(self):
-        """Returns True if graph is directed, False otherwise."""
-        return False
-
     def copy(self, as_view=False):
-        """Returns a copy of the graph.
+        """Returns a copy of the hypergraph.
 
-        The copy method by default returns an independent shallow copy
-        of the graph and attributes. That is, if an attribute is a
-        container, that container is shared by the original an the copy.
-        Use Python's `copy.deepcopy` for new containers.
+        The copy method by default returns a deep copy of the hypergraph
+        and attributes. Use the "as_view" flag to for a frozen copy of
+        the hypergraph with references to the original
 
         If `as_view` is True then a view is returned instead of a copy.
 
         Notes
         -----
-        All copies reproduce the graph structure, but data attributes
-        may be handled in different ways. There are four types of copies
-        of a graph that people might want.
+        All copies reproduce the hypergraph structure, but data attributes
+        may be handled in different ways. There are two options that this
+        method provides.
 
         Deepcopy -- A "deepcopy" copies the graph structure as well as
         all data attributes and any objects they might contain.
-        The entire graph object is new so that changes in the copy
+        The entire hypergraph object is new so that changes in the copy
         do not affect the original object. (see Python's copy.deepcopy)
-
-        Data Reference (Shallow) -- For a shallow copy the graph structure
-        is copied but the edge, node and graph attribute dicts are
-        references to those in the original graph. This saves
-        time and memory but could cause confusion if you change an attribute
-        in one graph and it changes the attribute in the other.
-        NetworkX does not provide this level of shallow copy.
-
-        Independent Shallow -- This copy creates new independent attribute
-        dicts and then does a shallow copy of the attributes. That is, any
-        attributes that are containers are shared between the new graph
-        and the original. This is exactly what `dict.copy()` provides.
-        You can obtain this style copy using:
-
-            >>> H = nx.path_graph(5)
-            >>> H = H.copy()
-            >>> H = H.copy(as_view=False)
-            >>> H = nx.Graph(H)
-            >>> H = H.__class__(H)
-
-        Fresh Data -- For fresh data, the graph structure is copied while
-        new empty data attribute dicts are created. The resulting graph
-        is independent of the original and it has no edge, node or graph
-        attributes. Fresh copies are not enabled. Instead use:
-
-            >>> H = H.__class__()
-            >>> H.add_nodes_from(H)
-            >>> H.add_edges_from(H.edges)
 
         View -- Inspired by dict-views, graph-views act like read-only
         versions of the original graph, providing a copy of the original
@@ -1125,22 +819,13 @@ class Hypergraph:
         Parameters
         ----------
         as_view : bool, optional (default=False)
-            If True, the returned graph-view provides a read-only view
-            of the original graph without actually copying any data.
+            If True, the returned hypergraph view provides a read-only view
+            of the original hypergraph without actually copying any data.
 
         Returns
         -------
-        H : Graph
-            A copy of the graph.
-
-        See Also
-        --------
-        to_directed: return a directed copy of the graph.
-
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H = H.copy()
+        H : Hypergraph
+            A copy of the hypergraph.
 
         """
         if as_view is True:
@@ -1153,98 +838,35 @@ class Hypergraph:
         H._edge_attr = deepcopy(self._edge_attr)
         return H
 
-    def dual(self, as_view=False):
-        """Returns a copy of the graph.
-
-        The copy method by default returns an independent shallow copy
-        of the graph and attributes. That is, if an attribute is a
-        container, that container is shared by the original an the copy.
-        Use Python's `copy.deepcopy` for new containers.
-
-        If `as_view` is True then a view is returned instead of a copy.
-
-        Notes
-        -----
-        All copies reproduce the graph structure, but data attributes
-        may be handled in different ways. There are four types of copies
-        of a graph that people might want.
-
-        Deepcopy -- A "deepcopy" copies the graph structure as well as
-        all data attributes and any objects they might contain.
-        The entire graph object is new so that changes in the copy
-        do not affect the original object. (see Python's copy.deepcopy)
-
-        Data Reference (Shallow) -- For a shallow copy the graph structure
-        is copied but the edge, node and graph attribute dicts are
-        references to those in the original graph. This saves
-        time and memory but could cause confusion if you change an attribute
-        in one graph and it changes the attribute in the other.
-        NetworkX does not provide this level of shallow copy.
-
-        Independent Shallow -- This copy creates new independent attribute
-        dicts and then does a shallow copy of the attributes. That is, any
-        attributes that are containers are shared between the new graph
-        and the original. This is exactly what `dict.copy()` provides.
-        You can obtain this style copy using:
-
-            >>> H = nx.path_graph(5)
-            >>> H = H.copy()
-            >>> H = H.copy(as_view=False)
-            >>> H = nx.Graph(H)
-            >>> H = H.__class__(H)
-
-        Fresh Data -- For fresh data, the graph structure is copied while
-        new empty data attribute dicts are created. The resulting graph
-        is independent of the original and it has no edge, node or graph
-        attributes. Fresh copies are not enabled. Instead use:
-
-            >>> H = H.__class__()
-            >>> H.add_nodes_from(H)
-            >>> H.add_edges_from(H.edges)
-
-        View -- Inspired by dict-views, graph-views act like read-only
-        versions of the original graph, providing a copy of the original
-        structure without requiring any memory for copying the information.
-
-        See the Python copy module for more information on shallow
-        and deep copies, https://docs.python.org/3/library/copy.html.
-
-        Parameters
-        ----------
-        as_view : bool, optional (default=False)
-            If True, the returned graph-view provides a read-only view
-            of the original graph without actually copying any data.
+    def dual(self):
+        """Returns the dual of the hypergraph (nodes become edges and
+        edges become nodes).
 
         Returns
         -------
-        H : Graph
-            A copy of the graph.
+        D : Hypergraph
+            The dual of the hypergraph.
 
-        See Also
-        --------
-        to_directed: return a directed copy of the graph.
-
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H = H.copy()
+        Notes
+        -----
+        This method simply switches the nodes (with their attributes)
+        with the edges (with their attributes) with a deep copy.
 
         """
-        if as_view is True:
-            return hg.hypergraphviews.generic_hypergraph_view(self)
-        H = self.__class__()
-        H._hypergraph = deepcopy(self._hypergraph)
-        H._node = deepcopy(self._edge)
-        H._node_attr = deepcopy(self._edge_attr)
-        H._edge = deepcopy(self._node)
-        H._edge_attr = deepcopy(self._node_attr)
-        return H
+        dual = self.__class__()
+        dual._hypergraph = deepcopy(self._hypergraph)
+        dual._node = deepcopy(self._edge)
+        dual._node_attr = deepcopy(self._edge_attr)
+        dual._edge = deepcopy(self._node)
+        dual._edge_attr = deepcopy(self._node_attr)
+        return dual
+
 
     def subhypergraph(self, nodes):
-        """Returns a SubGraph view of the subgraph induced on `nodes`.
+        """Returns a SubHypergraph view of the subhypergraph induced on `nodes`.
 
-        The induced subgraph of the graph contains the nodes in `nodes`
-        and the edges between those nodes.
+        The induced subhypergraph of the hypergraph contains the nodes in `nodes`
+        and the edges that only contain those nodes.
 
         Parameters
         ----------
@@ -1253,138 +875,86 @@ class Hypergraph:
 
         Returns
         -------
-        H : SubGraph View
-            A subgraph view of the graph. The graph structure cannot be
-            changed but node/edge attributes can and are shared with the
-            original graph.
+        H : SubHypergraph View
+            A subhypergraph view of the hypergraph. The hypergraph structure
+            cannot be changed but node/edge attributes can and are shared with the
+            original hypergraph.
 
         Notes
         -----
-        The graph, edge and node attributes are shared with the original graph.
-        Changes to the graph structure is ruled out by the view, but changes
-        to attributes are reflected in the original graph.
+        The hypergraph, edge and node attributes are shared with the original
+        hypergraph. Changes to the hypergraph structure is ruled out by the view,
+        but changes to attributes are reflected in the original hypergraph.
 
-        To create a subgraph with its own copy of the edge/node attributes use:
-        H.subgraph(nodes).copy()
-
-        For an inplace reduction of a graph to a subgraph you can remove nodes:
+        For an inplace reduction of a hypergraph to a subhypergraph you can remove nodes:
         H.remove_nodes_from([n for n in H if n not in set(nodes)])
-
-        Subgraph views are sometimes NOT what you want. In most cases where
-        you want to do more than simply look at the induced edges, it makes
-        more sense to just create the subgraph as its own graph with code like:
-
-        ::
-
-            # Create a subgraph SG based on a (possibly multigraph) H
-            SG = H.__class__()
-            SG.add_nodes_from((n, H.nodes[n]) for n in largest_wcc)
-            if SG.is_multigraph():
-                SG.add_edges_from((n, nbr, key, d)
-                    for n, nbrs in H.adj.items() if n in largest_wcc
-                    for nbr, keydict in nbrs.items() if nbr in largest_wcc
-                    for key, d in keydict.items())
-            else:
-                SG.add_edges_from((n, nbr, d)
-                    for n, nbrs in H.adj.items() if n in largest_wcc
-                    for nbr, d in nbrs.items() if nbr in largest_wcc)
-            SG.graph.update(H.graph)
-
-        Examples
-        --------
-        >>> H = nx.path_graph(4)  # or DiGraph, MultiGraph, MultiDiGraph, etc
-        >>> H = H.subgraph([0, 1, 2])
-        >>> list(H.edges)
-        [(0, 1), (1, 2)]
         """
         induced_nodes = self.nbunch_iter(nodes)
-        subgraph = hg.hypergraphviews.subhypergraph_view
-        return subgraph(self, induced_nodes, None)
+        subhypergraph = hg.hypergraphviews.subhypergraph_view
+        return subhypergraph(self, induced_nodes, None)
 
     def edge_subhypergraph(self, edges):
-        """Returns the subgraph induced by the specified edges.
+        """Returns a SubHypergraph view of the subhypergraph with only the edges specified.
 
-        The induced subgraph contains each edge in `edges` and each
-        node incident to any one of those edges.
+        The list of nodes is not affected, potentially leading to a disconnected hypergraph.
 
         Parameters
         ----------
-        edges : iterable
-            An iterable of edges in this graph.
+        edges : list, iterable
+            A container of edge ids which will be iterated through once.
 
         Returns
         -------
-        H : Graph
-            An edge-induced subgraph of this graph with the same edge
-            attributes.
+        H : SubHypergraph View
+            A subhypergraph view of the hypergraph. The hypergraph structure
+            cannot be changed but node/edge attributes can and are shared with the
+            original hypergraph.
 
         Notes
         -----
-        The graph, edge, and node attributes in the returned subgraph
-        view are references to the corresponding attributes in the original
-        graph. The view is read-only.
+        The hypergraph, edge and node attributes are shared with the original
+        hypergraph. Changes to the hypergraph structure is ruled out by the view,
+        but changes to attributes are reflected in the original hypergraph.
 
-        To create a full graph version of the subgraph with its own copy
-        of the edge or node attributes, use::
-
-            H.edge_subgraph(edges).copy()
-
-        Examples
-        --------
-        >>> H = nx.path_graph(5)
-        >>> H = H.edge_subgraph([(0, 1), (3, 4)])
-        >>> list(H.nodes)
-        [0, 1, 3, 4]
-        >>> list(H.edges)
-        [(0, 1), (3, 4)]
-
+        For an inplace reduction of a hypergraph to a subhypergraph you can remove nodes:
+        H.remove_edges_from([n for n in H if n not in set(nodes)])
         """
-        subgraph = hg.hypergraphviews.subhypergraph_view
-        return subgraph(self, None, edges)
+        subhypergraph = hg.hypergraphviews.subhypergraph_view
+        return subhypergraph(self, None, edges)
 
     def arbitrary_subhypergraph(self, nodes, edges):
-        """Returns the subgraph induced by the specified edges.
+        """Returns a SubHypergraph view of the subhypergraph with specified
+        nodes and edges.
 
-        The induced subgraph contains each edge in `edges` and each
-        node incident to any one of those edges.
+        This subhypergraph contains the list of nodes induced by the edges
+        as well as additional nodes specified.
 
         Parameters
         ----------
-        edges : iterable
-            An iterable of edges in this graph.
+        nodes : list, iterable
+            A container of nodes which will be iterated through once.
+        
+        edges : list, iterable
+            A container of edge ids which will be iterated through once.
 
         Returns
         -------
-        H : Graph
-            An edge-induced subgraph of this graph with the same edge
-            attributes.
+        H : SubHypergraph View
+            A subhypergraph view of the hypergraph. The hypergraph structure
+            cannot be changed but node/edge attributes can and are shared with the
+            original hypergraph.
 
         Notes
         -----
-        The graph, edge, and node attributes in the returned subgraph
-        view are references to the corresponding attributes in the original
-        graph. The view is read-only.
-
-        To create a full graph version of the subgraph with its own copy
-        of the edge or node attributes, use::
-
-            H.edge_subgraph(edges).copy()
-
-        Examples
-        --------
-        >>> H = nx.path_graph(5)
-        >>> H = H.edge_subgraph([(0, 1), (3, 4)])
-        >>> list(H.nodes)
-        [0, 1, 3, 4]
-        >>> list(H.edges)
-        [(0, 1), (3, 4)]
-
+        The hypergraph, edge and node attributes are shared with the original
+        hypergraph. Changes to the hypergraph structure is ruled out by the view,
+        but changes to attributes are reflected in the original hypergraph.
         """
-        subgraph = hg.hypergraphviews.subhypergraph_view
-        return subgraph(self, nodes, edges)
+        subhypergraph = hg.hypergraphviews.subhypergraph_view
+        return subhypergraph(self, nodes, edges)
 
     def number_of_edges(self):
-        """Returns the number of edges between two nodes.
+        """Returns the number of edges in the hypergraph.
 
         Parameters
         ----------
@@ -1392,44 +962,19 @@ class Hypergraph:
         Returns
         -------
         nedges : int
-            The number of edges in the graph.
+            The number of edges in the hypergraph.
 
         See Also
         --------
         size
-
-        Examples
-        --------
-        For undirected graphs, this method counts the total number of
-        edges in the graph:
-
-        >>> H = nx.path_graph(4)
-        >>> H.number_of_edges()
-        3
-
-        If you specify two nodes, this counts the total number of edges
-        joining the two nodes:
-
-        >>> H.number_of_edges(0, 1)
-        1
-
-        For directed graphs, this method can count the total number of
-        directed edges from `u` to `v`:
-
-        >>> H = nx.DiGraph()
-        >>> H.add_edge(0, 1)
-        >>> H.add_edge(1, 0)
-        >>> H.number_of_edges(0, 1)
-        1
-
         """
         return len(self._edge)
 
     def nbunch_iter(self, nbunch=None):
         """Returns an iterator over nodes contained in nbunch that are
-        also in the graph.
+        also in the hypergraph.
 
-        The nodes in nbunch are checked for membership in the graph
+        The nodes in nbunch are checked for membership in the hypergraph
         and if not are silently ignored.
 
         Parameters
@@ -1440,12 +985,12 @@ class Hypergraph:
         Returns
         -------
         niter : iterator
-            An iterator over nodes in nbunch that are also in the graph.
-            If nbunch is None, iterate over all nodes in the graph.
+            An iterator over nodes in nbunch that are also in the hypergraph.
+            If nbunch is None, iterate over all nodes in the hypergraph.
 
         Raises
         ------
-        NetworkXError
+        HypergraphError
             If nbunch is not a node or sequence of nodes.
             If a node in nbunch is not hashable.
 
@@ -1462,8 +1007,8 @@ class Hypergraph:
         "if nbunch in self:", even after processing with this routine.
 
         If nbunch is not a node or a (possibly empty) sequence/iterator
-        or None, a :exc:`NetworkXError` is raised.  Also, if any object in
-        nbunch is not hashable, a :exc:`NetworkXError` is raised.
+        or None, a :exc:`HypergraphError` is raised.  Also, if any object in
+        nbunch is not hashable, a :exc:`HypergraphError` is raised.
         """
         if nbunch is None:  # include all nodes via iterator
             bunch = iter(self._node)

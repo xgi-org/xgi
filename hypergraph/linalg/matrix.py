@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.sparse import csr_matrix
+import itertools
 
 __all__ = [
     "incidence_matrix",

@@ -24,8 +24,7 @@ def uniform_hypergraph_configuration_model(k, m):
 
     Notes
     -----
-    Creates multi-edges and self-loops. The Hypergraph class will remove
-    the self-loops which will make this not strictly uniform.
+    Creates multi-edges and self-loops.
 
     Example
     -------

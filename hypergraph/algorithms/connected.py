@@ -2,7 +2,7 @@ import networkx as nx
 import hypergraph as hg
 from hypergraph.exception import HypergraphError
 import scipy.sparse as sparse
-
+import random
 
 def is_connected(H, s=1):
     """
@@ -127,3 +127,45 @@ def node_connected_component(H, n, s=1):
     rows = data[0]
     cols = data[1]
     return nx.node_connected_component(nx.Graph(zip(rows, cols)), n)
+
+def is_connected_bfs(H):
+    """
+    A function to determine whether a hypergraph is connected.
+
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+    
+    Returns
+    -------
+    is_connected: boolean
+        Specifies whether the hypergraph is s-connected.
+
+    Example
+    -------
+        >>> import hypergraph as hg
+        >>> n = 1000
+        >>> m = n
+        >>> p = 0.01
+        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
+        >>> print(hg.is_connected(H))
+
+    Notes
+    -----
+    This currently does not check for s-connectedness.
+    """
+    return len(_plain_bfs(H, random.choice(list(H.nodes)))) == len(H)
+
+def _plain_bfs(H, source):
+    """A fast BFS node generator"""
+    seen = set()
+    nextlevel = {source}
+    while nextlevel:
+        thislevel = nextlevel
+        nextlevel = set()
+        for v in thislevel:
+            if v not in seen:
+                seen.add(v)
+                nextlevel.update(H.neighbors(v))
+    return seen
