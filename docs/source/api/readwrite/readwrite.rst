@@ -4,6 +4,14 @@ readwrite package
 Submodules
 ----------
 
+readwrite.bipartite module
+--------------------------
+
+.. automodule:: readwrite.bipartite
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 readwrite.edgelist module
 -------------------------
 

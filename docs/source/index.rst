@@ -29,7 +29,8 @@ hypergraphs.
 
    Classes <api/classes/classes.rst>
    Algorithms <api/algorithms/algorithms.rst>
-   Generative Modules <api/generators/generators.rst>
+   Generative Models <api/generators/generators.rst>
    Linear Algebra <api/linalg/linalg.rst>
    Read/Write <api/readwrite/readwrite.rst>
+   Converting to and from other data formats <api/convert.rst>
    Utilities <api/utils/utils.rst>

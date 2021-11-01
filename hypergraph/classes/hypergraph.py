@@ -39,11 +39,11 @@ class Hypergraph:
             Data to initialize the hypergraph. If None (default), an empty
             hypergraph is created.
             The data can be in the following formats:
-            hyperedge list
-            hyperedge dictionary
-            2-column Pandas dataframe (bipartite edges)
-            Scipy/Numpy incidence matrix
-            Hypergraph object.
+            * hyperedge list
+            * hyperedge dictionary
+            * 2-column Pandas dataframe (bipartite edges)
+            * Scipy/Numpy incidence matrix
+            * Hypergraph object.
 
         attr : keyword arguments, optional (default=no attributes)
             Attributes to add to the hypergraph as key=value pairs.

@@ -17,6 +17,7 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
     """
     A function to generate an Erdos-Renyi hypergraph as implemented by Mirah Shi and described for
     bipartite networks by Aksoy et al. in https://doi.org/10.1093/comnet/cnx001
+
     Parameters
     ----------
     n: int
@@ -29,6 +30,7 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
         Vertex labels
     edge_labels: list, default=None
         Hyperedge labels
+
     Returns
     -------
     Hypergraph object
@@ -69,12 +71,14 @@ def chung_lu_hypergraph(k1, k2):
     """
     A function to generate an extension of Chung-Lu hypergraph as implemented by Mirah Shi and described for
     bipartite networks by Aksoy et al. in https://doi.org/10.1093/comnet/cnx001
+
     Parameters
     ----------
     k1 : dictionary
         This is a dictionary where the keys are node ids and the values are node degrees.
     k2 : dictionary
         This is a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.
+    
     Returns
     -------
     Hypergraph object
@@ -83,6 +87,7 @@ def chung_lu_hypergraph(k1, k2):
     -----
     The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.
     The output currently is a Hypergraph object.
+    
     Example
     -------
         >>> import hypergraph as hg
@@ -135,6 +140,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     """
     A function to generate an extension of DCSBM hypergraph as implemented by Mirah Shi and described for
     bipartite networks by Larremore et al. in https://doi.org/10.1103/PhysRevE.90.012805
+
     Parameters
     ----------
     k1 : dictionary
@@ -151,6 +157,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
         This is a matrix with entries which specify the number of edges between a given node community and edge community.
         The number of rows must match the number of node communities and the number of columns
         must match the number of edge communities.
+
     Returns
     -------
     Hypergraph object

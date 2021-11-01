@@ -30,7 +30,6 @@ def empty_hypergraph(create_using=None, default=Hypergraph):
         0
         >>> H.number_of_edges()
         0
-
     """
     if create_using is None:
         H = default()

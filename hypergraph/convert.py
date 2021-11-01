@@ -28,24 +28,15 @@ def convert_to_hypergraph(data, create_using=None):
     ----------
     data : object to be converted
         Current known types are:
-         any Hypergraph object
-         list-of-lists
-         dict-of-lists
-         container (e.g. set, list, tuple) of edges
-         iterator (e.g. itertools.chain) that produces edges
-         generator of edges
-         Pandas DataFrame (row per edge)
-         numpy matrix
-         numpy ndarray
-         scipy sparse matrix
-         pygraphviz agraph
-    create_using : NetworkX graph constructor, optional (default=nx.Graph)
-        Graph type to create. If graph instance, then cleared before populated.
-    multigraph_input : bool (default False)
-        If True and  data is a dict_of_dicts,
-        try to create a multigraph assuming dict_of_dict_of_lists.
-        If data and create_using are both multigraphs then create
-        a multigraph from a multigraph.
+         * a Hypergraph object
+         * list-of-lists
+         * dict-of-lists
+         * Pandas DataFrame (bipartite edgelist)
+         * numpy matrix
+         * numpy ndarray
+         * scipy sparse matrix
+    create_using : Hypergraph graph constructor, optional (default=hg.Hypergraph)
+        Hypergraph type to create. If hypergraph instance, then cleared before populated.
     """
 
     if data is None:
