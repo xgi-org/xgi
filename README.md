@@ -2,9 +2,9 @@
 
 Hypergraph is a Python package for the representation, manipulation, and study of the structure, dynamics, and functions of hypergraphs.
 
-* **Source:** https://github.com/nwlandry/Hypergraph
-* **Bug reports:** https://github.com/nwlandry/Hypergraph/issues
-* **GitHub Discussions:** https://github.com/nwlandry/Hypergraph/discussions
+* **Source:** ../../
+* **Bug reports:** ../../issues
+* **GitHub Discussions:** ../../discussions
 
 ## Table of Contents:
   - [Installation](#installation)
@@ -44,7 +44,7 @@ We acknowledge the importance of good software to support research, and we note
 that research becomes more valuable when it is communicated effectively. To
 demonstrate the value of Hypergraph, we ask that you cite Hypergraph in your work.
 Currently, the best way to cite Hypergraph is to go to our
-[repository page](https://github.com/nwlandry/Hypergraph) (if you haven't already) and
+[repository page](../../) (if you haven't already) and
 click the "cite this repository" button on the right sidebar. This will generate
 a citation in your preferred format, and will also integrate well with citation managers.
 
