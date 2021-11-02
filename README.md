@@ -2,18 +2,19 @@
 
 Hypergraph is a Python package for the representation, manipulation, and study of the structure, dynamics, and functions of hypergraphs.
 
-* **Source:** ../../
-* **Bug reports:** ../../issues
-* **GitHub Discussions:** ../../discussions
+* [**Source:**](../../)
+* [**Bug reports:**](../../issues)
+* [**GitHub Discussions:**](../../discussions)
 
 ## Table of Contents:
   - [Installation](#installation)
   - [Usage](#usage)
   - [Documentation](#documentation)
   - [Contributing](#contributing)
-  - [How to cite](#how-to-cite)
+  - [How to Cite](#how-to-cite)
   - [Code of Conduct](#code-of-conduct)
   - [License](#license)
+  - [Other Resources](#other-resources)
 
 ## Installation
 
@@ -61,7 +62,7 @@ Leo Torres <leo@leotrs.com>
 
 The Hypergraph library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](license.md)
 
-## Other relevant resources
+## Other resources
 This library may not meet your needs and if this is this case, consider checking out these other resources:
 * [HyperNetX](https://pnnl.github.io/HyperNetX): A package in Python for representing, analyzing, and visualizing hypergraphs.
 * [SimpleHypergraphs.jl](https://pszufe.github.io/SimpleHypergraphs.jl/v0.1/): A package in Julia for representing, analyzing, and generating hypergraphs.
