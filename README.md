@@ -36,7 +36,7 @@ To get started, take a look at the [tutorials](/tutorials/) illustrating the lib
 Documentation is in progress.
 
 ## Contributing
-Contributions are always welcome. Please report any bugs that you find [here](https://github.com/nwlandry/Hypergraph/issues). Or, even better, fork the repository on [GitHub](https://github.com/nwlandry/Hypergraph) and create a pull request (PR). We welcome all changes, big or small, and we will help you make the PR if you are new to `git` (just ask on the issue and/or see `CONTRIBUTING.md`).
+Contributions are always welcome. Please report any bugs that you find [here](../../issues). Or, even better, fork the repository on [GitHub](../../) and create a pull request (PR). We welcome all changes, big or small, and we will help you make the PR if you are new to `git` (just ask on the issue and/or see `CONTRIBUTING.md`).
 
 ## How to Cite
 
@@ -50,7 +50,7 @@ a citation in your preferred format, and will also integrate well with citation 
 
 ## Code of Conduct
 
-Our full code of conduct, and how we enforce it, can be read in [our repository](https://github.com/nwlandry/Hypergraph/blob/main/CODE_OF_CONDUCT.md).
+Our full code of conduct, and how we enforce it, can be read in [our repository](CODE_OF_CONDUCT.md).
 
 ## License
 Released under the 3-Clause BSD license (see `license.md`)
@@ -59,7 +59,7 @@ Copyright (C) 2021 Hypergraph Developers
 Nicholas Landry <nicholas.landry@colorado.edu>
 Leo Torres <leo@leotrs.com>
 
-The Hypergraph library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](https://github.com/nwlandry/Hypergraph/blob/main/license.md)
+The Hypergraph library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](license.md)
 
 ## Other relevant resources
 This library may not meet your needs and if this is this case, consider checking out these other resources:
