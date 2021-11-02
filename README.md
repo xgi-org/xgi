@@ -27,31 +27,16 @@ Install the latest version of Hypergraph:
 pip install -e .["all"]
 ```
 
-## Usage
+## Getting Started
 
-The following is an example of constructing a hypergraph from a hyperedge list and getting its incidence matrix:
-
-```python
-import hypergraph as hg
-import random
-
-n = 1000
-m = 10000
-min_edge_size = 2
-max_edge_size = 25
-hyperedge_list = [random.sample(range(n), random.choice(range(min_edge_size,max_edge_size+1))) for i in range(m)]
-
-H = hg.Hypergraph(hyperedge_list)
-
-I = hg.incidence_matrix(H)
-```
+To get started, take a look at the [tutorials](/tutorials/) illustrating the library's basic functionality.
 
 ## Documentation
 
 Documentation is in progress.
 
 ## Contributing
-Is always welcome. Please report any bugs that you find [here](https://github.com/nwlandry/Hypergraph/issues). Or, even better, fork the repository on [GitHub](https://github.com/nwlandry/Hypergraph) and create a pull request (PR). We welcome all changes, big or small, and we will help you make the PR if you are new to `git` (just ask on the issue and/or see `CONTRIBUTING.md`).
+Contributions are always welcome. Please report any bugs that you find [here](https://github.com/nwlandry/Hypergraph/issues). Or, even better, fork the repository on [GitHub](https://github.com/nwlandry/Hypergraph) and create a pull request (PR). We welcome all changes, big or small, and we will help you make the PR if you are new to `git` (just ask on the issue and/or see `CONTRIBUTING.md`).
 
 ## How to Cite
 
@@ -66,7 +51,8 @@ a citation in your preferred format, and will also integrate well with citation 
 ## Code of Conduct
 
 Our full code of conduct, and how we enforce it, can be read in [our repository](https://github.com/nwlandry/Hypergraph/blob/main/CODE_OF_CONDUCT.md).
-### License
+
+## License
 Released under the 3-Clause BSD license (see `license.md`)
 
 Copyright (C) 2021 Hypergraph Developers
@@ -74,3 +60,9 @@ Nicholas Landry <nicholas.landry@colorado.edu>
 Leo Torres <leo@leotrs.com>
 
 The Hypergraph library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](https://github.com/nwlandry/Hypergraph/blob/main/license.md)
+
+## Other relevant resources
+This library may not meet your needs and if this is this case, consider checking out these other resources:
+* [HyperNetX](https://pnnl.github.io/HyperNetX): A package in Python for representing, analyzing, and visualizing hypergraphs.
+* [SimpleHypergraphs.jl](https://pszufe.github.io/SimpleHypergraphs.jl/v0.1/): A package in Julia for representing, analyzing, and generating hypergraphs.
+* [hyperG](https://cran.r-project.org/web/packages/HyperG/index.html): A package in R for storing and analyzing hypergraphs
