@@ -152,7 +152,7 @@ def clique_motif_matrix(H, index=False):
         return W, rowdict, coldict
     else:
         return W
-    
+
     References
     ----------
     "Higher-order organization of complex networks"

@@ -17,13 +17,18 @@ def empty_hypergraph(create_using=None, default=Hypergraph):
     ----------
     create_using : Hypergraph Instance, Constructor or None
         If None, use the `default` constructor.
-        If a constructor, call it to create an empty graph.
+        If a constructor, call it to create an empty hypergraph.
     default : Hypergraph constructor (optional, default = hg.Hypergraph)
         The constructor to use if create_using is None.
         If None, then hg.Hypergraph is used.
 
-    Example
+    Returns
     -------
+    Hypergraph object
+        An empty hypergraph
+
+    Examples
+    --------
         >>> import hypergraph as hg
         >>> H = hg.empty_hypergraph()
         >>> H.number_of_nodes()

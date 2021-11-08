@@ -132,7 +132,7 @@ def from_hyperedge_dict(d, create_using=None):
     -------
     Hypergraph object
         The constructed hypergraph object
-    
+
     See Also
     --------
     to_hyperedge_dict
@@ -158,7 +158,7 @@ def to_hyperedge_dict(H):
     dict
         A dictionary where the keys are edge IDs and the values
         are lists of nodes specifying the edges.
-    
+
     See Also
     --------
     from_hyperedge_dict
@@ -241,7 +241,7 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
     ------
     HypergraphError
         Raises an error if the specified labels are the wrong dimensions
-    
+
     See Also
     --------
     incidence_matrix

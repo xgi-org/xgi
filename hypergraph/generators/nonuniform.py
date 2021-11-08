@@ -14,9 +14,7 @@ __all__ = [
 
 
 def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
-    """
-    A function to generate an Erdos-Renyi hypergraph as implemented by Mirah Shi and described for
-    bipartite networks by Aksoy et al. in https://doi.org/10.1093/comnet/cnx001
+    """A function to generate an Erdos-Renyi hypergraph
 
     Parameters
     ----------
@@ -34,9 +32,15 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
     Returns
     -------
     Hypergraph object
+        The generated hypergraph
 
-    Example
-    -------
+    References
+    ----------
+    Implemented by Mirah Shi in HyperNetX and described for
+    bipartite networks by Aksoy et al. in https://doi.org/10.1093/comnet/cnx001
+
+    Examples
+    --------
         >>> import hypergraph as hg
         >>> n = 1000
         >>> m = n
@@ -68,25 +72,37 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
 
 
 def chung_lu_hypergraph(k1, k2):
-    """
-    A function to generate an extension of Chung-Lu hypergraph as implemented by Mirah Shi and described for
-    bipartite networks by Aksoy et al. in https://doi.org/10.1093/comnet/cnx001
+    """A function to generate a Chung-Lu hypergraph
 
     Parameters
     ----------
     k1 : dictionary
-        This is a dictionary where the keys are node ids and the values are node degrees.
+        Dictionary where the keys are node ids
+        and the values are node degrees.
     k2 : dictionary
-        This is a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.
+        Dictionary where the keys are edge ids
+        and the values are edge sizes.
 
     Returns
     -------
     Hypergraph object
+        The generated hypergraph
+
+    Warns
+    -----
+    warnings.warn
+        If the sums of the edge sizes and node degrees are not equal, the
+        algorithm still runs, but raises a warning.
 
     Notes
     -----
-    The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.
-    The output currently is a Hypergraph object.
+    The sums of k1 and k2 should be roughly the same. If they are not the same,
+    this function returns a warning but still runs.
+
+    References
+    ----------
+    Implemented by Mirah Shi in HyperNetX and described for
+    bipartite networks by Aksoy et al. in https://doi.org/10.1093/comnet/cnx001
 
     Example
     -------
@@ -137,39 +153,58 @@ def chung_lu_hypergraph(k1, k2):
 
 
 def dcsbm_hypergraph(k1, k2, g1, g2, omega):
-    """
-    A function to generate an extension of DCSBM hypergraph as implemented by Mirah Shi and described for
-    bipartite networks by Larremore et al. in https://doi.org/10.1103/PhysRevE.90.012805
+    """A function to generate a DCSBM hypergraph
 
     Parameters
     ----------
     k1 : dictionary
-        This is a dictionary where the keys are node ids and the values are node degrees.
+        This is a dictionary where the keys are node ids
+        and the values are node degrees.
     k2 : dictionary
-        This is a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.
+        This is a dictionary where the keys are edge ids
+        and the values are edge degrees also known as edge sizes.
     g1 : dictionary
-        This a dictionary where the keys are node ids and the values are the group ids to which the node belongs.
+        This a dictionary where the keys are node ids
+        and the values are the group ids to which the node belongs.
         The keys must match the keys of k1.
     g2 : dictionary
-        This a dictionary where the keys are edge ids and the values are the group ids to which the edge belongs.
+        This a dictionary where the keys are edge ids
+        and the values are the group ids to which the edge belongs.
         The keys must match the keys of k2.
     omega : 2D numpy array
-        This is a matrix with entries which specify the number of edges between a given node community and edge community.
-        The number of rows must match the number of node communities and the number of columns
-        must match the number of edge communities.
+        This is a matrix with entries which specify the number of edges
+        between a given node community and edge community.
+        The number of rows must match the number of node communities
+        and the number of columns must match the number of edge
+        communities.
 
     Returns
     -------
     Hypergraph object
 
+    Warns
+    -----
+    warnings.warn
+        If the sums of the edge sizes and node degrees are not equal, the
+        algorithm still runs, but raises a warning.
+        Also if the sum of the omega matrix does not match the sum of degrees,
+        a warning is raised.
+
     Notes
     -----
-    The sums of k1 and k2 should be the same. If they are not the same, this function returns a warning but still runs.
-    The sum of k1 (and k2) and omega should be the same. If they are not the same, this function returns a warning
-    but still runs and the number of entries in the incidence matrix is determined by the omega matrix.
-    The output currently is a static Hypergraph object. Dynamic hypergraphs are not currently supported.
-    Example
-    -------
+    The sums of k1 and k2 should be the same. If they are not the same,
+    this function returns a warning but still runs. The sum of k1 (and k2)
+    and omega should be the same. If they are not the same, this function
+    returns a warning but still runs and the number of entries in the
+     incidence matrix is determined by the omega matrix.
+
+    References
+    ----------
+    Implemented by Mirah Shi in HyperNetX and described for bipartite networks by
+    Larremore et al. in https://doi.org/10.1103/PhysRevE.90.012805
+
+    Examples
+    --------
         >>> import hypergraph as hg
         >>> import random
         >>> n = 100
