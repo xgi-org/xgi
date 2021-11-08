@@ -2,13 +2,13 @@
 
 Hypergraph is a Python package for the representation, manipulation, and study of the structure, dynamics, and functions of hypergraphs.
 
-* [**Source:**](../../)
-* [**Bug reports:**](../../issues)
-* [**GitHub Discussions:**](../../discussions)
+* [**Source**](../../)
+* [**Bug reports**](../../issues)
+* [**GitHub Discussions**](../../discussions)
 
 ## Table of Contents:
   - [Installation](#installation)
-  - [Usage](#usage)
+  - [Getting Started](#getting-started)
   - [Documentation](#documentation)
   - [Contributing](#contributing)
   - [How to Cite](#how-to-cite)

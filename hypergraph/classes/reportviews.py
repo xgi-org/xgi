@@ -91,8 +91,8 @@ __all__ = [
     "NodeDataView",
     "EdgeView",
     "EdgeDataView",
-    "NodeDegreeView",
-    "EdgeDegreeView",
+    "DegreeView",
+    "EdgeSizeView",
 ]
 
 
@@ -367,7 +367,7 @@ class NodeDataView(Set):
 
 
 # DegreeViews
-class NodeDegreeView:
+class DegreeView:
     """A View class for degree of nodes in a Hypergraph
 
     The functionality is like dict.items() with (node, degree) pairs.
@@ -444,7 +444,7 @@ class NodeDegreeView:
 
 
 # DegreeViews
-class EdgeDegreeView:
+class EdgeSizeView:
     """A View class for degree of edges in a Hypergraph
 
     The functionality is like dict.items() with (node, degree) pairs.

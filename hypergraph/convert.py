@@ -143,7 +143,7 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
         node = nodedict[node]
         edge = edgedict[edge]
         H.add_node_to_edge(edge, node)
-    
+
     return H
 
 

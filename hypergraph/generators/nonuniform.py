@@ -78,7 +78,7 @@ def chung_lu_hypergraph(k1, k2):
         This is a dictionary where the keys are node ids and the values are node degrees.
     k2 : dictionary
         This is a dictionary where the keys are edge ids and the values are edge degrees also known as edge sizes.
-    
+
     Returns
     -------
     Hypergraph object
@@ -87,7 +87,7 @@ def chung_lu_hypergraph(k1, k2):
     -----
     The sums of k1 and k2 should be roughly the same. If they are not the same, this function returns a warning but still runs.
     The output currently is a Hypergraph object.
-    
+
     Example
     -------
         >>> import hypergraph as hg

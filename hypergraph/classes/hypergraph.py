@@ -1,7 +1,7 @@
 """Base class for undirected hypergraphs.
 
 The Hypergraph class allows any hashable object as a node
-and can associate key/value attribute pairs with each undirected edge.
+and can associate key/value attribute pairs with each undirected edge and node.
 
 Multiedges and self-loops are allowed.
 """
@@ -10,8 +10,8 @@ from copy import deepcopy
 from hypergraph.classes.reportviews import (
     NodeView,
     EdgeView,
-    NodeDegreeView,
-    EdgeDegreeView,
+    DegreeView,
+    EdgeSizeView,
 )
 from hypergraph.exception import HypergraphError, HypergraphException
 import hypergraph.convert as convert
@@ -23,6 +23,23 @@ __all__ = ["Hypergraph"]
 
 
 class Hypergraph:
+    """A class to represent undirected hypergraphs
+
+    Attributes
+    ----------
+    name : string
+        The name of the hypergraph
+    shape : tuple
+        The number of nodes and edge in the hypergraph
+    nodes : NodeView
+        The nodes of the hypergraph
+    edges : EdgeView
+        The edges of the hypergraph
+    degree : DegreeView
+        The degrees of the hypergraph nodes
+    edge_size : EdgeSizeView
+        The sizes of the hypergraph edges
+    """
 
     node_dict_factory = dict
     node_attr_dict_factory = dict
@@ -47,6 +64,10 @@ class Hypergraph:
 
         attr : keyword arguments, optional (default=no attributes)
             Attributes to add to the hypergraph as key=value pairs.
+
+        See Also
+        --------
+        convert_to_hypergraph
         """
         self._edge_uid = HypergraphCounter()
 
@@ -70,16 +91,28 @@ class Hypergraph:
 
     @property
     def name(self):
-        """String identifier of the hypergraph.
+        """Get the string identifier of the hypergraph.
 
         This hypergraph attribute appears in the attribute dict H._hypergraph
         keyed by the string `"name"`. as well as an attribute (technically
         a property) `H.name`. This is entirely user controlled.
+
+        Returns
+        -------
+        string
+            The name of the hypergraph
         """
         return self._hypergraph.get("name", "")
 
     @name.setter
     def name(self, s):
+        """Set the name of the hypergraph
+
+        Parameters
+        ----------
+        s : string
+            The desired name of the hypergraph.
+        """
         self._hypergraph["name"] = s
 
     def __str__(self):
@@ -110,19 +143,23 @@ class Hypergraph:
 
         Returns
         -------
-        niter : iterator
+        iterator
             An iterator over all nodes in the hypergraph.
-
-        Examples
-        --------
         """
         return iter(self._node)
 
     def __contains__(self, n):
         """Returns True if n is a node, False otherwise. Use: 'n in H'.
 
-        Examples
-        --------
+        Parameters
+        ----------
+        n : hashable
+            node ID
+
+        Returns
+        -------
+        bool
+            Whether the node exists in the hypergraph.
         """
         try:
             return n in self._node
@@ -134,16 +171,13 @@ class Hypergraph:
 
         Returns
         -------
-        nnodes : int
+        int
             The number of nodes in the hypergraph.
 
         See Also
         --------
         number_of_nodes: identical method
         order: identical method
-
-        Examples
-        --------
         """
         return len(self._node)
 
@@ -152,15 +186,12 @@ class Hypergraph:
 
         Returns
         -------
-        neighbors : list
+        list
            A list of the edges of which the specified node is a part.
 
         Notes
         -----
         H[n] is the same as H.nodes[n]
-
-        Examples
-        --------
         """
         return self._node[n]
 
@@ -170,7 +201,7 @@ class Hypergraph:
 
         Returns
         -------
-        n_nodes, n_edges : tuple
+        tuple
            A tuple of the number of nodes and edges respectively.
 
         """
@@ -186,10 +217,13 @@ class Hypergraph:
 
         Returns
         -------
-        neighbors : set
+        set
             A set of the neighboring nodes
         """
-        return {i for e in self._node[n] for i in self._edge[e]}
+        if n in self._node:
+            return {i for e in self._node[n] for i in self._edge[e]}
+        else:
+            raise HypergraphError("Invalid node ID.")
 
     def add_node(self, node_for_adding, **attr):
         """Add a single node `node_for_adding` and update node attributes.
@@ -272,10 +306,10 @@ class Hypergraph:
             edge_neighbors = self.nodes[n]  # list handles self-loops (allows mutation)
             del self._node[n]
             del self._node_attr[n]
-        except KeyError as e:  # NetworkXError if n not in self
+        except KeyError as e:  # HypergraphError if n not in self
             raise HypergraphError(f"The node {n} is not in the graph.") from e
         for edge in edge_neighbors:
-            self._edge[edge].remove(n)  # remove all edges n-u in graph
+            self._edge[edge].remove(n)
             if len(self._edge[edge]) == 0:
                 del self._edge[edge]
 
@@ -306,7 +340,7 @@ class Hypergraph:
                     if len(self._edge[edge]) == 0:
                         del self._edge_attr[edge]
                         del self._edge[edge]
-            except KeyError as e:  # NetworkXError if n not in self
+            except KeyError as e:
                 pass
 
     @property
@@ -361,12 +395,12 @@ class Hypergraph:
         return nodes
 
     def number_of_nodes(self):
-        """Returns the number of nodes in the graph.
+        """Returns the number of nodes in the hypergraph.
 
         Returns
         -------
-        nnodes : int
-            The number of nodes in the graph.
+        int
+            The number of nodes in the hypergraph.
 
         See Also
         --------
@@ -376,12 +410,12 @@ class Hypergraph:
         return len(self._node)
 
     def order(self):
-        """Returns the number of nodes in the graph.
+        """Returns the number of nodes in the hypergraph.
 
         Returns
         -------
-        nnodes : int
-            The number of nodes in the graph.
+        int
+            The number of nodes in the hypergraph.
 
         See Also
         --------
@@ -391,13 +425,18 @@ class Hypergraph:
         return len(self._node)
 
     def has_node(self, n):
-        """Returns True if the graph contains the node n.
+        """Returns True if the hypergraph contains the node n.
 
         Identical to `n in H`
 
         Parameters
         ----------
         n : node
+
+        Returns
+        -------
+        bool
+            Whether the node exists in the hypergraph
         """
         try:
             return n in self._node
@@ -405,10 +444,8 @@ class Hypergraph:
             return False
 
     def add_edge(self, edge, **attr):
-        """Add an edge between u and v.
-
-        The nodes u and v will be automatically added if they are
-        not already in the graph.
+        """Add an edge to the hypergraph. The universal ID
+        is automatically assigned to the edge.
 
         Edge attributes can be specified with keywords or by directly
         accessing the edge's attribute dictionary. See examples below.
@@ -427,9 +464,12 @@ class Hypergraph:
 
         Notes
         -----
-        Adding an edge that already exists updates the edge data.
+        Currently cannot add empty edges.
         """
-        uid = self._edge_uid()
+        if edge:
+            uid = self._edge_uid()
+        else:
+            raise HypergraphError("Cannot add an empty edge.")
         for node in edge:
             if node not in self._node:
                 if node is None:
@@ -453,8 +493,8 @@ class Hypergraph:
         ----------
         ebunch_to_add : container of edges
             Each edge given in the container will be added to the
-            graph. The edges must be given as 2-tuples (u, v) or
-            3-tuples (u, v, d) where d is a dictionary containing edge data.
+            graph. Each edge must be given as as a container of nodes
+            or a container with the last entry as a dictionary.
         attr : keyword arguments, optional
             Edge data (or labels or objects) can be assigned using
             keyword arguments.
@@ -466,24 +506,39 @@ class Hypergraph:
 
         Notes
         -----
-        Adding the same edge twice will create a multi-edge.
+        Adding the same edge twice will create a multi-edge. Currently
+        cannot add empty edges; the method skips over them.
         """
         for e in ebunch_to_add:
-            self.add_edge(e, **attr)
 
-    def add_node_to_edge(self, edge, node):
+            try:
+                if isinstance(e[-1], dict):
+                    dd = e[-1]
+                    e = e[:-1]
+                else:
+                    dd = {}
+            except:
+                pass
 
-        if edge not in self._edge:
-            self._edge[edge] = [node]
-            self._edge_attr[edge] = self.hyperedge_attr_dict_factory()
-        else:
-            self._edge[edge].append(node)
+            if e:
+                uid = self._edge_uid()
 
-        if node not in self._node:
-            self._node[node] = [edge]
-            self._node_attr[node] = self.node_attr_dict_factory()
-        else:
-            self._node[node].append(edge)
+                for n in e:
+                    if n not in self._node:
+                        if n is None:
+                            raise ValueError("None cannot be a node")
+                        self._node[n] = list()
+                        self._node_attr[n] = self.node_attr_dict_factory()
+                        self._node[n].append(uid)
+
+                try:
+                    self._edge[uid] = list(e)
+                    self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
+                except:
+                    raise HypergraphError("The edge cannot be cast to a list.")
+
+                self._edge_attr[uid].update(attr)
+                self._edge_attr[uid].update(dd)
 
     def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
         """Add weighted edges in `ebunch_to_add` with specified weight attr
@@ -492,8 +547,7 @@ class Hypergraph:
         ----------
         ebunch_to_add : container of edges
             Each edge given in the list or container will be added
-            to the graph. The edges must be given as 3-tuples (u, v, w)
-            where w is a number.
+            to the graph. The edges must be given as containers.
         weight : string, optional (default= 'weight')
             The attribute name for the edge weights to be added.
         attr : keyword arguments, optional (default= no attributes)
@@ -508,10 +562,39 @@ class Hypergraph:
         -----
         Adding the same edge twice creates a multiedge.
         """
-        self.add_edges_from(((edge, {weight: w}) for edge, w in ebunch_to_add), **attr)
+        try:
+            self.add_edges_from(
+                ((edge[:-1], {weight: edge[-1]}) for edge in ebunch_to_add), **attr
+            )
+        except:
+            HypergraphError("Empty or invalid edges specified.")
+
+    def add_node_to_edge(self, edge, node):
+        """Add a node to an edge.
+
+        If the node or edge IDs do not exist, this method creates them.
+
+        Parameters
+        ----------
+        edge : hashable
+            edge ID
+        node : hashable
+            node ID
+        """
+        if edge not in self._edge:
+            self._edge[edge] = [node]
+            self._edge_attr[edge] = self.hyperedge_attr_dict_factory()
+        else:
+            self._edge[edge].append(node)
+
+        if node not in self._node:
+            self._node[node] = [edge]
+            self._node_attr[node] = self.node_attr_dict_factory()
+        else:
+            self._node[node].append(edge)
 
     def remove_edge(self, id):
-        """Remove a hyperedge with a given id.
+        """Remove an edge with a given id.
 
         Parameters
         ----------
@@ -531,6 +614,7 @@ class Hypergraph:
             for node in self.edges[id]:
                 self._node[node].remove(id)
             del self._edge[id]
+            del self._edge_attr[id]
         except KeyError as e:
             raise HypergraphError(f"Edge {id} is not in the graph") from e
 
@@ -541,7 +625,7 @@ class Hypergraph:
         ----------
         ebunch: list or container of hashables
             Each edge id given in the list or container will be removed
-            from the graph.
+            from the hypergraph.
 
         See Also
         --------
@@ -556,71 +640,69 @@ class Hypergraph:
                 for node in self.edges[id]:
                     self._node[node].remove(id)
                 del self._edge[id]
+                del self._edge_attr[id]
             except:
                 pass
 
     def remove_node_from_edge(self, edge, node):
+        """Remove a node from a given edge
+
+        Parameters
+        ----------
+        edge : hashable
+            The edge ID
+        node : hashable
+            The node ID
+
+        Raises
+        ------
+        HypergraphError
+            Raises an error if the user tries to delete nonexistent nodes or edges.
+
+        Notes
+        -----
+        Removes empty edges as a result of removing nodes.
+        """
         try:
             self._edge[edge].remove(node)
             self._node[node].remove(edge)
             if len(self._edge[edge]) == 0:
                 del self._edge[edge]
+                del self._edge_attr[edge]
         except KeyError as e:
             raise HypergraphError(f"Edge or node is not in the hypergraph") from e
 
     def update(self, edges=None, nodes=None):
         """Update the graph using nodes/edges/graphs as input.
 
-        Like dict.update, this method takes a hypergraph as input, adding the
-        graph's nodes and edges to this graph. It can also take two inputs:
-        edges and nodes. Finally it can take either edges or nodes.
+        Like dict.update, this method takes two inputs:
+        edges and nodes.It can take either edges or nodes.
         To specify only nodes the keyword `nodes` must be used.
 
         The collections of edges and nodes are treated similarly to
-        the add_edges_from/add_nodes_from methods. When iterated, they
-        should yield 2-tuples (u, v) or 3-tuples (u, v, datadict).
+        the add_edges_from/add_nodes_from methods.
 
         Parameters
         ----------
-        edges : Hypergraph object, collection of edges, or None
-            The first parameter can be a graph or some edges. If it has
-            attributes `nodes` and `edges`, then it is taken to be a
-            Graph-like object and those attributes are used as collections
-            of nodes and edges to be added to the graph.
-            If the first parameter does not have those attributes, it is
-            treated as a collection of edges and added to the graph.
+        edges : collection of edges, or None
+            The first parameter is a collection of edges and added to the hypergraph.
             If the first argument is None, no edges are added.
         nodes : collection of nodes, or None
             The second parameter is treated as a collection of nodes
-            to be added to the graph unless it is None.
+            to be added to the hypergraph unless it is None.
             If `edges is None` and `nodes is None` an exception is raised.
-            If the first parameter is a Graph, then `nodes` is ignored.
 
         See Also
         --------
-        add_edges_from: add multiple edges to a graph
-        add_nodes_from: add multiple nodes to a graph
+        add_edges_from: add multiple edges to a hypergraph
+        add_nodes_from: add multiple nodes to a hypergraph
         """
-        if edges is not None:
-            if nodes is not None:
-                self.add_nodes_from(nodes)
-                self.add_edges_from(edges)
-            else:
-                # check if edges is a Graph object
-                try:
-                    graph_nodes = edges.nodes
-                    graph_edges = edges.edges
-                except AttributeError:
-                    # edge not Graph-like
-                    self.add_edges_from(edges)
-                else:  # edges is Graph-like
-                    self.add_nodes_from(graph_nodes.data())
-                    self.add_edges_from(graph_edges.data())
-                    self._hypergraph.update(edges.hypergraph)
-        elif nodes is not None:
-            self.add_nodes_from(nodes)
-        else:
+
+        if edges is None and nodes is None:
             raise HypergraphError("update needs nodes or edges input")
+
+        self.add_nodes_from(nodes)
+        self.add_edges_from(edges)
 
     def has_edge(self, id):
         """Returns True if the edge id is in the hypergraph.
@@ -634,7 +716,7 @@ class Hypergraph:
 
         Returns
         -------
-        edge_ind : bool
+        bool
             True if edge is in the hypergraph, False otherwise.
         """
         try:
@@ -706,10 +788,10 @@ class Hypergraph:
             return default
 
     @property
-    def node_degree(self):
-        """A NodeDegreeView for the Hypergraph as H.node_degree or H.node_degree().
+    def degree(self):
+        """A NodeDegreeView for the Hypergraph as H.degree or H.degree().
 
-        The node degree is the number of edges adjacent to the node.
+        The degree is the number of edges adjacent to the node.
         The weighted node degree is the sum of the edge weights for
         edges incident to that node.
 
@@ -729,17 +811,18 @@ class Hypergraph:
         Returns
         -------
         If a single node is requested
-        deg : int
+        int
             Degree of the node
 
         OR if multiple nodes are requested
-        nd_view : A NodeDegreeView object capable of iterating (node, degree) pairs
+        NodeDegreeView object
+            The degrees of the hypergraph capable of iterating (node, degree) pairs
         """
-        return NodeDegreeView(self)
+        return DegreeView(self)
 
     @property
-    def edge_degree(self):
-        """A EdgeDegreeView for the Hypergraph as H.edge_degree or H.edge_degree().
+    def edge_size(self):
+        """A EdgeSizeView for the Hypergraph as H.edge_size or H.edge_size().
 
         The edge degree is the number of nodes in that edge, or the edge size.
         The weighted edge degree is the sum of the node weights for
@@ -761,13 +844,14 @@ class Hypergraph:
         Returns
         -------
         If a single node is requested
-        deg : int
+        int
             Degree of the node
 
         OR if multiple nodes are requested
-        nd_view : An EdgeDegreeView object capable of iterating (edge, degree) pairs
+        EdgeSizeView object
+            The sizes of the hypergraph edges capable of iterating (edge, degree) pairs
         """
-        return EdgeDegreeView(self)
+        return EdgeSizeView(self)
 
     def unique_edge_sizes(self, return_counts=False):
         """A function that returns the unique edge sizes.
@@ -780,16 +864,11 @@ class Hypergraph:
         Returns
         -------
         if return_counts:
-            unique_edge_sizes, counts
+            numpy.ndarray, numpy.ndarray
                 Numpy arrays of the unique edge sizes and the number of each size respectively
         else:
-            unique_edge_sizes
+            numpy.ndarray
                 A numpy array of the unique edge sizes
-        deg : int
-            Degree of the node
-
-        OR if multiple nodes are requested
-        nd_view : An EdgeDegreeView object capable of iterating (edge, degree) pairs
         """
         return np.unique(list(self.edge_degree), return_counts=return_counts)
 
@@ -820,6 +899,17 @@ class Hypergraph:
 
         If `as_view` is True then a view is returned instead of a copy.
 
+        Parameters
+        ----------
+        as_view : bool, optional (default=False)
+            If True, the returned hypergraph view provides a read-only view
+            of the original hypergraph without actually copying any data.
+
+        Returns
+        -------
+        H : Hypergraph
+            A copy of the hypergraph.
+
         Notes
         -----
         All copies reproduce the hypergraph structure, but data attributes
@@ -837,18 +927,6 @@ class Hypergraph:
 
         See the Python copy module for more information on shallow
         and deep copies, https://docs.python.org/3/library/copy.html.
-
-        Parameters
-        ----------
-        as_view : bool, optional (default=False)
-            If True, the returned hypergraph view provides a read-only view
-            of the original hypergraph without actually copying any data.
-
-        Returns
-        -------
-        H : Hypergraph
-            A copy of the hypergraph.
-
         """
         if as_view is True:
             return hg.hypergraphviews.generic_hypergraph_view(self)
@@ -866,7 +944,7 @@ class Hypergraph:
 
         Returns
         -------
-        D : Hypergraph
+        Hypergraph object
             The dual of the hypergraph.
 
         Notes
@@ -977,17 +1055,14 @@ class Hypergraph:
     def number_of_edges(self):
         """Returns the number of edges in the hypergraph.
 
-        Parameters
-        ----------
-
         Returns
         -------
-        nedges : int
+        int
             The number of edges in the hypergraph.
 
         See Also
         --------
-        size
+        number_of_nodes : returns the number of nodes in the hypergraph
         """
         return len(self._edge)
 
@@ -1017,7 +1092,7 @@ class Hypergraph:
 
         See Also
         --------
-        Graph.__iter__
+        Hypergraph.__iter__
 
         Notes
         -----

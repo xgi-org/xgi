@@ -26,8 +26,13 @@ def is_connected(H, s=1):
 
     Returns
     -------
-    is_connected: boolean
+    bool
         Specifies whether the hypergraph is s-connected.
+
+    See Also
+    --------
+    connected_components
+    number_connected_components
 
     Example
     -------
@@ -57,8 +62,13 @@ def connected_components(H, s=1):
 
     Returns
     -------
-    components: iteratble of lists
+    iterable of lists
         A list where each entry is an s-component of the hypergraph.
+
+    See Also
+    --------
+    is_connected
+    number_connected_components
 
     Example
     -------
@@ -88,8 +98,13 @@ def number_connected_components(H, s=1):
 
     Returns
     -------
-    num_components: int
+    int
         Returns the number of s-connected components of a hypergraph.
+
+    See Also
+    --------
+    is_connected
+    connected_components
 
     Example
     -------
@@ -117,9 +132,13 @@ def node_connected_component(H, n, s=1):
     s: int, default: 1
         Specifies the s-connected level
 
+    See Also
+    --------
+    connected_components
+
     Returns
     -------
-    component: list
+    list
         Returns the s-connected component of which the specified node in the
         hypergraph is a part.
 
@@ -149,8 +168,12 @@ def is_connected_bfs(H):
 
     Returns
     -------
-    is_connected: boolean
+    bool
         Specifies whether the hypergraph is s-connected.
+
+    Notes
+    -----
+    This currently does not check for s-connectedness.
 
     Example
     -------
@@ -160,10 +183,6 @@ def is_connected_bfs(H):
         >>> p = 0.01
         >>> H = hg.erdos_renyi_hypergraph(n, m, p)
         >>> print(hg.is_connected(H))
-
-    Notes
-    -----
-    This currently does not check for s-connectedness.
     """
     return len(_plain_bfs(H, random.choice(list(H.nodes)))) == len(H)
 
