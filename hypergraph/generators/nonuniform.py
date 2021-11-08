@@ -181,6 +181,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     Returns
     -------
     Hypergraph object
+        The generated hypergraph
 
     Warns
     -----

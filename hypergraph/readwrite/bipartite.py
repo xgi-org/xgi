@@ -20,9 +20,10 @@ def generate_bipartite_edgelist(H, delimiter=" "):
     delimiter: char, default: space (" ")
         Specifies the delimiter between hyperedge members
 
-    Returns
+    Yields
     -------
     A iterator of strings
+        Each entry is a line to be written to the output file.
     """
     for id in H.edges:
         for node in H.edges[id]:
@@ -30,8 +31,8 @@ def generate_bipartite_edgelist(H, delimiter=" "):
 
 
 def write_bipartite_edgelist(H, path, delimiter=" ", data=True, encoding="utf-8"):
-    """
-    A function to output a file containing a bipartite edge list from a Hypergraph object.
+    """Write a Hypergraph object to a file
+    as a bipartite edgelist.
 
     Parameters
     ----------
@@ -46,13 +47,12 @@ def write_bipartite_edgelist(H, path, delimiter=" ", data=True, encoding="utf-8"
     encoding: string, default: "utf-8"
         Encoding of the file
 
-    Returns
-    -------
-    A file containing a hyperedge list
+    See Also
+    --------
+    read_bipartite_edgelist
 
     Example
     -------
-
         >>> import hypergraph as hg
         >>> n = 1000
         >>> m = n
@@ -75,8 +75,7 @@ def read_bipartite_edgelist(
     data=False,
     encoding="utf-8",
 ):
-    """
-    A function to read a file containing a bipartite edge list and
+    """Read a file containing a bipartite edge list and
     convert it to a Hypergraph object.
 
     Parameters
@@ -87,7 +86,8 @@ def read_bipartite_edgelist(
         The token that denotes comments in the file
     delimiter: char, default: space (" ")
         Specifies the delimiter between hyperedge members
-    create_using:
+    create_using : Hypergraph constructor, optional
+        The hypergraph object to add the data to, by default None
     nodetype: type
         type that the node labels will be cast to
     data: bool, default: False
@@ -98,6 +98,11 @@ def read_bipartite_edgelist(
     Returns
     -------
     A Hypergraph object
+        The loaded hypergraph
+
+    See Also
+    --------
+    write_bipartite_edgelist
 
     Example
     -------
@@ -141,6 +146,7 @@ def parse_bipartite_edgelist(
     Returns
     -------
     A Hypergraph object
+        The loaded hypergraph
     """
     H = hg.empty_hypergraph(create_using)
     for line in lines:
