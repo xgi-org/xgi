@@ -27,13 +27,15 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
 
     Returns
     -------
-    if index is True:
-        return I, rowdict, coldict
-    else:
-        return I
+    numpy.ndarray or scipy csr_matrix
+        The incidence matrix
+    dict
+        The dictionary mapping indices to node IDs, if index is True
+    dict
+        The dictionary mapping indices to edge IDs, if index is True
 
-    Example
-    -------
+    Examples
+    --------
         >>> import hypergraph as hg
         >>> n = 1000
         >>> m = n
@@ -106,8 +108,8 @@ def adjacency_matrix(H, s=1, index=False):
     else:
         return A
 
-    Example
-    -------
+    Examples
+    --------
         >>> import hypergraph as hg
         >>> n = 1000
         >>> m = n
@@ -133,12 +135,7 @@ def adjacency_matrix(H, s=1, index=False):
 
 def clique_motif_matrix(H, index=False):
     """
-    A function to generate a weighted clique motif matrix as described in
-
-    "Higher-order organization of complex networks"
-    by Austin Benson, David Gleich, and Jure Leskovic
-    https://doi.org/10.1126/science.aad9029
-
+    A function to generate a weighted clique motif matrix
     from a Hypergraph object.
 
     Parameters
@@ -146,7 +143,8 @@ def clique_motif_matrix(H, index=False):
     H: Hypergraph object
         The hypergraph of interest
     index: bool, default: False
-        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+        Specifies whether to output dictionaries
+        mapping the node and edge IDs to indices
 
     Returns
     -------
@@ -154,9 +152,15 @@ def clique_motif_matrix(H, index=False):
         return W, rowdict, coldict
     else:
         return W
+    
+    References
+    ----------
+    "Higher-order organization of complex networks"
+    by Austin Benson, David Gleich, and Jure Leskovic
+    https://doi.org/10.1126/science.aad9029
 
-    Example
-    -------
+    Examples
+    --------
         >>> import hypergraph as hg
         >>> n = 1000
         >>> m = n
