@@ -93,50 +93,10 @@ __all__ = [
 class NodeView(Mapping, Set):
     """A NodeView class to act as H.nodes for a Hypergraph
 
-    Parameters
+    Attributes
     ----------
-    hypergraph : Hypergraph hypergraph-like class
-
-    Examples
-    --------
-    >>> H = nx.path_graph(3)
-    >>> NV = H.nodes()
-    >>> 2 in NV
-    True
-    >>> for n in NV:
-    ...     print(n)
-    0
-    1
-    2
-    >>> assert NV & {1, 2, 3} == {1, 2}
-
-    >>> H.add_node(2, color="blue")
-    >>> NV[2]
-    {'color': 'blue'}
-    >>> H.add_node(8, color="red")
-    >>> NDV = H.nodes(data=True)
-    >>> (2, NV[2]) in NDV
-    True
-    >>> for n, dd in NDV:
-    ...     print((n, dd.get("color", "aqua")))
-    (0, 'aqua')
-    (1, 'aqua')
-    (2, 'blue')
-    (8, 'red')
-    >>> NDV[2] == NV[2]
-    True
-
-    >>> NVdata = H.nodes(data="color", default="aqua")
-    >>> (2, NVdata[2]) in NVdata
-    True
-    >>> for n, dd in NVdata:
-    ...     print((n, dd))
-    (0, 'aqua')
-    (1, 'aqua')
-    (2, 'blue')
-    (8, 'red')
-    >>> NVdata[2] == NV[2]  # NVdata gets 'color', NV gets datadict
-    False
+    data : NodeDataView object
+        A NodeDataView of the node attributes
     """
 
     __slots__ = ("_nodes", "_node_attrs")
@@ -261,7 +221,7 @@ class NodeView(Mapping, Set):
 
 
 class NodeDataView(Set):
-    """A DataView class for nodes of a NetworkX Hypergraph
+    """A DataView class for nodes of a Hypergraph
 
     The main use for this class is to iterate through node-data pairs.
     The data can be the entire data-dictionary for each node, or it
@@ -270,12 +230,6 @@ class NodeDataView(Set):
     cases where the data is not hashable. Use with caution.
     Typically, set operations on nodes use NodeView, not NodeDataView.
     That is, they use `H.nodes` instead of `H.nodes(data='foo')`.
-
-    Parameters
-    ==========
-    hypergraph : NetworkX hypergraph-like class
-    data : bool or string (default=False)
-    default : object (default=None)
     """
 
     __slots__ = ("_node_attrs", "_data", "_default")
@@ -361,7 +315,7 @@ class NodeDataView(Set):
 
 # DegreeViews
 class DegreeView:
-    """A View class for degree of nodes in a Hypergraph
+    """A View class for the degree of nodes in a Hypergraph
 
     The functionality is like dict.items() with (node, degree) pairs.
     Additional functionality includes read-only lookup of node degree,
@@ -377,9 +331,6 @@ class DegreeView:
     Notes
     -----
     DegreeView can still lookup any node even if nbunch is specified.
-
-    Examples
-    --------
     """
 
     __slots__ = ("_hypergraph", "_nodes", "_edges", "_edge_attrs", "_weight")
@@ -395,7 +346,7 @@ class DegreeView:
         self._edge_attrs = H._edge_attr
         self._weight = weight
 
-    def __call__(self, nbunch=None, order=None, weight=None):
+    def __call__(self, nbunch=None, weight=None):
         if nbunch is None:
             if weight == self._weight:
                 return self
@@ -454,9 +405,6 @@ class EdgeSizeView:
     Notes
     -----
     DegreeView can still lookup any node even if nbunch is specified.
-
-    Examples
-    --------
     """
 
     __slots__ = ("_hypergraph", "_edges", "_nodes", "_node_attrs", "_weight")
@@ -600,7 +548,7 @@ class EdgeDataView:
 
 # EdgeViews    have set operations and no data reported
 class EdgeView(Set, Mapping):
-    """A EdgeView class for outward edges of a Hypergraph"""
+    """A EdgeView class for the edges of a Hypergraph"""
 
     __slots__ = "_edges"
 
@@ -650,41 +598,7 @@ class EdgeView(Set, Mapping):
         return self._edges[e]
 
     def data(self, data=True, default=None, nbunch=None):
-        """
-        Return a read-only view of edge data.
-
-        Parameters
-        ----------
-        data : bool or edge attribute key
-            If ``data=True``, then the data view maps each edge to a dictionary
-            containing all of its attributes. If `data` is a key in the edge
-            dictionary, then the data view maps each edge to its value for
-            the keyed attribute. In this case, if the edge doesn't have the
-            attribute, the `default` value is returned.
-        default : object, default=None
-            The value used when an edge does not have a specific attribute
-        nbunch : container of nodes, optional (default=None)
-            Allows restriction to edges only involving certain nodes. All edges
-            are considered by default.
-
-        Returns
-        -------
-        dataview
-            Returns an `EdgeDataView` for undirected Hypergraphs, `OutEdgeDataView`
-            for DiHypergraphs, `MultiEdgeDataView` for MultiHypergraphs and
-            `OutMultiEdgeDataView` for MultiDiHypergraphs.
-
-        Notes
-        -----
-        If ``data=False``, returns an `EdgeView` without any edge data.
-
-        See Also
-        --------
-        EdgeDataView
-
-        Examples
-        --------
-        """
+        
         if nbunch is None and data is False:
             return self
         return self.dataview(self, nbunch, data, default)
