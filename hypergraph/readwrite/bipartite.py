@@ -58,7 +58,7 @@ def write_bipartite_edgelist(H, path, delimiter=" ", data=True, encoding="utf-8"
         >>> m = n
         >>> p = 0.01
         >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> hg.write_edgelist(H, "test.csv", delimiter=",")
+        >>> hg.write_bipartite_edgelist(H, "test.csv", delimiter=",")
     """
     with open(path, "wb") as file:
         for line in generate_bipartite_edgelist(H, delimiter):
@@ -107,7 +107,7 @@ def read_bipartite_edgelist(
     Example
     -------
         >>> import hypergraph as hg
-        >>> H = hg.read_edgelist("test.csv", delimiter=",")
+        >>> H = hg.read_bipartite_edgelist("test.csv", delimiter=",")
     """
     with open(path, "rb") as file:
         lines = (

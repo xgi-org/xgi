@@ -19,11 +19,8 @@ def write_hypergraph_json(H, path):
     path: string
         The path of the file to read from
 
-    Returns
-    -------
-
-    Example
-    -------
+    Examples
+    --------
         >>> import hypergraph as hg
         >>> n = 1000
         >>> m = n
@@ -65,9 +62,15 @@ def read_hypergraph_json(path):
     Returns
     -------
     A Hypergraph object
+        The loaded hypergraph
 
-    Example
-    -------
+    Raises
+    ------
+    HypergraphError
+        If the json is not in a format that can be loaded.
+
+    Examples
+    --------
         >>> import hypergraph as hg
         >>> H = hg.read_hypergraph_json("test.json")
     """

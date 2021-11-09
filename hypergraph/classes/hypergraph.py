@@ -204,6 +204,13 @@ class Hypergraph:
         tuple
            A tuple of the number of nodes and edges respectively.
 
+        Examples
+        --------
+        >>> import hypergraph as hg
+        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H.shape
+        (4, 2)
         """
         return len(self._node), len(self._edge)
 
@@ -219,9 +226,19 @@ class Hypergraph:
         -------
         set
             A set of the neighboring nodes
+
+        Examples
+        --------
+        >>> import hypergraph as hg
+        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H.neighbors(1)
+        {2}
+        >>> H.neighbors(2)
+        {1, 3, 4}
         """
         if n in self._node:
-            return {i for e in self._node[n] for i in self._edge[e]}
+            return {i for e in self._node[n] for i in self._edge[e]}.difference({n})
         else:
             raise HypergraphError("Invalid node ID.")
 
@@ -312,6 +329,7 @@ class Hypergraph:
             self._edge[edge].remove(n)
             if len(self._edge[edge]) == 0:
                 del self._edge[edge]
+                del self._edge_attr[edge]
 
     def remove_nodes_from(self, nodes):
         """Remove multiple nodes.
@@ -338,35 +356,23 @@ class Hypergraph:
                     self._edge[edge].remove(n)  # remove all edges n-u in graph
                     # delete empty edges
                     if len(self._edge[edge]) == 0:
-                        del self._edge_attr[edge]
                         del self._edge[edge]
+                        del self._edge_attr[edge]
             except KeyError as e:
                 pass
 
     @property
     def nodes(self):
-        """A NodeView of the Graph as H.nodes or H.nodes().
+        """A NodeView of the Hypergraph as H.nodes or H.nodes().
 
         Can be used as `H.nodes` for data lookup and for set-like operations.
         Can also be used as `H.nodes(data='color', default=None)` to return a
         NodeDataView which reports specific node data but no set operations.
         It presents a dict-like interface as well with `H.nodes.items()`
-        iterating over `(node, nodedata)` 2-tuples and `H.nodes[3]['foo']`
-        providing the value of the `foo` attribute for node `3`. In addition,
+        iterating over `(node, edge_ids)` 2-tuples. In addition,
         a view `H.nodes.data('foo')` provides a dict-like interface to the
         `foo` attribute of each node. `H.nodes.data('foo', default=1)`
         provides a default for nodes that do not have attribute `foo`.
-
-        Parameters
-        ----------
-        data : string or bool, optional (default=False)
-            The node attribute returned in 2-tuple (n, ddict[data]).
-            If True, return entire node attribute dict as (n, ddict).
-            If False, return just the nodes n.
-
-        default : value, optional (default=None)
-            Value used for nodes that don't have the requested attribute.
-            Only relevant if data is not True or False.
 
         Returns
         -------
@@ -406,6 +412,14 @@ class Hypergraph:
         --------
         order: identical method
         __len__: identical method
+
+        Examples
+        --------
+        >>> import hypergraph as hg
+        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H.number_of_nodes()
+        4
         """
         return len(self._node)
 
@@ -421,6 +435,14 @@ class Hypergraph:
         --------
         number_of_nodes: identical method
         __len__: identical method
+
+        Examples
+        --------
+        >>> import hypergraph as hg
+        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H.order()
+        4
         """
         return len(self._node)
 
@@ -437,11 +459,49 @@ class Hypergraph:
         -------
         bool
             Whether the node exists in the hypergraph
+
+        Examples
+        --------
+        >>> import hypergraph as hg
+        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H.has_node(1)
+        True
+        >>> H.has_node(0)
+        False
         """
         try:
             return n in self._node
         except TypeError:
             return False
+
+    def has_edge(self, edge):
+        """Specifies whether an edge appears
+        in the hypergraph as a different ID.
+
+        Parameters
+        ----------
+        H : Hypergraph object
+            The hypergraph of interest
+        edge : list or set
+            A container of hashables that specifies an edge
+
+        Returns
+        -------
+        bool
+            Returns True if the set appears as an edge in the hypergraph.
+
+        Examples
+        --------
+        >>> import hypergraph as hg
+        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H.has_edge([1, 2])
+        True
+        >>> H.has_edge({1, 3})
+        False
+        """
+        return edge in [set(self.edges(e)) for e in self.edges]
 
     def add_edge(self, edge, **attr):
         """Add an edge to the hypergraph. The universal ID
@@ -529,7 +589,7 @@ class Hypergraph:
                             raise ValueError("None cannot be a node")
                         self._node[n] = list()
                         self._node_attr[n] = self.node_attr_dict_factory()
-                        self._node[n].append(uid)
+                    self._node[n].append(uid)
 
                 try:
                     self._edge[uid] = list(e)
@@ -1063,6 +1123,14 @@ class Hypergraph:
         See Also
         --------
         number_of_nodes : returns the number of nodes in the hypergraph
+
+        Examples
+        --------
+        >>> import hypergraph as hg
+        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H.number_of_edges()
+        2
         """
         return len(self._edge)
 

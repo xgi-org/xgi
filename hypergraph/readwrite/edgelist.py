@@ -117,7 +117,9 @@ def write_weighted_edgelist(H, path, delimiter=" ", encoding="utf-8"):
         >>> m = n
         >>> p = 0.01
         >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> hg.write_weighted_edgelist(H, "test.csv", delimiter=",")
+        >>> for edge in H.edges:
+        >>>     H._edge_attr[edge]["weight"] = random.random()
+        >>> hg.write_weighted_edgelist(H, "test_weighted.csv", delimiter=",")
     """
     write_edgelist(H, path, delimiter=delimiter, data=("weight",), encoding=encoding)
 
@@ -160,8 +162,8 @@ def read_edgelist(
     --------
     read_weighted_edgelist
 
-    Example
-    -------
+    Examples
+    --------
         >>> import hypergraph as hg
         >>> H = hg.read_edgelist("test.csv", delimiter=",")
     """
@@ -214,10 +216,11 @@ def read_weighted_edgelist(
     --------
     read_weighted_edgelist
 
-    Example
-    -------
+    Examples
+    --------
         >>> import hypergraph as hg
-        >>> H = hg.read_weighted_edgelist("test.csv", delimiter=",")
+        >>> import random
+        >>> H = hg.read_weighted_edgelist("test_weighted.csv", delimiter=",")
     """
     return read_edgelist(
         path,

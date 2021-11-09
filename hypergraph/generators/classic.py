@@ -29,12 +29,12 @@ def empty_hypergraph(create_using=None, default=Hypergraph):
 
     Examples
     --------
-        >>> import hypergraph as hg
-        >>> H = hg.empty_hypergraph()
-        >>> H.number_of_nodes()
-        0
-        >>> H.number_of_edges()
-        0
+    >>> import hypergraph as hg
+    >>> H = hg.empty_hypergraph()
+    >>> H.number_of_nodes()
+    0
+    >>> H.number_of_edges()
+    0
     """
     if create_using is None:
         H = default()

@@ -1,7 +1,6 @@
 """
 View Classes provide node, edge and degree "views" of a hypergraph.
 
-Views for nodes, edges and degree are provided for all base hypergraph classes.
 A view means a read-only object that is quick to create, automatically
 updated when the hypergraph changes, and provides basic access like `n in V`,
 `for n in V`, `V[n]` and sometimes set operations.
@@ -37,52 +36,46 @@ DegreeView
 ==========
 
     `V = H.degree` allows iteration over (node, degree) pairs as well
-    as lookup: `deg=V[n]`. There are many flavors of DegreeView
-    for In/Out/Directed/Multi. For Directed Hypergraphs, `H.degree`
-    counts both in and out going edges. `H.out_degree` and
-    `H.in_degree` count only specific directions.
-    Weighted degree using edge data attributes is provide via
-    `V = H.degree(weight='attr_name')` where any string with the
-    attribute name can be used. `weight=None` is the default.
+    as lookup: `deg=V[n]`. Weighted degree using edge data attributes
+    is provided via `V = H.degree(weight='attr_name')` where any string
+    with the attribute name can be used. `weight=None` is the default.
     No set operations are implemented for degrees, use NodeView.
 
     The argument `nbunch` restricts iteration to nodes in nbunch.
-    The DegreeView can still lookup any node even if nbunch is specified.
+    The DegreeView can still look up any node even if nbunch is specified.
+
+EdgeSizeView
+==========
+
+    `V = H.edge_size` allows iteration over (edge, size) pairs as well
+    as lookup: `size=V[e]`. Weighted edge size using node data attributes
+    is provided via `V = H.edge_size(weight='attr_name')` where any string
+    with the attribute name can be used. `weight=None` is the default.
+    No set operations are implemented for edge size, use EdgeView.
+
+    The argument `nbunch` restricts iteration to nodes in nbunch.
+    The EdgeSizeView can still look up any node even if nbunch is specified.
 
 EdgeView
 ========
 
     `V = H.edges` or `V = H.edges()` allows iteration over edges as well as
-    `e in V`, set operations and edge data lookup `dd = H.edges[2, 3]`.
-    Iteration is over 2-tuples `(u, v)` for Hypergraph/DiHypergraph. For multihypergraphs
-    edges 3-tuples `(u, v, key)` are the default but 2-tuples can be obtained
-    via `V = H.edges(keys=False)`.
+    `e in V`, set operations and edge data lookup by edge ID `dd = H.edges[2]`.
+    Iteration is over edge IDs for Hypergraph.
 
-    Set operations for directed hypergraphs treat the edges as a set of 2-tuples.
-    For undirected hypergraphs, 2-tuples are not a unique representation of edges.
-    So long as the set being compared to contains unique representations
-    of its edges, the set operations will act as expected. If the other
-    set contains both `(0, 1)` and `(1, 0)` however, the result of set
-    operations may contain both representations of the same edge.
+    Set operations are currently performed by id, not by set equivalence.
+    This may be in future functionality. As it stands, however, the same edge
+    can be added more than once using different IDs
 
 EdgeDataView
 ============
 
     Edge data can be reported using an EdgeDataView typically created
     by calling an EdgeView: `DV = H.edges(data='weight', default=1)`.
-    The EdgeDataView allows iteration over edge tuples, membership checking
-    but no set operations.
-
-    Iteration depends on `data` and `default` and for multihypergraph `keys`
-    If `data is False` (the default) then iterate over 2-tuples `(u, v)`.
-    If `data is True` iterate over 3-tuples `(u, v, datadict)`.
-    Otherwise iterate over `(u, v, datadict.get(data, default))`.
-    For Multihypergraphs, if `keys is True`, replace `u, v` with `u, v, key`
-    to create 3-tuples and 4-tuples.
+    The EdgeDataView allows iteration over edge ids.
 
     The argument `nbunch` restricts edges to those incident to nodes in nbunch.
 """
-from copy import deepcopy
 from collections.abc import Mapping, Set
 import hypergraph as hg
 

@@ -37,8 +37,8 @@ def read_incidence_matrix(
     --------
     write_incidence_matrix
 
-    Example
-    -------
+    Examples
+    --------
         >>> import hypergraph as hg
         >>> H = hg.read_incidence_matrix("test.csv", delimiter=",")
     """
@@ -67,8 +67,8 @@ def write_incidence_matrix(H, path, delimiter=" ", encoding="utf-8"):
     --------
     read_incidence_matrix
 
-    Example
-    -------
+    Examples
+    --------
         >>> import hypergraph as hg
         >>> n = 1000
         >>> m = n

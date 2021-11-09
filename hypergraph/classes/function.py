@@ -2,8 +2,6 @@
 """
 
 from collections import Counter
-from itertools import chain
-import numpy as np
 import hypergraph as hg
 from hypergraph.exception import HypergraphError
 
@@ -15,6 +13,7 @@ __all__ = [
     "degree_histogram",
     "number_of_nodes",
     "number_of_edges",
+    "has_edge",
     "freeze",
     "is_frozen",
     "create_empty_copy",
@@ -38,8 +37,45 @@ def nodes(H):
     -------
     NodeView object
         The nodes of the hypergraph
+
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.nodes(H)
+    NodeView([1, 2, 3, 4])
     """
     return H.nodes
+
+
+def has_edge(H, edge):
+    """Specifies whether an edge appears
+    in the hypergraph as a different ID.
+
+    Parameters
+    ----------
+    H : Hypergraph object
+        The hypergraph of interest
+    edge : list or set
+        A container of hashables that specifies an edge
+
+    Returns
+    -------
+    bool
+        Returns True if the set appears as an edge in the hypergraph.
+
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.has_edge(H, [1, 2])
+    True
+    >>> hg.has_edge(H, [1, 3])
+    False
+    """
+    return edge in [set(H.edges(e)) for e in H.edges]
 
 
 def edges(H, nbunch=None):
@@ -58,6 +94,12 @@ def edges(H, nbunch=None):
     -------
     EdgeView object
         The edges of a hypergraph
+
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.edges(H)
+    EdgeView([0, 1])
     """
     return H.edges(nbunch)
 
@@ -76,6 +118,16 @@ def neighbors(H, n):
     -------
     set
         The neighbors of that node
+
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.neighbors(H, 1)
+    {2}
+    >>> hg.neighbors(H, 2)
+    {1, 3, 4}
     """
     return H.neighbors(n)
 
@@ -97,6 +149,14 @@ def degree(H, nbunch=None, weight=None):
     -------
     DegreeView object
         The degrees of the hypergraph
+
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.degree(H)
+    DegreeView({1 : 1, 2 : 2, 3 : 1, 4 : 1})
     """
     return H.degree(nbunch, weight)
 
@@ -113,6 +173,14 @@ def number_of_nodes(H):
     -------
     int
         number of nodes in the hypergraph
+
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.number_of_nodes(H)
+    4
     """
     return H.number_of_nodes()
 
@@ -129,6 +197,14 @@ def number_of_edges(H):
     -------
     int
         number of edges in the hypergraph
+
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.number_of_edges(H)
+    2
     """
     return H.number_of_edges()
 
@@ -151,6 +227,14 @@ def degree_histogram(H):
     -----
     Note: the bins are width one, hence len(list) can be large
     (Order(number_of_edges))
+
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.degree_histogram(H)
+    [0, 3, 1]
     """
     counts = Counter(d for n, d in H.degree())
     return [counts.get(i, 0) for i in range(max(counts) + 1)]
@@ -163,6 +247,15 @@ def frozen(*args, **kwargs):
     ------
     hg.HypergraphError
         Raises error when user tries to modify the hypergraph
+
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.freeze(H)
+    >>> H.add_node(5)
+    HypergraphError: "Frozen hypergraph can't be modified"
     """
     raise hg.HypergraphError("Frozen hypergraph can't be modified")
 
@@ -186,6 +279,14 @@ def freeze(H):
     frozen : Method that raises an error when a user tries to modify the hypergraph
     is_frozen : Check whether a hypergraph is frozen
 
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.freeze(H)
+    >>> H.add_node(5)
+    HypergraphError: "Frozen hypergraph can't be modified"
     """
     H.add_node = frozen
     H.add_nodes_from = frozen
@@ -219,6 +320,15 @@ def is_frozen(H):
     See Also
     --------
     freeze : A method to prevent a hypergraph from being modified.
+
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.freeze(H)
+    >>> hg.is_frozen(H)
+    True
     """
     try:
         return H.frozen
@@ -246,6 +356,17 @@ def create_empty_copy(H, with_data=True):
     --------
     is_empty
     empty_hypergraph
+
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> H_copy = hg.creat_empty_copy(H)
+    >>> H_copy.nodes
+    NodeView([1, 2, 3, 4])
+    >>> H_copy.edges
+    EdgeView([])
     """
     H = H.__class__()
     H.add_nodes_from(H.nodes(data=with_data))
@@ -434,5 +555,13 @@ def is_empty(H):
     --------
     create_empty_copy
     empty_hypergraph
+
+    Examples
+    --------
+    >>> import hypergraph as hg
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = hg.Hypergraph(hyperedge_list)
+    >>> hg.is_empty(H)
+    False
     """
     return len(H.edges) == 0
