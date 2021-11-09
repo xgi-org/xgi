@@ -120,8 +120,8 @@ class Hypergraph:
 
         Returns
         -------
-        info : string
-            Graph information as provided by `nx.info`
+        string
+            Hypergraph information
 
         Examples
         --------

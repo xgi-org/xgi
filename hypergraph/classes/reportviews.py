@@ -102,46 +102,145 @@ class NodeView(Mapping, Set):
     __slots__ = ("_nodes", "_node_attrs")
 
     def __getstate__(self):
+        """Function that allows pickling of the nodes (write)
+
+        Returns
+        -------
+        dict of dict
+            The keys access the nodes and their attributes respectively
+            and the values are dictionarys from the Hypergraph class.
+        """
         return {"_nodes": self._nodes, "_node_attrs": self._node_attrs}
 
     def __setstate__(self, state):
+        """Function that allows pickling of the nodes (read)
+
+        Parameters
+        ----------
+        state : dict of dict
+            The keys access the nodes and their attributes respectively
+            and the values are dictionarys from the Hypergraph class.
+        """
         self._nodes = state["_nodes"]
         self._node_attrs = state["_node_attrs"]
 
     def __init__(self, hypergraph):
+        """Initialize the NodeView with a hypergraph
+
+        Parameters
+        ----------
+        hypergraph : Hypergraph object
+            The hypergraph of interest
+        """
         self._nodes = hypergraph._node
         self._node_attrs = hypergraph._node_attr
 
     # Mapping methods
     def __len__(self):
+        """Return the number of nodes
+
+        Returns
+        -------
+        int
+            Number of nodes
+        """
         return len(self._nodes)
 
     def __iter__(self):
+        """Returns an iterator over the node IDs.
+
+        Returns
+        -------
+        iterator of hashables
+            Each entry is a node in the hypergraph.
+        """
         return iter(self._nodes)
 
     def __getitem__(self, n):
+        """Get the edges of which the node is a member.
+
+        Identical to __call__, members
+
+        Parameters
+        ----------
+        n : hashable
+            node ID
+
+        Returns
+        -------
+        list
+            A list of the edge IDs of which the node is a part.
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the node does not exist in the hypergraph.
+
+        See Also
+        --------
+        __call__
+        members
+        """
         if isinstance(n, slice):
             raise hg.HypergraphError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
             )
+        elif n not in self._nodes:
+            raise hg.HypergraphError(f"The node {n} is not in the hypergraph")
+
         return self._nodes[n]
 
     # Set methods
     def __contains__(self, n):
+        """Checks whether the node is in the hypergraph
+
+        Parameters
+        ----------
+        n : hashable
+            The ID of a node
+
+        Returns
+        -------
+        bool
+            True if the node is in the hypergraph, False otherwise.
+        """
         return n in self._nodes
 
-    @classmethod
-    def _from_iterable(cls, it):
-        return set(it)
-
-    # DataView method
     def __call__(self, n):
+        """Handles calling the nodes, i.e. H.nodes(n).
+
+        Identical to __getitem__, members
+
+        Parameters
+        ----------
+        n : hashable
+            node ID
+
+        Returns
+        -------
+        list
+            A list of the edge IDs of which the node is a part.
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the node does not exist in the hypergraph.
+
+        See Also
+        --------
+        __getitem__
+        members
+        """
         if isinstance(n, slice):
             raise hg.HypergraphError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
             )
+        elif n not in self._nodes:
+            raise hg.HypergraphError(f"The node {n} is not in the hypergraph")
         return self._nodes[n]
 
     def data(self, data=True, default=None):
@@ -211,12 +310,57 @@ class NodeView(Mapping, Set):
         return NodeDataView(self._node_attrs, data, default)
 
     def __str__(self):
+        """Returns a string of the list of node IDs.
+
+        Returns
+        -------
+        str
+            A string of the list of node IDs.
+        """
         return str(list(self))
 
     def __repr__(self):
+        """Returns a summary of the class
+
+        Returns
+        -------
+        str
+            The class name with the node IDs.
+        """
         return f"{self.__class__.__name__}({tuple(self)})"
 
     def members(self, n):
+        """Handles calling the nodes, i.e. H.nodes(n).
+
+        Identical to __getitem__, __call__
+
+        Parameters
+        ----------
+        n : hashable
+            node ID
+
+        Returns
+        -------
+        list
+            A list of the edge IDs of which the node is a part.
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the node does not exist in the hypergraph.
+
+        See Also
+        --------
+        __getitem__
+        """
+        if isinstance(n, slice):
+            raise hg.HypergraphError(
+                f"{type(self).__name__} does not support slicing, "
+                f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
+            )
+        elif n not in self._nodes:
+            raise hg.HypergraphError(f"The node {n} is not in the hypergraph")
         return self._nodes[n]
 
 
@@ -235,6 +379,14 @@ class NodeDataView(Set):
     __slots__ = ("_node_attrs", "_data", "_default")
 
     def __getstate__(self):
+        """Function that allows pickling of the node data (write)
+
+        Returns
+        -------
+        dict of dict
+            The keys access the node attributes, the data key, and the default value respectively
+            and the values are a dictionary, a hashable, and a hashable respectively.
+        """
         return {
             "_node_attrs": self._node_attrs,
             "_data": self._data,
@@ -242,29 +394,58 @@ class NodeDataView(Set):
         }
 
     def __setstate__(self, state):
+        """Function that allows pickling of the node data (read)
+
+        Parameters
+        ----------
+        state : dict of dict
+            The keys access the node attributes, the data key, and the default value respectively
+            and the values are a dictionary, a hashable, and a hashable respectively.
+        """
         self._node_attrs = state["_node_attrs"]
         self._data = state["_data"]
         self._default = state["_default"]
 
-    def __init__(self, node_attrs, data=False, default=None):
+    def __init__(self, node_attrs, data=True, default=None):
+        """Initialize the NodeDataView object
+
+        Parameters
+        ----------
+        node_attrs : dict
+            The dictionary of attributes with node IDs as keys
+            and dictionaries as values
+        data : bool or hashable, optional
+            Whether or not to return all the data
+            or the key for the attribute, by default True
+        default : anything, optional
+            The value that should be returned if
+            the key value doesn't exist, by default None
+        """
         self._node_attrs = node_attrs
         self._data = data
         self._default = default
 
-    @classmethod
-    def _from_iterable(cls, it):
-        try:
-            return set(it)
-        except TypeError as err:
-            if "unhashable" in str(err):
-                msg = " : Could be b/c data=True or your values are unhashable"
-                raise TypeError(str(err) + msg) from err
-            raise
-
     def __len__(self):
+        """Returns the number of nodes
+
+        Returns
+        -------
+        int
+            Number of nodes
+        """
         return len(self._node_attrs)
 
     def __iter__(self):
+        """Returns an iterator over node IDs
+        or node ID, value pairs if the data
+        keyword arg is not False.
+
+        Returns
+        -------
+        iterator
+            Iterator over node IDs (data=False) or node ID, value
+            pairs (else).
+        """
         data = self._data
         if data is False:
             return iter(self._node_attrs)
@@ -276,18 +457,229 @@ class NodeDataView(Set):
         )
 
     def __contains__(self, n):
+        """Checks whether a node ID are in a
+        hypergraph.
+
+        Parameters
+        ----------
+        n : hashable
+            node ID
+
+        Returns
+        -------
+        bool
+            Whether the node is the hypergraph.
+        """
+        return n in self._node_attrs
+
+    def __getitem__(self, n):
+        """Get the data from a node.
+
+        Parameters
+        ----------
+        n : hashable
+            Node ID
+
+        Returns
+        -------
+        dict
+            empty dictionary if False, data dictionary if True,
+            and a dictionary with one key if the key is specified.
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the node does not exist in the hypergraph.
+        """
+        if isinstance(n, slice):
+            raise hg.HypergraphError(
+                f"{type(self).__name__} does not support slicing, "
+                f"try list(H.nodes.data())[{n.start}:{n.stop}:{n.step}]"
+            )
+        elif n not in self._data:
+            raise hg.HypergraphError(f"The node {n} is not in the hypergraph")
+
+        ddict = self._node_attrs[n]
+        data = self._data
+        if data is False:
+            return dict()
+        elif data is True:
+            return ddict
+        return {data : ddict[data]} if data in ddict else {data : self._default}
+
+    def __str__(self):
+        """Returns a string listing the node IDs.
+
+        Returns
+        -------
+        str
+            A string listing the node IDs.
+        """
+        return str(list(self))
+
+    def __repr__(self):
+        """Controls what is displayed when calling repr(H.nodes.data)
+
+        Returns
+        -------
+        str
+            A string with the class name, nodes, and data.
+        """
+        name = self.__class__.__name__
+        if self._data is False:
+            return f"{name}({tuple(self)})"
+        if self._data is True:
+            return f"{name}({dict(self)})"
+        return f"{name}({dict(self)}, data={self._data!r})"
+
+
+# EdgeViews have set operations and no data reported
+class EdgeView(Set, Mapping):
+    """A EdgeView class for the edges of a Hypergraph"""
+
+    __slots__ = "_edges"
+
+    def __getstate__(self):
+        """Function that allows pickling of the edges (write)
+
+        Returns
+        -------
+        dict of dict
+            The keys access the edges and the value is
+            a dictionary of the hypergraph "_edge" dictionary.
+        """
+        return {"_edges": self._edges}
+
+    def __setstate__(self, state):
+        """Function that allows pickling of the edges (read)
+
+        Parameters
+        ----------
+        state : dict of dict
+            The keys access the edges and the value is
+            a dictionary of the hypergraph "_edge" dictionary.
+        """
+        self._edges = state["_edges"]
+
+    def __init__(self, H):
+        self._edges = H._edge
+
+    # Set methods
+    def __len__(self):
+        return len(self._edges)
+
+    def __iter__(self):
+        return iter(self._edges)
+
+    def __contains__(self, e):
         try:
-            node_in = n in self._node_attrs
+            return self._edges[e]
+        except KeyError:
+            return False
+
+    # get edge members
+    def __getitem__(self, e):
+        if isinstance(e, slice):
+            raise hg.HypergraphError(
+                f"{type(self).__name__} does not support slicing, "
+                f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
+            )
+        return self._edges[e]
+
+    # get edge members
+    def __call__(self, e):
+        if isinstance(e, slice):
+            raise hg.HypergraphError(
+                f"{type(self).__name__} does not support slicing, "
+                f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
+            )
+        return self._edges[e]
+
+    def members(self, e):
+        return self._edges[e]
+
+    def data(self, data=True, default=None, nbunch=None):
+
+        if nbunch is None and data is False:
+            return self
+        return EdgeDataView(self, nbunch, data, default)
+
+    # String Methods
+    def __str__(self):
+        return str(list(self))
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({list(self)})"
+
+
+# EdgeDataViews
+class EdgeDataView:
+    """EdgeDataView for edges of Hypergraph"""
+
+    __slots__ = ("_edge_attrs", "_data", "_default")
+
+    def __getstate__(self):
+        """Function that allows pickling of the edge data (write)
+
+        Returns
+        -------
+        dict of dict
+            The keys access the edge attributes, the data key, and the default value respectively
+            and the values are a dictionary, a hashable, and a hashable respectively.
+        """
+        self._n
+        return {
+            "_edge_attrs": self._edge_attrs,
+            "_data": self._data,
+            "_default": self._default,
+        }
+
+    def __setstate__(self, state):
+        """Function that allows pickling of the edge data (read)
+
+        Parameters
+        ----------
+        state : dict of dict
+            The keys access the edge attributes, the data key, and the default value respectively
+            and the values are a dictionary, a hashable, and a hashable respectively.
+        """
+        self._edge_attrs = state["_edge_attrs"]
+        self._data = state["_data"]
+        self._default = state["_default"]
+
+    def __init__(self, edgedict, data=False, default=None):
+        self._edge_attrs = edgedict
+        self._data = data
+        self._default = default
+
+    def __len__(self):
+        return len(self._edge_attrs)
+
+    def __iter__(self):
+        data = self._data
+        if data is False:
+            return iter(self._edge_attrs)
+        if data is True:
+            return iter(self._edge_attrs.items())
+        return (
+            (n, dd[data] if data in dd else self._default)
+            for n, dd in self._edge_attrs.items()
+        )
+
+    def __contains__(self, n):
+        try:
+            edge_in = n in self._edge_attrs
         except TypeError:
             n, d = n
-            return n in self._node_attrs and self[n] == d
-        if node_in is True:
-            return node_in
+            return n in self._edge_attrs and self[n] == d
+        if edge_in is True:
+            return edge_in
         try:
             n, d = n
         except (TypeError, ValueError):
             return False
-        return n in self._node_attrs and self[n] == d
+        return n in self._edge_attrs and self[n] == d
 
     def __getitem__(self, n):
         if isinstance(n, slice):
@@ -295,7 +687,7 @@ class NodeDataView(Set):
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes.data())[{n.start}:{n.stop}:{n.step}]"
             )
-        ddict = self._node_attrs[n]
+        ddict = self._edge_attrs[n]
         data = self._data
         if data is False or data is True:
             return ddict
@@ -459,153 +851,3 @@ class EdgeSizeView:
 
     def __repr__(self):
         return f"{self.__class__.__name__}({dict(self)})"
-
-
-# EdgeDataViews
-class EdgeDataView:
-    """EdgeDataView for edges of Hypergraph"""
-
-    __slots__ = ("_edge_attrs", "_data", "_default")
-
-    def __getstate__(self):
-        return {
-            "_edge_attrs": self._edge_attrs,
-            "_data": self._data,
-            "_default": self._default,
-        }
-
-    def __setstate__(self, state):
-        self._edge_attrs = state["_edge_attrs"]
-        self._data = state["_data"]
-        self._default = state["_default"]
-
-    def __init__(self, edgedict, data=False, default=None):
-        self._edge_attrs = edgedict
-        self._data = data
-        self._default = default
-
-    @classmethod
-    def _from_iterable(cls, it):
-        try:
-            return set(it)
-        except TypeError as err:
-            if "unhashable" in str(err):
-                msg = " : Could be b/c data=True or your values are unhashable"
-                raise TypeError(str(err) + msg) from err
-            raise
-
-    def __len__(self):
-        return len(self._edge_attrs)
-
-    def __iter__(self):
-        data = self._data
-        if data is False:
-            return iter(self._edge_attrs)
-        if data is True:
-            return iter(self._edge_attrs.items())
-        return (
-            (n, dd[data] if data in dd else self._default)
-            for n, dd in self._edge_attrs.items()
-        )
-
-    def __contains__(self, n):
-        try:
-            edge_in = n in self._edge_attrs
-        except TypeError:
-            n, d = n
-            return n in self._edge_attrs and self[n] == d
-        if edge_in is True:
-            return edge_in
-        try:
-            n, d = n
-        except (TypeError, ValueError):
-            return False
-        return n in self._edge_attrs and self[n] == d
-
-    def __getitem__(self, n):
-        if isinstance(n, slice):
-            raise hg.HypergraphError(
-                f"{type(self).__name__} does not support slicing, "
-                f"try list(H.nodes.data())[{n.start}:{n.stop}:{n.step}]"
-            )
-        ddict = self._edge_attrs[n]
-        data = self._data
-        if data is False or data is True:
-            return ddict
-        return ddict[data] if data in ddict else self._default
-
-    def __str__(self):
-        return str(list(self))
-
-    def __repr__(self):
-        name = self.__class__.__name__
-        if self._data is False:
-            return f"{name}({tuple(self)})"
-        if self._data is True:
-            return f"{name}({dict(self)})"
-        return f"{name}({dict(self)}, data={self._data!r})"
-
-
-# EdgeViews    have set operations and no data reported
-class EdgeView(Set, Mapping):
-    """A EdgeView class for the edges of a Hypergraph"""
-
-    __slots__ = "_edges"
-
-    def __getstate__(self):
-        return {"_edges": self._edges}
-
-    def __setstate__(self, state):
-        self._graph = G = state["_edges"]
-
-    dataview = EdgeDataView
-
-    def __init__(self, H):
-        self._edges = H._edge
-
-    # Set methods
-    def __len__(self):
-        return len(self._edges)
-
-    def __iter__(self):
-        return iter(self._edges)
-
-    def __contains__(self, e):
-        try:
-            return self._edges[e]
-        except KeyError:
-            return False
-
-    # get edge members
-    def __getitem__(self, e):
-        if isinstance(e, slice):
-            raise hg.HypergraphError(
-                f"{type(self).__name__} does not support slicing, "
-                f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
-            )
-        return self._edges[e]
-
-    # get edge members
-    def __call__(self, e):
-        if isinstance(e, slice):
-            raise hg.HypergraphError(
-                f"{type(self).__name__} does not support slicing, "
-                f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
-            )
-        return self._edges[e]
-
-    def members(self, e):
-        return self._edges[e]
-
-    def data(self, data=True, default=None, nbunch=None):
-        
-        if nbunch is None and data is False:
-            return self
-        return self.dataview(self, nbunch, data, default)
-
-    # String Methods
-    def __str__(self):
-        return str(list(self))
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({list(self)})"
