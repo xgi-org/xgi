@@ -898,7 +898,7 @@ class EdgeDataView:
             return dict()
         elif data is True:
             return ddict
-        return {data : ddict[data]} if data in ddict else {data : self._default}
+        return {data: ddict[data]} if data in ddict else {data: self._default}
 
     def __str__(self):
         """Return a string of the edge IDs
@@ -1078,7 +1078,7 @@ class EdgeSizeView:
     __slots__ = ("_hypergraph", "_edges", "_nodes", "_node_attrs", "_weight")
 
     def __init__(self, H, nbunch=None, weight=None):
-        """Initialize 
+        """Initialize
 
         Parameters
         ----------

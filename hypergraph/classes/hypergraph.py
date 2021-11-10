@@ -790,34 +790,20 @@ class Hypergraph:
 
         edges(self, nbunch=None, data=False, default=None)
 
-        The EdgeView provides set-like operations on the edge-tuples
+        The EdgeView provides set-like operations on the edge IDs
         as well as edge attribute lookup. When called, it also provides
         an EdgeDataView object which allows control of access to edge
         attributes (but does not provide set-like operations).
-        Hence, `H.edges[u, v]['color']` provides the value of the color
-        attribute for edge `(u, v)` while
-        `for (u, v, c) in H.edges.data('color', default='red'):`
-        iterates through all the edges yielding the color attribute
-        with default `'red'` if no color attribute exists.
 
         Parameters
         ----------
-        nbunch : single node, container, or all nodes (default= all nodes)
-            The view will only report edges incident to these nodes.
-        data : string or bool, optional (default=False)
-            The edge attribute returned in 3-tuple (u, v, ddict[data]).
-            If True, return edge attribute dict in 3-tuple (u, v, ddict).
-            If False, return 2-tuple (u, v).
-        default : value, optional (default=None)
-            Value used for edges that don't have the requested attribute.
-            Only relevant if data is not True or False.
+        e : hashable or None (default = None)
+            The edge ID to access
 
         Returns
         -------
         edges : EdgeView
-            A view of edge attributes, usually it iterates over (u, v)
-            or (u, v, d) tuples of edges, but can also be used for
-            attribute lookup as `edges[u, v]['foo']`.
+            A view of edges in the hypergraph.
 
         Notes
         -----
@@ -833,9 +819,10 @@ class Hypergraph:
 
         Parameters
         ----------
-        u, v : nodes
+        id : hashable
+            edge ID
         default:  any Python object (default=None)
-            Value to return if the edge (u, v) is not found.
+            Value to return if the edge ID is not found.
 
         Returns
         -------
@@ -843,7 +830,7 @@ class Hypergraph:
             The edge attribute dictionary.
         """
         try:
-            return self.edges.data[id]
+            return self.edges.data(id, default=default)
         except KeyError:
             return default
 
@@ -871,11 +858,11 @@ class Hypergraph:
         Returns
         -------
         If a single node is requested
-        int
+        float or int
             Degree of the node
 
         OR if multiple nodes are requested
-        NodeDegreeView object
+        DegreeView object
             The degrees of the hypergraph capable of iterating (node, degree) pairs
         """
         return DegreeView(self)
@@ -893,23 +880,23 @@ class Hypergraph:
 
         Parameters
         ----------
-        nbunch : single node, container, or all nodes (default= all nodes)
-            The view will only report edges incident to these nodes.
+        nbunch : single edge, container, or all edges (default= all edges)
+            The view will only report sizes of these edges.
 
         weight : string or None, optional (default=None)
-           The name of an edge attribute that holds the numerical value used
-           as a weight.  If None, then each edge has weight 1.
-           The degree is the sum of the edge weights adjacent to the node.
+           The name of an node attribute that holds the numerical value used
+           as a weight.  If None, then each node has weight 1.
+           The size is the sum of the node weights adjacent to the edge.
 
         Returns
         -------
-        If a single node is requested
+        If a single edge is requested
         int
-            Degree of the node
+            size of the edge.
 
-        OR if multiple nodes are requested
+        OR if multiple edges are requested
         EdgeSizeView object
-            The sizes of the hypergraph edges capable of iterating (edge, degree) pairs
+            The sizes of the hypergraph edges capable of iterating (edge, size) pairs
         """
         return EdgeSizeView(self)
 
