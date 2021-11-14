@@ -1,7 +1,6 @@
 """
 View Classes provide node, edge and degree "views" of a hypergraph.
 
-Views for nodes, edges and degree are provided for all base hypergraph classes.
 A view means a read-only object that is quick to create, automatically
 updated when the hypergraph changes, and provides basic access like `n in V`,
 `for n in V`, `V[n]` and sometimes set operations.
@@ -33,56 +32,50 @@ NodeDataView
     `(n, {'color': 'red'}) in VD`. DataViews allow set operations when
     data attributes are hashable.
 
-DegreeView
-==========
-
-    `V = H.degree` allows iteration over (node, degree) pairs as well
-    as lookup: `deg=V[n]`. There are many flavors of DegreeView
-    for In/Out/Directed/Multi. For Directed Hypergraphs, `H.degree`
-    counts both in and out going edges. `H.out_degree` and
-    `H.in_degree` count only specific directions.
-    Weighted degree using edge data attributes is provide via
-    `V = H.degree(weight='attr_name')` where any string with the
-    attribute name can be used. `weight=None` is the default.
-    No set operations are implemented for degrees, use NodeView.
-
-    The argument `nbunch` restricts iteration to nodes in nbunch.
-    The DegreeView can still lookup any node even if nbunch is specified.
-
 EdgeView
 ========
 
     `V = H.edges` or `V = H.edges()` allows iteration over edges as well as
-    `e in V`, set operations and edge data lookup `dd = H.edges[2, 3]`.
-    Iteration is over 2-tuples `(u, v)` for Hypergraph/DiHypergraph. For multihypergraphs
-    edges 3-tuples `(u, v, key)` are the default but 2-tuples can be obtained
-    via `V = H.edges(keys=False)`.
+    `e in V`, set operations and edge data lookup by edge ID `dd = H.edges[2]`.
+    Iteration is over edge IDs for Hypergraph.
 
-    Set operations for directed hypergraphs treat the edges as a set of 2-tuples.
-    For undirected hypergraphs, 2-tuples are not a unique representation of edges.
-    So long as the set being compared to contains unique representations
-    of its edges, the set operations will act as expected. If the other
-    set contains both `(0, 1)` and `(1, 0)` however, the result of set
-    operations may contain both representations of the same edge.
+    Set operations are currently performed by id, not by set equivalence.
+    This may be in future functionality. As it stands, however, the same edge
+    can be added more than once using different IDs
 
 EdgeDataView
 ============
 
     Edge data can be reported using an EdgeDataView typically created
     by calling an EdgeView: `DV = H.edges(data='weight', default=1)`.
-    The EdgeDataView allows iteration over edge tuples, membership checking
-    but no set operations.
-
-    Iteration depends on `data` and `default` and for multihypergraph `keys`
-    If `data is False` (the default) then iterate over 2-tuples `(u, v)`.
-    If `data is True` iterate over 3-tuples `(u, v, datadict)`.
-    Otherwise iterate over `(u, v, datadict.get(data, default))`.
-    For Multihypergraphs, if `keys is True`, replace `u, v` with `u, v, key`
-    to create 3-tuples and 4-tuples.
+    The EdgeDataView allows iteration over edge ids.
 
     The argument `nbunch` restricts edges to those incident to nodes in nbunch.
+
+DegreeView
+==========
+
+    `V = H.degree` allows iteration over (node, degree) pairs as well
+    as lookup: `deg=V[n]`. Weighted degree using edge data attributes
+    is provided via `V = H.degree(weight='attr_name')` where any string
+    with the attribute name can be used. `weight=None` is the default.
+    No set operations are implemented for degrees, use NodeView.
+
+    The argument `nbunch` restricts iteration to nodes in nbunch.
+    The DegreeView can still look up any node even if nbunch is specified.
+
+EdgeSizeView
+==========
+
+    `V = H.edge_size` allows iteration over (edge, size) pairs as well
+    as lookup: `size=V[e]`. Weighted edge size using node data attributes
+    is provided via `V = H.edge_size(weight='attr_name')` where any string
+    with the attribute name can be used. `weight=None` is the default.
+    No set operations are implemented for edge size, use EdgeView.
+
+    The argument `nbunch` restricts iteration to nodes in nbunch.
+    The EdgeSizeView can still look up any node even if nbunch is specified.
 """
-from copy import deepcopy
 from collections.abc import Mapping, Set
 import hypergraph as hg
 
@@ -100,95 +93,154 @@ __all__ = [
 class NodeView(Mapping, Set):
     """A NodeView class to act as H.nodes for a Hypergraph
 
-    Parameters
+    Attributes
     ----------
-    hypergraph : Hypergraph hypergraph-like class
-
-    Examples
-    --------
-    >>> H = nx.path_graph(3)
-    >>> NV = H.nodes()
-    >>> 2 in NV
-    True
-    >>> for n in NV:
-    ...     print(n)
-    0
-    1
-    2
-    >>> assert NV & {1, 2, 3} == {1, 2}
-
-    >>> H.add_node(2, color="blue")
-    >>> NV[2]
-    {'color': 'blue'}
-    >>> H.add_node(8, color="red")
-    >>> NDV = H.nodes(data=True)
-    >>> (2, NV[2]) in NDV
-    True
-    >>> for n, dd in NDV:
-    ...     print((n, dd.get("color", "aqua")))
-    (0, 'aqua')
-    (1, 'aqua')
-    (2, 'blue')
-    (8, 'red')
-    >>> NDV[2] == NV[2]
-    True
-
-    >>> NVdata = H.nodes(data="color", default="aqua")
-    >>> (2, NVdata[2]) in NVdata
-    True
-    >>> for n, dd in NVdata:
-    ...     print((n, dd))
-    (0, 'aqua')
-    (1, 'aqua')
-    (2, 'blue')
-    (8, 'red')
-    >>> NVdata[2] == NV[2]  # NVdata gets 'color', NV gets datadict
-    False
+    data : NodeDataView object
+        A NodeDataView of the node attributes
     """
 
     __slots__ = ("_nodes", "_node_attrs")
 
     def __getstate__(self):
+        """Function that allows pickling of the nodes (write)
+
+        Returns
+        -------
+        dict of dict
+            The keys access the nodes and their attributes respectively
+            and the values are dictionarys from the Hypergraph class.
+        """
         return {"_nodes": self._nodes, "_node_attrs": self._node_attrs}
 
     def __setstate__(self, state):
+        """Function that allows pickling of the nodes (read)
+
+        Parameters
+        ----------
+        state : dict of dict
+            The keys access the nodes and their attributes respectively
+            and the values are dictionarys from the Hypergraph class.
+        """
         self._nodes = state["_nodes"]
         self._node_attrs = state["_node_attrs"]
 
     def __init__(self, hypergraph):
+        """Initialize the NodeView with a hypergraph
+
+        Parameters
+        ----------
+        hypergraph : Hypergraph object
+            The hypergraph of interest
+        """
         self._nodes = hypergraph._node
         self._node_attrs = hypergraph._node_attr
 
     # Mapping methods
     def __len__(self):
+        """Return the number of nodes
+
+        Returns
+        -------
+        int
+            Number of nodes
+        """
         return len(self._nodes)
 
     def __iter__(self):
+        """Returns an iterator over the node IDs.
+
+        Returns
+        -------
+        iterator of hashables
+            Each entry is a node in the hypergraph.
+        """
         return iter(self._nodes)
 
     def __getitem__(self, n):
+        """Get the edges of which the node is a member.
+
+        Identical to __call__, members
+
+        Parameters
+        ----------
+        n : hashable
+            node ID
+
+        Returns
+        -------
+        list
+            A list of the edge IDs of which the node is a part.
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the node does not exist in the hypergraph.
+
+        See Also
+        --------
+        __call__
+        members
+        """
         if isinstance(n, slice):
             raise hg.HypergraphError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
             )
+        elif n not in self._nodes:
+            raise hg.HypergraphError(f"The node {n} is not in the hypergraph")
+
         return self._nodes[n]
 
     # Set methods
     def __contains__(self, n):
+        """Checks whether the node is in the hypergraph
+
+        Parameters
+        ----------
+        n : hashable
+            The ID of a node
+
+        Returns
+        -------
+        bool
+            True if the node is in the hypergraph, False otherwise.
+        """
         return n in self._nodes
 
-    @classmethod
-    def _from_iterable(cls, it):
-        return set(it)
-
-    # DataView method
     def __call__(self, n):
+        """Handles calling the nodes, i.e. H.nodes(n).
+
+        Identical to __getitem__, members
+
+        Parameters
+        ----------
+        n : hashable
+            node ID
+
+        Returns
+        -------
+        list
+            A list of the edge IDs of which the node is a part.
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the node does not exist in the hypergraph.
+
+        See Also
+        --------
+        __getitem__
+        members
+        """
         if isinstance(n, slice):
             raise hg.HypergraphError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
             )
+        elif n not in self._nodes:
+            raise hg.HypergraphError(f"The node {n} is not in the hypergraph")
         return self._nodes[n]
 
     def data(self, data=True, default=None):
@@ -258,17 +310,62 @@ class NodeView(Mapping, Set):
         return NodeDataView(self._node_attrs, data, default)
 
     def __str__(self):
+        """Returns a string of the list of node IDs.
+
+        Returns
+        -------
+        string
+            A string of the list of node IDs.
+        """
         return str(list(self))
 
     def __repr__(self):
+        """Returns a summary of the class
+
+        Returns
+        -------
+        string
+            The class name with the node IDs.
+        """
         return f"{self.__class__.__name__}({tuple(self)})"
 
     def members(self, n):
+        """Handles calling the nodes, i.e. H.nodes(n).
+
+        Identical to __getitem__, __call__
+
+        Parameters
+        ----------
+        n : hashable
+            node ID
+
+        Returns
+        -------
+        list
+            A list of the edge IDs of which the node is a part.
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the node does not exist in the hypergraph.
+
+        See Also
+        --------
+        __getitem__
+        """
+        if isinstance(n, slice):
+            raise hg.HypergraphError(
+                f"{type(self).__name__} does not support slicing, "
+                f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
+            )
+        elif n not in self._nodes:
+            raise hg.HypergraphError(f"The node {n} is not in the hypergraph")
         return self._nodes[n]
 
 
 class NodeDataView(Set):
-    """A DataView class for nodes of a NetworkX Hypergraph
+    """A DataView class for nodes of a Hypergraph
 
     The main use for this class is to iterate through node-data pairs.
     The data can be the entire data-dictionary for each node, or it
@@ -277,17 +374,19 @@ class NodeDataView(Set):
     cases where the data is not hashable. Use with caution.
     Typically, set operations on nodes use NodeView, not NodeDataView.
     That is, they use `H.nodes` instead of `H.nodes(data='foo')`.
-
-    Parameters
-    ==========
-    hypergraph : NetworkX hypergraph-like class
-    data : bool or string (default=False)
-    default : object (default=None)
     """
 
     __slots__ = ("_node_attrs", "_data", "_default")
 
     def __getstate__(self):
+        """Function that allows pickling of the node data (write)
+
+        Returns
+        -------
+        dict of dict
+            The keys access the node attributes, the data key, and the default value respectively
+            and the values are a dictionary, a hashable, and a hashable respectively.
+        """
         return {
             "_node_attrs": self._node_attrs,
             "_data": self._data,
@@ -295,29 +394,58 @@ class NodeDataView(Set):
         }
 
     def __setstate__(self, state):
+        """Function that allows pickling of the node data (read)
+
+        Parameters
+        ----------
+        state : dict of dict
+            The keys access the node attributes, the data key, and the default value respectively
+            and the values are a dictionary, a hashable, and a hashable respectively.
+        """
         self._node_attrs = state["_node_attrs"]
         self._data = state["_data"]
         self._default = state["_default"]
 
-    def __init__(self, node_attrs, data=False, default=None):
+    def __init__(self, node_attrs, data=True, default=None):
+        """Initialize the NodeDataView object
+
+        Parameters
+        ----------
+        node_attrs : dict
+            The dictionary of attributes with node IDs as keys
+            and dictionaries as values
+        data : bool or hashable, optional
+            Whether or not to return all the data
+            or the key for the attribute, by default True
+        default : anything, optional
+            The value that should be returned if
+            the key value doesn't exist, by default None
+        """
         self._node_attrs = node_attrs
         self._data = data
         self._default = default
 
-    @classmethod
-    def _from_iterable(cls, it):
-        try:
-            return set(it)
-        except TypeError as err:
-            if "unhashable" in str(err):
-                msg = " : Could be b/c data=True or your values are unhashable"
-                raise TypeError(str(err) + msg) from err
-            raise
-
     def __len__(self):
+        """Returns the number of nodes
+
+        Returns
+        -------
+        int
+            Number of nodes
+        """
         return len(self._node_attrs)
 
     def __iter__(self):
+        """Returns an iterator over node IDs
+        or node ID, value pairs if the data
+        keyword arg is not False.
+
+        Returns
+        -------
+        iterator
+            Iterator over node IDs (data=False) or node ID, value
+            pairs (else).
+        """
         data = self._data
         if data is False:
             return iter(self._node_attrs)
@@ -329,35 +457,468 @@ class NodeDataView(Set):
         )
 
     def __contains__(self, n):
-        try:
-            node_in = n in self._node_attrs
-        except TypeError:
-            n, d = n
-            return n in self._node_attrs and self[n] == d
-        if node_in is True:
-            return node_in
-        try:
-            n, d = n
-        except (TypeError, ValueError):
-            return False
-        return n in self._node_attrs and self[n] == d
+        """Checks whether a node ID are in a
+        hypergraph.
+
+        Parameters
+        ----------
+        n : hashable
+            node ID
+
+        Returns
+        -------
+        bool
+            Whether the node is the hypergraph.
+        """
+        return n in self._node_attrs
 
     def __getitem__(self, n):
+        """Get the data from a node.
+
+        Parameters
+        ----------
+        n : hashable
+            Node ID
+
+        Returns
+        -------
+        dict
+            empty dictionary if False, data dictionary if True,
+            and a dictionary with one key if the key is specified.
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the node does not exist in the hypergraph.
+        """
         if isinstance(n, slice):
             raise hg.HypergraphError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes.data())[{n.start}:{n.stop}:{n.step}]"
             )
+        elif n not in self._data:
+            raise hg.HypergraphError(f"The node {n} is not in the hypergraph")
+
         ddict = self._node_attrs[n]
         data = self._data
-        if data is False or data is True:
+        if data is False:
+            return dict()
+        elif data is True:
             return ddict
-        return ddict[data] if data in ddict else self._default
+        return {data: ddict[data]} if data in ddict else {data: self._default}
 
     def __str__(self):
+        """Returns a string listing the node IDs.
+
+        Returns
+        -------
+        string
+            A string listing the node IDs.
+        """
         return str(list(self))
 
     def __repr__(self):
+        """Controls what is displayed when calling repr(H.nodes.data)
+
+        Returns
+        -------
+        string
+            A string with the class name, nodes, and data.
+        """
+        name = self.__class__.__name__
+        if self._data is False:
+            return f"{name}({tuple(self)})"
+        if self._data is True:
+            return f"{name}({dict(self)})"
+        return f"{name}({dict(self)}, data={self._data!r})"
+
+
+# EdgeViews have set operations and no data reported
+class EdgeView(Set, Mapping):
+    """A EdgeView class for the edges of a Hypergraph"""
+
+    __slots__ = "_edges"
+
+    def __getstate__(self):
+        """Function that allows pickling of the edges (write)
+
+        Returns
+        -------
+        dict of dict
+            The keys access the edges and the value is
+            a dictionary of the hypergraph "_edge" dictionary.
+        """
+        return {"_edges": self._edges}
+
+    def __setstate__(self, state):
+        """Function that allows pickling of the edges (read)
+
+        Parameters
+        ----------
+        state : dict of dict
+            The keys access the edges and the value is
+            a dictionary of the hypergraph "_edge" dictionary.
+        """
+        self._edges = state["_edges"]
+
+    def __init__(self, H):
+        """Initialize the EdgeView object
+
+        Parameters
+        ----------
+        H : Hypergraph object
+            The hypergraph of interest.
+        """
+        self._edges = H._edge
+
+    # Set methods
+    def __len__(self):
+        """Get the number of edges
+
+        Returns
+        -------
+        int
+            The number of edges
+        """
+        return len(self._edges)
+
+    def __iter__(self):
+        """Returns an iterator over edge IDs.
+
+        Returns
+        -------
+        iterator
+            Iterator over the edge IDs.
+        """
+        return iter(self._edges)
+
+    def __contains__(self, e):
+        """Return edge members if the edge ID is
+        in the hypergraph and False if not.
+
+        Parameters
+        ----------
+        e : hashable
+            the edge ID
+
+        Returns
+        -------
+        bool or list
+            Returns False if the edge ID does not exist in
+            the hypergraph and the edge as a list if it does.
+        """
+        try:
+            return self._edges[e]
+        except KeyError:
+            return False
+
+    # get edge members
+    def __getitem__(self, e):
+        """Get the members of an edge as a list
+        given an edge ID.
+
+        Parameters
+        ----------
+        e : hashable
+            edge ID
+
+        Returns
+        -------
+        list
+            edge members
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the edge ID does not exist in the hypergraph.
+
+        See Also
+        --------
+        __call__
+        members
+        """
+        if isinstance(e, slice):
+            raise hg.HypergraphError(
+                f"{type(self).__name__} does not support slicing, "
+                f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
+            )
+        elif e not in self._edges:
+            raise hg.HypergraphError(f"The edge {e} is not in the hypergraph")
+        return self._edges[e]
+
+    # get edge members
+    def __call__(self, e):
+        """Get the members of an edge as a list
+        given an edge ID.
+
+        Parameters
+        ----------
+        e : hashable
+            edge ID
+
+        Returns
+        -------
+        list
+            edge members
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the edge ID does not exist in the hypergraph.
+
+        See Also
+        --------
+        __getitem__
+        members
+        """
+        if isinstance(e, slice):
+            raise hg.HypergraphError(
+                f"{type(self).__name__} does not support slicing, "
+                f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
+            )
+        elif e not in self._edges:
+            raise hg.HypergraphError(f"The edge {e} is not in the hypergraph")
+        return self._edges[e]
+
+    def members(self, e):
+        """Get the members of an edge as a list
+        given an edge ID.
+
+        Parameters
+        ----------
+        e : hashable
+            edge ID
+
+        Returns
+        -------
+        list
+            edge members
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the edge ID does not exist in the hypergraph.
+
+        See Also
+        --------
+        __getitem__
+        __call__
+        """
+        if isinstance(e, slice):
+            raise hg.HypergraphError(
+                f"{type(self).__name__} does not support slicing, "
+                f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
+            )
+        elif e not in self._edges:
+            raise hg.HypergraphError(f"The edge {e} is not in the hypergraph")
+        return self._edges[e]
+
+    def data(self, data=True, default=None, nbunch=None):
+        """Return the data associated with edges
+
+        Parameters
+        ----------
+        data : bool, optional
+            True for all associated data, False for no data,
+            and a hashable specifying the attribute desired,
+            by default True
+        default : anything, optional
+            The value to return if the attribute doesn't exist,
+            by default None
+        nbunch : iterable, optional
+            A list of edge IDs, by default None
+
+        Returns
+        -------
+        EdgeDataView object
+            The edges of the hypergraph.
+        """
+        if nbunch is None and data is False:
+            return self
+        return EdgeDataView(self, nbunch, data, default)
+
+    # String Methods
+    def __str__(self):
+        """Return a string of edge IDs
+
+        Returns
+        -------
+        string
+            A string of edge IDs
+        """
+        return str(list(self))
+
+    def __repr__(self):
+        """Returns a string representing the EdgeView.
+
+        Returns
+        -------
+        string
+            Returns a string stating the class name
+            and the edge IDs in the class
+        """
+        return f"{self.__class__.__name__}({list(self)})"
+
+
+# EdgeDataViews
+class EdgeDataView:
+    """EdgeDataView for edges of Hypergraph"""
+
+    __slots__ = ("_edge_attrs", "_data", "_default")
+
+    def __getstate__(self):
+        """Function that allows pickling of the edge data (write)
+
+        Returns
+        -------
+        dict of dict
+            The keys access the edge attributes, the data key, and the default value respectively
+            and the values are a dictionary, a hashable, and a hashable respectively.
+        """
+        self._n
+        return {
+            "_edge_attrs": self._edge_attrs,
+            "_data": self._data,
+            "_default": self._default,
+        }
+
+    def __setstate__(self, state):
+        """Function that allows pickling of the edge data (read)
+
+        Parameters
+        ----------
+        state : dict of dict
+            The keys access the edge attributes, the data key, and the default value respectively
+            and the values are a dictionary, a hashable, and a hashable respectively.
+        """
+        self._edge_attrs = state["_edge_attrs"]
+        self._data = state["_data"]
+        self._default = state["_default"]
+
+    def __init__(self, edgedict, data=True, default=None):
+        """Initialize the edge data object with the hypergraph data.
+
+        Parameters
+        ----------
+        edgedict : dict
+            The edge attribute dictionary
+        data : bool or hashable, optional
+            True for all associated data, False for no data,
+            and a hashable specifying the attribute desired,
+            by default True
+        default : anything, optional
+            The value to return if the attribute doesn't exist,
+            by default None
+        """
+        self._edge_attrs = edgedict
+        self._data = data
+        self._default = default
+
+    def __len__(self):
+        """Get the number of edges
+
+        Returns
+        -------
+        int
+            The number of edges
+        """
+        return len(self._edge_attrs)
+
+    def __iter__(self):
+        """Returns an iterator over edge IDs
+        or edge ID, value pairs if the data
+        keyword arg is not False.
+
+        Returns
+        -------
+        iterator
+            Iterator over edge IDs (data=False) or edge ID, value
+            pairs (else).
+        """
+        data = self._data
+        if data is False:
+            return iter(self._edge_attrs)
+        if data is True:
+            return iter(self._edge_attrs.items())
+        return (
+            (e, dd[data] if data in dd else self._default)
+            for e, dd in self._edge_attrs.items()
+        )
+
+    def __contains__(self, e):
+        """Returns whether an edge ID is in the hypergraph
+
+        Parameters
+        ----------
+        n : hashable
+            edge ID
+
+        Returns
+        -------
+        bool
+            True if the edge ID is in the hypergraph, False if note.
+        """
+        return e in self._edge_attrs
+
+    def __getitem__(self, e):
+        """Get the data from an edge.
+
+        Parameters
+        ----------
+        e : hashable
+            edge ID
+
+        Returns
+        -------
+        dict
+            empty dictionary if False, data dictionary if True,
+            and a dictionary with one key if the key is specified.
+
+        Raises
+        ------
+        hg.HypergraphError
+            Returns an error if the user tries passing in a slice or if
+            the edge ID does not exist in the hypergraph.
+        """
+        if isinstance(e, slice):
+            raise hg.HypergraphError(
+                f"{type(self).__name__} does not support slicing, "
+                f"try list(H.nodes.data())[{e.start}:{e.stop}:{e.step}]"
+            )
+        elif e not in self._edge_attrs:
+            raise hg.HypergraphError(f"The edge ID {e} is not in the hypergraph")
+
+        ddict = self._edge_attrs[e]
+        data = self._data
+        if data is False:
+            return dict()
+        elif data is True:
+            return ddict
+        return {data: ddict[data]} if data in ddict else {data: self._default}
+
+    def __str__(self):
+        """Return a string of the edge IDs
+
+        Returns
+        -------
+        string
+            A string of the edge IDs
+        """
+        return str(list(self))
+
+    def __repr__(self):
+        """Returns a string representation of the edge data.
+
+        Returns
+        -------
+        string
+            A string representation of the EdgeDataView
+            with the class name, edge IDs, and associated data.
+        """
         name = self.__class__.__name__
         if self._data is False:
             return f"{name}({tuple(self)})"
@@ -368,30 +929,32 @@ class NodeDataView(Set):
 
 # DegreeViews
 class DegreeView:
-    """A View class for degree of nodes in a Hypergraph
+    """A View class for the degree of nodes in a Hypergraph
 
     The functionality is like dict.items() with (node, degree) pairs.
     Additional functionality includes read-only lookup of node degree,
     and calling with optional features nbunch (for only a subset of nodes)
     and weight (use edge weights to compute degree).
 
-    Parameters
-    ==========
-    hypergraph : Hypergraph hypergraph-like class
-    nbunch : node, container of nodes, or None meaning all nodes (default=None)
-    weight : bool or string (default=None)
-
     Notes
     -----
     DegreeView can still lookup any node even if nbunch is specified.
-
-    Examples
-    --------
     """
 
     __slots__ = ("_hypergraph", "_nodes", "_edges", "_edge_attrs", "_weight")
 
     def __init__(self, H, nbunch=None, weight=None):
+        """Initialize the DegreeView object
+
+        Parameters
+        ----------
+        H : Hypergraph object
+            The hypergraph of interest
+        nbunch : node, container of nodes, or None meaning all nodes (default=None)
+            The nodes for which to find the degree
+        weight : hashable or bool, optional
+            The name of the attribute to weight the degree, by default None
+        """
         self._hypergraph = H
         self._nodes = (
             H.nodes
@@ -402,7 +965,21 @@ class DegreeView:
         self._edge_attrs = H._edge_attr
         self._weight = weight
 
-    def __call__(self, nbunch=None, order=None, weight=None):
+    def __call__(self, nbunch=None, weight=None):
+        """Get the degree of specified nodes
+
+        Parameters
+        ----------
+        nbunch : node, container of nodes, or None, optional
+            The nodes for which to find the degree, by default None
+        weight : [type], optional
+            [description], by default None
+
+        Returns
+        -------
+        DegreeView
+            The degrees of the hypergraph
+        """
         if nbunch is None:
             if weight == self._weight:
                 return self
@@ -417,12 +994,31 @@ class DegreeView:
         return self.__class__(self._hypergraph, nbunch, weight)
 
     def __getitem__(self, n):
+        """Get the degree of a node
+
+        Parameters
+        ----------
+        n : hashable
+            node ID
+
+        Returns
+        -------
+        float
+            The degree of a node, weighted or unweighted
+        """
         weight = self._weight
         if weight is None:
             return len(self._nodes(n))
         return sum(self._edge_attrs[dd].get(weight, 1) for dd in self._nodes(n))
 
     def __iter__(self):
+        """Returns an iterator of node ID, node degree pairs.
+
+        Yields
+        -------
+        iterator of tuples
+            Each entry is a node ID, degree (Weighted or unweighted) pair.
+        """
         weight = self._weight
         if weight is None:
             for n in self._nodes:
@@ -434,41 +1030,65 @@ class DegreeView:
                 yield (n, deg)
 
     def __len__(self):
+        """Returns the number of nodes/degrees
+
+        Returns
+        -------
+        int
+            Number of nodes/degrees
+        """
         return len(self._nodes)
 
     def __str__(self):
+        """Returns a string of node IDs.
+
+        Returns
+        -------
+        string
+            A string of the list of node IDs.
+        """
         return str(list(self._nodes))
 
     def __repr__(self):
+        """A string representation of the degrees
+
+        Returns
+        -------
+        string
+            A string representation of the DegreeView
+            with the class name and a dictionary of
+            the node ID, degree pairs
+        """
         return f"{self.__class__.__name__}({dict(self)})"
 
 
-# DegreeViews
 class EdgeSizeView:
-    """A View class for degree of edges in a Hypergraph
+    """A View class for the size of edges in a Hypergraph
 
-    The functionality is like dict.items() with (node, degree) pairs.
-    Additional functionality includes read-only lookup of node degree,
-    and calling with optional features nbunch (for only a subset of nodes)
-    and weight (use edge weights to compute degree).
-
-    Parameters
-    ==========
-    hypergraph : Hypergraph hypergraph-like class
-    nbunch : node, container of nodes, or None meaning all nodes (default=None)
-    weight : bool or string (default=None)
+    The functionality is like dict.items() with (edge, size) pairs.
+    Additional functionality includes read-only lookup of edge size,
+    and calling with optional features nbunch (for only a subset of edges)
+    and weight (use node weights to compute a weighted size).
 
     Notes
     -----
-    DegreeView can still lookup any node even if nbunch is specified.
-
-    Examples
-    --------
+    EdgeSizeView can still lookup any node even if nbunch is specified.
     """
 
     __slots__ = ("_hypergraph", "_edges", "_nodes", "_node_attrs", "_weight")
 
     def __init__(self, H, nbunch=None, weight=None):
+        """Initialize
+
+        Parameters
+        ----------
+        H : Hypergraph object
+            The hypergraph of interest
+        nbunch : node, container of nodes, or None meaning all nodes (default=None)
+            The edges for which to find the size, by default None
+        weight : bool or string, optional
+            Weight attribute, by default None
+        """
         self._hypergraph = H
         self._edges = (
             H.edges
@@ -480,6 +1100,20 @@ class EdgeSizeView:
         self._weight = weight
 
     def __call__(self, nbunch=None, weight=None):
+        """Get the degree of specified nodes
+
+        Parameters
+        ----------
+        nbunch : edge, container of edges, or None, optional
+            The edges for which to find the size, by default None
+        weight : hanshable or bool, optional
+            The weight attribute of the nodes, by default None
+
+        Returns
+        -------
+        EdgeSizeView
+            The edge sizes of the hypergraph
+        """
         if nbunch is None:
             if weight == self._weight:
                 return self
@@ -494,12 +1128,32 @@ class EdgeSizeView:
         return self.__class__(self._hypergraph, nbunch, weight)
 
     def __getitem__(self, e):
+        """Get the degree of specified nodes
+
+        Parameters
+        ----------
+        e : hashable
+            The edge id for which to find the size
+
+        Returns
+        -------
+        float
+            The edge size (weighted or uunweighted)
+        """
         weight = self._weight
         if weight is None:
             return len(self._edges(e))
         return sum(self._node_attrs[dd].get(weight, 1) for dd in self._edges(e))
 
     def __iter__(self):
+        """Returns an iterator over edge ID, edge size pairs.
+
+        Yields
+        -------
+        iterator of tuples
+            Each entry is an edge ID, edge size
+            (weighted or unweighted) pairs.
+        """
         weight = self._weight
         if weight is None:
             for e in self._edges:
@@ -511,194 +1165,33 @@ class EdgeSizeView:
                 yield (e, deg)
 
     def __len__(self):
-        return len(self._edges)
-
-    def __str__(self):
-        return str(list(self._edges))
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({dict(self)})"
-
-
-# EdgeDataViews
-class EdgeDataView:
-    """EdgeDataView for edges of Hypergraph"""
-
-    __slots__ = ("_edge_attrs", "_data", "_default")
-
-    def __getstate__(self):
-        return {
-            "_edge_attrs": self._edge_attrs,
-            "_data": self._data,
-            "_default": self._default,
-        }
-
-    def __setstate__(self, state):
-        self._edge_attrs = state["_edge_attrs"]
-        self._data = state["_data"]
-        self._default = state["_default"]
-
-    def __init__(self, edgedict, data=False, default=None):
-        self._edge_attrs = edgedict
-        self._data = data
-        self._default = default
-
-    @classmethod
-    def _from_iterable(cls, it):
-        try:
-            return set(it)
-        except TypeError as err:
-            if "unhashable" in str(err):
-                msg = " : Could be b/c data=True or your values are unhashable"
-                raise TypeError(str(err) + msg) from err
-            raise
-
-    def __len__(self):
-        return len(self._edge_attrs)
-
-    def __iter__(self):
-        data = self._data
-        if data is False:
-            return iter(self._edge_attrs)
-        if data is True:
-            return iter(self._edge_attrs.items())
-        return (
-            (n, dd[data] if data in dd else self._default)
-            for n, dd in self._edge_attrs.items()
-        )
-
-    def __contains__(self, n):
-        try:
-            edge_in = n in self._edge_attrs
-        except TypeError:
-            n, d = n
-            return n in self._edge_attrs and self[n] == d
-        if edge_in is True:
-            return edge_in
-        try:
-            n, d = n
-        except (TypeError, ValueError):
-            return False
-        return n in self._edge_attrs and self[n] == d
-
-    def __getitem__(self, n):
-        if isinstance(n, slice):
-            raise hg.HypergraphError(
-                f"{type(self).__name__} does not support slicing, "
-                f"try list(H.nodes.data())[{n.start}:{n.stop}:{n.step}]"
-            )
-        ddict = self._edge_attrs[n]
-        data = self._data
-        if data is False or data is True:
-            return ddict
-        return ddict[data] if data in ddict else self._default
-
-    def __str__(self):
-        return str(list(self))
-
-    def __repr__(self):
-        name = self.__class__.__name__
-        if self._data is False:
-            return f"{name}({tuple(self)})"
-        if self._data is True:
-            return f"{name}({dict(self)})"
-        return f"{name}({dict(self)}, data={self._data!r})"
-
-
-# EdgeViews    have set operations and no data reported
-class EdgeView(Set, Mapping):
-    """A EdgeView class for outward edges of a Hypergraph"""
-
-    __slots__ = "_edges"
-
-    def __getstate__(self):
-        return {"_edges": self._edges}
-
-    def __setstate__(self, state):
-        self._graph = G = state["_edges"]
-
-    dataview = EdgeDataView
-
-    def __init__(self, H):
-        self._edges = H._edge
-
-    # Set methods
-    def __len__(self):
-        return len(self._edges)
-
-    def __iter__(self):
-        return iter(self._edges)
-
-    def __contains__(self, e):
-        try:
-            return self._edges[e]
-        except KeyError:
-            return False
-
-    # get edge members
-    def __getitem__(self, e):
-        if isinstance(e, slice):
-            raise hg.HypergraphError(
-                f"{type(self).__name__} does not support slicing, "
-                f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
-            )
-        return self._edges[e]
-
-    # get edge members
-    def __call__(self, e):
-        if isinstance(e, slice):
-            raise hg.HypergraphError(
-                f"{type(self).__name__} does not support slicing, "
-                f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
-            )
-        return self._edges[e]
-
-    def members(self, e):
-        return self._edges[e]
-
-    def data(self, data=True, default=None, nbunch=None):
-        """
-        Return a read-only view of edge data.
-
-        Parameters
-        ----------
-        data : bool or edge attribute key
-            If ``data=True``, then the data view maps each edge to a dictionary
-            containing all of its attributes. If `data` is a key in the edge
-            dictionary, then the data view maps each edge to its value for
-            the keyed attribute. In this case, if the edge doesn't have the
-            attribute, the `default` value is returned.
-        default : object, default=None
-            The value used when an edge does not have a specific attribute
-        nbunch : container of nodes, optional (default=None)
-            Allows restriction to edges only involving certain nodes. All edges
-            are considered by default.
+        """Returns the number of edges/edge sizes
 
         Returns
         -------
-        dataview
-            Returns an `EdgeDataView` for undirected Hypergraphs, `OutEdgeDataView`
-            for DiHypergraphs, `MultiEdgeDataView` for MultiHypergraphs and
-            `OutMultiEdgeDataView` for MultiDiHypergraphs.
-
-        Notes
-        -----
-        If ``data=False``, returns an `EdgeView` without any edge data.
-
-        See Also
-        --------
-        EdgeDataView
-
-        Examples
-        --------
+        int
+            The number of edges/edge sizes
         """
-        if nbunch is None and data is False:
-            return self
-        return self.dataview(self, nbunch, data, default)
+        return len(self._edges)
 
-    # String Methods
     def __str__(self):
-        return str(list(self))
+        """Returns a string of the edge IDs.
+
+        Returns
+        -------
+        string
+            A string of the list of edge IDs.
+        """
+        return str(list(self._edges))
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({list(self)})"
+        """A string representation of the EdgeSizeView class.
+
+        Returns
+        -------
+        string
+            A string representing the EdgeSizeSize class with the
+            class name and a dictionary with edge IDs as keys and
+            edge sizes as values.
+        """
+        return f"{self.__class__.__name__}({dict(self)})"

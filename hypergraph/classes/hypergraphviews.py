@@ -20,6 +20,21 @@ __all__ = ["generic_hypergraph_view", "subhypergraph_view"]
 
 
 def generic_hypergraph_view(H, create_using=None):
+    """Creat a read-only view of the hypergraph sharing the same memory
+    as the original hypergraph.
+
+    Parameters
+    ----------
+    H : Hypergraph object
+        The hypergraph of interest
+    create_using : Hypergraph constructor, optional
+        The hypergraph object to add the data to, by default None
+
+    Returns
+    -------
+    Hypergraph object
+        A read-only view of the hypergraph
+    """
     if create_using is None:
         newH = H.__class__()
     else:
@@ -37,6 +52,7 @@ def generic_hypergraph_view(H, create_using=None):
 
 def subhypergraph_view(H, filtered_nodes=None, filtered_edges=None):
     """View of `H` applying a filter on nodes and edges.
+
     `subhypergraph_view` provides a read-only view of the induced subhypergraph that
     includes nodes, edges, or both based on what the user specifies. This function
     automatically filters out edges that are not subsets of the nodes. This function
@@ -47,16 +63,16 @@ def subhypergraph_view(H, filtered_nodes=None, filtered_edges=None):
     H : hypergraph.Hypergraph
         A hypergraph
     filtered_nodes : list or set, default: None
-        A list of the nodes desired for the subhypergraph. If None, uses all the nodes.
+        A list of the nodes desired for the subhypergraph.
+        If None, uses all the nodes.
     filtered_edges : list or set, default: None
-        A list of the edges desired for the subhypergraph. If None, uses all the edges.
+        A list of the edges desired for the subhypergraph.
+        If None, uses all the edges.
+
     Returns
     -------
-    newH : hypergraph.Hypergraph
+    Hypergraph object
         A read-only hypergraph view of the input hypergraph.
-    Examples
-    --------
-    >>>
     """
     newH = hg.freeze(H.__class__())
 

@@ -8,34 +8,48 @@ __all__ = ["uniform_hypergraph_configuration_model"]
 
 def uniform_hypergraph_configuration_model(k, m):
     """
-    A function to generate an m-uniform configuration model as described in
-    "The effect of heterogeneity on hypergraph contagion models"
-    by Nicholas W. Landry and Juan G. Restrepo
-    https://doi.org/10.1063/5.0020034
+    A function to generate an m-uniform configuration model
 
     Parameters
     ----------
     k : dictionary
-        This is a dictionary where the keys are node ids and the values are node degrees.
+        This is a dictionary where the keys are node ids
+        and the values are node degrees.
     m : int
         specifies the hyperedge size
 
     Returns
     -------
     Hypergraph object
+        The generated hypergraph
+
+    Warns
+    -----
+    warnings.warn
+        If the sums of the degrees are not divisible by m, the
+        algorithm still runs, but raises a warning and adds an
+        additional connection to random nodes to satisfy this
+        condition.
 
     Notes
     -----
     Creates multi-edges and self-loops.
 
+    References
+    ----------
+    "The effect of heterogeneity on hypergraph contagion models"
+    by Nicholas W. Landry and Juan G. Restrepo
+    https://doi.org/10.1063/5.0020034
+
+
     Example
     -------
-        >>> import hypergraph as hg
-        >>> import random
-        >>> n = 1000
-        >>> m = 3
-        >>> k = {i: random.randint(10, 20) for i in range(n)}
-        >>> H = hg.uniform_hypergraph_configuration_model(k, m)
+    >>> import hypergraph as hg
+    >>> import random
+    >>> n = 1000
+    >>> m = 3
+    >>> k = {i: random.randint(10, 20) for i in range(n)}
+    >>> H = hg.uniform_hypergraph_configuration_model(k, m)
     """
     # Making sure we have the right number of stubs
     remainder = sum(k.values()) % m
