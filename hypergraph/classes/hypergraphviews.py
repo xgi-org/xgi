@@ -20,8 +20,11 @@ __all__ = ["generic_hypergraph_view", "subhypergraph_view"]
 
 
 def generic_hypergraph_view(H, create_using=None):
-    """Creat a read-only view of the hypergraph sharing the same memory
-    as the original hypergraph.
+    """Create a read-only view of the hypergraph
+    
+    The read-only view shares the same memory as the original hypergraph
+    and "freezes" the hypergraph by removing the methods that can modify
+    the hypergraph.
 
     Parameters
     ----------

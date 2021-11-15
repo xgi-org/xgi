@@ -476,8 +476,7 @@ class Hypergraph:
             return False
 
     def has_edge(self, edge):
-        """Specifies whether an edge appears
-        in the hypergraph as a different ID.
+        """Specifies whether an edge appears in the hypergraph as a different ID.
 
         Parameters
         ----------
@@ -489,7 +488,7 @@ class Hypergraph:
         Returns
         -------
         bool
-            Returns True if the set appears as an edge in the hypergraph.
+           Whether or not the set appears as an edge in the hypergraph.
 
         Examples
         --------
