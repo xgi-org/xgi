@@ -50,8 +50,7 @@ def nodes(H):
 
 
 def has_edge(H, edge):
-    """Specifies whether an edge appears
-    in the hypergraph as a different ID.
+    """Specifies whether an edge appears in the hypergraph as a different ID.
 
     Parameters
     ----------
