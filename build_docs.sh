@@ -6,10 +6,10 @@ rm -rf docs/source/api/linalg
 rm -rf docs/source/api/readwrite
 rm -rf docs/source/api/utils
 
-sphinx-apidoc -o docs/source/api/classes hypergraph/classes
-sphinx-apidoc -o docs/source/api/algorithms hypergraph/algorithms
-sphinx-apidoc -o docs/source/api/linalg hypergraph/linalg
-sphinx-apidoc -o docs/source/api/generators hypergraph/generators
-sphinx-apidoc -o docs/source/api/readwrite hypergraph/readwrite
-sphinx-apidoc -o docs/source/api/utils hypergraph/utils
+sphinx-apidoc -o docs/source/api/classes xgi/classes
+sphinx-apidoc -o docs/source/api/algorithms xgi/algorithms
+sphinx-apidoc -o docs/source/api/linalg xgi/linalg
+sphinx-apidoc -o docs/source/api/generators xgi/generators
+sphinx-apidoc -o docs/source/api/readwrite xgi/readwrite
+sphinx-apidoc -o docs/source/api/utils xgi/utils
 sphinx-build -b html docs/source docs/build

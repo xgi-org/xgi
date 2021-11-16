@@ -1,4 +1,4 @@
-Hypergraph is distributed with the 3-clause BSD license.
+XGI is distributed with the 3-clause BSD license.
 
 Copyright (C) 2021, Hypergraph Developers
 Nicholas Landry <nicholas.landry.91@gmail.com>

@@ -1,8 +1,8 @@
 import json
-import hypergraph as hg
-from hypergraph.classes.hypergraph import Hypergraph
-from hypergraph.exception import HypergraphError
-from hypergraph.utils.utilities import get_dual
+import xgi
+from xgi.classes.hypergraph import Hypergraph
+from xgi.exception import XGIError
+from xgi.utils.utilities import get_dual
 
 
 __all__ = ["write_hypergraph_json", "read_hypergraph_json"]
@@ -21,12 +21,12 @@ def write_hypergraph_json(H, path):
 
     Examples
     --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
         >>> m = n
         >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> hg.write_hypergraph_json(H, "test.json")
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> xgi.write_hypergraph_json(H, "test.json")
     """
     # initialize empty data
     data = dict()
@@ -66,17 +66,17 @@ def read_hypergraph_json(path):
 
     Raises
     ------
-    HypergraphError
+    XGIError
         If the json is not in a format that can be loaded.
 
     Examples
     --------
-        >>> import hypergraph as hg
-        >>> H = hg.read_hypergraph_json("test.json")
+        >>> import xgi
+        >>> H = xgi.read_hypergraph_json("test.json")
     """
     with open(path) as file:
         data = json.loads(file.read())
-    H = hg.empty_hypergraph()
+    H = xgi.empty_hypergraph()
     try:
         H._hypergraph = data["hypergraph"]
         H._node_attr = data["node-data"]
@@ -84,6 +84,6 @@ def read_hypergraph_json(path):
         H._edge = {id: set(val) for id, val in data["hyperedges"].items()}
         H._node = get_dual(H._edge)
     except:
-        raise HypergraphError("Invalid data structure!")
+        raise XGIError("Invalid data structure!")
 
     return H

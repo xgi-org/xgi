@@ -1,7 +1,7 @@
 About
 =====
 
-The ``Hypergraph`` library provides data structures and algorithms for modeling and analyzing
+The ``XGI`` library provides data structures and algorithms for modeling and analyzing
 hypergraphs.
 
 We provide a class for representing undirected hypergraphs and tools for analysis.
@@ -11,9 +11,9 @@ Install
 
 .. code:: bash
 
-   pip install hypergraph
+   pip install xgi
 
-``hypergraph`` was developed and tested for
+``XGI`` was developed and tested for
 
 -  Python 3.9
 
@@ -34,7 +34,7 @@ License
 -------
 
 This project is licensed under the `BSD 3-Clause License
-<https://github.com/nwlandry/Hypergraph/blob/master/LICENSE.md>`__.
+<https://github.com/nwlandry/xgi/blob/master/LICENSE.md>`__.
 Note that this excludes any images/pictures/figures shown here or in the
 documentation.
 
@@ -43,6 +43,6 @@ Contributing
 
 If you want to contribute to this project, please make sure to read the
 `code of conduct
-<https://github.com/nwlandry/Hypergraph/blob/master/CODE_OF_CONDUCT.md>`__
+<https://github.com/nwlandry/xgi/blob/master/CODE_OF_CONDUCT.md>`__
 and the `contributing guidelines
-<https://github.com/nwlandry/Hypergraph/blob/master/CONTRIBUTING.md>`__.
+<https://github.com/nwlandry/xgi/blob/master/CONTRIBUTING.md>`__.

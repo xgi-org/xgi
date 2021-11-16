@@ -1,7 +1,5 @@
-import csv
-import hypergraph as hg
-from hypergraph.exception import HypergraphError
-from ast import literal_eval
+import  xgi
+from xgi.exception import XGIError
 
 __all__ = [
     "read_bipartite_edgelist",
@@ -53,12 +51,12 @@ def write_bipartite_edgelist(H, path, delimiter=" ", data=True, encoding="utf-8"
 
     Example
     -------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
         >>> m = n
         >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> hg.write_bipartite_edgelist(H, "test.csv", delimiter=",")
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> xgi.write_bipartite_edgelist(H, "test.csv", delimiter=",")
     """
     with open(path, "wb") as file:
         for line in generate_bipartite_edgelist(H, delimiter):
@@ -106,8 +104,8 @@ def read_bipartite_edgelist(
 
     Example
     -------
-        >>> import hypergraph as hg
-        >>> H = hg.read_bipartite_edgelist("test.csv", delimiter=",")
+        >>> import xgi
+        >>> H = xgi.read_bipartite_edgelist("test.csv", delimiter=",")
     """
     with open(path, "rb") as file:
         lines = (
@@ -148,7 +146,7 @@ def parse_bipartite_edgelist(
     A Hypergraph object
         The loaded hypergraph
     """
-    H = hg.empty_hypergraph(create_using)
+    H = xgi.empty_hypergraph(create_using)
     for line in lines:
         if comments is not None:
             p = line.find(comments)
@@ -158,7 +156,7 @@ def parse_bipartite_edgelist(
                 continue
         s = line.strip().split(delimiter)
         if len(s) != 2:
-            raise HypergraphError("Each line must contain two entries!")
+            raise XGIError("Each line must contain two entries!")
         # no data or data type specified
 
         if nodetype is not None:

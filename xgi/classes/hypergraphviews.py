@@ -12,9 +12,9 @@ view-of-view-of-view chains. Be careful with chains because
 they become very slow with about 15 nested views. Often it is easiest to use .copy() to avoid chains.
 """
 
-from hypergraph.exception import HypergraphError
 
-import hypergraph as hg
+
+import xgi
 
 __all__ = ["generic_hypergraph_view", "subhypergraph_view"]
 
@@ -41,8 +41,8 @@ def generic_hypergraph_view(H, create_using=None):
     if create_using is None:
         newH = H.__class__()
     else:
-        newH = hg.empty_hypergraph(create_using)
-    newH = hg.freeze(newH)
+        newH = xgi.empty_hypergraph(create_using)
+    newH = xgi.freeze(newH)
 
     # create view by assigning attributes from G
     newH._hypergraph = H._hypergraph
@@ -77,7 +77,7 @@ def subhypergraph_view(H, filtered_nodes=None, filtered_edges=None):
     Hypergraph object
         A read-only hypergraph view of the input hypergraph.
     """
-    newH = hg.freeze(H.__class__())
+    newH = xgi.freeze(H.__class__())
 
     # create view by assigning attributes from G
     newH._hypergraph = H._hypergraph
@@ -95,11 +95,11 @@ def subhypergraph_view(H, filtered_nodes=None, filtered_edges=None):
 
     # Add edges that are a subset of the filtered nodes
     newH._edge = {
-        edge: H._edge[edge] for edge in edges if H._edge[edge].issubset(nodes)
+        edge: H._edge[edge] for edge in edges if set(H._edge[edge]).issubset(nodes)
     }
     newH._edge_attr = {edge: H._edge_attr[edge] for edge in newH._edge}
 
     # Add the filtered nodes with connections to the remaining edges after filtering
-    newH._node = {node: H._node[node].intersection(newH._edge.keys()) for node in nodes}
+    newH._node = {node: set(H._node[node]).intersection(newH._edge.keys()) for node in nodes}
     newH._node_attr = {node: H._node_attr[node] for node in nodes}
     return newH

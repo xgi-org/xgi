@@ -4,7 +4,7 @@ import warnings
 from collections import defaultdict
 import numpy as np
 import pandas as pd
-from hypergraph import Hypergraph
+from xgi import Hypergraph
 
 __all__ = [
     "erdos_renyi_hypergraph",
@@ -41,11 +41,11 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
 
     Examples
     --------
-    >>> import hypergraph as hg
+    >>> import xgi
     >>> n = 1000
     >>> m = n
     >>> p = 0.01
-    >>> H = hg.erdos_renyi_hypergraph(n, m, p)
+    >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
     """
 
     if node_labels is not None and edge_labels is not None:
@@ -106,12 +106,12 @@ def chung_lu_hypergraph(k1, k2):
 
     Example
     -------
-    >>> import hypergraph as hg
+    >>> import xgi
     >>> import random
     >>> n = 100
     >>> k1 = {i : random.randint(1, 100) for i in range(n)}
     >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
-    >>> H = hg.chung_lu_hypergraph(k1, k2)
+    >>> H = xgi.chung_lu_hypergraph(k1, k2)
     """
 
     # sort dictionary by degree in decreasing order
@@ -206,7 +206,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
 
     Examples
     --------
-    >>> import hypergraph as hg
+    >>> import xgi
     >>> import random
     >>> n = 100
     >>> k1 = {i : random.randint(1, 100) for i in range(n)}
@@ -214,7 +214,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     >>> g1 = {i : random.choice([0, 1]) for i in range(n)}
     >>> g2 = {i : random.choice([0, 1]) for i in range(n)}
     >>> omega = np.array([[100, 10], [10, 100]])
-    >>> H = hg.dcsbm_hypergraph(k1, k2, g1, g2, omega)
+    >>> H = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega)
     """
 
     # sort dictionary by degree in decreasing order

@@ -19,7 +19,7 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "hypergraph"))
 
 # -- Project information -----------------------------------------------------
 
-project = "Hypergraph"
+project = "XGI"
 copyright = "2021, Nicholas W. Landry and Leo Torres"
 author = "Nicholas W. Landry and Leo Torres"
 
@@ -160,7 +160,7 @@ html_static_path = ["_static"]
 
 html_show_sphinx = True
 
-htmlhelp_basename = "HypergraphDoc"
+htmlhelp_basename = "XGIDoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -182,21 +182,21 @@ latex_documents = [
     (
         master_doc,
         "hypergraph.tex",
-        u"Hypergraph Documentation",
+        u"XGI Documentation",
         u"Nicholas W. Landry and Leo Torres",
         "manual",
     ),
 ]
 
-man_pages = [(master_doc, "hypergraph", u"Hypergraph Documentation", [author], 1)]
+man_pages = [(master_doc, "hypergraph", u"XGI Documentation", [author], 1)]
 
 texinfo_documents = [
     (
         master_doc,
-        "Hypergraph",
-        u"Hypergraph Documentation",
+        "XGI",
+        u"XGI Documentation",
         author,
-        "Hypergraph",
+        "XGI",
         "One line description of project.",
         "Miscellaneous",
     ),

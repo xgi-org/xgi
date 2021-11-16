@@ -1,6 +1,6 @@
-# Hypergraph
+# XGI
 
-Hypergraph is a Python package for the representation, manipulation, and study of the structure, dynamics, and functions of hypergraphs.
+Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the representation, manipulation, and study of the structure, dynamics, and functions of hypergraphs.
 
 * [**Source**](../../)
 * [**Bug reports**](../../issues)
@@ -17,10 +17,14 @@ Hypergraph is a Python package for the representation, manipulation, and study o
   - [Other Resources](#other-resources)
 
 ## Installation
+XGI runs on Python 3.9 or higher.
 
-Hypergraph runs on Python 3.9 or higher.
+To install the latest version of XGI, run the following command:
+```sh
+pip install xgi
+```
 
-Install the latest version of Hypergraph:
+To install this package locally:
 * Clone this repository
 * Navigate to the folder on your local machine
 * Run the following command:
@@ -43,8 +47,8 @@ Contributions are always welcome. Please report any bugs that you find [here](..
 
 We acknowledge the importance of good software to support research, and we note
 that research becomes more valuable when it is communicated effectively. To
-demonstrate the value of Hypergraph, we ask that you cite Hypergraph in your work.
-Currently, the best way to cite Hypergraph is to go to our
+demonstrate the value of xgi, we ask that you cite xgi in your work.
+Currently, the best way to cite xgi is to go to our
 [repository page](../../) (if you haven't already) and
 click the "cite this repository" button on the right sidebar. This will generate
 a citation in your preferred format, and will also integrate well with citation managers.
@@ -56,14 +60,15 @@ Our full code of conduct, and how we enforce it, can be read in [our repository]
 ## License
 Released under the 3-Clause BSD license (see `license.md`)
 
-Copyright (C) 2021 Hypergraph Developers
+Copyright (C) 2021 XGI Developers
 Nicholas Landry <nicholas.landry@colorado.edu>
 Leo Torres <leo@leotrs.com>
 
-The Hypergraph library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](license.md)
+The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](license.md)
 
 ## Other resources
 This library may not meet your needs and if this is this case, consider checking out these other resources:
 * [HyperNetX](https://pnnl.github.io/HyperNetX): A package in Python for representing, analyzing, and visualizing hypergraphs.
 * [SimpleHypergraphs.jl](https://pszufe.github.io/SimpleHypergraphs.jl/v0.1/): A package in Julia for representing, analyzing, and generating hypergraphs.
 * [hyperG](https://cran.r-project.org/web/packages/HyperG/index.html): A package in R for storing and analyzing hypergraphs
+* [NetworkX](https://networkx.org/): A package in Python for representing, analyzing, and visualizing networks.

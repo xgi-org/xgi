@@ -2,8 +2,7 @@
 in this module return a Hypergraph class (i.e. a simple, undirected hypergraph).
 """
 
-from hypergraph.classes import Hypergraph
-from hypergraph.exception import HypergraphError
+from xgi.classes import Hypergraph
 
 __all__ = [
     "empty_hypergraph",
@@ -18,9 +17,9 @@ def empty_hypergraph(create_using=None, default=Hypergraph):
     create_using : Hypergraph Instance, Constructor or None
         If None, use the `default` constructor.
         If a constructor, call it to create an empty hypergraph.
-    default : Hypergraph constructor (optional, default = hg.Hypergraph)
+    default : Hypergraph constructor (optional, default = xgi.Hypergraph)
         The constructor to use if create_using is None.
-        If None, then hg.Hypergraph is used.
+        If None, then xgi.Hypergraph is used.
 
     Returns
     -------
@@ -29,8 +28,8 @@ def empty_hypergraph(create_using=None, default=Hypergraph):
 
     Examples
     --------
-    >>> import hypergraph as hg
-    >>> H = hg.empty_hypergraph()
+    >>> import xgi
+    >>> H = xgi.empty_hypergraph()
     >>> H.number_of_nodes()
     0
     >>> H.number_of_edges()

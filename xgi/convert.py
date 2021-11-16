@@ -1,11 +1,10 @@
-import hypergraph as hg
-from hypergraph.exception import HypergraphException, HypergraphError
-from collections import defaultdict
+import xgi
+from xgi.exception import XGIError
 import pandas as pd
 from scipy.sparse import coo_matrix, csr_matrix, csc_matrix, lil_matrix
 from numpy import ndarray, matrix
 from copy import deepcopy
-from hypergraph.utils.utilities import get_dual
+from xgi.utils.utilities import get_dual
 
 __all__ = [
     "convert_to_hypergraph",
@@ -35,7 +34,7 @@ def convert_to_hypergraph(data, create_using=None):
          * numpy matrix
          * numpy ndarray
          * scipy sparse matrix
-    create_using : Hypergraph graph constructor, optional (default=hg.Hypergraph)
+    create_using : Hypergraph graph constructor, optional (default=xgi.Hypergraph)
         Hypergraph type to create. If hypergraph instance, then cleared before populated.
 
     Returns
@@ -45,10 +44,10 @@ def convert_to_hypergraph(data, create_using=None):
     """
 
     if data is None:
-        hg.empty_hypergraph(create_using)
+        xgi.empty_hypergraph(create_using)
 
-    elif isinstance(data, hg.Hypergraph):
-        H = hg.empty_hypergraph(create_using)
+    elif isinstance(data, xgi.Hypergraph):
+        H = xgi.empty_hypergraph(create_using)
         # copy hypergraph
         H._node = deepcopy(data._node)
         H._node_attr = deepcopy(data._node_attr)
@@ -92,7 +91,7 @@ def from_hyperedge_list(d, create_using=None):
     --------
     to_hyperedge_list
     """
-    H = hg.empty_hypergraph(create_using)
+    H = xgi.empty_hypergraph(create_using)
     H.add_edges_from(d)
     return H
 
@@ -137,7 +136,7 @@ def from_hyperedge_dict(d, create_using=None):
     --------
     to_hyperedge_dict
     """
-    H = hg.empty_hypergraph(create_using)
+    H = xgi.empty_hypergraph(create_using)
     H._edge = d
     H._edge_attr = {id: dict() for id in H.edges}
     H._node = get_dual(d)
@@ -193,10 +192,10 @@ def from_bipartite_pandas_dataframe(
 
     Raises
     ------
-    HypergraphError
+    XGIError
         Raises an error if the user specifies invalid column names
     """
-    H = hg.empty_hypergraph(create_using)
+    H = xgi.empty_hypergraph(create_using)
     # try to get by labels first
     try:
         d = df[[node_column, edge_column]]
@@ -206,7 +205,7 @@ def from_bipartite_pandas_dataframe(
             columns = list(df.columns)
             d = df[[columns[node_column], columns[edge_column]]]
         except:
-            raise HypergraphError("Invalid columns specified")
+            raise XGIError("Invalid columns specified")
 
     for line in d.itertuples(index=False):
         node = line[0]
@@ -239,7 +238,7 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
 
     Raises
     ------
-    HypergraphError
+    XGIError
         Raises an error if the specified labels are the wrong dimensions
 
     See Also
@@ -253,18 +252,18 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
     if nodelabels is None:
         nodedict = dict(zip(range(n), range(n)))
     elif nodelabels is not None and len(nodelabels) != n:
-        raise HypergraphError("Node dictionary is the wrong size.")
+        raise XGIError("Node dictionary is the wrong size.")
     else:
         nodedict = dict(zip(range(n), nodelabels))
 
     if edgelabels is None:
         edgedict = dict(zip(range(m), range(m)))
     elif edgelabels is not None and len(edgelabels) != m:
-        raise HypergraphError("Edge dictionary is the wrong size.")
+        raise XGIError("Edge dictionary is the wrong size.")
     else:
         edgedict = dict(zip(range(m), edgelabels))
 
-    H = hg.empty_hypergraph(create_using)
+    H = xgi.empty_hypergraph(create_using)
 
     for node, edge in zip(I.row, I.col):
         node = nodedict[node]
@@ -302,4 +301,4 @@ def to_incidence_matrix(H, sparse=True, index=False):
     incidence_matrix
     from_incidence_matrix
     """
-    return hg.incidence_matrix(H, sparse=sparse, index=index)
+    return xgi.incidence_matrix(H, sparse=sparse, index=index)

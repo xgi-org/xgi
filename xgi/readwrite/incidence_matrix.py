@@ -1,4 +1,4 @@
-import hypergraph as hg
+import xgi
 import numpy as np
 
 __all__ = [
@@ -39,10 +39,10 @@ def read_incidence_matrix(
 
     Examples
     --------
-        >>> import hypergraph as hg
-        >>> H = hg.read_incidence_matrix("test.csv", delimiter=",")
+        >>> import xgi
+        >>> H = xgi.read_incidence_matrix("test.csv", delimiter=",")
     """
-    return hg.from_incidence_matrix(
+    return xgi.from_incidence_matrix(
         np.loadtxt(path, comments=comments, delimiter=delimiter, encoding=encoding),
         create_using=create_using,
     )
@@ -69,12 +69,12 @@ def write_incidence_matrix(H, path, delimiter=" ", encoding="utf-8"):
 
     Examples
     --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
         >>> m = n
         >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> hg.write_incidence_matrix(H, "test.csv", delimiter=",")
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> xgi.write_incidence_matrix(H, "test.csv", delimiter=",")
     """
-    I = hg.incidence_matrix(H, sparse=False)
+    I = xgi.incidence_matrix(H, sparse=False)
     np.savetxt(path, I, delimiter=delimiter, newline="\n", encoding=encoding)

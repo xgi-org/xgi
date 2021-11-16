@@ -1,22 +1,22 @@
 # Code of Conduct
 
-   > TL;DR Be excellent to each other; we're a community after all. If you run into issues with others in our community, please contact a Hypergraph Community Dev or Moderator.
+   > TL;DR Be excellent to each other; we're a community after all. If you run into issues with others in our community, please contact a XGI Community Dev or Moderator.
 
 ## Purpose
 
-The Hypergraph Community includes members of varying skills, languages, personalities, cultural backgrounds, and experiences from around the globe. Through these differences, we continue to grow and collectively improve upon an open-source animation engine. When working in a community, it is important to remember that you are interacting with humans on the other end of your screen. This code of conduct will guide your interactions and keep Hypergraph a positive environment for our developers, users, and fundamentally our growing community.
+The XGI Community includes members of varying skills, languages, personalities, cultural backgrounds, and experiences from around the globe. Through these differences, we continue to grow and collectively improve upon an open-source animation engine. When working in a community, it is important to remember that you are interacting with humans on the other end of your screen. This code of conduct will guide your interactions and keep XGI a positive environment for our developers, users, and fundamentally our growing community.
 
 
 
 ## Our Community
 
-Members of the Hypergraph Community are respectful, open, and considerate. Behaviors that reinforce these values contribute to our positive environment, and include:
+Members of the XGI Community are respectful, open, and considerate. Behaviors that reinforce these values contribute to our positive environment, and include:
 
 - **Being respectful.** Respectful of others, their positions, experiences, viewpoints, skills, commitments, time, and efforts.
 
 - **Being open.** Open to collaboration, whether it's on problems, Pull Requests, issues, or otherwise.
 
-- **Being considerate.** Considerate of their peers -- other Hypergraph users and developers.
+- **Being considerate.** Considerate of their peers -- other XGI users and developers.
 
 - **Focusing on what is best for the community.** We're respectful of the processes set forth in the community, and we work within them.
 
@@ -30,7 +30,7 @@ Members of the Hypergraph Community are respectful, open, and considerate. Behav
 
 ## Our Standards
 
-Every member of our community has the right to have their identity respected. Hypergraph Community is dedicated to providing a positive environment for everyone, regardless of age, gender identity and expression, sexual orientation, disability, physical appearance, body size, ethnicity, nationality, race, religion (or lack thereof), education, or socioeconomic status.
+Every member of our community has the right to have their identity respected. The XGI Community is dedicated to providing a positive environment for everyone, regardless of age, gender identity and expression, sexual orientation, disability, physical appearance, body size, ethnicity, nationality, race, religion (or lack thereof), education, or socioeconomic status.
 
 
 
@@ -57,13 +57,13 @@ Examples of unacceptable behavior by participants include:
 Community members asked to stop any inappropriate behavior are expected to comply immediately.
 
 
-## Hypergraph Community Online Spaces
+## XGI Community Online Spaces
 
 This Code of Conduct applies to the following online spaces:
 
-- The [Hypergraph GitHub Project](https://github.com/nwlandry/Hypergraph)
+- The [XGI GitHub Project](https://github.com/nwlandry/xgi)
 
-This Code of Conduct applies to every member in official Hypergraph Community online spaces, including:
+This Code of Conduct applies to every member in official XGI Community online spaces, including:
 
 - Moderators
 
@@ -83,20 +83,20 @@ This Code of Conduct applies to every member in official Hypergraph Community on
 
 ## Consequences
 
-If a member's behavior violates this code of conduct, the Hypergraph Community Code of Conduct team may take any action they deem appropriate, including, but not limited to: warning the offender, temporary bans, deletion of offending messages, and expulsion from the community and its online spaces. The full list of consequences for inappropriate behavior is listed below in the Enforcement Procedures.
+If a member's behavior violates this code of conduct, the XGI Community Code of Conduct team may take any action they deem appropriate, including, but not limited to: warning the offender, temporary bans, deletion of offending messages, and expulsion from the community and its online spaces. The full list of consequences for inappropriate behavior is listed below in the Enforcement Procedures.
 
 Thank you for helping make this a welcoming, friendly community for everyone.
 
 
 ## Contact Information
 
-If you believe someone is violating the code of conduct, or have any other concerns, please contact a Hypergraph Community Dev or Moderator immediately. They can be reached via email (See the README).
+If you believe someone is violating the code of conduct, or have any other concerns, please contact a XGI Community Dev or Moderator immediately. They can be reached via email (See the README).
 
 <hr style="border:2px solid gray"> </hr>
 
 ## Enforcement Procedures
 
-This document summarizes the procedures the Hypergraph Community Code of Conduct team uses to enforce the Code of Conduct.
+This document summarizes the procedures the XGI Community Code of Conduct team uses to enforce the Code of Conduct.
 
 ### Summary of processes
 
@@ -109,7 +109,7 @@ When the team receives a report of a possible Code of Conduct violation, it will
    1. Propose a behavioral modification plan.
    1. Propose consequences for the reported behavior.
    1. Vote on behavioral modification plan and consequences for the reported person.
-   1. Contact Hypergraph Community moderators to approve the behavioral modification plan and consequences.
+   1. Contact XGI Community moderators to approve the behavioral modification plan and consequences.
    1. Follow up with the reported person.
    1. Decide further responses.
    1. Follow up with the reporter.
@@ -159,7 +159,7 @@ Reports which involve higher risk or higher impact may face more severe conseque
 
 ### Propose consequences
 
-What follows are examples of possible consequences to an incident report. This consequences list is not inclusive, and the Hypergraph Community Code of Conduct team reserves the right to take any action it deems necessary.
+What follows are examples of possible consequences to an incident report. This consequences list is not inclusive, and the XGI Community Code of Conduct team reserves the right to take any action it deems necessary.
 
 Possible private responses to an incident include:
 
@@ -173,23 +173,23 @@ Possible private responses to an incident include:
 
 ### Team vote
 
-Some team members may have a conflict of interest and may be excluded from discussions of a particular incident report. Excluding those members, decisions on the behavioral modification plans and consequences will be determined by a two-thirds majority vote of the Hypergraph Community Code of Conduct team.
+Some team members may have a conflict of interest and may be excluded from discussions of a particular incident report. Excluding those members, decisions on the behavioral modification plans and consequences will be determined by a two-thirds majority vote of the XGI Community Code of Conduct team.
 
 
 
 ### Moderators approval
 
-Once the team has approved the behavioral modification plans and consequences, they will communicate the recommended response to the Hypergraph Community moderators. The team should not state who reported this incident. They should attempt to anonymize any identifying information from the report.
+Once the team has approved the behavioral modification plans and consequences, they will communicate the recommended response to the XGI Community moderators. The team should not state who reported this incident. They should attempt to anonymize any identifying information from the report.
 
 Moderators are required to respond with whether they accept the recommended response to the report. If they disagree with the recommended response, they should provide a detailed response or additional context as to why they disagree. Moderators are encouraged to respond within a week.
 
-In cases where the moderators disagree on the suggested resolution for a report, the Hypergraph Community Code of Conduct team may choose to notify the Hypergraph Community Moderators.
+In cases where the moderators disagree on the suggested resolution for a report, the XGI Community Code of Conduct team may choose to notify the XGI Community Moderators.
 
 
 
 ### Follow up with the reported person
 
-The Hypergraph Community Code of Conduct team will work with the Hypergraph Community moderators to draft a response to the reported person. The response should contain:
+The XGI Community Code of Conduct team will work with the XGI Community moderators to draft a response to the reported person. The response should contain:
 
    * A description of the person's behavior in neutral language
    * The negative impact of that behavior
@@ -201,7 +201,7 @@ The team should not state who reported this incident. They should attempt to ano
 
 ### Decide further responses
 
-If the reported person provides additional context, the Hypergraph Community Code of Conduct team may need to re-evaluate the behavioral modification plan and consequences.
+If the reported person provides additional context, the XGI Community Code of Conduct team may need to re-evaluate the behavioral modification plan and consequences.
 
 ### Follow up with the reporter
 
@@ -213,16 +213,16 @@ The follow-up should be sent no later than one week after the receipt of the rep
 
 ### Changes to Code of Conduct
 
-When discussing a change to the Hypergraph Community code of conduct or enforcement procedures, the Hypergraph Community Code of Conduct team will follow this decision-making process:
+When discussing a change to the XGI Community code of conduct or enforcement procedures, the XGI Community Code of Conduct team will follow this decision-making process:
 
    * **Brainstorm options.** Team members should discuss any relevant context and brainstorm a set of possible options. It is important to provide constructive feedback without getting side-tracked from the main question.
    * **Vote.** Proposed changes to the code of conduct will be decided by a two-thirds majority of all voting members of the Code of Conduct team. Team members are listed in the charter. Currently active voting members are listed in the following section.
-   * **Board Vote.** Once a working draft is in place for the Code of Conduct and procedures, the Code of Conduct team shall provide the Hypergraph Community Moderators with a draft of the changes. The Hypergraph Community Moderators will vote on the changes at a board meeting.
+   * **Board Vote.** Once a working draft is in place for the Code of Conduct and procedures, the Code of Conduct team shall provide the XGI Community Moderators with a draft of the changes. The XGI Community Moderators will vote on the changes at a board meeting.
 
 
 ### Current list of voting members
 
-- All available Community Developers (i.e. those with "write" permissions, or above, on the Hypergraph Community GitHub organization).
+- All available Community Developers (i.e. those with "write" permissions, or above, on the XGI Community GitHub organization).
 
 
 
@@ -234,4 +234,4 @@ This Code of Conduct is licensed under the [Creative Commons Attribution-ShareAl
 
 ## Attributions
 
-This Code of Conduct was forked from the code of conduct from the [Python Software Foundation](https://www.python.org/psf/conduct/) and the Manim community and adapted by the Hypergraph Community.
+This Code of Conduct was forked from the code of conduct from the [Python Software Foundation](https://www.python.org/psf/conduct/) and the Manim community and adapted by the XGI Community.

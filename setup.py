@@ -4,18 +4,18 @@ import sys
 __version__ = "0.0"
 
 if sys.version_info < (3, 7):
-    sys.exit("Hypergraph requires Python 3.7 or later.")
+    sys.exit("XGI requires Python 3.7 or later.")
 
-name = "hypergraph"
+name = "xgi"
 
 packages = [
-    "hypergraph",
-    "hypergraph.algorithms",
-    "hypergraph.classes",
-    "hypergraph.generators",
-    "hypergraph.linalg",
-    "hypergraph.readwrite",
-    "hypergraph.utils",
+    "xgi",
+    "xgi.algorithms",
+    "xgi.classes",
+    "xgi.generators",
+    "xgi.linalg",
+    "xgi.readwrite",
+    "xgi.utils",
 ]
 
 version = __version__
@@ -24,9 +24,9 @@ authors = "Nicholas Landry and Leo Torres"
 
 author_email = "nicholas.landry@colorado.edu"
 
-url = "https://github.com/nwlandry/Hypergraph"
+url = "https://github.com/nwlandry/xgi"
 
-description = "Hypergraph is a Python library for hypergraphs."
+description = "XGI is a Python library for hypergraphs."
 
 install_requires = [
     "networkx>=2.2,<3.0",

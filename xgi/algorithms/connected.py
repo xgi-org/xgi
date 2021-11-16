@@ -1,6 +1,5 @@
 import networkx as nx
-import hypergraph as hg
-from hypergraph.exception import HypergraphError
+import xgi
 import scipy.sparse as sparse
 import random
 
@@ -36,14 +35,14 @@ def is_connected(H, s=1):
 
     Example
     -------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
         >>> m = n
         >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> print(hg.is_connected(H))
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> print(xgi.is_connected(H))
     """
-    data = sparse.find(hg.clique_motif_matrix(H) >= s)
+    data = sparse.find(xgi.clique_motif_matrix(H) >= s)
     rows = data[0]
     cols = data[1]
     return nx.is_connected(nx.Graph(zip(rows, cols)))
@@ -72,14 +71,14 @@ def connected_components(H, s=1):
 
     Example
     -------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
         >>> m = n
         >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> print([len(component) for component in hg.connected_components(H)])
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> print([len(component) for component in xgi.connected_components(H)])
     """
-    data = sparse.find(hg.clique_motif_matrix(H) >= s)
+    data = sparse.find(xgi.clique_motif_matrix(H) >= s)
     rows = data[0]
     cols = data[1]
     return nx.connected_components(nx.Graph(zip(rows, cols)))
@@ -108,12 +107,12 @@ def number_connected_components(H, s=1):
 
     Example
     -------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
         >>> m = n
         >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> print(hg.number_connected_components(H))
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> print(xgi.number_connected_components(H))
     """
     return len(connected_components(H, s=s))
 
@@ -144,14 +143,14 @@ def node_connected_component(H, n, s=1):
 
     Example
     -------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
         >>> m = n
         >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> print(hg.node_connected_component(H, 0))
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> print(xgi.node_connected_component(H, 0))
     """
-    data = sparse.find(hg.clique_motif_matrix(H) >= s)
+    data = sparse.find(xgi.clique_motif_matrix(H) >= s)
     rows = data[0]
     cols = data[1]
     return nx.node_connected_component(nx.Graph(zip(rows, cols)), n)
@@ -177,12 +176,12 @@ def is_connected_bfs(H):
 
     Example
     -------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
         >>> m = n
         >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> print(hg.is_connected(H))
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> print(xgi.is_connected(H))
     """
     return len(_plain_bfs(H, random.choice(list(H.nodes)))) == len(H)
 

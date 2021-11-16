@@ -1,6 +1,6 @@
 import csv
-import hypergraph as hg
-from hypergraph.exception import HypergraphError
+import xgi
+from xgi.exception import XGIError
 from ast import literal_eval
 
 __all__ = [
@@ -78,12 +78,12 @@ def write_edgelist(H, path, delimiter=" ", data=False, encoding="utf-8"):
 
     Examples
     --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
         >>> m = n
         >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> hg.write_edgelist(H, "test.csv", delimiter=",")
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> xgi.write_edgelist(H, "test.csv", delimiter=",")
     """
     with open(path, "wb") as file:
         for line in generate_edgelist(H, delimiter, data):
@@ -112,14 +112,14 @@ def write_weighted_edgelist(H, path, delimiter=" ", encoding="utf-8"):
 
     Examples
     --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
         >>> m = n
         >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
         >>> for edge in H.edges:
         >>>     H._edge_attr[edge]["weight"] = random.random()
-        >>> hg.write_weighted_edgelist(H, "test_weighted.csv", delimiter=",")
+        >>> xgi.write_weighted_edgelist(H, "test_weighted.csv", delimiter=",")
     """
     write_edgelist(H, path, delimiter=delimiter, data=("weight",), encoding=encoding)
 
@@ -164,8 +164,8 @@ def read_edgelist(
 
     Examples
     --------
-        >>> import hypergraph as hg
-        >>> H = hg.read_edgelist("test.csv", delimiter=",")
+        >>> import xgi
+        >>> H = xgi.read_edgelist("test.csv", delimiter=",")
     """
     with open(path, "rb") as file:
         lines = (
@@ -218,9 +218,9 @@ def read_weighted_edgelist(
 
     Examples
     --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> import random
-        >>> H = hg.read_weighted_edgelist("test_weighted.csv", delimiter=",")
+        >>> H = xgi.read_weighted_edgelist("test_weighted.csv", delimiter=",")
     """
     return read_edgelist(
         path,
@@ -260,7 +260,7 @@ def parse_edgelist(
     Hypergraph object
         The loaded hypergraph
     """
-    H = hg.empty_hypergraph(create_using)
+    H = xgi.empty_hypergraph(create_using)
     for line in lines:
         if comments is not None:
             p = line.find(comments)
@@ -293,7 +293,7 @@ def parse_edgelist(
                 d = s[-len(data) :]
                 edge = s[: -len(data)]
             except:
-                raise HypergraphError("Too many data columns specified.")
+                raise XGIError("Too many data columns specified.")
             edgedata = {}
             for (edge_key, edge_type), edge_value in zip(data, d):
                 try:

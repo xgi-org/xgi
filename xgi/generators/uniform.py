@@ -1,5 +1,4 @@
-import hypergraph as hg
-from hypergraph.exception import HypergraphError
+import xgi
 import random
 import warnings
 
@@ -44,12 +43,12 @@ def uniform_hypergraph_configuration_model(k, m):
 
     Example
     -------
-    >>> import hypergraph as hg
+    >>> import xgi
     >>> import random
     >>> n = 1000
     >>> m = 3
     >>> k = {i: random.randint(10, 20) for i in range(n)}
-    >>> H = hg.uniform_hypergraph_configuration_model(k, m)
+    >>> H = xgi.uniform_hypergraph_configuration_model(k, m)
     """
     # Making sure we have the right number of stubs
     remainder = sum(k.values()) % m
@@ -66,7 +65,7 @@ def uniform_hypergraph_configuration_model(k, m):
     for id in k:
         stubs.extend([id] * int(k[id]))
 
-    H = hg.empty_hypergraph()
+    H = xgi.empty_hypergraph()
 
     while len(stubs) != 0:
         u = random.sample(range(len(stubs)), m)

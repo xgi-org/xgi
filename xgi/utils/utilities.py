@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 
-class HypergraphCounter:
+class XGICounter:
     """
     A class for a universal counter
     when generating uids.

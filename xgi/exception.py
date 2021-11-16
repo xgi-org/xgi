@@ -1,6 +1,6 @@
-class HypergraphException(Exception):
+class XGIException(Exception):
     """Base class for exceptions in NetworkX."""
 
 
-class HypergraphError(HypergraphException):
+class XGIError(XGIException):
     """Exception for a serious error in NetworkX"""

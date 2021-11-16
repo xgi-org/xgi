@@ -7,17 +7,17 @@ Multiedges and self-loops are allowed.
 """
 from copy import deepcopy
 
-from hypergraph.classes.reportviews import (
+from xgi.classes.reportviews import (
     NodeView,
     EdgeView,
     DegreeView,
     EdgeSizeView,
 )
-from hypergraph.exception import HypergraphError, HypergraphException
-import hypergraph.convert as convert
+from xgi.exception import XGIError
+import xgi.convert as convert
 import numpy as np
-from hypergraph.utils import HypergraphCounter
-import hypergraph as hg
+from xgi.utils import XGICounter
+import xgi
 
 __all__ = ["Hypergraph"]
 
@@ -69,7 +69,7 @@ class Hypergraph:
         --------
         convert_to_hypergraph
         """
-        self._edge_uid = HypergraphCounter()
+        self._edge_uid = XGICounter()
 
         self.hypergraph_attr_dict_factory = self.hypergraph_attr_dict_factory
         self.node_dict_factory = self.node_dict_factory
@@ -125,7 +125,8 @@ class Hypergraph:
 
         Examples
         --------
-        >>> H = hg.Hypergraph(name="foo")
+        >>> import xgi
+        >>> H = xgi.Hypergraph(name="foo")
         >>> str(H)
         "Hypergraph named 'foo' with 0 nodes and 0 edges"
 
@@ -206,9 +207,9 @@ class Hypergraph:
 
         Examples
         --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H = xgi.Hypergraph(hyperedge_list)
         >>> H.shape
         (4, 2)
         """
@@ -229,9 +230,9 @@ class Hypergraph:
 
         Examples
         --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H = xgi.Hypergraph(hyperedge_list)
         >>> H.neighbors(1)
         {2}
         >>> H.neighbors(2)
@@ -240,7 +241,7 @@ class Hypergraph:
         if n in self._node:
             return {i for e in self._node[n] for i in self._edge[e]}.difference({n})
         else:
-            raise HypergraphError("Invalid node ID.")
+            raise XGIError("Invalid node ID.")
 
     def add_node(self, node_for_adding, **attr):
         """Add a single node `node_for_adding` and update node attributes.
@@ -312,7 +313,7 @@ class Hypergraph:
 
         Raises
         ------
-        HypergraphError
+        XGIError
            If n is not in the hypergraph.
 
         See Also
@@ -323,8 +324,8 @@ class Hypergraph:
             edge_neighbors = self.nodes[n]  # list handles self-loops (allows mutation)
             del self._node[n]
             del self._node_attr[n]
-        except KeyError as e:  # HypergraphError if n not in self
-            raise HypergraphError(f"The node {n} is not in the graph.") from e
+        except KeyError as e:  # XGIError if n not in self
+            raise XGIError(f"The node {n} is not in the graph.") from e
         for edge in edge_neighbors:
             self._edge[edge].remove(n)
             if len(self._edge[edge]) == 0:
@@ -415,9 +416,9 @@ class Hypergraph:
 
         Examples
         --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H = xgi.Hypergraph(hyperedge_list)
         >>> H.number_of_nodes()
         4
         """
@@ -438,9 +439,9 @@ class Hypergraph:
 
         Examples
         --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H = xgi.Hypergraph(hyperedge_list)
         >>> H.order()
         4
         """
@@ -462,9 +463,9 @@ class Hypergraph:
 
         Examples
         --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H = xgi.Hypergraph(hyperedge_list)
         >>> H.has_node(1)
         True
         >>> H.has_node(0)
@@ -492,9 +493,9 @@ class Hypergraph:
 
         Examples
         --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H = xgi.Hypergraph(hyperedge_list)
         >>> H.has_edge([1, 2])
         True
         >>> H.has_edge({1, 3})
@@ -528,7 +529,7 @@ class Hypergraph:
         if edge:
             uid = self._edge_uid()
         else:
-            raise HypergraphError("Cannot add an empty edge.")
+            raise XGIError("Cannot add an empty edge.")
         for node in edge:
             if node not in self._node:
                 if node is None:
@@ -541,7 +542,7 @@ class Hypergraph:
             self._edge[uid] = list(edge)
             self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
         except:
-            raise HypergraphError("The edge cannot be cast to a list.")
+            raise XGIError("The edge cannot be cast to a list.")
 
         self._edge_attr[uid].update(attr)
 
@@ -594,7 +595,7 @@ class Hypergraph:
                     self._edge[uid] = list(e)
                     self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
                 except:
-                    raise HypergraphError("The edge cannot be cast to a list.")
+                    raise XGIError("The edge cannot be cast to a list.")
 
                 self._edge_attr[uid].update(attr)
                 self._edge_attr[uid].update(dd)
@@ -626,7 +627,7 @@ class Hypergraph:
                 ((edge[:-1], {weight: edge[-1]}) for edge in ebunch_to_add), **attr
             )
         except:
-            HypergraphError("Empty or invalid edges specified.")
+            XGIError("Empty or invalid edges specified.")
 
     def add_node_to_edge(self, edge, node):
         """Add a node to an edge.
@@ -662,7 +663,7 @@ class Hypergraph:
 
         Raises
         ------
-        HypergraphError
+        XGIError
             If no edge has that ID.
 
         See Also
@@ -675,7 +676,7 @@ class Hypergraph:
             del self._edge[id]
             del self._edge_attr[id]
         except KeyError as e:
-            raise HypergraphError(f"Edge {id} is not in the graph") from e
+            raise XGIError(f"Edge {id} is not in the graph") from e
 
     def remove_edges_from(self, ebunch):
         """Remove all edges specified in ebunch.
@@ -715,7 +716,7 @@ class Hypergraph:
 
         Raises
         ------
-        HypergraphError
+        XGIError
             Raises an error if the user tries to delete nonexistent nodes or edges.
 
         Notes
@@ -729,7 +730,7 @@ class Hypergraph:
                 del self._edge[edge]
                 del self._edge_attr[edge]
         except KeyError as e:
-            raise HypergraphError(f"Edge or node is not in the hypergraph") from e
+            raise XGIError(f"Edge or node is not in the hypergraph") from e
 
     def update(self, edges=None, nodes=None):
         """Update the graph using nodes/edges/graphs as input.
@@ -758,7 +759,7 @@ class Hypergraph:
         """
 
         if edges is None and nodes is None:
-            raise HypergraphError("update needs nodes or edges input")
+            raise XGIError("update needs nodes or edges input")
 
         self.add_nodes_from(nodes)
         self.add_edges_from(edges)
@@ -975,7 +976,7 @@ class Hypergraph:
         and deep copies, https://docs.python.org/3/library/copy.html.
         """
         if as_view is True:
-            return hg.hypergraphviews.generic_hypergraph_view(self)
+            return xgi.hypergraphviews.generic_hypergraph_view(self)
         H = self.__class__()
         H._hypergraph = deepcopy(self._hypergraph)
         H._node = deepcopy(self._node)
@@ -1035,7 +1036,7 @@ class Hypergraph:
         H.remove_nodes_from([n for n in H if n not in set(nodes)])
         """
         induced_nodes = self.nbunch_iter(nodes)
-        subhypergraph = hg.hypergraphviews.subhypergraph_view
+        subhypergraph = xgi.hypergraphviews.subhypergraph_view
         return subhypergraph(self, induced_nodes, None)
 
     def edge_subhypergraph(self, edges):
@@ -1064,7 +1065,7 @@ class Hypergraph:
         For an inplace reduction of a hypergraph to a subhypergraph you can remove nodes:
         H.remove_edges_from([n for n in H if n not in set(nodes)])
         """
-        subhypergraph = hg.hypergraphviews.subhypergraph_view
+        subhypergraph = xgi.hypergraphviews.subhypergraph_view
         return subhypergraph(self, None, edges)
 
     def arbitrary_subhypergraph(self, nodes, edges):
@@ -1095,7 +1096,7 @@ class Hypergraph:
         hypergraph. Changes to the hypergraph structure is ruled out by the view,
         but changes to attributes are reflected in the original hypergraph.
         """
-        subhypergraph = hg.hypergraphviews.subhypergraph_view
+        subhypergraph = xgi.hypergraphviews.subhypergraph_view
         return subhypergraph(self, nodes, edges)
 
     def number_of_edges(self):
@@ -1112,9 +1113,9 @@ class Hypergraph:
 
         Examples
         --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = hg.Hypergraph(hyperedge_list)
+        >>> H = xgi.Hypergraph(hyperedge_list)
         >>> H.number_of_edges()
         2
         """
@@ -1140,7 +1141,7 @@ class Hypergraph:
 
         Raises
         ------
-        HypergraphError
+        XGIError
             If nbunch is not a node or sequence of nodes.
             If a node in nbunch is not hashable.
 
@@ -1157,8 +1158,8 @@ class Hypergraph:
         "if nbunch in self:", even after processing with this routine.
 
         If nbunch is not a node or a (possibly empty) sequence/iterator
-        or None, a :exc:`HypergraphError` is raised.  Also, if any object in
-        nbunch is not hashable, a :exc:`HypergraphError` is raised.
+        or None, a :exc:`XGIError` is raised.  Also, if any object in
+        nbunch is not hashable, a :exc:`XGIError` is raised.
         """
         if nbunch is None:  # include all nodes via iterator
             bunch = iter(self._node)
@@ -1175,12 +1176,12 @@ class Hypergraph:
                     exc, message = e, e.args[0]
                     # capture error for non-sequence/iterator nbunch.
                     if "iter" in message:
-                        exc = HypergraphError(
+                        exc = XGIError(
                             "nbunch is not a node or a sequence of nodes."
                         )
                     # capture error for unhashable node.
                     if "hashable" in message:
-                        exc = HypergraphError(
+                        exc = XGIError(
                             f"Node {n} in sequence nbunch is not a valid node."
                         )
                     raise exc

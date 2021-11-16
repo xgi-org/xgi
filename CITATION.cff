@@ -10,6 +10,6 @@ authors:
 cff-version: "1.1.0"
 license: "BSD-3"
 message: "If you use this software, please cite it using these metadata."
-title: Hypergraph
+title: XGI
 version: "0.0"
 ...
