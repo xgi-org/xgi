@@ -48,6 +48,25 @@ def nodes(H):
     """
     return H.nodes
 
+def has_edge_id(H, id):
+    """Returns True if the edge id is in the hypergraph.
+
+    This is the same as `v in H.edges` without KeyError exceptions.
+
+    Parameters
+    ----------
+    id : hashable
+        Edge id
+
+    Returns
+    -------
+    bool
+        True if edge is in the hypergraph, False otherwise.
+    """
+    try:
+        return id in H._edge
+    except KeyError:
+        return False
 
 def has_edge(H, edge):
     """Specifies whether an edge appears in the hypergraph as a different ID.
@@ -74,7 +93,7 @@ def has_edge(H, edge):
     >>> hg.has_edge(H, [1, 3])
     False
     """
-    return edge in [set(H.edges(e)) for e in H.edges]
+    return set(edge) in [set(H.edges(e)) for e in H.edges]
 
 
 def edges(H, nbunch=None):

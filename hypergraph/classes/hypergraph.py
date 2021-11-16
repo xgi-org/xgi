@@ -500,7 +500,7 @@ class Hypergraph:
         >>> H.has_edge({1, 3})
         False
         """
-        return edge in [set(self.edges(e)) for e in self.edges]
+        return set(edge) in [set(self.edges(e)) for e in self.edges]
 
     def add_edge(self, edge, **attr):
         """Add an edge to the hypergraph. The universal ID
@@ -763,7 +763,7 @@ class Hypergraph:
         self.add_nodes_from(nodes)
         self.add_edges_from(edges)
 
-    def has_edge(self, id):
+    def has_edge_id(self, id):
         """Returns True if the edge id is in the hypergraph.
 
         This is the same as `v in H.edges` without KeyError exceptions.
