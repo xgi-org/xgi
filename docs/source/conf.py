@@ -14,7 +14,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath("."))
-sys.path.append(os.path.join(os.path.dirname(__name__), "hypergraph"))
+sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 
 
 # -- Project information -----------------------------------------------------
@@ -179,14 +179,14 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "hypergraph.tex",
+        "xgi.tex",
         u"XGI Documentation",
         u"Nicholas W. Landry and Leo Torres",
         "manual",
     ),
 ]
 
-man_pages = [(master_doc, "hypergraph", u"XGI Documentation", [author], 1)]
+man_pages = [(master_doc, "xgi", u"XGI Documentation", [author], 1)]
 
 texinfo_documents = [
     (
