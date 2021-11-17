@@ -24,7 +24,7 @@ authors = "Nicholas Landry and Leo Torres"
 
 author_email = "nicholas.landry@colorado.edu"
 
-url = "https://github.com/nwlandry/xgi"
+url = "https://github.com/ComplexGroupInteractions/xgi"
 
 description = "XGI is a Python library for the representation and analysis of hypergraphs."
 
@@ -40,10 +40,9 @@ license = "3-Clause BSD license"
 extras_require = {
     "testing": ["pytest>=4.0"],
     "tutorials": ["jupyter>=1.0"],
-    "documentation": ["sphinx>=1.8.2", "nb2plots>=0.6", "sphinx-rtd-theme>=0.4.2"],
+    "documentation": ["sphinx>=1.8.2", "sphinx-rtd-theme>=0.4.2"],
     "all": [
         "sphinx>=1.8.2",
-        "nb2plots>=0.6",
         "sphinx-rtd-theme>=0.4.2",
         "pytest>=4.0",
         "jupyter>=1.0",
