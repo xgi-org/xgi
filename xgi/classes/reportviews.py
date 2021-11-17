@@ -91,13 +91,7 @@ __all__ = [
 
 # NodeViews
 class NodeView(Mapping, Set):
-    """A NodeView class to act as H.nodes for a Hypergraph
-
-    Attributes
-    ----------
-    data : NodeDataView object
-        A NodeDataView of the node attributes
-    """
+    """A NodeView class to act as H.nodes for a Hypergraph."""
 
     __slots__ = ("_nodes", "_node_attrs")
 

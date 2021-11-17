@@ -35,12 +35,3 @@ classes.reportviews module
    :members:
    :undoc-members:
    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: xgi.classes
-   :members:
-   :undoc-members:
-   :show-inheritance:

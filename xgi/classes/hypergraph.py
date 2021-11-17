@@ -23,24 +23,7 @@ __all__ = ["Hypergraph"]
 
 
 class Hypergraph:
-    """A class to represent undirected hypergraphs
-
-    Attributes
-    ----------
-    name : string
-        The name of the hypergraph
-    shape : tuple
-        The number of nodes and edge in the hypergraph
-    nodes : NodeView
-        The nodes of the hypergraph
-    edges : EdgeView
-        The edges of the hypergraph
-    degree : DegreeView
-        The degrees of the hypergraph nodes
-    edge_size : EdgeSizeView
-        The sizes of the hypergraph edges
-    """
-
+    """A class to represent undirected hypergraphs."""
     node_dict_factory = dict
     node_attr_dict_factory = dict
     hyperedge_dict_factory = dict
