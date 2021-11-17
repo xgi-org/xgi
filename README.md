@@ -5,6 +5,7 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the rep
 * [**Source**](../../)
 * [**Bug reports**](../../issues)
 * [**GitHub Discussions**](../../discussions)
+* [**Documentation**](https://xgi.readthedocs.io/en/latest/)
 
 ## Table of Contents:
   - [Installation](#installation)
@@ -38,7 +39,7 @@ To get started, take a look at the [tutorials](/tutorials/) illustrating the lib
 
 ## Documentation
 
-Documentation is in progress.
+For more documentation, see our [Read The Docs](https://xgi.readthedocs.io/en/latest/) page
 
 ## Contributing
 Contributions are always welcome. Please report any bugs that you find [here](../../issues). Or, even better, fork the repository on [GitHub](../../) and create a pull request (PR). We welcome all changes, big or small, and we will help you make the PR if you are new to `git` (just ask on the issue and/or see our [contributing guidelines](CONTRIBUTING.md)).
