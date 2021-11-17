@@ -6,7 +6,7 @@ __version__ = "0.0"
 if sys.version_info < (3, 7):
     sys.exit("XGI requires Python 3.7 or later.")
 
-name = "xgi"
+name = "XGI"
 
 packages = [
     "xgi",
@@ -26,7 +26,7 @@ author_email = "nicholas.landry@colorado.edu"
 
 url = "https://github.com/nwlandry/xgi"
 
-description = "XGI is a Python library for hypergraphs."
+description = "XGI is a Python library for the representation and analysis of hypergraphs."
 
 install_requires = [
     "networkx>=2.2,<3.0",

@@ -41,14 +41,14 @@ To get started, take a look at the [tutorials](/tutorials/) illustrating the lib
 Documentation is in progress.
 
 ## Contributing
-Contributions are always welcome. Please report any bugs that you find [here](../../issues). Or, even better, fork the repository on [GitHub](../../) and create a pull request (PR). We welcome all changes, big or small, and we will help you make the PR if you are new to `git` (just ask on the issue and/or see `CONTRIBUTING.md`).
+Contributions are always welcome. Please report any bugs that you find [here](../../issues). Or, even better, fork the repository on [GitHub](../../) and create a pull request (PR). We welcome all changes, big or small, and we will help you make the PR if you are new to `git` (just ask on the issue and/or see our [contributing guidelines](CONTRIBUTING.md)).
 
 ## How to Cite
 
 We acknowledge the importance of good software to support research, and we note
 that research becomes more valuable when it is communicated effectively. To
-demonstrate the value of xgi, we ask that you cite xgi in your work.
-Currently, the best way to cite xgi is to go to our
+demonstrate the value of XGI, we ask that you cite XGI in your work.
+Currently, the best way to cite XGI is to go to our
 [repository page](../../) (if you haven't already) and
 click the "cite this repository" button on the right sidebar. This will generate
 a citation in your preferred format, and will also integrate well with citation managers.
