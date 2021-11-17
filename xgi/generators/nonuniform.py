@@ -153,7 +153,7 @@ def chung_lu_hypergraph(k1, k2):
 
 
 def dcsbm_hypergraph(k1, k2, g1, g2, omega):
-    """A function to generate a DCSBM hypergraph
+    """A function to generate a DCSBM hypergraph.
 
     Parameters
     ----------
@@ -193,11 +193,10 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
 
     Notes
     -----
-    The sums of k1 and k2 should be the same. If they are not the same,
-    this function returns a warning but still runs. The sum of k1 (and k2)
-    and omega should be the same. If they are not the same, this function
-    returns a warning but still runs and the number of entries in the
-     incidence matrix is determined by the omega matrix.
+    The sums of k1 and k2 should be the same. If they are not the same, this function
+    returns a warning but still runs. The sum of k1 (and k2) and omega should be the
+    same. If they are not the same, this function returns a warning but still runs and
+    the number of entries in the incidence matrix is determined by the omega matrix.
 
     References
     ----------
@@ -215,6 +214,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     >>> g2 = {i : random.choice([0, 1]) for i in range(n)}
     >>> omega = np.array([[100, 10], [10, 100]])
     >>> H = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega)
+
     """
 
     # sort dictionary by degree in decreasing order

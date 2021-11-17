@@ -65,7 +65,7 @@ DegreeView
     The DegreeView can still look up any node even if nbunch is specified.
 
 EdgeSizeView
-==========
+============
 
     `V = H.edge_size` allows iteration over (edge, size) pairs as well
     as lookup: `size=V[e]`. Weighted edge size using node data attributes
