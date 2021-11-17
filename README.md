@@ -15,6 +15,7 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the rep
   - [How to Cite](#how-to-cite)
   - [Code of Conduct](#code-of-conduct)
   - [License](#license)
+  - [Funding](#funding)
   - [Other Resources](#other-resources)
 
 ## Installation
@@ -66,6 +67,9 @@ Nicholas Landry <nicholas.landry@colorado.edu>
 Leo Torres <leo@leotrs.com>
 
 The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](license.md)
+
+## Funding
+The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905)
 
 ## Other resources
 This library may not meet your needs and if this is this case, consider checking out these other resources:
