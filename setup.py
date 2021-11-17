@@ -1,12 +1,13 @@
 from setuptools import setup
 import sys
+import xgi.metadata
 
-__version__ = "0.0"
+__version__ = xgi.metadata.__version__
 
 if sys.version_info < (3, 7):
     sys.exit("XGI requires Python 3.7 or later.")
 
-name = "XGI"
+name = "xgi"
 
 packages = [
     "xgi",
@@ -20,9 +21,9 @@ packages = [
 
 version = __version__
 
-authors = "Nicholas Landry and Leo Torres"
+authors = xgi.metadata.__author__# "Nicholas Landry and Leo Torres"
 
-author_email = "nicholas.landry@colorado.edu"
+author_email = xgi.metadata.__email__ #"nicholas.landry@colorado.edu"
 
 url = "https://github.com/ComplexGroupInteractions/xgi"
 
@@ -35,7 +36,7 @@ install_requires = [
     "pandas>=0.23",
 ]
 
-license = "3-Clause BSD license"
+license = xgi.metadata.__license__ #"3-Clause BSD license"
 
 extras_require = {
     "testing": ["pytest>=4.0"],

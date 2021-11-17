@@ -12,6 +12,7 @@
 #
 import os
 import sys
+import xgi.metadata
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
@@ -24,8 +25,7 @@ copyright = "2021, Nicholas W. Landry and Leo Torres"
 author = "Nicholas W. Landry and Leo Torres"
 
 # The full version, including alpha/beta/rc tags
-release = "0.0"
-
+release = xgi.metadata.__version__
 
 # -- General configuration ---------------------------------------------------
 
