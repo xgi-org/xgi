@@ -7,7 +7,7 @@ Submodules
 readwrite.bipartite module
 --------------------------
 
-.. automodule:: readwrite.bipartite
+.. automodule:: xgi.readwrite.bipartite
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,7 @@ readwrite.bipartite module
 readwrite.edgelist module
 -------------------------
 
-.. automodule:: readwrite.edgelist
+.. automodule:: xgi.readwrite.edgelist
    :members:
    :undoc-members:
    :show-inheritance:
@@ -23,7 +23,7 @@ readwrite.edgelist module
 readwrite.incidence\_matrix module
 ----------------------------------
 
-.. automodule:: readwrite.incidence_matrix
+.. automodule:: xgi.readwrite.incidence_matrix
    :members:
    :undoc-members:
    :show-inheritance:
@@ -31,15 +31,16 @@ readwrite.incidence\_matrix module
 readwrite.json module
 ---------------------
 
-.. automodule:: readwrite.json
+.. automodule:: xgi.readwrite.json
    :members:
    :undoc-members:
    :show-inheritance:
 
+
 Module contents
 ---------------
 
-.. automodule:: readwrite
+.. automodule:: xgi.readwrite
    :members:
    :undoc-members:
    :show-inheritance:

@@ -7,15 +7,16 @@ Submodules
 linalg.matrix module
 --------------------
 
-.. automodule:: linalg.matrix
+.. automodule:: xgi.linalg.matrix
    :members:
    :undoc-members:
    :show-inheritance:
 
+
 Module contents
 ---------------
 
-.. automodule:: linalg
+.. automodule:: xgi.linalg
    :members:
    :undoc-members:
    :show-inheritance:

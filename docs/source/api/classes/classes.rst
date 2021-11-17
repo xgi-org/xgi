@@ -7,7 +7,7 @@ Submodules
 classes.function module
 -----------------------
 
-.. automodule:: classes.function
+.. automodule:: xgi.classes.function
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,7 @@ classes.function module
 classes.hypergraph module
 -------------------------
 
-.. automodule:: classes.hypergraph
+.. automodule:: xgi.classes.hypergraph
    :members:
    :undoc-members:
    :show-inheritance:
@@ -23,7 +23,7 @@ classes.hypergraph module
 classes.hypergraphviews module
 ------------------------------
 
-.. automodule:: classes.hypergraphviews
+.. automodule:: xgi.classes.hypergraphviews
    :members:
    :undoc-members:
    :show-inheritance:
@@ -31,15 +31,16 @@ classes.hypergraphviews module
 classes.reportviews module
 --------------------------
 
-.. automodule:: classes.reportviews
+.. automodule:: xgi.classes.reportviews
    :members:
    :undoc-members:
    :show-inheritance:
 
+
 Module contents
 ---------------
 
-.. automodule:: classes
+.. automodule:: xgi.classes
    :members:
    :undoc-members:
    :show-inheritance:

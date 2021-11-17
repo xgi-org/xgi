@@ -7,7 +7,7 @@ Submodules
 generators.classic module
 -------------------------
 
-.. automodule:: generators.classic
+.. automodule:: xgi.generators.classic
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,7 @@ generators.classic module
 generators.nonuniform module
 ----------------------------
 
-.. automodule:: generators.nonuniform
+.. automodule:: xgi.generators.nonuniform
    :members:
    :undoc-members:
    :show-inheritance:
@@ -23,15 +23,16 @@ generators.nonuniform module
 generators.uniform module
 -------------------------
 
-.. automodule:: generators.uniform
+.. automodule:: xgi.generators.uniform
    :members:
    :undoc-members:
    :show-inheritance:
 
+
 Module contents
 ---------------
 
-.. automodule:: generators
+.. automodule:: xgi.generators
    :members:
    :undoc-members:
    :show-inheritance:

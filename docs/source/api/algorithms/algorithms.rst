@@ -7,15 +7,16 @@ Submodules
 algorithms.connected module
 ---------------------------
 
-.. automodule:: algorithms.connected
+.. automodule:: xgi.algorithms.connected
    :members:
    :undoc-members:
    :show-inheritance:
 
+
 Module contents
 ---------------
 
-.. automodule:: algorithms
+.. automodule:: xgi.algorithms
    :members:
    :undoc-members:
    :show-inheritance:

@@ -7,15 +7,16 @@ Submodules
 utils.utilities module
 ----------------------
 
-.. automodule:: utils.utilities
+.. automodule:: xgi.utils.utilities
    :members:
    :undoc-members:
    :show-inheritance:
 
+
 Module contents
 ---------------
 
-.. automodule:: utils
+.. automodule:: xgi.utils
    :members:
    :undoc-members:
    :show-inheritance:
