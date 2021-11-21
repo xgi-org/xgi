@@ -6,7 +6,7 @@ Description
 -----------
 
 The `XGI`_ library provides data structures and algorithms for modeling and analyzing
-hypergraphs.
+complex systems with group (higher-order) interactions.
 
 .. raw:: latex
 

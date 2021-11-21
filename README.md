@@ -1,6 +1,6 @@
 # XGI
-
-Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the representation, manipulation, and study of the structure, dynamics, and functions of hypergraphs.
+<img src='logo/logo.png' width='150px' style="float:right;margin-left:10pt"></img>
+Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the representation, manipulation, and study of the structure, dynamics, and functions of complex systems with group (higher-order) interactions.
 
 * [**Source**](../../)
 * [**Bug reports**](../../issues)
@@ -19,7 +19,7 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the rep
   - [Other Resources](#other-resources)
 
 ## Installation
-XGI runs on Python 3.9 or higher.
+XGI runs on Python 3.7 or higher.
 
 To install the latest version of XGI, run the following command:
 ```sh

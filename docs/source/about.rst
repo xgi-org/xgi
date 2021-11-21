@@ -2,9 +2,7 @@ About
 =====
 
 The ``XGI`` library provides data structures and algorithms for modeling and analyzing
-hypergraphs.
-
-We provide a class for representing undirected hypergraphs and tools for analysis.
+complex systems with group (higher-order) interactions.
 
 Install
 -------
@@ -22,7 +20,7 @@ So far, the package's functionality was tested on Mac OS X and Windows 10.
 Dependencies
 ------------
 
-``hypergraph`` directly depends on the following packages which will be
+``xgi`` directly depends on the following packages which will be
 installed by ``pip`` during the installation process
 
 -  ``numpy>=1.15``
