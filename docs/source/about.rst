@@ -32,7 +32,7 @@ License
 -------
 
 This project is licensed under the `BSD 3-Clause License
-<https://github.com/ComplexGroupInteractions/xgi/blob/master/LICENSE.md>`__.
+<https://github.com/ComplexGroupInteractions/xgi/blob/main/LICENSE.md>`__.
 Note that this excludes any images/pictures/figures shown here or in the
 documentation.
 
@@ -41,6 +41,6 @@ Contributing
 
 If you want to contribute to this project, please make sure to read the
 `code of conduct
-<https://github.com/ComplexGroupInteractions/xgi/blob/master/CODE_OF_CONDUCT.md>`__
+<https://github.com/ComplexGroupInteractions/xgi/blob/main/CODE_OF_CONDUCT.md>`__
 and the `contributing guidelines
-<https://github.com/ComplexGroupInteractions/xgi/blob/master/CONTRIBUTING.md>`__.
+<https://github.com/ComplexGroupInteractions/xgi/blob/main/CONTRIBUTING.md>`__.
