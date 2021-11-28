@@ -26,7 +26,7 @@ author_email = "nicholas.landry@colorado.edu"
 
 url = "https://github.com/ComplexGroupInteractions/xgi"
 
-description = "XGI is a Python library for the representation and analysis of complex systems with group (higher-order) interaction."
+description = "XGI is a Python library for the representation and analysis of complex systems with group (higher-order) interactions."
 
 install_requires = [
     "networkx>=2.2,<3.0",
