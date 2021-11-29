@@ -19,7 +19,7 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the rep
   - [Other Resources](#other-resources)
 
 ## Installation
-XGI runs on Python 3.8 or higher.
+XGI runs on Python 3.7 or higher.
 
 To install the latest version of XGI, run the following command:
 ```sh
