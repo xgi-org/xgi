@@ -3,8 +3,8 @@ import sys
 
 __version__ = "0.1.1"
 
-if sys.version_info < (3, 7):
-    sys.exit("XGI requires Python 3.7 or later.")
+if sys.version_info < (3, 8):
+    sys.exit("XGI requires Python 3.8 or later.")
 
 name = "xgi"
 
