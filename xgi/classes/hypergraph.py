@@ -24,6 +24,7 @@ __all__ = ["Hypergraph"]
 
 class Hypergraph:
     """A class to represent undirected hypergraphs."""
+
     node_dict_factory = dict
     node_attr_dict_factory = dict
     hyperedge_dict_factory = dict
@@ -1140,9 +1141,7 @@ class Hypergraph:
                     exc, message = e, e.args[0]
                     # capture error for non-sequence/iterator nbunch.
                     if "iter" in message:
-                        exc = XGIError(
-                            "nbunch is not a node or a sequence of nodes."
-                        )
+                        exc = XGIError("nbunch is not a node or a sequence of nodes.")
                     # capture error for unhashable node.
                     if "hashable" in message:
                         exc = XGIError(

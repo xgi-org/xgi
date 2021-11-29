@@ -13,7 +13,6 @@ they become very slow with about 15 nested views. Often it is easiest to use .co
 """
 
 
-
 import xgi
 
 __all__ = ["generic_hypergraph_view", "subhypergraph_view"]
@@ -21,7 +20,7 @@ __all__ = ["generic_hypergraph_view", "subhypergraph_view"]
 
 def generic_hypergraph_view(H, create_using=None):
     """Create a read-only view of the hypergraph
-    
+
     The read-only view shares the same memory as the original hypergraph
     and "freezes" the hypergraph by removing the methods that can modify
     the hypergraph.
@@ -100,6 +99,8 @@ def subhypergraph_view(H, filtered_nodes=None, filtered_edges=None):
     newH._edge_attr = {edge: H._edge_attr[edge] for edge in newH._edge}
 
     # Add the filtered nodes with connections to the remaining edges after filtering
-    newH._node = {node: set(H._node[node]).intersection(newH._edge.keys()) for node in nodes}
+    newH._node = {
+        node: set(H._node[node]).intersection(newH._edge.keys()) for node in nodes
+    }
     newH._node_attr = {node: H._node_attr[node] for node in nodes}
     return newH

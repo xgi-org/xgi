@@ -1,4 +1,4 @@
-import  xgi
+import xgi
 from xgi.exception import XGIError
 
 __all__ = [

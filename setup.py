@@ -30,9 +30,9 @@ description = "XGI is a Python library for the representation and analysis of co
 
 install_requires = [
     "networkx>=2.2,<3.0",
-    "numpy>=1.15.0,<2.0",
-    "scipy>=1.1.0,<2.0",
-    "pandas>=0.23",
+    "numpy>=1.16.6,<1.22.0",
+    "scipy>=1.1.0,<1.7.0",
+    "pandas>=0.23.4,<1.0.0",
 ]
 
 license = "3-Clause BSD license"
