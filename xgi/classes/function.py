@@ -55,6 +55,8 @@ def unique_edge_sizes(H, return_counts=False):
 
     Parameters
     ----------
+    H : Hypergraph object
+        The hypergraph of interest
     return_counts : bool, default: False
         Specifies whether to include the number of occurences of that edge size
 
