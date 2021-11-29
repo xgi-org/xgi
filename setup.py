@@ -1,7 +1,7 @@
 from setuptools import setup
 import sys
 
-__version__ = "0.1"
+__version__ = "0.1.1"
 
 if sys.version_info < (3, 7):
     sys.exit("XGI requires Python 3.7 or later.")
@@ -18,7 +18,7 @@ packages = [
     "xgi.utils",
 ]
 
-version = "0.1"
+version = "0.1.1"
 
 authors = "Nicholas Landry and Leo Torres"
 
