@@ -7,10 +7,10 @@ XGI
 CompleX Group Interactions (XGI) is a Python package for the representation, manipulation,
 and study of the structure, dynamics, and functions of complex systems with group (higher-order) interactions.
 
-- **Source** https://github.com/ComplexGroupInteractions/xgi
-- **Bug reports** https://github.com/ComplexGroupInteractions/xgi/issues
-- **GitHub Discussions** https://github.com/ComplexGroupInteractions/xgi/discussions
-- **Documentation** https://xgi.readthedocs.io/en/latest/
+- **Source**: https://github.com/ComplexGroupInteractions/xgi
+- **Bug reports**: https://github.com/ComplexGroupInteractions/xgi/issues
+- **GitHub Discussions**: https://github.com/ComplexGroupInteractions/xgi/discussions
+- **Documentation**: https://xgi.readthedocs.io/en/latest/
 
 Installation
 ------------
