@@ -1,6 +1,5 @@
 from setuptools import setup
 import sys
-from xgi.utils.utilities import parse_requirements_file
 
 __version__ = "0.1.1"
 
