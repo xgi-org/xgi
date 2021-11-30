@@ -63,9 +63,3 @@ def get_dual(edge_dict):
             node_dict[node].append(edge_id)
 
     return node_dict
-
-
-def parse_requirements_file(filename):
-    with open(filename) as fid:
-        requires = [l.strip() for l in fid.readlines() if not l.startswith("#")]
-    return requires
