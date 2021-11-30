@@ -2,7 +2,7 @@
 XGI
 ===
 
-.. image:: ../../logo/logo.png
+.. image:: ../../logo/logo.svg
   :width: 200
 
 Description
