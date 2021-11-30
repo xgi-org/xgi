@@ -2,6 +2,9 @@
 XGI
 =======
 
+.. image:: https://github.com/ComplexGroupInteractions/xgi/blob/main/logo/logo.svg
+  :width: 400
+
 Description
 -----------
 

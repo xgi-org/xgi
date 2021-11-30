@@ -1,6 +1,9 @@
 About
 =====
 
+.. image:: https://github.com/ComplexGroupInteractions/xgi/blob/main/logo/logo.svg
+  :width: 400
+
 The ``XGI`` library provides data structures and algorithms for modeling and analyzing
 complex systems with group (higher-order) interactions.
 
@@ -30,7 +33,6 @@ installed by ``pip`` during the installation process
 
 License
 -------
-
 This project is licensed under the `BSD 3-Clause License
 <https://github.com/ComplexGroupInteractions/xgi/blob/main/LICENSE.md>`__.
 Note that this excludes any images/pictures/figures shown here or in the
@@ -38,7 +40,6 @@ documentation.
 
 Contributing
 ------------
-
 If you want to contribute to this project, please make sure to read the
 `code of conduct
 <https://github.com/ComplexGroupInteractions/xgi/blob/main/CODE_OF_CONDUCT.md>`__
