@@ -33,7 +33,7 @@ To install this package locally:
 Getting Started
 ---------------
 To get started, take a look at the `tutorials <https://github.com/ComplexGroupInteractions/xgi/tree/main/tutorials>`_
- illustrating the library's basic functionality.
+illustrating the library's basic functionality.
 
 Documentation
 -------------
