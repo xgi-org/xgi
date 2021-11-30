@@ -2,7 +2,8 @@
 XGI
 ===
 
-.. image:: logo/logo.png
+.. image:: ../../logo/logo.png
+  :width: 200
 
 Description
 -----------

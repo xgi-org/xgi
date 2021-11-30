@@ -1,7 +1,8 @@
 About
 =====
 
-.. image:: logo/logo.png
+.. image:: ../../logo/logo.png
+  :width: 200
 
 The ``XGI`` library provides data structures and algorithms for modeling and analyzing
 complex systems with group (higher-order) interactions.
