@@ -2,7 +2,7 @@ XGI
 ===
 
 .. image:: https://github.com/ComplexGroupInteractions/xgi/blob/main/logo/logo.svg
-  :width: 400
+  :width: 200
 
 Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the representation, manipulation,
 and study of the structure, dynamics, and functions of complex systems with group (higher-order) interactions.
@@ -16,7 +16,7 @@ Installation
 ------------
 XGI runs on Python 3.7 or higher.
 
-To install the latest version of XGI, run the following command::
+To install the latest version of XGI, run the following command
 .. code:: bash
 
    pip install xgi
@@ -24,7 +24,7 @@ To install the latest version of XGI, run the following command::
 To install this package locally:
 - Clone this repository
 - Navigate to the folder on your local machine
-- Run the following command::
+- Run the following command
 .. code:: bash
 
    pip install -e .["all"]
