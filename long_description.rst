@@ -4,7 +4,7 @@ XGI
 .. image:: https://github.com/ComplexGroupInteractions/xgi/blob/main/logo/logo.svg
   :width: 200
 
-Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the representation, manipulation,
+CompleX Group Interactions (XGI) is a Python package for the representation, manipulation,
 and study of the structure, dynamics, and functions of complex systems with group (higher-order) interactions.
 
 - **Source** https://github.com/ComplexGroupInteractions/xgi
