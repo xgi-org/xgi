@@ -1,7 +1,7 @@
 About
 =====
 
-.. image:: https://github.com/ComplexGroupInteractions/xgi/blob/main/logo/logo.svg
+.. image:: logo/logo.svg
   :width: 400
 
 The ``XGI`` library provides data structures and algorithms for modeling and analyzing
