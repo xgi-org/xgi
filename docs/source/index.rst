@@ -1,9 +1,9 @@
-=======
+===
 XGI
-=======
+===
 
-.. image:: logo/logo.svg
-  :width: 400
+.. image:: logo/logo.png
+  :width: 200
 
 Description
 -----------
