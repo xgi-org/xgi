@@ -32,7 +32,7 @@ To install this package locally:
 
 Getting Started
 ---------------
-To get started, take a look at the `tutorials <https://github.com/ComplexGroupInteractions/xgi/tree/main/tutorials>'_
+To get started, take a look at the `tutorials <https://github.com/ComplexGroupInteractions/xgi/tree/main/tutorials>`_
  illustrating the library's basic functionality.
 
 Documentation
@@ -62,7 +62,7 @@ Our full code of conduct, and how we enforce it, can be read in `our repository 
 
 License
 -------
-Released under the 3-Clause BSD license (see ``license.md` <https://github.com/ComplexGroupInteractions/xgi/tree/main/license.md>`_)
+Released under the 3-Clause BSD license (see the `license file <https://github.com/ComplexGroupInteractions/xgi/tree/main/license.md>`_)
 
 Copyright (C) 2021 XGI Developers
 
@@ -70,5 +70,5 @@ Nicholas Landry <nicholas.landry@colorado.edu>
 
 Leo Torres <leo@leotrs.com>
 
-The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our
-``license.md` <https://github.com/ComplexGroupInteractions/xgi/tree/main/license.md>`_.
+The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in the
+`license file <https://github.com/ComplexGroupInteractions/xgi/tree/main/license.md>`_.
