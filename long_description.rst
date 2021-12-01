@@ -16,9 +16,9 @@ To install the latest version of XGI, run the following command::
    $ pip install xgi
 
 To install this package locally:
-- Clone this repository
-- Navigate to the folder on your local machine
-- Run the following command::
+-  Clone this repository
+-  Navigate to the folder on your local machine
+-  Run the following command::
 
    $ pip install -e .["all"]
 
