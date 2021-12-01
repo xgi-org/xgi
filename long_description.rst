@@ -1,43 +1,32 @@
 XGI
 ===
 
-.. image:: https://github.com/ComplexGroupInteractions/xgi/blob/main/logo/logo.svg
+.. image:: https://github.com/ComplexGroupInteractions/xgi/raw/main/logo/logo.svg
   :width: 200
 
 CompleX Group Interactions (XGI) is a Python package for the representation, manipulation,
 and study of the structure, dynamics, and functions of complex systems with group (higher-order) interactions.
 
-- **Source**: https://github.com/ComplexGroupInteractions/xgi
-- **Bug reports**: https://github.com/ComplexGroupInteractions/xgi/issues
-- **GitHub Discussions**: https://github.com/ComplexGroupInteractions/xgi/discussions
-- **Documentation**: https://xgi.readthedocs.io/en/latest/
-
 Installation
 ------------
 XGI runs on Python 3.7 or higher.
 
-To install the latest version of XGI, run the following command
-.. code:: bash
+To install the latest version of XGI, run the following command::
 
-   pip install xgi
+   $ pip install xgi
 
 To install this package locally:
 - Clone this repository
 - Navigate to the folder on your local machine
-- Run the following command
-.. code:: bash
+- Run the following command::
 
-   pip install -e .["all"]
+   $ pip install -e .["all"]
 
 
 Getting Started
 ---------------
 To get started, take a look at the `tutorials <https://github.com/ComplexGroupInteractions/xgi/tree/main/tutorials>`_
 illustrating the library's basic functionality.
-
-Documentation
--------------
-For more documentation, see our `Read The Docs <https://xgi.readthedocs.io/en/latest/>`_ page.
 
 Contributing
 ------------
@@ -69,6 +58,3 @@ Copyright (C) 2021 XGI Developers
 Nicholas Landry <nicholas.landry@colorado.edu>
 
 Leo Torres <leo@leotrs.com>
-
-The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in the
-`license file <https://github.com/ComplexGroupInteractions/xgi/tree/main/license.md>`_.

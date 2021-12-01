@@ -1,4 +1,5 @@
 from setuptools import setup
+import setuptools
 import sys
 
 __version__ = "0.1.1"
@@ -18,13 +19,19 @@ packages = [
     "xgi.utils",
 ]
 
-version = "0.1.1"
+version = __version__
 
 authors = "Nicholas Landry and Leo Torres"
 
 author_email = "nicholas.landry@colorado.edu"
 
-url = "https://github.com/ComplexGroupInteractions/xgi"
+project_urls={
+        'Documentation': "https://xgi.readthedocs.io/en/latest/",
+        'Bug Reports': "https://github.com/ComplexGroupInteractions/xgi/issues",
+        'Source': "https://github.com/ComplexGroupInteractions/xgi",
+        'PyPI': "https://pypi.org/project/xgi/",
+        'GitHub Discussions': "https://github.com/ComplexGroupInteractions/xgi/discussions"
+    },
 
 description = """XGI is a Python library for the representation
 and analysis of complex systems with group (higher-order) interactions."""
@@ -52,11 +59,11 @@ license = "3-Clause BSD license"
 
 setup(
     name=name,
-    packages=packages,
+    packages=setuptools.find_packages(),
     version=version,
     author=authors,
     author_email=author_email,
-    url=url,
+    project_urls=project_urls,
     description=description,
     long_description=long_description,
     install_requires=install_requires,
