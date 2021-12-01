@@ -40,7 +40,7 @@ To get started, take a look at the [tutorials](/tutorials/) illustrating the lib
 
 ## Documentation
 
-For more documentation, see our [Read The Docs](https://xgi.readthedocs.io/en/latest/) page
+For more documentation, see our [Read The Docs](https://xgi.readthedocs.io/en/latest/) page.
 
 ## Contributing
 Contributions are always welcome. Please report any bugs that you find [here](../../issues). Or, even better, fork the repository on [GitHub](../../) and create a pull request (PR). We welcome all changes, big or small, and we will help you make the PR if you are new to `git` (just ask on the issue and/or see our [contributing guidelines](CONTRIBUTING.md)).
@@ -60,16 +60,18 @@ a citation in your preferred format, and will also integrate well with citation 
 Our full code of conduct, and how we enforce it, can be read in [our repository](CODE_OF_CONDUCT.md).
 
 ## License
-Released under the 3-Clause BSD license (see `license.md`)
+Released under the 3-Clause BSD license (see [`license.md`](license.md))
 
 Copyright (C) 2021 XGI Developers
+
 Nicholas Landry <nicholas.landry@colorado.edu>
+
 Leo Torres <leo@leotrs.com>
 
 The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](license.md)
 
 ## Funding
-The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905)
+The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905).
 
 ## Other resources
 This library may not meet your needs and if this is this case, consider checking out these other resources:

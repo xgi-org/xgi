@@ -2,10 +2,12 @@
 """
 
 from collections import Counter
+import numpy as np
 import xgi
 
 __all__ = [
     "degree_histogram",
+    "unique_edge_sizes",
     "freeze",
     "is_frozen",
     "create_empty_copy",
@@ -46,6 +48,28 @@ def degree_histogram(H):
     """
     counts = Counter(d for n, d in H.degree())
     return [counts.get(i, 0) for i in range(max(counts) + 1)]
+
+
+def unique_edge_sizes(H, return_counts=False):
+    """A function that returns the unique edge sizes.
+
+    Parameters
+    ----------
+    H : Hypergraph object
+        The hypergraph of interest
+    return_counts : bool, default: False
+        Specifies whether to include the number of occurences of that edge size
+
+    Returns
+    -------
+    if return_counts:
+        numpy.ndarray, numpy.ndarray
+            Numpy arrays of the unique edge sizes and the number of each size respectively
+    else:
+        numpy.ndarray
+            A numpy array of the unique edge sizes
+    """
+    return np.unique(list(H.edge_size), return_counts=return_counts)
 
 
 def frozen(*args, **kwargs):

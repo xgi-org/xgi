@@ -24,6 +24,7 @@ __all__ = ["Hypergraph"]
 
 class Hypergraph:
     """A class to represent undirected hypergraphs."""
+
     node_dict_factory = dict
     node_attr_dict_factory = dict
     hyperedge_dict_factory = dict
@@ -883,25 +884,6 @@ class Hypergraph:
         """
         return EdgeSizeView(self)
 
-    def unique_edge_sizes(self, return_counts=False):
-        """A function that returns the unique edge sizes.
-
-        Parameters
-        ----------
-        return_counts : bool, default: False
-            Specifies whether to include the number of occurences of that edge size
-
-        Returns
-        -------
-        if return_counts:
-            numpy.ndarray, numpy.ndarray
-                Numpy arrays of the unique edge sizes and the number of each size respectively
-        else:
-            numpy.ndarray
-                A numpy array of the unique edge sizes
-        """
-        return np.unique(list(self.edge_degree), return_counts=return_counts)
-
     def clear(self):
         """Remove all nodes and edges from the graph.
 
@@ -1159,9 +1141,7 @@ class Hypergraph:
                     exc, message = e, e.args[0]
                     # capture error for non-sequence/iterator nbunch.
                     if "iter" in message:
-                        exc = XGIError(
-                            "nbunch is not a node or a sequence of nodes."
-                        )
+                        exc = XGIError("nbunch is not a node or a sequence of nodes.")
                     # capture error for unhashable node.
                     if "hashable" in message:
                         exc = XGIError(

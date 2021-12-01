@@ -3,7 +3,7 @@
 Contains information about this package.
 """
 
-__version__ = "0.1"
+__version__ = "0.1.1"
 
 __author__ = "Nicholas W. Landry and Leo Torres"
 __copyright__ = "Copyright 2021-2022, " + __author__
