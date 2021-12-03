@@ -1,0 +1,17 @@
+include MANIFEST.in
+include setup.py
+include CONTRIBUTING.md
+include long_description.rst
+include README.md
+include LICENSE.md
+include CITATION.cff
+include CODE_OF_CONDUCT.md
+
+recursive-include data *.txt
+recursive-include tutorials *.ipynb
+recursive-include logo *.jpg *.png *.svg
+recursive-include requirements *.txt *.md
+
+global-exclude *~
+global-exclude *.pyc
+global-exclude .svn
