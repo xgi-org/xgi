@@ -35,8 +35,6 @@ License
 -------
 This project is licensed under the `BSD 3-Clause License
 <https://github.com/ComplexGroupInteractions/xgi/blob/main/LICENSE.md>`__.
-Note that this excludes any images/pictures/figures shown here or in the
-documentation.
 
 Contributing
 ------------

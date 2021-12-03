@@ -2,7 +2,7 @@ from setuptools import setup
 import setuptools
 import sys
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 if sys.version_info < (3, 7):
     sys.exit("XGI requires Python 3.7 or later.")
@@ -31,14 +31,13 @@ project_urls={
         'Source': "https://github.com/ComplexGroupInteractions/xgi",
         'PyPI': "https://pypi.org/project/xgi/",
         'GitHub Discussions': "https://github.com/ComplexGroupInteractions/xgi/discussions"
-    },
+    }
 
 description = """XGI is a Python library for the representation
 and analysis of complex systems with group (higher-order) interactions."""
 
 with open("long_description.rst") as file:
     long_description = file.read()
-
 
 def parse_requirements_file(filename):
     with open(filename) as fid:
