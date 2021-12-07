@@ -148,8 +148,9 @@ def parse_bipartite_edgelist(
     Raises
     ------
     XGIError
-        If a line contains less than two entries or if node types
-        fail to be converted.
+        If a line contains fewer than two entries
+    TypeError
+        If node types fail to be converted
 
     Returns
     -------

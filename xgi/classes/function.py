@@ -4,6 +4,7 @@
 from collections import Counter
 import numpy as np
 import xgi
+from xgi.exception import XGIError
 
 __all__ = [
     "degree_histogram",
@@ -77,7 +78,7 @@ def frozen(*args, **kwargs):
 
     Raises
     ------
-    xgi.HypergraphError
+    xgi.XGIError
         Raises error when user tries to modify the hypergraph
 
     Examples
@@ -87,9 +88,9 @@ def frozen(*args, **kwargs):
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> xgi.freeze(H)
     >>> H.add_node(5)
-    HypergraphError: "Frozen hypergraph can't be modified"
+    XGIError: "Frozen hypergraph can't be modified"
     """
-    raise xgi.HypergraphError("Frozen hypergraph can't be modified")
+    raise XGIError("Frozen hypergraph can't be modified")
 
 
 def freeze(H):
@@ -118,7 +119,7 @@ def freeze(H):
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> xgi.freeze(H)
     >>> H.add_node(5)
-    HypergraphError: "Frozen hypergraph can't be modified"
+    XGIError: "Frozen hypergraph can't be modified"
     """
     H.add_node = frozen
     H.add_nodes_from = frozen

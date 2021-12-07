@@ -1,5 +1,5 @@
 # XGI
-<img src='logo/logo.png' width='150px' align="right" style="float:right;margin-left:10pt"></img>
+<img src='logo/logo.svg' width='150px' align="right" style="float:right;margin-left:10pt"></img>
 Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the representation, manipulation, and study of the structure, dynamics, and functions of complex systems with group (higher-order) interactions.
 
 * [**Source**](../../)
