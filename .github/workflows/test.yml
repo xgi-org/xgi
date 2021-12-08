@@ -25,4 +25,4 @@ jobs:
         python -m pip list
     - name: Test XGI
       run: |
-        pytest --doctest-modules --durations=10 --pyargs xgi
+        pytest --durations=10 --pyargs xgi
