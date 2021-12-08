@@ -29,7 +29,6 @@ installed by ``pip`` during the installation process
 -  ``numpy>=1.15``
 -  ``scipy>=1.3``
 -  ``pandas>=0.23``
--  ``networkx>=2.2``
 
 License
 -------
