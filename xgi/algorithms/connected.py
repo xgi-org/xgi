@@ -48,7 +48,7 @@ def connected_components(H):
     ----------
     H: Hypergraph object
         The hypergraph of interest
-    
+
     Returns
     -------
     iterable of lists

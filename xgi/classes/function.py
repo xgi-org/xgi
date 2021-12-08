@@ -58,19 +58,13 @@ def unique_edge_sizes(H, return_counts=False):
     ----------
     H : Hypergraph object
         The hypergraph of interest
-    return_counts : bool, default: False
-        Specifies whether to include the number of occurences of that edge size
 
     Returns
     -------
-    if return_counts:
-        numpy.ndarray, numpy.ndarray
-            Numpy arrays of the unique edge sizes and the number of each size respectively
-    else:
-        numpy.ndarray
-            A numpy array of the unique edge sizes
+    list()
+        The unique edge sizes
     """
-    return np.unique(list(H.edge_size), return_counts=return_counts)
+    return list({len(H.edges[edge]) for edge in H.edges})
 
 
 def frozen(*args, **kwargs):
@@ -201,11 +195,12 @@ def create_empty_copy(H, with_data=True):
     >>> H_copy.edges
     EdgeView([])
     """
-    H = H.__class__()
-    H.add_nodes_from(H.nodes(data=with_data))
+    H_copy = H.__class__()
+    H_copy.add_nodes_from(H.nodes)
     if with_data:
-        H._hypergraph.update(H._hypergraph)
-    return H
+        xgi.set_node_attributes(H_copy, H._node_attr)
+        H_copy._hypergraph.update(H._hypergraph)
+    return H_copy
 
 
 def set_node_attributes(H, values, name=None):
