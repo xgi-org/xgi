@@ -198,7 +198,7 @@ def create_empty_copy(H, with_data=True):
     H_copy = H.__class__()
     H_copy.add_nodes_from(H.nodes)
     if with_data:
-        xgi.set_node_attributes(H_copy, H._node_attr)
+        xgi.set_node_attributes(H_copy, dict(H.nodes.data()))
         H_copy._hypergraph.update(H._hypergraph)
     return H_copy
 
