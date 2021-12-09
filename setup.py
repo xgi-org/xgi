@@ -9,16 +9,6 @@ if sys.version_info < (3, 7):
 
 name = "xgi"
 
-packages = [
-    "xgi",
-    "xgi.algorithms",
-    "xgi.classes",
-    "xgi.generators",
-    "xgi.linalg",
-    "xgi.readwrite",
-    "xgi.utils",
-]
-
 version = __version__
 
 authors = "Nicholas Landry and Leo Torres"
