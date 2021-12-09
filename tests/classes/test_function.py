@@ -94,6 +94,7 @@ def test_create_empty_copy(edgelist1):
     assert E2._hypergraph == {"name": "test", "timestamp": "Nov. 20"}
     assert dict(E2.nodes.data()) == attr_dict
 
+
 def test_is_empty():
     H1 = xgi.Hypergraph()
     H2 = xgi.Hypergraph()

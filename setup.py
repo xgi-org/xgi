@@ -25,15 +25,13 @@ authors = "Nicholas Landry and Leo Torres"
 
 author_email = "nicholas.landry@colorado.edu"
 
-project_urls = (
-    {
-        "Documentation": "https://xgi.readthedocs.io/en/latest/",
-        "Bug Reports": "https://github.com/ComplexGroupInteractions/xgi/issues",
-        "Source": "https://github.com/ComplexGroupInteractions/xgi",
-        "PyPI": "https://pypi.org/project/xgi/",
-        "GitHub Discussions": "https://github.com/ComplexGroupInteractions/xgi/discussions",
-    },
-)
+project_urls = {
+    "Documentation": "https://xgi.readthedocs.io/en/latest/",
+    "Bug Reports": "https://github.com/ComplexGroupInteractions/xgi/issues",
+    "Source": "https://github.com/ComplexGroupInteractions/xgi",
+    "PyPI": "https://pypi.org/project/xgi/",
+    "GitHub Discussions": "https://github.com/ComplexGroupInteractions/xgi/discussions",
+}
 
 description = """XGI is a Python library for the representation
 and analysis of complex systems with group (higher-order) interactions."""
