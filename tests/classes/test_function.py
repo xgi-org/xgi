@@ -1,9 +1,5 @@
-from attr import attr
 import pytest
 import xgi
-import numpy as np
-
-from xgi.classes.hypergraph import Hypergraph
 from xgi.exception import XGIError
 
 

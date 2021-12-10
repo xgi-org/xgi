@@ -1,20 +1,11 @@
-import pytest
 import xgi
-
-from xgi.classes.hypergraph import Hypergraph
-from xgi.exception import XGIError
 
 
 def test_constructor(edgelist5, dict5, incidence5, dataframe5):
-    el = edgelist5
-    d = dict5
-    i = incidence5
-    df = dataframe5
-
-    H_list = xgi.Hypergraph(el)
-    H_dict = xgi.Hypergraph(d)
-    H_mat = xgi.Hypergraph(i)
-    H_df = xgi.Hypergraph(df)
+    H_list = xgi.Hypergraph(edgelist5)
+    H_dict = xgi.Hypergraph(dict5)
+    H_mat = xgi.Hypergraph(incidence5)
+    H_df = xgi.Hypergraph(dataframe5)
 
     assert H_list.shape == H_dict.shape == H_mat.shape == H_df.shape
     assert (
@@ -49,7 +40,7 @@ def test_name():
 def test_contains(edgelist1):
     el1 = edgelist1
     H = xgi.Hypergraph(el1)
-    unique_nodes = list({node for edge in el1 for node in edge})
+    unique_nodes = {node for edge in el1 for node in edge}
     for node in unique_nodes:
         assert node in H
 
