@@ -127,10 +127,14 @@ def parse_bipartite_edgelist(
     A helper function to read a iterable of strings containing a bipartite edge list and
     convert it to a Hypergraph object.
 
+    Reads the first two entries of each line and assumes that the first entry is a node
+    ID and that the second entry is an edge ID. Raises error if there are fewer than two
+    entries.
+
     Parameters
     ----------
     lines: iterable of strings
-        Lines where each line is an edge
+        Lines where each line is a bipartite edge
     comments: string, default: "#"
         The token that denotes comments to ignore
     delimiter: char, default: space (" ")
@@ -140,6 +144,13 @@ def parse_bipartite_edgelist(
         type that the node labels will be cast to
     data: bool, default: False
         Specifies whether there is a dictionary of data at the end of the line.
+
+    Raises
+    ------
+    XGIError
+        If a line contains fewer than two entries
+    TypeError
+        If node types fail to be converted
 
     Returns
     -------
@@ -155,8 +166,8 @@ def parse_bipartite_edgelist(
             if not line:
                 continue
         s = line.strip().split(delimiter)
-        if len(s) != 2:
-            raise XGIError("Each line must contain two entries!")
+        if len(s) < 2:
+            raise XGIError("Each line must contain at least two entries!")
         # no data or data type specified
 
         if nodetype is not None:

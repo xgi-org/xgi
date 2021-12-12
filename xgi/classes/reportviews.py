@@ -78,6 +78,7 @@ EdgeSizeView
 """
 from collections.abc import Mapping, Set
 import xgi
+from xgi.exception import XGIError
 
 __all__ = [
     "NodeView",
@@ -167,7 +168,7 @@ class NodeView(Mapping, Set):
 
         Raises
         ------
-        xgi.HypergraphError
+        xgi.XGIError
             Returns an error if the user tries passing in a slice or if
             the node does not exist in the hypergraph.
 
@@ -177,12 +178,12 @@ class NodeView(Mapping, Set):
         members
         """
         if isinstance(n, slice):
-            raise xgi.HypergraphError(
+            raise XGIError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
             )
         elif n not in self._nodes:
-            raise xgi.HypergraphError(f"The node {n} is not in the hypergraph")
+            raise XGIError(f"The node {n} is not in the hypergraph")
 
         return self._nodes[n]
 
@@ -219,7 +220,7 @@ class NodeView(Mapping, Set):
 
         Raises
         ------
-        xgi.HypergraphError
+        xgi.XGIError
             Returns an error if the user tries passing in a slice or if
             the node does not exist in the hypergraph.
 
@@ -229,12 +230,12 @@ class NodeView(Mapping, Set):
         members
         """
         if isinstance(n, slice):
-            raise xgi.HypergraphError(
+            raise XGIError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
             )
         elif n not in self._nodes:
-            raise xgi.HypergraphError(f"The node {n} is not in the hypergraph")
+            raise XGIError(f"The node {n} is not in the hypergraph")
         return self._nodes[n]
 
     def data(self, data=True, default=None):
@@ -340,7 +341,7 @@ class NodeView(Mapping, Set):
 
         Raises
         ------
-        xgi.HypergraphError
+        xgi.XGIError
             Returns an error if the user tries passing in a slice or if
             the node does not exist in the hypergraph.
 
@@ -349,12 +350,12 @@ class NodeView(Mapping, Set):
         __getitem__
         """
         if isinstance(n, slice):
-            raise xgi.HypergraphError(
+            raise XGIError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
             )
         elif n not in self._nodes:
-            raise xgi.HypergraphError(f"The node {n} is not in the hypergraph")
+            raise XGIError(f"The node {n} is not in the hypergraph")
         return self._nodes[n]
 
 
@@ -482,17 +483,17 @@ class NodeDataView(Set):
 
         Raises
         ------
-        xgi.HypergraphError
+        xgi.XGIError
             Returns an error if the user tries passing in a slice or if
             the node does not exist in the hypergraph.
         """
         if isinstance(n, slice):
-            raise xgi.HypergraphError(
+            raise XGIError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes.data())[{n.start}:{n.stop}:{n.step}]"
             )
         elif n not in self._data:
-            raise xgi.HypergraphError(f"The node {n} is not in the hypergraph")
+            raise XGIError(f"The node {n} is not in the hypergraph")
 
         ddict = self._node_attrs[n]
         data = self._data
@@ -624,7 +625,7 @@ class EdgeView(Set, Mapping):
 
         Raises
         ------
-        xgi.HypergraphError
+        xgi.XGIError
             Returns an error if the user tries passing in a slice or if
             the edge ID does not exist in the hypergraph.
 
@@ -634,12 +635,12 @@ class EdgeView(Set, Mapping):
         members
         """
         if isinstance(e, slice):
-            raise xgi.HypergraphError(
+            raise XGIError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
             )
         elif e not in self._edges:
-            raise xgi.HypergraphError(f"The edge {e} is not in the hypergraph")
+            raise XGIError(f"The edge {e} is not in the hypergraph")
         return self._edges[e]
 
     # get edge members
@@ -659,7 +660,7 @@ class EdgeView(Set, Mapping):
 
         Raises
         ------
-        xgi.HypergraphError
+        xgi.XGIError
             Returns an error if the user tries passing in a slice or if
             the edge ID does not exist in the hypergraph.
 
@@ -669,12 +670,12 @@ class EdgeView(Set, Mapping):
         members
         """
         if isinstance(e, slice):
-            raise xgi.HypergraphError(
+            raise XGIError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
             )
         elif e not in self._edges:
-            raise xgi.HypergraphError(f"The edge {e} is not in the hypergraph")
+            raise XGIError(f"The edge {e} is not in the hypergraph")
         return self._edges[e]
 
     def members(self, e):
@@ -693,7 +694,7 @@ class EdgeView(Set, Mapping):
 
         Raises
         ------
-        xgi.HypergraphError
+        xgi.XGIError
             Returns an error if the user tries passing in a slice or if
             the edge ID does not exist in the hypergraph.
 
@@ -703,12 +704,12 @@ class EdgeView(Set, Mapping):
         __call__
         """
         if isinstance(e, slice):
-            raise xgi.HypergraphError(
+            raise XGIError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
             )
         elif e not in self._edges:
-            raise xgi.HypergraphError(f"The edge {e} is not in the hypergraph")
+            raise XGIError(f"The edge {e} is not in the hypergraph")
         return self._edges[e]
 
     def data(self, data=True, default=None, nbunch=None):
@@ -874,17 +875,17 @@ class EdgeDataView:
 
         Raises
         ------
-        xgi.HypergraphError
+        xgi.XGIError
             Returns an error if the user tries passing in a slice or if
             the edge ID does not exist in the hypergraph.
         """
         if isinstance(e, slice):
-            raise xgi.HypergraphError(
+            raise XGIError(
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes.data())[{e.start}:{e.stop}:{e.step}]"
             )
         elif e not in self._edge_attrs:
-            raise xgi.HypergraphError(f"The edge ID {e} is not in the hypergraph")
+            raise XGIError(f"The edge ID {e} is not in the hypergraph")
 
         ddict = self._edge_attrs[e]
         data = self._data

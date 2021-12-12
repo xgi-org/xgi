@@ -118,7 +118,7 @@ def adjacency_matrix(H, s=1, index=False):
     """
 
     if index:
-        I, row_dict, col_dict = incidence_matrix(H, index=True)
+        I, row_dict, _ = incidence_matrix(H, index=True)
     else:
         I = incidence_matrix(H, index=False)
 
@@ -127,7 +127,7 @@ def adjacency_matrix(H, s=1, index=False):
     A = (A >= s) * 1
 
     if index:
-        return A, row_dict, col_dict
+        return A, row_dict
     else:
         return A
 
@@ -168,7 +168,7 @@ def clique_motif_matrix(H, index=False):
         >>> W = hg.clique_motif_matrix(H)
     """
     if index:
-        I, row_dict, col_dict = incidence_matrix(H, index=True)
+        I, row_dict, _ = incidence_matrix(H, index=True)
     else:
         I = incidence_matrix(H, index=False)
 
@@ -177,6 +177,6 @@ def clique_motif_matrix(H, index=False):
     W.eliminate_zeros()
 
     if index:
-        return W, row_dict, col_dict
+        return W, row_dict
     else:
         return W
