@@ -10,7 +10,7 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
    build.
 2. Update README.md and CHANGELOG.md with details of changes to the interface, this includes new environment 
    variables, exposed ports, useful file locations and container parameters.
-3. Increase the version number in [xgi/metadata.py](/xgi/metadata.py) and the README.md to the new version that this
+3. Increase the version number in [setup.py](setup.py), [conf.py](docs/source/conf.py), and [CITATION.cff](CITATION.cff) to the new version that this
    Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
 4. Please read the documentation part on [testing](TODO). Make sure [pytest](https://docs.pytest.org/en/latest/) is installed. Run ``make test`` to run all automated tests. Post the output as a comment in your Pull Request.
 5. You may merge the Pull Request in once you have the sign-off of one other developer, or if you 
