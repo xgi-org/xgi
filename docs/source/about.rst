@@ -14,11 +14,7 @@ Install
 
    pip install xgi
 
-``XGI`` was developed and tested for
-
--  Python 3.9
-
-So far, the package's functionality was tested on Mac OS X and Windows 10.
+``XGI`` was developed and tested for Python 3.7-3.10 on Mac OS, Windows, and Ubuntu.
 
 Dependencies
 ------------
