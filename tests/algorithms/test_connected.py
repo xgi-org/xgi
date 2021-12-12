@@ -14,9 +14,9 @@ def test_connected_components(edgelist1, edgelist2, edgelist4):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist2)
     H3 = xgi.Hypergraph(edgelist4)
-    cc1 = xgi.connected_components(H1)
-    cc2 = xgi.connected_components(H2)
-    cc3 = xgi.connected_components(H3)
+    cc1 = list(xgi.connected_components(H1))
+    cc2 = list(xgi.connected_components(H2))
+    cc3 = list(xgi.connected_components(H3))
     assert sorted([len(cc) for cc in cc1]) == [1, 3, 4]
     assert {1, 2, 3} in cc1
     assert {4} in cc1
