@@ -1151,3 +1151,36 @@ class Hypergraph:
 
             bunch = bunch_iter(nbunch, self._node)
         return bunch
+        
+    def max_edge_order(self) : 
+        """Returns the maximum order of edges in the hypergraph. 
+        
+        Returns
+        -------
+        d_max : int 
+            Maximum order of edges in hypergraph 
+        """
+        
+        try : 
+            edges = list(H._edge.values())
+            d_max = max([len(edge) for edges in edges]) - 1
+        except ValueError: # if edges is empty
+            if self.node : 
+                d_max = 0 
+            else : 
+                d_max = None
+        
+        return d_max
+        
+    def is_possible_order(self, d) : 
+        """Returns True if 'd' is a possible edge order, 
+        given the number of nodes in the hypergraph.
+        
+        Returns
+        -------
+        bool
+        """
+        d_max = self.max_edge_order()
+        return (d >= 1) * (d <= d_max)
+        
+        
