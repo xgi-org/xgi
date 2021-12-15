@@ -1162,8 +1162,8 @@ class Hypergraph:
         """
         
         try : 
-            edges = list(H._edge.values())
-            d_max = max([len(edge) for edges in edges]) - 1
+            edges = list(self._edge.values())
+            d_max = max([len(edge) for edge in edges]) - 1
         except ValueError: # if edges is empty
             if self.node : 
                 d_max = 0 
@@ -1181,6 +1181,6 @@ class Hypergraph:
         bool
         """
         d_max = self.max_edge_order()
-        return (d >= 1) * (d <= d_max)
+        return (d >= 1) & (d <= d_max)
         
         
