@@ -59,3 +59,9 @@ Copyright (C) 2021 XGI Developers
 Nicholas Landry <nicholas.landry@colorado.edu>
 
 Leo Torres <leo@leotrs.com>
+
+Iacopo Iacopini <iacopiniiacopo@gmail.com>
+
+Maxime Lucas <maxime.lucas@isi.it>
+
+Giovanni Petri <giovanni.petri@isi.it>

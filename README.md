@@ -68,6 +68,12 @@ Nicholas Landry <nicholas.landry@colorado.edu>
 
 Leo Torres <leo@leotrs.com>
 
+Iacopo Iacopini <iacopiniiacopo@gmail.com>
+
+Maxime Lucas <maxime.lucas@isi.it>
+
+Giovanni Petri <giovanni.petri@isi.it>
+
 The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](license.md)
 
 ## Funding
