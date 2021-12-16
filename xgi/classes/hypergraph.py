@@ -1181,6 +1181,6 @@ class Hypergraph:
         bool
         """
         d_max = self.max_edge_order()
-        return (d >= 1) & (d <= d_max)
+        return (d >= 1) and (d <= d_max)
         
         
