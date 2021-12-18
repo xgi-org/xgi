@@ -28,7 +28,7 @@ def generate_bipartite_edgelist(H, delimiter=" "):
             yield delimiter.join(map(str, [node, id]))
 
 
-def write_bipartite_edgelist(H, path, delimiter=" ", data=True, encoding="utf-8"):
+def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     """Write a Hypergraph object to a file
     as a bipartite edgelist.
 
@@ -40,8 +40,6 @@ def write_bipartite_edgelist(H, path, delimiter=" ", data=True, encoding="utf-8"
         The path of the file to write to
     delimiter: char, default: space (" ")
         Specifies the delimiter between hyperedge members
-    data: bool, default: True
-        Specifies whether to output the edge attributes
     encoding: string, default: "utf-8"
         Encoding of the file
 
@@ -70,7 +68,7 @@ def read_bipartite_edgelist(
     delimiter=None,
     create_using=None,
     nodetype=None,
-    data=False,
+    dual=False,
     encoding="utf-8",
 ):
     """Read a file containing a bipartite edge list and
@@ -88,8 +86,9 @@ def read_bipartite_edgelist(
         The hypergraph object to add the data to, by default None
     nodetype: type
         type that the node labels will be cast to
-    data: bool, default: False
-        Specifies whether there is a dictionary of data at the end of the line.
+    dual: bool, default: False
+        Specifies whether the node IDs are in the second column. If False,
+        the node IDs are in the first column.
     encoding: string, default: "utf-8"
         Encoding of the file
 
@@ -117,11 +116,12 @@ def read_bipartite_edgelist(
             delimiter=delimiter,
             create_using=create_using,
             nodetype=nodetype,
+            dual=dual,
         )
 
 
 def parse_bipartite_edgelist(
-    lines, comments="#", delimiter=None, create_using=None, nodetype=None
+    lines, comments="#", delimiter=None, create_using=None, nodetype=None, dual=False
 ):
     """
     A helper function to read a iterable of strings containing a bipartite edge list and
@@ -158,6 +158,14 @@ def parse_bipartite_edgelist(
         The loaded hypergraph
     """
     H = xgi.empty_hypergraph(create_using)
+
+    if dual:
+        node_index = 1
+        edge_index = 0
+    else:
+        node_index = 0
+        edge_index = 1
+
     for line in lines:
         if comments is not None:
             p = line.find(comments)
@@ -172,9 +180,9 @@ def parse_bipartite_edgelist(
 
         if nodetype is not None:
             try:
-                H.add_node_to_edge(s[1], nodetype(s[0]))
+                H.add_node_to_edge(s[edge_index], nodetype(s[node_index]))
             except Exception as e:
                 raise TypeError(f"Failed to convert nodes to type {nodetype}.") from e
         else:
-            H.add_node_to_edge(s[1], s[0])
+            H.add_node_to_edge(s[edge_index], s[node_index])
     return H

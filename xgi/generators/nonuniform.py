@@ -5,6 +5,10 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 from xgi import Hypergraph
+import xgi
+from xgi.classes import hypergraph
+from xgi.exception import XGIError
+from xgi.readwrite import bipartite
 
 __all__ = [
     "erdos_renyi_hypergraph",
@@ -13,7 +17,7 @@ __all__ = [
 ]
 
 
-def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
+def erdos_renyi_hypergraph(n, m, p):
     """A function to generate an Erdos-Renyi hypergraph
 
     Parameters
@@ -24,10 +28,6 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
         Number of edges
     p: float
         The probability that a bipartite edge is created
-    node_labels: list, default=None
-        Vertex labels
-    edge_labels: list, default=None
-        Hyperedge labels
 
     Returns
     -------
@@ -48,14 +48,12 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
     >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
     """
 
-    if node_labels is not None and edge_labels is not None:
-        get_node_label = lambda index: node_labels[index]
-        get_edge_label = lambda index: edge_labels[index]
-    else:
-        get_node_label = lambda index: index
-        get_edge_label = lambda index: index
+    H = xgi.empty_hypergraph()
+    H.add_nodes_from(range(n))
 
-    bipartite_edges = []
+    if p <= 0.0 or p >= 1.0:
+        raise XGIError("Invalid p value.")
+
     for u in range(n):
         v = 0
         while v < m:
@@ -64,11 +62,10 @@ def erdos_renyi_hypergraph(n, m, p, node_labels=None, edge_labels=None):
             v = v + math.floor(math.log(r) / math.log(1 - p))
             if v < m:
                 # add vertex hyperedge pair
-                bipartite_edges.append((get_edge_label(u), get_node_label(v)))
+                H.add_node_to_edge(v, u)
                 v = v + 1
 
-    df = pd.DataFrame(bipartite_edges)
-    return Hypergraph(df)
+    return H
 
 
 def chung_lu_hypergraph(k1, k2):
@@ -127,7 +124,9 @@ def chung_lu_hypergraph(k1, k2):
 
     S = sum(k1.values())
 
-    bipartite_edges = []
+    H = xgi.empty_hypergraph()
+    H.add_nodes_from(Nlabels)
+
     for u in Nlabels:
         j = 0
         v = Mlabels[j]  # start from beginning every time
@@ -143,13 +142,11 @@ def chung_lu_hypergraph(k1, k2):
                 r = random.random()
                 if r < q / p:
                     # no duplicates
-                    bipartite_edges.append((u, v))
-
+                    H.add_node_to_edge(u, v)
                 p = q
                 j = j + 1
 
-    df = pd.DataFrame(bipartite_edges)
-    return Hypergraph(df)
+    return H
 
 
 def dcsbm_hypergraph(k1, k2, g1, g2, omega):
@@ -244,7 +241,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
         group = g2[label]
         community2Indices[group].append(label)
 
-    bipartite_edges = list()
+    H = xgi.empty_hypergraph()
+    H.add_nodes_from(Nlabels)
 
     kappa1 = defaultdict(lambda: 0)
     kappa2 = defaultdict(lambda: 0)
@@ -281,10 +279,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
                         r = random.random()
                         if r < q / p:
                             # no duplicates
-                            bipartite_edges.append((u, v))
+                            H.add_node_to_edge(u, v)
+                        p = q
+                        j = j + 1
 
-                            p = q
-                            j = j + 1
-
-    df = pd.DataFrame(bipartite_edges)
-    return Hypergraph(df)
+    return H
