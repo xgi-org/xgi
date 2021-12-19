@@ -1195,6 +1195,44 @@ class Hypergraph:
     def remove_singleton_edges(self):
         """Removes all singletons edges from the hypergraph"""
 
-        singleton_ids = [id_ for id_, size in dict(self.edge_size).items() if size==1]
+        singleton_ids = [id_ for id_, size in dict(self.edge_size).items() if size == 1]
         self.remove_edges_from(singleton_ids)
         return None
+
+    def is_d_uniform(self, return_d=False):
+        """Returns True the hypergraph is d-uniform, that is if 
+        all edges in the hypergraph (excluding singletons, i.e. nodes) 
+        have the same degree d.
+
+        Parameters
+        ----------
+        return_d : bool, default: False
+            If True, return the order of all edges d. If the hypergraph
+            is not d-uniform, d=None.
+
+        Returns:
+        --------
+            uniform : bool
+                True if the hypergraph is d-uniform. None if the 
+                hypergraph has no edges (other than singleton edges).
+            d : int (optional return)
+        """
+
+        edge_sizes = set(dict(self.edge_size()).values())
+        if 1 in edge_sizes:
+            edge_sizes.remove(1)  # discard singleton edges
+
+        if len(edge_sizes) == 0:  # no edges
+            uniform = None
+            d = None
+        else:
+            uniform = len(edge_sizes) == 1
+            if uniform:
+                d = edge_sizes[0] - 1  # order of all edges
+            else:
+                d = None
+
+        if return_d:
+            return uniform, d
+        else:
+            return uniform
