@@ -1151,36 +1151,50 @@ class Hypergraph:
 
             bunch = bunch_iter(nbunch, self._node)
         return bunch
-        
-    def max_edge_order(self) : 
-        """Returns the maximum order of edges in the hypergraph. 
-        
+
+    def max_edge_order(self):
+        """Returns the maximum order of edges in the hypergraph.
+
         Returns
         -------
-        d_max : int 
-            Maximum order of edges in hypergraph 
+        d_max : int
+            Maximum order of edges in hypergraph
         """
-        
-        try : 
+
+        try:
             edges = list(self._edge.values())
             d_max = max([len(edge) for edge in edges]) - 1
-        except ValueError: # if edges is empty
-            if self.node : 
-                d_max = 0 
-            else : 
+        except ValueError:  # if edges is empty
+            if self.node:
+                d_max = 0
+            else:
                 d_max = None
-        
+
         return d_max
-        
-    def is_possible_order(self, d) : 
-        """Returns True if 'd' is a possible edge order, 
+
+    def is_possible_order(self, d):
+        """Returns True if 'd' is a possible edge order,
         given the number of nodes in the hypergraph.
-        
+
         Returns
         -------
         bool
         """
         d_max = self.max_edge_order()
         return (d >= 1) and (d <= d_max)
-        
-        
+
+    def singleton_edges(self):
+        """Returns a dict of single edges"""
+
+        return {
+            id_: self._edge[id_]
+            for id_, size in dict(self.edge_size).items()
+            if size == 1
+        }
+
+    def remove_singleton_edges(self):
+        """Removes all singletons edges from the hypergraph"""
+
+        singleton_ids = [id_ for id_, size in dict(self.edge_size).items() if size==1]
+        self.remove_edges_from(singleton_ids)
+        return None
