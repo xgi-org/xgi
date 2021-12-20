@@ -51,8 +51,20 @@ def erdos_renyi_hypergraph(n, m, p):
     H = xgi.empty_hypergraph()
     H.add_nodes_from(range(n))
 
-    if p <= 0.0 or p >= 1.0:
-        raise XGIError("Invalid p value.")
+    if p < 0.0 or p > 1.0:
+        raise ValueError("Invalid p value.")
+    
+    if p == 0.0:
+        H = xgi.empty_hypergraph()
+        H.add_nodes_from(range(n))
+        return H
+    
+    # this corresponds to a completely filled incidence matrix,
+    # not a complete hypergraph.
+    if p == 1.0:
+        H = xgi.empty_hypergraph()
+        H.add_edges_from([range(n) for i in range(m)])
+        return H
 
     for u in range(n):
         v = 0
@@ -63,8 +75,7 @@ def erdos_renyi_hypergraph(n, m, p):
             if v < m:
                 # add vertex hyperedge pair
                 H.add_node_to_edge(v, u)
-                v = v + 1
-
+            v = v + 1
     return H
 
 

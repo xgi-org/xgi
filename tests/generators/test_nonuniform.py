@@ -5,14 +5,18 @@ from xgi.exception import XGIError
 
 
 def test_erdos_renyi_hypergraph():
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         H = xgi.erdos_renyi_hypergraph(10, 20, -0.1)
-    with pytest.raises(XGIError):
-        H = xgi.erdos_renyi_hypergraph(10, 20, 0.0)
-    with pytest.raises(XGIError):
-        H = xgi.erdos_renyi_hypergraph(10, 20, 1.0)
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         H = xgi.erdos_renyi_hypergraph(10, 20, 2.0)
+
+    H = xgi.erdos_renyi_hypergraph(10, 20, 0.0)
+    assert H.number_of_nodes() == 10
+    assert H.number_of_edges() == 0
+    
+    H = xgi.erdos_renyi_hypergraph(10, 20, 1.0)
+    assert H.number_of_nodes() == 10
+    assert H.number_of_edges() == 20
 
     H = xgi.erdos_renyi_hypergraph(10, 20, 0.1)
     assert H.number_of_nodes() == 10

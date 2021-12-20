@@ -139,7 +139,8 @@ def parse_bipartite_edgelist(
         The token that denotes comments to ignore
     delimiter: char, default: space (" ")
         Specifies the delimiter between hyperedge members
-    create_using:
+    create_using : Hypergraph constructor, optional
+        The hypergraph object to add the data to, by default None
     nodetype: type
         type that the node labels will be cast to
     data: bool, default: False
@@ -159,12 +160,8 @@ def parse_bipartite_edgelist(
     """
     H = xgi.empty_hypergraph(create_using)
 
-    if dual:
-        node_index = 1
-        edge_index = 0
-    else:
-        node_index = 0
-        edge_index = 1
+    node_index = 1 if dual else 0
+    edge_index = 0 if dual else 1
 
     for line in lines:
         if comments is not None:

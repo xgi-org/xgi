@@ -8,7 +8,7 @@ XGI
 Description
 -----------
 
-The `XGI`_ library provides data structures and algorithms for modeling and analyzing
+The <`XGI` https://github.com/ComplexGroupInteractions/xgi>_ library provides data structures and algorithms for modeling and analyzing
 complex systems with group (higher-order) interactions.
 
 .. raw:: latex
