@@ -7,17 +7,13 @@ Multiedges and self-loops are allowed.
 """
 from copy import deepcopy
 
-from xgi.classes.reportviews import (
-    NodeView,
-    EdgeView,
-    DegreeView,
-    EdgeSizeView,
-)
-from xgi.exception import XGIError
-import xgi.convert as convert
 import numpy as np
-from xgi.utils import XGICounter
 import xgi
+import xgi.convert as convert
+from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
+                                     NodeView)
+from xgi.exception import XGIError
+from xgi.utils import XGICounter
 
 __all__ = ["Hypergraph"]
 
@@ -1173,8 +1169,12 @@ class Hypergraph:
         return d_max
 
     def is_possible_order(self, d):
-        """Returns True if 'd' is a possible edge order,
-        given the number of nodes in the hypergraph.
+        """Returns True if 'd' is a possible edge order.
+
+        Parameters
+        ----------
+        d : int
+            Order for which to check
 
         Returns
         -------

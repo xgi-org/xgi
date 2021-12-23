@@ -91,3 +91,59 @@ def test_dual(edgelist1, edgelist2, edgelist4):
     assert D1.shape == (4, 8)
     assert D2.shape == (3, 6)
     assert D3.shape == (3, 5)
+
+def test_max_edge_order(edgelist1, edgelist4,edgelist5):
+    H0 = xgi.empty_hypergraph()
+    H1 = x.empty_hypergraph()
+    H1.add_nodes_from(range(5))
+    H2 = xgi.Hypergraph(edgelist1)
+    H3 = xgi.Hypergraph(edgelist4)
+    H4 = xgi.Hypergraph(edgelist5)
+
+    assert H0.max_edge_order() == None
+    assert H1.max_edge_order() == 0
+    assert H2.max_edge_order() == 2 
+    assert H3.max_edge_order() == 3
+    assert H4.max_edge_order() == 3
+
+def test_is_possible_order(edgelist1): 
+    H1 = xgi.Hypergraph(edgelist1)
+
+    assert H1.is_possible_order(-1) == False
+    assert H1.is_possible_order(0) == False 
+    assert H1.is_possible_order(1) == True
+    assert H1.is_possible_order(2) == True
+    assert H1.is_possible_order(3) == False 
+
+def test_singleton_edges(edgelist1, edgelist2):
+    H1 = xgi.Hypergraph(edgelist1)
+    H2 = xgi.Hypergraph(edgelist2)
+
+    assert H1.singleton_edges() == {1 : [4]}
+    assert H2.singleton_edges() == {}
+
+def test_remove_singleton_edges(edgelist1, edgelist2):
+    H1 = xgi.Hypergraph(edgelist1)
+    H2 = xgi.Hypergraph(edgelist2)
+
+    H1.remove_singleton_edges()
+    H2.remove_singleton_edges()
+
+    assert H1.singleton_edges() == {}
+    assert H2.singleton_edges() == {}
+
+def test_is_d_uniform(edgelist1, edgelist6, edgelist7):
+    H0 = xgi.Hypergraph(edgelist1)
+    H1 = xgi.Hypergraph(edgelist6)
+    H2 = xgi.Hypergraph(edgelist7)
+    H3 = xgi.empty_hypergraph()
+
+    assert H0.is_d_uniform() == False 
+    assert H1.is_d_uniform() == True 
+    assert H2.is_d_uniform() == True
+    assert H3.is_d_uniform() == None 
+
+    assert H0.is_d_uniform(return_d=True) == False, None 
+    assert H1.is_d_uniform(return_d=True) == True, 2
+    assert H2.is_d_uniform(return_d=True) == True, 2
+    assert H3.is_d_uniform(return_d=True) == None, None
