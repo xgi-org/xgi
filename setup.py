@@ -29,6 +29,7 @@ and analysis of complex systems with group (higher-order) interactions."""
 with open("long_description.rst") as file:
     long_description = file.read()
 
+
 def parse_requirements_file(filename):
     with open(filename) as fid:
         requires = [l.strip() for l in fid.readlines() if not l.startswith("#")]

@@ -7,6 +7,9 @@ About
 The ``XGI`` library provides data structures and algorithms for modeling and analyzing
 complex systems with group (higher-order) interactions.
 
+-  Repository: https://github.com/ComplexGroupInteractions/xgi
+-  PyPI: https://pypi.org/project/xgi/
+
 Install
 -------
 
