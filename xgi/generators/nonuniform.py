@@ -295,8 +295,6 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
 def random_hypergraph(N, ps):
     """Generates a random hypergraph
 
-    #TODO still need to check input ps
-
     Generate N nodes, and connect any d+1 nodes
     by a hyperedge with probability ps[d-1].
 
@@ -316,6 +314,9 @@ def random_hypergraph(N, ps):
         The generated hypergraph
 
     """
+
+    if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
+        raise ValueError("All elements of ps must be between 0 and 1 included.")
 
     # I first generate a standard ER graph with edges connected with probability p1
     G = nx.fast_gnp_random_graph(N, ps[0], seed=None)

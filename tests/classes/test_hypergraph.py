@@ -94,7 +94,7 @@ def test_dual(edgelist1, edgelist2, edgelist4):
 
 def test_max_edge_order(edgelist1, edgelist4,edgelist5):
     H0 = xgi.empty_hypergraph()
-    H1 = x.empty_hypergraph()
+    H1 = xgi.empty_hypergraph()
     H1.add_nodes_from(range(5))
     H2 = xgi.Hypergraph(edgelist1)
     H3 = xgi.Hypergraph(edgelist4)
@@ -143,7 +143,7 @@ def test_is_d_uniform(edgelist1, edgelist6, edgelist7):
     assert H2.is_d_uniform() == True
     assert H3.is_d_uniform() == None 
 
-    assert H0.is_d_uniform(return_d=True) == False, None 
-    assert H1.is_d_uniform(return_d=True) == True, 2
-    assert H2.is_d_uniform(return_d=True) == True, 2
-    assert H3.is_d_uniform(return_d=True) == None, None
+    assert H0.is_d_uniform(return_d=True) == (False, None) 
+    assert H1.is_d_uniform(return_d=True) == (True, 2)
+    assert H2.is_d_uniform(return_d=True) == (True, 2)
+    assert H3.is_d_uniform(return_d=True) == (None, None)

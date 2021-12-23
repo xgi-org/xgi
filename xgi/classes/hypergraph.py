@@ -1161,7 +1161,7 @@ class Hypergraph:
             edges = list(self._edge.values())
             d_max = max([len(edge) for edge in edges]) - 1
         except ValueError:  # if edges is empty
-            if self.node:
+            if len(self._node) > 0:
                 d_max = 0
             else:
                 d_max = None
@@ -1200,8 +1200,8 @@ class Hypergraph:
         return None
 
     def is_d_uniform(self, return_d=False):
-        """Returns True the hypergraph is d-uniform, that is if 
-        all edges in the hypergraph (excluding singletons, i.e. nodes) 
+        """Returns True the hypergraph is d-uniform, that is if
+        all edges in the hypergraph (excluding singletons, i.e. nodes)
         have the same degree d.
 
         Parameters
@@ -1213,7 +1213,7 @@ class Hypergraph:
         Returns:
         --------
             uniform : bool
-                True if the hypergraph is d-uniform. None if the 
+                True if the hypergraph is d-uniform. None if the
                 hypergraph has no edges (other than singleton edges).
             d : int (optional return)
         """
@@ -1228,7 +1228,7 @@ class Hypergraph:
         else:
             uniform = len(edge_sizes) == 1
             if uniform:
-                d = edge_sizes[0] - 1  # order of all edges
+                d = list(edge_sizes)[0] - 1  # order of all edges
             else:
                 d = None
 
