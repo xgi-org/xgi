@@ -1,7 +1,8 @@
-import random
 import math
+import random
 import warnings
 from collections import defaultdict
+
 import numpy as np
 import pandas as pd
 from xgi import Hypergraph
@@ -10,6 +11,7 @@ __all__ = [
     "erdos_renyi_hypergraph",
     "chung_lu_hypergraph",
     "dcsbm_hypergraph",
+    "random_hypergraph",
 ]
 
 
@@ -289,48 +291,49 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
     df = pd.DataFrame(bipartite_edges)
     return Hypergraph(df)
 
-def random_hypergraph(N, ps) : 
+
+def random_hypergraph(N, ps):
     """Generates a random hypergraph
 
     #TODO still need to check input ps
-    
-    Generate N nodes, and connect any d+1 nodes 
+
+    Generate N nodes, and connect any d+1 nodes
     by a hyperedge with probability ps[d-1].
-        
+
     Parameters
     ----------
-    N : int 
-        Number of nodes 
+    N : int
+        Number of nodes
     ps : list of float
-        List of probabilities (between 0 and 1) to create a 
-        hyperedge at each order d between any d+1 nodes. For example, 
-        ps[0] is the wiring probability of any edge (2 nodes), ps[1] 
+        List of probabilities (between 0 and 1) to create a
+        hyperedge at each order d between any d+1 nodes. For example,
+        ps[0] is the wiring probability of any edge (2 nodes), ps[1]
         of any triangles (3 nodes).
-        
+
     Returns
     -------
     Hypergraph object
         The generated hypergraph
 
     """
-    
-    #I first generate a standard ER graph with edges connected with probability p1
+
+    # I first generate a standard ER graph with edges connected with probability p1
     G = nx.fast_gnp_random_graph(N, ps[0], seed=None)
-    
+
     nodes = list(G.nodes())
     hyperedges = list(G.edges())
-    
-    for i,p in enumerate(ps[1:]) :
-        d = i + 2 # order (+2 because we started with [1:])
 
-        for hyperedge in combinations(nodes, d+1) : 
-            if random.random() <= p :
+    for i, p in enumerate(ps[1:]):
+        d = i + 2  # order (+2 because we started with [1:])
+
+        for hyperedge in combinations(nodes, d + 1):
+            if random.random() <= p:
                 hyperedges.append(hyperedge)
-                
-    hyperedges += [[i] for i in nodes] # add singleton edges
-            
+
+    hyperedges += [[i] for i in nodes]  # add singleton edges
+
     H = xgi.empty_hypergraph()
     H.add_nodes_from(nodes)
     H.add_edges_from(hyperedges)
-    
+
     return H
