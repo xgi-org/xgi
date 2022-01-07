@@ -7,17 +7,13 @@ Multiedges and self-loops are allowed.
 """
 from copy import deepcopy
 
-from xgi.classes.reportviews import (
-    NodeView,
-    EdgeView,
-    DegreeView,
-    EdgeSizeView,
-)
-from xgi.exception import XGIError
-import xgi.convert as convert
 import numpy as np
-from xgi.utils import XGICounter
 import xgi
+import xgi.convert as convert
+from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
+                                     NodeView)
+from xgi.exception import XGIError
+from xgi.utils import XGICounter
 
 __all__ = ["Hypergraph"]
 
@@ -1151,3 +1147,86 @@ class Hypergraph:
 
             bunch = bunch_iter(nbunch, self._node)
         return bunch
+
+    def max_edge_order(self):
+        """Returns the maximum order of edges in the hypergraph.
+
+        Returns
+        -------
+        d_max : int
+            Maximum order of edges in hypergraph
+        """
+
+        try:
+            edges = list(self._edge.values())
+            d_max = max([len(edge) for edge in edges]) - 1
+        except ValueError:  # if edges is empty
+            if len(self._node) > 0:
+                d_max = 0
+            else:
+                d_max = None
+
+        return d_max
+
+    def is_possible_order(self, d):
+        """Returns True if 'd' is a possible edge order.
+
+        Parameters
+        ----------
+        d : int
+            Order for which to check
+
+        Returns
+        -------
+        bool
+        """
+        d_max = self.max_edge_order()
+        return (d >= 1) and (d <= d_max)
+
+    def singleton_edges(self):
+        """Returns a dict of single edges"""
+
+        return {
+            id_: self._edge[id_]
+            for id_, size in dict(self.edge_size).items()
+            if size == 1
+        }
+
+    def remove_singleton_edges(self):
+        """Removes all singletons edges from the hypergraph"""
+
+        singleton_ids = [id_ for id_, size in dict(self.edge_size).items() if size == 1]
+        self.remove_edges_from(singleton_ids)
+        return None
+
+    def is_uniform(self):
+        """Returns d>=1 if the hypergraph is d-uniform, that is if
+        all edges in the hypergraph (excluding singletons, i.e. nodes)
+        have the same degree d. Returns d=None if not uniform.
+
+        This function can be used as a boolean check: 
+        >>> if H.is_uniform() 
+        works as expected.
+
+        Returns:
+        --------
+            uniform : bool
+                True if the hypergraph is d-uniform. None if the
+                hypergraph has no edges (other than singleton edges).
+            d : int (optional return)
+        """
+
+        edge_sizes = set(dict(self.edge_size()).values())
+        if 1 in edge_sizes:
+            edge_sizes.remove(1)  # discard singleton edges
+
+        if len(edge_sizes) == 0:  # no edges
+            d = False # not uniform
+        else:
+            uniform = len(edge_sizes) == 1
+            if uniform:
+                d = list(edge_sizes)[0] - 1  # order of all edges
+            else:
+                d = False
+
+        return d 

@@ -9,7 +9,7 @@ include CODE_OF_CONDUCT.md
 
 recursive-include data *.txt
 recursive-include tutorials *.ipynb
-recursive-include logo *.jpg *.png *.svg
+recursive-include logo *.pdf *.png *.svg
 recursive-include requirements *.txt *.md
 
 global-exclude *~

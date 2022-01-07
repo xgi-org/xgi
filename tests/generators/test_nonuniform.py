@@ -32,3 +32,4 @@ def test_chung_lu_hypergraph():
         k1 = {1: 1, 2: 2}
         k2 = {1: 2, 1: 2}
         H = xgi.chung_lu_hypergraph(k1, k2)
+

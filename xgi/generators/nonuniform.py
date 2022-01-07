@@ -1,19 +1,17 @@
-import random
 import math
+import random
 import warnings
 from collections import defaultdict
+from itertools import combinations
 import numpy as np
-import pandas as pd
-from xgi import Hypergraph
 import xgi
-from xgi.classes import hypergraph
-from xgi.exception import XGIError
-from xgi.readwrite import bipartite
+
 
 __all__ = [
     "erdos_renyi_hypergraph",
     "chung_lu_hypergraph",
     "dcsbm_hypergraph",
+    "random_hypergraph",
 ]
 
 
@@ -293,5 +291,60 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
                             H.add_node_to_edge(u, v)
                         p = q
                         j = j + 1
+    return H
+
+
+def random_hypergraph(N, ps):
+    """Generates a random hypergraph
+
+    Generate N nodes, and connect any d+1 nodes
+    by a hyperedge with probability ps[d-1].
+
+    Parameters
+    ----------
+    N : int
+        Number of nodes
+    ps : list of float
+        List of probabilities (between 0 and 1) to create a
+        hyperedge at each order d between any d+1 nodes. For example,
+        ps[0] is the wiring probability of any edge (2 nodes), ps[1]
+        of any triangles (3 nodes).
+
+    Returns
+    -------
+    Hypergraph object
+        The generated hypergraph
+
+    References
+    ----------
+    Described as 'random hypergraph' by M. Dewar et al. in https://arxiv.org/abs/1703.07686
+
+    Example
+    -------
+    >>> import xgi
+    >>> N = 100
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_hypergraph(N, ps)
+
+    """
+
+    if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
+        raise ValueError("All elements of ps must be between 0 and 1 included.")
+
+    nodes = range(N)  # list(G.nodes())
+    hyperedges = []  # hyperedges = list(G.edges())
+
+    for i, p in enumerate(ps):
+        d = i + 1  # order, ps[0] is prob of edges (d=1)
+
+        for hyperedge in combinations(nodes, d + 1):
+            if random.random() <= p:
+                hyperedges.append(hyperedge)
+
+    hyperedges += [[i] for i in nodes]  # add singleton edges
+
+    H = xgi.empty_hypergraph()
+    H.add_nodes_from(nodes)
+    H.add_edges_from(hyperedges)
 
     return H

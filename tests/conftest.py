@@ -1,9 +1,9 @@
 import os
 import sys
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
-
 import pytest
 
 
@@ -30,6 +30,14 @@ def edgelist4():
 @pytest.fixture
 def edgelist5():
     return [[0, 1, 2, 3], [4], [5, 6], [6, 7, 8]]
+    
+@pytest.fixture
+def edgelist6():
+    return [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
+    
+@pytest.fixture
+def edgelist7():
+    return [[0, 1, 2], [1, 2, 3], [2, 3, 4], [4]]    
 
 
 @pytest.fixture
