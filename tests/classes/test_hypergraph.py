@@ -139,11 +139,6 @@ def test_is_uniform(edgelist1, edgelist6, edgelist7):
     H3 = xgi.empty_hypergraph()
 
     assert H0.is_uniform() == False 
-    assert H1.is_uniform() == True 
-    assert H2.is_uniform() == True
-    assert H3.is_uniform() == None 
-
-    assert H0.is_uniform(return_d=True) == (False, None) 
-    assert H1.is_uniform(return_d=True) == (True, 2)
-    assert H2.is_uniform(return_d=True) == (True, 2)
-    assert H3.is_uniform(return_d=True) == (None, None)
+    assert H1.is_uniform() == 2 
+    assert H2.is_uniform() == 2
+    assert H3.is_uniform() == False 
