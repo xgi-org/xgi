@@ -132,18 +132,18 @@ def test_remove_singleton_edges(edgelist1, edgelist2):
     assert H1.singleton_edges() == {}
     assert H2.singleton_edges() == {}
 
-def test_is_d_uniform(edgelist1, edgelist6, edgelist7):
+def test_is_uniform(edgelist1, edgelist6, edgelist7):
     H0 = xgi.Hypergraph(edgelist1)
     H1 = xgi.Hypergraph(edgelist6)
     H2 = xgi.Hypergraph(edgelist7)
     H3 = xgi.empty_hypergraph()
 
-    assert H0.is_d_uniform() == False 
-    assert H1.is_d_uniform() == True 
-    assert H2.is_d_uniform() == True
-    assert H3.is_d_uniform() == None 
+    assert H0.is_uniform() == False 
+    assert H1.is_uniform() == True 
+    assert H2.is_uniform() == True
+    assert H3.is_uniform() == None 
 
-    assert H0.is_d_uniform(return_d=True) == (False, None) 
-    assert H1.is_d_uniform(return_d=True) == (True, 2)
-    assert H2.is_d_uniform(return_d=True) == (True, 2)
-    assert H3.is_d_uniform(return_d=True) == (None, None)
+    assert H0.is_uniform(return_d=True) == (False, None) 
+    assert H1.is_uniform(return_d=True) == (True, 2)
+    assert H2.is_uniform(return_d=True) == (True, 2)
+    assert H3.is_uniform(return_d=True) == (None, None)
