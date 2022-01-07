@@ -3,15 +3,9 @@ import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
-
 import numpy as np
-import pandas as pd
 import xgi
-from xgi import Hypergraph
-import xgi
-from xgi.classes import hypergraph
-from xgi.exception import XGIError
-from xgi.readwrite import bipartite
+
 
 __all__ = [
     "erdos_renyi_hypergraph",
@@ -297,10 +291,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
                             H.add_node_to_edge(u, v)
                         p = q
                         j = j + 1
-
-
-    df = pd.DataFrame(bipartite_edges)
-    return Hypergraph(df)
+    return H
 
 
 def random_hypergraph(N, ps):
