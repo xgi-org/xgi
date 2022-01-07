@@ -1199,16 +1199,14 @@ class Hypergraph:
         self.remove_edges_from(singleton_ids)
         return None
 
-    def is_d_uniform(self, return_d=False):
-        """Returns True the hypergraph is d-uniform, that is if
+    def is_uniform(self):
+        """Returns d>=1 if the hypergraph is d-uniform, that is if
         all edges in the hypergraph (excluding singletons, i.e. nodes)
-        have the same degree d.
+        have the same degree d. Returns d=None if not uniform.
 
-        Parameters
-        ----------
-        return_d : bool, default: False
-            If True, return the order of all edges d. If the hypergraph
-            is not d-uniform, d=None.
+        This function can be used as a boolean check: 
+        >>> if H.is_uniform() 
+        works as expected.
 
         Returns:
         --------
@@ -1223,16 +1221,12 @@ class Hypergraph:
             edge_sizes.remove(1)  # discard singleton edges
 
         if len(edge_sizes) == 0:  # no edges
-            uniform = None
-            d = None
+            d = False # not uniform
         else:
             uniform = len(edge_sizes) == 1
             if uniform:
                 d = list(edge_sizes)[0] - 1  # order of all edges
             else:
-                d = None
+                d = False
 
-        if return_d:
-            return uniform, d
-        else:
-            return uniform
+        return d 

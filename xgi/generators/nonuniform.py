@@ -2,9 +2,11 @@ import math
 import random
 import warnings
 from collections import defaultdict
+from itertools import combinations
 
 import numpy as np
 import pandas as pd
+import xgi
 from xgi import Hypergraph
 
 __all__ = [
@@ -313,19 +315,27 @@ def random_hypergraph(N, ps):
     Hypergraph object
         The generated hypergraph
 
+    References
+    ----------
+    Described as 'random hypergraph' by M. Dewar et al. in https://arxiv.org/abs/1703.07686
+
+    Example
+    -------
+    >>> import xgi
+    >>> N = 100
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_hypergraph(N, ps)
+
     """
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
 
-    # I first generate a standard ER graph with edges connected with probability p1
-    G = nx.fast_gnp_random_graph(N, ps[0], seed=None)
+    nodes = range(N)  # list(G.nodes())
+    hyperedges = []  # hyperedges = list(G.edges())
 
-    nodes = list(G.nodes())
-    hyperedges = list(G.edges())
-
-    for i, p in enumerate(ps[1:]):
-        d = i + 2  # order (+2 because we started with [1:])
+    for i, p in enumerate(ps):
+        d = i + 1  # order, ps[0] is prob of edges (d=1)
 
         for hyperedge in combinations(nodes, d + 1):
             if random.random() <= p:
