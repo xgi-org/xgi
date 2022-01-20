@@ -457,19 +457,17 @@ class Hypergraph:
             return False
 
     def has_edge(self, edge):
-        """Specifies whether an edge appears in the hypergraph as a different ID.
+        """Whether an edge appears in the hypergraph.
 
         Parameters
         ----------
-        H : Hypergraph object
-            The hypergraph of interest
         edge : list or set
             A container of hashables that specifies an edge
 
         Returns
         -------
         bool
-           Whether or not the set appears as an edge in the hypergraph.
+           Whether or not edge is as an edge in the hypergraph.
 
         Examples
         --------
@@ -481,7 +479,7 @@ class Hypergraph:
         >>> H.has_edge({1, 3})
         False
         """
-        return set(edge) in [set(self.edges(e)) for e in self.edges]
+        return set(edge) in (set(self.edges(e)) for e in self.edges)
 
     def add_edge(self, edge, **attr):
         """Add an edge to the hypergraph. The universal ID
