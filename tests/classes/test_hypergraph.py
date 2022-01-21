@@ -151,6 +151,7 @@ def test_is_uniform(edgelist1, edgelist6, edgelist7):
 
 def test_isolates(edgelist1):
     H = xgi.Hypergraph(edgelist1)
+    assert H.isolates(ignore_singletons=False) == set()
     assert H.isolates() == {4}
     H.remove_isolates()
     assert 4 not in H
