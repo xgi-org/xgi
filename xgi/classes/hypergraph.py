@@ -242,8 +242,7 @@ class Hypergraph:
                 raise ValueError("None cannot be a node")
             self._node[node_for_adding] = list()
             self._node_attr[node_for_adding] = self.node_attr_dict_factory()
-        else:  # update attr even if node already exists
-            self._node_attr[node_for_adding].update(attr)
+        self._node_attr[node_for_adding].update(attr)
 
     def add_nodes_from(self, nodes_for_adding, **attr):
         """Add multiple nodes.

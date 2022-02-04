@@ -155,3 +155,12 @@ def test_isolates(edgelist1):
     assert H.isolates() == {4}
     H.remove_isolates()
     assert 4 not in H
+
+
+def test_add_node_atr(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert 'new_node' not in H
+    H.add_node('new_node', color='red')
+    assert 'new_node' in H
+    assert 'color' in H.node['new_node']
+    assert H.node['new_node']['color'] == 'red'
