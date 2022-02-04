@@ -51,14 +51,7 @@ class Hypergraph:
         """
         self._edge_uid = XGICounter()
 
-        self.hypergraph_attr_dict_factory = self.hypergraph_attr_dict_factory
-        self.node_dict_factory = self.node_dict_factory
-        self.node_attr_dict_factory = self.node_attr_dict_factory
-        self.hyperedge_attr_dict_factory = self.hyperedge_attr_dict_factory
-
-        self._hypergraph = (
-            self.hypergraph_attr_dict_factory()
-        )  # dictionary for graph attributes
+        self._hypergraph = self.hypergraph_attr_dict_factory()
         self._node = self.node_dict_factory()  # empty node attribute dict
         self._node_attr = self.node_attr_dict_factory()
         self._edge = self.hyperedge_dict_factory()
@@ -162,19 +155,9 @@ class Hypergraph:
         """
         return len(self._node)
 
-    def __getitem__(self, n):
-        """Returns a list of neighboring edge IDs of node n.  Use: 'H[n]'.
-
-        Returns
-        -------
-        list
-           A list of the edges of which the specified node is a part.
-
-        Notes
-        -----
-        H[n] is the same as H.nodes[n]
-        """
-        return self._node[n]
+    def __getitem__(self, attr):
+        """Hypergraph attributes."""
+        return self._hypergraph[attr]
 
     @property
     def shape(self):
