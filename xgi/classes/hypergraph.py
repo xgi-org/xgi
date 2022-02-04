@@ -1207,7 +1207,7 @@ class Hypergraph:
         """
         nodes_in_edges = set()
         for idx in self.edges:
-            edge = self.edges(idx)
+            edge = self.edges.members(idx)
             if ignore_singletons and len(edge) == 1:
                 continue
             nodes_in_edges = nodes_in_edges.union(edge)

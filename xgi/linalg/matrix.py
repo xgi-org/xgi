@@ -63,7 +63,7 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
             cols = list()
             data = list()
             for edge in H.edges:
-                members = H.edges[edge]
+                members = H.edges.members(edge)
                 for node in members:
                     data.append(weight(node, edge, H))
                     rows.append(node_dict[node])
