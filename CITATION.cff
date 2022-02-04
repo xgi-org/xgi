@@ -7,6 +7,16 @@ authors:
   -
     family-names: Torres
     given-names: Leo
+  -
+    family-names: Iacopini
+    given-names: Iacopo
+  -
+    family-names: Lucas
+    given-names: Maxime
+  -
+    family-names: Petri
+    given-names: Giovanni
+
 cff-version: "1.1.0"
 license: "BSD-3"
 message: "If you use this software, please cite it using these metadata."
