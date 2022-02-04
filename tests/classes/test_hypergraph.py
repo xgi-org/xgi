@@ -173,3 +173,12 @@ def test_hypergraph_attr(edgelist1):
         H['color']
     H['color'] = 'red'
     assert H['color'] == 'red'
+
+
+def test_members(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert H.nodes.members(1) == H.nodes.membership(1) == [0]
+    assert H.nodes.members(2) == H.nodes.membership(2) == [0]
+    assert H.nodes.members(3) == H.nodes.membership(3) == [0]
+    assert H.nodes.members(4) == H.nodes.membership(4) == [1]
+    assert H.nodes.members(6) == H.nodes.membership(6) == [2, 3]

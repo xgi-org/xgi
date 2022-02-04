@@ -316,6 +316,9 @@ class NodeView(Mapping, Set):
             raise XGIError(f"The node {n} is not in the hypergraph")
         return self._nodes[n]
 
+    membership = members
+
+
 
 class NodeDataView(Set):
     """A DataView class for nodes of a Hypergraph
