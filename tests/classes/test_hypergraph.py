@@ -22,10 +22,10 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
         == list(H_df.edges)
     )
     assert (
-        list(H_list.edges[0])
-        == list(H_dict.edges[0])
-        == list(H_mat.edges[0])
-        == list(H_df.edges[0])
+        list(H_list.edges.members(0))
+        == list(H_dict.edges.members(0))
+        == list(H_mat.edges.members(0))
+        == list(H_df.edges.members(0))
     )
 
 

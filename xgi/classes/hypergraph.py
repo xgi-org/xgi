@@ -287,7 +287,7 @@ class Hypergraph:
         remove_nodes_from
         """
         try:
-            edge_neighbors = self.nodes[n]  # list handles self-loops (allows mutation)
+            edge_neighbors = self._node[n]  # list handles self-loops (allows mutation)
             del self._node[n]
             del self._node_attr[n]
         except KeyError as e:  # XGIError if n not in self
@@ -314,9 +314,8 @@ class Hypergraph:
         """
         for n in nodes:
             try:
-                edge_neighbors = self.nodes[
-                    n
-                ]  # list handles self-loops (allows mutation)
+                edge_neighbors = self._node[n] 
+                # list handles self-loops (allows mutation)
                 del self._node[n]
                 del self._node_attr[n]
                 for edge in edge_neighbors:
@@ -635,7 +634,7 @@ class Hypergraph:
         remove_edges_from : remove a collection of edges
         """
         try:
-            for node in self.edges[id]:
+            for node in self.edges.members(id):
                 self._node[node].remove(id)
             del self._edge[id]
             del self._edge_attr[id]
@@ -661,7 +660,7 @@ class Hypergraph:
         """
         for id in ebunch:
             try:
-                for node in self.edges[id]:
+                for node in self.edges.members(id):
                     self._node[node].remove(id)
                 del self._edge[id]
                 del self._edge_attr[id]
@@ -799,7 +798,9 @@ class Hypergraph:
             The edge attribute dictionary.
         """
         try:
-            return self.edges.data(id, default=default)
+             # this may fail because the ID may not exist
+             # or the property doesn't exist.
+            return self.edges[id]
         except KeyError:
             return default
 

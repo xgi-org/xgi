@@ -73,7 +73,7 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
             # Create an np.matrix
             I = np.zeros((num_nodes, num_edges), dtype=int)
             for edge in H.edges:
-                members = H.edges[edge]
+                members = H.edges.members(edge)
                 for node in members:
                     I[node_dict[node], edge_dict[edge]] = weight(node, edge, H)
         if index:
