@@ -25,9 +25,9 @@ NodeDataView
 ============
 
     To iterate over (node, data) pairs, use arguments to `H.nodes()`
-    to create a DataView e.H. `DV = H.nodes(data='color', default='red')`.
+    to create a DataView e.g. `DV = H.nodes.data(data='color', default='red')`.
     The DataView iterates as `for n, color in DV` and allows
-    `(n, 'red') in DV`. Using `DV = H.nodes(data=True)`, the DataViews
+    `(n, 'red') in DV`. Using `DV = H.nodes.data()`, the DataViews
     use the full datadict in writeable form also allowing contain testing as
     `(n, {'color': 'red'}) in VD`. DataViews allow set operations when
     data attributes are hashable.
