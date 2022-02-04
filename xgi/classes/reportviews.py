@@ -94,7 +94,7 @@ __all__ = [
 class NodeView(Mapping, Set):
     """A NodeView class to act as H.nodes for a Hypergraph."""
 
-    __slots__ = ("_nodes", "_node_attrs")
+    __slots__ = ("_nodes", "_node_attr")
 
     def __getstate__(self):
         """Function that allows pickling of the nodes (write)
@@ -105,7 +105,7 @@ class NodeView(Mapping, Set):
             The keys access the nodes and their attributes respectively
             and the values are dictionarys from the Hypergraph class.
         """
-        return {"_nodes": self._nodes, "_node_attrs": self._node_attrs}
+        return {"_nodes": self._nodes, "_node_attr": self._node_attr}
 
     def __setstate__(self, state):
         """Function that allows pickling of the nodes (read)
@@ -117,9 +117,9 @@ class NodeView(Mapping, Set):
             and the values are dictionarys from the Hypergraph class.
         """
         self._nodes = state["_nodes"]
-        self._node_attrs = state["_node_attrs"]
+        self._node_attr = state["_node_attr"]
 
-    def __init__(self, hypergraph):
+    def __init__(self, H):
         """Initialize the NodeView with a hypergraph
 
         Parameters
@@ -127,8 +127,8 @@ class NodeView(Mapping, Set):
         hypergraph : Hypergraph object
             The hypergraph of interest
         """
-        self._nodes = hypergraph._node
-        self._node_attrs = hypergraph._node_attr
+        self._nodes = H._node
+        self._node_attr = H._node_attr
 
     # Mapping methods
     def __len__(self):
@@ -302,7 +302,7 @@ class NodeView(Mapping, Set):
         """
         if data is False:
             return self
-        return NodeDataView(self._node_attrs, data, default)
+        return NodeDataView(self._node_attr, data, default)
 
     def __str__(self):
         """Returns a string of the list of node IDs.
@@ -371,7 +371,7 @@ class NodeDataView(Set):
     That is, they use `H.nodes` instead of `H.nodes(data='foo')`.
     """
 
-    __slots__ = ("_node_attrs", "_data", "_default")
+    __slots__ = ("_node_attr", "_data", "_default")
 
     def __getstate__(self):
         """Function that allows pickling of the node data (write)
@@ -383,7 +383,7 @@ class NodeDataView(Set):
             and the values are a dictionary, a hashable, and a hashable respectively.
         """
         return {
-            "_node_attrs": self._node_attrs,
+            "_node_attr": self._node_attr,
             "_data": self._data,
             "_default": self._default,
         }
@@ -397,16 +397,16 @@ class NodeDataView(Set):
             The keys access the node attributes, the data key, and the default value respectively
             and the values are a dictionary, a hashable, and a hashable respectively.
         """
-        self._node_attrs = state["_node_attrs"]
+        self._node_attr = state["_node_attr"]
         self._data = state["_data"]
         self._default = state["_default"]
 
-    def __init__(self, node_attrs, data=True, default=None):
+    def __init__(self, node_attr, data=True, default=None):
         """Initialize the NodeDataView object
 
         Parameters
         ----------
-        node_attrs : dict
+        node_attr : dict
             The dictionary of attributes with node IDs as keys
             and dictionaries as values
         data : bool or hashable, optional
@@ -416,7 +416,7 @@ class NodeDataView(Set):
             The value that should be returned if
             the key value doesn't exist, by default None
         """
-        self._node_attrs = node_attrs
+        self._node_attr = node_attr
         self._data = data
         self._default = default
 
@@ -428,7 +428,7 @@ class NodeDataView(Set):
         int
             Number of nodes
         """
-        return len(self._node_attrs)
+        return len(self._node_attr)
 
     def __iter__(self):
         """Returns an iterator over node IDs
@@ -443,12 +443,12 @@ class NodeDataView(Set):
         """
         data = self._data
         if data is False:
-            return iter(self._node_attrs)
+            return iter(self._node_attr)
         if data is True:
-            return iter(self._node_attrs.items())
+            return iter(self._node_attr.items())
         return (
             (n, dd[data] if data in dd else self._default)
-            for n, dd in self._node_attrs.items()
+            for n, dd in self._node_attr.items()
         )
 
     def __contains__(self, n):
@@ -465,7 +465,7 @@ class NodeDataView(Set):
         bool
             Whether the node is the hypergraph.
         """
-        return n in self._node_attrs
+        return n in self._node_attr
 
     def __getitem__(self, n):
         """Get the data from a node.
@@ -495,7 +495,7 @@ class NodeDataView(Set):
         elif n not in self._data:
             raise XGIError(f"The node {n} is not in the hypergraph")
 
-        ddict = self._node_attrs[n]
+        ddict = self._node_attr[n]
         data = self._data
         if data is False:
             return dict()
@@ -533,7 +533,7 @@ class NodeDataView(Set):
 class EdgeView(Set, Mapping):
     """A EdgeView class for the edges of a Hypergraph"""
 
-    __slots__ = "_edges"
+    __slots__ = ("_edges", "_edge_attr")
 
     def __getstate__(self):
         """Function that allows pickling of the edges (write)
@@ -544,7 +544,8 @@ class EdgeView(Set, Mapping):
             The keys access the edges and the value is
             a dictionary of the hypergraph "_edge" dictionary.
         """
-        return {"_edges": self._edges}
+        return {"_edges": self._edges, "_edge_attr": self._edge_attr}
+
 
     def __setstate__(self, state):
         """Function that allows pickling of the edges (read)
@@ -556,6 +557,7 @@ class EdgeView(Set, Mapping):
             a dictionary of the hypergraph "_edge" dictionary.
         """
         self._edges = state["_edges"]
+        self._edge_attr = state["_edge_attr"]
 
     def __init__(self, H):
         """Initialize the EdgeView object
@@ -566,6 +568,7 @@ class EdgeView(Set, Mapping):
             The hypergraph of interest.
         """
         self._edges = H._edge
+        self._edge_attr = H._edge_attr
 
     # Set methods
     def __len__(self):
@@ -763,7 +766,7 @@ class EdgeView(Set, Mapping):
 class EdgeDataView:
     """EdgeDataView for edges of Hypergraph"""
 
-    __slots__ = ("_edge_attrs", "_data", "_default")
+    __slots__ = ("_edge_attr", "_data", "_default")
 
     def __getstate__(self):
         """Function that allows pickling of the edge data (write)
@@ -776,7 +779,7 @@ class EdgeDataView:
         """
         self._n
         return {
-            "_edge_attrs": self._edge_attrs,
+            "_edge_attr": self._edge_attr,
             "_data": self._data,
             "_default": self._default,
         }
@@ -790,7 +793,7 @@ class EdgeDataView:
             The keys access the edge attributes, the data key, and the default value respectively
             and the values are a dictionary, a hashable, and a hashable respectively.
         """
-        self._edge_attrs = state["_edge_attrs"]
+        self._edge_attr = state["_edge_attr"]
         self._data = state["_data"]
         self._default = state["_default"]
 
@@ -809,7 +812,7 @@ class EdgeDataView:
             The value to return if the attribute doesn't exist,
             by default None
         """
-        self._edge_attrs = edgedict
+        self._edge_attr = edgedict
         self._data = data
         self._default = default
 
@@ -821,7 +824,7 @@ class EdgeDataView:
         int
             The number of edges
         """
-        return len(self._edge_attrs)
+        return len(self._edge_attr)
 
     def __iter__(self):
         """Returns an iterator over edge IDs
@@ -836,12 +839,12 @@ class EdgeDataView:
         """
         data = self._data
         if data is False:
-            return iter(self._edge_attrs)
+            return iter(self._edge_attr)
         if data is True:
-            return iter(self._edge_attrs.items())
+            return iter(self._edge_attr.items())
         return (
             (e, dd[data] if data in dd else self._default)
-            for e, dd in self._edge_attrs.items()
+            for e, dd in self._edge_attr.items()
         )
 
     def __contains__(self, e):
@@ -857,7 +860,7 @@ class EdgeDataView:
         bool
             True if the edge ID is in the hypergraph, False if note.
         """
-        return e in self._edge_attrs
+        return e in self._edge_attr
 
     def __getitem__(self, e):
         """Get the data from an edge.
@@ -884,10 +887,10 @@ class EdgeDataView:
                 f"{type(self).__name__} does not support slicing, "
                 f"try list(H.nodes.data())[{e.start}:{e.stop}:{e.step}]"
             )
-        elif e not in self._edge_attrs:
+        elif e not in self._edge_attr:
             raise XGIError(f"The edge ID {e} is not in the hypergraph")
 
-        ddict = self._edge_attrs[e]
+        ddict = self._edge_attr[e]
         data = self._data
         if data is False:
             return dict()
@@ -936,7 +939,7 @@ class DegreeView:
     DegreeView can still lookup any node even if nbunch is specified.
     """
 
-    __slots__ = ("_hypergraph", "_nodes", "_edges", "_edge_attrs", "_weight")
+    __slots__ = ("_hypergraph", "_nodes", "_edges", "_edge_attr", "_weight")
 
     def __init__(self, H, nbunch=None, weight=None):
         """Initialize the DegreeView object
@@ -957,7 +960,7 @@ class DegreeView:
             else {id: val for id, val in H.nodes.items() if id in nbunch}
         )
         self._edges = H.edges
-        self._edge_attrs = H._edge_attr
+        self._edge_attr = H._edge_attr
         self._weight = weight
 
     def __call__(self, nbunch=None, weight=None):
@@ -1004,7 +1007,7 @@ class DegreeView:
         weight = self._weight
         if weight is None:
             return len(self._nodes(n))
-        return sum(self._edge_attrs[dd].get(weight, 1) for dd in self._nodes(n))
+        return sum(self._edge_attr[dd].get(weight, 1) for dd in self._nodes(n))
 
     def __iter__(self):
         """Returns an iterator of node ID, node degree pairs.
@@ -1017,11 +1020,11 @@ class DegreeView:
         weight = self._weight
         if weight is None:
             for n in self._nodes:
-                yield (n, len(self._nodes(n)))
+                yield (n, len(self._nodes.members(n)))
         else:
             for n in self._nodes:
                 elements = self._nodes(n)
-                deg = sum(self._edge_attrs[dd].get(weight, 1) for dd in elements)
+                deg = sum(self._edge_attr[dd].get(weight, 1) for dd in elements)
                 yield (n, deg)
 
     def __len__(self):
@@ -1070,7 +1073,7 @@ class EdgeSizeView:
     EdgeSizeView can still lookup any node even if nbunch is specified.
     """
 
-    __slots__ = ("_hypergraph", "_edges", "_nodes", "_node_attrs", "_weight")
+    __slots__ = ("_hypergraph", "_edges", "_nodes", "_node_attr", "_weight")
 
     def __init__(self, H, nbunch=None, weight=None):
         """Initialize
@@ -1091,7 +1094,7 @@ class EdgeSizeView:
             else {id: val for id, val in H.edges.items() if id in nbunch}
         )
         self._nodes = H.nodes
-        self._node_attrs = H._node_attr
+        self._node_attr = H._node_attr
         self._weight = weight
 
     def __call__(self, nbunch=None, weight=None):
@@ -1138,7 +1141,7 @@ class EdgeSizeView:
         weight = self._weight
         if weight is None:
             return len(self._edges(e))
-        return sum(self._node_attrs[dd].get(weight, 1) for dd in self._edges(e))
+        return sum(self._node_attr[dd].get(weight, 1) for dd in self._edges(e))
 
     def __iter__(self):
         """Returns an iterator over edge ID, edge size pairs.
@@ -1152,11 +1155,11 @@ class EdgeSizeView:
         weight = self._weight
         if weight is None:
             for e in self._edges:
-                yield (e, len(self._edges(e)))
+                yield (e, len(self._edges.members(e)))
         else:
             for e in self._edges:
                 elements = self._edges(e)
-                deg = sum(self._node_attrs[dd].get(weight, 1) for dd in elements)
+                deg = sum(self._node_attr[dd].get(weight, 1) for dd in elements)
                 yield (e, deg)
 
     def __len__(self):
