@@ -1242,8 +1242,8 @@ class Hypergraph:
         all edges in the hypergraph (excluding singletons, i.e. nodes)
         have the same degree d. Returns d=None if not uniform.
 
-        This function can be used as a boolean check: 
-        >>> if H.is_uniform() 
+        This function can be used as a boolean check:
+        >>> if H.is_uniform()
         works as expected.
 
         Returns:
@@ -1267,4 +1267,4 @@ class Hypergraph:
             else:
                 d = False
 
-        return d 
+        return d

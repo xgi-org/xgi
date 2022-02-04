@@ -103,7 +103,7 @@ def test_max_edge_order(edgelist1, edgelist4,edgelist5):
 
     assert H0.max_edge_order() == None
     assert H1.max_edge_order() == 0
-    assert H2.max_edge_order() == 2 
+    assert H2.max_edge_order() == 2
     assert H3.max_edge_order() == 3
     assert H4.max_edge_order() == 3
 
@@ -112,7 +112,7 @@ def test_is_possible_order(edgelist1):
     H1 = xgi.Hypergraph(edgelist1)
 
     assert H1.is_possible_order(-1) == False
-    assert H1.is_possible_order(0) == False 
+    assert H1.is_possible_order(0) == False
     assert H1.is_possible_order(1) == True
     assert H1.is_possible_order(2) == True
     assert H1.is_possible_order(3) == False
@@ -143,8 +143,8 @@ def test_is_uniform(edgelist1, edgelist6, edgelist7):
     H2 = xgi.Hypergraph(edgelist7)
     H3 = xgi.empty_hypergraph()
 
-    assert H0.is_uniform() == False 
-    assert H1.is_uniform() == 2 
+    assert H0.is_uniform() == False
+    assert H1.is_uniform() == 2
     assert H2.is_uniform() == 2
     assert H3.is_uniform() == False
 
