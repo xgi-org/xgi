@@ -1,3 +1,4 @@
+import pytest
 import xgi
 
 
@@ -157,10 +158,18 @@ def test_isolates(edgelist1):
     assert 4 not in H
 
 
-def test_add_node_atr(edgelist1):
+def test_add_node_attr(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     assert 'new_node' not in H
     H.add_node('new_node', color='red')
     assert 'new_node' in H
-    assert 'color' in H.node['new_node']
-    assert H.node['new_node']['color'] == 'red'
+    assert 'color' in H.nodes['new_node']
+    assert H.nodes['new_node']['color'] == 'red'
+
+
+def test_hypergraph_attr(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    with pytest.raises(KeyError):
+        H['color']
+    H['color'] = 'red'
+    assert H['color'] == 'red'

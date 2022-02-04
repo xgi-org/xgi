@@ -156,8 +156,12 @@ class Hypergraph:
         return len(self._node)
 
     def __getitem__(self, attr):
-        """Hypergraph attributes."""
+        """Read hypergraph attribute."""
         return self._hypergraph[attr]
+
+    def __setitem__(self, attr, val):
+        """Write hypergraph attribute."""
+        self._hypergraph[attr] = val
 
     @property
     def shape(self):
@@ -769,7 +773,12 @@ class Hypergraph:
         -----
         Nodes in nbunch that are not in the hypergraph will be (quietly) ignored.
         """
-        return EdgeView(self)
+        edges = EdgeView(self)
+        # Lazy View creation: overload the (class) property on the instance
+        # Then future H.edges use the existing View
+        # setattr doesn't work because attribute already exists
+        self.__dict__["edges"] = edges
+        return edges
 
     def get_edge_data(self, id, default=None):
         """Returns the attribute dictionary associated with edge id.
