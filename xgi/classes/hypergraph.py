@@ -157,7 +157,7 @@ class Hypergraph:
 
     def __getitem__(self, attr):
         """Read hypergraph attribute."""
-        return self._hypergraph[attr]
+        return self._hypergraph.get(attr, "")
 
     def __setitem__(self, attr, val):
         """Write hypergraph attribute."""
