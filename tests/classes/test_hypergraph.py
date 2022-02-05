@@ -1,5 +1,6 @@
 import pytest
 import xgi
+from xgi.exception import XGIError
 
 
 def test_constructor(edgelist5, dict5, incidence5, dataframe5):
@@ -169,7 +170,7 @@ def test_add_node_attr(edgelist1):
 
 def test_hypergraph_attr(edgelist1):
     H = xgi.Hypergraph(edgelist1)
-    with pytest.raises(KeyError):
+    with pytest.raises(XGIError):
         H['color']
     H['color'] = 'red'
     assert H['color'] == 'red'

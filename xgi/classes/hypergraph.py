@@ -157,7 +157,10 @@ class Hypergraph:
 
     def __getitem__(self, attr):
         """Read hypergraph attribute."""
-        return self._hypergraph.get(attr, "")
+        try:
+            return self._hypergraph[attr]
+        except:
+            raise XGIError("This attribute has not been set.")
 
     def __setitem__(self, attr, val):
         """Write hypergraph attribute."""
