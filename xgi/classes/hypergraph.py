@@ -10,8 +10,7 @@ from copy import deepcopy
 import numpy as np
 import xgi
 import xgi.convert as convert
-from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
-                                     NodeView)
+from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
 from xgi.exception import XGIError
 from xgi.utils import XGICounter
 
@@ -317,7 +316,7 @@ class Hypergraph:
         """
         for n in nodes:
             try:
-                edge_neighbors = self._node[n] 
+                edge_neighbors = self._node[n]
                 # list handles self-loops (allows mutation)
                 del self._node[n]
                 del self._node_attr[n]
@@ -801,8 +800,8 @@ class Hypergraph:
             The edge attribute dictionary.
         """
         try:
-             # this may fail because the ID may not exist
-             # or the property doesn't exist.
+            # this may fail because the ID may not exist
+            # or the property doesn't exist.
             return self.edges[id]
         except KeyError:
             return default
@@ -1255,7 +1254,7 @@ class Hypergraph:
             edge_sizes.remove(1)  # discard singleton edges
 
         if len(edge_sizes) == 0:  # no edges
-            d = False # not uniform
+            d = False  # not uniform
         else:
             uniform = len(edge_sizes) == 1
             if uniform:

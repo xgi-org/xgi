@@ -95,7 +95,7 @@ def test_dual(edgelist1, edgelist2, edgelist4):
     assert D3.shape == (3, 5)
 
 
-def test_max_edge_order(edgelist1, edgelist4,edgelist5):
+def test_max_edge_order(edgelist1, edgelist4, edgelist5):
     H0 = xgi.empty_hypergraph()
     H1 = xgi.empty_hypergraph()
     H1.add_nodes_from(range(5))
@@ -124,7 +124,7 @@ def test_singleton_edges(edgelist1, edgelist2):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist2)
 
-    assert H1.singleton_edges() == {1 : [4]}
+    assert H1.singleton_edges() == {1: [4]}
     assert H2.singleton_edges() == {}
 
 
@@ -161,25 +161,25 @@ def test_isolates(edgelist1):
 
 def test_add_node_attr(edgelist1):
     H = xgi.Hypergraph(edgelist1)
-    assert 'new_node' not in H
-    H.add_node('new_node', color='red')
-    assert 'new_node' in H
-    assert 'color' in H.nodes['new_node']
-    assert H.nodes['new_node']['color'] == 'red'
+    assert "new_node" not in H
+    H.add_node("new_node", color="red")
+    assert "new_node" in H
+    assert "color" in H.nodes["new_node"]
+    assert H.nodes["new_node"]["color"] == "red"
 
 
 def test_hypergraph_attr(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     with pytest.raises(XGIError):
-        H['color']
-    H['color'] = 'red'
-    assert H['color'] == 'red'
+        H["color"]
+    H["color"] = "red"
+    assert H["color"] == "red"
 
 
 def test_members(edgelist1):
     H = xgi.Hypergraph(edgelist1)
-    assert H.nodes.members(1) == H.nodes.membership(1) == [0]
-    assert H.nodes.members(2) == H.nodes.membership(2) == [0]
-    assert H.nodes.members(3) == H.nodes.membership(3) == [0]
-    assert H.nodes.members(4) == H.nodes.membership(4) == [1]
-    assert H.nodes.members(6) == H.nodes.membership(6) == [2, 3]
+    assert H.nodes.members(1) == H.nodes.memberships(1) == [0]
+    assert H.nodes.members(2) == H.nodes.memberships(2) == [0]
+    assert H.nodes.members(3) == H.nodes.memberships(3) == [0]
+    assert H.nodes.members(4) == H.nodes.memberships(4) == [1]
+    assert H.nodes.members(6) == H.nodes.memberships(6) == [2, 3]

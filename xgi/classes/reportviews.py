@@ -223,7 +223,7 @@ class IDView(Mapping, Set):
             elif id not in self._ids:
                 raise XGIError(f"The ID {id} is not in the hypergraph")
 
-    membership = members
+    memberships = members
 
 
 # ID Degree View Base Class
@@ -255,7 +255,8 @@ class IDDegreeView:
         weight : hashable, optional
             The name of the attribute to weight the degree, by default None.
         """
-        self._ids = (ids
+        self._ids = (
+            ids
             if id_bunch is None
             else {id: val for id, val in ids.items() if id in id_bunch}
         )
@@ -350,18 +351,26 @@ class IDDegreeView:
         """
         return f"{self.__class__.__name__}({dict(self)})"
 
+
 class NodeView(IDView):
     def __init__(self, hypergraph):
         super(NodeView, self).__init__(hypergraph._node, hypergraph._node_attr)
+
 
 class EdgeView(IDView):
     def __init__(self, hypergraph):
         super(EdgeView, self).__init__(hypergraph._edge, hypergraph._edge_attr)
 
+
 class DegreeView(IDDegreeView):
     def __init__(self, hypergraph, nbunch=None, weight=None):
-        super().__init__(hypergraph._node, hypergraph._edge_attr, id_bunch=nbunch, weight=weight)
+        super().__init__(
+            hypergraph._node, hypergraph._edge_attr, id_bunch=nbunch, weight=weight
+        )
+
 
 class EdgeSizeView(IDDegreeView):
     def __init__(self, hypergraph, ebunch=None, weight=None):
-        super().__init__(hypergraph._edge, hypergraph._node_attr, id_bunch=ebunch, weight=weight)
+        super().__init__(
+            hypergraph._edge, hypergraph._node_attr, id_bunch=ebunch, weight=weight
+        )
