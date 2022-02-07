@@ -321,16 +321,23 @@ class IDDegreeView:
 
 
 class NodeView(IDView):
+    """ Class for representing the nodes.
+
+    Much of the functionality in this class inherits from IDView
+    """
     def __init__(self, hypergraph):
         super(NodeView, self).__init__(hypergraph._node, hypergraph._node_attr)
     
-    def memberships(self, id):
-        """Get the bipartite neighbors of an ID.
+    def memberships(self, n):
+        """Get the edges of which a node is a member.
+
+        Given a node ID, this method returns the edge IDs
+        of which this node is a member.
 
         Parameters
         ----------
-        id : hashable
-            edge ID
+        n : hashable
+            node ID
 
         Returns
         -------
@@ -341,30 +348,37 @@ class NodeView(IDView):
         ------
         xgi.XGIError
             Returns an error if the user tries passing in a slice or if
-            the edge ID does not exist in the hypergraph.
+            the node ID does not exist in the hypergraph.
         """
         try:
-            return self._ids[id]
+            return self._ids[n]
         except KeyError:
-            if isinstance(id, slice):
+            if isinstance(n, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
-                    f"try (for example) list(H.edges)[{id.start}:{id.stop}:{id.step}]"
+                    f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
                 )
-            elif id not in self._ids:
-                raise XGIError(f"The ID {id} is not in the hypergraph")
+            elif n not in self._ids:
+                raise XGIError(f"The node ID {n} is not in the hypergraph")
 
 
 class EdgeView(IDView):
+    """ Class for representing the edges.
+
+    Much of the functionality in this class inherits from IDView
+    """
     def __init__(self, hypergraph):
         super(EdgeView, self).__init__(hypergraph._edge, hypergraph._edge_attr)
     
-    def members(self, id):
-        """Get the bipartite neighbors of an ID.
+    def members(self, e):
+        """Get the nodes that are members of an edge.
+        
+        Given an edge ID, this method returns the node IDs
+        that are members of this edge.
 
         Parameters
         ----------
-        id : hashable
+        e : hashable
             edge ID
 
         Returns
@@ -379,17 +393,21 @@ class EdgeView(IDView):
             the edge ID does not exist in the hypergraph.
         """
         try:
-            return self._ids[id]
+            return self._ids[e]
         except KeyError:
-            if isinstance(id, slice):
+            if isinstance(e, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
-                    f"try (for example) list(H.edges)[{id.start}:{id.stop}:{id.step}]"
+                    f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
                 )
-            elif id not in self._ids:
-                raise XGIError(f"The ID {id} is not in the hypergraph")
+            elif e not in self._ids:
+                raise XGIError(f"The edge ID {e} is not in the hypergraph")
 
 class DegreeView(IDDegreeView):
+    """ Class for representing the degrees.
+
+    This class inherits all its functionality from IDDegreeView
+    """
     def __init__(self, hypergraph, nbunch=None, weight=None):
         super().__init__(
             hypergraph._node, hypergraph._edge_attr, id_bunch=nbunch, weight=weight
@@ -397,6 +415,10 @@ class DegreeView(IDDegreeView):
 
 
 class EdgeSizeView(IDDegreeView):
+    """ Class for representing the edge sizes.
+
+    This class inherits all its functionality from IDDegreeView
+    """
     def __init__(self, hypergraph, ebunch=None, weight=None):
         super().__init__(
             hypergraph._edge, hypergraph._node_attr, id_bunch=ebunch, weight=weight

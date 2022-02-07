@@ -334,21 +334,14 @@ class Hypergraph:
         """A NodeView of the Hypergraph as H.nodes or H.nodes().
 
         Can be used as `H.nodes` for data lookup and for set-like operations.
-        Can also be used as `H.nodes(data='color', default=None)` to return a
-        NodeDataView which reports specific node data but no set operations.
-        It presents a dict-like interface as well with `H.nodes.items()`
-        iterating over `(node, edge_ids)` 2-tuples. In addition,
-        a view `H.nodes.data('foo')` provides a dict-like interface to the
-        `foo` attribute of each node. `H.nodes.data('foo', default=1)`
-        provides a default for nodes that do not have attribute `foo`.
+        Can also be used as `H.nodes[id]` to return a
+        dictionary of the node attributes.
 
         Returns
         -------
         NodeView
             Allows set-like operations over the nodes as well as node
-            attribute dict lookup and calling to get a NodeDataView.
-            A NodeDataView iterates over `(n, data)` and has no set operations.
-            A NodeView iterates over `n` and includes set operations.
+            attribute dict lookup.
 
             When called, if data is False, an iterator over nodes.
             Otherwise an iterator of 2-tuples (node, attribute value)
@@ -751,14 +744,12 @@ class Hypergraph:
 
     @property
     def edges(self):
-        """An EdgeView of the Hyperraph as H.edges or H.edges().
+        """An EdgeView of the Hypergraph as H.edges or H.edges().
 
         edges(self, nbunch=None, data=False, default=None)
 
         The EdgeView provides set-like operations on the edge IDs
-        as well as edge attribute lookup. When called, it also provides
-        an EdgeDataView object which allows control of access to edge
-        attributes (but does not provide set-like operations).
+        as well as edge attribute lookup.
 
         Parameters
         ----------
