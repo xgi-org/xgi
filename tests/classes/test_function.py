@@ -81,7 +81,6 @@ def test_create_empty_copy(edgelist1):
     assert E1.shape == (8, 0)
     for node in E1.nodes:
         assert len(E1.nodes.memberships(node)) == 0
-    assert E1.name == ""
     assert E1._hypergraph == {}
 
     assert E2.shape == (8, 0)

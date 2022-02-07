@@ -321,13 +321,14 @@ class IDDegreeView:
 
 
 class NodeView(IDView):
-    """ Class for representing the nodes.
+    """Class for representing the nodes.
 
     Much of the functionality in this class inherits from IDView
     """
+
     def __init__(self, hypergraph):
         super(NodeView, self).__init__(hypergraph._node, hypergraph._node_attr)
-    
+
     def memberships(self, n):
         """Get the edges of which a node is a member.
 
@@ -363,16 +364,17 @@ class NodeView(IDView):
 
 
 class EdgeView(IDView):
-    """ Class for representing the edges.
+    """Class for representing the edges.
 
     Much of the functionality in this class inherits from IDView
     """
+
     def __init__(self, hypergraph):
         super(EdgeView, self).__init__(hypergraph._edge, hypergraph._edge_attr)
-    
+
     def members(self, e):
         """Get the nodes that are members of an edge.
-        
+
         Given an edge ID, this method returns the node IDs
         that are members of this edge.
 
@@ -403,11 +405,13 @@ class EdgeView(IDView):
                     f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
                 )
 
+
 class DegreeView(IDDegreeView):
-    """ Class for representing the degrees.
+    """Class for representing the degrees.
 
     This class inherits all its functionality from IDDegreeView
     """
+
     def __init__(self, hypergraph, nbunch=None, weight=None):
         super().__init__(
             hypergraph._node, hypergraph._edge_attr, id_bunch=nbunch, weight=weight
@@ -415,10 +419,11 @@ class DegreeView(IDDegreeView):
 
 
 class EdgeSizeView(IDDegreeView):
-    """ Class for representing the edge sizes.
+    """Class for representing the edge sizes.
 
     This class inherits all its functionality from IDDegreeView
     """
+
     def __init__(self, hypergraph, ebunch=None, weight=None):
         super().__init__(
             hypergraph._edge, hypergraph._node_attr, id_bunch=ebunch, weight=weight

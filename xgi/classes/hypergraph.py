@@ -7,7 +7,6 @@ Multiedges and self-loops are allowed.
 """
 from copy import deepcopy
 
-import numpy as np
 import xgi
 import xgi.convert as convert
 from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
@@ -61,32 +60,6 @@ class Hypergraph:
         # load hypergraph attributes (must be after convert)
         self._hypergraph.update(attr)
 
-    @property
-    def name(self):
-        """Get the string identifier of the hypergraph.
-
-        This hypergraph attribute appears in the attribute dict H._hypergraph
-        keyed by the string `"name"`. as well as an attribute (technically
-        a property) `H.name`. This is entirely user controlled.
-
-        Returns
-        -------
-        string
-            The name of the hypergraph
-        """
-        return self._hypergraph.get("name", "")
-
-    @name.setter
-    def name(self, s):
-        """Set the name of the hypergraph
-
-        Parameters
-        ----------
-        s : string
-            The desired name of the hypergraph.
-        """
-        self._hypergraph["name"] = s
-
     def __str__(self):
         """Returns a short summary of the hypergraph.
 
@@ -103,13 +76,10 @@ class Hypergraph:
         "Hypergraph named 'foo' with 0 nodes and 0 edges"
 
         """
-        return "".join(
-            [
-                type(self).__name__,
-                f" named {self.name!r}",
-                f" with {self.number_of_nodes()} nodes and {self.number_of_edges()} hyperedges",
-            ]
-        )
+        try:
+            return f"{type(self).__name__} named {self['name']} with {self.number_of_nodes()} nodes and {self.number_of_edges()} hyperedges"
+        except:
+            return f"Unnamed {type(self).__name__} with {self.number_of_nodes()} nodes and {self.number_of_edges()} hyperedges"
 
     def __iter__(self):
         """Iterate over the nodes. Use: 'for n in H'.
@@ -158,7 +128,7 @@ class Hypergraph:
         """Read hypergraph attribute."""
         try:
             return self._hypergraph[attr]
-        except:
+        except KeyError:
             raise XGIError("This attribute has not been set.")
 
     def __setitem__(self, attr, val):

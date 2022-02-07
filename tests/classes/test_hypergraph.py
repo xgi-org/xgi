@@ -30,13 +30,13 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     )
 
 
-def test_name():
+def test_hypergraph_attrs():
     H = xgi.Hypergraph()
-    assert H.name == ""
-    H.name = "test"
-    assert H.name == "test"
+    assert H._hypergraph == dict()
+    with pytest.raises(XGIError):
+        name = H["name"]
     H = xgi.Hypergraph(name="test")
-    assert H.name == "test"
+    assert H["name"] == "test"
 
 
 def test_contains(edgelist1):
@@ -48,6 +48,12 @@ def test_contains(edgelist1):
 
     assert 0 not in H
 
+def test_string():
+    H1 = xgi.Hypergraph()
+    assert str(H1) == "Unnamed Hypergraph with 0 nodes and 0 hyperedges"
+    H2 = xgi.Hypergraph(name="test")
+    # H2["name"] = "test"
+    assert str(H2) == "Hypergraph named test with 0 nodes and 0 hyperedges"
 
 def test_len(edgelist1, edgelist2):
     el1 = edgelist1
