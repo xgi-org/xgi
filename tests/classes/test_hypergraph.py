@@ -183,3 +183,7 @@ def test_members(edgelist1):
     assert H.nodes.memberships(3) == [0]
     assert H.nodes.memberships(4) == [1]
     assert H.nodes.memberships(6) == [2, 3]
+    with pytest.raises(XGIError):
+        H.nodes.memberships(0)
+    with pytest.raises(XGIError):
+        H.nodes.memberships(slice(1, 4))
