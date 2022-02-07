@@ -150,7 +150,7 @@ class IDView(Mapping, Set):
         """
         try:
             return self._id_attrs[id]
-        except:
+        except KeyError:
             if isinstance(id, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
@@ -345,7 +345,7 @@ class NodeView(IDView):
         """
         try:
             return self._ids[id]
-        except:
+        except KeyError:
             if isinstance(id, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
@@ -380,7 +380,7 @@ class EdgeView(IDView):
         """
         try:
             return self._ids[id]
-        except:
+        except KeyError:
             if isinstance(id, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
