@@ -193,38 +193,6 @@ class IDView(Mapping, Set):
         """
         return f"{self.__class__.__name__}({tuple(self)})"
 
-    def members(self, id):
-        """Get the bipartite neighbors of an ID.
-
-        Parameters
-        ----------
-        id : hashable
-            edge ID
-
-        Returns
-        -------
-        list
-            edge members
-
-        Raises
-        ------
-        xgi.XGIError
-            Returns an error if the user tries passing in a slice or if
-            the edge ID does not exist in the hypergraph.
-        """
-        try:
-            return self._ids[id]
-        except:
-            if isinstance(id, slice):
-                raise XGIError(
-                    f"{type(self).__name__} does not support slicing, "
-                    f"try (for example) list(H.edges)[{id.start}:{id.stop}:{id.step}]"
-                )
-            elif id not in self._ids:
-                raise XGIError(f"The ID {id} is not in the hypergraph")
-
-    memberships = members
-
 
 # ID Degree View Base Class
 class IDDegreeView:
@@ -355,12 +323,71 @@ class IDDegreeView:
 class NodeView(IDView):
     def __init__(self, hypergraph):
         super(NodeView, self).__init__(hypergraph._node, hypergraph._node_attr)
+    
+    def memberships(self, id):
+        """Get the bipartite neighbors of an ID.
+
+        Parameters
+        ----------
+        id : hashable
+            edge ID
+
+        Returns
+        -------
+        list
+            edge members
+
+        Raises
+        ------
+        xgi.XGIError
+            Returns an error if the user tries passing in a slice or if
+            the edge ID does not exist in the hypergraph.
+        """
+        try:
+            return self._ids[id]
+        except:
+            if isinstance(id, slice):
+                raise XGIError(
+                    f"{type(self).__name__} does not support slicing, "
+                    f"try (for example) list(H.edges)[{id.start}:{id.stop}:{id.step}]"
+                )
+            elif id not in self._ids:
+                raise XGIError(f"The ID {id} is not in the hypergraph")
 
 
 class EdgeView(IDView):
     def __init__(self, hypergraph):
         super(EdgeView, self).__init__(hypergraph._edge, hypergraph._edge_attr)
+    
+    def members(self, id):
+        """Get the bipartite neighbors of an ID.
 
+        Parameters
+        ----------
+        id : hashable
+            edge ID
+
+        Returns
+        -------
+        list
+            edge members
+
+        Raises
+        ------
+        xgi.XGIError
+            Returns an error if the user tries passing in a slice or if
+            the edge ID does not exist in the hypergraph.
+        """
+        try:
+            return self._ids[id]
+        except:
+            if isinstance(id, slice):
+                raise XGIError(
+                    f"{type(self).__name__} does not support slicing, "
+                    f"try (for example) list(H.edges)[{id.start}:{id.stop}:{id.step}]"
+                )
+            elif id not in self._ids:
+                raise XGIError(f"The ID {id} is not in the hypergraph")
 
 class DegreeView(IDDegreeView):
     def __init__(self, hypergraph, nbunch=None, weight=None):

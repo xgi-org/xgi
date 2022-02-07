@@ -178,8 +178,8 @@ def test_hypergraph_attr(edgelist1):
 
 def test_members(edgelist1):
     H = xgi.Hypergraph(edgelist1)
-    assert H.nodes.members(1) == H.nodes.memberships(1) == [0]
-    assert H.nodes.members(2) == H.nodes.memberships(2) == [0]
-    assert H.nodes.members(3) == H.nodes.memberships(3) == [0]
-    assert H.nodes.members(4) == H.nodes.memberships(4) == [1]
-    assert H.nodes.members(6) == H.nodes.memberships(6) == [2, 3]
+    assert H.nodes.memberships(1) == [0]
+    assert H.nodes.memberships(2) == [0]
+    assert H.nodes.memberships(3) == [0]
+    assert H.nodes.memberships(4) == [1]
+    assert H.nodes.memberships(6) == [2, 3]
