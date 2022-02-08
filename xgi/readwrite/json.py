@@ -42,7 +42,7 @@ def write_hypergraph_json(H, path):
     data["hyperedge-data"] = {id: H._edge_attr[id] for id in H.edges}
 
     # hyperedge list
-    data["hyperedges"] = {id: tuple(H.edges[id]) for id in H.edges}
+    data["hyperedges"] = {id: tuple(H.edges.members(id)) for id in H.edges}
 
     datastring = json.dumps(data)
 

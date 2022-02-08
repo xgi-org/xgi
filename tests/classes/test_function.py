@@ -80,15 +80,15 @@ def test_create_empty_copy(edgelist1):
 
     assert E1.shape == (8, 0)
     for node in E1.nodes:
-        assert len(E1.nodes[node]) == 0
-    assert E1.name == ""
+        assert len(E1.nodes.memberships(node)) == 0
     assert E1._hypergraph == {}
 
     assert E2.shape == (8, 0)
     for node in E2.nodes:
-        assert len(E1.nodes[node]) == 0
+        assert len(E1.nodes.memberships(node)) == 0
     assert E2._hypergraph == {"name": "test", "timestamp": "Nov. 20"}
-    assert dict(E2.nodes.data()) == attr_dict
+    for n in H.nodes:
+        assert H.nodes[n]["name"] == attr_dict[n]["name"]
 
 
 def test_is_empty():

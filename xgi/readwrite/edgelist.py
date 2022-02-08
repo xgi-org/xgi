@@ -40,15 +40,15 @@ def generate_edgelist(H, delimiter=" ", data=True):
     """
     if data is True:
         for id in H.edges:
-            e = *H.edges[id], dict(H._edge_attr[id])
+            e = *H.edges.members(id), dict(H._edge_attr[id])
             yield delimiter.join(map(str, e))
     elif data is False:
         for id in H.edges:
-            e = H.edges[id]
+            e = H.edges.members(id)
             yield delimiter.join(map(str, e))
     else:
         for id in H.edges:
-            e = H.edges[id]
+            e = H.edges.members(id)
             try:
                 e.extend([H._edge_attr[id][k] for k in data])
             except KeyError:

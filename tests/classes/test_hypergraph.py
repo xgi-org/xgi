@@ -1,4 +1,6 @@
+import pytest
 import xgi
+from xgi.exception import XGIError
 
 
 def test_constructor(edgelist5, dict5, incidence5, dataframe5):
@@ -21,20 +23,20 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
         == list(H_df.edges)
     )
     assert (
-        list(H_list.edges[0])
-        == list(H_dict.edges[0])
-        == list(H_mat.edges[0])
-        == list(H_df.edges[0])
+        list(H_list.edges.members(0))
+        == list(H_dict.edges.members(0))
+        == list(H_mat.edges.members(0))
+        == list(H_df.edges.members(0))
     )
 
 
-def test_name():
+def test_hypergraph_attrs():
     H = xgi.Hypergraph()
-    assert H.name == ""
-    H.name = "test"
-    assert H.name == "test"
+    assert H._hypergraph == dict()
+    with pytest.raises(XGIError):
+        name = H["name"]
     H = xgi.Hypergraph(name="test")
-    assert H.name == "test"
+    assert H["name"] == "test"
 
 
 def test_contains(edgelist1):
@@ -46,6 +48,12 @@ def test_contains(edgelist1):
 
     assert 0 not in H
 
+def test_string():
+    H1 = xgi.Hypergraph()
+    assert str(H1) == "Unnamed Hypergraph with 0 nodes and 0 hyperedges"
+    H2 = xgi.Hypergraph(name="test")
+    # H2["name"] = "test"
+    assert str(H2) == "Hypergraph named test with 0 nodes and 0 hyperedges"
 
 def test_len(edgelist1, edgelist2):
     el1 = edgelist1
@@ -93,7 +101,7 @@ def test_dual(edgelist1, edgelist2, edgelist4):
     assert D3.shape == (3, 5)
 
 
-def test_max_edge_order(edgelist1, edgelist4,edgelist5):
+def test_max_edge_order(edgelist1, edgelist4, edgelist5):
     H0 = xgi.empty_hypergraph()
     H1 = xgi.empty_hypergraph()
     H1.add_nodes_from(range(5))
@@ -103,7 +111,7 @@ def test_max_edge_order(edgelist1, edgelist4,edgelist5):
 
     assert H0.max_edge_order() == None
     assert H1.max_edge_order() == 0
-    assert H2.max_edge_order() == 2 
+    assert H2.max_edge_order() == 2
     assert H3.max_edge_order() == 3
     assert H4.max_edge_order() == 3
 
@@ -112,7 +120,7 @@ def test_is_possible_order(edgelist1):
     H1 = xgi.Hypergraph(edgelist1)
 
     assert H1.is_possible_order(-1) == False
-    assert H1.is_possible_order(0) == False 
+    assert H1.is_possible_order(0) == False
     assert H1.is_possible_order(1) == True
     assert H1.is_possible_order(2) == True
     assert H1.is_possible_order(3) == False
@@ -122,7 +130,7 @@ def test_singleton_edges(edgelist1, edgelist2):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist2)
 
-    assert H1.singleton_edges() == {1 : [4]}
+    assert H1.singleton_edges() == {1: [4]}
     assert H2.singleton_edges() == {}
 
 
@@ -143,8 +151,8 @@ def test_is_uniform(edgelist1, edgelist6, edgelist7):
     H2 = xgi.Hypergraph(edgelist7)
     H3 = xgi.empty_hypergraph()
 
-    assert H0.is_uniform() == False 
-    assert H1.is_uniform() == 2 
+    assert H0.is_uniform() == False
+    assert H1.is_uniform() == 2
     assert H2.is_uniform() == 2
     assert H3.is_uniform() == False
 
@@ -155,3 +163,33 @@ def test_isolates(edgelist1):
     assert H.isolates() == {4}
     H.remove_isolates()
     assert 4 not in H
+
+
+def test_add_node_attr(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert "new_node" not in H
+    H.add_node("new_node", color="red")
+    assert "new_node" in H
+    assert "color" in H.nodes["new_node"]
+    assert H.nodes["new_node"]["color"] == "red"
+
+
+def test_hypergraph_attr(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    with pytest.raises(XGIError):
+        H["color"]
+    H["color"] = "red"
+    assert H["color"] == "red"
+
+
+def test_members(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert H.nodes.memberships(1) == [0]
+    assert H.nodes.memberships(2) == [0]
+    assert H.nodes.memberships(3) == [0]
+    assert H.nodes.memberships(4) == [1]
+    assert H.nodes.memberships(6) == [2, 3]
+    with pytest.raises(XGIError):
+        H.nodes.memberships(0)
+    with pytest.raises(XGIError):
+        H.nodes.memberships(slice(1, 4))

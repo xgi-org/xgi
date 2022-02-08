@@ -51,12 +51,12 @@ def erdos_renyi_hypergraph(n, m, p):
 
     if p < 0.0 or p > 1.0:
         raise ValueError("Invalid p value.")
-    
+
     if p == 0.0:
         H = xgi.empty_hypergraph()
         H.add_nodes_from(range(n))
         return H
-    
+
     # this corresponds to a completely filled incidence matrix,
     # not a complete hypergraph.
     if p == 1.0:

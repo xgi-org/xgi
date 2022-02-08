@@ -64,7 +64,7 @@ def unique_edge_sizes(H, return_counts=False):
     list()
         The unique edge sizes
     """
-    return list({len(H.edges[edge]) for edge in H.edges})
+    return list({len(H.edges.members(edge)) for edge in H.edges})
 
 
 def frozen(*args, **kwargs):
@@ -198,7 +198,7 @@ def create_empty_copy(H, with_data=True):
     H_copy = H.__class__()
     H_copy.add_nodes_from(H.nodes)
     if with_data:
-        xgi.set_node_attributes(H_copy, dict(H.nodes.data()))
+        xgi.set_node_attributes(H_copy, dict(H._node_attr))
         H_copy._hypergraph.update(H._hypergraph)
     return H_copy
 
@@ -251,7 +251,7 @@ def set_node_attributes(H, values, name=None):
         try:  # `values` is a dict
             for n, v in values.items():
                 try:
-                    H._node_attr[n][name] = values[n]
+                    H._node_attr[n][name] = v
                 except KeyError:
                     pass
         except AttributeError:  # `values` is a constant
@@ -362,7 +362,7 @@ def get_edge_attributes(H, name):
     get_node_attributes
     set_edge_attributes
     """
-    edge_data = H.edges.data
+    edge_data = H._edge_attr
     return {id: edge_data[edge][name] for edge in edge_data if name in edge_data[edge]}
 
 

@@ -13,7 +13,7 @@ def test_erdos_renyi_hypergraph():
     H = xgi.erdos_renyi_hypergraph(10, 20, 0.0)
     assert H.number_of_nodes() == 10
     assert H.number_of_edges() == 0
-    
+
     H = xgi.erdos_renyi_hypergraph(10, 20, 1.0)
     assert H.number_of_nodes() == 10
     assert H.number_of_edges() == 20
@@ -32,4 +32,3 @@ def test_chung_lu_hypergraph():
         k1 = {1: 1, 2: 2}
         k2 = {1: 2, 1: 2}
         H = xgi.chung_lu_hypergraph(k1, k2)
-

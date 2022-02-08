@@ -7,11 +7,9 @@ Multiedges and self-loops are allowed.
 """
 from copy import deepcopy
 
-import numpy as np
 import xgi
 import xgi.convert as convert
-from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
-                                     NodeView)
+from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
 from xgi.exception import XGIError
 from xgi.utils import XGICounter
 
@@ -51,14 +49,7 @@ class Hypergraph:
         """
         self._edge_uid = XGICounter()
 
-        self.hypergraph_attr_dict_factory = self.hypergraph_attr_dict_factory
-        self.node_dict_factory = self.node_dict_factory
-        self.node_attr_dict_factory = self.node_attr_dict_factory
-        self.hyperedge_attr_dict_factory = self.hyperedge_attr_dict_factory
-
-        self._hypergraph = (
-            self.hypergraph_attr_dict_factory()
-        )  # dictionary for graph attributes
+        self._hypergraph = self.hypergraph_attr_dict_factory()
         self._node = self.node_dict_factory()  # empty node attribute dict
         self._node_attr = self.node_attr_dict_factory()
         self._edge = self.hyperedge_dict_factory()
@@ -68,32 +59,6 @@ class Hypergraph:
             convert.convert_to_hypergraph(incoming_hypergraph_data, create_using=self)
         # load hypergraph attributes (must be after convert)
         self._hypergraph.update(attr)
-
-    @property
-    def name(self):
-        """Get the string identifier of the hypergraph.
-
-        This hypergraph attribute appears in the attribute dict H._hypergraph
-        keyed by the string `"name"`. as well as an attribute (technically
-        a property) `H.name`. This is entirely user controlled.
-
-        Returns
-        -------
-        string
-            The name of the hypergraph
-        """
-        return self._hypergraph.get("name", "")
-
-    @name.setter
-    def name(self, s):
-        """Set the name of the hypergraph
-
-        Parameters
-        ----------
-        s : string
-            The desired name of the hypergraph.
-        """
-        self._hypergraph["name"] = s
 
     def __str__(self):
         """Returns a short summary of the hypergraph.
@@ -111,13 +76,10 @@ class Hypergraph:
         "Hypergraph named 'foo' with 0 nodes and 0 edges"
 
         """
-        return "".join(
-            [
-                type(self).__name__,
-                f" named {self.name!r}",
-                f" with {self.number_of_nodes()} nodes and {self.number_of_edges()} hyperedges",
-            ]
-        )
+        try:
+            return f"{type(self).__name__} named {self['name']} with {self.number_of_nodes()} nodes and {self.number_of_edges()} hyperedges"
+        except:
+            return f"Unnamed {type(self).__name__} with {self.number_of_nodes()} nodes and {self.number_of_edges()} hyperedges"
 
     def __iter__(self):
         """Iterate over the nodes. Use: 'for n in H'.
@@ -162,19 +124,16 @@ class Hypergraph:
         """
         return len(self._node)
 
-    def __getitem__(self, n):
-        """Returns a list of neighboring edge IDs of node n.  Use: 'H[n]'.
+    def __getitem__(self, attr):
+        """Read hypergraph attribute."""
+        try:
+            return self._hypergraph[attr]
+        except KeyError:
+            raise XGIError("This attribute has not been set.")
 
-        Returns
-        -------
-        list
-           A list of the edges of which the specified node is a part.
-
-        Notes
-        -----
-        H[n] is the same as H.nodes[n]
-        """
-        return self._node[n]
+    def __setitem__(self, attr, val):
+        """Write hypergraph attribute."""
+        self._hypergraph[attr] = val
 
     @property
     def shape(self):
@@ -242,8 +201,7 @@ class Hypergraph:
                 raise ValueError("None cannot be a node")
             self._node[node_for_adding] = list()
             self._node_attr[node_for_adding] = self.node_attr_dict_factory()
-        else:  # update attr even if node already exists
-            self._node_attr[node_for_adding].update(attr)
+        self._node_attr[node_for_adding].update(attr)
 
     def add_nodes_from(self, nodes_for_adding, **attr):
         """Add multiple nodes.
@@ -301,7 +259,7 @@ class Hypergraph:
         remove_nodes_from
         """
         try:
-            edge_neighbors = self.nodes[n]  # list handles self-loops (allows mutation)
+            edge_neighbors = self._node[n]  # list handles self-loops (allows mutation)
             del self._node[n]
             del self._node_attr[n]
         except KeyError as e:  # XGIError if n not in self
@@ -328,9 +286,8 @@ class Hypergraph:
         """
         for n in nodes:
             try:
-                edge_neighbors = self.nodes[
-                    n
-                ]  # list handles self-loops (allows mutation)
+                edge_neighbors = self._node[n]
+                # list handles self-loops (allows mutation)
                 del self._node[n]
                 del self._node_attr[n]
                 for edge in edge_neighbors:
@@ -347,21 +304,14 @@ class Hypergraph:
         """A NodeView of the Hypergraph as H.nodes or H.nodes().
 
         Can be used as `H.nodes` for data lookup and for set-like operations.
-        Can also be used as `H.nodes(data='color', default=None)` to return a
-        NodeDataView which reports specific node data but no set operations.
-        It presents a dict-like interface as well with `H.nodes.items()`
-        iterating over `(node, edge_ids)` 2-tuples. In addition,
-        a view `H.nodes.data('foo')` provides a dict-like interface to the
-        `foo` attribute of each node. `H.nodes.data('foo', default=1)`
-        provides a default for nodes that do not have attribute `foo`.
+        Can also be used as `H.nodes[id]` to return a
+        dictionary of the node attributes.
 
         Returns
         -------
         NodeView
             Allows set-like operations over the nodes as well as node
-            attribute dict lookup and calling to get a NodeDataView.
-            A NodeDataView iterates over `(n, data)` and has no set operations.
-            A NodeView iterates over `n` and includes set operations.
+            attribute dict lookup.
 
             When called, if data is False, an iterator over nodes.
             Otherwise an iterator of 2-tuples (node, attribute value)
@@ -649,7 +599,7 @@ class Hypergraph:
         remove_edges_from : remove a collection of edges
         """
         try:
-            for node in self.edges[id]:
+            for node in self.edges.members(id):
                 self._node[node].remove(id)
             del self._edge[id]
             del self._edge_attr[id]
@@ -675,7 +625,7 @@ class Hypergraph:
         """
         for id in ebunch:
             try:
-                for node in self.edges[id]:
+                for node in self.edges.members(id):
                     self._node[node].remove(id)
                 del self._edge[id]
                 del self._edge_attr[id]
@@ -764,14 +714,12 @@ class Hypergraph:
 
     @property
     def edges(self):
-        """An EdgeView of the Hyperraph as H.edges or H.edges().
+        """An EdgeView of the Hypergraph as H.edges or H.edges().
 
         edges(self, nbunch=None, data=False, default=None)
 
         The EdgeView provides set-like operations on the edge IDs
-        as well as edge attribute lookup. When called, it also provides
-        an EdgeDataView object which allows control of access to edge
-        attributes (but does not provide set-like operations).
+        as well as edge attribute lookup.
 
         Parameters
         ----------
@@ -787,7 +735,12 @@ class Hypergraph:
         -----
         Nodes in nbunch that are not in the hypergraph will be (quietly) ignored.
         """
-        return EdgeView(self)
+        edges = EdgeView(self)
+        # Lazy View creation: overload the (class) property on the instance
+        # Then future H.edges use the existing View
+        # setattr doesn't work because attribute already exists
+        self.__dict__["edges"] = edges
+        return edges
 
     def get_edge_data(self, id, default=None):
         """Returns the attribute dictionary associated with edge id.
@@ -808,7 +761,9 @@ class Hypergraph:
             The edge attribute dictionary.
         """
         try:
-            return self.edges.data(id, default=default)
+            # this may fail because the ID may not exist
+            # or the property doesn't exist.
+            return self.edges[id]
         except KeyError:
             return default
 
@@ -1216,7 +1171,7 @@ class Hypergraph:
         """
         nodes_in_edges = set()
         for idx in self.edges:
-            edge = self.edges(idx)
+            edge = self.edges.members(idx)
             if ignore_singletons and len(edge) == 1:
                 continue
             nodes_in_edges = nodes_in_edges.union(edge)
@@ -1243,8 +1198,8 @@ class Hypergraph:
         all edges in the hypergraph (excluding singletons, i.e. nodes)
         have the same degree d. Returns d=None if not uniform.
 
-        This function can be used as a boolean check: 
-        >>> if H.is_uniform() 
+        This function can be used as a boolean check:
+        >>> if H.is_uniform()
         works as expected.
 
         Returns:
@@ -1260,7 +1215,7 @@ class Hypergraph:
             edge_sizes.remove(1)  # discard singleton edges
 
         if len(edge_sizes) == 0:  # no edges
-            d = False # not uniform
+            d = False  # not uniform
         else:
             uniform = len(edge_sizes) == 1
             if uniform:
@@ -1268,4 +1223,4 @@ class Hypergraph:
             else:
                 d = False
 
-        return d 
+        return d
