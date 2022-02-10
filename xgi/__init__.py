@@ -17,3 +17,6 @@ from xgi.convert import *
 
 from xgi import algorithms
 from xgi.algorithms import *
+
+from xgi import drawing
+from xgi.drawing import *
