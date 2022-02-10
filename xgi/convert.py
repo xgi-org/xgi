@@ -1,6 +1,7 @@
 import xgi
 from xgi.exception import XGIError
 import pandas as pd
+import networkx as nx
 from scipy.sparse import coo_matrix, csr_matrix, csc_matrix, lil_matrix
 from numpy import ndarray, matrix
 from copy import deepcopy
@@ -8,6 +9,7 @@ from xgi.utils.utilities import get_dual
 
 __all__ = [
     "convert_to_hypergraph",
+    "convert_to_graph",
     "from_hyperedge_list",
     "to_hyperedge_list",
     "from_hyperedge_dict",
@@ -71,6 +73,25 @@ def convert_to_hypergraph(data, create_using=None):
     ):
         from_incidence_matrix(data, create_using)
 
+def convert_to_graph(H): 
+    """Graph projection (1-skeleton) of the hypergraph H.
+    Weights are not considered. 
+    
+    Parameters
+    ----------
+    H : Hypergraph object
+        The hypergraph of interest
+    
+    Returns
+    -------
+    G : networkx.Graph
+        The graph projection
+    """
+
+    A = xgi.adjacency_matrix(H) #This is unweighted by design        
+    G = nx.from_scipy_sparse_matrix(A)
+    G = nx.relabel_nodes(G, {i : node for i, node in enumerate(H.nodes)})
+    return G
 
 def from_hyperedge_list(d, create_using=None):
     """Generate a hypergraph from a list of lists.

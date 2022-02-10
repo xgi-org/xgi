@@ -5,6 +5,7 @@ import xgi
 
 __all__ = [
     "random_layout",
+    "pairwise_spring_layout",
     "barycenter_spring_layout",
 ]
 
@@ -48,6 +49,25 @@ def random_layout(H, center=None, dim=2, seed=None):
     pos = pos.astype(np.float32)
     pos = dict(zip(HG, pos))
 
+    return pos
+
+def pairwise_spring_layout(H):
+    """
+    Position the nodes using Fruchterman-Reingold force-directed
+    algorithm using the graph projection of the hypergraph.
+
+    Parameters
+    ----------
+    H : xgi Hypergraph 
+        A position will be assigned to every node in H.
+        
+    Returns
+    -------
+    pos : dict
+        A dictionary of positions keyed by node
+    """
+    G = xgi.convert_to_graph(H)
+    pos = nx.spring_layout(G)    
     return pos
 
 def barycenter_spring_layout(H, return_phantom_graph=False):
