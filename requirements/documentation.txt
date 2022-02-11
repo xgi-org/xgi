@@ -2,3 +2,4 @@ sphinx~=4.0
 sphinx-rtd-theme>=0.4.2
 numpydoc>=1.1
 pillow>=8.2
+networkx>=2.0
