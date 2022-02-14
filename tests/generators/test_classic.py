@@ -9,13 +9,13 @@ def test_empty_hypergraph():
 def test_star_clique(): 
 
     with pytest.raises(ValueError):
-        H = xgi.erdos_renyi_hypergraph(-1, 7, 3)
+        H = xgi.star_clique(-1, 7, 3)
     with pytest.raises(ValueError):
-        H = xgi.erdos_renyi_hypergraph(6, -1, 3)
+        H = xgi.star_clique(6, -1, 3)
     with pytest.raises(ValueError):
-        H = xgi.erdos_renyi_hypergraph(6, 7, -1)
+        H = xgi.star_clique(6, 7, -1)
     with pytest.raises(ValueError):
-        H = xgi.erdos_renyi_hypergraph(6, 7, 7)
+        H = xgi.star_clique(6, 7, 7)
 
-    H = xgi.erdos_renyi_hypergraph(6, 7, 3)
+    H = xgi.star_clique(6, 7, 3)
     assert H.number_of_nodes() == 13
