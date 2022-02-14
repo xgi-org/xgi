@@ -5,6 +5,8 @@ from scipy.sparse import coo_matrix, csr_matrix, csc_matrix, lil_matrix
 from numpy import ndarray, matrix
 from copy import deepcopy
 from xgi.utils.utilities import get_dual
+from networkx.algorithms import bipartite
+import networkx as nx
 
 __all__ = [
     "convert_to_hypergraph",
@@ -15,6 +17,8 @@ __all__ = [
     "from_bipartite_pandas_dataframe",
     "from_incidence_matrix",
     "to_incidence_matrix",
+    "from_bipartite_network",
+    "to_bipartite_network"
 ]
 
 
@@ -302,3 +306,103 @@ def to_incidence_matrix(H, sparse=True, index=False):
     from_incidence_matrix
     """
     return xgi.incidence_matrix(H, sparse=sparse, index=index)
+
+
+def from_bipartite_network(G, create_using=None, dual=False):
+    """
+    Create a Hypergraph from a NetworkX bipartite graph.
+
+    Parameters
+    ----------
+    G : nx.Graph()
+        A networkx bipartite graph. Each node in the graph has a property
+        'bipartite' taking the value of 0 or 1 indicating the type of node.
+
+    create_using : Hypergraph constructor, optional
+        The hypergraph object to add the data to, by default None
+    
+    dual : bool, default : False
+        Whether to get edges from bipartite=0 and nodes from bipartite=1
+    
+    Returns
+    -------
+    xgi.Hypergraph
+        The equivalent hypergraph
+
+    Notes
+    -----
+    A partition for the nodes in a bipartite graph generates a hypergraph.
+        >>> import networkx as nx
+        >>> import xgi
+        >>> G = nx.Graph()
+        >>> G.add_nodes_from([1, 2, 3, 4], bipartite=0)
+        >>> G.add_nodes_from(['a', 'b', 'c'], bipartite=1)
+        >>> G.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), (3, 'c'), (4, 'a')])
+        >>> H = xgi.from_bipartite_network(G)
+    """
+    # TODO: Add filepath keyword to signatures here and with dataframe and numpy array
+    edges = []
+    nodes = []
+    for n, d in G.nodes(data=True):
+        try:
+            node_type = d["bipartite"]
+        except:
+            raise XGIError("bipartite property not set")
+
+        if node_type == 0:
+            nodes.append(n)
+        elif node_type == 1:
+            edges.append(n)
+        else:
+            raise XGIError("Invalid type specifier")
+
+    if not bipartite.is_bipartite_node_set(G, nodes):
+        raise XGIError("The network is not bipartite")
+    
+    H = xgi.empty_hypergraph(create_using)
+    H.add_nodes_from(nodes)
+    for node, edge in G.edges:
+        H.add_node_to_edge(edge, node)
+    if dual:
+        return H.dual()
+    else:
+        return H
+
+
+def to_bipartite_network(H):
+    """
+    Create a NetworkX bipartite network from a hypergraph.
+
+    Parameters
+    ----------
+    G: nx.Graph()
+        A networkx bipartite graph. Each node in the graph has a property
+        'bipartite' taking the value of 0 or 1 indicating a 2-coloring of the graph.
+    
+    Returns
+    -------
+    xgi.Hypergraph
+
+    Notes
+    -----
+    A partition for the nodes in a bipartite graph generates a hypergraph.
+        >>> import networkx as nx
+        >>> import xgi
+        >>> >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+        >>> H = xgi.Hypergraph(hyperedge_list)
+        >>> G = xgi.to_bipartite_network(H)
+    """
+    # TODO: Add filepath keyword to signatures here and with dataframe and numpy array
+    G = nx.Graph()
+
+    num_nodes = H.number_of_nodes()
+    num_edges = H.number_of_edges()
+    node_dict = dict(zip(H.nodes, range(num_nodes)))
+    edge_dict = dict(zip(H.edges, range(num_nodes, num_nodes + num_edges)))
+    G.add_nodes_from(node_dict.values(), bipartite=0)
+    G.add_nodes_from(edge_dict.values(), bipartite=1)
+    for node in H.nodes:
+        for edge in H.nodes.memberships(node):
+            G.add_edge(node_dict[node], edge_dict[edge])
+
+    return G, dict(zip(range(num_nodes), H.nodes)), dict(zip(range(num_nodes, num_nodes + num_edges), H.edges))
