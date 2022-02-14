@@ -17,3 +17,6 @@ from xgi.convert import *
 
 from xgi import algorithms
 from xgi.algorithms import *
+
+import pkg_resources
+__version__ = pkg_resources.require("xgi")[0].version
