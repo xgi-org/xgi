@@ -83,6 +83,15 @@ def draw_hypergraph(H, pos, ax=None):
     import matplotlib.pyplot as plt
     from matplotlib.colors import ListedColormap
     import palettable as pltt
+    import numpy as np
+
+    def ccw_sort(p):
+        p = np.array(p)
+        mean = np.mean(p,axis=0)
+        d = p-mean
+        s = np.arctan2(d[:,0], d[:,1])
+        return p[np.argsort(s),:]
+
             
     if ax is None: ax = plt.gca()
     ax.set_xlim([-1.1, 1.1])      
@@ -110,7 +119,9 @@ def draw_hypergraph(H, pos, ax=None):
             for he in list(H.edges_of_order(d).values()):
                 # Filling the polygon
                 coordinates = [[pos[n][0], pos[n][1]] for n in he]
-                obj = plt.Polygon(coordinates, edgecolor = 'black', facecolor=colors[d], alpha=0.4, lw=0.5)
+                #Sorting the points counterclockwise (needed to have the correct filling)
+                sorted_coordinates = ccw_sort(coordinates)
+                obj = plt.Polygon(sorted_coordinates, edgecolor = 'black', facecolor=colors[d], alpha=0.4, lw=0.5)
                 ax.add_patch(obj);
             
     # Drawing the nodes 
