@@ -17,8 +17,8 @@ __all__ = [
     "from_bipartite_pandas_dataframe",
     "from_incidence_matrix",
     "to_incidence_matrix",
-    "from_bipartite_network",
-    "to_bipartite_network"
+    "from_bipartite_graph",
+    "to_bipartite_graph",
 ]
 
 
@@ -308,29 +308,46 @@ def to_incidence_matrix(H, sparse=True, index=False):
     return xgi.incidence_matrix(H, sparse=sparse, index=index)
 
 
-def from_bipartite_network(G, create_using=None, dual=False):
+def from_bipartite_graph(G, create_using=None, dual=False):
     """
     Create a Hypergraph from a NetworkX bipartite graph.
 
+    Any hypergraph may be represented as a bipartite graph where
+    nodes in the first layer are nodes and nodes in the second layer
+    are hyperedges.
+
+    The default behavior is to create nodes in the hypergraph
+    from the nodes in the bipartite graph where the attribute
+    bipartite=0 and hyperedges in the hypergraph from the nodes
+    in the bipartite graph with attribute bipartite=1. Setting the
+    keyword `dual` reverses this behavior.
+
+
     Parameters
     ----------
-    G : nx.Graph()
+    G : nx.Graph
         A networkx bipartite graph. Each node in the graph has a property
         'bipartite' taking the value of 0 or 1 indicating the type of node.
 
     create_using : Hypergraph constructor, optional
         The hypergraph object to add the data to, by default None
-    
+
     dual : bool, default : False
-        Whether to get edges from bipartite=0 and nodes from bipartite=1
-    
+        If True, get edges from bipartite=0 and nodes from bipartite=1
+
     Returns
     -------
     xgi.Hypergraph
         The equivalent hypergraph
 
-    Notes
-    -----
+    References
+    ----------
+    The Why, How, and When of Representations for Complex Systems
+    Leo Torres, Ann S. Blevins, Danielle Bassett, and Tina Eliassi-Rad
+    https://doi.org/10.1137/20M1355896
+
+    Examples
+    --------
     A partition for the nodes in a bipartite graph generates a hypergraph.
         >>> import networkx as nx
         >>> import xgi
@@ -340,7 +357,6 @@ def from_bipartite_network(G, create_using=None, dual=False):
         >>> G.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), (3, 'c'), (4, 'a')])
         >>> H = xgi.from_bipartite_network(G)
     """
-    # TODO: Add filepath keyword to signatures here and with dataframe and numpy array
     edges = []
     nodes = []
     for n, d in G.nodes(data=True):
@@ -358,7 +374,7 @@ def from_bipartite_network(G, create_using=None, dual=False):
 
     if not bipartite.is_bipartite_node_set(G, nodes):
         raise XGIError("The network is not bipartite")
-    
+
     H = xgi.empty_hypergraph(create_using)
     H.add_nodes_from(nodes)
     for node, edge in G.edges:
@@ -369,22 +385,28 @@ def from_bipartite_network(G, create_using=None, dual=False):
         return H
 
 
-def to_bipartite_network(H):
+def to_bipartite_graph(H):
     """
     Create a NetworkX bipartite network from a hypergraph.
 
     Parameters
     ----------
-    G: nx.Graph()
-        A networkx bipartite graph. Each node in the graph has a property
-        'bipartite' taking the value of 0 or 1 indicating a 2-coloring of the graph.
-    
+    H: xgi.Hypergraph
+        The XGI hypergraph object of interest
+
     Returns
     -------
-    xgi.Hypergraph
+    nx.Graph
+        The resulting equivalent bipartite graph
 
-    Notes
-    -----
+    References
+    ----------
+    The Why, How, and When of Representations for Complex Systems
+    Leo Torres, Ann S. Blevins, Danielle Bassett, and Tina Eliassi-Rad
+    https://doi.org/10.1137/20M1355896
+
+    Examples
+    --------
     A partition for the nodes in a bipartite graph generates a hypergraph.
         >>> import networkx as nx
         >>> import xgi
@@ -392,7 +414,6 @@ def to_bipartite_network(H):
         >>> H = xgi.Hypergraph(hyperedge_list)
         >>> G = xgi.to_bipartite_network(H)
     """
-    # TODO: Add filepath keyword to signatures here and with dataframe and numpy array
     G = nx.Graph()
 
     num_nodes = H.number_of_nodes()
@@ -405,4 +426,8 @@ def to_bipartite_network(H):
         for edge in H.nodes.memberships(node):
             G.add_edge(node_dict[node], edge_dict[edge])
 
-    return G, dict(zip(range(num_nodes), H.nodes)), dict(zip(range(num_nodes, num_nodes + num_edges), H.edges))
+    return (
+        G,
+        dict(zip(range(num_nodes), H.nodes)),
+        dict(zip(range(num_nodes, num_nodes + num_edges), H.edges)),
+    )
