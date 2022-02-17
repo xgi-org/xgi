@@ -86,9 +86,129 @@ def test_create_empty_copy(edgelist1):
     assert E2.shape == (8, 0)
     for node in E2.nodes:
         assert len(E1.nodes.memberships(node)) == 0
-    assert E2._hypergraph == {"name": "test", "timestamp": "Nov. 20"}
-    for n in H.nodes:
-        assert H.nodes[n]["name"] == attr_dict[n]["name"]
+    assert E2["name"] == "test"
+    assert E2["timestamp"] == "Nov. 20"
+    with pytest.raises(XGIError):
+        author = E2["author"]
+    for n in E2.nodes:
+        assert E2.nodes[n]["name"] == attr_dict[n]["name"]
+
+
+def test_set_node_attributes(edgelist1):
+    attr_dict1 = {
+        1: {"name": "Leonie"},
+        2: {"name": "Ilya"},
+        3: {"name": "Alice"},
+        4: {"name": "Giovanni"},
+        5: {"name": "Heather"},
+        6: {"name": "Juan"},
+        7: {"name": "Nicole"},
+        8: {"name": "Sinan"},
+    }
+
+    attr_dict2 = {
+        1: "Leonie",
+        2: "Ilya",
+        3: "Alice",
+        4: "Giovanni",
+        5: "Heather",
+        6: "Juan",
+        7: "Nicole",
+        8: "Sinan",
+    }
+
+    H1 = xgi.Hypergraph(edgelist1)
+    xgi.set_node_attributes(H1, attr_dict1)
+
+    for n in H1.nodes:
+        assert H1.nodes[n]["name"] == attr_dict1[n]["name"]
+
+    H2 = xgi.Hypergraph(edgelist1)
+    xgi.set_node_attributes(H2, attr_dict2, name="name")
+
+    for n in H2.nodes:
+        assert H2.nodes[n]["name"] == attr_dict2[n]
+    
+    H3 = xgi.Hypergraph(edgelist1)
+    xgi.set_node_attributes(H3, 2, name="weight")
+
+    for n in H3.nodes:
+        assert H3.nodes[n]["weight"] == 2
+    
+    H4 = xgi.Hypergraph(edgelist1)
+
+    with pytest.raises(XGIError):
+        xgi.set_node_attributes(H4, attr_dict2)
+
+    with pytest.raises(XGIError):
+        xgi.set_node_attributes(H4, 2)    
+
+def test_get_node_attributes(edgelist1):
+    H1 = xgi.Hypergraph(edgelist1)
+    attr_dict = {
+        1: {"name": "Leonie"},
+        2: {"name": "Ilya"},
+        3: {"name": "Alice"},
+        4: {"name": "Giovanni"},
+        5: {"name": "Heather"},
+        6: {"name": "Juan"},
+        7: {"name": "Nicole"},
+        8: {"name": "Sinan"},
+    }
+    xgi.set_node_attributes(H1, attr_dict)
+
+    assert xgi.get_node_attributes(H1, "name") == {id : data["name"] for id, data in attr_dict.items()}
+    assert xgi.get_node_attributes(H1, "weight") == dict()
+    
+
+def test_set_edge_attributes(edgelist1):
+    H1 = xgi.Hypergraph(edgelist1)
+    attr_dict1 = {
+        0: {"weight": 1},
+        1: {"weight": 2},
+        2: {"weight": 3},
+        3: {"weight": -1}
+    }
+
+    attr_dict2 = {
+        0 : 1,
+        1 : 2,
+        2 : 3,
+        3 : -1
+    }
+    xgi.set_edge_attributes(H1, attr_dict1)
+
+    for e in H1.edges:
+        assert H1.edges[e]["weight"] == attr_dict1[e]["weight"]
+    
+    H2 = xgi.Hypergraph(edgelist1)
+    xgi.set_node_attributes(H2, "blue", name="color")
+
+    for n in H2.nodes:
+        assert H2.nodes[n]["color"] == "blue"
+
+    H3 = xgi.Hypergraph(edgelist1)
+
+    with pytest.raises(XGIError):
+        xgi.set_node_attributes(H3, attr_dict2)
+
+    with pytest.raises(XGIError):
+        xgi.set_edge_attributes(H3, 2)
+
+
+def test_get_edge_attributes(edgelist1):
+    H1 = xgi.Hypergraph(edgelist1)
+    attr_dict = {
+        0: {"weight": 1},
+        1: {"weight": 2},
+        2: {"weight": 3},
+        3: {"weight": -1}
+    }
+
+    xgi.set_edge_attributes(H1, attr_dict)
+
+    assert xgi.get_edge_attributes(H1, "weight") == {id : data["weight"] for id, data in attr_dict.items()}
+    assert xgi.get_node_attributes(H1, "name") == dict()
 
 
 def test_is_empty():

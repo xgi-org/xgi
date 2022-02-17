@@ -258,11 +258,14 @@ def set_node_attributes(H, values, name=None):
             for n in H:
                 H._node_attr[n][name] = values
     else:  # `values` must be dict of dict
-        for n, d in values.items():
-            try:
-                H._node_attr[n].update(d)
-            except KeyError:
-                pass
+        try:
+            for n, d in values.items():
+                try:
+                    H._node_attr[n].update(d)
+                except KeyError:
+                    pass
+        except:
+            raise XGIError("name property has not been set and a dict-of-dicts has not been provided.")
 
 
 def get_node_attributes(H, name):
@@ -333,13 +336,14 @@ def set_edge_attributes(H, values, name=None):
             for id in H.edges:
                 H._edge_attr[id][name] = values
     else:
-        # `values` consists of doct-of-dict {edge: {attr: value}} shape
-        for id, value in values.items():
-            try:
-                H._edge_attr[id].update(values)
-            except KeyError:
-                pass
-
+        try:
+            for id, d in values.items():
+                try:
+                    H._edge_attr[id].update(d)
+                except KeyError:
+                    pass
+        except:
+            raise XGIError("name property has not been set and a dict-of-dicts has not been provided.")
 
 def get_edge_attributes(H, name):
     """Get the edge attributes of the hypergraph
@@ -362,8 +366,7 @@ def get_edge_attributes(H, name):
     get_node_attributes
     set_edge_attributes
     """
-    edge_data = H._edge_attr
-    return {id: edge_data[edge][name] for edge in edge_data if name in edge_data[edge]}
+    return {e: d[name] for e, d in H._edge_attr.items() if name in d}
 
 
 def is_empty(H):
