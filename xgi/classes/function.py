@@ -265,7 +265,9 @@ def set_node_attributes(H, values, name=None):
                 except KeyError:
                     pass
         except:
-            raise XGIError("name property has not been set and a dict-of-dicts has not been provided.")
+            raise XGIError(
+                "name property has not been set and a dict-of-dicts has not been provided."
+            )
 
 
 def get_node_attributes(H, name):
@@ -343,7 +345,10 @@ def set_edge_attributes(H, values, name=None):
                 except KeyError:
                     pass
         except:
-            raise XGIError("name property has not been set and a dict-of-dicts has not been provided.")
+            raise XGIError(
+                "name property has not been set and a dict-of-dicts has not been provided."
+            )
+
 
 def get_edge_attributes(H, name):
     """Get the edge attributes of the hypergraph
