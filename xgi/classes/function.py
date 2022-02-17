@@ -51,7 +51,7 @@ def degree_histogram(H):
     return [counts.get(i, 0) for i in range(max(counts) + 1)]
 
 
-def unique_edge_sizes(H, return_counts=False):
+def unique_edge_sizes(H):
     """A function that returns the unique edge sizes.
 
     Parameters
