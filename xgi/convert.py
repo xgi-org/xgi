@@ -348,7 +348,6 @@ def from_bipartite_graph(G, create_using=None, dual=False):
 
     Examples
     --------
-    A partition for the nodes in a bipartite graph generates a hypergraph.
         >>> import networkx as nx
         >>> import xgi
         >>> G = nx.Graph()
@@ -407,7 +406,6 @@ def to_bipartite_graph(H):
 
     Examples
     --------
-    A partition for the nodes in a bipartite graph generates a hypergraph.
         >>> import networkx as nx
         >>> import xgi
         >>> >>> hyperedge_list = [[1, 2], [2, 3, 4]]
