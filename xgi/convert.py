@@ -342,8 +342,8 @@ def from_bipartite_graph(G, create_using=None, dual=False):
 
     References
     ----------
-    The Why, How, and When of Representations for Complex Systems
-    Leo Torres, Ann S. Blevins, Danielle Bassett, and Tina Eliassi-Rad
+    The Why, How, and When of Representations for Complex Systems,
+    Leo Torres, Ann S. Blevins, Danielle Bassett, and Tina Eliassi-Rad,
     https://doi.org/10.1137/20M1355896
 
     Examples
@@ -400,8 +400,8 @@ def to_bipartite_graph(H):
 
     References
     ----------
-    The Why, How, and When of Representations for Complex Systems
-    Leo Torres, Ann S. Blevins, Danielle Bassett, and Tina Eliassi-Rad
+    The Why, How, and When of Representations for Complex Systems,
+    Leo Torres, Ann S. Blevins, Danielle Bassett, and Tina Eliassi-Rad,
     https://doi.org/10.1137/20M1355896
 
     Examples
