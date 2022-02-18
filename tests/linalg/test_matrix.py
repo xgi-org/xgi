@@ -72,7 +72,8 @@ def test_incidence_matrix(edgelist1, edgelist3, edgelist4):
     node_dict4 = {k: v for v, k in node_dict.items()}
     edge_dict4 = {k: v for v, k in edge_dict.items()}
     assert I5[node_dict4[1], edge_dict4[0]] == 3
-    assert np.unique(np.ravel(I5.todense())).tolist() == [0, 3]
+    unique_entries = np.unique(np.ravel(I5.todense())).tolist()
+    assert unique_entries == [0, 3]
 
     data = xgi.adjacency_matrix(H1)
     assert type(data) == csr_matrix

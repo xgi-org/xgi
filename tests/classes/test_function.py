@@ -158,6 +158,8 @@ def test_get_node_attributes(edgelist1):
     }
     xgi.set_node_attributes(H1, attr_dict)
 
+    assert xgi.get_node_attributes(H1) == attr_dict
+
     assert xgi.get_node_attributes(H1, "name") == {
         id: data["name"] for id, data in attr_dict.items()
     }
@@ -169,7 +171,7 @@ def test_set_edge_attributes(edgelist1):
     attr_dict1 = {
         0: {"weight": 1},
         1: {"weight": 2},
-        2: {"weight": 3},
+        2: {"weight": 3.0},
         3: {"weight": -1},
     }
 
@@ -204,6 +206,8 @@ def test_get_edge_attributes(edgelist1):
     }
 
     xgi.set_edge_attributes(H1, attr_dict)
+
+    assert xgi.get_edge_attributes(H1) == attr_dict
 
     assert xgi.get_edge_attributes(H1, "weight") == {
         id: data["weight"] for id, data in attr_dict.items()

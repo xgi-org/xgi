@@ -270,15 +270,15 @@ def set_node_attributes(H, values, name=None):
             )
 
 
-def get_node_attributes(H, name):
+def get_node_attributes(H, name=None):
     """Get the node attributes for a hypergraph
 
     Parameters
     ----------
     H : Hypergraph object
         The hypergraph to get node attributes from
-    name : string
-       Attribute name
+    name : string, optional
+       Attribute name. If None, then return the entire attribute dictionary.
 
     Returns
     -------
@@ -291,7 +291,10 @@ def get_node_attributes(H, name):
     set_edge_attributes
     get_edge_attributes
     """
-    return {n: d[name] for n, d in H._node_attr.items() if name in d}
+    if name is None:
+        return dict(H._node_attr)
+    else:
+        return {n: d[name] for n, d in H._node_attr.items() if name in d}
 
 
 def set_edge_attributes(H, values, name=None):
@@ -350,15 +353,15 @@ def set_edge_attributes(H, values, name=None):
             )
 
 
-def get_edge_attributes(H, name):
+def get_edge_attributes(H, name=None):
     """Get the edge attributes of the hypergraph
 
     Parameters
     ----------
     H : Hypergraph object
         The hypergraph to get edge attributes from
-    name : string
-       Attribute name
+    name : string, optional
+       Attribute name. If None, then return the entire attribute dictionary.
 
     Returns
     -------
@@ -371,7 +374,10 @@ def get_edge_attributes(H, name):
     get_node_attributes
     set_edge_attributes
     """
-    return {e: d[name] for e, d in H._edge_attr.items() if name in d}
+    if name is None:
+        return dict(H._edge_attr)
+    else:
+        return {e: d[name] for e, d in H._edge_attr.items() if name in d}
 
 
 def is_empty(H):
