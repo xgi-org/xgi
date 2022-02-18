@@ -2,6 +2,7 @@ import xgi
 import pytest
 from xgi.exception import XGIError
 
+
 def test_generic_hypergraph_view(edgelist1):
     H = xgi.Hypergraph(edgelist1)
 
@@ -42,6 +43,7 @@ def test_generic_hypergraph_view(edgelist1):
 
     assert list(H.nodes) == list(new_H.nodes)
     assert list(H.edges) == list(new_H.edges)
+
 
 def test_subhypergraph_view(edgelist1):
     H = xgi.Hypergraph(edgelist1)
@@ -84,7 +86,9 @@ def test_subhypergraph_view(edgelist1):
     assert list(H.nodes) == list(new_H.nodes)
     assert list(H.edges) == list(new_H.edges)
     print("hi")
-    new_H = xgi.classes.hypergraphviews.subhypergraph_view(H, filtered_nodes=[1, 2, 3, 4, 5])
+    new_H = xgi.classes.hypergraphviews.subhypergraph_view(
+        H, filtered_nodes=[1, 2, 3, 4, 5]
+    )
     assert list(new_H.nodes) == [1, 2, 3, 4, 5]
     assert list(new_H.edges) == [0, 1]
 
@@ -93,7 +97,9 @@ def test_subhypergraph_view(edgelist1):
     assert list(new_H.edges) == [1, 2]
     assert new_H.isolates(ignore_singletons=False) == {1, 2, 3, 7, 8}
 
-    new_H = xgi.classes.hypergraphviews.subhypergraph_view(H, filtered_nodes=[1, 2, 3, 4, 5], filtered_edges=[1, 2])
+    new_H = xgi.classes.hypergraphviews.subhypergraph_view(
+        H, filtered_nodes=[1, 2, 3, 4, 5], filtered_edges=[1, 2]
+    )
     assert list(new_H.nodes) == [1, 2, 3, 4, 5]
     assert list(new_H.edges) == [1]
     assert new_H.isolates(ignore_singletons=False) == {1, 2, 3, 5}
