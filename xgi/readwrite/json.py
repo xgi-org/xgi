@@ -38,9 +38,11 @@ def write_hypergraph_json(H, path):
     # get node data
     data["node-data"] = {str(id): H.nodes[id] for id in H.nodes}
     data["edge-data"] = {str(id): H.edges[id] for id in H.edges}
-    
+
     # hyperedge dict
-    data["edge-dict"] = {str(id): [str(n) for n in H.edges.members(id)] for id in H.edges}
+    data["edge-dict"] = {
+        str(id): [str(n) for n in H.edges.members(id)] for id in H.edges
+    }
 
     datastring = json.dumps(data)
 
@@ -89,17 +91,18 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
             try:
                 id = edgetype(id)
             except Exception as e:
-                raise TypeError(f"Failed to convert the edge with ID {id} to type {edgetype}.") from e
-    
+                raise TypeError(
+                    f"Failed to convert the edge with ID {id} to type {edgetype}."
+                ) from e
+
         if nodetype is not None:
             try:
                 edge = [nodetype(n) for n in edge]
             except Exception as e:
                 raise TypeError(f"Failed to convert nodes to type {nodetype}.") from e
         H._edge[id] = edge
-        
-    H._node = get_dual(H._edge)
 
+    H._node = get_dual(H._edge)
 
     try:
         for id, dd in data["node-data"].items():
@@ -107,7 +110,9 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
                 try:
                     id = edgetype(id)
                 except Exception as e:
-                    raise TypeError(f"Failed to convert edge IDs to type {edgetype}.") from e
+                    raise TypeError(
+                        f"Failed to convert edge IDs to type {edgetype}."
+                    ) from e
             H._node_attr[id] = dd
     except:
         raise TypeError("Failed to import node attributes.")
@@ -118,7 +123,9 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
                 try:
                     id = edgetype(id)
                 except Exception as e:
-                    raise TypeError(f"Failed to convert edge IDs to type {edgetype}.") from e
+                    raise TypeError(
+                        f"Failed to convert edge IDs to type {edgetype}."
+                    ) from e
             H._edge_attr[id] = dd
     except:
         raise TypeError("Failed to import edge attributes.")

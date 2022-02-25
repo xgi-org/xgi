@@ -126,7 +126,13 @@ def read_bipartite_edgelist(
 
 
 def parse_bipartite_edgelist(
-    lines, comments="#", delimiter=None, create_using=None, nodetype=None, edgetype=None, dual=False
+    lines,
+    comments="#",
+    delimiter=None,
+    create_using=None,
+    nodetype=None,
+    edgetype=None,
+    dual=False,
 ):
     """
     A helper function to read a iterable of strings containing a bipartite edge list and
@@ -187,7 +193,9 @@ def parse_bipartite_edgelist(
             try:
                 node = nodetype(s[node_index])
             except Exception as e:
-                raise TypeError(f"Failed to convert the node with ID {s[node_index]} to type {nodetype}.") from e
+                raise TypeError(
+                    f"Failed to convert the node with ID {s[node_index]} to type {nodetype}."
+                ) from e
         else:
             node = s[node_index]
 
@@ -196,7 +204,9 @@ def parse_bipartite_edgelist(
             try:
                 edge = edgetype(s[edge_index])
             except Exception as e:
-                raise TypeError(f"Failed to convert the edge with ID {s[edge_index]} to type {edgetype}.") from e
+                raise TypeError(
+                    f"Failed to convert the edge with ID {s[edge_index]} to type {edgetype}."
+                ) from e
         else:
             edge = s[edge_index]
 
