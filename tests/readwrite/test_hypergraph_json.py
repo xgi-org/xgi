@@ -6,7 +6,6 @@ dataset_folder = "tests/readwrite/data/"
 
 
 def test_read_hypergraph_json():
-    print(os.getcwd())
     filename = os.path.join(dataset_folder, "hypergraph_json.json")
     H1 = xgi.read_hypergraph_json(filename, nodetype=int)
     H2 = xgi.read_hypergraph_json(filename)
