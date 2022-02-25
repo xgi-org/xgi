@@ -2,15 +2,14 @@ import pytest
 import tempfile
 import os
 import xgi
-from xgi.readwrite import edgelist
 
 dataset_folder = "tests/readwrite/data/"
 
 @pytest.mark.parametrize(
     ("filename", "extra_kwargs"),
     (
-        (os.path.join(dataset_folder, "bipartite_edges_spaces.txt"), {}),
-        (os.path.join(dataset_folder, "bipartite_edges_commas.txt"), {"delimiter": ","}),
+        (os.path.join(dataset_folder, "bipartite_edgelist_spaces.txt"), {}),
+        (os.path.join(dataset_folder, "bipartite_edgelist_commas.txt"), {"delimiter": ","}),
     ),
 )
 def test_read_bipartite_edgelist(filename, extra_kwargs):

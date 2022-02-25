@@ -8,8 +8,8 @@ dataset_folder = "tests/readwrite/data/"
 @pytest.mark.parametrize(
     ("filename", "extra_kwargs"),
     (
-        (os.path.join(dataset_folder, "edges_spaces.txt"), {}),
-        (os.path.join(dataset_folder, "edges_commas.txt"), {"delimiter": ","}),
+        (os.path.join(dataset_folder, "edgelist_spaces.txt"), {}),
+        (os.path.join(dataset_folder, "edgelist_commas.txt"), {"delimiter": ","}),
     ),
 )
 def test_read_edgelist(filename, extra_kwargs):
