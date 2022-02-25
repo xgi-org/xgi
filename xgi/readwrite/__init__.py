@@ -4,3 +4,5 @@ from xgi.readwrite.json import *
 from xgi.readwrite import json
 from xgi.readwrite.bipartite import *
 from xgi.readwrite import bipartite
+from xgi.readwrite.incidence import *
+from xgi.readwrite import incidence
