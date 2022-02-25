@@ -16,10 +16,10 @@ dataset_folder = "tests/readwrite/data/"
         ),
     ),
 )
-def test_read_incidence_matrix(filename, extra_kwargs):
-    H = xgi.read_incidence_matrix(filename, **extra_kwargs)
-    int_edgelist = [[0, 1, 2, 3], [4], [5, 6], [6, 7, 8]]
-    assert [H.edges.members(id) for id in H.edges] == int_edgelist
+# def test_read_incidence_matrix(filename, extra_kwargs):
+#     H = xgi.read_incidence_matrix(filename, **extra_kwargs)
+#     int_edgelist = [[0, 1, 2, 3], [4], [5, 6], [6, 7, 8]]
+#     assert [H.edges.members(id) for id in H.edges] == int_edgelist
 
 
 def test_write_incidence_matrix(edgelist5):

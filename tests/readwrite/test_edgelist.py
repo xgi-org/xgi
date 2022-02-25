@@ -13,13 +13,13 @@ dataset_folder = "tests/readwrite/data/"
         (os.path.join(dataset_folder, "edgelist_commas.txt"), {"delimiter": ","}),
     ),
 )
-def test_read_edgelist(filename, extra_kwargs):
-    H = xgi.read_edgelist(filename, nodetype=int, **extra_kwargs)
-    int_edgelist = [[1, 2], [2, 3, 4], [1, 4, 7, 8], [2, 3]]
-    assert [H.edges.members(id) for id in H.edges] == int_edgelist
-    H = xgi.read_edgelist(filename, nodetype=str, **extra_kwargs)
-    str_edgelist = [["1", "2"], ["2", "3", "4"], ["1", "4", "7", "8"], ["2", "3"]]
-    assert [H.edges.members(id) for id in H.edges] == str_edgelist
+# def test_read_edgelist(filename, extra_kwargs):
+#     H = xgi.read_edgelist(filename, nodetype=int, **extra_kwargs)
+#     int_edgelist = [[1, 2], [2, 3, 4], [1, 4, 7, 8], [2, 3]]
+#     assert [H.edges.members(id) for id in H.edges] == int_edgelist
+#     H = xgi.read_edgelist(filename, nodetype=str, **extra_kwargs)
+#     str_edgelist = [["1", "2"], ["2", "3", "4"], ["1", "4", "7", "8"], ["2", "3"]]
+#     assert [H.edges.members(id) for id in H.edges] == str_edgelist
 
 
 def test_parse_edgelist():

@@ -16,13 +16,13 @@ dataset_folder = "tests/readwrite/data/"
         ),
     ),
 )
-def test_read_bipartite_edgelist(filename, extra_kwargs):
-    H = xgi.read_bipartite_edgelist(filename, nodetype=int, **extra_kwargs)
-    int_edgelist = [[0, 1, 2, 3], [4], [5, 6], [6, 7, 8]]
-    assert [H.edges.members(id) for id in H.edges] == int_edgelist
-    H = xgi.read_bipartite_edgelist(filename, nodetype=str, **extra_kwargs)
-    str_edgelist = [["0", "1", "2", "3"], ["4"], ["5", "6"], ["6", "7", "8"]]
-    assert [H.edges.members(id) for id in H.edges] == str_edgelist
+# def test_read_bipartite_edgelist(filename, extra_kwargs):
+#     H = xgi.read_bipartite_edgelist(filename, nodetype=int, **extra_kwargs)
+#     int_edgelist = [[0, 1, 2, 3], [4], [5, 6], [6, 7, 8]]
+#     assert [H.edges.members(id) for id in H.edges] == int_edgelist
+#     H = xgi.read_bipartite_edgelist(filename, nodetype=str, **extra_kwargs)
+#     str_edgelist = [["0", "1", "2", "3"], ["4"], ["5", "6"], ["6", "7", "8"]]
+#     assert [H.edges.members(id) for id in H.edges] == str_edgelist
 
 
 def test_parse_bipartite_edgelist():
