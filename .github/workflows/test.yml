@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   env:
-  working-dir: ../
+    working-dir: ../
   default:
     runs-on: ${{ matrix.os }}-latest
     strategy:
