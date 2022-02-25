@@ -25,5 +25,5 @@ jobs:
         python -m pip list
     - name: Test XGI
       run: |
-        cd ../../
+        cd ..
         pytest xgi
