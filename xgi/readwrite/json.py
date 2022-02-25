@@ -1,6 +1,5 @@
 import json
 import xgi
-from xgi.classes.hypergraph import Hypergraph
 from xgi.exception import XGIError
 from xgi.utils.utilities import get_dual
 

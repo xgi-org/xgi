@@ -1,26 +1,50 @@
 import pytest
 import tempfile
-import os
 import xgi
 
 dataset_folder = "tests/readwrite/data/"
 
 
-# @pytest.mark.parametrize(
-#     ("filename", "extra_kwargs"),
-#     (
-#         (os.path.join(dataset_folder, "incidence_matrix_spaces.txt"), {}),
-#         (
-#             os.path.join(dataset_folder, "incidence_matrix_commas.txt"),
-#             {"delimiter": ","},
-#         ),
-#     ),
-# )
+incidence_matrix_spaces_string = """1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+# Comment
+0 1 0 0
+0 0 1 0
+0 0 1 1
+0 0 0 1
+0 0 0 1"""
 
-# def test_read_incidence_matrix(filename, extra_kwargs):
-#     H = xgi.read_incidence_matrix(filename, **extra_kwargs)
-#     int_edgelist = [[0, 1, 2, 3], [4], [5, 6], [6, 7, 8]]
-#     assert [H.edges.members(id) for id in H.edges] == int_edgelist
+incidence_matrix_commas_string = """1,0,0,0
+1,0,0,0
+1,0,0,0
+# Comment
+1,0,0,0
+0,1,0,0
+0,0,1,0
+0,0,1,1
+0,0,0,1
+0,0,0,1"""
+
+
+@pytest.mark.parametrize(
+    ("file_string", "extra_kwargs"),
+    (
+        (incidence_matrix_spaces_string, {}),
+        (incidence_matrix_commas_string, {"delimiter": ","}),
+    ),
+)
+def test_read_incidence_matrix(file_string, extra_kwargs):
+
+    _, filename = tempfile.mkstemp()
+
+    with open(filename, "w") as file:
+        file.write(file_string)
+
+    H = xgi.read_incidence_matrix(filename, **extra_kwargs)
+    int_edgelist = [[0, 1, 2, 3], [4], [5, 6], [6, 7, 8]]
+    assert [H.edges.members(id) for id in H.edges] == int_edgelist
 
 
 def test_write_incidence_matrix(edgelist5):

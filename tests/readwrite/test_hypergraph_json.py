@@ -1,12 +1,61 @@
 import tempfile
-import os
 import xgi
 
-dataset_folder = "tests/readwrite/data/"
+json_string = """
+{
+    "hypergraph-data": {
+      "name": "test",
+      "author": "Nicholas Landry"
+    },
+    "node-data": {
+      "1": {
+        "color": "blue"
+      },
+      "2": {
+        "color": "yellow"
+      },
+      "3": {
+        "color": "cyan"
+      },
+      "4": {
+        "color": "green"
+      }
+    },
+    "edge-data": {
+      "edge1": {
+        "weight": 2
+      },
+      "edge2": {
+        "weight": 4
+      },
+      "edge3": {
+        "weight": -1
+      }
+    },
+    "edge-dict": {
+      "edge1": [
+        "1",
+        "2"
+      ],
+      "edge2": [
+        "2",
+        "3",
+        "4"
+      ],
+      "edge3": [
+        "1",
+        "4"
+      ]
+    }
+  }
+"""
 
 
 def test_read_hypergraph_json():
-    filename = os.path.join(dataset_folder, "hypergraph_json.json")
+    _, filename = tempfile.mkstemp()
+    with open(filename, "w") as file:
+        file.write(json_string)
+
     H1 = xgi.read_hypergraph_json(filename, nodetype=int)
     H2 = xgi.read_hypergraph_json(filename)
 
@@ -27,9 +76,11 @@ def test_read_hypergraph_json():
 
 
 def test_write_hypergraph_json(edgelist1):
-    print(os.getcwd())
     _, filename = tempfile.mkstemp()
     H1 = xgi.Hypergraph(edgelist1)
+
+    H1["name"] = "test"
+    H1["author"] = "Nicholas Landry"
 
     node_attr_dict = {
         1: {"name": "Leonie"},
@@ -58,3 +109,4 @@ def test_write_hypergraph_json(edgelist1):
     ]
     assert H2.nodes[2] == {"name": "Ilya"}
     assert H2.edges[1] == {"weight": 2}
+    assert H2["name"] == "test"

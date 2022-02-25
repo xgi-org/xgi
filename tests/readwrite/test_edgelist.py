@@ -1,25 +1,41 @@
 import pytest
 import tempfile
-import os
 import xgi
 
-dataset_folder = "tests/readwrite/data/"
+edgelist_spaces_string = """# comment line
+1 2
+# comment line
+2 3 4
+1 4 7 8
+2 3"""
+
+edgelist_commas_string = """# comment line
+1,2
+# comment line
+2,3,4
+1,4,7,8
+2,3"""
 
 
-# @pytest.mark.parametrize(
-#     ("filename", "extra_kwargs"),
-#     (
-#         (os.path.join(dataset_folder, "edgelist_spaces.txt"), {}),
-#         (os.path.join(dataset_folder, "edgelist_commas.txt"), {"delimiter": ","}),
-#     ),
-# )
-# def test_read_edgelist(filename, extra_kwargs):
-#     H = xgi.read_edgelist(filename, nodetype=int, **extra_kwargs)
-#     int_edgelist = [[1, 2], [2, 3, 4], [1, 4, 7, 8], [2, 3]]
-#     assert [H.edges.members(id) for id in H.edges] == int_edgelist
-#     H = xgi.read_edgelist(filename, nodetype=str, **extra_kwargs)
-#     str_edgelist = [["1", "2"], ["2", "3", "4"], ["1", "4", "7", "8"], ["2", "3"]]
-#     assert [H.edges.members(id) for id in H.edges] == str_edgelist
+@pytest.mark.parametrize(
+    ("file_string", "extra_kwargs"),
+    (
+        (edgelist_spaces_string, {}),
+        (edgelist_commas_string, {"delimiter": ","}),
+    ),
+)
+def test_read_edgelist(file_string, extra_kwargs):
+    _, filename = tempfile.mkstemp()
+
+    with open(filename, "w") as file:
+        file.write(file_string)
+
+    H = xgi.read_edgelist(filename, nodetype=int, **extra_kwargs)
+    int_edgelist = [[1, 2], [2, 3, 4], [1, 4, 7, 8], [2, 3]]
+    assert [H.edges.members(id) for id in H.edges] == int_edgelist
+    H = xgi.read_edgelist(filename, nodetype=str, **extra_kwargs)
+    str_edgelist = [["1", "2"], ["2", "3", "4"], ["1", "4", "7", "8"], ["2", "3"]]
+    assert [H.edges.members(id) for id in H.edges] == str_edgelist
 
 
 def test_parse_edgelist():
@@ -35,10 +51,10 @@ def test_parse_edgelist():
 
 
 def test_write_edgelist(edgelist1):
-    _, fname = tempfile.mkstemp()
+    _, filename = tempfile.mkstemp()
     H1 = xgi.Hypergraph(edgelist1)
-    xgi.write_edgelist(H1, fname)
-    H2 = xgi.read_edgelist(fname, nodetype=int)
+    xgi.write_edgelist(H1, filename)
+    H2 = xgi.read_edgelist(filename, nodetype=int)
     assert H1.nodes == H2.nodes
     assert H1.edges == H2.edges
     assert [H1.edges.members(id) for id in H1.edges] == [
