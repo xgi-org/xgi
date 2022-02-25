@@ -6,16 +6,17 @@ import xgi
 dataset_folder = "tests/readwrite/data/"
 
 
-@pytest.mark.parametrize(
-    ("filename", "extra_kwargs"),
-    (
-        (os.path.join(dataset_folder, "bipartite_edgelist_spaces.txt"), {}),
-        (
-            os.path.join(dataset_folder, "bipartite_edgelist_commas.txt"),
-            {"delimiter": ","},
-        ),
-    ),
-)
+# @pytest.mark.parametrize(
+#     ("filename", "extra_kwargs"),
+#     (
+#         (os.path.join(dataset_folder, "bipartite_edgelist_spaces.txt"), {}),
+#         (
+#             os.path.join(dataset_folder, "bipartite_edgelist_commas.txt"),
+#             {"delimiter": ","},
+#         ),
+#     ),
+# )
+
 # def test_read_bipartite_edgelist(filename, extra_kwargs):
 #     H = xgi.read_bipartite_edgelist(filename, nodetype=int, **extra_kwargs)
 #     int_edgelist = [[0, 1, 2, 3], [4], [5, 6], [6, 7, 8]]

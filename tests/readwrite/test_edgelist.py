@@ -6,13 +6,13 @@ import xgi
 dataset_folder = "tests/readwrite/data/"
 
 
-@pytest.mark.parametrize(
-    ("filename", "extra_kwargs"),
-    (
-        (os.path.join(dataset_folder, "edgelist_spaces.txt"), {}),
-        (os.path.join(dataset_folder, "edgelist_commas.txt"), {"delimiter": ","}),
-    ),
-)
+# @pytest.mark.parametrize(
+#     ("filename", "extra_kwargs"),
+#     (
+#         (os.path.join(dataset_folder, "edgelist_spaces.txt"), {}),
+#         (os.path.join(dataset_folder, "edgelist_commas.txt"), {"delimiter": ","}),
+#     ),
+# )
 # def test_read_edgelist(filename, extra_kwargs):
 #     H = xgi.read_edgelist(filename, nodetype=int, **extra_kwargs)
 #     int_edgelist = [[1, 2], [2, 3, 4], [1, 4, 7, 8], [2, 3]]
