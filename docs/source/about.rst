@@ -45,9 +45,9 @@ and the `contributing guidelines
 Relevant References
 -------------------
 
-`The Why, How, and When of Representations for Complex Systems <https://doi.org/10.1137/20M1355896>`_. Leo Torres, Ann S. Blevins, Danielle Bassett, and Tina Eliassi-Rad
+`The Why, How, and When of Representations for Complex Systems <https://doi.org/10.1137/20M1355896>`_, Leo Torres, Ann S. Blevins, Danielle Bassett, and Tina Eliassi-Rad
 
-`Networks beyond pairwise interactions: Structure and dynamics <https://doi.org/10.1016/j.physrep.2020.05.004>`_. Federico Battiston, Giulia Cencetti, Iacopo Iacopini,
+`Networks beyond pairwise interactions: Structure and dynamics <https://doi.org/10.1016/j.physrep.2020.05.004>`_, Federico Battiston, Giulia Cencetti, Iacopo Iacopini,
 Vito Latora, Maxime Lucas, Alice Patania, Jean-Gabriel Young, and Giovanni Petri
 
-`What are higher-order networks? <https://arxiv.org/abs/2104.11329>`_. Christian Bick, Elizabeth Gross, Heather A. Harrington, Michael T. Schaub
+`What are higher-order networks? <https://arxiv.org/abs/2104.11329>`_, Christian Bick, Elizabeth Gross, Heather A. Harrington, Michael T. Schaub
