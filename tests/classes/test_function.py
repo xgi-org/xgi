@@ -78,12 +78,12 @@ def test_create_empty_copy(edgelist1):
     E1 = xgi.create_empty_copy(H, with_data=False)
     E2 = xgi.create_empty_copy(H)
 
-    assert E1.shape == (8, 0)
+    assert (E1.number_of_nodes(), E1.number_of_edges()) == (8, 0)
     for node in E1.nodes:
         assert len(E1.nodes.memberships(node)) == 0
     assert E1._hypergraph == {}
 
-    assert E2.shape == (8, 0)
+    assert (E2.number_of_nodes(), E2.number_of_edges()) == (8, 0)
     for node in E2.nodes:
         assert len(E1.nodes.memberships(node)) == 0
     assert E2["name"] == "test"

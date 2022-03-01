@@ -9,7 +9,6 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     H_mat = xgi.Hypergraph(incidence5)
     H_df = xgi.Hypergraph(dataframe5)
 
-    assert H_list.shape == H_dict.shape == H_mat.shape == H_df.shape
     assert (
         list(H_list.nodes)
         == list(H_dict.nodes)
@@ -66,15 +65,6 @@ def test_len(edgelist1, edgelist2):
     assert len(H2) == 6
 
 
-def test_shape(edgelist1, edgelist2):
-    el1 = edgelist1
-    el2 = edgelist2
-    H1 = xgi.Hypergraph(el1)
-    H2 = xgi.Hypergraph(el2)
-    assert H1.shape == (8, 4)
-    assert H2.shape == (6, 3)
-
-
 def test_neighbors(edgelist1, edgelist2):
     el1 = edgelist1
     el2 = edgelist2
@@ -98,9 +88,9 @@ def test_dual(edgelist1, edgelist2, edgelist4):
     D1 = H1.dual()
     D2 = H2.dual()
     D3 = H3.dual()
-    assert D1.shape == (4, 8)
-    assert D2.shape == (3, 6)
-    assert D3.shape == (3, 5)
+    assert (D1.number_of_nodes(), D1.number_of_edges()) == (4, 8)
+    assert (D2.number_of_nodes(), D2.number_of_edges()) == (3, 6)
+    assert (D3.number_of_nodes(), D3.number_of_edges()) == (3, 5)
 
 
 def test_max_edge_order(edgelist1, edgelist4, edgelist5):

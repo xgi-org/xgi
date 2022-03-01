@@ -120,7 +120,6 @@ class Hypergraph:
         See Also
         --------
         number_of_nodes: identical method
-        order: identical method
         """
         return len(self._node)
 
@@ -134,25 +133,6 @@ class Hypergraph:
     def __setitem__(self, attr, val):
         """Write hypergraph attribute."""
         self._hypergraph[attr] = val
-
-    @property
-    def shape(self):
-        """Return the number of nodes and edges as a tuple.
-
-        Returns
-        -------
-        tuple
-           A tuple of the number of nodes and edges respectively.
-
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.shape
-        (4, 2)
-        """
-        return len(self._node), len(self._edge)
 
     def neighbors(self, n):
         """Find the neighbors of a specified node.
@@ -341,7 +321,6 @@ class Hypergraph:
 
         See Also
         --------
-        order: identical method
         __len__: identical method
 
         Examples
@@ -350,29 +329,6 @@ class Hypergraph:
         >>> hyperedge_list = [[1, 2], [2, 3, 4]]
         >>> H = xgi.Hypergraph(hyperedge_list)
         >>> H.number_of_nodes()
-        4
-        """
-        return len(self._node)
-
-    def order(self):
-        """Returns the number of nodes in the hypergraph.
-
-        Returns
-        -------
-        int
-            The number of nodes in the hypergraph.
-
-        See Also
-        --------
-        number_of_nodes: identical method
-        __len__: identical method
-
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.order()
         4
         """
         return len(self._node)
