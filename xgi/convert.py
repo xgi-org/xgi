@@ -414,10 +414,8 @@ def to_bipartite_graph(H):
     """
     G = nx.Graph()
 
-    num_nodes = H.number_of_nodes()
-    num_edges = H.number_of_edges()
-    node_dict = dict(zip(H.nodes, range(num_nodes)))
-    edge_dict = dict(zip(H.edges, range(num_nodes, num_nodes + num_edges)))
+    node_dict = dict(zip(H.nodes, range(H.num_nodes)))
+    edge_dict = dict(zip(H.edges, range(H.num_nodes, H.num_nodes + H.num_edges)))
     G.add_nodes_from(node_dict.values(), bipartite=0)
     G.add_nodes_from(edge_dict.values(), bipartite=1)
     for node in H.nodes:
@@ -426,6 +424,6 @@ def to_bipartite_graph(H):
 
     return (
         G,
-        dict(zip(range(num_nodes), H.nodes)),
-        dict(zip(range(num_nodes, num_nodes + num_edges), H.edges)),
+        dict(zip(range(H.num_nodes), H.nodes)),
+        dict(zip(range(H.num_nodes, H.num_nodes + H.num_edges), H.edges)),
     )
