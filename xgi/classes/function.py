@@ -37,7 +37,7 @@ def degree_histogram(H):
     Notes
     -----
     Note: the bins are width one, hence len(list) can be large
-    (Order(number_of_edges))
+    (Order(num_edges))
 
     Examples
     --------

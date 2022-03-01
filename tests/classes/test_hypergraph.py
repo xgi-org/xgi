@@ -88,9 +88,9 @@ def test_dual(edgelist1, edgelist2, edgelist4):
     D1 = H1.dual()
     D2 = H2.dual()
     D3 = H3.dual()
-    assert (D1.number_of_nodes(), D1.number_of_edges()) == (4, 8)
-    assert (D2.number_of_nodes(), D2.number_of_edges()) == (3, 6)
-    assert (D3.number_of_nodes(), D3.number_of_edges()) == (3, 5)
+    assert (D1.num_nodes, D1.num_edges) == (4, 8)
+    assert (D2.num_nodes, D2.num_edges) == (3, 6)
+    assert (D3.num_nodes, D3.num_edges) == (3, 5)
 
 
 def test_max_edge_order(edgelist1, edgelist4, edgelist5):

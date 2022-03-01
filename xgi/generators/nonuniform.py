@@ -13,6 +13,7 @@ __all__ = [
     "random_hypergraph",
 ]
 
+
 def chung_lu_hypergraph(k1, k2):
     """A function to generate a Chung-Lu hypergraph
 

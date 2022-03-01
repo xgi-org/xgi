@@ -77,9 +77,9 @@ class Hypergraph:
 
         """
         try:
-            return f"{type(self).__name__} named {self['name']} with {self.number_of_nodes()} nodes and {self.number_of_edges()} hyperedges"
+            return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
         except:
-            return f"Unnamed {type(self).__name__} with {self.number_of_nodes()} nodes and {self.number_of_edges()} hyperedges"
+            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
 
     def __iter__(self):
         """Iterate over the nodes. Use: 'for n in H'.
@@ -119,7 +119,7 @@ class Hypergraph:
 
         See Also
         --------
-        number_of_nodes: identical method
+        num_nodes: identical method
         """
         return len(self._node)
 
@@ -133,6 +133,53 @@ class Hypergraph:
     def __setitem__(self, attr, val):
         """Write hypergraph attribute."""
         self._hypergraph[attr] = val
+
+    @property
+    def num_nodes(self):
+        """Returns the number of nodes in the hypergraph.
+
+        Returns
+        -------
+        int
+            The number of nodes in the hypergraph.
+
+        See Also
+        --------
+        __len__: identical method
+        num_edges : returns the number of edges in the hypergraph
+
+        Examples
+        --------
+        >>> import xgi
+        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+        >>> H = xgi.Hypergraph(hyperedge_list)
+        >>> H.num_nodes
+        4
+        """
+        return len(self._node)
+
+    @property
+    def num_edges(self):
+        """Returns the number of edges in the hypergraph.
+
+        Returns
+        -------
+        int
+            The number of edges in the hypergraph.
+
+        See Also
+        --------
+        num_nodes : returns the number of nodes in the hypergraph
+
+        Examples
+        --------
+        >>> import xgi
+        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+        >>> H = xgi.Hypergraph(hyperedge_list)
+        >>> H.num_edges
+        2
+        """
+        return len(self._edge)
 
     def neighbors(self, n):
         """Find the neighbors of a specified node.
@@ -310,28 +357,6 @@ class Hypergraph:
         # setattr doesn't work because attribute already exists
         self.__dict__["nodes"] = nodes
         return nodes
-
-    def number_of_nodes(self):
-        """Returns the number of nodes in the hypergraph.
-
-        Returns
-        -------
-        int
-            The number of nodes in the hypergraph.
-
-        See Also
-        --------
-        __len__: identical method
-
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.number_of_nodes()
-        4
-        """
-        return len(self._node)
 
     def has_node(self, n):
         """Returns True if the hypergraph contains the node n.
@@ -968,28 +993,6 @@ class Hypergraph:
         """
         subhypergraph = xgi.hypergraphviews.subhypergraph_view
         return subhypergraph(self, nodes, edges)
-
-    def number_of_edges(self):
-        """Returns the number of edges in the hypergraph.
-
-        Returns
-        -------
-        int
-            The number of edges in the hypergraph.
-
-        See Also
-        --------
-        number_of_nodes : returns the number of nodes in the hypergraph
-
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.number_of_edges()
-        2
-        """
-        return len(self._edge)
 
     def nbunch_iter(self, nbunch=None):
         """Returns an iterator over nodes contained in nbunch that are
