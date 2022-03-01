@@ -4,6 +4,7 @@ from xgi.exception import XGIError
 __all__ = [
     "is_connected",
     "connected_components",
+    "largest_connected_component",
     "number_connected_components",
     "node_connected_component",
 ]
@@ -76,6 +77,42 @@ def connected_components(H):
             yield c
 
 
+def largest_connected_component(H, in_place=False):
+    """
+    A function to find the largest connected component of a hypergraph.
+
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+
+    Returns
+    -------
+    set
+       the largest connected component of the hypergraph.
+
+    See Also
+    --------
+    is_connected
+    connected_components
+    number_connected_components
+
+    Example
+    -------
+        >>> import xgi
+        >>> n = 1000
+        >>> m = n
+        >>> p = 0.01
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> print(xgi.number_connected_components(H))
+    """
+    connected_nodes = max(connected_components(H), key=len)
+    if not in_place:
+        return H.subhypergraph(connected_nodes).copy()
+    else:
+        H.remove_nodes_from(set(H.nodes).difference(connected_nodes))
+
+
 def number_connected_components(H):
     """
     A function to find the number of connected components of a hypergraph.
@@ -88,12 +125,13 @@ def number_connected_components(H):
     Returns
     -------
     int
-        Returns the number of connected components of a hypergraph.
+        the number of connected components of the hypergraph.
 
     See Also
     --------
     is_connected
     connected_components
+    largest_connected_component
 
     Example
     -------
