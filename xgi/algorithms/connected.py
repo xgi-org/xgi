@@ -7,7 +7,7 @@ __all__ = [
     "largest_connected_component",
     "number_connected_components",
     "node_connected_component",
-    "largest_connected_hypergraph"
+    "largest_connected_hypergraph",
 ]
 
 
@@ -130,7 +130,7 @@ def largest_connected_component(H):
     ----------
     H: Hypergraph object
         The hypergraph of interest
-    
+
     Returns
     -------
     set

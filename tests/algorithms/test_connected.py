@@ -43,7 +43,7 @@ def test_largest_connected_component(edgelist1, edgelist2):
 
     lcc_1 = xgi.largest_connected_component(H1)
     lcc_2 = xgi.largest_connected_component(H2)
-    
+
     assert lcc_1 == {5, 6, 7, 8}
     assert lcc_2 == {3, 4, 5, 6}
 
@@ -74,7 +74,7 @@ def test_largest_connected_hypergraph(edgelist1, edgelist2):
 
     H1_lcc = xgi.largest_connected_hypergraph(H1)
     xgi.largest_connected_hypergraph(H2, in_place=True)
-    
+
     assert xgi.is_connected(H1_lcc)
     assert sorted(H1_lcc.nodes) == [5, 6, 7, 8]
     assert xgi.is_connected(H2)
