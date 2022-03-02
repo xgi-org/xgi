@@ -7,6 +7,7 @@ __all__ = [
     "largest_connected_component",
     "number_connected_components",
     "node_connected_component",
+    "largest_connected_hypergraph"
 ]
 
 
@@ -28,6 +29,8 @@ def is_connected(H):
     --------
     connected_components
     number_connected_components
+    largest_connected_component
+    largest_connected_hypergraph
 
     Example
     -------
@@ -59,6 +62,8 @@ def connected_components(H):
     --------
     is_connected
     number_connected_components
+    largest_connected_component
+    largest_connected_hypergraph
 
     Example
     -------
@@ -75,42 +80,6 @@ def connected_components(H):
             c = _plain_bfs(H, v)
             seen.update(c)
             yield c
-
-
-def largest_connected_component(H, in_place=False):
-    """
-    A function to find the largest connected component of a hypergraph.
-
-    Parameters
-    ----------
-    H: Hypergraph object
-        The hypergraph of interest
-
-    Returns
-    -------
-    set
-       the largest connected component of the hypergraph.
-
-    See Also
-    --------
-    is_connected
-    connected_components
-    number_connected_components
-
-    Example
-    -------
-        >>> import xgi
-        >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
-        >>> print(xgi.number_connected_components(H))
-    """
-    connected_nodes = max(connected_components(H), key=len)
-    if not in_place:
-        return H.subhypergraph(connected_nodes).copy()
-    else:
-        H.remove_nodes_from(set(H.nodes).difference(connected_nodes))
 
 
 def number_connected_components(H):
@@ -132,6 +101,7 @@ def number_connected_components(H):
     is_connected
     connected_components
     largest_connected_component
+    largest_connected_hypergraph
 
     Example
     -------
@@ -150,6 +120,39 @@ def number_connected_components(H):
             seen.update(c)
             num_cc += 1
     return num_cc
+
+
+def largest_connected_component(H):
+    """
+    A function to find the largest connected component of a hypergraph.
+
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+    
+    Returns
+    -------
+    set
+        the largest connected component of the hypergraph.
+
+    See Also
+    --------
+    is_connected
+    connected_components
+    number_connected_components
+    largest_connected_hypergraph
+
+    Example
+    -------
+        >>> import xgi
+        >>> n = 1000
+        >>> m = n
+        >>> p = 0.01
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> print(xgi.number_connected_components(H))
+    """
+    return max(connected_components(H), key=len)
 
 
 def node_connected_component(H, n):
@@ -201,3 +204,45 @@ def _plain_bfs(H, source):
                 seen.add(v)
                 nextlevel.update(H.neighbors(v))
     return seen
+
+
+def largest_connected_hypergraph(H, in_place=False):
+    """
+    A function to find the largest connected hypergraph from a data set.
+
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+    in_place: bool, optional
+        If False, creates a copy; if True, modifies the existing hypergraph
+
+    Returns
+    -------
+    None
+        if in_place (modifies the existing hypergrpah)
+
+    xgi.Hypergraph
+       if not in_place: the hypergraph induced on the nodes of the
+       largest connected component.
+
+    See Also
+    --------
+    is_connected
+    connected_components
+    number_connected_components
+
+    Example
+    -------
+        >>> import xgi
+        >>> n = 1000
+        >>> m = n
+        >>> p = 0.01
+        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> print(xgi.number_connected_components(H))
+    """
+    connected_nodes = max(connected_components(H), key=len)
+    if not in_place:
+        return H.subhypergraph(connected_nodes).copy()
+    else:
+        H.remove_nodes_from(set(H.nodes).difference(connected_nodes))
