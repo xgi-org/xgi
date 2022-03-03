@@ -7,9 +7,11 @@ Multiedges and self-loops are allowed.
 """
 from copy import deepcopy
 
+import numpy as np
 import xgi
 import xgi.convert as convert
-from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
+from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
+                                     NodeView)
 from xgi.exception import XGIError
 from xgi.utils import XGICounter
 
@@ -1192,6 +1194,34 @@ class Hypergraph:
         """
         self.remove_nodes_from(self.isolates(ignore_singletons))
         return self
+
+    def remove_duplicates(self): 
+        """Remove all duplicate edges so that each edge
+        is unique. 
+        
+        See also
+        --------
+        remove_isolates
+        remove_singleton_edges
+        """
+        
+        edges = [tuple(e) for e in self._edge.values()]
+        edges_unique = set(edges) 
+        
+        self.remove_edges_from(edges) # remove all edges
+        self.add_edges_from(edges_unique) # re-add only unique ones
+
+    def duplicate_edges(self):
+        """A list of all duplicate edges.
+        
+        See also
+        --------
+        remove_duplicates
+        """
+
+        edges = [tuple(e) for e in self._edge.values()]
+        edges_unique, counts = np.unique(edges, return_counts=True)
+        return edges_unique[np.where(counts > 1)]
 
     def is_uniform(self):
         """Returns d>=1 if the hypergraph is d-uniform, that is if
