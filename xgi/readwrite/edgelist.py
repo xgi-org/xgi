@@ -49,9 +49,8 @@ def write_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     --------
         >>> import xgi
         >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
         >>> xgi.write_edgelist(H, "test.csv", delimiter=",")
     """
     with open(path, "wb") as file:
