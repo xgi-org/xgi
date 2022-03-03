@@ -23,7 +23,7 @@ def is_connected(H):
     Returns
     -------
     bool
-        Specifies whether the hypergraph is connected.
+        Whether the hypergraph is connected.
 
     See Also
     --------
@@ -36,9 +36,8 @@ def is_connected(H):
     -------
         >>> import xgi
         >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
         >>> print(xgi.is_connected(H))
     """
     return len(_plain_bfs(H, random.choice(list(H.nodes)))) == len(H)
@@ -69,9 +68,8 @@ def connected_components(H):
     -------
         >>> import xgi
         >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
         >>> print([len(component) for component in xgi.connected_components(H)])
     """
     seen = set()
@@ -94,7 +92,7 @@ def number_connected_components(H):
     Returns
     -------
     int
-        the number of connected components of the hypergraph.
+        The number of connected components of the hypergraph.
 
     See Also
     --------
@@ -107,9 +105,8 @@ def number_connected_components(H):
     -------
         >>> import xgi
         >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
         >>> print(xgi.number_connected_components(H))
     """
     num_cc = 0
@@ -134,7 +131,7 @@ def largest_connected_component(H):
     Returns
     -------
     set
-        the largest connected component of the hypergraph.
+        The largest connected component (a set of nodes) of the hypergraph.
 
     See Also
     --------
@@ -148,8 +145,8 @@ def largest_connected_component(H):
         >>> import xgi
         >>> n = 1000
         >>> m = n
-        >>> p = 0.01
-        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
         >>> print(xgi.number_connected_components(H))
     """
     return max(connected_components(H), key=len)
@@ -181,9 +178,8 @@ def node_connected_component(H, n):
     -------
         >>> import xgi
         >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
         >>> print(xgi.node_connected_component(H, 0))
     """
     if n in H:
@@ -220,25 +216,25 @@ def largest_connected_hypergraph(H, in_place=False):
     Returns
     -------
     None
-        if in_place (modifies the existing hypergrpah)
+        If in_place: modifies the existing hypergraph
 
     xgi.Hypergraph
-       if not in_place: the hypergraph induced on the nodes of the
-       largest connected component.
+        If not in_place: the hypergraph induced on the nodes of the
+        largest connected component.
 
     See Also
     --------
     is_connected
     connected_components
     number_connected_components
+    largest_connected_component
 
     Example
     -------
         >>> import xgi
         >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
         >>> print(xgi.number_connected_components(H))
     """
     connected_nodes = max(connected_components(H), key=len)
