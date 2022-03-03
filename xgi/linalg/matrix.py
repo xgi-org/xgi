@@ -35,12 +35,11 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
 
     Examples
     --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> I = hg.incidence_matrix(H)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
+        >>> I = xgi.incidence_matrix(H)
     """
 
     edge_ids = H.edges
@@ -109,12 +108,11 @@ def adjacency_matrix(H, s=1, index=False):
 
     Examples
     --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> A = hg.adjacency_matrix(H)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
+        >>> A = xgi.adjacency_matrix(H)
     """
 
     if index:
@@ -160,12 +158,11 @@ def clique_motif_matrix(H, index=False):
 
     Examples
     --------
-        >>> import hypergraph as hg
+        >>> import xgi
         >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = hg.erdos_renyi_hypergraph(n, m, p)
-        >>> W = hg.clique_motif_matrix(H)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
+        >>> W = xgi.clique_motif_matrix(H)
     """
     if index:
         I, row_dict, _ = incidence_matrix(H, index=True)
