@@ -19,9 +19,9 @@ from xgi.utils import XGICounter
 __all__ = ["SimplicialComplex"]
 
 class SimplicialComplex(Hypergraph) :
-	"""A class to represent undirected simplicial complexes."""
+    """A class to represent undirected simplicial complexes."""
 
-	def is_simplicial_complex(self) :
+    def is_simplicial_complex(self) :
         """Returns True if all subfaces of each edge exist
         
         Goes through all edges, from larger to smaller and stops at first missing subface found.
@@ -49,8 +49,8 @@ class SimplicialComplex(Hypergraph) :
                 return True 
 
     def add_edge(self, edge, **attr):
-    	"""Add an edge to the simplicial complex, and all its subfaces that do
-    	not exist yet. The universal ID is automatically assigned to the edge(s).
+        """Add an edge to the simplicial complex, and all its subfaces that do
+        not exist yet. The universal ID is automatically assigned to the edge(s).
 
         Edge attributes can be specified with keywords or by directly
         accessing the edge's attribute dictionary. See examples below.
@@ -76,10 +76,10 @@ class SimplicialComplex(Hypergraph) :
         # add all subfaces
         size = len(edge)
         faces = []
-        for n in range(size, 3, -1):
-        	for face in combinations(edge, n-1):
-        		faces.append(face)
-		super().add_edges_from(faces)
+        for n in range(size, 2, -1): 
+            for face in combinations(edge, n-1):
+                faces.append(face)
+        super().add_edges_from(faces)
 
     def add_edges_from(self, ebunch_to_add, **attr):
         """Add all the edges in ebunch_to_add.
@@ -109,13 +109,13 @@ class SimplicialComplex(Hypergraph) :
         # add subfaces 
         faces = []
         for edge in ebunch_to_add:
-        	size = len(edge)
-    		for n in range(size, 3, -1):
-    			for face in combinations(edge, n-1):
-    				faces.append(face)
-		super().add_edges_from(faces)
+            size = len(edge)
+            for n in range(size, 2, -1):
+                for face in combinations(edge, n-1):
+                    faces.append(face)
+        super().add_edges_from(faces)
 
-	def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
+    def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
         """Add weighted edges in `ebunch_to_add` with specified weight attr
 
         Parameters
@@ -142,8 +142,8 @@ class SimplicialComplex(Hypergraph) :
         # add subfaces 
         faces = []
         for edge in ebunch_to_add:
-        	size = len(edge)
-    		for n in range(size, 3, -1):
-    			for face in combinations(edge, n-1):
-    				faces.append(face)
-		super().add_edges_from(faces)
+            size = len(edge)
+            for n in range(size, 2, -1):
+                for face in combinations(edge, n-1):
+                    faces.append(face)
+        super().add_edges_from(faces)
