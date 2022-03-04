@@ -223,41 +223,21 @@ class IDDegreeView:
         weight : hashable, optional
             The name of the attribute to weight the degree, by default None.
         """
-        self._ids = (
-            ids
-            if id_bunch is None
-            else {id: val for id, val in ids.items() if id in id_bunch}
-        )
         self._id_attrs = id_attrs
         self._weight = weight
 
-    def __call__(self, id_bunch=None, weight=None):
-        """Get the degree of specified IDs
-        Parameters
-        ----------
-        nbunch : ID, container of IDs, or None, optional
-            The IDs for which to find the degree, by default None
-        weight : hashable, optional
-            The name of the attribute to weight the degree, by default None
-        Returns
-        -------
-        DegreeView
-            The degrees of the hypergraph
-        """
         if id_bunch is None:
-            if weight == self._weight:
-                return self
-            return self.__class__(self._ids, self._id_attrs, None, weight)
-        try:
-            if id_bunch in self._ids:
-                if weight == self._weight:
-                    return self[id_bunch]
-                return self.__class__(self._ids, self._id_attrs, None, weight)[id_bunch]
-        except TypeError:
-            pass
-        return self.__class__(self._ids, self._id_attrs, id_bunch, weight)
+            self._ids = ids
+        elif id_bunch in self._ids:
+            self._ids = {id_bunch : ids[id_bunch]}
+        else:
+            self._ids = {id: val for id, val in ids.items() if id in id_bunch}
 
-    def __getitem__(self, id):
+        self._id_attrs = id_attrs
+        self._weight = weight
+        self._deg = self._get_degrees()
+
+    def __getitem__(self, id_bunch):
         """Get the degree for an ID
         Parameters
         ----------
@@ -268,10 +248,13 @@ class IDDegreeView:
         float
             The degree of an ID, weighted or unweighted
         """
-        weight = self._weight
-        if weight is None:
-            return len(self._ids[id])
-        return sum(self._id_attrs[dd].get(weight, 1) for dd in self._ids(id))
+        try:
+            return self._deg[id_bunch]
+        except:
+            try:
+                return {id: deg for id, deg in self if id in id_bunch}
+            except:
+                raise XGIError("Invalid ID or combination of IDs specified!")
 
     def __iter__(self):
         """Returns an iterator of ID, degree pairs.
@@ -280,15 +263,8 @@ class IDDegreeView:
         iterator of tuples
             Each entry is an ID, degree (Weighted or unweighted) pair.
         """
-        weight = self._weight
-        if weight is None:
-            for id in self._ids:
-                yield (id, len(self._ids[id]))
-        else:
-            for id in self._ids:
-                elements = self._ids[id]
-                deg = sum(self._id_attrs[dd].get(weight, 1) for dd in elements)
-                yield (id, deg)
+        for id, deg in self._deg.items():
+            yield (id, deg)
 
     def __len__(self):
         """Returns the number of IDs/degrees
@@ -319,6 +295,15 @@ class IDDegreeView:
         """
         return f"{self.__class__.__name__}({dict(self)})"
 
+    def _get_degrees(self):
+        degrees = dict()
+        if self._weight is None:
+            for id, memberships in self._ids.items():
+                degrees[id] = len(memberships)
+        else:
+            for id, memberships in self._ids.items():
+                degrees[id] = sum(self._id_attrs[dd].get(self._weight, 1) for dd in memberships)
+        return degrees
 
 class NodeView(IDView):
     """Class for representing the nodes.

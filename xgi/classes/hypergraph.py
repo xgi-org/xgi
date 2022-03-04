@@ -748,8 +748,8 @@ class Hypergraph:
         except KeyError:
             return default
 
-    @property
-    def degree(self):
+    
+    def degree(self, nbunch=None, weight=None, order=None):
         """A NodeDegreeView for the Hypergraph as H.degree or H.degree().
 
         The degree is the number of edges adjacent to the node.
@@ -779,10 +779,12 @@ class Hypergraph:
         DegreeView object
             The degrees of the hypergraph capable of iterating (node, degree) pairs
         """
-        return DegreeView(self)
+        # handles the single node case.
+        if nbunch in self:
+            return DegreeView(self, nbunch=nbunch, weight=weight)[nbunch]
+        return DegreeView(self, nbunch=nbunch, weight=weight)
 
-    @property
-    def edge_size(self):
+    def edge_size(self, ebunch=None, weight=None):
         """A EdgeSizeView for the Hypergraph as H.edge_size or H.edge_size().
 
         The edge degree is the number of nodes in that edge, or the edge size.
@@ -812,7 +814,9 @@ class Hypergraph:
         EdgeSizeView object
             The sizes of the hypergraph edges capable of iterating (edge, size) pairs
         """
-        return EdgeSizeView(self)
+        if ebunch in self:
+            return DegreeView(self, ebunch=ebunch, weight=weight)[ebunch]
+        return DegreeView(self, ebunch=ebunch, weight=weight)
 
     def clear(self):
         """Remove all nodes and edges from the graph.
