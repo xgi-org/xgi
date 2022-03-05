@@ -1,5 +1,6 @@
-import xgi
 import numpy as np
+
+import xgi
 
 __all__ = [
     "read_incidence_matrix",

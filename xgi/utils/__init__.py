@@ -1,2 +1,2 @@
-from xgi.utils.utilities import XGICounter
 from xgi.utils import utilities
+from xgi.utils.utilities import XGICounter
