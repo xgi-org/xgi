@@ -4,17 +4,24 @@ When contributing to this repository, please first discuss the change you wish t
 
 Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it in all your interactions with the project.
 
-## Pull Request Process
+## Pull Request process
 
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a 
-   build.
-2. Update README.md and CHANGELOG.md with details of changes to the interface, this includes new environment 
-   variables, exposed ports, useful file locations and container parameters.
-3. Increase the version number in [setup.py](setup.py), [conf.py](docs/source/conf.py), and [CITATION.cff](CITATION.cff) to the new version that this
-   Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. Please read the documentation part on [testing](TODO). Make sure [pytest](https://docs.pytest.org/en/latest/) is installed. Run ``make test`` to run all automated tests. Post the output as a comment in your Pull Request.
-5. You may merge the Pull Request in once you have the sign-off of one other developer, or if you 
-   do not have permission to do that, you may request the reviewer to merge it for you.
+1. Download the dependencies in the developer [requirements file](/requirements/developer.txt).
+2. Label commits according to [Conventional Commits](https://www.conventionalcommits.org) style.
+3. Add unit tests for features being added or bugs being fixed.
+4. Run `pytest` to verify all unit tests pass.
+5. Run `isort .` to sort any new import statements.
+6. Run `black` for consistent styling.
+7. Update the "Current Version" section of CHANGELOG.md with overview of changes to the interface and add the usernames of all contributors.
+8. Submit Pull Request with a list of changes, links to issues that it addresses (if applicable)
+9. You may merge the Pull Request in once you have the sign-off of one other developer, or if you do not have permission to do that, you may request the reviewer to merge it for you.
+
+
+## New Version process
+1. Increase the version number in [setup.py](setup.py), [conf.py](docs/source/conf.py), and [CITATION.cff](CITATION.cff) to the new version that this Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
+2. Change the "Current Version" heading to the version number and put a new blank "Current Version" heading above this.
+3. Upload to PyPI.
+
 
 ## Attribution
 
