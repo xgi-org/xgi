@@ -748,7 +748,6 @@ class Hypergraph:
         except KeyError:
             return default
 
-    
     def degree(self, nbunch=None, weight=None, order=None):
         """A NodeDegreeView for the Hypergraph as H.degree or H.degree().
 
@@ -815,8 +814,8 @@ class Hypergraph:
             The sizes of the hypergraph edges capable of iterating (edge, size) pairs
         """
         if ebunch in self:
-            return DegreeView(self, ebunch=ebunch, weight=weight)[ebunch]
-        return DegreeView(self, ebunch=ebunch, weight=weight)
+            return EdgeSizeView(self, ebunch=ebunch, weight=weight)[ebunch]
+        return EdgeSizeView(self, ebunch=ebunch, weight=weight)
 
     def clear(self):
         """Remove all nodes and edges from the graph.
@@ -1102,16 +1101,12 @@ class Hypergraph:
     def singleton_edges(self):
         """Returns a dict of single edges"""
 
-        return {
-            id_: self._edge[id_]
-            for id_, size in dict(self.edge_size).items()
-            if size == 1
-        }
+        return {id_: self._edge[id_] for id_, size in self.edge_size() if size == 1}
 
     def remove_singleton_edges(self):
         """Removes all singletons edges from the hypergraph"""
 
-        singleton_ids = [id_ for id_, size in dict(self.edge_size).items() if size == 1]
+        singleton_ids = [id_ for id_, size in self.edge_size() if size == 1]
         self.remove_edges_from(singleton_ids)
         return None
 
@@ -1173,7 +1168,7 @@ class Hypergraph:
             d : int (optional return)
         """
 
-        edge_sizes = set(dict(self.edge_size()).values())
+        edge_sizes = {size for _, size in self.edge_size()}
         if 1 in edge_sizes:
             edge_sizes.remove(1)  # discard singleton edges
 

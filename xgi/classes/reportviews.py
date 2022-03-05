@@ -229,7 +229,7 @@ class IDDegreeView:
         if id_bunch is None:
             self._ids = ids
         elif id_bunch in self._ids:
-            self._ids = {id_bunch : ids[id_bunch]}
+            self._ids = {id_bunch: ids[id_bunch]}
         else:
             self._ids = {id: val for id, val in ids.items() if id in id_bunch}
 
@@ -302,8 +302,11 @@ class IDDegreeView:
                 degrees[id] = len(memberships)
         else:
             for id, memberships in self._ids.items():
-                degrees[id] = sum(self._id_attrs[dd].get(self._weight, 1) for dd in memberships)
+                degrees[id] = sum(
+                    self._id_attrs[dd].get(self._weight, 1) for dd in memberships
+                )
         return degrees
+
 
 class NodeView(IDView):
     """Class for representing the nodes.
