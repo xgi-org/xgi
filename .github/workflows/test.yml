@@ -27,13 +27,4 @@ jobs:
       run: |
         cd ..
         pytest xgi
-    
-    - name: Test notebooks
-      uses: yaananth/run-notebook@v1
-      env:
-        RUNNER: ${{ toJson(runner) }}
-        SECRETS: ${{ toJson(secrets) }}
-        GITHUB: ${{ toJson(github) }}
-      with:
-        notebook: "tutorials/Tutorial 1 - Basic Hypergraph Functionality.ipynb"
       
