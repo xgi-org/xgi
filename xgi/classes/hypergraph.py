@@ -1208,7 +1208,8 @@ class Hypergraph:
         edges = [tuple(e) for e in self._edge.values()]
         edges_unique = set(edges) 
         
-        self.remove_edges_from(edges) # remove all edges
+        self._edge.clear() # remove all edges
+        self._edge_attr.clear()
         self.add_edges_from(edges_unique) # re-add only unique ones
 
     def duplicate_edges(self):
@@ -1221,7 +1222,7 @@ class Hypergraph:
 
         edges = [tuple(e) for e in self._edge.values()]
         edges_unique, counts = np.unique(edges, return_counts=True)
-        return edges_unique[np.where(counts > 1)]
+        return list(edges_unique[np.where(counts > 1)])
 
     def is_uniform(self):
         """Returns d>=1 if the hypergraph is d-uniform, that is if
