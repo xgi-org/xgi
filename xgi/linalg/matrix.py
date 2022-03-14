@@ -8,7 +8,7 @@ __all__ = [
 ]
 
 
-def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1):
+def incidence_matrix(H, order=None, sparse=True, index=False, weight=lambda node, edge, H: 1):
     """
     A function to generate a weighted incidence matrix from a Hypergraph object,
     where the rows correspond to nodes and the columns correspond to edges.
@@ -17,6 +17,9 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
     ----------
     H: Hypergraph object
         The hypergraph of interest
+    order: int, optional
+        Order of interactions to use. If None (default), all orders are used. If int, 
+        must be >= 1.
     sparse: bool, default: True
         Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
     index: bool, default: False
@@ -43,6 +46,8 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
     """
 
     edge_ids = H.edges
+    if order is not None: 
+        edge_ids = [id_ for id_, edge in H._edge.items() if len(edge)==order+1]
     node_ids = H.nodes
     num_edges = len(edge_ids)
     num_nodes = len(node_ids)
@@ -61,7 +66,7 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
             rows = list()
             cols = list()
             data = list()
-            for edge in H.edges:
+            for edge in edge_ids:
                 members = H.edges.members(edge)
                 for node in members:
                     data.append(weight(node, edge, H))
@@ -71,7 +76,7 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
         else:
             # Create an np.matrix
             I = np.zeros((num_nodes, num_edges), dtype=int)
-            for edge in H.edges:
+            for edge in edge_ids:
                 members = H.edges.members(edge)
                 for node in members:
                     I[node_dict[node], edge_dict[edge]] = weight(node, edge, H)
@@ -85,6 +90,52 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
         else:
             return np.zeros(1)
 
+def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
+    """
+    A function to generate an unweighted adjacency matrix from a Hypergraph object.
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+    order: int, optional
+        Order of interactions to use. If None (default), all orders are used. If int, 
+        must be >= 1.
+    s: int, default: 1
+        Specifies the number of overlapping edges to be considered connected.
+    index: bool, default: False
+        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+    Returns
+    -------
+    if index is True:
+        return A, rowdict, coldict
+    else:
+        return A
+    Examples
+    --------
+        >>> import xgi
+        >>> n = 1000
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
+        >>> A = xgi.adjacency_matrix(H)
+    """
+
+    if index:
+        I, row_dict, _ = incidence_matrix(H, index=True, order=order)
+    else:
+        I = incidence_matrix(H, index=False, order=order)
+
+    A = I.dot(I.T)
+    A.setdiag(0)
+    
+    if not weighted:
+        A = (A >= s) * 1
+    else: 
+        A[A < s] = 0
+
+    if index:
+        return A, row_dict
+    else:
+        return A
 
 def intersection_profile(H, index=False):
     """
