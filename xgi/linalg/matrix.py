@@ -20,14 +20,14 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
     sparse: bool, default: True
         Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
     index: bool, default: False
-        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+        Specifies whether to output dictionaries mapping the node and edge IDs to indices
     weight: lambda function, default=lambda function outputting 1
         A function specifying the weight, given a node and edge
 
     Returns
     -------
     numpy.ndarray or scipy csr_matrix
-        The incidence matrix
+        The incidence matrix, has dimension (n_nodes, n_edges)
     dict
         The dictionary mapping indices to node IDs, if index is True
     dict
@@ -86,25 +86,23 @@ def incidence_matrix(H, sparse=True, index=False, weight=lambda node, edge, H: 1
             return np.zeros(1)
 
 
-def adjacency_matrix(H, s=1, index=False):
+def intersection_profile(H, index=False):
     """
-    A function to generate an unweighted adjacency matrix from a Hypergraph object.
+    A function to generate an unweighted intersection profile from a Hypergraph object.
 
     Parameters
     ----------
     H: Hypergraph object
         The hypergraph of interest
-    s: int, default: 1
-        Specifies the number of overlapping edges to be considered connected.
     index: bool, default: False
-        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+        Specifies whether to output dictionaries mapping the node and edge IDs to indices
 
     Returns
     -------
     if index is True:
-        return A, rowdict, coldict
+        return P, rowdict, coldict
     else:
-        return A
+        return P
 
     Examples
     --------
@@ -112,7 +110,7 @@ def adjacency_matrix(H, s=1, index=False):
         >>> N = 100
         >>> ps = [0.1, 0.01]
         >>> H = xgi.random_hypergraph(N, ps)
-        >>> A = xgi.adjacency_matrix(H)
+        >>> P = xgi.intersection_profile(H)
     """
 
     if index:
@@ -120,15 +118,12 @@ def adjacency_matrix(H, s=1, index=False):
     else:
         I = incidence_matrix(H, index=False)
 
-    A = I.dot(I.T)
-    A.setdiag(0)
-    A = (A >= s) * 1
+    P = I.T.dot(I)
 
     if index:
-        return A, row_dict
+        return P, row_dict
     else:
-        return A
-
+        return P
 
 def clique_motif_matrix(H, index=False):
     """
