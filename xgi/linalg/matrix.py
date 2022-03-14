@@ -4,6 +4,8 @@ from scipy.sparse import csr_matrix
 __all__ = [
     "incidence_matrix",
     "adjacency_matrix",
+    "intersection_profile",
+    "laplacian",
     "clique_motif_matrix",
 ]
 
@@ -92,7 +94,8 @@ def incidence_matrix(H, order=None, sparse=True, index=False, weight=lambda node
 
 def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
     """
-    A function to generate an unweighted adjacency matrix from a Hypergraph object.
+    A function to generate an adjacency matrix (N,N) from a Hypergraph object.
+    
     Parameters
     ----------
     H: Hypergraph object
@@ -104,12 +107,14 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
         Specifies the number of overlapping edges to be considered connected.
     index: bool, default: False
         Specifies whether to output disctionaries mapping the node and edge IDs to indices
+
     Returns
     -------
     if index is True:
-        return A, rowdict, coldict
+        return A, rowdict
     else:
         return A
+
     Examples
     --------
         >>> import xgi
@@ -175,6 +180,81 @@ def intersection_profile(H, index=False):
         return P, row_dict
     else:
         return P
+
+def _degree(H, order=None, index=False):
+    """Returns the degree of each node as an array
+
+    Parameters
+    ----------
+    H: Hypergraph object
+        The hypergraph of interest
+    order: int, optional
+        Order of interactions to use. If None (default), all orders are used. If int, 
+        must be >= 1.
+    index: bool, default: False
+        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+
+    Returns
+    -------
+    if index is True:
+        return K, rowdict
+    else:
+        return K
+    """
+
+    if index:
+        I, row_dict, _ = incidence_matrix(H, index=True, order=order)
+    else:
+        I = incidence_matrix(H, index=False, order=order)
+
+    K = np.sum(I, axis=1)
+
+    if index:
+        return K, row_dict
+    else:
+        return K
+
+def laplacian(H, order=1, rescale_per_node=False, index=False) :
+    
+    """Laplacian matrix of order d, see [1]_. 
+    
+    Parameters
+    ----------
+    HG : horss.HyperGraph
+        Hypergraph 
+    order : int 
+        Order of interactions to consider. If order (default),
+        returns the usual graph Laplacian   
+    index: bool, default: False
+        Specifies whether to output disctionaries mapping the node and edge IDs to indices   
+
+    Returns 
+    -------
+    L_d : numpy array
+        Array of dim (N, N)
+    if index is True:
+        return rowdict
+    References
+    ----------
+    .. [1] Lucas, M., Cencetti, G., & Battiston, F. (2020). 
+        Multiorder Laplacian for synchronization in higher-order networks. 
+        Physical Review Research, 2(3), 033410.
+    """
+    
+    A, rowdict = adjacency_matrix(H, order=order, weighted=True, index=True)
+    K = _degree(H, order=order, index=False)
+    
+    L = order * np.diag(np.ravel(K)) - A # ravel needed to convert sparse matrix
+    L = np.asarray(L)
+
+    if rescale_per_node : 
+        L = L / order
+    
+    if index:
+        return L, row_dict
+    else:
+        return L
+
 
 def clique_motif_matrix(H, index=False):
     """
