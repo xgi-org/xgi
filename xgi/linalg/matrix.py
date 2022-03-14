@@ -10,7 +10,9 @@ __all__ = [
 ]
 
 
-def incidence_matrix(H, order=None, sparse=True, index=False, weight=lambda node, edge, H: 1):
+def incidence_matrix(
+    H, order=None, sparse=True, index=False, weight=lambda node, edge, H: 1
+):
     """
     A function to generate a weighted incidence matrix from a Hypergraph object,
     where the rows correspond to nodes and the columns correspond to edges.
@@ -20,7 +22,7 @@ def incidence_matrix(H, order=None, sparse=True, index=False, weight=lambda node
     H: Hypergraph object
         The hypergraph of interest
     order: int, optional
-        Order of interactions to use. If None (default), all orders are used. If int, 
+        Order of interactions to use. If None (default), all orders are used. If int,
         must be >= 1.
     sparse: bool, default: True
         Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
@@ -48,8 +50,8 @@ def incidence_matrix(H, order=None, sparse=True, index=False, weight=lambda node
     """
 
     edge_ids = H.edges
-    if order is not None: 
-        edge_ids = [id_ for id_, edge in H._edge.items() if len(edge)==order+1]
+    if order is not None:
+        edge_ids = [id_ for id_, edge in H._edge.items() if len(edge) == order + 1]
     node_ids = H.nodes
     num_edges = len(edge_ids)
     num_nodes = len(node_ids)
@@ -92,16 +94,17 @@ def incidence_matrix(H, order=None, sparse=True, index=False, weight=lambda node
         else:
             return np.zeros(1)
 
+
 def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
     """
     A function to generate an adjacency matrix (N,N) from a Hypergraph object.
-    
+
     Parameters
     ----------
     H: Hypergraph object
         The hypergraph of interest
     order: int, optional
-        Order of interactions to use. If None (default), all orders are used. If int, 
+        Order of interactions to use. If None (default), all orders are used. If int,
         must be >= 1.
     s: int, default: 1
         Specifies the number of overlapping edges to be considered connected.
@@ -131,16 +134,17 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
 
     A = I.dot(I.T)
     A.setdiag(0)
-    
+
     if not weighted:
         A = (A >= s) * 1
-    else: 
+    else:
         A[A < s] = 0
 
     if index:
         return A, row_dict
     else:
         return A
+
 
 def intersection_profile(H, index=False):
     """
@@ -181,6 +185,7 @@ def intersection_profile(H, index=False):
     else:
         return P
 
+
 def _degree(H, order=None, index=False):
     """Returns the degree of each node as an array
 
@@ -189,7 +194,7 @@ def _degree(H, order=None, index=False):
     H: Hypergraph object
         The hypergraph of interest
     order: int, optional
-        Order of interactions to use. If None (default), all orders are used. If int, 
+        Order of interactions to use. If None (default), all orders are used. If int,
         must be >= 1.
     index: bool, default: False
         Specifies whether to output disctionaries mapping the node and edge IDs to indices
@@ -214,21 +219,22 @@ def _degree(H, order=None, index=False):
     else:
         return K
 
-def laplacian(H, order=1, rescale_per_node=False, index=False) :
-    
-    """Laplacian matrix of order d, see [1]_. 
-    
+
+def laplacian(H, order=1, rescale_per_node=False, index=False):
+
+    """Laplacian matrix of order d, see [1]_.
+
     Parameters
     ----------
     HG : horss.HyperGraph
-        Hypergraph 
-    order : int 
+        Hypergraph
+    order : int
         Order of interactions to consider. If order (default),
-        returns the usual graph Laplacian   
+        returns the usual graph Laplacian
     index: bool, default: False
-        Specifies whether to output disctionaries mapping the node and edge IDs to indices   
+        Specifies whether to output disctionaries mapping the node and edge IDs to indices
 
-    Returns 
+    Returns
     -------
     L_d : numpy array
         Array of dim (N, N)
@@ -236,20 +242,20 @@ def laplacian(H, order=1, rescale_per_node=False, index=False) :
         return rowdict
     References
     ----------
-    .. [1] Lucas, M., Cencetti, G., & Battiston, F. (2020). 
-        Multiorder Laplacian for synchronization in higher-order networks. 
+    .. [1] Lucas, M., Cencetti, G., & Battiston, F. (2020).
+        Multiorder Laplacian for synchronization in higher-order networks.
         Physical Review Research, 2(3), 033410.
     """
-    
+
     A, rowdict = adjacency_matrix(H, order=order, weighted=True, index=True)
     K = _degree(H, order=order, index=False)
-    
-    L = order * np.diag(np.ravel(K)) - A # ravel needed to convert sparse matrix
+
+    L = order * np.diag(np.ravel(K)) - A  # ravel needed to convert sparse matrix
     L = np.asarray(L)
 
-    if rescale_per_node : 
+    if rescale_per_node:
         L = L / order
-    
+
     if index:
         return L, row_dict
     else:
