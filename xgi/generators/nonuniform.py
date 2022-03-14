@@ -3,9 +3,10 @@ import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
+
 import numpy as np
 import xgi
-
+from xgi.utils import py_random_state
 
 __all__ = [
     "chung_lu_hypergraph",
@@ -230,8 +231,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
                         j = j + 1
     return H
 
-
-def random_hypergraph(N, ps):
+@py_random_state(2)
+def random_hypergraph(N, ps, seed=None):
     """Generates a random hypergraph
 
     Generate N nodes, and connect any d+1 nodes
@@ -246,12 +247,14 @@ def random_hypergraph(N, ps):
         hyperedge at each order d between any d+1 nodes. For example,
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
         of any triangles (3 nodes).
+    seed : integer, random_state, or None (default)
+            Indicator of random number generation state.
 
     Returns
     -------
     Hypergraph object
         The generated hypergraph
-
+    
     References
     ----------
     Described as 'random hypergraph' by M. Dewar et al. in https://arxiv.org/abs/1703.07686
@@ -275,7 +278,7 @@ def random_hypergraph(N, ps):
         d = i + 1  # order, ps[0] is prob of edges (d=1)
 
         for hyperedge in combinations(nodes, d + 1):
-            if random.random() <= p:
+            if seed.random() <= p:
                 hyperedges.append(hyperedge)
 
     hyperedges += [[i] for i in nodes]  # add singleton edges
