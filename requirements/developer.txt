@@ -1,3 +1,4 @@
 black==21.5b1
 pre-commit>=2.12
 isort==5.10.1
+pylint>=2.10
