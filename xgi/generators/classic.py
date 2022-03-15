@@ -30,9 +30,9 @@ def empty_hypergraph(create_using=None, default=Hypergraph):
     --------
     >>> import xgi
     >>> H = xgi.empty_hypergraph()
-    >>> H.number_of_nodes()
+    >>> H.num_nodes
     0
-    >>> H.number_of_edges()
+    >>> H.num_edges
     0
     """
     if create_using is None:

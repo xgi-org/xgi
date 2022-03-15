@@ -8,74 +8,11 @@ import numpy as np
 import xgi
 
 __all__ = [
-    "erdos_renyi_hypergraph",
     "chung_lu_hypergraph",
     "dcsbm_hypergraph",
     "random_hypergraph",
     "random_simplicial_complex",
 ]
-
-
-def erdos_renyi_hypergraph(n, m, p):
-    """A function to generate an Erdos-Renyi hypergraph
-
-    Parameters
-    ----------
-    n: int
-        Number of nodes
-    m: int
-        Number of edges
-    p: float
-        The probability that a bipartite edge is created
-
-    Returns
-    -------
-    Hypergraph object
-        The generated hypergraph
-
-    References
-    ----------
-    Implemented by Mirah Shi in HyperNetX and described for
-    bipartite networks by Aksoy et al. in https://doi.org/10.1093/comnet/cnx001
-
-    Examples
-    --------
-    >>> import xgi
-    >>> n = 1000
-    >>> m = n
-    >>> p = 0.01
-    >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
-    """
-
-    H = xgi.empty_hypergraph()
-    H.add_nodes_from(range(n))
-
-    if p < 0.0 or p > 1.0:
-        raise ValueError("Invalid p value.")
-
-    if p == 0.0:
-        H = xgi.empty_hypergraph()
-        H.add_nodes_from(range(n))
-        return H
-
-    # this corresponds to a completely filled incidence matrix,
-    # not a complete hypergraph.
-    if p == 1.0:
-        H = xgi.empty_hypergraph()
-        H.add_edges_from([range(n) for i in range(m)])
-        return H
-
-    for u in range(n):
-        v = 0
-        while v < m:
-            # identify next pair
-            r = random.random()
-            v = v + math.floor(math.log(r) / math.log(1 - p))
-            if v < m:
-                # add vertex hyperedge pair
-                H.add_node_to_edge(v, u)
-            v = v + 1
-    return H
 
 
 def chung_lu_hypergraph(k1, k2):

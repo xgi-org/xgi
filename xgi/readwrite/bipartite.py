@@ -4,6 +4,7 @@ from xgi.exception import XGIError
 __all__ = [
     "read_bipartite_edgelist",
     "write_bipartite_edgelist",
+    "parse_bipartite_edgelist",
 ]
 
 
@@ -51,9 +52,8 @@ def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     -------
         >>> import xgi
         >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
         >>> xgi.write_bipartite_edgelist(H, "test.csv", delimiter=",")
     """
     with open(path, "wb") as file:
@@ -68,6 +68,7 @@ def read_bipartite_edgelist(
     delimiter=None,
     create_using=None,
     nodetype=None,
+    edgetype=None,
     dual=False,
     encoding="utf-8",
 ):
@@ -86,6 +87,8 @@ def read_bipartite_edgelist(
         The hypergraph object to add the data to, by default None
     nodetype: type
         type that the node labels will be cast to
+    edgetype: type
+        type that the edge labels will be cast to
     dual: bool, default: False
         Specifies whether the node IDs are in the second column. If False,
         the node IDs are in the first column.
@@ -116,12 +119,19 @@ def read_bipartite_edgelist(
             delimiter=delimiter,
             create_using=create_using,
             nodetype=nodetype,
+            edgetype=edgetype,
             dual=dual,
         )
 
 
 def parse_bipartite_edgelist(
-    lines, comments="#", delimiter=None, create_using=None, nodetype=None, dual=False
+    lines,
+    comments="#",
+    delimiter=None,
+    create_using=None,
+    nodetype=None,
+    edgetype=None,
+    dual=False,
 ):
     """
     A helper function to read a iterable of strings containing a bipartite edge list and
@@ -143,6 +153,8 @@ def parse_bipartite_edgelist(
         The hypergraph object to add the data to, by default None
     nodetype: type
         type that the node labels will be cast to
+    edgetype: type
+        type that the edge labels will be cast to
     data: bool, default: False
         Specifies whether there is a dictionary of data at the end of the line.
 
@@ -175,11 +187,27 @@ def parse_bipartite_edgelist(
             raise XGIError("Each line must contain at least two entries!")
         # no data or data type specified
 
+        # convert node types
         if nodetype is not None:
             try:
-                H.add_node_to_edge(s[edge_index], nodetype(s[node_index]))
+                node = nodetype(s[node_index])
             except Exception as e:
-                raise TypeError(f"Failed to convert nodes to type {nodetype}.") from e
+                raise TypeError(
+                    f"Failed to convert the node with ID {s[node_index]} to type {nodetype}."
+                ) from e
         else:
-            H.add_node_to_edge(s[edge_index], s[node_index])
+            node = s[node_index]
+
+        # convert edge types
+        if edgetype is not None:
+            try:
+                edge = edgetype(s[edge_index])
+            except Exception as e:
+                raise TypeError(
+                    f"Failed to convert the edge with ID {s[edge_index]} to type {edgetype}."
+                ) from e
+        else:
+            edge = s[edge_index]
+
+        H.add_node_to_edge(edge, node)
     return H
