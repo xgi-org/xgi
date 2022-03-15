@@ -81,7 +81,7 @@ class SimplicialComplex(Hypergraph) :
     def remove_edge(self, id):
         raise XGIError("Cannot remove_edge to SimplicialComplex, use remove_simplex instead")
 
-    def remove_edges_from(self, ebunch)::
+    def remove_edges_from(self, ebunch):
         raise XGIError("Cannot remove_edges_from to SimplicialComplex, use remove_simplices_from instead")
 
     def add_simplex(self, simplex, **attr):
