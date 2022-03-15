@@ -75,6 +75,15 @@ class SimplicialComplex(Hypergraph) :
     def add_edges_from(self, edges, **attr):
         raise XGIError("Cannot add_edges_from to SimplicialComplex, use add_simplices_from instead")
 
+    def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
+        raise XGIError("Cannot add_weighted_edges_from to SimplicialComplex, use add_weighted_simplices_from instead")
+
+    def remove_edge(self, id):
+        raise XGIError("Cannot remove_edge to SimplicialComplex, use remove_simplex instead")
+
+    def remove_edges_from(self, ebunch)::
+        raise XGIError("Cannot remove_edges_from to SimplicialComplex, use remove_simplices_from instead")
+
     def add_simplex(self, simplex, **attr):
         """Add a simplex to the simplicial complex, and all its subfaces that do
         not exist yet. The universal ID is automatically assigned to the simplex(s).
