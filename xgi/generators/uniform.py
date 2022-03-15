@@ -1,6 +1,7 @@
-import xgi
 import random
 import warnings
+
+import xgi
 
 __all__ = ["uniform_hypergraph_configuration_model"]
 

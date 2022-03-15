@@ -27,3 +27,4 @@ jobs:
       run: |
         cd ..
         pytest xgi
+      

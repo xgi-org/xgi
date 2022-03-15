@@ -57,7 +57,7 @@ EdgeSizeView
     The EdgeSizeView can still look up any node even if nbunch is specified.
 """
 from collections.abc import Mapping, Set
-import xgi
+
 from xgi.exception import XGIError
 
 __all__ = [

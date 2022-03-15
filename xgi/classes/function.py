@@ -2,7 +2,7 @@
 """
 
 from collections import Counter
-import numpy as np
+
 import xgi
 from xgi.exception import XGIError
 

@@ -74,7 +74,9 @@ Maxime Lucas <maxime.lucas@isi.it>
 
 Giovanni Petri <giovanni.petri@isi.it>
 
-The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](license.md)
+Alice Patania <apatania@uvm.edu>
+
+The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](LICENSE.md)
 
 ## Funding
 The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905).
