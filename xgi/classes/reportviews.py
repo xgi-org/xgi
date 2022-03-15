@@ -58,7 +58,6 @@ EdgeSizeView
 """
 from collections.abc import Mapping, Set
 
-import xgi
 from xgi.exception import XGIError
 
 __all__ = [
