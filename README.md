@@ -60,7 +60,7 @@ a citation in your preferred format, and will also integrate well with citation 
 Our full code of conduct, and how we enforce it, can be read in [our repository](CODE_OF_CONDUCT.md).
 
 ## License
-Released under the 3-Clause BSD license (see [`license.md`](license.md))
+Released under the 3-Clause BSD license (see [`LICENSE.md`](LICENSE.md))
 
 Copyright (C) 2021 XGI Developers
 
