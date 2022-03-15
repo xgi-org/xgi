@@ -7,11 +7,11 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 ## Pull Request process
 
 1. Download the dependencies in the developer [requirements file](/requirements/developer.txt).
-2. Label commits according to [Conventional Commits](https://www.conventionalcommits.org) style.
-3. Add unit tests for features being added or bugs being fixed.
+2. [Optional, but STRONGLY preferred] Label commits according to [Conventional Commits](https://www.conventionalcommits.org) style.
+3. [Optional, but STRONGLY preferred] Add unit tests for features being added or bugs being fixed.
 4. Run `pytest` to verify all unit tests pass.
-5. Run `isort .` to sort any new import statements.
-6. Run `black .` for consistent styling.
+5. [Optional, but STRONGLY preferred] Run `isort .` to sort any new import statements.
+6. [Optional, but STRONGLY preferred] Run `black .` for consistent styling.
 7. Update the "Current Version" section of CHANGELOG.md with overview of changes to the interface and add the usernames of all contributors.
 8. Submit Pull Request with a list of changes, links to issues that it addresses (if applicable)
 9. You may merge the Pull Request in once you have the sign-off of at least one other developer, or if you do not have permission to do that, you may request the reviewer to merge it for you.
