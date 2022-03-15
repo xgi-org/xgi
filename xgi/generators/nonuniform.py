@@ -15,7 +15,8 @@ __all__ = [
 ]
 
 
-def chung_lu_hypergraph(k1, k2):
+@py_random_state(2)
+def chung_lu_hypergraph(k1, k2, seed=None):
     """A function to generate a Chung-Lu hypergraph
 
     Parameters
@@ -26,6 +27,8 @@ def chung_lu_hypergraph(k1, k2):
     k2 : dictionary
         Dictionary where the keys are edge ids
         and the values are edge sizes.
+    seed : integer, random_state, or None (default)
+            Indicator of random number generation state.
 
     Returns
     -------
@@ -81,12 +84,12 @@ def chung_lu_hypergraph(k1, k2):
 
         while j < m:
             if p != 1:
-                r = random.random()
+                r = seed.random()
                 j = j + math.floor(math.log(r) / math.log(1 - p))
             if j < m:
                 v = Mlabels[j]
                 q = min((k1[u] * k2[v]) / S, 1)
-                r = random.random()
+                r = seed.random()
                 if r < q / p:
                     # no duplicates
                     H.add_node_to_edge(u, v)
@@ -96,7 +99,8 @@ def chung_lu_hypergraph(k1, k2):
     return H
 
 
-def dcsbm_hypergraph(k1, k2, g1, g2, omega):
+@py_random_state(2)
+def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     """A function to generate a DCSBM hypergraph.
 
     Parameters
@@ -121,6 +125,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
         The number of rows must match the number of node communities
         and the number of columns must match the number of edge
         communities.
+    seed : integer, random_state, or None (default)
+            Indicator of random number generation state.
 
     Returns
     -------
@@ -215,7 +221,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
                 p = min(k1[u] * k2[v] * groupConstant, 1)
                 while j < len(community2Indices[group2]):
                     if p != 1:
-                        r = random.random()
+                        r = seed.random()
                         try:
                             j = j + math.floor(math.log(r) / math.log(1 - p))
                         except:
@@ -223,13 +229,14 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
                     if j < len(community2Indices[group2]):
                         v = community2Indices[group2][j]
                         q = min((k1[u] * k2[v]) * groupConstant, 1)
-                        r = random.random()
+                        r = seed.random()
                         if r < q / p:
                             # no duplicates
                             H.add_node_to_edge(u, v)
                         p = q
                         j = j + 1
     return H
+
 
 @py_random_state(2)
 def random_hypergraph(N, ps, seed=None):
