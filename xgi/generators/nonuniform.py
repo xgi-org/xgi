@@ -5,6 +5,7 @@ from collections import defaultdict
 from itertools import combinations
 
 import numpy as np
+
 import xgi
 from xgi.utils import py_random_state
 

@@ -410,7 +410,7 @@ class Hypergraph:
         >>> H.has_edge({1, 3})
         False
         """
-        return set(edge) in (set(self.edges(e)) for e in self.edges)
+        return set(edge) in (set(self.edges.members(e)) for e in self.edges)
 
     def add_edge(self, edge, **attr):
         """Add an edge to the hypergraph. The universal ID

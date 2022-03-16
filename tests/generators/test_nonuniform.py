@@ -1,6 +1,6 @@
 import pytest
+
 import xgi
-from xgi.exception import XGIError
 
 
 def test_chung_lu_hypergraph():

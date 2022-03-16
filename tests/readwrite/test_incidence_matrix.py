@@ -1,5 +1,7 @@
-import pytest
 import tempfile
+
+import pytest
+
 import xgi
 
 dataset_folder = "tests/readwrite/data/"
