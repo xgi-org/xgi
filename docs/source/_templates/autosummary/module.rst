@@ -29,15 +29,14 @@
    {%- endif %}
    {%- endblock %}
 
-   {% block functions %}
+   {%- block functions %}
    {% if functions %}
    .. rubric:: {{ _('Functions') }}
-
    {% for item in functions %}
    .. autofunction:: {{ item }}
    {%- endfor %}
-   {% endif %}
-   {% endblock %}
+   {%- endif %}
+   {%- endblock %}
 
    {% block exceptions %}
    {% if exceptions %}
