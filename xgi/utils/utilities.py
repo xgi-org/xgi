@@ -55,7 +55,7 @@ def get_dual(edge_dict):
     --------
     >>> import xgi
     >>> xgi.get_dual({0 : [1, 2, 3], 1 : [0, 2]})
-    {0 : [1], 1 : [0], 2 : [0, 1], 3 : [0]}
+    {1: [0], 2: [0, 1], 3: [0], 0: [1]}
     """
     node_dict = defaultdict(list)
     for edge_id, members in edge_dict.items():

@@ -186,7 +186,7 @@ def node_connected_component(H, n):
     >>> H = xgi.random_hypergraph(n, ps)
     >>> comp = xgi.node_connected_component(H, 0)
     >>> print(type(comp), len(comp))
-    set, 1000
+    <class 'set'> 1000
     """
     if n in H:
         return _plain_bfs(H, n)
