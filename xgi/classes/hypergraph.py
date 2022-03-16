@@ -1,10 +1,4 @@
-"""Base class for undirected hypergraphs.
-
-The Hypergraph class allows any hashable object as a node
-and can associate key/value attribute pairs with each undirected edge and node.
-
-Multiedges and self-loops are allowed.
-"""
+"""Base class for undirected hypergraphs."""
 from copy import deepcopy
 
 import xgi
@@ -17,36 +11,57 @@ __all__ = ["Hypergraph"]
 
 
 class Hypergraph:
-    """A class to represent undirected hypergraphs."""
+    """A hypergraph is a collection of subsets of a set of *nodes* or *vertices*.
 
+    A hypergraph is a pair :math:`(V, E)`, where :math:`V` is a set of elements called
+    *nodes* or *vertices*, and :math:`E` is a set whose elements are subsets of
+    :math:`V`, that is, each :math:`e \in E` satisfies :math:`e \subset V`.  The
+    elements of :math:`E` are called *hyperedges* or simply *edges*.
+
+    The Hypergraph class allows any hashable object as a node and can associate
+    arbitrary key/value attribute pairs with each undirected node, edge, or the
+    hypergraph itself.
+
+    Multiedges and self-loops are allowed.
+
+    Parameters
+    ----------
+    incoming_data : input hypergraph data (optional, default: None)
+        Data to initialize the hypergraph. If None (default), an empty
+        hypergraph is created, i.e. one with no nodes or edges.
+        The data can be in the following formats:
+          * hyperedge list
+          * hyperedge dictionary
+          * 2-column Pandas dataframe (bipartite edges)
+          * Scipy/Numpy incidence matrix
+          * Hypergraph object.
+
+    attr : keyword arguments, optional (default: None)
+        Attributes to add to the hypergraph as key, value pairs.
+
+    Notes
+    -----
+    Unique IDs are assigned to each node and edge internally and are used to refer to
+    them throughout.
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.Hypergraph([[1, 2, 3], [4], [5, 6], [6, 7, 8]])
+    >>> H.nodes
+    NodeView((1, 2, 3, 4, 5, 6, 7, 8))
+    >>> H.edges
+    EdgeView((0, 1, 2, 3))
+
+    """
     node_dict_factory = dict
     node_attr_dict_factory = dict
     hyperedge_dict_factory = dict
     hyperedge_attr_dict_factory = dict
     hypergraph_attr_dict_factory = dict
 
-    def __init__(self, incoming_hypergraph_data=None, **attr):
-        """Initialize a hypergraph with hypergraph data and arbitrary hypergraph attributes.
-
-        Parameters
-        ----------
-        incoming_hypergraph_data : input hypergraph data (optional, default: None)
-            Data to initialize the hypergraph. If None (default), an empty
-            hypergraph is created.
-            The data can be in the following formats:
-            * hyperedge list
-            * hyperedge dictionary
-            * 2-column Pandas dataframe (bipartite edges)
-            * Scipy/Numpy incidence matrix
-            * Hypergraph object.
-
-        attr : keyword arguments, optional (default=no attributes)
-            Attributes to add to the hypergraph as key=value pairs.
-
-        See Also
-        --------
-        convert_to_hypergraph
-        """
+    def __init__(self, incoming_data=None, **attr):
+        """Initialize with arbitrary data and attributes."""
         self._edge_uid = XGICounter()
 
         self._hypergraph = self.hypergraph_attr_dict_factory()
@@ -55,8 +70,8 @@ class Hypergraph:
         self._edge = self.hyperedge_dict_factory()
         self._edge_attr = self.hyperedge_attr_dict_factory()  # empty adjacency dict
         # attempt to load graph with data
-        if incoming_hypergraph_data is not None:
-            convert.convert_to_hypergraph(incoming_hypergraph_data, create_using=self)
+        if incoming_data is not None:
+            convert.convert_to_hypergraph(incoming_data, create_using=self)
         # load hypergraph attributes (must be after convert)
         self._hypergraph.update(attr)
 

@@ -32,14 +32,7 @@ To install for development purposes, first clone the repository and then execute
    pip install -e .['all']
 
 
-``XGI`` was developed and tested for Python 3.7-3.10 on Mac OS, Windows, and Ubuntu.
-
-
-License
-=======
-
-This project is licensed under the `BSD 3-Clause License
-<https://github.com/ComplexGroupInteractions/xgi/blob/main/LICENSE.md>`_.
+XGI was developed and tested for Python 3.7-3.10 on Mac OS, Windows, and Ubuntu.
 
 
 Contributing
@@ -55,29 +48,60 @@ and the `contributing guidelines
 Relevant References
 ===================
 
-`The Why, How, and When of Representations for Complex Systems
-<https://doi.org/10.1137/20M1355896>`_, Leo Torres, Ann S. Blevins, Danielle Bassett,
-and Tina Eliassi-Rad
+* `The Why, How, and When of Representations for Complex Systems
+  <https://doi.org/10.1137/20M1355896>`_, Leo Torres, Ann S. Blevins, Danielle Bassett,
+  and Tina Eliassi-Rad.
 
-`Networks beyond pairwise interactions: Structure and dynamics
-<https://doi.org/10.1016/j.physrep.2020.05.004>`_, Federico Battiston, Giulia Cencetti,
-Iacopo Iacopini, Vito Latora, Maxime Lucas, Alice Patania, Jean-Gabriel Young, and
-Giovanni Petri
+* `Networks beyond pairwise interactions: Structure and dynamics
+  <https://doi.org/10.1016/j.physrep.2020.05.004>`_, Federico Battiston, Giulia
+  Cencetti, Iacopo Iacopini, Vito Latora, Maxime Lucas, Alice Patania, Jean-Gabriel
+  Young, and Giovanni Petri.
 
-`What are higher-order networks? <https://arxiv.org/abs/2104.11329>`_, Christian Bick,
-Elizabeth Gross, Heather A. Harrington, Michael T. Schaub
+* `What are higher-order networks? <https://arxiv.org/abs/2104.11329>`_, Christian Bick,
+  Elizabeth Gross, Heather A. Harrington, Michael T. Schaub.
 
 
-API Reference
-=============
+Tutorials
+=========
 
 .. toctree::
    :maxdepth: 2
 
-   Classes <api/classes/classes.rst>
+   Quickstart <tutorials/quickstart.rst>
+   Main classes <tutorials/classes.rst>
+   Examples <tutorials/examples.rst>
+
+
+Quick reference links
+======================
+
+Links to the most important API documentation pages.
+
+.. toctree::
+   :maxdepth: 1
+
+   Hypergraph class <api/classes/classes/xgi.classes.hypergraph.Hypergraph.rst>
+
+
+Complete API Reference
+======================
+
+Complete API reference to every subpackage, module, class, and function.
+
+.. toctree::
+   :maxdepth: 2
+
+   Core classes <api/classes/classes.rst>
    Algorithms <api/algorithms/algorithms.rst>
    Generative Models <api/generators/generators.rst>
    Linear Algebra <api/linalg/linalg.rst>
    Read/Write <api/readwrite/readwrite.rst>
    Converting to and from other data formats <api/convert.rst>
    Utilities <api/utils/utils.rst>
+
+
+License
+=======
+
+This project is licensed under the `BSD 3-Clause License
+<https://github.com/ComplexGroupInteractions/xgi/blob/main/LICENSE.md>`_.
