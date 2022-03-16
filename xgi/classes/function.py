@@ -1,7 +1,7 @@
 """Functional interface to graph methods and assorted utilities."""
 
 from collections import Counter
-import numpy as np
+
 import xgi
 from xgi.exception import XGIError
 

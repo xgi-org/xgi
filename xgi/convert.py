@@ -1,12 +1,14 @@
+from copy import deepcopy
+
+import networkx as nx
+import pandas as pd
+from networkx.algorithms import bipartite
+from numpy import matrix, ndarray
+from scipy.sparse import coo_matrix, csc_matrix, csr_matrix, lil_matrix
+
 import xgi
 from xgi.exception import XGIError
-import pandas as pd
-from scipy.sparse import coo_matrix, csr_matrix, csc_matrix, lil_matrix
-from numpy import ndarray, matrix
-from copy import deepcopy
 from xgi.utils.utilities import get_dual
-from networkx.algorithms import bipartite
-import networkx as nx
 
 __all__ = [
     "convert_to_hypergraph",
