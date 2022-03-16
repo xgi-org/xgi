@@ -1,37 +1,13 @@
+###############
 classes package
-===============
+###############
 
-Submodules
-----------
+.. rubric:: Modules
 
-classes.function module
------------------------
+.. autosummary::
+   :toctree: classes
 
-.. automodule:: xgi.classes.function
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-classes.hypergraph module
--------------------------
-
-.. automodule:: xgi.classes.hypergraph
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-classes.hypergraphviews module
-------------------------------
-
-.. automodule:: xgi.classes.hypergraphviews
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-classes.reportviews module
---------------------------
-
-.. automodule:: xgi.classes.reportviews
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   ~xgi.classes.hypergraph
+   ~xgi.classes.reportviews
+   ~xgi.classes.hypergraphviews
+   ~xgi.classes.function
