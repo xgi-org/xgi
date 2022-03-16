@@ -20,10 +20,10 @@ readwrite.edgelist module
    :undoc-members:
    :show-inheritance:
 
-readwrite.incidence\_matrix module
+readwrite.incidence module
 ----------------------------------
 
-.. automodule:: xgi.readwrite.incidence_matrix
+.. automodule:: xgi.readwrite.incidence
    :members:
    :undoc-members:
    :show-inheritance:

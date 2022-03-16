@@ -1161,8 +1161,8 @@ class Hypergraph:
         >>> if H.is_uniform()
         works as expected.
 
-        Returns:
-        --------
+        Returns
+        -------
             uniform : bool
                 True if the hypergraph is d-uniform. None if the
                 hypergraph has no edges (other than singleton edges).
