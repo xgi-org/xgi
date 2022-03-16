@@ -80,7 +80,7 @@ Links to the most important API documentation pages.
 .. toctree::
    :maxdepth: 1
 
-   Hypergraph class <api/classes/classes/xgi.classes.hypergraph.Hypergraph.rst>
+   Hypergraph class <api/classes/xgi.classes.hypergraph.Hypergraph.rst>
 
 
 Complete API Reference
@@ -91,13 +91,13 @@ Complete API reference to every subpackage, module, class, and function.
 .. toctree::
    :maxdepth: 2
 
-   Core classes <api/classes/classes.rst>
-   Algorithms <api/algorithms/algorithms.rst>
-   Generative Models <api/generators/generators.rst>
-   Linear Algebra <api/linalg/linalg.rst>
-   Read/Write <api/readwrite/readwrite.rst>
+   Core classes <api/classes.rst>
+   Algorithms <api/algorithms.rst>
+   Generative Models <api/generators.rst>
+   Linear Algebra <api/linalg.rst>
+   Read/Write <api/readwrite.rst>
    Converting to and from other data formats <api/convert.rst>
-   Utilities <api/utils/utils.rst>
+   Utilities <api/utils.rst>
 
 
 License
