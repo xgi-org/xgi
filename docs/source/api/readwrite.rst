@@ -1,46 +1,13 @@
+#################
 readwrite package
-=================
+#################
 
-Submodules
-----------
+.. rubric:: Modules
 
-readwrite.bipartite module
---------------------------
+.. autosummary::
+   :toctree: readwrite
 
-.. automodule:: xgi.readwrite.bipartite
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-readwrite.edgelist module
--------------------------
-
-.. automodule:: xgi.readwrite.edgelist
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-readwrite.incidence module
-----------------------------------
-
-.. automodule:: xgi.readwrite.incidence
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-readwrite.json module
----------------------
-
-.. automodule:: xgi.readwrite.json
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: xgi.readwrite
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   ~xgi.readwrite.bipartite
+   ~xgi.readwrite.edgelist
+   ~xgi.readwrite.incidence
+   ~xgi.readwrite.json

@@ -23,9 +23,6 @@ xgi.classes.reportviews
       
         NodeView
       
-
-   
-   
    
 
    

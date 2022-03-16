@@ -1,22 +1,10 @@
+##############
 linalg package
-==============
+##############
 
-Submodules
-----------
+.. rubric:: Modules
 
-linalg.matrix module
---------------------
+.. autosummary::
+   :toctree: classes
 
-.. automodule:: xgi.linalg.matrix
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: xgi.linalg
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   ~xgi.linalg.matrix

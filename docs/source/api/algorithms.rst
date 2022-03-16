@@ -1,22 +1,10 @@
+##################
 algorithms package
-==================
+##################
 
-Submodules
-----------
+.. rubric:: Modules
 
-algorithms.connected module
----------------------------
+.. autosummary::
+   :toctree: connected
 
-.. automodule:: xgi.algorithms.connected
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: xgi.algorithms
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   ~xgi.algorithms.connected

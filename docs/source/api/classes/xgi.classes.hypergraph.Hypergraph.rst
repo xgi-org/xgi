@@ -50,11 +50,11 @@ xgi.classes.hypergraph.Hypergraph
    .. rubric:: Attributes
 
    .. autosummary::
-     
-     ~Hypergraph.degree
-     ~Hypergraph.edge_size
-     ~Hypergraph.edges
-     ~Hypergraph.nodes
-     ~Hypergraph.num_edges
-     ~Hypergraph.num_nodes
+      
+      ~Hypergraph.degree
+      ~Hypergraph.edge_size
+      ~Hypergraph.edges
+      ~Hypergraph.nodes
+      ~Hypergraph.num_edges
+      ~Hypergraph.num_nodes
    

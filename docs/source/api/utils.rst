@@ -1,22 +1,10 @@
+#############
 utils package
-=============
+#############
 
-Submodules
-----------
+.. rubric:: Modules
 
-utils.utilities module
-----------------------
+.. autosummary::
+   :toctree: classes
 
-.. automodule:: xgi.utils.utilities
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: xgi.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   ~xgi.utils.utilities

@@ -4,11 +4,8 @@ xgi.classes.function
 .. currentmodule:: xgi.classes.function
 
 .. automodule:: xgi.classes.function
-
-   
    
    .. rubric:: Functions
-
    
    .. autofunction:: create_empty_copy
    .. autofunction:: degree_histogram
@@ -18,8 +15,6 @@ xgi.classes.function
    .. autofunction:: set_edge_attributes
    .. autofunction:: set_node_attributes
    .. autofunction:: unique_edge_sizes
-   
-   
 
    
    

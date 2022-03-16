@@ -13,9 +13,6 @@ xgi.classes.hypergraph
       
         Hypergraph
       
-
-   
-   
    
 
    

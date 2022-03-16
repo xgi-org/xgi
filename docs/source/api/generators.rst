@@ -1,38 +1,12 @@
+##################
 generators package
-==================
+##################
 
-Submodules
-----------
+.. rubric:: Modules
 
-generators.classic module
--------------------------
+.. autosummary::
+   :toctree: generators
 
-.. automodule:: xgi.generators.classic
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-generators.nonuniform module
-----------------------------
-
-.. automodule:: xgi.generators.nonuniform
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-generators.uniform module
--------------------------
-
-.. automodule:: xgi.generators.uniform
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: xgi.generators
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   ~xgi.generators.classic
+   ~xgi.generators.nonuniform
+   ~xgi.generators.uniform
