@@ -11,6 +11,7 @@ from xgi import readwrite
 from xgi.readwrite import *
 
 from xgi import utils
+from xgi.utils import *
 
 from xgi import convert
 from xgi.convert import *

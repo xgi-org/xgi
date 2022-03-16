@@ -148,8 +148,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega):
 
     Examples
     --------
-    >>> import xgi
-    >>> import random
+    >>> import xgi; import random; import numpy as np
     >>> n = 100
     >>> k1 = {i : random.randint(1, 100) for i in range(n)}
     >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}

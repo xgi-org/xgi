@@ -34,11 +34,12 @@ def is_connected(H):
 
     Example
     -------
-        >>> import xgi
-        >>> n = 1000
-        >>> ps = [0.01, 0.001]
-        >>> H = xgi.random_hypergraph(n, ps)
-        >>> print(xgi.is_connected(H))
+    >>> import xgi
+    >>> n = 1000
+    >>> ps = [0.01, 0.001]
+    >>> H = xgi.random_hypergraph(n, ps)
+    >>> print(xgi.is_connected(H))
+    True
     """
     return len(_plain_bfs(H, random.choice(list(H.nodes)))) == len(H)
 
@@ -66,11 +67,12 @@ def connected_components(H):
 
     Example
     -------
-        >>> import xgi
-        >>> n = 1000
-        >>> ps = [0.01, 0.001]
-        >>> H = xgi.random_hypergraph(n, ps)
-        >>> print([len(component) for component in xgi.connected_components(H)])
+    >>> import xgi
+    >>> n = 1000
+    >>> ps = [0.01, 0.001]
+    >>> H = xgi.random_hypergraph(n, ps)
+    >>> print([len(component) for component in xgi.connected_components(H)])
+    [1000]
     """
     seen = set()
     for v in H:
@@ -103,11 +105,12 @@ def number_connected_components(H):
 
     Example
     -------
-        >>> import xgi
-        >>> n = 1000
-        >>> ps = [0.01, 0.001]
-        >>> H = xgi.random_hypergraph(n, ps)
-        >>> print(xgi.number_connected_components(H))
+    >>> import xgi
+    >>> n = 1000
+    >>> ps = [0.01, 0.001]
+    >>> H = xgi.random_hypergraph(n, ps)
+    >>> print(xgi.number_connected_components(H))
+    1
     """
     num_cc = 0
     seen = set()
@@ -142,12 +145,13 @@ def largest_connected_component(H):
 
     Example
     -------
-        >>> import xgi
-        >>> n = 1000
-        >>> m = n
-        >>> ps = [0.01, 0.001]
-        >>> H = xgi.random_hypergraph(n, ps)
-        >>> print(xgi.number_connected_components(H))
+    >>> import xgi
+    >>> n = 1000
+    >>> m = n
+    >>> ps = [0.01, 0.001]
+    >>> H = xgi.random_hypergraph(n, ps)
+    >>> print(xgi.number_connected_components(H))
+    1
     """
     return max(connected_components(H), key=len)
 
@@ -176,11 +180,13 @@ def node_connected_component(H, n):
 
     Example
     -------
-        >>> import xgi
-        >>> n = 1000
-        >>> ps = [0.01, 0.001]
-        >>> H = xgi.random_hypergraph(n, ps)
-        >>> print(xgi.node_connected_component(H, 0))
+    >>> import xgi
+    >>> n = 1000
+    >>> ps = [0.01, 0.001]
+    >>> H = xgi.random_hypergraph(n, ps)
+    >>> comp = xgi.node_connected_component(H, 0)
+    >>> print(type(comp), len(comp))
+    set, 1000
     """
     if n in H:
         return _plain_bfs(H, n)
@@ -231,11 +237,12 @@ def largest_connected_hypergraph(H, in_place=False):
 
     Example
     -------
-        >>> import xgi
-        >>> n = 1000
-        >>> ps = [0.01, 0.001]
-        >>> H = xgi.random_hypergraph(n, ps)
-        >>> print(xgi.number_connected_components(H))
+    >>> import xgi
+    >>> n = 1000
+    >>> ps = [0.01, 0.001]
+    >>> H = xgi.random_hypergraph(n, ps)
+    >>> print(xgi.number_connected_components(H))
+    1
     """
     connected_nodes = max(connected_components(H), key=len)
     if not in_place:
