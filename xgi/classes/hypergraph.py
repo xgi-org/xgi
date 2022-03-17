@@ -1154,23 +1154,6 @@ class Hypergraph:
         self.remove_nodes_from(self.isolates(ignore_singletons))
         return self
 
-    def remove_duplicates(self): 
-        """Remove all duplicate edges so that each edge
-        is unique. 
-        
-        See also
-        --------
-        remove_isolates
-        remove_singleton_edges
-        """
-        
-        edges = [tuple(e) for e in self._edge.values()]
-        edges_unique = set(edges) 
-        
-        self._edge.clear() # remove all edges
-        self._edge_attr.clear()
-        self.add_edges_from(edges_unique) # re-add only unique ones
-
     def duplicate_edges(self):
         """A list of all duplicate edges.
         

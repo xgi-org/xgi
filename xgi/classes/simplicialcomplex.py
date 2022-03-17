@@ -21,33 +21,6 @@ __all__ = ["SimplicialComplex"]
 class SimplicialComplex(Hypergraph) :
     """A class to represent undirected simplicial complexes."""
 
-    # def is_simplicial_complex(self) :
-    #     """Returns True if all subfaces of each edge exist
-        
-    #     Goes through all simplices, from larger to smaller and stops at first missing subface found.
-    #     """
-        
-    #     # check that all nodes in simplices are in nodes
-    #     nodes_to_have = sorted({node for edge in self.edges for node in edge})
-    #     if not set(nodes_to_have).issubset(self.nodes) :
-    #         print("Some of the nodes members of edges are not in H.nodes.")
-    #         return False
-    #     else : # check that all subfaces of each edge exist
-    #         edges = self.edges
-    #         for edge in edges[::-1] : # loop over edges, from larger to smaller 
-        
-    #             size = len(edge) 
-    #             if size>=3 : # because we already checked nodes 
-    #                 for face in combinations(edge, size-1) : # check if all subfaces are present
-
-    #                     face = tuple(sorted(face))
-    #                     if face not in edges : 
-    #                         print(f"{face} not in SimplicialComplex (first found)")
-    #                         return False
-            
-    #         else : 
-    #             return True 
-    
     def __str__(self):
         """Returns a short summary of the simplicial complex.
 

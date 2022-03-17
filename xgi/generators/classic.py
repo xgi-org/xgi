@@ -92,15 +92,14 @@ def star_clique(n_star, n_clique, d_max):
     H.add_nodes_from(nodes)
 
     # add star edges (center of the star is 0-th node)
-    for i in range(1, n_star):
-        H.add_edge((nodes_star[0], nodes_star[i]))
+    H.add_edges_from([(nodes_star[0], nodes_star[i]) for i in range(1, n_star)])
 
     # connect clique and star by adding last star leg
     H.add_edge((nodes_star[0], nodes_clique[0]))
 
     # add clique hyperedges up to order d_max
-    for d in range(1, d_max):
-        for hyperedge in combinations(nodes_clique, d + 1):
-            H.add_edge(hyperedge)
+    H.add_edges_from(
+        [e for d in range(1, d_max + 1) for e in combinations(nodes_clique, d + 1)]
+    )
 
     return H
