@@ -46,7 +46,7 @@ def test_remove_simplex_id(edgelist6):
 
 
 def test_string():
-    S1 = xgi.Simplicialcomplex()
+    S1 = xgi.SimplicialComplex()
     assert str(S1) == "Unnamed Simplicialcomplex with 0 nodes and 0 simplices"
     S2 = xgi.Simplicialcomplex(name="test")
     # S2["name"] = "test"
