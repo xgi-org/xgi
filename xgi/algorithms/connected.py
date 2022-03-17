@@ -1,4 +1,5 @@
 import random
+
 from xgi.exception import XGIError
 
 __all__ = [
