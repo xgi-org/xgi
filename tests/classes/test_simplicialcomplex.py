@@ -43,11 +43,3 @@ def test_remove_simplex_id(edgelist6):
         9: frozenset({3, 4}),
     }
     assert S._edge == edge_dict
-
-
-def test_string():
-    S1 = xgi.SimplicialComplex()
-    assert str(S1) == "Unnamed Simplicialcomplex with 0 nodes and 0 simplices"
-    S2 = xgi.Simplicialcomplex(name="test")
-    # S2["name"] = "test"
-    assert str(S2) == "Simplicialcomplex named test with 0 nodes and 0 simplices"
