@@ -38,9 +38,9 @@ class SimplicialComplex(Hypergraph) :
 
         """
         try:
-            return f"{type(self).__name__} named {self['name']} with {self.number_of_nodes()} nodes and {self.number_of_edges()} simplices"
+            return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} simplices"
         except:
-            return f"Unnamed {type(self).__name__} with {self.number_of_nodes()} nodes and {self.number_of_edges()} simplices"
+            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} simplices"
 
     def add_edge(self, edge, **attr):
         raise XGIError("Cannot add_edge to SimplicialComplex, use add_simplex instead")

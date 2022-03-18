@@ -33,11 +33,11 @@ def incidence_matrix(
 
     Returns
     -------
-    numpy.ndarray or scipy csr_matrix
+    I: numpy.ndarray or scipy csr_matrix
         The incidence matrix, has dimension (n_nodes, n_edges)
-    dict
+    rowdict: dict
         The dictionary mapping indices to node IDs, if index is True
-    dict
+    coldict: dict
         The dictionary mapping indices to edge IDs, if index is True
 
     Examples
@@ -59,7 +59,7 @@ def incidence_matrix(
     node_dict = dict(zip(node_ids, range(num_nodes)))
     edge_dict = dict(zip(edge_ids, range(num_edges)))
 
-    if len(node_dict) != 0:
+    if len(node_dict) != 0 and len(edge_dict) != 0:
 
         if index:
             rowdict = {v: k for k, v in node_dict.items()}
@@ -109,7 +109,7 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
     s: int, default: 1
         Specifies the number of overlapping edges to be considered connected.
     index: bool, default: False
-        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+        Specifies whether to output disctionaries mapping the node IDs to indices
 
     Returns
     -------
@@ -128,7 +128,7 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
     """
 
     if index:
-        I, row_dict, _ = incidence_matrix(H, index=True, order=order)
+        I, rowdict, _ = incidence_matrix(H, index=True, order=order)
     else:
         I = incidence_matrix(H, index=False, order=order)
 
@@ -141,21 +141,24 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
         A[A < s] = 0
 
     if index:
-        return A, row_dict
+        return A, rowdict
     else:
         return A
 
 
-def intersection_profile(H, index=False):
+def intersection_profile(H, order=None, index=False):
     """
-    A function to generate an unweighted intersection profile from a Hypergraph object.
+    A function to generate an intersection profile from a Hypergraph object.
 
     Parameters
     ----------
     H: Hypergraph object
         The hypergraph of interest
+    order: int, optional
+        Order of interactions to use. If None (default), all orders are used. If int,
+        must be >= 1.
     index: bool, default: False
-        Specifies whether to output dictionaries mapping the node and edge IDs to indices
+        Specifies whether to output dictionaries mapping the edge IDs to indices
 
     Returns
     -------
@@ -174,14 +177,14 @@ def intersection_profile(H, index=False):
     """
 
     if index:
-        I, row_dict, _ = incidence_matrix(H, index=True)
+        I, _, coldict = incidence_matrix(H, order=order, index=True)
     else:
-        I = incidence_matrix(H, index=False)
+        I = incidence_matrix(H, order=order, index=False)
 
     P = I.T.dot(I)
 
     if index:
-        return P, row_dict
+        return P, coldict
     else:
         return P
 
@@ -229,7 +232,7 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
     HG : horss.HyperGraph
         Hypergraph
     order : int
-        Order of interactions to consider. If order (default),
+        Order of interactions to consider. If order=1 (default),
         returns the usual graph Laplacian
     index: bool, default: False
         Specifies whether to output disctionaries mapping the node and edge IDs to indices
@@ -247,7 +250,7 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
         Physical Review Research, 2(3), 033410.
     """
 
-    A, rowdict = adjacency_matrix(H, order=order, weighted=True, index=True)
+    A, row_dict = adjacency_matrix(H, order=order, weighted=True, index=True)
     K = _degree(H, order=order, index=False)
 
     L = order * np.diag(np.ravel(K)) - A  # ravel needed to convert sparse matrix
