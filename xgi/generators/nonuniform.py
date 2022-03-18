@@ -13,6 +13,7 @@ __all__ = [
     "dcsbm_hypergraph",
     "random_hypergraph",
     "random_simplicial_complex",
+    "random_maximal_simplicial_complex_d2",
 ]
 
 
