@@ -71,16 +71,38 @@ def pairwise_spring_layout(H):
     return pos
 
 def barycenter_spring_layout(H, return_phantom_graph=False):
-    
+    """
+    Position the nodes using Fruchterman-Reingold force-directed
+    algorithm using an augmented version of the the graph projection
+    of the hypergraph, where phantom nodes (barycenters) are created
+    for each edge composed by more than two nodes.  
+
+    Parameters
+    ----------
+    H : xgi Hypergraph 
+        A position will be assigned to every node in H.
+        
+    Returns
+    -------
+    pos : dict
+        A dictionary of positions keyed by node
+    """
+
     # Creating the projected networkx Graph, I will fill it manually
     G = nx.Graph()
+    
     # Adding real nodes
     G.add_nodes_from(list(H.nodes))
     
+    # Adding links (edges composed by two nodes only, for which we don't use phantom nodes
+    for i, j in H.edges_of_order(1).values():
+        G.add_edge(i, j)
+    
+    # Adding phantom nodes and connections therein
     phantom_node_id = H.number_of_nodes() #the first id is N (the first node is 0)
-    #Looping over the hyperedges of different order
-    for d in range(1, H.max_edge_order()+1):  
-        #Hyperedges of order d (d=1: links, etc.)
+    #Looping over the hyperedges of different order (from triples up)
+    for d in range(2, H.max_edge_order()+1):  
+        #Hyperedges of order d (d=2: triplets, etc.)
         for he in H.edges_of_order(d).values():
             #Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
             for n in he:
