@@ -51,7 +51,7 @@ def star_clique(n_star, n_clique, d_max):
     """Generate a star-clique structure
 
     That is a star network and a clique network,
-    connected by one pairwise edge. In the clique
+    connected by one pairwise edge connecting the centre of the star to the clique.
     network, the each clique is promoted to a hyperedge
     up to order d_max.
 
