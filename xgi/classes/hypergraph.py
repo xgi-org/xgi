@@ -209,6 +209,12 @@ class Hypergraph:
         else:
             raise XGIError("Invalid node ID.")
 
+    def egonet(self, n, include_self=False):
+        if include_self:
+            return [self.edges.members(e) for e in self.nodes.memberships(n)]
+        else:
+            return [[x for x in self.edges.members(e) if x != n] for e in self.nodes.memberships(n)]
+
     def add_node(self, node_for_adding, **attr):
         """Add a single node `node_for_adding` and update node attributes.
 
