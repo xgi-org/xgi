@@ -52,9 +52,9 @@ def get_dual(edge_dict):
 
     Examples
     --------
-    >>> import hypergraph as hg
+    >>> import xgi
     >>> d = {0 : [1, 2, 3], 1 : [0, 2]}
-    >>> hg.get_dual(d)
+    >>> xgi.get_dual(d)
     {0 : [1], 1 : [0], 2 : [0, 1], 3 : [0]}
     """
     node_dict = defaultdict(list)

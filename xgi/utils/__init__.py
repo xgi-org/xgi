@@ -1,2 +1,4 @@
+from xgi.utils import decorators, utilities
 from xgi.utils.utilities import XGICounter
-from xgi.utils import utilities
+
+from .decorators import *

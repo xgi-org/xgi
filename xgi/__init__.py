@@ -1,22 +1,14 @@
-from xgi import classes
+import pkg_resources
+
+from xgi import algorithms, classes, convert, drawing, generators, linalg, readwrite, utils
+from xgi.algorithms import *
 from xgi.classes import *
-
-from xgi import generators
+from xgi.convert import *
+from xgi.drawing import *
 from xgi.generators import *
-
-from xgi import linalg
 from xgi.linalg import *
-
-from xgi import readwrite
 from xgi.readwrite import *
 
-from xgi import utils
 
-from xgi import convert
-from xgi.convert import *
+__version__ = pkg_resources.require("xgi")[0].version
 
-from xgi import algorithms
-from xgi.algorithms import *
-
-from xgi import drawing
-from xgi.drawing import *

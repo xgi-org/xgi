@@ -1,5 +1,6 @@
-import xgi
 import numpy as np
+
+import xgi
 
 __all__ = [
     "read_incidence_matrix",
@@ -71,9 +72,8 @@ def write_incidence_matrix(H, path, delimiter=" ", encoding="utf-8"):
     --------
         >>> import xgi
         >>> n = 1000
-        >>> m = n
-        >>> p = 0.01
-        >>> H = xgi.erdos_renyi_hypergraph(n, m, p)
+        >>> ps = [0.01, 0.001]
+        >>> H = xgi.random_hypergraph(n, ps)
         >>> xgi.write_incidence_matrix(H, "test.csv", delimiter=",")
     """
     I = xgi.incidence_matrix(H, sparse=False)

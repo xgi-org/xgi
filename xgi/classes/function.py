@@ -2,7 +2,7 @@
 """
 
 from collections import Counter
-import numpy as np
+
 import xgi
 from xgi.exception import XGIError
 
@@ -37,7 +37,7 @@ def degree_histogram(H):
     Notes
     -----
     Note: the bins are width one, hence len(list) can be large
-    (Order(number_of_edges))
+    (Order(num_edges))
 
     Examples
     --------
@@ -51,7 +51,7 @@ def degree_histogram(H):
     return [counts.get(i, 0) for i in range(max(counts) + 1)]
 
 
-def unique_edge_sizes(H, return_counts=False):
+def unique_edge_sizes(H):
     """A function that returns the unique edge sizes.
 
     Parameters
@@ -258,22 +258,27 @@ def set_node_attributes(H, values, name=None):
             for n in H:
                 H._node_attr[n][name] = values
     else:  # `values` must be dict of dict
-        for n, d in values.items():
-            try:
-                H._node_attr[n].update(d)
-            except KeyError:
-                pass
+        try:
+            for n, d in values.items():
+                try:
+                    H._node_attr[n].update(d)
+                except KeyError:
+                    pass
+        except:
+            raise XGIError(
+                "name property has not been set and a dict-of-dicts has not been provided."
+            )
 
 
-def get_node_attributes(H, name):
+def get_node_attributes(H, name=None):
     """Get the node attributes for a hypergraph
 
     Parameters
     ----------
     H : Hypergraph object
         The hypergraph to get node attributes from
-    name : string
-       Attribute name
+    name : string, optional
+       Attribute name. If None, then return the entire attribute dictionary.
 
     Returns
     -------
@@ -286,7 +291,10 @@ def get_node_attributes(H, name):
     set_edge_attributes
     get_edge_attributes
     """
-    return {n: d[name] for n, d in H._node_attr.items() if name in d}
+    if name is None:
+        return dict(H._node_attr)
+    else:
+        return {n: d[name] for n, d in H._node_attr.items() if name in d}
 
 
 def set_edge_attributes(H, values, name=None):
@@ -333,23 +341,27 @@ def set_edge_attributes(H, values, name=None):
             for id in H.edges:
                 H._edge_attr[id][name] = values
     else:
-        # `values` consists of doct-of-dict {edge: {attr: value}} shape
-        for id, value in values.items():
-            try:
-                H._edge_attr[id].update(values)
-            except KeyError:
-                pass
+        try:
+            for id, d in values.items():
+                try:
+                    H._edge_attr[id].update(d)
+                except KeyError:
+                    pass
+        except:
+            raise XGIError(
+                "name property has not been set and a dict-of-dicts has not been provided."
+            )
 
 
-def get_edge_attributes(H, name):
+def get_edge_attributes(H, name=None):
     """Get the edge attributes of the hypergraph
 
     Parameters
     ----------
     H : Hypergraph object
         The hypergraph to get edge attributes from
-    name : string
-       Attribute name
+    name : string, optional
+       Attribute name. If None, then return the entire attribute dictionary.
 
     Returns
     -------
@@ -362,8 +374,10 @@ def get_edge_attributes(H, name):
     get_node_attributes
     set_edge_attributes
     """
-    edge_data = H._edge_attr
-    return {id: edge_data[edge][name] for edge in edge_data if name in edge_data[edge]}
+    if name is None:
+        return dict(H._edge_attr)
+    else:
+        return {e: d[name] for e, d in H._edge_attr.items() if name in d}
 
 
 def is_empty(H):

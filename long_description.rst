@@ -65,3 +65,5 @@ Iacopo Iacopini <iacopiniiacopo@gmail.com>
 Maxime Lucas <maxime.lucas@isi.it>
 
 Giovanni Petri <giovanni.petri@isi.it>
+
+Alice Patania <apatania@uvm.edu>

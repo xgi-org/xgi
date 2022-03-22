@@ -60,6 +60,16 @@ def subhypergraph_view(H, filtered_nodes=None, filtered_edges=None):
     automatically filters out edges that are not subsets of the nodes. This function
     may create isolated nodes.
 
+    If the user only specifies the nodes to include, the function returns
+    an induced subhypergraph on the nodes.
+
+    If the user only specifies the edges to include, the function returns all of the nodes
+    and the specified edges.
+
+    If the user specifies both nodes and edges to include in the subhypergraph, then the
+    function returns a subhypergraph with the specified nodes and edges from the list of specified
+    hyperedges that are induced by the specified nodes.
+
     Parameters
     ----------
     H : hypergraph.Hypergraph
