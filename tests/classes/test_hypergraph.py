@@ -9,7 +9,6 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     H_mat = xgi.Hypergraph(incidence5)
     H_df = xgi.Hypergraph(dataframe5)
 
-    assert H_list.shape == H_dict.shape == H_mat.shape == H_df.shape
     assert (
         list(H_list.nodes)
         == list(H_dict.nodes)
@@ -48,12 +47,14 @@ def test_contains(edgelist1):
 
     assert 0 not in H
 
+
 def test_string():
     H1 = xgi.Hypergraph()
     assert str(H1) == "Unnamed Hypergraph with 0 nodes and 0 hyperedges"
     H2 = xgi.Hypergraph(name="test")
     # H2["name"] = "test"
     assert str(H2) == "Hypergraph named test with 0 nodes and 0 hyperedges"
+
 
 def test_len(edgelist1, edgelist2):
     el1 = edgelist1
@@ -62,15 +63,6 @@ def test_len(edgelist1, edgelist2):
     H2 = xgi.Hypergraph(el2)
     assert len(H1) == 8
     assert len(H2) == 6
-
-
-def test_shape(edgelist1, edgelist2):
-    el1 = edgelist1
-    el2 = edgelist2
-    H1 = xgi.Hypergraph(el1)
-    H2 = xgi.Hypergraph(el2)
-    assert H1.shape == (8, 4)
-    assert H2.shape == (6, 3)
 
 
 def test_neighbors(edgelist1, edgelist2):
@@ -96,9 +88,9 @@ def test_dual(edgelist1, edgelist2, edgelist4):
     D1 = H1.dual()
     D2 = H2.dual()
     D3 = H3.dual()
-    assert D1.shape == (4, 8)
-    assert D2.shape == (3, 6)
-    assert D3.shape == (3, 5)
+    assert (D1.num_nodes, D1.num_edges) == (4, 8)
+    assert (D2.num_nodes, D2.num_edges) == (3, 6)
+    assert (D3.num_nodes, D3.num_edges) == (3, 5)
 
 
 def test_max_edge_order(edgelist1, edgelist4, edgelist5):
@@ -193,3 +185,13 @@ def test_members(edgelist1):
         H.nodes.memberships(0)
     with pytest.raises(XGIError):
         H.nodes.memberships(slice(1, 4))
+
+
+def test_has_edge(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert H.has_edge([1, 2, 3])
+    assert H.has_edge({1, 2, 3})
+    assert H.has_edge({4})
+    assert not H.has_edge([4, 5])
+    assert not H.has_edge([3])
+    assert not H.has_edge([1, 2])

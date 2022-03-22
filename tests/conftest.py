@@ -1,7 +1,4 @@
-import os
-import sys
-from pathlib import Path
-
+import networkx as nx
 import numpy as np
 import pandas as pd
 import pytest
@@ -71,3 +68,40 @@ def dataframe5():
         [8, 3],
     ]
     return pd.DataFrame(data)
+
+
+@pytest.fixture
+def bipartite_graph1():
+    G = nx.Graph()
+    G.add_nodes_from([1, 2, 3, 4], bipartite=0)
+    G.add_nodes_from(["a", "b", "c"], bipartite=1)
+    G.add_edges_from([(1, "a"), (1, "b"), (2, "b"), (2, "c"), (3, "c"), (4, "a")])
+    return G
+
+
+@pytest.fixture
+def bipartite_graph2():
+    G = nx.Graph()
+    G.add_nodes_from([1, 2, 3, 4], bipartite=0)
+    G.add_nodes_from(["a", "b", "c"], bipartite=2)
+    G.add_edges_from([(1, "a"), (1, "b"), (2, "b"), (2, "c"), (3, "c"), (4, "a")])
+    return G
+
+
+@pytest.fixture
+def bipartite_graph3():
+    G = nx.Graph()
+    G.add_nodes_from([1, 2, 3, 4])
+    G.add_nodes_from(["a", "b", "c"])
+    G.add_edges_from([(1, "a"), (1, "b"), (2, "b"), (2, "c"), (3, "c"), (4, "a")])
+    return G
+
+
+@pytest.fixture
+def bipartite_graph4():
+    # this is to test when the bipartite condition is not true
+    G = nx.Graph()
+    G.add_nodes_from([1, 2, 3, 4], bipartite=0)
+    G.add_nodes_from(["a", "b", "c"], bipartite=1)
+    G.add_edges_from([(1, "a"), ("a", "b"), (2, "b"), (2, "c"), (3, "c"), (4, "a")])
+    return G

@@ -57,7 +57,7 @@ EdgeSizeView
     The EdgeSizeView can still look up any node even if nbunch is specified.
 """
 from collections.abc import Mapping, Set
-import xgi
+
 from xgi.exception import XGIError
 
 __all__ = [
@@ -270,7 +270,7 @@ class IDDegreeView:
         """
         weight = self._weight
         if weight is None:
-            return len(self._ids(id))
+            return len(self._ids[id])
         return sum(self._id_attrs[dd].get(weight, 1) for dd in self._ids(id))
 
     def __iter__(self):
@@ -282,13 +282,13 @@ class IDDegreeView:
         """
         weight = self._weight
         if weight is None:
-            for n in self._ids:
-                yield (n, len(self._ids[n]))
+            for id in self._ids:
+                yield (id, len(self._ids[id]))
         else:
-            for n in self._ids:
-                elements = self._ids(n)
+            for id in self._ids:
+                elements = self._ids[id]
                 deg = sum(self._id_attrs[dd].get(weight, 1) for dd in elements)
-                yield (n, deg)
+                yield (id, deg)
 
     def __len__(self):
         """Returns the number of IDs/degrees

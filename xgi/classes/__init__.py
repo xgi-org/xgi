@@ -1,4 +1,5 @@
-from .hypergraph import Hypergraph
+from xgi.classes import hypergraphviews, reportviews
+
 from .function import *
-from xgi.classes import hypergraphviews
-from xgi.classes import reportviews
+from .hypergraph import Hypergraph
+from .simplicialcomplex import SimplicialComplex

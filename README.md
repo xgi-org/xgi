@@ -60,7 +60,7 @@ a citation in your preferred format, and will also integrate well with citation 
 Our full code of conduct, and how we enforce it, can be read in [our repository](CODE_OF_CONDUCT.md).
 
 ## License
-Released under the 3-Clause BSD license (see [`license.md`](license.md))
+Released under the 3-Clause BSD license (see [`LICENSE.md`](LICENSE.md))
 
 Copyright (C) 2021 XGI Developers
 
@@ -74,7 +74,9 @@ Maxime Lucas <maxime.lucas@isi.it>
 
 Giovanni Petri <giovanni.petri@isi.it>
 
-The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](license.md)
+Alice Patania <apatania@uvm.edu>
+
+The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](LICENSE.md)
 
 ## Funding
 The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905).
