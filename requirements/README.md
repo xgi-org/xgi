@@ -4,12 +4,12 @@
 
 - [`default.txt`](default.txt)
   Default requirements
-- [`example.txt`](example.txt)
-  Requirements for gallery examples
+- [`tutorial.txt`](example.txt)
+  Requirements for running the Jupyter Notebooks with the examples
 - [`test.txt`](test.txt)
   Requirements for running test suite
-- [`doc.txt`](doc.txt)
-  Requirements for building the documentation (see `../doc/`)
+- [`documentation.txt`](doc.txt)
+  Requirements for building the documentation (see `../docs/`)
 - [`developer.txt`](developer.txt)
   Requirements for developers
 - [`release.txt`](release.txt)
