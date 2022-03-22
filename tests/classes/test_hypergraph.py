@@ -202,3 +202,5 @@ def test_egonet(edgelist3):
     assert H.neighbors(3) == {1, 2, 4}
     assert H.egonet(3) == [[1, 2], [4]]
     assert H.egonet(3, include_self=True) == [[1, 2, 3], [3, 4]]
+    with pytest.raises(XGIError):
+        H.egonet(7)
