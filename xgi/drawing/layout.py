@@ -100,7 +100,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
         G.add_edge(i, j)
     
     # Adding phantom nodes and connections therein
-    phantom_node_id = H.number_of_nodes() #the first id is N (the first node is 0)
+    phantom_node_id = max(H.nodes)+1 
     #Looping over the hyperedges of different order (from triples up)
     for d in range(2, H.max_edge_order()+1):  
         #Hyperedges of order d (d=2: triplets, etc.)
@@ -126,8 +126,9 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     Position the nodes using Fruchterman-Reingold force-directed
     algorithm using an augmented version of the the graph projection
     of the hypergraph, where phantom nodes (barycenters) are created
-    for each edge composed by more than two nodes. Repulsive weights
-    are used to keep hyperedges further apart.
+    for each edge composed by more than two nodes. Weights are
+    assigned to connections to phaneom nodes within hyperedges
+    to keep them together.
 
     Parameters
     ----------
@@ -148,25 +149,18 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     
     # Adding links (edges composed by two nodes only, for which we don't use phantom nodes)
     for i, j in H.edges_of_order(1).values():
-        G.add_edge(i, j, weight=1)
+        G.add_edge(i, j, weight=1*5)
     
     # Adding phantom nodes and connections therein
-    phantom_node_id = H.number_of_nodes() #the first id is N (the first node is 0)
-    phantom_nodes = []
+    phantom_node_id = max(H.nodes)+1 
     #Looping over the hyperedges of different order (from triples up)
     for d in range(2, H.max_edge_order()+1):  
         #Hyperedges of order d (d=2: triplets, etc.)
-        for he in H.edges_of_order(d).values():
+        for he_id, members in H.edges_of_order(d).items():
             #Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
-            for n in he:
-                G.add_edge(phantom_node_id, n, weight=30)
-            phantom_nodes.append(phantom_node_id)
+            for n in members:
+                G.add_edge(phantom_node_id, n, weight=d*5)
             phantom_node_id+=1
-            
-    #Adding negative weights between phantom nodes of adjacent hyperedges
-    for i in phantom_nodes:
-        for j in phantom_nodes:
-            G.add_edge(i, j, weight=-1)
                 
     # Creating a dictionary for the position of the nodes with the standard spring layout
     pos_with_phantom_nodes = nx.spring_layout(G, weight='weight')

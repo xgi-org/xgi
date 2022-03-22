@@ -24,8 +24,8 @@ __all__ = [
     "draw",
 ]
         
-def draw(H, pos, cmap=None, ax=None, edge_lc='black', edge_lw=0.7, node_fc='white', node_ec='black',
-                    node_lw=1, node_size=0.02):
+def draw(H, pos, cmap=None, ax=None, edge_lc='black', edge_lw=1.5, node_fc='white', node_ec='black',
+                    node_lw=1, node_size=0.03):
     """
     Draw hypergraph.
         
@@ -45,7 +45,7 @@ def draw(H, pos, cmap=None, ax=None, edge_lc='black', edge_lw=0.7, node_fc='whit
     edge_lc : color (default='black')
     Color of the edges (dyadic links and borders of the hyperedges).
 
-    edge_lw :  float (default=0.7)
+    edge_lw :  float (default=1.5)
     Line width of edges of order 1 (dyadic links).
 
     node_fc : color (default='white')
@@ -57,7 +57,7 @@ def draw(H, pos, cmap=None, ax=None, edge_lc='black', edge_lw=0.7, node_fc='whit
     node_lw : float (default=1.0)
     Line width of the node borders.
 
-    node_size : float (default=0.02)
+    node_size : float (default=0.03)
     Size of the nodes.
         
     Examples
