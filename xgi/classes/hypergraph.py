@@ -194,6 +194,10 @@ class Hypergraph:
         set
             A set of the neighboring nodes
 
+        See Also
+        --------
+        egonet
+
         Examples
         --------
         >>> import xgi
@@ -228,6 +232,10 @@ class Hypergraph:
         -------
         list
             An edgelist of the egonet of `n`.
+
+        See Also
+        --------
+        neighbors
 
         Examples
         --------
