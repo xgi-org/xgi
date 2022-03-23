@@ -67,11 +67,11 @@ __all__ = [
     "EdgeSizeView",
 ]
 
-# ID View Base Class
+
 class IDView(Mapping, Set):
     """A Base View class to act as H.nodes and H.edges for a Hypergraph."""
 
-    __slots__ = ("_ids", "_id_attrs")
+    __slots__ = ("_id_dict", "_id_attr", "_ids")
 
     def __getstate__(self):
         """Function that allows pickling of the IDs (write)
@@ -81,8 +81,14 @@ class IDView(Mapping, Set):
         dict of dict
             The keys access the IDs and their attributes respectively
             and the values are dictionarys from the Hypergraph class.
+
         """
-        return {"_ids": self._ids, "_id_attrs": self._id_attrs}
+        return {
+            "_id_dict": self._id_dict,
+            "_id_attr": self._id_attr,
+            "_ids": self._ids,
+
+        }
 
     def __setstate__(self, state):
         """Function that allows pickling of the IDs (read)
@@ -92,39 +98,51 @@ class IDView(Mapping, Set):
         state : dict of dict
             The keys access the IDs and their attributes respectively
             and the values are dictionarys from the Hypergraph class.
-        """
-        self._ids = state["_ids"]
-        self._id_attrs = state["_id_attrs"]
 
-    def __init__(self, ids, id_attrs):
+        """
+        self._id_dict = state["_id_dict"]
+        self._id_attr = state["_id_attr"]
+        self._ids = state["_ids"]
+
+    def __init__(self, id_dict, id_attr, ids=None):
         """Initialize the IDView with IDs and associated attributes
+
         Parameters
         ----------
-        ids : dict
-            Specifies IDs and the associated adjacency list
+        id_dict : dict
+            The original dict this is a view of.
         id_attrs : dict
-            Specifies IDs and their associated attributes.
-        """
-        self._ids = ids
-        self._id_attrs = id_attrs
+            The original attribute dict this is a view of.
+        ids : iterable
+            A subset of the keys in id_dict to keep track of.
 
-    # Mapping methods
-    # Mapping methods
+        """
+        self._id_dict = id_dict
+        self._id_attr = id_attr
+        if id_dict is None:
+            self._ids = None
+        else:
+            self._ids = set(id_dict.keys()) if ids is None else set(ids)
+
     def __len__(self):
-        """Return the number of IDs
+        """Return the number of IDs.
+
         Returns
         -------
         int
             Number of IDs
+
         """
         return len(self._ids)
 
     def __iter__(self):
         """Returns an iterator over the IDs.
+
         Returns
         -------
         iterator of hashables
             Each entry is an ID in the hypergraph.
+
         """
         return iter(self._ids)
 
@@ -148,8 +166,11 @@ class IDView(Mapping, Set):
             the node does not exist in the hypergraph.
 
         """
+        if id not in self._ids:
+            raise XGIError(f"The ID {id} is not in this view")
+
         try:
-            return self._id_attrs[id]
+            return self._id_attr[id]
         except KeyError:
             raise XGIError(f"The ID {id} is not in the hypergraph")
         except:
@@ -159,7 +180,6 @@ class IDView(Mapping, Set):
                     f"try list(H.nodes)[{id.start}:{id.stop}:{id.step}]"
                 )
 
-    # Set methods
     def __contains__(self, id):
         """Checks whether the ID is in the hypergraph
         Parameters
@@ -326,8 +346,15 @@ class NodeView(IDView):
     Much of the functionality in this class inherits from IDView
     """
 
-    def __init__(self, hypergraph):
-        super(NodeView, self).__init__(hypergraph._node, hypergraph._node_attr)
+    def __init__(self, hypergraph, bunch=None):
+        if hypergraph is None:
+            super().__init__(None, None, bunch)
+        else:
+            super().__init__(hypergraph._node, hypergraph._node_attr, bunch)
+
+    def __call__(self, degree):
+        """Filter the results by size."""
+        return super().__call__(size=degree)
 
     def memberships(self, n):
         """Get the edges of which a node is a member.
@@ -350,9 +377,10 @@ class NodeView(IDView):
         xgi.XGIError
             Returns an error if the user tries passing in a slice or if
             the node ID does not exist in the hypergraph.
+
         """
         try:
-            return self._ids[n]
+            return self._id_dict[n]
         except KeyError:
             raise XGIError(f"The node ID {n} is not in the hypergraph")
         except TypeError:
@@ -369,8 +397,15 @@ class EdgeView(IDView):
     Much of the functionality in this class inherits from IDView
     """
 
-    def __init__(self, hypergraph):
-        super(EdgeView, self).__init__(hypergraph._edge, hypergraph._edge_attr)
+    def __init__(self, hypergraph, bunch=None):
+        if hypergraph is None:
+            super().__init__(None, None, bunch)
+        else:
+            super().__init__(hypergraph._edge, hypergraph._edge_attr, bunch)
+
+    def __call__(self, order):
+        """Filter the results by size."""
+        return super().__call__(size=order+1)
 
     def members(self, e):
         """Get the nodes that are members of an edge.
@@ -395,7 +430,7 @@ class EdgeView(IDView):
             the edge ID does not exist in the hypergraph.
         """
         try:
-            return self._ids[e]
+            return self._id_dict[e]
         except KeyError:
             raise XGIError(f"The edge ID {e} is not in the hypergraph")
         except TypeError:
