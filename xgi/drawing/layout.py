@@ -145,9 +145,10 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     Position the nodes using Fruchterman-Reingold force-directed
     algorithm using an augmented version of the the graph projection
     of the hypergraph, where phantom nodes (barycenters) are created
-    for each edge composed by more than two nodes. Weights are
-    assigned to connections to phantom nodes within hyperedges
-    to keep them together.
+    for each edge of order d>1 (composed by more than two nodes).
+    Weights are assigned to all hyperedges of order 1 (links) and
+    to all connections to phantom nodes within each hyperedge
+    to keep them together. Weights scale as the order d. 
 
     Parameters
     ----------
@@ -175,8 +176,9 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     G.add_nodes_from(list(H.nodes))
     
     # Adding links (edges composed by two nodes only, for which we don't use phantom nodes)
-    for i, j in H.edges_of_order(1).values():
-        G.add_edge(i, j, weight=1*5)
+    d=1
+    for i, j in H.edges_of_order(d).values():
+        G.add_edge(i, j, weight=d)
     
     # Adding phantom nodes and connections therein
     phantom_node_id = max(H.nodes)+1 
@@ -186,7 +188,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
         for he_id, members in H.edges_of_order(d).items():
             #Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
             for n in members:
-                G.add_edge(phantom_node_id, n, weight=d*5)
+                G.add_edge(phantom_node_id, n, weight=d)
             phantom_node_id+=1
                 
     # Creating a dictionary for the position of the nodes with the standard spring layout
