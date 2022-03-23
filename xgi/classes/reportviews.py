@@ -213,8 +213,26 @@ class IDView(Mapping, Set):
         """
         return f"{self.__class__.__name__}({tuple(self)})"
 
+    def __call__(self, size):
+        """Filter the results by size."""
+        bunch = [id for id in self._id_dict if len(self._id_dict[id]) == size]
+        return self.from_view(self, bunch)
 
-# ID Degree View Base Class
+    @classmethod
+    def from_view(cls, view, bunch=None):
+        """Create a view from another view.
+
+        Allows to create a view with the same underlying data but with a different
+        bunch.
+
+        """
+        newview = cls(None)
+        newview._id_dict = view._id_dict
+        newview._id_attr = view._id_attr
+        newview._ids = set(view._id_dict.keys()) if bunch is None else set(bunch)
+        return newview
+
+
 class IDDegreeView:
     """A View class for the degree of IDs in a Hypergraph
     The functionality is like dict.items() with (ID, degree) pairs.
