@@ -127,7 +127,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     algorithm using an augmented version of the the graph projection
     of the hypergraph, where phantom nodes (barycenters) are created
     for each edge composed by more than two nodes. Weights are
-    assigned to connections to phaneom nodes within hyperedges
+    assigned to connections to phantom nodes within hyperedges
     to keep them together.
 
     Parameters
