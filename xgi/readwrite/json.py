@@ -103,12 +103,12 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
 
     try:
         for id, dd in data["node-data"].items():
-            if edgetype is not None:
+            if nodetype is not None:
                 try:
-                    id = edgetype(id)
+                    id = nodetype(id)
                 except Exception as e:
                     raise TypeError(
-                        f"Failed to convert edge IDs to type {edgetype}."
+                        f"Failed to convert edge IDs to type {nodetype}."
                     ) from e
             H._node_attr[id] = dd
     except:
