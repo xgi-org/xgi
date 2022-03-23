@@ -40,8 +40,11 @@ def random_layout(H, center=None, dim=2, seed=None):
         
     Examples
     --------
-    >>> H = nx.stupid_hypergraph()
-    >>> pos = nx.random_layout(H)
+    >>> import xgi
+    >>> N = 100
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_hypergraph(N, ps)
+    >>> pos = xgi.random_layout(H)
     """
     import numpy as np
 
@@ -66,7 +69,15 @@ def pairwise_spring_layout(H):
     -------
     pos : dict
         A dictionary of positions keyed by node
-    """
+    
+    Examples
+    --------
+    >>> import xgi
+    >>> N = 100
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_hypergraph(N, ps)
+    >>> pos = xgi.pairwise_spring_layout(H)
+    """    
     G = xgi.convert_to_graph(H)
     pos = nx.spring_layout(G)    
     return pos
@@ -87,6 +98,14 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     -------
     pos : dict
         A dictionary of positions keyed by node
+        
+    Examples
+    --------
+    >>> import xgi
+    >>> N = 100
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_hypergraph(N, ps)
+    >>> pos = xgi.barycenter_spring_layout(H)
     """
 
     # Creating the projected networkx Graph, I will fill it manually
@@ -139,6 +158,14 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     -------
     pos : dict
         A dictionary of positions keyed by node
+    
+    Examples
+    --------
+    >>> import xgi
+    >>> N = 100
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_hypergraph(N, ps)
+    >>> pos = xgi.weighted_barycenter_spring_layout(H)
     """
 
     # Creating the projected networkx Graph, I will fill it manually
