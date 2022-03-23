@@ -60,19 +60,24 @@ def test_read_hypergraph_json():
     H1 = xgi.read_hypergraph_json(filename, nodetype=int)
     H2 = xgi.read_hypergraph_json(filename)
 
-    assert list(H1.nodes) == [1, 2, 3, 4]
-    assert list(H1.edges) == ["edge1", "edge2", "edge3"]
+    assert set(H1.nodes) == {1, 2, 3, 4}
+    assert set(H1.edges) == {"edge1", "edge2", "edge3"}
 
-    assert list(H2.nodes) == ["1", "2", "3", "4"]
+    assert set(H2.nodes) == {"1", "2", "3", "4"}
     assert H1["name"] == "test"
     assert H1["author"] == "Nicholas Landry"
-    assert [H1.edges.members(id) for id in H1.edges] == [[1, 2], [2, 3, 4], [1, 4]]
-    assert [H2.edges.members(id) for id in H2.edges] == [
-        ["1", "2"],
-        ["2", "3", "4"],
-        ["1", "4"],
-    ]
-    assert H1.nodes["1"]["color"] == "blue"
+    assert {tuple(H1.edges.members(id)) for id in H1.edges} == {
+        (1, 2),
+        (2, 3, 4),
+        (1, 4)
+    }
+    assert {tuple(H2.edges.members(id)) for id in H2.edges} == {
+        ("1", "2"),
+        ("2", "3", "4"),
+        ("1", "4"),
+    }
+
+    assert H1.nodes[1]["color"] == "blue"
     assert H1.edges["edge2"]["weight"] == 4
 
 
