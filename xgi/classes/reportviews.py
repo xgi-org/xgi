@@ -372,7 +372,7 @@ class EdgeView(IDView):
     def __init__(self, hypergraph):
         super(EdgeView, self).__init__(hypergraph._edge, hypergraph._edge_attr)
 
-    def members(self, e):
+    def members(self, e=None, dtype=list):
         """Get the nodes that are members of an edge.
 
         Given an edge ID, this method returns the node IDs
@@ -394,6 +394,14 @@ class EdgeView(IDView):
             Returns an error if the user tries passing in a slice or if
             the edge ID does not exist in the hypergraph.
         """
+        if e is None:
+            if dtype is dict:
+                return self._ids.copy()
+            elif dtype is list:
+                return [v for _, v in self._ids.items()]
+            else:
+                raise XGIError(f"Unrecognized dtype {dtype}")
+
         try:
             return self._ids[e]
         except KeyError:
