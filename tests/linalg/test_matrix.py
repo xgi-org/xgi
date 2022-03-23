@@ -185,6 +185,7 @@ def test_adjacency_matrix(edgelist1, edgelist4):
     assert A4[node_dict4[4], node_dict4[5]] == 0
     assert A4[node_dict4[4], node_dict4[6]] == 0
 
+
 def test_laplacian(edgelist2, edgelist6):
     el1 = edgelist6
     H1 = xgi.Hypergraph(el1)
@@ -232,7 +233,7 @@ def test_laplacian(edgelist2, edgelist6):
     assert L2[node_dict2[3], node_dict2[4]] == -0.5
 
     L3, node_dict3 = xgi.laplacian(H2, order=1, index=True)
-    node_dict3 = {k: v for v, k in node_dict3.items()}  
+    node_dict3 = {k: v for v, k in node_dict3.items()}
 
     assert np.all((L3.T == L3))
     for i in range(np.size(L3, axis=0)):
@@ -244,6 +245,7 @@ def test_laplacian(edgelist2, edgelist6):
     assert L3[node_dict3[2], node_dict3[3]] == 0
     assert L3[node_dict3[2], node_dict3[4]] == 0
     assert L3[node_dict3[3], node_dict3[4]] == -1
+
 
 def test_intersection_profile(edgelist2):
     el1 = edgelist2
@@ -292,3 +294,18 @@ def test_clique_motif_matrix(edgelist4):
     assert W1[node_dict1[2], node_dict1[5]] == 1
     assert W1[node_dict1[3], node_dict1[4]] == 2
     assert W1[node_dict1[5], node_dict1[1]] == 0
+
+
+def test_empty_order(edgelist6):
+    H = xgi.Hypergraph(edgelist6)
+    I, _, _ = xgi.incidence_matrix(H, order=1, index=True)
+    A, _ = xgi.adjacency_matrix(H, order=1, index=True)
+    assert I.shape == (0,)
+    assert A.shape == (0,)
+
+
+def test_empty():
+    H = xgi.Hypergraph([])
+    assert xgi.incidence_matrix(H).shape == (0,)
+    assert xgi.adjacency_matrix(H).shape == (0,)
+    assert xgi.laplacian(H).shape == (0,)
