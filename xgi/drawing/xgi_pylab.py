@@ -4,28 +4,16 @@ Matplotlib
 **********
 
 Draw hypergraphs with matplotlib.
-
-Examples
---------
->>> H=xgi.Hypergraph()
->>> H.add_edges_from([[1,2,3],[3,4],[4,5,6,7],[7,8,9,10,11]])
->>> pos = xgi.barycenter_spring_layout(H)
->>> xgi.draw(H)
-
-See Also
---------
- - :doc:`matplotlib <matplotlib:index>`
 """
 
 import xgi
-from xgi.drawing.layout import barycenter_spring_layout
 
 __all__ = [
     "draw",
 ]
         
-def draw(H, pos, cmap=None, ax=None, edge_lc='black', edge_lw=0.7, node_fc='white', node_ec='black',
-                    node_lw=1, node_size=0.02):
+def draw(H, pos, cmap=None, ax=None, edge_lc='black', edge_lw=1.5, node_fc='white', node_ec='black',
+                    node_lw=1, node_size=0.03):
     """
     Draw hypergraph.
         
@@ -45,7 +33,7 @@ def draw(H, pos, cmap=None, ax=None, edge_lc='black', edge_lw=0.7, node_fc='whit
     edge_lc : color (default='black')
     Color of the edges (dyadic links and borders of the hyperedges).
 
-    edge_lw :  float (default=0.7)
+    edge_lw :  float (default=1.5)
     Line width of edges of order 1 (dyadic links).
 
     node_fc : color (default='white')
@@ -57,11 +45,12 @@ def draw(H, pos, cmap=None, ax=None, edge_lc='black', edge_lw=0.7, node_fc='whit
     node_lw : float (default=1.0)
     Line width of the node borders.
 
-    node_size : float (default=0.02)
+    node_size : float (default=0.03)
     Size of the nodes.
         
     Examples
     --------
+    >>> import xgi
     >>> H=xgi.Hypergraph()
     >>> H.add_edges_from([[1,2,3],[3,4],[4,5,6,7],[7,8,9,10,11]])
     >>> xgi.draw(H, pos=xgi.barycenter_spring_layout(H))
@@ -71,7 +60,10 @@ def draw(H, pos, cmap=None, ax=None, edge_lc='black', edge_lw=0.7, node_fc='whit
     from matplotlib import cm
     import numpy as np
 
-    def ccw_sort(p):
+    def CCW_sort(p):
+        """
+        Sort the input 2D points counterclockwise.
+        """
         p = np.array(p)
         mean = np.mean(p,axis=0)
         d = p-mean
@@ -115,7 +107,7 @@ def draw(H, pos, cmap=None, ax=None, edge_lc='black', edge_lw=0.7, node_fc='whit
                 # Filling the polygon
                 coordinates = [[pos[n][0], pos[n][1]] for n in he]
                 #Sorting the points counterclockwise (needed to have the correct filling)
-                sorted_coordinates = ccw_sort(coordinates)
+                sorted_coordinates = CCW_sort(coordinates)
                 obj = plt.Polygon(sorted_coordinates, edgecolor=edge_lc, facecolor=colors[d-1], alpha=0.4, lw=0.5)
                 ax.add_patch(obj);
             
