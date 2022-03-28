@@ -309,15 +309,18 @@ def clique_motif_matrix(H, index=False):
         >>> W = xgi.clique_motif_matrix(H)
     """
     if index:
-        I, row_dict, _ = incidence_matrix(H, index=True)
+        I, rowdict, _ = incidence_matrix(H, index=True)
     else:
         I = incidence_matrix(H, index=False)
+
+    if I.shape == (0,):
+        return (np.array([]), rowdict) if index else np.array([])
 
     W = I.dot(I.T)
     W.setdiag(0)
     W.eliminate_zeros()
 
     if index:
-        return W, row_dict
+        return W, rowdict
     else:
         return W

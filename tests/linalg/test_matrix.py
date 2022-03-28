@@ -309,3 +309,4 @@ def test_empty():
     assert xgi.incidence_matrix(H).shape == (0,)
     assert xgi.adjacency_matrix(H).shape == (0, 0)
     assert xgi.laplacian(H).shape == (0, 0)
+    assert xgi.clique_motif_matrix(H).shape == (0,)
