@@ -130,13 +130,14 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
         >>> A = xgi.adjacency_matrix(H)
 
     """
-    if index:
-        I, rowdict, _ = incidence_matrix(H, index=True, order=order)
-    else:
-        I = incidence_matrix(H, index=False, order=order)
+    I, rowdict, coldict = incidence_matrix(H, index=True, order=order)
 
     if I.shape == (0,):
-        return (np.array([]), {}) if index else np.array([])
+        if not rowdict:
+            A = np.array([])
+        if not coldict:
+            A = np.zeros((H.num_nodes, H.num_nodes))
+        return (A, {}) if index else A
 
     A = I.dot(I.T)
     A.setdiag(0)
@@ -217,16 +218,15 @@ def _degree(H, order=None, index=False):
     """
 
     if index:
-        I, row_dict, _ = incidence_matrix(H, index=True, order=order)
+        I, rowdict, _ = incidence_matrix(H, index=True, order=order)
     else:
         I = incidence_matrix(H, index=False, order=order)
 
-    K = np.sum(I, axis=1)
+    if I.shape == (0,):
+        return np.array([])
 
-    if index:
-        return K, row_dict
-    else:
-        return K
+    K = np.sum(I, axis=1)
+    return (K, rowdict) if index else K
 
 
 def laplacian(H, order=1, rescale_per_node=False, index=False):

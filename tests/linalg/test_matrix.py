@@ -301,11 +301,11 @@ def test_empty_order(edgelist6):
     I, _, _ = xgi.incidence_matrix(H, order=1, index=True)
     A, _ = xgi.adjacency_matrix(H, order=1, index=True)
     assert I.shape == (0,)
-    assert A.shape == (0,)
+    assert A.shape == (5, 5)
 
 
 def test_empty():
     H = xgi.Hypergraph([])
     assert xgi.incidence_matrix(H).shape == (0,)
-    assert xgi.adjacency_matrix(H).shape == (0,)
-    assert xgi.laplacian(H).shape == (0,)
+    assert xgi.adjacency_matrix(H).shape == (0, 0)
+    assert xgi.laplacian(H).shape == (0, 0)
