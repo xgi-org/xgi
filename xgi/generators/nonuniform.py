@@ -351,11 +351,11 @@ def random_simplicial_complex(N, ps):
             if seed.random() <= p:
                 simplices.append(simplex)
 
-    S = xgi.Simplicialcomplex()
+    S = xgi.SimplicialComplex()
     S.add_nodes_from(nodes)
-    S.add_edges_from(simplices)
+    S.add_simplices_from(simplices)
 
-    return H
+    return S
 
 
 @py_random_state(2)
@@ -396,8 +396,8 @@ def random_maximal_simplicial_complex_d2(N, p, seed=None):
 
     simplices = edges + triad_cliques
 
-    S = xgi.Simplicialcomplex()
+    S = xgi.SimplicialComplex()
     S.add_nodes_from(nodes)
-    S.add_edges_from(simplices)
+    S.add_simplices_from(simplices)
 
     return S
