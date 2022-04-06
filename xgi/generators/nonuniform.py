@@ -4,6 +4,7 @@ import warnings
 from collections import defaultdict
 from itertools import combinations
 
+import networkx as nx
 import numpy as np
 import xgi
 from xgi.utils import py_random_state
@@ -300,7 +301,7 @@ def random_hypergraph(N, ps, seed=None):
 
 
 @py_random_state(2)
-def random_simplicial_complex(N, ps):
+def random_simplicial_complex(N, ps, seed=None):
     """Generates a random hypergraph
 
     Generate N nodes, and connect any d+1 nodes
