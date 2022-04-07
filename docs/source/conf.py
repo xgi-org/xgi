@@ -82,6 +82,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
+    "sphinx_copybutton",
 ]
 
 # Automatically generate stub pages when using the .. autosummary directive
