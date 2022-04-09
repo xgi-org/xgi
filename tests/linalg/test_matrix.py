@@ -89,7 +89,7 @@ def test_incidence_matrix(edgelist1, edgelist3, edgelist4):
     assert type(data) == csr_matrix
 
     H7 = xgi.empty_hypergraph()
-    H7.add_nodes_from(range(8)) # disconnected node 0
+    H7.add_nodes_from(range(8))  # disconnected node 0
     H7.add_edges_from(el1)
 
     I7_sparse = xgi.incidence_matrix(H7, order=None, sparse=True)
