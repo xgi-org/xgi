@@ -73,12 +73,20 @@ def incidence_matrix(
             rows = []
             cols = []
             data = []
-            for edge in edge_ids:
-                members = H.edges.members(edge)
-                for node in members:
-                    data.append(weight(node, edge, H))
-                    rows.append(node_dict[node])
-                    cols.append(edge_dict[edge])
+            for node in node_ids:
+                memberships = H.nodes.memberships(node)
+                # keep only those with right order
+                memberships = [i for i in memberships if i in edge_ids]
+                if len(memberships) > 0:
+                    for edge in memberships:
+                        data.append(weight(node, edge, H))
+                        rows.append(node_dict[node])
+                        cols.append(edge_dict[edge])
+                else:  # include disconnected nodes
+                    for edge in edge_ids:
+                        data.append(0)
+                        rows.append(node_dict[node])
+                        cols.append(edge_dict[edge])
             I = csr_matrix((data, (rows, cols)))
         else:
             # Create an np.matrix

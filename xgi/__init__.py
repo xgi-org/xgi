@@ -1,6 +1,15 @@
 import pkg_resources
 
-from xgi import algorithms, classes, convert, drawing, generators, linalg, readwrite, utils
+from xgi import (
+    algorithms,
+    classes,
+    convert,
+    drawing,
+    generators,
+    linalg,
+    readwrite,
+    utils,
+)
 from xgi.algorithms import *
 from xgi.classes import *
 from xgi.convert import *
@@ -11,4 +20,3 @@ from xgi.readwrite import *
 
 
 __version__ = pkg_resources.require("xgi")[0].version
-

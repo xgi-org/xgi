@@ -10,8 +10,7 @@ from copy import deepcopy
 import numpy as np
 import xgi
 import xgi.convert as convert
-from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
-                                     NodeView)
+from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
 from xgi.exception import XGIError
 from xgi.utils import XGICounter
 
@@ -254,7 +253,10 @@ class Hypergraph:
         if include_self:
             return [self.edges.members(e) for e in self.nodes.memberships(n)]
         else:
-            return [[x for x in self.edges.members(e) if x != n] for e in self.nodes.memberships(n)]
+            return [
+                [x for x in self.edges.members(e) if x != n]
+                for e in self.nodes.memberships(n)
+            ]
 
     def add_node(self, node_for_adding, **attr):
         """Add a single node `node_for_adding` and update node attributes.
@@ -1133,12 +1135,12 @@ class Hypergraph:
         Parameters
         ----------
         d : int
-            Desired order 
+            Desired order
         """
         return {
             id_: self._edge[id_]
             for id_, size in dict(self.edge_size).items()
-            if size == d+1
+            if size == d + 1
         }
 
     def is_possible_order(self, d):
@@ -1215,7 +1217,7 @@ class Hypergraph:
 
     def duplicate_edges(self):
         """A list of all duplicate edges.
-        
+
         See also
         --------
         remove_duplicates
