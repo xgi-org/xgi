@@ -19,8 +19,8 @@ class Hypergraph:
     elements of :math:`E` are called *hyperedges* or simply *edges*.
 
     The Hypergraph class allows any hashable object as a node and can associate
-    arbitrary key/value attribute pairs with each undirected node, edge, or the
-    hypergraph itself.
+    attributes to each node, edge, or the hypergraph itself, in the form of key/value
+    pairs.
 
     Multiedges and self-loops are allowed.
 
@@ -37,7 +37,7 @@ class Hypergraph:
         * Scipy/Numpy incidence matrix
         * Hypergraph object.
 
-    attr : keyword arguments, optional (default: None)
+    **attr : dict, optional, default: None
         Attributes to add to the hypergraph as key, value pairs.
 
     Notes
@@ -62,19 +62,16 @@ class Hypergraph:
     hypergraph_attr_dict_factory = dict
 
     def __init__(self, incoming_data=None, **attr):
-        """Initialize with arbitrary data and attributes."""
         self._edge_uid = XGICounter()
-
         self._hypergraph = self.hypergraph_attr_dict_factory()
-        self._node = self.node_dict_factory()  # empty node attribute dict
+        self._node = self.node_dict_factory()
         self._node_attr = self.node_attr_dict_factory()
         self._edge = self.hyperedge_dict_factory()
-        self._edge_attr = self.hyperedge_attr_dict_factory()  # empty adjacency dict
-        # attempt to load graph with data
+        self._edge_attr = self.hyperedge_attr_dict_factory()
+
         if incoming_data is not None:
             convert.convert_to_hypergraph(incoming_data, create_using=self)
-        # load hypergraph attributes (must be after convert)
-        self._hypergraph.update(attr)
+        self._hypergraph.update(attr) # must be after convert
 
     def __str__(self):
         """Returns a short summary of the hypergraph.
@@ -83,13 +80,6 @@ class Hypergraph:
         -------
         string
             Hypergraph information
-
-        Examples
-        --------
-        >>> import xgi
-        >>> H = xgi.Hypergraph(name="foo")
-        >>> str(H)
-        "Hypergraph named 'foo' with 0 nodes and 0 edges"
 
         """
         try:
@@ -135,7 +125,9 @@ class Hypergraph:
 
         See Also
         --------
-        num_nodes: identical method
+        num_nodes : identical method
+        num_edges : number of edges in the hypergraph
+
         """
         return len(self._node)
 
@@ -161,7 +153,6 @@ class Hypergraph:
 
         See Also
         --------
-        __len__: identical method
         num_edges : returns the number of edges in the hypergraph
 
         Examples
@@ -171,6 +162,7 @@ class Hypergraph:
         >>> H = xgi.Hypergraph(hyperedge_list)
         >>> H.num_nodes
         4
+
         """
         return len(self._node)
 
@@ -194,6 +186,7 @@ class Hypergraph:
         >>> H = xgi.Hypergraph(hyperedge_list)
         >>> H.num_edges
         2
+
         """
         return len(self._edge)
 
@@ -224,17 +217,16 @@ class Hypergraph:
         {1, 3, 4}
 
         """
-        if n in self._node:
-            return {i for e in self._node[n] for i in self._edge[e]}.difference({n})
-        else:
+        if n not in self._node:
             raise XGIError("Invalid node ID.")
+        return {i for e in self._node[n] for i in self._edge[e]}.difference({n})
 
-    def add_node(self, node_for_adding, **attr):
+    def add_node(self, node, **attr):
         """Add a node with optional attributes.
 
         Parameters
         ----------
-        node_for_adding : node
+        node : node
             A node can be any hashable Python object except None.
         attr : keyword arguments, optional
             Set or change node attributes using key=value.
@@ -242,13 +234,18 @@ class Hypergraph:
         See Also
         --------
         add_nodes_from
+
+        Notes
+        -----
+        If node is already in the hypergraph, its attributes are still updated.
+
         """
-        if node_for_adding not in self._node:
-            if node_for_adding is None:
+        if node not in self._node:
+            if node is None:
                 raise ValueError("None cannot be a node")
-            self._node[node_for_adding] = list()
-            self._node_attr[node_for_adding] = self.node_attr_dict_factory()
-        self._node_attr[node_for_adding].update(attr)
+            self._node[node] = []
+            self._node_attr[node] = self.node_attr_dict_factory()
+        self._node_attr[node].update(attr)
 
     def add_nodes_from(self, nodes_for_adding, **attr):
         """Add multiple nodes with optional attributes.
@@ -282,7 +279,7 @@ class Hypergraph:
             if newnode:
                 if n is None:
                     raise ValueError("None cannot be a node")
-                self._node[n] = list()
+                self._node[n] = []
                 self._node_attr[n] = self.node_attr_dict_factory()
             self._node_attr[n].update(newdict)
 
