@@ -105,3 +105,18 @@ def bipartite_graph4():
     G.add_nodes_from(["a", "b", "c"], bipartite=1)
     G.add_edges_from([(1, "a"), ("a", "b"), (2, "b"), (2, "c"), (3, "c"), (4, "a")])
     return G
+
+
+@pytest.fixture
+def attr1():
+    return {'color': 'red', 'name': 'horse'}
+
+
+@pytest.fixture
+def attr2():
+    return {'color': 'blue', 'name': 'pony'}
+
+
+@pytest.fixture
+def attr3():
+    return {'color': 'yellow', 'name': 'zebra'}
