@@ -1,7 +1,6 @@
 import numpy as np
-from scipy.sparse import csr_matrix
-
 import xgi
+from scipy.sparse import csr_matrix
 
 
 def test_incidence_matrix(edgelist1, edgelist3, edgelist4):
@@ -53,30 +52,94 @@ def test_incidence_matrix(edgelist1, edgelist3, edgelist4):
     assert I3[node_dict3[5], edge_dict3[2]] == 1
 
     I4, node_dict, edge_dict = xgi.incidence_matrix(H1, index=True, sparse=False)
-    node_dict1 = {k: v for v, k in node_dict.items()}
-    edge_dict1 = {k: v for v, k in edge_dict.items()}
+    node_dict4 = {k: v for v, k in node_dict.items()}
+    edge_dict4 = {k: v for v, k in edge_dict.items()}
 
-    assert I4[node_dict1[1], edge_dict1[0]] == 1
-    assert I4[node_dict1[2], edge_dict1[0]] == 1
-    assert I4[node_dict1[3], edge_dict1[0]] == 1
-    assert I4[node_dict1[4], edge_dict1[1]] == 1
-    assert I4[node_dict1[5], edge_dict1[2]] == 1
-    assert I4[node_dict1[6], edge_dict1[2]] == 1
-    assert I4[node_dict1[6], edge_dict1[3]] == 1
-    assert I4[node_dict1[7], edge_dict1[3]] == 1
-    assert I4[node_dict1[8], edge_dict1[3]] == 1
+    assert I4[node_dict4[1], edge_dict4[0]] == 1
+    assert I4[node_dict4[2], edge_dict4[0]] == 1
+    assert I4[node_dict4[3], edge_dict4[0]] == 1
+    assert I4[node_dict4[4], edge_dict4[1]] == 1
+    assert I4[node_dict4[5], edge_dict4[2]] == 1
+    assert I4[node_dict4[6], edge_dict4[2]] == 1
+    assert I4[node_dict4[6], edge_dict4[3]] == 1
+    assert I4[node_dict4[7], edge_dict4[3]] == 1
+    assert I4[node_dict4[8], edge_dict4[3]] == 1
 
     I5, node_dict, edge_dict = xgi.incidence_matrix(
         H1, index=True, weight=lambda node, edge, H: 3
     )
-    node_dict4 = {k: v for v, k in node_dict.items()}
-    edge_dict4 = {k: v for v, k in edge_dict.items()}
-    assert I5[node_dict4[1], edge_dict4[0]] == 3
+    node_dict5 = {k: v for v, k in node_dict.items()}
+    edge_dict5 = {k: v for v, k in edge_dict.items()}
+    assert I5[node_dict5[1], edge_dict5[0]] == 3
     unique_entries = np.unique(np.ravel(I5.todense())).tolist()
     assert unique_entries == [0, 3]
 
-    data = xgi.adjacency_matrix(H1)
+    I6, node_dict, edge_dict = xgi.incidence_matrix(H1, index=True, order=2)
+    node_dict6 = {k: v for v, k in node_dict.items()}
+    edge_dict6 = {k: v for v, k in edge_dict.items()}
+
+    assert I6[node_dict6[1], edge_dict6[0]] == 1
+    assert I6[node_dict6[2], edge_dict6[0]] == 1
+    assert I6[node_dict6[3], edge_dict6[0]] == 1
+    assert I6[node_dict6[6], edge_dict6[3]] == 1
+    assert I6[node_dict6[7], edge_dict6[3]] == 1
+    assert I6[node_dict6[8], edge_dict6[3]] == 1
+
+    data = xgi.incidence_matrix(H1)
     assert type(data) == csr_matrix
+
+    H7 = xgi.empty_hypergraph()
+    H7.add_nodes_from(range(8))  # disconnected node 0
+    H7.add_edges_from(el1)
+
+    I7_sparse = xgi.incidence_matrix(H7, order=None, sparse=True)
+    I7 = xgi.incidence_matrix(H7, order=None, sparse=False)
+    assert np.all(I7_sparse == I7)
+
+    I7_sparse_1 = xgi.incidence_matrix(H7, order=1, sparse=True)
+    I7_1 = xgi.incidence_matrix(H7, order=1, sparse=False)
+    assert np.all(I7_sparse_1 == I7_1)
+
+    I7_sparse_2 = xgi.incidence_matrix(H7, order=2, sparse=True)
+    I7_2 = xgi.incidence_matrix(H7, order=2, sparse=False)
+    assert np.all(I7_sparse_2 == I7_2)
+
+
+def test_degree_matrix(edgelist1):
+    el1 = edgelist1
+    H1 = xgi.Hypergraph(el1)
+
+    K, node_dict = xgi.degree_matrix(H1, order=None, index=True)
+    node_dict = {k: v for v, k in node_dict.items()}
+    assert K.shape == (8,)
+
+    assert K[node_dict[1]] == 1
+    assert K[node_dict[2]] == 1
+    assert K[node_dict[3]] == 1
+    assert K[node_dict[4]] == 1
+    assert K[node_dict[5]] == 1
+    assert K[node_dict[6]] == 2
+    assert K[node_dict[7]] == 1
+    assert K[node_dict[8]] == 1
+
+    K1, node_dict1 = xgi.degree_matrix(H1, order=1, index=True)
+    node_dict1 = {k: v for v, k in node_dict1.items()}
+    assert K1.shape == (8,)
+
+    assert K1[node_dict[1]] == 0
+    assert K1[node_dict[2]] == 0
+    assert K1[node_dict[3]] == 0
+    assert K1[node_dict[4]] == 0
+    assert K1[node_dict[5]] == 1
+    assert K1[node_dict[6]] == 1
+    assert K1[node_dict[7]] == 0
+    assert K1[node_dict[8]] == 0
+
+    K3, node_dict3 = xgi.degree_matrix(H1, order=3, index=True)
+    node_dict3 = {k: v for v, k in node_dict3.items()}
+    assert K3.shape == (8,)
+    for i in range(8):
+        assert K3[i] == 0
 
 
 def test_adjacency_matrix(edgelist1, edgelist4):
@@ -125,6 +188,148 @@ def test_adjacency_matrix(edgelist1, edgelist4):
     assert A2[node_dict2[2], node_dict2[5]] == 0
     assert A2[node_dict2[1], node_dict2[5]] == 0
 
+    A3, node_dict3 = xgi.adjacency_matrix(H1, index=True, order=1)
+    node_dict3 = {k: v for v, k in node_dict3.items()}
+
+    for i in range(np.size(A3, axis=0)):
+        assert A3[i, i] == 0
+
+    assert np.all((A3.T == A3).todense())
+
+    assert A3[node_dict3[5], node_dict3[6]] == 1
+    assert A3[node_dict3[1], node_dict3[2]] == 0
+    assert A3[node_dict3[1], node_dict3[3]] == 0
+    assert A3[node_dict3[1], node_dict3[4]] == 0
+    assert A3[node_dict3[1], node_dict3[5]] == 0
+    assert A3[node_dict3[1], node_dict3[6]] == 0
+    assert A3[node_dict3[2], node_dict3[3]] == 0
+    assert A3[node_dict3[2], node_dict3[4]] == 0
+    assert A3[node_dict3[2], node_dict3[5]] == 0
+    assert A3[node_dict3[2], node_dict3[6]] == 0
+    assert A3[node_dict3[3], node_dict3[4]] == 0
+    assert A3[node_dict3[3], node_dict3[5]] == 0
+    assert A3[node_dict3[3], node_dict3[6]] == 0
+    assert A3[node_dict3[4], node_dict3[5]] == 0
+    assert A3[node_dict3[4], node_dict3[6]] == 0
+
+    A4, node_dict4 = xgi.adjacency_matrix(H1, index=True, order=2)
+    node_dict4 = {k: v for v, k in node_dict4.items()}
+
+    for i in range(np.size(A4, axis=0)):
+        assert A4[i, i] == 0
+
+    assert np.all((A4.T == A4).todense())
+
+    assert A4[node_dict4[6], node_dict4[7]] == 1
+    assert A4[node_dict4[6], node_dict4[8]] == 1
+    assert A4[node_dict4[7], node_dict4[8]] == 1
+    assert A4[node_dict4[1], node_dict4[2]] == 1
+    assert A4[node_dict4[1], node_dict4[3]] == 1
+    assert A4[node_dict4[1], node_dict4[4]] == 0
+    assert A4[node_dict4[1], node_dict4[5]] == 0
+    assert A4[node_dict4[1], node_dict4[6]] == 0
+    assert A4[node_dict4[2], node_dict4[3]] == 1
+    assert A4[node_dict4[2], node_dict4[4]] == 0
+    assert A4[node_dict4[2], node_dict4[5]] == 0
+    assert A4[node_dict4[2], node_dict4[6]] == 0
+    assert A4[node_dict4[3], node_dict4[4]] == 0
+    assert A4[node_dict4[3], node_dict4[5]] == 0
+    assert A4[node_dict4[3], node_dict4[6]] == 0
+    assert A4[node_dict4[4], node_dict4[5]] == 0
+    assert A4[node_dict4[4], node_dict4[6]] == 0
+
+
+def test_laplacian(edgelist2, edgelist6):
+    el1 = edgelist6
+    H1 = xgi.Hypergraph(el1)
+    el2 = edgelist2
+    H2 = xgi.Hypergraph(el2)
+
+    L1, node_dict1 = xgi.laplacian(H1, order=2, index=True)
+    node_dict1 = {k: v for v, k in node_dict1.items()}
+
+    assert L1[node_dict1[0], node_dict1[0]] == 2
+    assert L1[node_dict1[1], node_dict1[1]] == 4
+    assert L1[node_dict1[2], node_dict1[2]] == 6
+    assert L1[node_dict1[3], node_dict1[3]] == 4
+    assert L1[node_dict1[4], node_dict1[4]] == 2
+    assert np.all((L1.T == L1))
+    assert L1[node_dict1[0], node_dict1[1]] == -1
+    assert L1[node_dict1[0], node_dict1[2]] == -1
+    assert L1[node_dict1[0], node_dict1[3]] == 0
+    assert L1[node_dict1[0], node_dict1[4]] == 0
+    assert L1[node_dict1[1], node_dict1[2]] == -2
+    assert L1[node_dict1[1], node_dict1[3]] == -1
+    assert L1[node_dict1[1], node_dict1[4]] == 0
+    assert L1[node_dict1[2], node_dict1[3]] == -2
+    assert L1[node_dict1[2], node_dict1[4]] == -1
+    assert L1[node_dict1[3], node_dict1[4]] == -1
+
+    L2, node_dict2 = xgi.laplacian(H1, order=2, index=True, rescale_per_node=True)
+    node_dict2 = {k: v for v, k in node_dict2.items()}
+
+    assert L2[node_dict2[0], node_dict2[0]] == 1
+    assert L2[node_dict2[1], node_dict2[1]] == 2
+    assert L2[node_dict2[2], node_dict2[2]] == 3
+    assert L2[node_dict2[3], node_dict2[3]] == 2
+    assert L2[node_dict2[4], node_dict2[4]] == 1
+    assert np.all((L2.T == L2))
+    assert L2[node_dict2[0], node_dict2[1]] == -0.5
+    assert L2[node_dict2[0], node_dict2[2]] == -0.5
+    assert L2[node_dict2[0], node_dict2[3]] == 0
+    assert L2[node_dict2[0], node_dict2[4]] == 0
+    assert L2[node_dict2[1], node_dict2[2]] == -1
+    assert L2[node_dict2[1], node_dict2[3]] == -0.5
+    assert L2[node_dict2[1], node_dict2[4]] == 0
+    assert L2[node_dict2[2], node_dict2[3]] == -1
+    assert L2[node_dict2[2], node_dict2[4]] == -0.5
+    assert L2[node_dict2[3], node_dict2[4]] == -0.5
+
+    L3, node_dict3 = xgi.laplacian(H2, order=1, index=True)
+    node_dict3 = {k: v for v, k in node_dict3.items()}
+
+    assert np.all((L3.T == L3))
+    assert L3[node_dict3[1], node_dict3[1]] == 1
+    assert L3[node_dict3[2], node_dict3[2]] == 1
+    assert L3[node_dict3[3], node_dict3[3]] == 1
+    assert L3[node_dict3[4], node_dict3[4]] == 1
+    assert L3[node_dict3[5], node_dict3[5]] == 0
+    assert L3[node_dict3[6], node_dict3[6]] == 0
+
+    assert L3[node_dict3[1], node_dict3[2]] == -1
+    assert L3[node_dict3[1], node_dict3[3]] == 0
+    assert L3[node_dict3[1], node_dict3[4]] == 0
+    assert L3[node_dict3[2], node_dict3[3]] == 0
+    assert L3[node_dict3[2], node_dict3[4]] == 0
+    assert L3[node_dict3[3], node_dict3[4]] == -1
+
+
+def test_intersection_profile(edgelist2):
+    el1 = edgelist2
+    H1 = xgi.Hypergraph(el1)
+
+    P, edge_dict = xgi.intersection_profile(H1, index=True)
+    edge_dict = {k: v for v, k in edge_dict.items()}
+
+    assert P[edge_dict[0], edge_dict[0]] == 2
+    assert P[edge_dict[1], edge_dict[1]] == 2
+    assert P[edge_dict[2], edge_dict[2]] == 3
+    assert P[edge_dict[0], edge_dict[1]] == 0
+    assert P[edge_dict[0], edge_dict[2]] == 0
+    assert P[edge_dict[1], edge_dict[2]] == 1
+
+    P1, edge_dict1 = xgi.intersection_profile(H1, order=1, index=True)
+    edge_dict1 = {k: v for v, k in edge_dict1.items()}
+
+    assert P1[edge_dict1[0], edge_dict1[0]] == 2
+    assert P1[edge_dict1[1], edge_dict1[1]] == 2
+    assert P1[edge_dict1[0], edge_dict1[1]] == 0
+
+    P2, edge_dict2 = xgi.intersection_profile(H1, order=2, index=True)
+    edge_dict2 = {k: v for v, k in edge_dict2.items()}
+
+    assert P2[edge_dict2[2], edge_dict2[2]] == 3
+
 
 def test_clique_motif_matrix(edgelist4):
     H1 = xgi.Hypergraph(edgelist4)
@@ -146,3 +351,19 @@ def test_clique_motif_matrix(edgelist4):
     assert W1[node_dict1[2], node_dict1[5]] == 1
     assert W1[node_dict1[3], node_dict1[4]] == 2
     assert W1[node_dict1[5], node_dict1[1]] == 0
+
+
+def test_empty_order(edgelist6):
+    H = xgi.Hypergraph(edgelist6)
+    I, _, _ = xgi.incidence_matrix(H, order=1, index=True)
+    A, _ = xgi.adjacency_matrix(H, order=1, index=True)
+    assert I.shape == (0,)
+    assert A.shape == (5, 5)
+
+
+def test_empty():
+    H = xgi.Hypergraph([])
+    assert xgi.incidence_matrix(H).shape == (0,)
+    assert xgi.adjacency_matrix(H).shape == (0, 0)
+    assert xgi.laplacian(H).shape == (0, 0)
+    assert xgi.clique_motif_matrix(H).shape == (0,)

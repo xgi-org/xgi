@@ -2,18 +2,12 @@
 
 ## Index
 
-- [`default.txt`](default.txt)
-  Default requirements
-- [`example.txt`](example.txt)
-  Requirements for gallery examples
-- [`test.txt`](test.txt)
-  Requirements for running test suite
-- [`doc.txt`](doc.txt)
-  Requirements for building the documentation (see `../doc/`)
-- [`developer.txt`](developer.txt)
-  Requirements for developers
-- [`release.txt`](release.txt)
-  Requirements for making releases
+- `default.txt`: Default requirements
+- `tutorial.txt`: Requirements for running the Jupyter Notebooks with the examples
+- `test.txt`: Requirements for running test suite
+- `documentation.txt`: Requirements for building the documentation (see `../docs/`)
+- `developer.txt`: Requirements for developers
+- `release.txt`: Requirements for making releases
 
 ## Examples
 

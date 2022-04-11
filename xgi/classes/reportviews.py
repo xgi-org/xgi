@@ -109,7 +109,6 @@ class IDView(Mapping, Set):
         self._id_attrs = id_attrs
 
     # Mapping methods
-    # Mapping methods
     def __len__(self):
         """Return the number of IDs
         Returns
@@ -150,8 +149,8 @@ class IDView(Mapping, Set):
         """
         try:
             return self._id_attrs[id]
-        except KeyError:
-            raise XGIError(f"The ID {id} is not in the hypergraph")
+        except KeyError as e:
+            raise XGIError(f"The ID {id} is not in the hypergraph") from e
         except:
             if isinstance(id, slice):
                 raise XGIError(
