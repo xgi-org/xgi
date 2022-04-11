@@ -1,5 +1,7 @@
-import pytest
 import tempfile
+
+import pytest
+
 import xgi
 
 edgelist_spaces_string = """# comment line

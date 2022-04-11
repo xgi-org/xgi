@@ -1,7 +1,8 @@
+import numpy as np
 import pytest
+
 import xgi
 from xgi.exception import XGIError
-import numpy as np
 
 
 def test_id_degree_view(edgelist1, edgelist4):

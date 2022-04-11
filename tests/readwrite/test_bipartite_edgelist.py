@@ -1,5 +1,7 @@
-import pytest
 import tempfile
+
+import pytest
+
 import xgi
 
 bipartite_edgelist_spaces_string = """0 0

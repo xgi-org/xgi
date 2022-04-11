@@ -1,8 +1,8 @@
 import json
+
 import xgi
 from xgi.exception import XGIError
 from xgi.utils.utilities import get_dual
-
 
 __all__ = ["write_hypergraph_json", "read_hypergraph_json"]
 

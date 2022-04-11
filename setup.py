@@ -1,6 +1,7 @@
-from setuptools import setup
-import setuptools
 import sys
+
+import setuptools
+from setuptools import setup
 
 __version__ = "0.2"
 

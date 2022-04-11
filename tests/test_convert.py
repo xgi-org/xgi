@@ -1,6 +1,7 @@
-import xgi
 import networkx as nx
 import pytest
+
+import xgi
 from xgi.exception import XGIError
 
 

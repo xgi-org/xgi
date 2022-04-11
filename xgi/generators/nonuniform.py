@@ -3,9 +3,10 @@ import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
-import numpy as np
-import xgi
 
+import numpy as np
+
+import xgi
 
 __all__ = [
     "chung_lu_hypergraph",

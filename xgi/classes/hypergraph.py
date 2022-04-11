@@ -9,7 +9,8 @@ from copy import deepcopy
 
 import xgi
 import xgi.convert as convert
-from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
+from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
+                                     NodeView)
 from xgi.exception import XGIError
 from xgi.utils import XGICounter
 
