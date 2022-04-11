@@ -7,6 +7,7 @@ __all__ = [
     "intersection_profile",
     "degree_matrix",
     "laplacian",
+    "multiorder_laplacian",
     "clique_motif_matrix",
 ]
 
@@ -278,6 +279,64 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
         return L, row_dict
     else:
         return L
+
+
+def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False):
+    """Multiorder Laplacian matrix, see [1]_.
+
+    Parameters
+    ----------
+    HG : horss.HyperGraph
+        Hypergraph
+    orders : list of int
+        Orders of interactions to consider.
+    weights: list of float
+        Weight of each order, i.e coupling strenghts gamma_i in [1]_.
+    rescale_per_node: bool, (default=False)
+        Whether to rescale each Laplacian of order d by d (per node).
+    index: bool, default: False
+        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+
+    Returns
+    -------
+    L_multi : numpy array
+        Array of dim (N, N)
+    if index is True:
+        return rowdict
+
+    See also
+    --------
+    laplacian
+
+    Examples
+    --------
+        >>> import xgi
+        >>> N = 100
+        >>> ps = [0.1, 0.01]
+        >>> H = xgi.random_hypergraph(N, ps)
+        >>> L = xgi.multiorder_laplacian(H, orders=[1,2], weights=[0.7, 0.3])
+
+    References
+    ----------
+    .. [1] Lucas, M., Cencetti, G., & Battiston, F. (2020).
+        Multiorder Laplacian for synchronization in higher-order networks.
+        Physical Review Research, 2(3), 033410.
+
+    """
+
+    Ls = [laplacian(H, order=i, rescale_per_node=rescale_per_node) for i in orders]
+    Ks = [degree_matrix(H, order=i) for i in orders]
+
+    L_multi = 0
+    for L, K, w in zip(Ls, Ks, weights):
+        L_multi += L * w / np.mean(K)
+
+    _, rowdict, _ = incidence_matrix(H, index=True)  # get index
+
+    if index:
+        return L_multi, rowdict
+    else:
+        return L_multi
 
 
 def clique_motif_matrix(H, index=False):
