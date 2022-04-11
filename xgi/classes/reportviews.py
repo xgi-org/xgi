@@ -57,8 +57,8 @@ EdgeSizeView
     The EdgeSizeView can still look up any node even if nbunch is specified.
 """
 from collections.abc import Mapping, Set
-import xgi
 from xgi.exception import XGIError
+import numpy as np
 
 __all__ = [
     "NodeView",
@@ -208,7 +208,16 @@ class IDDegreeView:
 
     __slots__ = ("_ids", "_id_attrs", "_weight")
 
-    def __init__(self, ids, id_attrs, id_bunch=None, weight=None):
+    def __init__(
+        self,
+        ids,
+        id_attrs,
+        neighbor_ids,
+        id_bunch=None,
+        weight=None,
+        order=None,
+        dtype="dict",
+    ):
         """Initialize the DegreeView object
         Parameters
         ----------
@@ -216,25 +225,41 @@ class IDDegreeView:
             A dictionary with IDs as keys and a list of bipartite relations
             as values
         id_attrs : dict
-            A dictionary with IDs as keys and a dictionary of properties as values.
-            Used to weight the degree.
+            A dictionary with IDs as keys and a dictionary
+            of properties as values. Used to weight the degree.
+        neighbor_ids : dict
+            A dictionary with neighboring IDs as keys and
+            a list of bipartite neighbors as values. Used when the degree order
+            is specified.
         nbunch : ID, container of IDs, or None meaning all IDs (default=None)
             The IDs for which to find the degree
         weight : hashable, optional
             The name of the attribute to weight the degree, by default None.
+        order : int, default: None
+            Specifies the size of the neighbors for which
+            the degree should be computed.
+        dtype : str, default : dict
+            Specifies the data type when __getitem__ is called. Valid choices are
+            dict, list, or nparray.
+
         """
         self._id_attrs = id_attrs
+        self._neighbor_ids = neighbor_ids
         self._weight = weight
+        self._order = order
+        self._dtype = dtype
 
         if id_bunch is None:
             self._ids = ids
-        elif id_bunch in self._ids:
-            self._ids = {id_bunch: ids[id_bunch]}
+        elif isinstance(id_bunch, int):
+            # the user specified ID may not be
+            if id_bunch in ids:
+                self._ids = {id_bunch: ids[id_bunch]}
+            else:
+                raise XGIError("ID does not exist in the hypergraph!")
         else:
             self._ids = {id: val for id, val in ids.items() if id in id_bunch}
 
-        self._id_attrs = id_attrs
-        self._weight = weight
         self._deg = self._get_degrees()
 
     def __getitem__(self, id_bunch):
@@ -248,11 +273,17 @@ class IDDegreeView:
         float
             The degree of an ID, weighted or unweighted
         """
+
         try:
             return self._deg[id_bunch]
         except:
             try:
-                return {id: deg for id, deg in self if id in id_bunch}
+                if self._dtype == "dict":
+                    return {id: deg for id, deg in self if id in id_bunch}
+                elif self._dtype == "list":
+                    return [deg for id, deg in self if id in id_bunch]
+                elif self._dtype == "nparray":
+                    return np.array([deg for id, deg in self if id in id_bunch])
             except:
                 raise XGIError("Invalid ID or combination of IDs specified!")
 
@@ -297,14 +328,28 @@ class IDDegreeView:
 
     def _get_degrees(self):
         degrees = dict()
-        if self._weight is None:
-            for id, memberships in self._ids.items():
-                degrees[id] = len(memberships)
+        if self._order is None:
+            if self._weight is None:
+                for id, nbrs in self._ids.items():
+                    degrees[id] = len(nbrs)
+            else:
+                for id, nbrs in self._ids.items():
+                    degrees[id] = sum(
+                        self._id_attrs[dd].get(self._weight, 1) for dd in nbrs
+                    )
         else:
-            for id, memberships in self._ids.items():
-                degrees[id] = sum(
-                    self._id_attrs[dd].get(self._weight, 1) for dd in memberships
-                )
+            if self._weight is None:
+                for id, nbrs in self._ids.items():
+                    degrees[id] = len(
+                        [i for i in nbrs if len(self._neighbor_ids[i]) == self._order]
+                    )
+            else:
+                for id, nbrs in self._ids.items():
+                    degrees[id] = sum(
+                        self._id_attrs[i].get(self._weight, 1)
+                        for i in nbrs
+                        if len(self._neighbor_ids[i]) == self._order
+                    )
         return degrees
 
 
@@ -400,9 +445,15 @@ class DegreeView(IDDegreeView):
     This class inherits all its functionality from IDDegreeView
     """
 
-    def __init__(self, hypergraph, nbunch=None, weight=None):
+    def __init__(self, hypergraph, nbunch=None, weight=None, order=None, dtype="dict"):
         super().__init__(
-            hypergraph._node, hypergraph._edge_attr, id_bunch=nbunch, weight=weight
+            hypergraph._node,
+            hypergraph._edge_attr,
+            hypergraph._edge,
+            id_bunch=nbunch,
+            weight=weight,
+            order=order,
+            dtype=dtype,
         )
 
 
@@ -412,7 +463,12 @@ class EdgeSizeView(IDDegreeView):
     This class inherits all its functionality from IDDegreeView
     """
 
-    def __init__(self, hypergraph, ebunch=None, weight=None):
+    def __init__(self, hypergraph, ebunch=None, weight=None, dtype="dict"):
         super().__init__(
-            hypergraph._edge, hypergraph._node_attr, id_bunch=ebunch, weight=weight
+            hypergraph._edge,
+            hypergraph._node_attr,
+            hypergraph._node,
+            id_bunch=ebunch,
+            weight=weight,
+            dtype=dtype,
         )

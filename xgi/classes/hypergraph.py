@@ -748,7 +748,7 @@ class Hypergraph:
         except KeyError:
             return default
 
-    def degree(self, nbunch=None, weight=None, order=None):
+    def degree(self, nbunch=None, weight=None, order=None, dtype="dict"):
         """A NodeDegreeView for the Hypergraph as H.degree or H.degree().
 
         The degree is the number of edges adjacent to the node.
@@ -760,13 +760,19 @@ class Hypergraph:
 
         Parameters
         ----------
-        nbunch : single node, container, or all nodes (default= all nodes)
-            The view will only report edges incident to these nodes.
-
-        weight : string or None, optional (default=None)
+        nbunch : single node, container, or None, default: None
+            The view will only report edges incident to these nodes. If None
+            is specified, the degree of all nodes is computed.
+        weight : string or None, default: None
            The name of an edge attribute that holds the numerical value used
            as a weight.  If None, then each edge has weight 1.
            The degree is the sum of the edge weights adjacent to the node.
+        order : int or None, default: None
+            The size edges for which to compute the degree. If None is
+            specified, all edges are considered.
+        dtype : str, default: "dict"
+            The datatype to return
+
 
         Returns
         -------
@@ -778,10 +784,15 @@ class Hypergraph:
         DegreeView object
             The degrees of the hypergraph capable of iterating (node, degree) pairs
         """
+
+        degree = DegreeView(
+            self, nbunch=nbunch, weight=weight, order=order, dtype=dtype
+        )
+
         # handles the single node case.
         if nbunch in self:
-            return DegreeView(self, nbunch=nbunch, weight=weight)[nbunch]
-        return DegreeView(self, nbunch=nbunch, weight=weight)
+            return degree[nbunch]
+        return degree
 
     def edge_size(self, ebunch=None, weight=None):
         """A EdgeSizeView for the Hypergraph as H.edge_size or H.edge_size().
@@ -813,6 +824,7 @@ class Hypergraph:
         EdgeSizeView object
             The sizes of the hypergraph edges capable of iterating (edge, size) pairs
         """
+
         if ebunch in self:
             return EdgeSizeView(self, ebunch=ebunch, weight=weight)[ebunch]
         return EdgeSizeView(self, ebunch=ebunch, weight=weight)
