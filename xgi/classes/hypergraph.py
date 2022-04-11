@@ -436,24 +436,21 @@ class Hypergraph:
         edges.
 
         """
-        if edge:
-            uid = self._edge_uid()
-        else:
+        if not members:
             raise XGIError("Cannot add an empty edge.")
-        for node in edge:
+
+        uid = self._edge_uid() if not id else id
+        self._edge[uid] = []
+        for node in members:
             if node not in self._node:
                 if node is None:
                     raise ValueError("None cannot be a node")
-                self._node[node] = list()
+                self._node[node] = []
                 self._node_attr[node] = self.node_attr_dict_factory()
             self._node[node].append(uid)
+            self._edge[uid].append(node)
 
-        try:
-            self._edge[uid] = list(edge)
-            self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
-        except:
-            raise XGIError("The edge cannot be cast to a list.")
-
+        self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
 
     def add_edges_from(self, ebunch_to_add, **attr):
