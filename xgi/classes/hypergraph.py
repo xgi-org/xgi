@@ -794,7 +794,7 @@ class Hypergraph:
             return degree[nbunch]
         return degree
 
-    def edge_size(self, ebunch=None, weight=None):
+    def edge_size(self, ebunch=None, weight=None, dtype="dict"):
         """A EdgeSizeView for the Hypergraph as H.edge_size or H.edge_size().
 
         The edge degree is the number of nodes in that edge, or the edge size.
@@ -806,13 +806,14 @@ class Hypergraph:
 
         Parameters
         ----------
-        nbunch : single edge, container, or all edges (default= all edges)
+        ebunch : single edge, container, or all edges (default= all edges)
             The view will only report sizes of these edges.
-
         weight : string or None, optional (default=None)
            The name of an node attribute that holds the numerical value used
            as a weight.  If None, then each node has weight 1.
            The size is the sum of the node weights adjacent to the edge.
+        dtype : str, default: "dict"
+            The datatype to return
 
         Returns
         -------
@@ -824,10 +825,10 @@ class Hypergraph:
         EdgeSizeView object
             The sizes of the hypergraph edges capable of iterating (edge, size) pairs
         """
-
+        edge_sizes = EdgeSizeView(self, ebunch=ebunch, weight=weight, dtype=dtype)
         if ebunch in self:
-            return EdgeSizeView(self, ebunch=ebunch, weight=weight)[ebunch]
-        return EdgeSizeView(self, ebunch=ebunch, weight=weight)
+            return edge_sizes[ebunch]
+        return edge_sizes
 
     def clear(self):
         """Remove all nodes and edges from the graph.
