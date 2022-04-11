@@ -225,16 +225,13 @@ def degree_matrix(H, order=None, index=False):
     else:
         return K
     """
-
-    if index:
-        I, rowdict, _ = incidence_matrix(H, index=True, order=order)
-    else:
-        I = incidence_matrix(H, index=False, order=order)
+    I, rowdict, _ = incidence_matrix(H, order=order, index=True)
 
     if I.shape == (0,):
-        return np.zeros(H.num_nodes)
+        K = np.zeros(H.num_nodes)
+    else:
+        K = np.ravel(np.sum(I, axis=1))  # flatten
 
-    K = np.sum(I, axis=1)
     return (K, rowdict) if index else K
 
 
@@ -271,7 +268,7 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
 
     K = degree_matrix(H, order=order, index=False)
 
-    L = order * np.diag(np.ravel(K)) - A  # ravel needed to convert sparse matrix
+    L = order * np.diag(K) - A  # ravel needed to convert sparse matrix
     L = np.asarray(L)
 
     if rescale_per_node:

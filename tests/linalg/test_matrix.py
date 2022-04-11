@@ -111,7 +111,7 @@ def test_degree_matrix(edgelist1):
 
     K, node_dict = xgi.degree_matrix(H1, order=None, index=True)
     node_dict = {k: v for v, k in node_dict.items()}
-    assert K.shape == (8,1)
+    assert K.shape == (8,)
 
     assert K[node_dict[1]] == 1
     assert K[node_dict[2]] == 1
@@ -124,7 +124,7 @@ def test_degree_matrix(edgelist1):
 
     K1, node_dict1 = xgi.degree_matrix(H1, order=1, index=True)
     node_dict1 = {k: v for v, k in node_dict1.items()}
-    assert K1.shape == (8,1)
+    assert K1.shape == (8,)
 
     assert K1[node_dict[1]] == 0
     assert K1[node_dict[2]] == 0
@@ -135,9 +135,9 @@ def test_degree_matrix(edgelist1):
     assert K1[node_dict[7]] == 0
     assert K1[node_dict[8]] == 0
 
-    K3, node_dict3 = xgi.degree_matrix(H, order=3, index=True)
+    K3, node_dict3 = xgi.degree_matrix(H1, order=3, index=True)
     node_dict3 = {k: v for v, k in node_dict3.items()}
-    assert K3.shape == (8,1)
+    assert K3.shape == (8,)
     for i in range(8):
         assert K3[i] == 0
 
