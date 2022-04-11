@@ -4,8 +4,8 @@ import warnings
 from collections import defaultdict
 from itertools import combinations
 
+import networkx as nx
 import numpy as np
-
 import xgi
 from xgi.utils import py_random_state
 
@@ -13,6 +13,8 @@ __all__ = [
     "chung_lu_hypergraph",
     "dcsbm_hypergraph",
     "random_hypergraph",
+    "random_simplicial_complex",
+    "random_maximal_simplicial_complex_d2",
 ]
 
 
@@ -261,7 +263,7 @@ def random_hypergraph(N, ps, seed=None):
     -------
     Hypergraph object
         The generated hypergraph
-    
+
     References
     ----------
     Described as 'random hypergraph' by M. Dewar et al. in https://arxiv.org/abs/1703.07686
@@ -295,3 +297,107 @@ def random_hypergraph(N, ps, seed=None):
     H.add_edges_from(hyperedges)
 
     return H
+
+
+@py_random_state(2)
+def random_simplicial_complex(N, ps, seed=None):
+    """Generates a random hypergraph
+
+    Generate N nodes, and connect any d+1 nodes
+    by a simplex with probability ps[d-1]. For each simplex,
+    add all its subfaces if they do not already exist.
+
+    Parameters
+    ----------
+    N : int
+        Number of nodes
+    ps : list of float
+        List of probabilities (between 0 and 1) to create a
+        hyperedge at each order d between any d+1 nodes. For example,
+        ps[0] is the wiring probability of any edge (2 nodes), ps[1]
+        of any triangles (3 nodes).
+
+    Returns
+    -------
+    Simplicialcomplex object
+        The generated simplicial complex
+
+    References
+    ----------
+    Described as 'random simplicial complex' in
+    "Simplicial Models of Social Contagion", Nature Communications 10(1), 2485,
+    by I. Iacopini, G. Petri, A. Barrat & V. Latora (2019).
+    https://doi.org/10.1038/s41467-019-10431-6
+
+    Example
+    -------
+    >>> import xgi
+    >>> N = 100
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_simplicial_complex(N, ps)
+
+    """
+
+    if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
+        raise ValueError("All elements of ps must be between 0 and 1 included.")
+
+    nodes = range(N)
+    simplices = [[i] for i in nodes]  # add singleton edges
+
+    for i, p in enumerate(ps):
+        d = i + 1  # order, ps[0] is prob of edges (d=1)
+
+        for simplex in combinations(nodes, d + 1):
+            if seed.random() <= p:
+                simplices.append(simplex)
+
+    S = xgi.SimplicialComplex()
+    S.add_nodes_from(nodes)
+    S.add_simplices_from(simplices)
+
+    return S
+
+
+@py_random_state(2)
+def random_maximal_simplicial_complex_d2(N, p, seed=None):
+    """Generate a maximal simplicial complex (up to order 2) from a
+    $G_{N,p}$ Erdős-Rényi random graph by filling all empty triangles with 2-simplices.
+
+    Parameters
+    ----------
+    N : int
+        Number of nodes
+    p : float
+        Probabilities (between 0 and 1) to create an edge
+        between any 2 nodes
+
+    Returns
+    -------
+    hyperedges_final : list of tuples
+        List of hyperedges, i.e. tuples of length 2 and 3.
+
+    Notes
+    -----
+    Computing all cliques quickly becomes heavy for large networks.
+
+    """
+
+    if (p < 0) or (p > 1):
+        raise ValueError("p must be between 0 and 1 included.")
+
+    G = nx.fast_gnp_random_graph(N, p, seed=seed)
+
+    nodes = G.nodes()
+    edges = list(G.edges())
+
+    # compute all triangles to fill
+    all_cliques = list(nx.enumerate_all_cliques(G))
+    triad_cliques = [tuple(x) for x in all_cliques if len(x) == 3]
+
+    simplices = edges + triad_cliques
+
+    S = xgi.SimplicialComplex()
+    S.add_nodes_from(nodes)
+    S.add_simplices_from(simplices)
+
+    return S
