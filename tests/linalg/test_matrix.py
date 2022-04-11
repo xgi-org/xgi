@@ -88,6 +88,22 @@ def test_incidence_matrix(edgelist1, edgelist3, edgelist4):
     data = xgi.incidence_matrix(H1)
     assert type(data) == csr_matrix
 
+    H7 = xgi.empty_hypergraph()
+    H7.add_nodes_from(range(8))  # disconnected node 0
+    H7.add_edges_from(el1)
+
+    I7_sparse = xgi.incidence_matrix(H7, order=None, sparse=True)
+    I7 = xgi.incidence_matrix(H7, order=None, sparse=False)
+    assert np.all(I7_sparse == I7)
+
+    I7_sparse_1 = xgi.incidence_matrix(H7, order=1, sparse=True)
+    I7_1 = xgi.incidence_matrix(H7, order=1, sparse=False)
+    assert np.all(I7_sparse_1 == I7_1)
+
+    I7_sparse_2 = xgi.incidence_matrix(H7, order=2, sparse=True)
+    I7_2 = xgi.incidence_matrix(H7, order=2, sparse=False)
+    assert np.all(I7_sparse_2 == I7_2)
+
 
 def test_degree_matrix(edgelist1):
     el1 = edgelist1
@@ -273,8 +289,12 @@ def test_laplacian(edgelist2, edgelist6):
     node_dict3 = {k: v for v, k in node_dict3.items()}
 
     assert np.all((L3.T == L3))
-    for i in range(np.size(L3, axis=0)):
-        assert L3[i, i] == 1
+    assert L3[node_dict3[1], node_dict3[1]] == 1
+    assert L3[node_dict3[2], node_dict3[2]] == 1
+    assert L3[node_dict3[3], node_dict3[3]] == 1
+    assert L3[node_dict3[4], node_dict3[4]] == 1
+    assert L3[node_dict3[5], node_dict3[5]] == 0
+    assert L3[node_dict3[6], node_dict3[6]] == 0
 
     assert L3[node_dict3[1], node_dict3[2]] == -1
     assert L3[node_dict3[1], node_dict3[3]] == 0
