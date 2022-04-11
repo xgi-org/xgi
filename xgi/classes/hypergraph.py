@@ -11,7 +11,7 @@ __all__ = ["Hypergraph"]
 
 
 class Hypergraph:
-    """A hypergraph is a collection of subsets of a set of *nodes* or *vertices*.
+    r"""A hypergraph is a collection of subsets of a set of *nodes* or *vertices*.
 
     A hypergraph is a pair :math:`(V, E)`, where :math:`V` is a set of elements called
     *nodes* or *vertices*, and :math:`E` is a set whose elements are subsets of
@@ -284,9 +284,7 @@ class Hypergraph:
             self._node_attr[n].update(newdict)
 
     def remove_node(self, n):
-        """Remove a single node.
-
-        Removes the specified node and all adjacent hyperedges.
+        """Remove a single node and all adjacent hyperedges.
 
         Parameters
         ----------
@@ -304,14 +302,14 @@ class Hypergraph:
 
         """
         try:
-            edge_neighbors = self._node[n]  # list handles self-loops (allows mutation)
+            edge_neighbors = self._node[n]
             del self._node[n]
             del self._node_attr[n]
-        except KeyError as e:  # XGIError if n not in self
+        except KeyError as e:
             raise XGIError(f"The node {n} is not in the graph.") from e
         for edge in edge_neighbors:
             self._edge[edge].remove(n)
-            if len(self._edge[edge]) == 0:
+            if not self._edge[edge]:
                 del self._edge[edge]
                 del self._edge_attr[edge]
 
@@ -320,29 +318,16 @@ class Hypergraph:
 
         Parameters
         ----------
-        nodes : iterable container
-            A container of nodes (list, dict, set, etc.).  If a node
-            in the container is not in the graph it is silently
-            ignored.
+        nodes : iterable
+            An iterable of nodes.
 
         See Also
         --------
         remove_node
+
         """
         for n in nodes:
-            try:
-                edge_neighbors = self._node[n]
-                # list handles self-loops (allows mutation)
-                del self._node[n]
-                del self._node_attr[n]
-                for edge in edge_neighbors:
-                    self._edge[edge].remove(n)  # remove all edges n-u in graph
-                    # delete empty edges
-                    if len(self._edge[edge]) == 0:
-                        del self._edge[edge]
-                        del self._edge_attr[edge]
-            except KeyError as e:
-                pass
+            self.remove_node(n)
 
     @property
     def nodes(self):
@@ -358,16 +343,12 @@ class Hypergraph:
             Allows set-like operations over the nodes as well as node
             attribute dict lookup.
 
-            When called, if data is False, an iterator over nodes.
-            Otherwise an iterator of 2-tuples (node, attribute value)
-            where the attribute is specified in `data`.
-            If data is True then the attribute becomes the
-            entire data dictionary.
-
         Notes
         -----
-        If your node data is not needed, it is simpler and equivalent
-        to use the expression ``for n in H``, or ``list(H)``.
+        Membership tests and iterating over nodes can also be done via the hpyergraph.
+        That is, ``n in H.nodes`` is equivalent to ``n in H``, and ``for n in H`` is
+        equivalent to ``for n in H.nodes``.
+
         """
         nodes = NodeView(self)
         # Lazy View creation: overload the (class) property on the instance
@@ -379,7 +360,7 @@ class Hypergraph:
     def has_node(self, n):
         """Whether the specified node is in the hypergraph.
 
-        Identical to `n in H`.
+        Identical to ``n in H`` and ``n in H.nodes``.
 
         Parameters
         ----------
@@ -395,10 +376,10 @@ class Hypergraph:
         >>> import xgi
         >>> hyperedge_list = [[1, 2], [2, 3, 4]]
         >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.has_node(1)
-        True
-        >>> H.has_node(0)
-        False
+        >>> H.has_node(1), 1 in H, 1 in H.nodes
+        True, True, True
+        >>> H.has_node(0), 0 in H, 0 in H.nodes
+        False, False, False
 
         """
         try:
@@ -411,8 +392,8 @@ class Hypergraph:
 
         Parameters
         ----------
-        edge : list or set
-            A container of hashables that specifies an edge
+        edge : Iterable
+            A container of hashables that specifies an edge.
 
         Returns
         -------
@@ -432,16 +413,15 @@ class Hypergraph:
         """
         return set(edge) in (set(self.edges.members(e)) for e in self.edges)
 
-    def add_edge(self, edge, **attr):
+    def add_edge(self, members, id=None, **attr):
         """Add a single edge with optional attributes.
-
-        Edge attributes can be specified with keywords or by directly
-        accessing the edge's attribute dictionary. See examples below.
 
         Parameters
         ----------
-        edge : an container or iterable of hashables
-            A list of node ids
+        members : Iterable
+            An iterable of node ids
+        id : hashable, default None
+            Edge id. If None, a unique numeric ID will be created automatically
         attr : keyword arguments, optional
             Edge data (or labels or objects) can be assigned using
             keyword arguments.
@@ -572,16 +552,13 @@ class Hypergraph:
             node ID
         """
         if edge not in self._edge:
-            self._edge[edge] = [node]
-            self._edge_attr[edge] = self.hyperedge_attr_dict_factory()
-        else:
-            self._edge[edge].append(node)
-
+            self._edge[edge] = []
+            self._edge_attr[edge] = {}
         if node not in self._node:
-            self._node[node] = [edge]
-            self._node_attr[node] = self.node_attr_dict_factory()
-        else:
-            self._node[node].append(edge)
+            self._node[node] = []
+            self._node_attr[node] = {}
+        self._edge[edge].append(node)
+        self._node[node].append(edge)
 
     def remove_edge(self, id):
         """Remove a single edge.
@@ -613,9 +590,8 @@ class Hypergraph:
 
         Parameters
         ----------
-        ebunch: list or container of hashables
-            Each edge id given in the list or container will be removed
-            from the hypergraph.
+        ebunch: Iterable
+            Edges to remove.
 
         See Also
         --------
@@ -624,15 +600,10 @@ class Hypergraph:
         Notes
         -----
         Will fail silently if an edge in ebunch is not in the hypergraph.
+
         """
         for id in ebunch:
-            try:
-                for node in self.edges.members(id):
-                    self._node[node].remove(id)
-                del self._edge[id]
-                del self._edge_attr[id]
-            except:
-                pass
+            self.remove_edge(id)
 
     def remove_node_from_edge(self, edge, node):
         """Remove a node from an existing edge.
@@ -647,40 +618,41 @@ class Hypergraph:
         Raises
         ------
         XGIError
-            Raises an error if the user tries to delete nonexistent nodes or edges.
+            If either the node or edge does not exist.
 
         Notes
         -----
-        Removes empty edges as a result of removing nodes.
+        If edge is left empty as a result of removing node from it, the edge is also
+        removed.
 
         """
         try:
             self._edge[edge].remove(node)
-            self._node[node].remove(edge)
-            if len(self._edge[edge]) == 0:
-                del self._edge[edge]
-                del self._edge_attr[edge]
         except KeyError as e:
-            raise XGIError(f"Edge or node is not in the hypergraph") from e
+            raise XGIError(f"Edge {edge} not in the hypergraph") from e
+        except ValueError as e:
+            raise XGIError(f"Node {node} not in edge {edge}") from e
 
-    def update(self, edges=None, nodes=None):
-        """Update the hypergraph using nodes/edges as input.
+        try:
+            self._node[node].remove(edge)
+        except KeyError as e:
+            raise XGIError(f"Node {node} not in the hypergraph") from e
+        except ValueError as e:
+            raise XGIError(f"Node {node} not in edge {edge}") from e
 
-        Like dict.update, this method takes two inputs: edges and nodes.  It can take
-        either edges or nodes.  To specify only nodes the keyword `nodes` must be used.
+        if not self._edge[edge]:
+            del self._edge[edge]
+            del self._edge_attr[edge]
 
-        The collections of edges and nodes are treated similarly to
-        the add_edges_from/add_nodes_from methods.
+    def update(self, *, edges=None, nodes=None):
+        """Add nodes or edges to the hypergraph.
 
         Parameters
         ----------
-        edges : collection of edges, or None
-            The first parameter is a collection of edges and added to the hypergraph.
-            If the first argument is None, no edges are added.
-        nodes : collection of nodes, or None
-            The second parameter is treated as a collection of nodes
-            to be added to the hypergraph unless it is None.
-            If `edges is None` and `nodes is None` an exception is raised.
+        edges : Iterable | None
+            Edges to be added.
+        nodes : Iterable | None
+            Nodes to be added.
 
         See Also
         --------
@@ -688,12 +660,10 @@ class Hypergraph:
         add_nodes_from: add multiple nodes to a hypergraph
 
         """
-
-        if edges is None and nodes is None:
-            raise XGIError("update needs nodes or edges input")
-
-        self.add_nodes_from(nodes)
-        self.add_edges_from(edges)
+        if nodes:
+            self.add_nodes_from(nodes)
+        if edges:
+            self.add_edges_from(edges)
 
     def has_edge_id(self, id):
         """Whether the edge id is in the hypergraph.
@@ -708,7 +678,8 @@ class Hypergraph:
         Returns
         -------
         bool
-            True if edge is in the hypergraph, False otherwise.
+            Whether the edge is in the hypergraph.
+
         """
         try:
             return id in self._edge
@@ -752,19 +723,18 @@ class Hypergraph:
 
         Parameters
         ----------
-        id : hashable
+        id : Hashable
             edge ID
-        default:  any Python object (default=None)
+        default: Any, default None
             Value to return if the edge ID is not found.
 
         Returns
         -------
         edge_dict : dictionary
             The edge attribute dictionary.
+
         """
         try:
-            # this may fail because the ID may not exist
-            # or the property doesn't exist.
             return self.edges[id]
         except KeyError:
             return default
@@ -838,7 +808,7 @@ class Hypergraph:
     def clear(self):
         """Remove all nodes and edges from the graph.
 
-        This also removes all graph, node, and edge attributes.
+        Also removes all graph, node, and edge attributes.
 
         """
         self._node.clear()
@@ -910,13 +880,8 @@ class Hypergraph:
 
         Returns
         -------
-        Hypergraph object
+        Hypergraph
             The dual of the hypergraph.
-
-        Notes
-        -----
-        This method simply switches the nodes (with their attributes)
-        with the edges (with their attributes) with a deep copy.
 
         """
         dual = self.__class__()
@@ -1107,7 +1072,7 @@ class Hypergraph:
         return d_max
 
     def is_possible_order(self, d):
-        """Whether the specified order is a possible edge order.
+        """Whether the specified order is between 1 and the maximum order.
 
         Parameters
         ----------
@@ -1131,19 +1096,17 @@ class Hypergraph:
 
         """
         return {
-            id_: self._edge[id_]
-            for id_, size in dict(self.edge_size).items()
-            if size == 1
+            id_: members
+            for id_, members in self._edge.items()
+            if len(members) == 1
         }
 
     def remove_singleton_edges(self):
         """Remove all singleton edges."""
-        singleton_ids = [id_ for id_, size in dict(self.edge_size).items() if size == 1]
-        self.remove_edges_from(singleton_ids)
-        return None
+        self.remove_edges_from(self.singleton_edges())
 
     def isolates(self, ignore_singletons=True):
-        """All nodes that belong to no edges.
+        """Nodes that belong to no edges.
 
         When ignore_singletons is True (default), a node is considered isolated frmo the
         rest of the hypergraph when it is included in no edges of size two or more.  In
@@ -1164,7 +1127,7 @@ class Hypergraph:
 
         Returns
         -------
-        list
+        set
 
         """
         nodes_in_edges = set()
@@ -1192,17 +1155,17 @@ class Hypergraph:
         return self
 
     def is_uniform(self):
-        """Order of uniformity If the hypergraph is uniform, or None.
+        """Order of uniformity if the hypergraph is uniform, or None.
 
         A hypergraph is uniform if all its edges have the same order.
 
-        Returns d>=1 if the hypergraph is d-uniform, that is if
-        all edges in the hypergraph (excluding singletons, i.e. nodes)
-        have the same degree d. Returns d=None if not uniform.
+        Returns d if the hypergraph is d-uniform, that is if all edges
+        in the hypergraph (excluding singletons) have the same degree d.
+        Returns False if not uniform.
 
         Returns
         -------
-        d : int or None
+        d : int or False
             If the hypergraph is d-uniform, return d, or None otherwise.
 
         Examples
@@ -1219,13 +1182,7 @@ class Hypergraph:
         if 1 in edge_sizes:
             edge_sizes.remove(1)  # discard singleton edges
 
-        if len(edge_sizes) == 0:  # no edges
-            d = False  # not uniform
-        else:
-            uniform = len(edge_sizes) == 1
-            if uniform:
-                d = list(edge_sizes)[0] - 1  # order of all edges
-            else:
-                d = False
+        if not edge_sizes or len(edge_sizes) != 1:
+            return False
 
-        return d
+        return edge_sizes.pop() - 1  # order of all edges
