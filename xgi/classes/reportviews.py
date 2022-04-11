@@ -382,11 +382,15 @@ class EdgeView(IDView):
         ----------
         e : hashable
             edge ID
+        dtype : list
+            spectify the type of the return value
 
         Returns
         -------
-        list
+        list (if dtype is list, default)
             edge members
+        dict (if dtype is dict)
+            edge members, if multiple nodes are requested
 
         Raises
         ------
@@ -398,7 +402,7 @@ class EdgeView(IDView):
             if dtype is dict:
                 return self._ids.copy()
             elif dtype is list:
-                return [v for _, v in self._ids.items()]
+                return list(self._ids.values())
             else:
                 raise XGIError(f"Unrecognized dtype {dtype}")
 
