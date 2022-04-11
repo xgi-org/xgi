@@ -1,4 +1,5 @@
-"""Functional interface to graph methods and assorted utilities."""
+"""Functional interface to graph methods and assorted utilities.
+"""
 
 from collections import Counter
 
@@ -8,6 +9,8 @@ from xgi.exception import XGIError
 __all__ = [
     "degree_histogram",
     "unique_edge_sizes",
+    "freeze",
+    "is_frozen",
     "create_empty_copy",
     "set_node_attributes",
     "get_node_attributes",
@@ -62,6 +65,102 @@ def unique_edge_sizes(H):
         The unique edge sizes
     """
     return list({len(H.edges.members(edge)) for edge in H.edges})
+
+
+def frozen(*args, **kwargs):
+    """Dummy method that raises an error when trying to modify frozen hypergraphs
+
+    Raises
+    ------
+    xgi.XGIError
+        Raises error when user tries to modify the hypergraph
+
+    Examples
+    --------
+    >>> import xgi
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = xgi.Hypergraph(hyperedge_list)
+    >>> xgi.freeze(H)
+    >>> H.add_node(5)
+    XGIError: "Frozen hypergraph can't be modified"
+    """
+    raise XGIError("Frozen hypergraph can't be modified")
+
+
+def freeze(H):
+    """Method for freezing a hypergraph which prevents it from being modified
+
+    Parameters
+    ----------
+    H : Hypergraph object
+        The hypergraph to freeze
+
+    Returns
+    -------
+    Hypergraph object
+        The hypergraph with all the functions that can modify the hypergraph
+        set to the frozen method
+
+    See Also
+    --------
+    frozen : Method that raises an error when a user tries to modify the hypergraph
+    is_frozen : Check whether a hypergraph is frozen
+
+    Examples
+    --------
+    >>> import xgi
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = xgi.Hypergraph(hyperedge_list)
+    >>> xgi.freeze(H)
+    >>> H.add_node(5)
+    XGIError: "Frozen hypergraph can't be modified"
+    """
+    H.add_node = frozen
+    H.add_nodes_from = frozen
+    H.remove_node = frozen
+    H.remove_nodes_from = frozen
+    H.add_edge = frozen
+    H.add_edges_from = frozen
+    H.add_weighted_edges_from = frozen
+    H.remove_edge = frozen
+    H.remove_edges_from = frozen
+    H.add_node_to_edge = frozen
+    H.remove_node_from_edge = frozen
+    H.clear = frozen
+    H.frozen = True
+    return H
+
+
+def is_frozen(H):
+    """Checks whether a hypergraph is frozen
+
+    Parameters
+    ----------
+    H : Hypergraph object
+        The hypergraph to check
+
+    Returns
+    -------
+    bool
+        True if hypergraph is frozen, false if not.
+
+    See Also
+    --------
+    freeze : A method to prevent a hypergraph from being modified.
+
+    Examples
+    --------
+    >>> import xgi
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = xgi.Hypergraph(hyperedge_list)
+    >>> xgi.freeze(H)
+    >>> xgi.is_frozen(H)
+    True
+    """
+    try:
+        return H.frozen
+    except AttributeError:
+        return False
 
 
 def create_empty_copy(H, with_data=True):
