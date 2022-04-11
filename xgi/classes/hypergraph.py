@@ -477,35 +477,31 @@ class Hypergraph:
         cannot add empty edges; the method skips over them.
         """
         for e in ebunch_to_add:
+            if isinstance(e[-1], dict):
+                dd = e[-1]
+                e = e[:-1]
+            else:
+                dd = {}
+            if not e:
+                continue
+
+            uid = self._edge_uid()
+            for n in e:
+                if n not in self._node:
+                    if n is None:
+                        raise ValueError("None cannot be a node")
+                    self._node[n] = list()
+                    self._node_attr[n] = self.node_attr_dict_factory()
+                self._node[n].append(uid)
 
             try:
-                if isinstance(e[-1], dict):
-                    dd = e[-1]
-                    e = e[:-1]
-                else:
-                    dd = {}
+                self._edge[uid] = list(e)
+                self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
             except:
-                pass
+                raise XGIError("The edge cannot be cast to a list.")
 
-            if e:
-                uid = self._edge_uid()
-
-                for n in e:
-                    if n not in self._node:
-                        if n is None:
-                            raise ValueError("None cannot be a node")
-                        self._node[n] = list()
-                        self._node_attr[n] = self.node_attr_dict_factory()
-                    self._node[n].append(uid)
-
-                try:
-                    self._edge[uid] = list(e)
-                    self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
-                except:
-                    raise XGIError("The edge cannot be cast to a list.")
-
-                self._edge_attr[uid].update(attr)
-                self._edge_attr[uid].update(dd)
+            self._edge_attr[uid].update(attr)
+            self._edge_attr[uid].update(dd)
 
     def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
         """Add multiple weighted edges with optional attributes.
