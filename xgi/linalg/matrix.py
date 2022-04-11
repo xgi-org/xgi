@@ -5,6 +5,7 @@ __all__ = [
     "incidence_matrix",
     "adjacency_matrix",
     "intersection_profile",
+    "degree",
     "laplacian",
     "clique_motif_matrix",
 ]
@@ -196,7 +197,7 @@ def intersection_profile(H, order=None, index=False):
         return P
 
 
-def _degree(H, order=None, index=False):
+def degree(H, order=None, index=False):
     """Returns the degree of each node as an array
 
     Parameters
@@ -223,7 +224,7 @@ def _degree(H, order=None, index=False):
         I = incidence_matrix(H, index=False, order=order)
 
     if I.shape == (0,):
-        return np.array([])
+        return np.zeros(H.num_nodes)
 
     K = np.sum(I, axis=1)
     return (K, rowdict) if index else K
@@ -260,7 +261,7 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
     if A.shape == (0,):
         return (np.array([]), {}) if index else np.array([])
 
-    K = _degree(H, order=order, index=False)
+    K = degree(H, order=order, index=False)
 
     L = order * np.diag(np.ravel(K)) - A  # ravel needed to convert sparse matrix
     L = np.asarray(L)
