@@ -247,6 +247,8 @@ class IDDegreeView:
         self._neighbor_ids = neighbor_ids
         self._weight = weight
         self._order = order
+        if dtype not in {"dict", "list", "nparray"}:
+            raise XGIError("Invalid datatype!")
         self._dtype = dtype
 
         if id_bunch is None:
