@@ -242,7 +242,7 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
 
     Parameters
     ----------
-    HG : horss.HyperGraph
+    HG : xgi.HyperGraph
         Hypergraph
     order : int
         Order of interactions to consider. If order=1 (default),
@@ -286,7 +286,7 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
 
     Parameters
     ----------
-    HG : horss.HyperGraph
+    HG : xgi.HyperGraph
         Hypergraph
     orders : list of int
         Orders of interactions to consider.
