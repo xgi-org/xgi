@@ -25,6 +25,6 @@ python:
     - method: setuptools
       path: .
 
-# formats:
-#   - pdf
-#   - epub
+formats:
+  - pdf
+  - epub
