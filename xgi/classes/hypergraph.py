@@ -7,6 +7,7 @@ Multiedges and self-loops are allowed.
 """
 from copy import deepcopy
 
+import numpy as np
 import xgi
 import xgi.convert as convert
 from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
@@ -195,6 +196,10 @@ class Hypergraph:
         set
             A set of the neighboring nodes
 
+        See Also
+        --------
+        egonet
+
         Examples
         --------
         >>> import xgi
@@ -209,6 +214,50 @@ class Hypergraph:
             return {i for e in self._node[n] for i in self._edge[e]}.difference({n})
         else:
             raise XGIError("Invalid node ID.")
+
+    def egonet(self, n, include_self=False):
+        """The egonet of the specified node.
+
+        The egonet of a node `n` in a hypergraph `H` is another hypergraph whose nodes
+        are the neighbors of `n` and its edges are all the edges in `H` that contain
+        `n`.  Usually, the egonet do not include `n` itself.  This can be controlled
+        with `include_self`.
+
+        Parameters
+        ----------
+        n : node
+            Node whose egonet is needed.
+        include_self : bool (default False)
+            Whether the egonet contains `n`.
+
+        Returns
+        -------
+        list
+            An edgelist of the egonet of `n`.
+
+        See Also
+        --------
+        neighbors
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5, 6]])
+        >>> H.neighbors(3)
+        {1, 2, 4}
+        >>> H.egonet(3)
+        [[1, 2], [4]]
+        >>> H.egonet(3, include_self=True)
+        [[1, 2, 3], [3, 4]]
+
+        """
+        if include_self:
+            return [self.edges.members(e) for e in self.nodes.memberships(n)]
+        else:
+            return [
+                [x for x in self.edges.members(e) if x != n]
+                for e in self.nodes.memberships(n)
+            ]
 
     def add_node(self, node_for_adding, **attr):
         """Add a single node `node_for_adding` and update node attributes.
@@ -411,7 +460,7 @@ class Hypergraph:
         >>> H.has_edge({1, 3})
         False
         """
-        return set(edge) in (set(self.edges(e)) for e in self.edges)
+        return set(edge) in (set(self.edges.members(e)) for e in self.edges)
 
     def add_edge(self, edge, **attr):
         """Add an edge to the hypergraph. The universal ID
@@ -1097,6 +1146,20 @@ class Hypergraph:
 
         return d_max
 
+    def edges_of_order(self, d):
+        """Returns a dict of d-hyperedges
+
+        Parameters
+        ----------
+        d : int
+            Desired order
+        """
+        return {
+            id_: self._edge[id_]
+            for id_, size in dict(self.edge_size).items()
+            if size == d + 1
+        }
+
     def is_possible_order(self, d):
         """Returns True if 'd' is a possible edge order.
 
@@ -1168,6 +1231,18 @@ class Hypergraph:
         """
         self.remove_nodes_from(self.isolates(ignore_singletons))
         return self
+
+    def duplicate_edges(self):
+        """A list of all duplicate edges.
+
+        See also
+        --------
+        remove_duplicates
+        """
+
+        edges = [tuple(e) for e in self._edge.values()]
+        edges_unique, counts = np.unique(edges, return_counts=True)
+        return list(edges_unique[np.where(counts > 1)])
 
     def is_uniform(self):
         """Returns d>=1 if the hypergraph is d-uniform, that is if

@@ -1,11 +1,19 @@
 XGI is distributed with the 3-clause BSD license.
 
 Copyright (C) 2021, XGI Developers
+
 Nicholas Landry <nicholas.landry.91@gmail.com>
+
 Leo Torres <leo@leotrs.com>
+
 Iacopo Iacopini <iacopiniiacopo@gmail.com>
+
 Maxime Lucas <maxime.lucas@isi.it>
+
 Giovanni Petri <giovanni.petri@isi.it>
+
+Alice Patania <apatania@uvm.edu>
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

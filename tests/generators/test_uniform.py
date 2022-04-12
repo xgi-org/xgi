@@ -1,7 +1,6 @@
 import pytest
 
 import xgi
-from xgi.exception import XGIError
 
 
 def test_uniform_configuration_model_hypergraph():

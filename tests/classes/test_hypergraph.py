@@ -186,3 +186,22 @@ def test_members(edgelist1):
         H.nodes.memberships(0)
     with pytest.raises(XGIError):
         H.nodes.memberships(slice(1, 4))
+
+
+def test_has_edge(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert H.has_edge([1, 2, 3])
+    assert H.has_edge({1, 2, 3})
+    assert H.has_edge({4})
+    assert not H.has_edge([4, 5])
+    assert not H.has_edge([3])
+    assert not H.has_edge([1, 2])
+
+
+def test_egonet(edgelist3):
+    H = xgi.Hypergraph(edgelist3)
+    assert H.neighbors(3) == {1, 2, 4}
+    assert H.egonet(3) == [[1, 2], [4]]
+    assert H.egonet(3, include_self=True) == [[1, 2, 3], [3, 4]]
+    with pytest.raises(XGIError):
+        H.egonet(7)

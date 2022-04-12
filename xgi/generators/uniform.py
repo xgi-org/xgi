@@ -2,11 +2,13 @@ import random
 import warnings
 
 import xgi
+from xgi.utils import py_random_state
 
 __all__ = ["uniform_hypergraph_configuration_model"]
 
 
-def uniform_hypergraph_configuration_model(k, m):
+@py_random_state(2)
+def uniform_hypergraph_configuration_model(k, m, seed=None):
     """
     A function to generate an m-uniform configuration model
 
@@ -17,6 +19,8 @@ def uniform_hypergraph_configuration_model(k, m):
         and the values are node degrees.
     m : int
         specifies the hyperedge size
+    seed : integer, random_state, or None (default)
+            Indicator of random number generation state.
 
     Returns
     -------
@@ -57,7 +61,7 @@ def uniform_hypergraph_configuration_model(k, m):
         warnings.warn(
             "This degree sequence is not realizable. Increasing the degree of random nodes so that it is."
         )
-        random_ids = random.sample(list(k.keys()), int(round(m - remainder)))
+        random_ids = seed.sample(list(k.keys()), int(round(m - remainder)))
         for id in random_ids:
             k[id] = k[id] + 1
 
@@ -69,7 +73,7 @@ def uniform_hypergraph_configuration_model(k, m):
     H = xgi.empty_hypergraph()
 
     while len(stubs) != 0:
-        u = random.sample(range(len(stubs)), m)
+        u = seed.sample(range(len(stubs)), m)
         edge = []
         for index in u:
             edge.append(stubs[index])

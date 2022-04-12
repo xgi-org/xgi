@@ -1,8 +1,4 @@
-import csv
-from ast import literal_eval
-
 import xgi
-from xgi.exception import XGIError
 
 __all__ = [
     "read_edgelist",
