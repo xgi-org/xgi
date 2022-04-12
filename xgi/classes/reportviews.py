@@ -292,6 +292,7 @@ class IDDegreeView:
                 raise XGIError("Invalid combination of IDs specified!")
         except KeyError:
             raise XGIError("Invalid ID specified!")
+
     def __iter__(self):
         """Returns an iterator of ID, degree pairs.
         Yields
@@ -345,7 +346,9 @@ class IDDegreeView:
         else:
             if self._weight is None:
                 for id, nbrs in self._ids.items():
-                    degrees[id] = len([i for i in nbrs if len(self._neighbor_ids[i]) == self._order])
+                    degrees[id] = len(
+                        [i for i in nbrs if len(self._neighbor_ids[i]) == self._order]
+                    )
             else:
                 for id, nbrs in self._ids.items():
                     degrees[id] = sum(
