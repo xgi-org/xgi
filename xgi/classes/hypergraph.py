@@ -1115,12 +1115,12 @@ class Hypergraph:
     def singleton_edges(self):
         """Returns a dict of single edges"""
 
-        return {id_: self._edge[id_] for id_, size in self.edge_size() if size == 1}
+        return {id_: members for id_, members in self._edge.items() if len(members) == 1}
 
     def remove_singleton_edges(self):
         """Removes all singletons edges from the hypergraph"""
 
-        singleton_ids = [id_ for id_, size in self.edge_size() if size == 1]
+        singleton_ids = [id_ for id_, members in self._edge.items() if len(members) == 1]
         self.remove_edges_from(singleton_ids)
         return None
 
@@ -1182,7 +1182,7 @@ class Hypergraph:
             d : int (optional return)
         """
 
-        edge_sizes = {size for _, size in self.edge_size()}
+        edge_sizes = {len(members) for _, members in self._edge.items()}
         if 1 in edge_sizes:
             edge_sizes.remove(1)  # discard singleton edges
 
