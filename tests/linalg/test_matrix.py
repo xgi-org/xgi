@@ -1,6 +1,7 @@
 import numpy as np
-import xgi
 from scipy.sparse import csr_matrix
+
+import xgi
 
 
 def test_incidence_matrix(edgelist1, edgelist3, edgelist4):

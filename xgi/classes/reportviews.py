@@ -58,6 +58,8 @@ EdgeSizeView
 """
 from collections.abc import Mapping, Set
 
+import numpy as np
+
 from xgi.exception import XGIError
 
 __all__ = [
@@ -208,7 +210,16 @@ class IDDegreeView:
 
     __slots__ = ("_ids", "_id_attrs", "_weight")
 
-    def __init__(self, ids, id_attrs, id_bunch=None, weight=None):
+    def __init__(
+        self,
+        ids,
+        id_attrs,
+        neighbor_ids,
+        id_bunch=None,
+        weight=None,
+        order=None,
+        dtype="dict",
+    ):
         """Initialize the DegreeView object
         Parameters
         ----------
@@ -216,48 +227,45 @@ class IDDegreeView:
             A dictionary with IDs as keys and a list of bipartite relations
             as values
         id_attrs : dict
-            A dictionary with IDs as keys and a dictionary of properties as values.
-            Used to weight the degree.
+            A dictionary with IDs as keys and a dictionary
+            of properties as values. Used to weight the degree.
+        neighbor_ids : dict
+            A dictionary with neighboring IDs as keys and
+            a list of bipartite neighbors as values. Used when the degree order
+            is specified.
         nbunch : ID, container of IDs, or None meaning all IDs (default=None)
             The IDs for which to find the degree
         weight : hashable, optional
             The name of the attribute to weight the degree, by default None.
+        order : int, default: None
+            Specifies the size of the neighbors for which
+            the degree should be computed.
+        dtype : str, default : dict
+            Specifies the data type when __getitem__ is called. Valid choices are
+            dict, list, or nparray.
+
         """
-        self._ids = (
-            ids
-            if id_bunch is None
-            else {id: val for id, val in ids.items() if id in id_bunch}
-        )
         self._id_attrs = id_attrs
+        self._neighbor_ids = neighbor_ids
         self._weight = weight
+        self._order = order
+        if dtype not in {"dict", "list", "nparray"}:
+            raise XGIError("Invalid datatype!")
+        self._dtype = dtype
 
-    def __call__(self, id_bunch=None, weight=None):
-        """Get the degree of specified IDs
-        Parameters
-        ----------
-        nbunch : ID, container of IDs, or None, optional
-            The IDs for which to find the degree, by default None
-        weight : hashable, optional
-            The name of the attribute to weight the degree, by default None
-        Returns
-        -------
-        DegreeView
-            The degrees of the hypergraph
-        """
         if id_bunch is None:
-            if weight == self._weight:
-                return self
-            return self.__class__(self._ids, self._id_attrs, None, weight)
-        try:
-            if id_bunch in self._ids:
-                if weight == self._weight:
-                    return self[id_bunch]
-                return self.__class__(self._ids, self._id_attrs, None, weight)[id_bunch]
-        except TypeError:
-            pass
-        return self.__class__(self._ids, self._id_attrs, id_bunch, weight)
+            self._ids = ids
+        elif isinstance(id_bunch, int):
+            if id_bunch in ids:
+                self._ids = {id_bunch: ids[id_bunch]}
+            else:
+                raise XGIError("ID does not exist in the hypergraph!")
+        else:
+            self._ids = {id: val for id, val in ids.items() if id in id_bunch}
 
-    def __getitem__(self, id):
+        self._deg = self._get_degrees()
+
+    def __getitem__(self, id_bunch):
         """Get the degree for an ID
         Parameters
         ----------
@@ -268,10 +276,22 @@ class IDDegreeView:
         float
             The degree of an ID, weighted or unweighted
         """
-        weight = self._weight
-        if weight is None:
-            return len(self._ids[id])
-        return sum(self._id_attrs[dd].get(weight, 1) for dd in self._ids(id))
+
+        try:
+            return self._deg[id_bunch]
+        except TypeError:
+            try:
+                degs = {id: deg for id, deg in self if id in id_bunch}
+                if self._dtype == "dict":
+                    return degs
+                elif self._dtype == "list":
+                    return list(degs.values())
+                elif self._dtype == "nparray":
+                    return np.array(list(degs.values()))
+            except:
+                raise XGIError("Invalid combination of IDs specified!")
+        except KeyError:
+            raise XGIError("Invalid ID specified!")
 
     def __iter__(self):
         """Returns an iterator of ID, degree pairs.
@@ -280,15 +300,8 @@ class IDDegreeView:
         iterator of tuples
             Each entry is an ID, degree (Weighted or unweighted) pair.
         """
-        weight = self._weight
-        if weight is None:
-            for id in self._ids:
-                yield (id, len(self._ids[id]))
-        else:
-            for id in self._ids:
-                elements = self._ids[id]
-                deg = sum(self._id_attrs[dd].get(weight, 1) for dd in elements)
-                yield (id, deg)
+        for id, deg in self._deg.items():
+            yield (id, deg)
 
     def __len__(self):
         """Returns the number of IDs/degrees
@@ -318,6 +331,32 @@ class IDDegreeView:
             the ID, degree pairs
         """
         return f"{self.__class__.__name__}({dict(self)})"
+
+    def _get_degrees(self):
+        degrees = dict()
+        if self._order is None:
+            if self._weight is None:
+                for id, nbrs in self._ids.items():
+                    degrees[id] = len(nbrs)
+            else:
+                for id, nbrs in self._ids.items():
+                    degrees[id] = sum(
+                        self._id_attrs[dd].get(self._weight, 1) for dd in nbrs
+                    )
+        else:
+            if self._weight is None:
+                for id, nbrs in self._ids.items():
+                    degrees[id] = len(
+                        [i for i in nbrs if len(self._neighbor_ids[i]) == self._order]
+                    )
+            else:
+                for id, nbrs in self._ids.items():
+                    degrees[id] = sum(
+                        self._id_attrs[i].get(self._weight, 1)
+                        for i in nbrs
+                        if len(self._neighbor_ids[i]) == self._order
+                    )
+        return degrees
 
 
 class NodeView(IDView):
@@ -424,9 +463,15 @@ class DegreeView(IDDegreeView):
     This class inherits all its functionality from IDDegreeView
     """
 
-    def __init__(self, hypergraph, nbunch=None, weight=None):
+    def __init__(self, hypergraph, nbunch=None, weight=None, order=None, dtype="dict"):
         super().__init__(
-            hypergraph._node, hypergraph._edge_attr, id_bunch=nbunch, weight=weight
+            hypergraph._node,
+            hypergraph._edge_attr,
+            hypergraph._edge,
+            id_bunch=nbunch,
+            weight=weight,
+            order=order,
+            dtype=dtype,
         )
 
 
@@ -436,7 +481,12 @@ class EdgeSizeView(IDDegreeView):
     This class inherits all its functionality from IDDegreeView
     """
 
-    def __init__(self, hypergraph, ebunch=None, weight=None):
+    def __init__(self, hypergraph, ebunch=None, weight=None, dtype="dict"):
         super().__init__(
-            hypergraph._edge, hypergraph._node_attr, id_bunch=ebunch, weight=weight
+            hypergraph._edge,
+            hypergraph._node_attr,
+            hypergraph._node,
+            id_bunch=ebunch,
+            weight=weight,
+            dtype=dtype,
         )
