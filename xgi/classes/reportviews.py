@@ -256,7 +256,6 @@ class IDDegreeView:
         if id_bunch is None:
             self._ids = ids
         elif isinstance(id_bunch, int):
-            # the user specified ID may not be
             if id_bunch in ids:
                 self._ids = {id_bunch: ids[id_bunch]}
             else:
@@ -280,17 +279,19 @@ class IDDegreeView:
 
         try:
             return self._deg[id_bunch]
-        except:
+        except TypeError:
             try:
+                degs = {id: deg for id, deg in self if id in id_bunch}
                 if self._dtype == "dict":
-                    return {id: deg for id, deg in self if id in id_bunch}
+                    return degs
                 elif self._dtype == "list":
-                    return [deg for id, deg in self if id in id_bunch]
+                    return list(degs.values())
                 elif self._dtype == "nparray":
-                    return np.array([deg for id, deg in self if id in id_bunch])
+                    return np.array(list(degs.values()))
             except:
-                raise XGIError("Invalid ID or combination of IDs specified!")
-
+                raise XGIError("Invalid combination of IDs specified!")
+        except KeyError:
+            raise XGIError("Invalid ID specified!")
     def __iter__(self):
         """Returns an iterator of ID, degree pairs.
         Yields
@@ -344,9 +345,7 @@ class IDDegreeView:
         else:
             if self._weight is None:
                 for id, nbrs in self._ids.items():
-                    degrees[id] = len(
-                        [i for i in nbrs if len(self._neighbor_ids[i]) == self._order]
-                    )
+                    degrees[id] = len([i for i in nbrs if len(self._neighbor_ids[i]) == self._order])
             else:
                 for id, nbrs in self._ids.items():
                     degrees[id] = sum(
