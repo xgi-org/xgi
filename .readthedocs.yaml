@@ -23,7 +23,7 @@ python:
       extra_requirements:
         - documentation
     - method: setuptools
-      path: package
+      path: .
 
 # formats:
 #   - pdf
