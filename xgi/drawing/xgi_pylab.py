@@ -6,8 +6,6 @@ Matplotlib
 Draw hypergraphs with matplotlib.
 """
 
-import xgi
-
 __all__ = [
     "draw",
 ]
@@ -67,9 +65,9 @@ def draw(
     >>> xgi.draw(H, pos=xgi.barycenter_spring_layout(H))
     """
     import matplotlib.pyplot as plt
-    from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-    from matplotlib import cm
     import numpy as np
+    from matplotlib import cm
+    from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 
     def CCW_sort(p):
         """

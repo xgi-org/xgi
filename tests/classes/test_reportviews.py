@@ -1,9 +1,9 @@
 import numpy as np
-
 import pytest
 
 import xgi
 from xgi.exception import XGIError
+
 
 def test_id_degree_view(edgelist1, edgelist4):
     H1 = xgi.Hypergraph(edgelist4)
@@ -61,6 +61,7 @@ def test_id_degree_view(edgelist1, edgelist4):
         4: 0.3,
         5: 0.3,
     }
+
 
 def test_edge_members(edgelist3):
     H = xgi.Hypergraph(edgelist3)

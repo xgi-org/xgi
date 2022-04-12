@@ -1,4 +1,3 @@
-import random
 import warnings
 
 import xgi

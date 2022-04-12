@@ -8,10 +8,10 @@ Multiedges and self-loops are allowed.
 from copy import deepcopy
 
 import numpy as np
+
 import xgi
 import xgi.convert as convert
-from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
-                                     NodeView)
+from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
 from xgi.exception import XGIError
 from xgi.utils import XGICounter
 
