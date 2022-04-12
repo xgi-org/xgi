@@ -53,8 +53,6 @@ def test_id_degree_view(edgelist1, edgelist4):
     attr_dict1 = {0: {"weight": -2}, 1: {"weight": 4.0}, 2: {"weight": 0.3}}
     xgi.set_edge_attributes(H1, attr_dict1)
 
-    [[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]]
-
     assert H1.degree(weight="weight")[H1.nodes] == {1: -2, 2: 2, 3: 2.3, 4: 4.3, 5: 4.3}
     assert H1.degree(weight="weight", order=3)[H1.nodes] == {
         1: -2,
