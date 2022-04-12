@@ -1,3 +1,4 @@
+"""General utilities."""
 from collections import defaultdict
 
 __all__ = ['XGICounter', 'get_dual']

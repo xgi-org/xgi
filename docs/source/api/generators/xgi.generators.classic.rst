@@ -8,6 +8,7 @@ xgi.generators.classic
    .. rubric:: Functions
    
    .. autofunction:: empty_hypergraph
+   .. autofunction:: star_clique
 
    
    

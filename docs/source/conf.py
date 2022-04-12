@@ -21,8 +21,8 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 # -- Project information -----------------------------------------------------
 
 project = "XGI"
-copyright = "2021, Nicholas W. Landry and Leo Torres"
-author = "Nicholas W. Landry and Leo Torres"
+copyright = "Copyright (C) 2021 XGI Developers"
+author = "Nicholas W. Landry, Leo Torres, Iacopo Iacopini, Maxime Lucas, Giovanni Petri, Alice Patania"
 
 # The full version, including alpha/beta/rc tags
 release = "0.2"

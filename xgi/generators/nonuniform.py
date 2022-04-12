@@ -1,3 +1,4 @@
+"""Generate random (non-uniform) hypergraphs."""
 import math
 import random
 import warnings

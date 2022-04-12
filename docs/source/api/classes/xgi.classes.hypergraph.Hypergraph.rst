@@ -24,7 +24,10 @@ xgi.classes.hypergraph.Hypergraph
       ~Hypergraph.clear_edges
       ~Hypergraph.copy
       ~Hypergraph.dual
+      ~Hypergraph.duplicate_edges
       ~Hypergraph.edge_subhypergraph
+      ~Hypergraph.edges_of_order
+      ~Hypergraph.egonet
       ~Hypergraph.get_edge_data
       ~Hypergraph.has_edge
       ~Hypergraph.has_edge_id
