@@ -150,9 +150,7 @@ class IDView(Mapping, Set):
         """
         try:
             return self._id_attrs[id]
-        except KeyError:
-            raise XGIError(f"The ID {id} is not in the hypergraph")
-        except:
+        except ValueError:
             if isinstance(id, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
@@ -353,8 +351,6 @@ class NodeView(IDView):
         """
         try:
             return self._ids[n]
-        except KeyError:
-            raise XGIError(f"The node ID {n} is not in the hypergraph")
         except TypeError:
             if isinstance(n, slice):
                 raise XGIError(
@@ -408,8 +404,6 @@ class EdgeView(IDView):
 
         try:
             return self._ids[e]
-        except KeyError:
-            raise XGIError(f"The edge ID {e} is not in the hypergraph")
         except TypeError:
             if isinstance(e, slice):
                 raise XGIError(

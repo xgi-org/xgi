@@ -1,6 +1,6 @@
 import pytest
 import xgi
-from xgi.exception import XGIError
+from xgi.exception import XGIError, IDNotFound
 
 
 def test_constructor(edgelist5, dict5, incidence5, dataframe5):
@@ -181,7 +181,7 @@ def test_members(edgelist1):
     assert H.nodes.memberships(3) == [0]
     assert H.nodes.memberships(4) == [1]
     assert H.nodes.memberships(6) == [2, 3]
-    with pytest.raises(XGIError):
+    with pytest.raises(IDNotFound):
         H.nodes.memberships(0)
     with pytest.raises(XGIError):
         H.nodes.memberships(slice(1, 4))
@@ -202,5 +202,5 @@ def test_egonet(edgelist3):
     assert H.neighbors(3) == {1, 2, 4}
     assert H.egonet(3) == [[1, 2], [4]]
     assert H.egonet(3, include_self=True) == [[1, 2, 3], [3, 4]]
-    with pytest.raises(XGIError):
+    with pytest.raises(IDNotFound):
         H.egonet(7)
