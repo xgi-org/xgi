@@ -1,5 +1,6 @@
 """Base class for undirected hypergraphs."""
 from copy import deepcopy
+from warnings import warn
 
 import numpy as np
 import xgi
@@ -376,6 +377,9 @@ class Hypergraph:
 
         """
         for n in nodes:
+            if n not in self._node:
+                warn(f'Node {n} not in hypergraph')
+                continue
             self.remove_node(n)
 
     @property
@@ -645,6 +649,9 @@ class Hypergraph:
 
         """
         for id in ebunch:
+            if id not in self._edge:
+                warn(f'Node {n} not in hypergraph')
+                continue
             self.remove_edge(id)
 
     def remove_node_from_edge(self, edge, node):
