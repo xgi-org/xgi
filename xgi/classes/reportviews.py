@@ -89,7 +89,6 @@ class IDView(Mapping, Set):
             "_id_dict": self._id_dict,
             "_id_attr": self._id_attr,
             "_ids": self._ids,
-
         }
 
     def __setstate__(self, state):
@@ -124,7 +123,7 @@ class IDView(Mapping, Set):
         if id_dict is None:
             self._ids = None
         else:
-            self._ids = set(id_dict.keys()) if ids is None else set(ids)
+            self._ids = list(id_dict.keys()) if ids is None else list(ids)
 
     def __len__(self):
         """Return the number of IDs.
