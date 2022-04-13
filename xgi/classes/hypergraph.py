@@ -1271,7 +1271,7 @@ class Hypergraph:
         3
         >>> if H.is_uniform(): print('H is uniform!')
         H is uniform!
-
+        """
         edge_sizes = {len(members) for _, members in self._edge.items()}
         if 1 in edge_sizes:
             edge_sizes.remove(1)  # discard singleton edges
