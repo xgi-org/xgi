@@ -74,10 +74,10 @@ class Hypergraph:
     EdgeView((0, 1, 2, 3))
 
     """
-    node_dict_factory = dict
-    node_attr_dict_factory = dict
-    hyperedge_dict_factory = dict
-    hyperedge_attr_dict_factory = dict
+    node_dict_factory = IDDict
+    node_attr_dict_factory = IDDict
+    hyperedge_dict_factory = IDDict
+    hyperedge_attr_dict_factory = IDDict
     hypergraph_attr_dict_factory = dict
 
     def __init__(self, incoming_data=None, **attr):
@@ -240,8 +240,6 @@ class Hypergraph:
         {1, 3, 4}
 
         """
-        if n not in self._node:
-            raise XGIError("Invalid node ID.")
         return {i for e in self._node[n] for i in self._edge[e]}.difference({n})
 
     def egonet(self, n, include_self=False):
@@ -308,8 +306,6 @@ class Hypergraph:
 
         """
         if node not in self._node:
-            if node is None:
-                raise ValueError("None cannot be a node")
             self._node[node] = []
             self._node_attr[node] = self.node_attr_dict_factory()
         self._node_attr[node].update(attr)
@@ -543,40 +539,33 @@ class Hypergraph:
         cannot add empty edges; the method skips over them.
         """
         for e in ebunch_to_add:
-            if isinstance(e[-1], dict):
-                dd = e[-1]
-                e = e[:-1]
-            else:
-                dd = {}
-            if not e:
-                continue
-
-            uid = self._edge_uid()
-            for n in e:
-                if n not in self._node:
-                    if n is None:
-                        raise ValueError("None cannot be a node")
-                    self._node[n] = list()
-                    self._node_attr[n] = self.node_attr_dict_factory()
-                self._node[n].append(uid)
-
             try:
-                self._edge[uid] = list(e)
-                self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
+                if isinstance(e[-1], dict):
+                    dd = e[-1]
+                    e = e[:-1]
+                else:
+                    dd = {}
             except:
                 pass
-
             if e:
                 uid = self._edge_uid()
 
                 for n in e:
                     if n not in self._node:
+                        if n is None:
+                            raise ValueError("None cannot be a node")
+                        self._node[n] = list()
                         self._node[n] = []
                         self._node_attr[n] = self.node_attr_dict_factory()
                     self._node[n].append(uid)
 
-            self._edge_attr[uid].update(attr)
-            self._edge_attr[uid].update(dd)
+                try:
+                    self._edge[uid] = list(e)
+                    self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
+                except:
+                    raise XGIError("The edge cannot be cast to a list.")
+                self._edge_attr[uid].update(attr)
+                self._edge_attr[uid].update(dd)
 
     def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
         """Add multiple weighted edges with optional attributes.

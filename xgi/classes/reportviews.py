@@ -151,9 +151,7 @@ class IDView(Mapping, Set):
         """
         try:
             return self._id_attrs[id]
-        except KeyError as e:
-            raise XGIError(f"The ID {id} is not in the hypergraph") from e
-        except:
+        except ValueError as e:
             if isinstance(id, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
