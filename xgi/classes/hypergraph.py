@@ -546,13 +546,14 @@ class Hypergraph:
 
         See Also
         --------
-        add_edge : add a single edge
-        add_weighted_edges_from : convenient way to add weighted edges
+        add_edge : Add a single edge.
+        add_weighted_edges_from : Convenient way to add weighted edges.
 
         Notes
         -----
         Adding the same edge twice will create a multi-edge. Currently
         cannot add empty edges; the method skips over them.
+
         """
         for e in ebunch_to_add:
             if isinstance(e[-1], dict):
@@ -647,7 +648,7 @@ class Hypergraph:
         self._node[node].append(edge)
 
     def remove_edge(self, id):
-        """Remove a single edge.
+        """Remove one edge.
 
         Parameters
         ----------
@@ -661,7 +662,8 @@ class Hypergraph:
 
         See Also
         --------
-        remove_edges_from : remove a collection of edges
+        remove_edges_from : Remove multiple edges.
+
         """
         try:
             for node in self.edges.members(id):
@@ -738,15 +740,15 @@ class Hypergraph:
 
         Parameters
         ----------
-        edges : Iterable | None
+        edges : Iterable, optional
             Edges to be added.
-        nodes : Iterable | None
+        nodes : Iterable, optional
             Nodes to be added.
 
         See Also
         --------
-        add_edges_from: add multiple edges to a hypergraph
-        add_nodes_from: add multiple nodes to a hypergraph
+        add_edges_from: Add multiple edges.
+        add_nodes_from: Add multiple nodes.
 
         """
         if nodes:
