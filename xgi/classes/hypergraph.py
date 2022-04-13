@@ -1144,19 +1144,14 @@ class Hypergraph:
 
         Returns
         -------
-        d_max : int
-            Maximum order of edges in hypergraph
+        int
+            Maximum order of edges in hypergraph.
 
         """
-        try:
-            edges = list(self._edge.values())
-            d_max = max([len(edge) for edge in edges]) - 1
-        except ValueError:  # if edges is empty
-            if len(self._node) > 0:
-                d_max = 0
-            else:
-                d_max = None
-
+        if self._edge:
+            d_max = max(len(edge) for edge in self._edge.values()) - 1
+        else:
+            d_max = 0 if self._node else None
         return d_max
 
     def edges_of_order(self, d):
@@ -1179,11 +1174,12 @@ class Hypergraph:
         Parameters
         ----------
         d : int
-            Order for which to check
+            Order for which to check.
 
         Returns
         -------
         bool
+            Whether `d` is a possible order.
 
         """
         d_max = self.max_edge_order()
@@ -1207,7 +1203,6 @@ class Hypergraph:
             id_ for id_, members in self._edge.items() if len(members) == 1
         ]
         self.remove_edges_from(singleton_ids)
-        return None
 
     def isolates(self, ignore_singletons=True):
         """Nodes that belong to no edges.
@@ -1223,7 +1218,7 @@ class Hypergraph:
         Parameters
         ----------
         ignore_singletons : bool, default False
-            Whether to consider singleton edges when searching for isolated nodes.
+            Whether to consider singleton edges.
 
         See Also
         --------
@@ -1232,6 +1227,7 @@ class Hypergraph:
         Returns
         -------
         set
+            Isolated nodes.
 
         """
         nodes_in_edges = set()
@@ -1256,7 +1252,6 @@ class Hypergraph:
 
         """
         self.remove_nodes_from(self.isolates(ignore_singletons))
-        return self
 
     def duplicate_edges(self):
         """A list of all duplicate edges.
@@ -1264,8 +1259,13 @@ class Hypergraph:
         See also
         --------
         remove_duplicates
-        """
 
+        Returns
+        -------
+        list
+            All edges with a duplicate.
+
+        """
         edges = [tuple(e) for e in self._edge.values()]
         edges_unique, counts = np.unique(edges, return_counts=True)
         return list(edges_unique[np.where(counts > 1)])
@@ -1282,7 +1282,7 @@ class Hypergraph:
         Returns
         -------
         d : int or False
-            If the hypergraph is d-uniform, return d, or None otherwise.
+            If the hypergraph is d-uniform, return d, or False otherwise.
 
         Examples
         --------
