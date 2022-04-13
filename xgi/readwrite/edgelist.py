@@ -1,3 +1,4 @@
+"""Read from and write to edgelists."""
 import xgi
 
 __all__ = [
