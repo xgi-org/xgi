@@ -771,6 +771,17 @@ class Hypergraph:
         bool
             Whether the edge is in the hypergraph.
 
+        See Also
+        --------
+        edges
+
+        Example
+        -------
+        >>> H = xgi.Hypergraph()
+        >>> H.add_edge([1, 2, 3], id='myedge')
+        >>> H.has_edge_id('myedge')
+        True
+
         """
         try:
             return id in self._edge
@@ -793,10 +804,6 @@ class Hypergraph:
         -------
         edges : EdgeView
             A view of edges in the hypergraph.
-
-        Notes
-        -----
-        Nodes in nbunch that are not in the hypergraph will be (quietly) ignored.
 
         """
         edges = EdgeView(self)
