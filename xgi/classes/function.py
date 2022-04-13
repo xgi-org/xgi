@@ -264,7 +264,7 @@ def set_node_attributes(H, values, name=None):
                     H._node_attr[n].update(d)
                 except KeyError:
                     pass
-        except:
+        except (ValueError, TypeError, AttributeError):
             raise XGIError(
                 "name property has not been set and a dict-of-dicts has not been provided."
             )
@@ -347,7 +347,7 @@ def set_edge_attributes(H, values, name=None):
                     H._edge_attr[id].update(d)
                 except KeyError:
                     pass
-        except:
+        except AttributeError:
             raise XGIError(
                 "name property has not been set and a dict-of-dicts has not been provided."
             )

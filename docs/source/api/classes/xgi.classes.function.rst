@@ -1,4 +1,4 @@
-﻿xgi.classes.function
+xgi.classes.function
 ====================
 
 .. currentmodule:: xgi.classes.function

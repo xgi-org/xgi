@@ -232,7 +232,7 @@ def from_bipartite_pandas_dataframe(
         try:
             columns = list(df.columns)
             d = df[[columns[node_column], columns[edge_column]]]
-        except:
+        except KeyError:
             raise XGIError("Invalid columns specified")
 
     for line in d.itertuples(index=False):
