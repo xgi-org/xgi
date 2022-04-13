@@ -4,41 +4,6 @@ A View class allows for inspection and querying of an underlying object but does
 allow modification.  This module provides View classes for nodes, edges, degree, and
 edge size of a hypergraph.  Views are automatically updaed when the hypergraph changes.
 
-EdgeView
-========
-
-    `V = H.edges` or `V = H.edges()` allows iteration over edges as well as
-    `e in V`, set operations and edge data lookup by edge ID `dd = H.edges[2]`.
-    Iteration is over edge IDs for Hypergraph.
-
-    Set operations are currently performed by id, not by set equivalence.
-    This may be in future functionality. As it stands, however, the same edge
-    can be added more than once using different IDs
-
-DegreeView
-==========
-
-    `V = H.degree` allows iteration over (node, degree) pairs as well
-    as lookup: `deg=V[n]`. Weighted degree using edge data attributes
-    is provided via `V = H.degree(weight='attr_name')` where any string
-    with the attribute name can be used. `weight=None` is the default.
-    No set operations are implemented for degrees, use NodeView.
-
-    The argument `nbunch` restricts iteration to nodes in nbunch.
-    The DegreeView can still look up any node even if nbunch is specified.
-
-EdgeSizeView
-============
-
-    `V = H.edge_size` allows iteration over (edge, size) pairs as well
-    as lookup: `size=V[e]`. Weighted edge size using node data attributes
-    is provided via `V = H.edge_size(weight='attr_name')` where any string
-    with the attribute name can be used. `weight=None` is the default.
-    No set operations are implemented for edge size, use EdgeView.
-
-    The argument `nbunch` restricts iteration to nodes in nbunch.
-    The EdgeSizeView can still look up any node even if nbunch is specified.
-
 """
 from collections.abc import Mapping, Set
 
@@ -216,14 +181,30 @@ class IDView(Mapping, Set):
 
 
 class IDDegreeView:
-    """A View class for the degree of IDs in a Hypergraph
-    The functionality is like dict.items() with (ID, degree) pairs.
-    Additional functionality includes read-only lookup of degree,
-    and calling with optional features nbunch (for only a subset of IDs)
-    and weight (use weights to compute degree).
-    Notes
-    -----
-    IDDegreeView can still lookup any ID even if nbunch is specified.
+    """Base View class for the size (degree or order) of IDs in a Hypergraph.
+
+    Parameters
+    ----------
+    ids : dict
+        A dictionary with IDs as keys and a list of bipartite relations
+        as values.
+    id_attrs : dict
+        A dictionary with IDs as keys and a dictionary of properties as values.  Used to
+        weight the degree.
+    neighbor_ids : dict
+        A dictionary with neighboring IDs as keys and a list of bipartite neighbors as
+        values. Used when the degree order is specified.
+    nbunch : ID, container of IDs, or None meaning all IDs (default=None)
+        The IDs for which to find the degree
+    weight : hashable, optional
+        The name of the attribute to weight the degree, by default None.
+    order : int, default: None
+        Specifies the size of the neighbors for which
+        the degree should be computed.
+    dtype : str, default : dict
+        Specifies the data type when __getitem__ is called. Valid choices are
+        dict, list, or nparray.
+
     """
 
     __slots__ = ("_ids", "_id_attrs", "_weight")
@@ -238,31 +219,6 @@ class IDDegreeView:
         order=None,
         dtype="dict",
     ):
-        """Initialize the DegreeView object
-        Parameters
-        ----------
-        ids : dict
-            A dictionary with IDs as keys and a list of bipartite relations
-            as values
-        id_attrs : dict
-            A dictionary with IDs as keys and a dictionary
-            of properties as values. Used to weight the degree.
-        neighbor_ids : dict
-            A dictionary with neighboring IDs as keys and
-            a list of bipartite neighbors as values. Used when the degree order
-            is specified.
-        nbunch : ID, container of IDs, or None meaning all IDs (default=None)
-            The IDs for which to find the degree
-        weight : hashable, optional
-            The name of the attribute to weight the degree, by default None.
-        order : int, default: None
-            Specifies the size of the neighbors for which
-            the degree should be computed.
-        dtype : str, default : dict
-            Specifies the data type when __getitem__ is called. Valid choices are
-            dict, list, or nparray.
-
-        """
         self._id_attrs = id_attrs
         self._neighbor_ids = neighbor_ids
         self._weight = weight
@@ -284,17 +240,19 @@ class IDDegreeView:
         self._deg = self._get_degrees()
 
     def __getitem__(self, id_bunch):
-        """Get the degree for an ID
+        """Get the degree for an ID.
+
         Parameters
         ----------
         id : hashable
-            Unique ID
+            Unique ID.
+
         Returns
         -------
         float
-            The degree of an ID, weighted or unweighted
-        """
+            The degree of an ID, weighted or unweighted.
 
+        """
         try:
             return self._deg[id_bunch]
         except TypeError:
@@ -310,41 +268,26 @@ class IDDegreeView:
 
     def __iter__(self):
         """Returns an iterator of ID, degree pairs.
+
         Yields
         -------
         iterator of tuples
             Each entry is an ID, degree (Weighted or unweighted) pair.
+
         """
         for id, deg in self._deg.items():
             yield (id, deg)
 
     def __len__(self):
-        """Returns the number of IDs/degrees
-        Returns
-        -------
-        int
-            Number of IDs/degrees
-        """
+        """Returns the number of IDs/degrees."""
         return len(self._ids)
 
     def __str__(self):
-        """Returns a string of IDs.
-        Returns
-        -------
-        string
-            A string of the list of IDs.
-        """
+        """Returns a string of IDs."""
         return str(list(self._ids))
 
     def __repr__(self):
-        """A string representation of the degrees
-        Returns
-        -------
-        string
-            A string representation of the IDDegreeView
-            with the class name and a dictionary of
-            the ID, degree pairs
-        """
+        """A string representation of the degrees."""
         return f"{self.__class__.__name__}({dict(self)})"
 
     def _get_degrees(self):
@@ -496,10 +439,7 @@ class EdgeView(IDView):
 
 
 class DegreeView(IDDegreeView):
-    """Class for representing the degrees.
-
-    This class inherits all its functionality from IDDegreeView
-    """
+    """An IDDegreeView that keeps track of node degree."""
 
     def __init__(self, hypergraph, nbunch=None, weight=None, order=None, dtype="dict"):
         super().__init__(
@@ -514,10 +454,7 @@ class DegreeView(IDDegreeView):
 
 
 class EdgeSizeView(IDDegreeView):
-    """Class for representing the edge sizes.
-
-    This class inherits all its functionality from IDDegreeView
-    """
+    """An IDDegreeView that keeps track of edge size."""
 
     def __init__(self, hypergraph, ebunch=None, weight=None, dtype="dict"):
         super().__init__(
