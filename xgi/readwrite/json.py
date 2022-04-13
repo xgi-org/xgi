@@ -81,7 +81,7 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
     H = xgi.empty_hypergraph()
     try:
         H._hypergraph.update(data["hypergraph-data"])
-    except:
+    except KeyError:
         raise TypeError("Failed to get hypergraph data attributes.")
 
     for id, edge in data["edge-dict"].items():
@@ -112,7 +112,7 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
                         f"Failed to convert edge IDs to type {nodetype}."
                     ) from e
             H._node_attr[id] = dd
-    except:
+    except KeyError:
         raise TypeError("Failed to import node attributes.")
 
     try:
@@ -125,7 +125,7 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
                         f"Failed to convert edge IDs to type {edgetype}."
                     ) from e
             H._edge_attr[id] = dd
-    except:
+    except KeyError:
         raise TypeError("Failed to import edge attributes.")
 
     return H

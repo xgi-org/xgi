@@ -214,7 +214,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                 groupConstant = omega[group1, group2] / (
                     kappa1[group1] * kappa2[group2]
                 )
-            except:
+            except ZeroDivisionError:
                 groupConstant = 0
 
             for u in community1Indices[group1]:
@@ -227,7 +227,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                         r = seed.random()
                         try:
                             j = j + math.floor(math.log(r) / math.log(1 - p))
-                        except:
+                        except ZeroDivisionError:
                             j = np.inf
                     if j < len(community2Indices[group2]):
                         v = community2Indices[group2][j]

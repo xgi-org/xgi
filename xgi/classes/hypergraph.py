@@ -87,7 +87,7 @@ class Hypergraph:
         """
         try:
             return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
-        except:
+        except KeyError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
 
     def __iter__(self):
@@ -551,7 +551,7 @@ class Hypergraph:
             try:
                 self._edge[uid] = list(e)
                 self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
-            except:
+            except TypeError:
                 raise XGIError("The edge cannot be cast to a list.")
 
             self._edge_attr[uid].update(attr)
@@ -583,7 +583,7 @@ class Hypergraph:
             self.add_edges_from(
                 ((edge[:-1], {weight: edge[-1]}) for edge in ebunch_to_add), **attr
             )
-        except:
+        except KeyError:
             XGIError("Empty or invalid edges specified.")
 
     def add_node_to_edge(self, edge, node):

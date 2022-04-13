@@ -175,12 +175,6 @@ class IDView(Mapping, Set):
             return self._id_attrs[id]
         except KeyError as e:
             raise XGIError(f"The ID {id} is not in the hypergraph") from e
-        except:
-            if isinstance(id, slice):
-                raise XGIError(
-                    f"{type(self).__name__} does not support slicing, "
-                    f"try list(H.nodes)[{id.start}:{id.stop}:{id.step}]"
-                )
 
     def __contains__(self, id):
         """Checks whether the ID is in the hypergraph
@@ -318,16 +312,13 @@ class IDDegreeView:
         try:
             return self._deg[id_bunch]
         except TypeError:
-            try:
-                degs = {id: deg for id, deg in self if id in id_bunch}
-                if self._dtype == "dict":
-                    return degs
-                elif self._dtype == "list":
-                    return list(degs.values())
-                elif self._dtype == "nparray":
-                    return np.array(list(degs.values()))
-            except:
-                raise XGIError("Invalid combination of IDs specified!")
+            degs = {id: deg for id, deg in self if id in id_bunch}
+            if self._dtype == "dict":
+                return degs
+            elif self._dtype == "list":
+                return list(degs.values())
+            elif self._dtype == "nparray":
+                return np.array(list(degs.values()))
         except KeyError:
             raise XGIError("Invalid ID specified!")
 
