@@ -1,4 +1,7 @@
 """Matrices associated to hypergraphs."""
+
+from warnings import warn
+
 import numpy as np
 from scipy.sparse import csr_matrix
 
@@ -8,6 +11,7 @@ __all__ = [
     "intersection_profile",
     "degree_matrix",
     "laplacian",
+    "multiorder_laplacian",
     "clique_motif_matrix",
 ]
 
@@ -237,12 +241,11 @@ def degree_matrix(H, order=None, index=False):
 
 
 def laplacian(H, order=1, rescale_per_node=False, index=False):
-
     """Laplacian matrix of order d, see [1]_.
 
     Parameters
     ----------
-    HG : horss.HyperGraph
+    HG : xgi.HyperGraph
         Hypergraph
     order : int
         Order of interactions to consider. If order=1 (default),
@@ -256,6 +259,19 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
         Array of dim (N, N)
     if index is True:
         return rowdict
+
+    See also
+    --------
+    multiorder_laplacian
+
+    Examples
+    --------
+        >>> import xgi
+        >>> N = 100
+        >>> ps = [0.1, 0.01]
+        >>> H = xgi.random_hypergraph(N, ps)
+        >>> L = xgi.laplacian(H, order=2, rescale_per_node=True)
+
     References
     ----------
     .. [1] Lucas, M., Cencetti, G., & Battiston, F. (2020).
@@ -279,6 +295,71 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
         return L, row_dict
     else:
         return L
+
+
+def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False):
+    """Multiorder Laplacian matrix, see [1]_.
+
+    Parameters
+    ----------
+    HG : xgi.HyperGraph
+        Hypergraph
+    orders : list of int
+        Orders of interactions to consider.
+    weights: list of float
+        Weights associated to each order, i.e coupling strengths gamma_i in [1]_.
+    rescale_per_node: bool, (default=False)
+        Whether to rescale each Laplacian of order d by d (per node).
+    index: bool, default: False
+        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+
+    Returns
+    -------
+    L_multi : numpy array
+        Array of dim (N, N)
+    if index is True:
+        return rowdict
+
+    See also
+    --------
+    laplacian
+
+    Examples
+    --------
+        >>> import xgi
+        >>> N = 100
+        >>> ps = [0.1, 0.01]
+        >>> H = xgi.random_hypergraph(N, ps)
+        >>> L = xgi.multiorder_laplacian(H, orders=[1,2], weights=[0.7, 0.3])
+
+    References
+    ----------
+    .. [1] Lucas, M., Cencetti, G., & Battiston, F. (2020).
+        Multiorder Laplacian for synchronization in higher-order networks.
+        Physical Review Research, 2(3), 033410.
+
+    """
+
+    if len(orders)!=len(weights):
+        raise ValueError("orders and weights must have the same length.")
+
+    Ls = [laplacian(H, order=i, rescale_per_node=rescale_per_node) for i in orders]
+    Ks = [degree_matrix(H, order=i) for i in orders]
+
+    L_multi = np.zeros((H.num_nodes, H.num_nodes))
+    for L, K, w, d in zip(Ls, Ks, weights, orders):
+        if np.all(K==0):
+            # avoid getting nans from dividing by 0
+            # manually setting contribution to 0 as it should be
+            warn(f"No edges of order {d}. Contribution of that order is zero. Its weight is effectively zero.")  
+        else:
+            L_multi += L * w / np.mean(K)
+
+    if index:
+        _, rowdict, _ = incidence_matrix(H, index=True)
+        return L_multi, rowdict
+    else:
+        return L_multi
 
 
 def clique_motif_matrix(H, index=False):

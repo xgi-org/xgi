@@ -305,6 +305,42 @@ def test_laplacian(edgelist2, edgelist6):
     assert L3[node_dict3[3], node_dict3[4]] == -1
 
 
+def test_multiorder_laplacian(edgelist2, edgelist6):
+    el1 = edgelist6
+    H1 = xgi.Hypergraph(el1)
+    el2 = edgelist2
+    H2 = xgi.Hypergraph(el2)
+
+    L1, node_dict1 = xgi.multiorder_laplacian(
+        H1, orders=[1, 2], weights=[1, 1], index=True
+    )
+    node_dict1 = {k: v for v, k in node_dict1.items()}
+    assert L1.shape == (5, 5)
+    assert np.all((L1.T == L1))
+
+    assert L1[node_dict1[0], node_dict1[3]] == 0
+    assert L1[node_dict1[0], node_dict1[4]] == 0
+    assert L1[node_dict1[1], node_dict1[4]] == 0
+
+    L2, node_dict2 = xgi.multiorder_laplacian(
+        H2, orders=[1, 2], weights=[1, 1], index=True, rescale_per_node=False
+    )
+    node_dict2 = {k: v for v, k in node_dict2.items()}
+    assert L2.shape == (6, 6)
+    assert np.all((L2.T == L2))
+
+    assert L2[node_dict2[1], node_dict2[3]] == 0
+    assert L2[node_dict2[1], node_dict2[4]] == 0
+    assert L2[node_dict2[1], node_dict2[5]] == 0
+    assert L2[node_dict2[1], node_dict2[6]] == 0
+    assert L2[node_dict2[2], node_dict2[3]] == 0
+    assert L2[node_dict2[2], node_dict2[4]] == 0
+    assert L2[node_dict2[2], node_dict2[5]] == 0
+    assert L2[node_dict2[2], node_dict2[6]] == 0
+    assert L2[node_dict2[3], node_dict2[5]] == 0
+    assert L2[node_dict2[3], node_dict2[6]] == 0
+
+
 def test_intersection_profile(edgelist2):
     el1 = edgelist2
     H1 = xgi.Hypergraph(el1)
