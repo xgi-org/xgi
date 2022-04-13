@@ -1,5 +1,7 @@
+"""General utilities."""
 from collections import defaultdict
 
+__all__ = ['XGICounter', 'get_dual']
 
 class XGICounter:
     """
@@ -53,13 +55,12 @@ def get_dual(edge_dict):
     Examples
     --------
     >>> import xgi
-    >>> d = {0 : [1, 2, 3], 1 : [0, 2]}
-    >>> xgi.get_dual(d)
-    {0 : [1], 1 : [0], 2 : [0, 1], 3 : [0]}
+    >>> xgi.get_dual({0 : [1, 2, 3], 1 : [0, 2]})
+    {1: [0], 2: [0, 1], 3: [0], 0: [1]}
     """
     node_dict = defaultdict(list)
     for edge_id, members in edge_dict.items():
         for node in members:
             node_dict[node].append(edge_id)
 
-    return node_dict
+    return dict(node_dict)

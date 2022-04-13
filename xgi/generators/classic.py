@@ -1,5 +1,8 @@
-"""Generators for some classic hypergraphs. All the functions
-in this module return a Hypergraph class (i.e. a simple, undirected hypergraph).
+"""Generators for some classic hypergraphs.
+
+All the functions in this module return a Hypergraph class (i.e. a simple, undirected
+hypergraph).
+
 """
 
 from itertools import combinations

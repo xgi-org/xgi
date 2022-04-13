@@ -1,0 +1,18 @@
+xgi.classes.reportviews.IDView
+==============================
+
+.. currentmodule:: xgi.classes.reportviews
+
+.. autoclass:: IDView
+   :show-inheritance:
+   :members:
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+      
+
+   
+   
