@@ -87,7 +87,7 @@ class Hypergraph:
         """
         try:
             return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
-        except KeyError:
+        except XGIError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
 
     def __iter__(self):

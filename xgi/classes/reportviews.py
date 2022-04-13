@@ -172,7 +172,7 @@ class IDView(Mapping, Set):
             raise XGIError(f"The ID {id} is not in this view")
 
         try:
-            return self._id_attrs[id]
+            return self._id_attr[id]
         except KeyError as e:
             raise XGIError(f"The ID {id} is not in the hypergraph") from e
 
@@ -483,9 +483,9 @@ class EdgeView(IDView):
         """
         if e is None:
             if dtype is dict:
-                return self._ids.copy()
+                return self._id_dict.copy()
             elif dtype is list:
-                return list(self._ids.values())
+                return list(self._id_dict.values())
             else:
                 raise XGIError(f"Unrecognized dtype {dtype}")
 
