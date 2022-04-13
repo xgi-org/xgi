@@ -485,11 +485,32 @@ class Hypergraph:
         Raises
         -----
         XGIError
-            If members is empty.
+            If `members` is empty.
 
         See Also
         --------
         add_edges_from : Add a collection of edges.
+
+        Examples
+        --------
+
+        Add edges with ir without specifying an edge id.
+
+        >>> H = xgi.Hypergraph()
+        >>> H.add_edge([1, 2, 3])
+        >>> H.add_edge([3, 4], id='myedge')
+        >>> H.edges
+        EdgeView((0, 'myedge')
+
+        Access attributes using square brackets.  By default no attributes are created.
+
+        >>> H.edges[0]
+        {}
+        >>> H.add_edge([1, 4], color='red', place='peru')
+        >>> H.edges
+        EdgeView((0, 'myedge', 1)
+        >>> H.edges[1]
+        {'color': 'red', 'place': 'peru'}
 
         """
         members = list(members)
