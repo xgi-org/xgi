@@ -1,3 +1,5 @@
+from warnings import warn
+
 import numpy as np
 from scipy.sparse import csr_matrix
 
@@ -342,9 +344,14 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
     Ls = [laplacian(H, order=i, rescale_per_node=rescale_per_node) for i in orders]
     Ks = [degree_matrix(H, order=i) for i in orders]
 
-    L_multi = 0
-    for L, K, w in zip(Ls, Ks, weights):
-        L_multi += L * w / np.mean(K)
+    L_multi = np.zeros((H.num_nodes, H.num_nodes))
+    for L, K, w, d in zip(Ls, Ks, weights, orders):
+        if np.all(K==0):
+            # avoid getting nans from dividing by 0
+            # manually setting contribution to 0 as it should be
+            warn(f"No edges of order {d}. Contribution of that order is zero. Its weight is effectively zero.")  
+        else:
+            L_multi += L * w / np.mean(K)
 
     if index:
         _, rowdict, _ = incidence_matrix(H, index=True)
