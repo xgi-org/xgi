@@ -35,7 +35,7 @@ class SimplicialComplex(Hypergraph):
         """
         try:
             return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} simplices"
-        except:
+        except KeyError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} simplices"
 
     def add_edge(self, edge, **attr):
@@ -104,7 +104,7 @@ class SimplicialComplex(Hypergraph):
             try:
                 self._edge[uid] = frozenset(simplex)
                 self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
-            except:
+            except TypeError:
                 raise XGIError("The simplex cannot be cast to a frozenset.")
 
             self._edge_attr[uid].update(attr)
@@ -159,14 +159,11 @@ class SimplicialComplex(Hypergraph):
 
         for simplex in ebunch_to_add:
 
-            try:
-                if isinstance(simplex[-1], dict):
-                    dd = simplex[-1]
-                    simplex = simplex[:-1]
-                else:
-                    dd = {}
-            except:
-                pass
+            if isinstance(simplex[-1], dict):
+                dd = simplex[-1]
+                simplex = simplex[:-1]
+            else:
+                dd = {}
 
             if simplex and not self.has_simplex(simplex):
                 uid = self._edge_uid()
@@ -182,7 +179,7 @@ class SimplicialComplex(Hypergraph):
                 try:
                     self._edge[uid] = frozenset(simplex)
                     self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
-                except:
+                except TypeError:
                     raise XGIError("The simplex cannot be cast to a frozenset.")
 
                 self._edge_attr[uid].update(attr)
@@ -219,7 +216,7 @@ class SimplicialComplex(Hypergraph):
             self.add_edges_from(
                 ((edge[:-1], {weight: edge[-1]}) for edge in ebunch_to_add), **attr
             )
-        except:
+        except KeyError:
             XGIError("Empty or invalid edges specified.")
 
     def remove_simplex_id(self, id):
@@ -275,13 +272,10 @@ class SimplicialComplex(Hypergraph):
         Will fail silently if an edge in ebunch is not in the simplicial complex.
         """
         for id in ebunch:
-            try:
-                for node in self.edges.members(id):
-                    self._node[node].remove(id)
-                del self._edge[id]
-                del self._edge_attr[id]
-            except:
-                pass
+            for node in self.edges.members(id):
+                self._node[node].remove(id)
+            del self._edge[id]
+            del self._edge_attr[id]
 
     def has_simplex(self, simplex):
         """Whether a simplex appears in the simplicial complex.

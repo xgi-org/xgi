@@ -32,7 +32,6 @@ xgi.classes.hypergraph.Hypergraph
       ~Hypergraph.egonet
       ~Hypergraph.get_edge_data
       ~Hypergraph.has_edge
-      ~Hypergraph.has_edge_id
       ~Hypergraph.has_node
       ~Hypergraph.is_possible_order
       ~Hypergraph.is_uniform

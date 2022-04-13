@@ -66,13 +66,18 @@ def test_read_hypergraph_json():
     assert list(H2.nodes) == ["1", "2", "3", "4"]
     assert H1["name"] == "test"
     assert H1["author"] == "Nicholas Landry"
-    assert [H1.edges.members(id) for id in H1.edges] == [[1, 2], [2, 3, 4], [1, 4]]
+    assert [H1.edges.members(id) for id in H1.edges] == [
+        [1, 2],
+        [2, 3, 4],
+        [1, 4]
+    ]
     assert [H2.edges.members(id) for id in H2.edges] == [
         ["1", "2"],
         ["2", "3", "4"],
         ["1", "4"],
     ]
-    assert H1.nodes["1"]["color"] == "blue"
+
+    assert H1.nodes[1]["color"] == "blue"
     assert H1.edges["edge2"]["weight"] == 4
 
 

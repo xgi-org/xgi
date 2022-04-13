@@ -90,7 +90,7 @@ class Hypergraph:
         """
         try:
             return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
-        except:
+        except XGIError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
 
     def __iter__(self):
@@ -576,7 +576,7 @@ class Hypergraph:
             try:
                 self._edge[uid] = list(e)
                 self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
-            except:
+            except TypeError:
                 raise XGIError("The edge cannot be cast to a list.")
 
             self._edge_attr[uid].update(attr)
@@ -608,7 +608,7 @@ class Hypergraph:
             self.add_edges_from(
                 ((edge[:-1], {weight: edge[-1]}) for edge in ebunch), **attr
             )
-        except:
+        except KeyError:
             XGIError("Empty or invalid edges specified.")
 
     def add_node_to_edge(self, edge, node):
@@ -755,38 +755,6 @@ class Hypergraph:
             self.add_nodes_from(nodes)
         if edges:
             self.add_edges_from(edges)
-
-    def has_edge_id(self, id):
-        """Whether the edge id is in the hypergraph.
-
-        This is the same as `v in H.edges` without KeyError exceptions.
-
-        Parameters
-        ----------
-        id : hashable
-            Edge id
-
-        Returns
-        -------
-        bool
-            Whether the edge is in the hypergraph.
-
-        See Also
-        --------
-        edges
-
-        Example
-        -------
-        >>> H = xgi.Hypergraph()
-        >>> H.add_edge([1, 2, 3], id='myedge')
-        >>> H.has_edge_id('myedge')
-        True
-
-        """
-        try:
-            return id in self._edge
-        except KeyError:
-            return False
 
     @property
     def edges(self):
