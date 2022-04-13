@@ -52,8 +52,8 @@ def test_node_degree(edgelist3):
     H.add_node_to_edge(0, 7)
     assert 7 in H.nodes(degree=2)
 
-   
-  def test_id_degree_view(edgelist1, edgelist4):
+
+def test_id_degree_view(edgelist1, edgelist4):
     H1 = xgi.Hypergraph(edgelist4)
     H2 = xgi.Hypergraph(edgelist1)
     # test basic functionality

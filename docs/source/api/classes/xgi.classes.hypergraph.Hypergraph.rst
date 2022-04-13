@@ -23,8 +23,10 @@ xgi.classes.hypergraph.Hypergraph
       ~Hypergraph.clear
       ~Hypergraph.clear_edges
       ~Hypergraph.copy
+      ~Hypergraph.degree
       ~Hypergraph.dual
       ~Hypergraph.duplicate_edges
+      ~Hypergraph.edge_size
       ~Hypergraph.edge_subhypergraph
       ~Hypergraph.edges_of_order
       ~Hypergraph.egonet
@@ -54,8 +56,6 @@ xgi.classes.hypergraph.Hypergraph
 
    .. autosummary::
       
-      ~Hypergraph.degree
-      ~Hypergraph.edge_size
       ~Hypergraph.edges
       ~Hypergraph.nodes
       ~Hypergraph.num_edges
