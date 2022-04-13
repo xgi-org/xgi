@@ -919,17 +919,23 @@ class Hypergraph:
             return edge_sizes[ebunch]
         return edge_sizes
 
-    def clear(self):
+    def clear(self, hypergraph_attr=True):
         """Remove all nodes and edges from the graph.
 
-        Also removes all graph, node, and edge attributes.
+        Also removes node and edge attribues, and optionally hypergraph attributes.
+
+        Parameters
+        ----------
+        hypergraph_attr : bool, default True
+            Whether to remove hypergraph attributes as well
 
         """
         self._node.clear()
         self._node_attr.clear()
         self._edge.clear()
         self._edge_attr.clear()
-        self._hypergraph.clear()
+        if hypergraph_attr:
+            self._hypergraph.clear()
 
     def clear_edges(self):
         """Remove all edges from the graph without altering any nodes."""
