@@ -1,10 +1,12 @@
+"""Generate random (non-uniform) hypergraphs."""
 import math
-import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
 
+import networkx as nx
 import numpy as np
+
 import xgi
 from xgi.utils import py_random_state
 
@@ -157,8 +159,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
 
     Examples
     --------
-    >>> import xgi
-    >>> import random
+    >>> import xgi; import random; import numpy as np
     >>> n = 100
     >>> k1 = {i : random.randint(1, 100) for i in range(n)}
     >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
@@ -300,7 +301,7 @@ def random_hypergraph(N, ps, seed=None):
 
 
 @py_random_state(2)
-def random_simplicial_complex(N, ps):
+def random_simplicial_complex(N, ps, seed=None):
     """Generates a random hypergraph
 
     Generate N nodes, and connect any d+1 nodes
@@ -351,11 +352,11 @@ def random_simplicial_complex(N, ps):
             if seed.random() <= p:
                 simplices.append(simplex)
 
-    S = xgi.Simplicialcomplex()
+    S = xgi.SimplicialComplex()
     S.add_nodes_from(nodes)
-    S.add_edges_from(simplices)
+    S.add_simplices_from(simplices)
 
-    return H
+    return S
 
 
 @py_random_state(2)
@@ -396,8 +397,8 @@ def random_maximal_simplicial_complex_d2(N, p, seed=None):
 
     simplices = edges + triad_cliques
 
-    S = xgi.Simplicialcomplex()
+    S = xgi.SimplicialComplex()
     S.add_nodes_from(nodes)
-    S.add_edges_from(simplices)
+    S.add_simplices_from(simplices)
 
     return S

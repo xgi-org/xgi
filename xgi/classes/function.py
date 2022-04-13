@@ -1,4 +1,4 @@
-"""Functional interface to graph methods and assorted utilities.
+"""Functional interface to hypergraph methods and assorted utilities.
 """
 
 from collections import Counter

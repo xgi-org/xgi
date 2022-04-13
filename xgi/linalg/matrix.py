@@ -1,3 +1,4 @@
+"""Matrices associated to hypergraphs."""
 import numpy as np
 from scipy.sparse import csr_matrix
 
@@ -5,6 +6,7 @@ __all__ = [
     "incidence_matrix",
     "adjacency_matrix",
     "intersection_profile",
+    "degree_matrix",
     "laplacian",
     "clique_motif_matrix",
 ]
@@ -47,11 +49,14 @@ def incidence_matrix(
         >>> ps = [0.1, 0.01]
         >>> H = xgi.random_hypergraph(N, ps)
         >>> I = xgi.incidence_matrix(H)
-    """
 
+    """
     edge_ids = H.edges
     if order is not None:
         edge_ids = [id_ for id_, edge in H._edge.items() if len(edge) == order + 1]
+    if not edge_ids:
+        return (np.array([]), {}, {}) if index else np.array([])
+
     node_ids = H.nodes
     num_edges = len(edge_ids)
     num_nodes = len(node_ids)
@@ -59,7 +64,7 @@ def incidence_matrix(
     node_dict = dict(zip(node_ids, range(num_nodes)))
     edge_dict = dict(zip(edge_ids, range(num_edges)))
 
-    if len(node_dict) != 0 and len(edge_dict) != 0:
+    if node_dict and edge_dict:
 
         if index:
             rowdict = {v: k for k, v in node_dict.items()}
@@ -67,15 +72,23 @@ def incidence_matrix(
 
         if sparse:
             # Create csr sparse matrix
-            rows = list()
-            cols = list()
-            data = list()
-            for edge in edge_ids:
-                members = H.edges.members(edge)
-                for node in members:
-                    data.append(weight(node, edge, H))
-                    rows.append(node_dict[node])
-                    cols.append(edge_dict[edge])
+            rows = []
+            cols = []
+            data = []
+            for node in node_ids:
+                memberships = H.nodes.memberships(node)
+                # keep only those with right order
+                memberships = [i for i in memberships if i in edge_ids]
+                if len(memberships) > 0:
+                    for edge in memberships:
+                        data.append(weight(node, edge, H))
+                        rows.append(node_dict[node])
+                        cols.append(edge_dict[edge])
+                else:  # include disconnected nodes
+                    for edge in edge_ids:
+                        data.append(0)
+                        rows.append(node_dict[node])
+                        cols.append(edge_dict[edge])
             I = csr_matrix((data, (rows, cols)))
         else:
             # Create an np.matrix
@@ -90,9 +103,9 @@ def incidence_matrix(
             return I
     else:
         if index:
-            return np.zeros(1), {}, {}
+            return np.array([]), {}, {}
         else:
-            return np.zeros(1)
+            return np.array([])
 
 
 def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
@@ -125,12 +138,16 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
         >>> ps = [0.01, 0.001]
         >>> H = xgi.random_hypergraph(n, ps)
         >>> A = xgi.adjacency_matrix(H)
-    """
 
-    if index:
-        I, rowdict, _ = incidence_matrix(H, index=True, order=order)
-    else:
-        I = incidence_matrix(H, index=False, order=order)
+    """
+    I, rowdict, coldict = incidence_matrix(H, index=True, order=order)
+
+    if I.shape == (0,):
+        if not rowdict:
+            A = np.array([])
+        if not coldict:
+            A = np.zeros((H.num_nodes, H.num_nodes))
+        return (A, {}) if index else A
 
     A = I.dot(I.T)
     A.setdiag(0)
@@ -189,7 +206,7 @@ def intersection_profile(H, order=None, index=False):
         return P
 
 
-def _degree(H, order=None, index=False):
+def degree_matrix(H, order=None, index=False):
     """Returns the degree of each node as an array
 
     Parameters
@@ -209,18 +226,14 @@ def _degree(H, order=None, index=False):
     else:
         return K
     """
+    I, rowdict, _ = incidence_matrix(H, order=order, index=True)
 
-    if index:
-        I, row_dict, _ = incidence_matrix(H, index=True, order=order)
+    if I.shape == (0,):
+        K = np.zeros(H.num_nodes)
     else:
-        I = incidence_matrix(H, index=False, order=order)
+        K = np.ravel(np.sum(I, axis=1))  # flatten
 
-    K = np.sum(I, axis=1)
-
-    if index:
-        return K, row_dict
-    else:
-        return K
+    return (K, rowdict) if index else K
 
 
 def laplacian(H, order=1, rescale_per_node=False, index=False):
@@ -248,12 +261,15 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
     .. [1] Lucas, M., Cencetti, G., & Battiston, F. (2020).
         Multiorder Laplacian for synchronization in higher-order networks.
         Physical Review Research, 2(3), 033410.
+
     """
-
     A, row_dict = adjacency_matrix(H, order=order, weighted=True, index=True)
-    K = _degree(H, order=order, index=False)
+    if A.shape == (0,):
+        return (np.array([]), {}) if index else np.array([])
 
-    L = order * np.diag(np.ravel(K)) - A  # ravel needed to convert sparse matrix
+    K = degree_matrix(H, order=order, index=False)
+
+    L = order * np.diag(K) - A  # ravel needed to convert sparse matrix
     L = np.asarray(L)
 
     if rescale_per_node:
@@ -300,15 +316,18 @@ def clique_motif_matrix(H, index=False):
         >>> W = xgi.clique_motif_matrix(H)
     """
     if index:
-        I, row_dict, _ = incidence_matrix(H, index=True)
+        I, rowdict, _ = incidence_matrix(H, index=True)
     else:
         I = incidence_matrix(H, index=False)
+
+    if I.shape == (0,):
+        return (np.array([]), rowdict) if index else np.array([])
 
     W = I.dot(I.T)
     W.setdiag(0)
     W.eliminate_zeros()
 
     if index:
-        return W, row_dict
+        return W, rowdict
     else:
         return W

@@ -1,3 +1,4 @@
+"""Read from and write to JSON."""
 import json
 
 import xgi

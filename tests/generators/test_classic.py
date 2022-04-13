@@ -1,4 +1,5 @@
 import pytest
+
 import xgi
 
 
@@ -6,7 +7,8 @@ def test_empty_hypergraph():
     H = xgi.empty_hypergraph()
     assert (H.num_nodes, H.num_edges) == (0, 0)
 
-def test_star_clique(): 
+
+def test_star_clique():
 
     with pytest.raises(ValueError):
         H = xgi.star_clique(-1, 7, 3)

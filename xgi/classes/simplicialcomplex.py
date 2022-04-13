@@ -5,20 +5,16 @@ and can associate key/value attribute pairs with each undirected simplex and nod
 
 Multi-simplices are not allowed.
 """
-from copy import deepcopy
+
 from itertools import combinations
 
-import xgi
-import xgi.convert as convert
 from xgi.classes import Hypergraph
-from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
-                                     NodeView)
 from xgi.exception import XGIError
-from xgi.utils import XGICounter
 
 __all__ = ["SimplicialComplex"]
 
-class SimplicialComplex(Hypergraph) :
+
+class SimplicialComplex(Hypergraph):
     """A class to represent undirected simplicial complexes."""
 
     def __str__(self):
@@ -46,16 +42,24 @@ class SimplicialComplex(Hypergraph) :
         raise XGIError("Cannot add_edge to SimplicialComplex, use add_simplex instead")
 
     def add_edges_from(self, edges, **attr):
-        raise XGIError("Cannot add_edges_from to SimplicialComplex, use add_simplices_from instead")
+        raise XGIError(
+            "Cannot add_edges_from to SimplicialComplex, use add_simplices_from instead"
+        )
 
     def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
-        raise XGIError("Cannot add_weighted_edges_from to SimplicialComplex, use add_weighted_simplices_from instead")
+        raise XGIError(
+            "Cannot add_weighted_edges_from to SimplicialComplex, use add_weighted_simplices_from instead"
+        )
 
     def remove_edge(self, id):
-        raise XGIError("Cannot remove_edge to SimplicialComplex, use remove_simplex instead")
+        raise XGIError(
+            "Cannot remove_edge to SimplicialComplex, use remove_simplex instead"
+        )
 
     def remove_edges_from(self, ebunch):
-        raise XGIError("Cannot remove_edges_from to SimplicialComplex, use remove_simplices_from instead")
+        raise XGIError(
+            "Cannot remove_edges_from to SimplicialComplex, use remove_simplices_from instead"
+        )
 
     def add_simplex(self, simplex, **attr):
         """Add a simplex to the simplicial complex, and all its subfaces that do
@@ -82,7 +86,7 @@ class SimplicialComplex(Hypergraph) :
         Currently cannot add empty edges.
         """
 
-        if not self.has_simplex(simplex) :
+        if not self.has_simplex(simplex):
 
             # add simplex and its nodes
             if simplex:
@@ -113,18 +117,18 @@ class SimplicialComplex(Hypergraph) :
         """Returns list of subfaces of simplex"""
         size = len(simplex)
         faces = []
-        for n in range(size, 2, -1): 
-            for face in combinations(simplex, n-1):
+        for n in range(size, 2, -1):
+            for face in combinations(simplex, n - 1):
                 faces.append(face)
 
-        return faces 
+        return faces
 
-    def _supfaces(self, simplex): 
+    def _supfaces(self, simplex):
         """Returns list of simplices that contain simplex"""
 
         return [s for s in self._edge.values() if simplex < s]
 
-    def _supfaces_id(self, simplex): 
+    def _supfaces_id(self, simplex):
         """Returns list of IDs of simplices that contain simplex"""
 
         return [id_ for id_, s in self._edge.items() if simplex < s]
@@ -164,7 +168,7 @@ class SimplicialComplex(Hypergraph) :
             except:
                 pass
 
-            if simplex and not self.has_simplex(simplex) :
+            if simplex and not self.has_simplex(simplex):
                 uid = self._edge_uid()
 
                 for n in simplex:
@@ -184,7 +188,7 @@ class SimplicialComplex(Hypergraph) :
                 self._edge_attr[uid].update(attr)
                 self._edge_attr[uid].update(dd)
 
-                # add subfaces 
+                # add subfaces
                 faces = self._subfaces(simplex)
                 self.add_simplices_from(faces)
 
