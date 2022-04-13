@@ -1194,12 +1194,11 @@ class Hypergraph:
 
         Returns
         -------
-        dict
+        EdgeView
+            View of the edges with a single member.
 
         """
-        return {
-            id_: members for id_, members in self._edge.items() if len(members) == 1
-        }
+        return self.edges(order=0)
 
     def remove_singleton_edges(self):
         """Removes all singletons edges from the hypergraph"""
