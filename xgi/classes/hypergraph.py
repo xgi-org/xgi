@@ -48,6 +48,9 @@ class Hypergraph:
     Unique IDs are assigned to each node and edge internally and are used to refer to
     them throughout.
 
+    The attr keyword arguments are added as hypergraph attributes. To add node or ede
+    attributes see :meth:`add_node` and :meth:`add_edge`.
+
     Examples
     --------
     >>> import xgi
@@ -273,7 +276,7 @@ class Hypergraph:
             ]
 
     def add_node(self, node, **attr):
-        """Add a node with optional attributes.
+        """Add one node with optional attributes.
 
         Parameters
         ----------
@@ -587,7 +590,7 @@ class Hypergraph:
             XGIError("Empty or invalid edges specified.")
 
     def add_node_to_edge(self, edge, node):
-        """Add a node to an existing edge.
+        """Add one node to an existing edge.
 
         If the node or edge IDs do not exist, they are created.
 
@@ -790,7 +793,7 @@ class Hypergraph:
             return default
 
     def degree(self, nbunch=None, weight=None, order=None, dtype="dict"):
-        """A NodeDegreeView for the Hypergraph as H.degree or H.degree().
+        """A NodeDegreeView for the Hypergraph.
 
         The degree is the number of edges adjacent to the node.
         The weighted node degree is the sum of the edge weights for
@@ -884,7 +887,7 @@ class Hypergraph:
         self._hypergraph.clear()
 
     def clear_edges(self):
-        """Remove all edges from the graph without altering nodes."""
+        """Remove all edges from the graph without altering any nodes."""
         for node in self.nodes:
             self._node[node] = {}
         self._edge.clear()
@@ -1250,7 +1253,7 @@ class Hypergraph:
         return list(edges_unique[np.where(counts > 1)])
 
     def is_uniform(self):
-        """Order of uniformity if the hypergraph is uniform, or None.
+        """Order of uniformity if the hypergraph is uniform, or False.
 
         A hypergraph is uniform if all its edges have the same order.
 
@@ -1271,6 +1274,7 @@ class Hypergraph:
         3
         >>> if H.is_uniform(): print('H is uniform!')
         H is uniform!
+
         """
         edge_sizes = {len(members) for _, members in self._edge.items()}
         if 1 in edge_sizes:
