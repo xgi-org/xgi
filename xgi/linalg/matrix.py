@@ -331,9 +331,8 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
     for L, K, w in zip(Ls, Ks, weights):
         L_multi += L * w / np.mean(K)
 
-    _, rowdict, _ = incidence_matrix(H, index=True)  # get index
-
     if index:
+        _, rowdict, _ = incidence_matrix(H, index=True)
         return L_multi, rowdict
     else:
         return L_multi
