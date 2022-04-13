@@ -468,30 +468,30 @@ class Hypergraph:
         return set(edge) in (set(self.edges.members(e)) for e in self.edges)
 
     def add_edge(self, members, id=None, **attr):
-        """Add a single edge with optional attributes.
+        """Add one edge with optional attributes.
 
         Parameters
         ----------
         members : Iterable
-            An iterable of node ids
+            An iterable of the ids of the nodes contained in the new edge.
         id : hashable, default None
-            Edge id. If None, a unique numeric ID will be created automatically
-        attr : keyword arguments, optional
-            Edge data (or labels or objects) can be assigned using
-            keyword arguments.
+            Id of the new edge. If None, a unique numeric ID will be created.
+        **attr : dict, optional
+            Attributes of the new edge.
+
+        Raises
+        -----
+        XGIError
+            If members is empty.
 
         See Also
         --------
-        add_edges_from : add a collection of edges
-
-        Notes
-        -----
-        A unique ID is automatically assigned to the edge.  Currently cannot add empty
-        edges.
+        add_edges_from : Add a collection of edges.
 
         """
+        members = list(members)
         if not members:
-            raise XGIError("Cannot add an empty edge.")
+            raise XGIError("Cannot add an empty edge")
 
         uid = self._edge_uid() if not id else id
         self._edge[uid] = []

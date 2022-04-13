@@ -219,3 +219,18 @@ def test_egonet(edgelist3):
     assert H.egonet(3, include_self=True) == [[1, 2, 3], [3, 4]]
     with pytest.raises(XGIError):
         H.egonet(7)
+
+
+def test_add_edge():
+    for edge in [[1, 2, 3], {1, 2, 3}, iter([1, 2, 3])]:
+        H = xgi.Hypergraph()
+        H.add_edge(edge)
+        assert (1 in H) and (2 in H) and (3 in H)
+        assert 0 in H.edges
+        assert [1, 2, 3] in H.edges.members()
+        assert H.edges.members(dtype=dict) == {0: [1, 2, 3]}
+
+    H = xgi.Hypergraph()
+    for edge in [[], set(), iter([])]:
+        with pytest.raises(XGIError):
+            H.add_edge(edge)
