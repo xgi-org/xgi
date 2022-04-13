@@ -255,12 +255,12 @@ def test_add_edge_with_attr():
     assert [1, 2, 3] in H.edges.members()
     assert [1, 2, 3] == H.edges.members(0)
     assert H.edges.members(dtype=dict) == {0: [1, 2, 3]}
-    assert H.edges[0] == {'color': 'ref', 'place': 'peru'}
+    assert H.edges[0] == {'color': 'red', 'place': 'peru'}
 
 
 def test_add_node_to_edge():
     H = xgi.Hypergraph()
     H.add_edge(['apple', 'banana'], 'fruits')
-    H.add_node_to_edge('pear', 'fruits')
-    H.add_node_to_edge('lettuce', 'veggies')
-    assert H.edges.members(dtype=dict) == {'fruits': ['apple', 'banana', 'pear'], 'veggies': 'lettuce'}
+    H.add_node_to_edge('fruits', 'pear')
+    H.add_node_to_edge('veggies', 'lettuce')
+    assert H.edges.members(dtype=dict) == {'fruits': ['apple', 'banana', 'pear'], 'veggies': ['lettuce']}
