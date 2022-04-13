@@ -19,5 +19,4 @@ from xgi.linalg import *
 from xgi.readwrite import *
 from xgi.utils import *
 
-
 __version__ = pkg_resources.require("xgi")[0].version

@@ -3,6 +3,7 @@ from copy import deepcopy
 from warnings import warn
 
 import numpy as np
+
 import xgi
 import xgi.convert as convert
 from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
@@ -788,9 +789,8 @@ class Hypergraph:
         except KeyError:
             return default
 
-    @property
-    def degree(self):
-        """A NodeDegreeView of the hypergraph.
+    def degree(self, nbunch=None, weight=None, order=None, dtype="dict"):
+        """A NodeDegreeView for the Hypergraph as H.degree or H.degree().
 
         The degree is the number of edges adjacent to the node.
         The weighted node degree is the sum of the edge weights for
@@ -801,13 +801,19 @@ class Hypergraph:
 
         Parameters
         ----------
-        nbunch : single node, container, or all nodes (default= all nodes)
-            The view will only report edges incident to these nodes.
-
-        weight : string or None, optional (default=None)
+        nbunch : single node, container, or None, default: None
+            The view will only report edges incident to these nodes. If None
+            is specified, the degree of all nodes is computed.
+        weight : string or None, default: None
            The name of an edge attribute that holds the numerical value used
            as a weight.  If None, then each edge has weight 1.
            The degree is the sum of the edge weights adjacent to the node.
+        order : int or None, default: None
+            The size edges for which to compute the degree. If None is
+            specified, all edges are considered.
+        dtype : str, default: "dict"
+            The datatype to return
+
 
         Returns
         -------
@@ -819,11 +825,18 @@ class Hypergraph:
         DegreeView object
             The degrees of the hypergraph capable of iterating (node, degree) pairs
         """
-        return DegreeView(self)
 
-    @property
-    def edge_size(self):
-        """An EdgeSizeView of the hypergraph.
+        degree = DegreeView(
+            self, nbunch=nbunch, weight=weight, order=order, dtype=dtype
+        )
+
+        # handles the single node case.
+        if nbunch in self:
+            return degree[nbunch]
+        return degree
+
+    def edge_size(self, ebunch=None, weight=None, dtype="dict"):
+        """A EdgeSizeView for the Hypergraph as H.edge_size or H.edge_size().
 
         The edge degree is the number of nodes in that edge, or the edge size.
         The weighted edge degree is the sum of the node weights for
@@ -834,13 +847,14 @@ class Hypergraph:
 
         Parameters
         ----------
-        nbunch : single edge, container, or all edges (default= all edges)
+        ebunch : single edge, container, or all edges (default= all edges)
             The view will only report sizes of these edges.
-
         weight : string or None, optional (default=None)
            The name of an node attribute that holds the numerical value used
            as a weight.  If None, then each node has weight 1.
            The size is the sum of the node weights adjacent to the edge.
+        dtype : str, default: "dict"
+            The datatype to return
 
         Returns
         -------
@@ -852,7 +866,10 @@ class Hypergraph:
         EdgeSizeView object
             The sizes of the hypergraph edges capable of iterating (edge, size) pairs
         """
-        return EdgeSizeView(self)
+        edge_sizes = EdgeSizeView(self, ebunch=ebunch, weight=weight, dtype=dtype)
+        if ebunch in self:
+            return edge_sizes[ebunch]
+        return edge_sizes
 
     def clear(self):
         """Remove all nodes and edges from the graph.
@@ -1159,14 +1176,17 @@ class Hypergraph:
 
         """
         return {
-            id_: members
-            for id_, members in self._edge.items()
-            if len(members) == 1
+            id_: members for id_, members in self._edge.items() if len(members) == 1
         }
 
     def remove_singleton_edges(self):
-        """Remove all singleton edges."""
-        self.remove_edges_from(self.singleton_edges())
+        """Removes all singletons edges from the hypergraph"""
+
+        singleton_ids = [
+            id_ for id_, members in self._edge.items() if len(members) == 1
+        ]
+        self.remove_edges_from(singleton_ids)
+        return None
 
     def isolates(self, ignore_singletons=True):
         """Nodes that belong to no edges.
@@ -1252,8 +1272,7 @@ class Hypergraph:
         >>> if H.is_uniform(): print('H is uniform!')
         H is uniform!
 
-        """
-        edge_sizes = set(dict(self.edge_size()).values())
+        edge_sizes = {len(members) for _, members in self._edge.items()}
         if 1 in edge_sizes:
             edge_sizes.remove(1)  # discard singleton edges
 

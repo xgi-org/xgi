@@ -5,15 +5,11 @@ and can associate key/value attribute pairs with each undirected simplex and nod
 
 Multi-simplices are not allowed.
 """
-from copy import deepcopy
+
 from itertools import combinations
 
-import xgi
-import xgi.convert as convert
 from xgi.classes import Hypergraph
-from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
 from xgi.exception import XGIError
-from xgi.utils import XGICounter
 
 __all__ = ["SimplicialComplex"]
 
