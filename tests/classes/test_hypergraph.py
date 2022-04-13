@@ -237,7 +237,7 @@ def test_add_edge():
             H.add_edge(edge)
 
 
-def add_test_with_id():
+def test_add_edge_with_id():
     H = xgi.Hypergraph()
     H.add_edge([1, 2, 3], id='myedge')
     assert (1 in H) and (2 in H) and (3 in H)
@@ -247,7 +247,7 @@ def add_test_with_id():
     assert H.edges.members(dtype=dict) == {'myedge': [1, 2, 3]}
 
 
-def add_test_with_attr():
+def test_add_edge_with_attr():
     H = xgi.Hypergraph()
     H.add_edge([1, 2, 3], color='red', place='peru')
     assert (1 in H) and (2 in H) and (3 in H)
@@ -256,3 +256,11 @@ def add_test_with_attr():
     assert [1, 2, 3] == H.edges.members(0)
     assert H.edges.members(dtype=dict) == {0: [1, 2, 3]}
     assert H.edges[0] == {'color': 'ref', 'place': 'peru'}
+
+
+def test_add_node_to_edge():
+    H = xgi.Hypergraph()
+    H.add_edge(['apple', 'banana'], 'fruits')
+    H.add_node_to_edge('pear', 'fruits')
+    H.add_node_to_edge('lettuce', 'veggies')
+    assert H.edges.members(dtype=dict) == {'fruits': ['apple', 'banana', 'pear'], 'veggies': 'lettuce'}

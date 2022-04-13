@@ -434,9 +434,9 @@ class Hypergraph:
         >>> hyperedge_list = [[1, 2], [2, 3, 4]]
         >>> H = xgi.Hypergraph(hyperedge_list)
         >>> H.has_node(1), 1 in H, 1 in H.nodes
-        True, True, True
+        (True, True, True)
         >>> H.has_node(0), 0 in H, 0 in H.nodes
-        False, False, False
+        (False, False, False)
 
         """
         try:
@@ -500,7 +500,7 @@ class Hypergraph:
         >>> H.add_edge([1, 2, 3])
         >>> H.add_edge([3, 4], id='myedge')
         >>> H.edges
-        EdgeView((0, 'myedge')
+        EdgeView((0, 'myedge'))
 
         Access attributes using square brackets.  By default no attributes are created.
 
@@ -508,7 +508,7 @@ class Hypergraph:
         {}
         >>> H.add_edge([1, 4], color='red', place='peru')
         >>> H.edges
-        EdgeView((0, 'myedge', 1)
+        EdgeView((0, 'myedge', 1))
         >>> H.edges[1]
         {'color': 'red', 'place': 'peru'}
 
@@ -581,7 +581,7 @@ class Hypergraph:
             self._edge_attr[uid].update(attr)
             self._edge_attr[uid].update(dd)
 
-    def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
+    def add_weighted_edges_from(self, ebunch, weight="weight", **attr):
         """Add multiple weighted edges with optional attributes.
 
         Parameters
@@ -605,7 +605,7 @@ class Hypergraph:
         """
         try:
             self.add_edges_from(
-                ((edge[:-1], {weight: edge[-1]}) for edge in ebunch_to_add), **attr
+                ((edge[:-1], {weight: edge[-1]}) for edge in ebunch), **attr
             )
         except:
             XGIError("Empty or invalid edges specified.")
@@ -621,6 +621,21 @@ class Hypergraph:
             edge ID
         node : hashable
             node ID
+
+        See Also
+        --------
+        add_node
+        add_edge
+
+        Examples
+        --------
+        >>> H = xgi.Hypergraph()
+        >>> H.add_edge(['apple', 'banana'], 'fruits')
+        >>> H.add_node_to_edge('fruits', 'pear')
+        >>> H.add_node_to_edge('veggies', 'lettuce')
+        >>> H.edges.members(dtype=dict)
+        {'fruits': ['apple', 'banana', 'pear'], 'veggies': ['lettuce']}
+
         """
         if edge not in self._edge:
             self._edge[edge] = []
