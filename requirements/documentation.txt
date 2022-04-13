@@ -1,4 +1,5 @@
 sphinx~=4.0
+sphinx_copybutton
 sphinx-rtd-theme>=0.4.2
 numpydoc>=1.1
 pillow>=8.2

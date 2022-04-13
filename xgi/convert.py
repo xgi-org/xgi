@@ -372,21 +372,22 @@ def from_bipartite_graph(G, create_using=None, dual=False):
 
     Examples
     --------
-        >>> import networkx as nx
-        >>> import xgi
-        >>> G = nx.Graph()
-        >>> G.add_nodes_from([1, 2, 3, 4], bipartite=0)
-        >>> G.add_nodes_from(['a', 'b', 'c'], bipartite=1)
-        >>> G.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), (3, 'c'), (4, 'a')])
-        >>> H = xgi.from_bipartite_network(G)
+    >>> import networkx as nx
+    >>> import xgi
+    >>> G = nx.Graph()
+    >>> G.add_nodes_from([1, 2, 3, 4], bipartite=0)
+    >>> G.add_nodes_from(['a', 'b', 'c'], bipartite=1)
+    >>> G.add_edges_from([(1, 'a'), (1, 'b'), (2, 'b'), (2, 'c'), (3, 'c'), (4, 'a')])
+    >>> H = xgi.from_bipartite_graph(G)
+
     """
     edges = []
     nodes = []
     for n, d in G.nodes(data=True):
         try:
             node_type = d["bipartite"]
-        except:
-            raise XGIError("bipartite property not set")
+        except KeyError as e:
+            raise XGIError("bipartite property not set") from e
 
         if node_type == 0:
             nodes.append(n)
@@ -400,12 +401,10 @@ def from_bipartite_graph(G, create_using=None, dual=False):
 
     H = xgi.empty_hypergraph(create_using)
     H.add_nodes_from(nodes)
-    for node, edge in G.edges:
-        H.add_node_to_edge(edge, node)
-    if dual:
-        return H.dual()
-    else:
-        return H
+    for edge in edges:
+        nodes_in_edge = list(G.neighbors(edge))
+        H.add_edge(nodes_in_edge, id=edge)
+    return H.dual() if dual else H
 
 
 def to_bipartite_graph(H):
@@ -430,11 +429,10 @@ def to_bipartite_graph(H):
 
     Examples
     --------
-        >>> import networkx as nx
-        >>> import xgi
-        >>> >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> G = xgi.to_bipartite_network(H)
+    >>> import xgi
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = xgi.Hypergraph(hyperedge_list)
+    >>> G = xgi.to_bipartite_graph(H)
     """
     G = nx.Graph()
 

@@ -1,3 +1,4 @@
+"""Read from and write to bipartite formats."""
 import xgi
 from xgi.exception import XGIError
 

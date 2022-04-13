@@ -1,3 +1,4 @@
+"""Read from and write to incidece matrices."""
 import numpy as np
 
 import xgi

@@ -1,4 +1,5 @@
 import pytest
+
 import xgi
 from xgi.exception import XGIError, IDNotFound
 
@@ -106,6 +107,20 @@ def test_max_edge_order(edgelist1, edgelist4, edgelist5):
     assert H2.max_edge_order() == 2
     assert H3.max_edge_order() == 3
     assert H4.max_edge_order() == 3
+
+
+def test_add_nodes_from(attr1, attr2, attr3):
+    H = xgi.Hypergraph()
+    H.add_nodes_from(range(3), **attr1)
+    assert H.nodes[0]['color'] == attr1['color']
+    assert H.nodes[1]['color'] == attr1['color']
+    assert H.nodes[2]['color'] == attr1['color']
+
+    H = xgi.Hypergraph()
+    H.add_nodes_from(zip(range(3), [attr1, attr2, attr3]))
+    assert H.nodes[0]['color'] == attr1['color']
+    assert H.nodes[1]['color'] == attr2['color']
+    assert H.nodes[2]['color'] == attr3['color']
 
 
 def test_is_possible_order(edgelist1):

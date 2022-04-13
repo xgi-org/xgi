@@ -1,7 +1,7 @@
 import networkx as nx
-from xgi.utils import py_random_state
 
 import xgi
+from xgi.utils import py_random_state
 
 __all__ = [
     "random_layout",
