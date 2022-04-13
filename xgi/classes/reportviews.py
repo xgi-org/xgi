@@ -174,6 +174,8 @@ class IDView(Mapping, Set):
             return self._id_attr[id]
         except KeyError as e:
             raise XGIError(f"The ID {id} is not in the hypergraph") from e
+        except TypeError as e:
+            raise XGIError(f"The ID {id} is not hashable") from e
 
     def __contains__(self, id):
         """Checks whether the ID is in the hypergraph
@@ -219,6 +221,18 @@ class IDView(Mapping, Set):
 
         Allows to create a view with the same underlying data but with a different
         bunch.
+
+        Parameters
+        ----------
+        view : IDView
+            The view used to initialze the new object
+        bunch : iterable
+            IDs the new view will keep track of
+
+        Returns
+        -------
+        IDView
+            A view object that is identical to `view` but keeps track of different IDs.
 
         """
         newview = cls(None)
