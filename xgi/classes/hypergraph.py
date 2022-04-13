@@ -715,27 +715,6 @@ class Hypergraph:
         if edges:
             self.add_edges_from(edges)
 
-    def has_edge_id(self, id):
-        """Whether the edge id is in the hypergraph.
-
-        This is the same as `v in H.edges` without KeyError exceptions.
-
-        Parameters
-        ----------
-        id : hashable
-            Edge id
-
-        Returns
-        -------
-        bool
-            Whether the edge is in the hypergraph.
-
-        """
-        try:
-            return id in self._edge
-        except KeyError:
-            return False
-
     @property
     def edges(self):
         """An EdgeView of the hypergraph.
