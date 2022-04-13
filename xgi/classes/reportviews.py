@@ -496,22 +496,25 @@ class EdgeView(IDView):
         """
         if e is None:
             if dtype is dict:
-                return self._id_dict.copy()
+                return {key: self._id_dict[key] for key in self._ids}
             elif dtype is list:
-                return list(self._id_dict.values())
+                return [self._id_dict[key] for key in self._ids]
             else:
                 raise XGIError(f"Unrecognized dtype {dtype}")
 
+        if e not in self._ids:
+            raise XGIError(f"Item {e} not in this view")
+
         try:
             return self._id_dict[e]
-        except KeyError:
-            raise XGIError(f"The edge ID {e} is not in the hypergraph")
-        except TypeError:
+        except KeyError as e:
+            raise XGIError(f"The edge ID {e} is not in the hypergraph") from e
+        except TypeError as e:
             if isinstance(e, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
                     f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
-                )
+                ) from e
 
 
 class DegreeView(IDDegreeView):
