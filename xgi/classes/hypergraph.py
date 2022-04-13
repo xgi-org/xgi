@@ -597,12 +597,13 @@ class Hypergraph:
 
         See Also
         --------
-        add_edge : add a single edge
-        add_edges_from : add multiple edges
+        add_edge : Add a single edge.
+        add_edges_from : Add multiple edges.
 
         Notes
         -----
         Adding the same edge twice creates a multiedge.
+
         """
         try:
             self.add_edges_from(
@@ -840,8 +841,8 @@ class Hypergraph:
         OR if multiple nodes are requested
         DegreeView object
             The degrees of the hypergraph capable of iterating (node, degree) pairs
-        """
 
+        """
         degree = DegreeView(
             self, nbunch=nbunch, weight=weight, order=order, dtype=dtype
         )
@@ -881,6 +882,7 @@ class Hypergraph:
         OR if multiple edges are requested
         EdgeSizeView object
             The sizes of the hypergraph edges capable of iterating (edge, size) pairs
+
         """
         edge_sizes = EdgeSizeView(self, ebunch=ebunch, weight=weight, dtype=dtype)
         if ebunch in self:
@@ -1069,6 +1071,7 @@ class Hypergraph:
         The hypergraph, edge and node attributes are shared with the original
         hypergraph. Changes to the hypergraph structure is ruled out by the view,
         but changes to attributes are reflected in the original hypergraph.
+
         """
         subhypergraph = xgi.hypergraphviews.subhypergraph_view
         return subhypergraph(self, nodes, edges)
@@ -1184,7 +1187,6 @@ class Hypergraph:
 
     def remove_singleton_edges(self):
         """Removes all singletons edges from the hypergraph"""
-
         singleton_ids = [
             id_ for id_, members in self._edge.items() if len(members) == 1
         ]
@@ -1206,14 +1208,14 @@ class Hypergraph:
         ignore_singletons : bool, default False
             Whether to consider singleton edges.
 
-        See Also
-        --------
-        remove_isolates
-
         Returns
         -------
         set
             Isolated nodes.
+
+        See Also
+        --------
+        remove_isolates
 
         """
         nodes_in_edges = set()
@@ -1242,14 +1244,14 @@ class Hypergraph:
     def duplicate_edges(self):
         """A list of all duplicate edges.
 
-        See also
-        --------
-        remove_duplicates
-
         Returns
         -------
         list
             All edges with a duplicate.
+
+        See also
+        --------
+        remove_duplicates
 
         """
         edges = [tuple(e) for e in self._edge.values()]
@@ -1273,6 +1275,7 @@ class Hypergraph:
         Examples
         --------
         This function can be used as a boolean check:
+
         >>> H = xgi.Hypergraph([(0, 1, 2), (1, 2, 3), (2, 3, 4)])
         >>> H.is_uniform()
         3
