@@ -1154,20 +1154,6 @@ class Hypergraph:
             d_max = 0 if self._node else None
         return d_max
 
-    def edges_of_order(self, d):
-        """Returns a dict of d-hyperedges
-
-        Parameters
-        ----------
-        d : int
-            Desired order
-        """
-        return {
-            id_: self._edge[id_]
-            for id_, size in dict(self.edge_size).items()
-            if size == d + 1
-        }
-
     def is_possible_order(self, d):
         """Whether the specified order is between 1 and the maximum order.
 
