@@ -61,19 +61,19 @@ class Hypergraph:
     EdgeView((0, 1, 2, 3))
 
     """
-    node_dict_factory = dict
-    node_attr_dict_factory = dict
-    hyperedge_dict_factory = dict
-    hyperedge_attr_dict_factory = dict
-    hypergraph_attr_dict_factory = dict
+    _node_dict_factory = dict
+    _node_attr_dict_factory = dict
+    _hyperedge_dict_factory = dict
+    _hyperedge_attr_dict_factory = dict
+    _hypergraph_attr_dict_factory = dict
 
     def __init__(self, incoming_data=None, **attr):
         self._edge_uid = XGICounter()
-        self._hypergraph = self.hypergraph_attr_dict_factory()
-        self._node = self.node_dict_factory()
-        self._node_attr = self.node_attr_dict_factory()
-        self._edge = self.hyperedge_dict_factory()
-        self._edge_attr = self.hyperedge_attr_dict_factory()
+        self._hypergraph = self._hypergraph_attr_dict_factory()
+        self._node = self._node_dict_factory()
+        self._node_attr = self._node_attr_dict_factory()
+        self._edge = self._hyperedge_dict_factory()
+        self._edge_attr = self._hyperedge_attr_dict_factory()
 
         if incoming_data is not None:
             convert.convert_to_hypergraph(incoming_data, create_using=self)
@@ -298,7 +298,7 @@ class Hypergraph:
             if node is None:
                 raise ValueError("None cannot be a node")
             self._node[node] = []
-            self._node_attr[node] = self.node_attr_dict_factory()
+            self._node_attr[node] = self._node_attr_dict_factory()
         self._node_attr[node].update(attr)
 
     def add_nodes_from(self, nodes_for_adding, **attr):
@@ -334,7 +334,7 @@ class Hypergraph:
                 if n is None:
                     raise ValueError("None cannot be a node")
                 self._node[n] = []
-                self._node_attr[n] = self.node_attr_dict_factory()
+                self._node_attr[n] = self._node_attr_dict_factory()
             self._node_attr[n].update(newdict)
 
     def remove_node(self, n):
@@ -524,11 +524,11 @@ class Hypergraph:
                 if node is None:
                     raise ValueError("None cannot be a node")
                 self._node[node] = []
-                self._node_attr[node] = self.node_attr_dict_factory()
+                self._node_attr[node] = self._node_attr_dict_factory()
             self._node[node].append(uid)
             self._edge[uid].append(node)
 
-        self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
+        self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
 
     def add_edges_from(self, ebunch_to_add, **attr):
@@ -570,12 +570,12 @@ class Hypergraph:
                     if n is None:
                         raise ValueError("None cannot be a node")
                     self._node[n] = list()
-                    self._node_attr[n] = self.node_attr_dict_factory()
+                    self._node_attr[n] = self._node_attr_dict_factory()
                 self._node[n].append(uid)
 
             try:
                 self._edge[uid] = list(e)
-                self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
+                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             except TypeError:
                 raise XGIError("The edge cannot be cast to a list.")
 

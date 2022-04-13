@@ -98,12 +98,12 @@ class SimplicialComplex(Hypergraph):
                     if node is None:
                         raise ValueError("None cannot be a node")
                     self._node[node] = list()
-                    self._node_attr[node] = self.node_attr_dict_factory()
+                    self._node_attr[node] = self._node_attr_dict_factory()
                 self._node[node].append(uid)
 
             try:
                 self._edge[uid] = frozenset(simplex)
-                self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
+                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             except TypeError:
                 raise XGIError("The simplex cannot be cast to a frozenset.")
 
@@ -173,12 +173,12 @@ class SimplicialComplex(Hypergraph):
                         if n is None:
                             raise ValueError("None cannot be a node")
                         self._node[n] = list()
-                        self._node_attr[n] = self.node_attr_dict_factory()
+                        self._node_attr[n] = self._node_attr_dict_factory()
                     self._node[n].append(uid)
 
                 try:
                     self._edge[uid] = frozenset(simplex)
-                    self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
+                    self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
                 except TypeError:
                     raise XGIError("The simplex cannot be cast to a frozenset.")
 
