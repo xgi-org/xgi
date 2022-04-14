@@ -60,7 +60,7 @@ from collections.abc import Mapping, Set
 
 import numpy as np
 
-from xgi.exception import XGIError
+from xgi.exception import XGIError, IDNotFound
 
 __all__ = [
     "NodeView",
@@ -168,7 +168,7 @@ class IDView(Mapping, Set):
 
         """
         if id not in self._ids:
-            raise XGIError(f"The ID {id} is not in this view")
+            raise IDNotFound(f"The ID {id} is not in this view")
 
         try:
             return self._id_attr[id]

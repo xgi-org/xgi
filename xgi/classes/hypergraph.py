@@ -539,19 +539,26 @@ class Hypergraph:
         cannot add empty edges; the method skips over them.
         """
         for e in ebunch_to_add:
-            try:
-                self._edge[uid] = list(e)
-                self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
-            except TypeError:
-                raise XGIError("The edge cannot be cast to a list.")
+            if isinstance(e[-1], dict):
+                dd = e[-1]
+                e = e[:-1]
+            else:
+                dd = {}
+            if not e:
+                continue
 
-                try:
-                    self._edge[uid] = list(e)
-                    self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
-                except:
-                    raise XGIError("The edge cannot be cast to a list.")
-                self._edge_attr[uid].update(attr)
-                self._edge_attr[uid].update(dd)
+            uid = self._edge_uid()
+            self._edge[uid] = []
+            for n in e:
+                if n not in self._node:
+                    self._node[n] = []
+                    self._node_attr[n] = self.node_attr_dict_factory()
+                self._node[n].append(uid)
+                self._edge[uid].append(n)
+
+            self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
+            self._edge_attr[uid].update(attr)
+            self._edge_attr[uid].update(dd)
 
     def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
         """Add multiple weighted edges with optional attributes.
