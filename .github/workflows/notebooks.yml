@@ -31,4 +31,4 @@ jobs:
       run: |
         pip install pytest
         find tutorials/ -name "*.md" -exec jupytext --to notebook {} \;
-        pytest --nbval-lax content/
+        pytest --nbval-lax tutorials/
