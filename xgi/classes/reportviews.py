@@ -8,7 +8,6 @@ edge size of a hypergraph.  Views are automatically updaed when the hypergraph c
 from collections.abc import Mapping, Set
 
 import numpy as np
-
 from xgi.exception import XGIError
 
 __all__ = [
@@ -181,7 +180,7 @@ class IDView(Mapping, Set):
 
 
 class IDDegreeView:
-    """Base View class for the size (degree or order) of IDs in a Hypergraph.
+    """Base View class for the size (node degree or edge order) of IDs in a Hypergraph.
 
     Parameters
     ----------
@@ -371,7 +370,7 @@ class NodeView(IDView):
 
 
 class EdgeView(IDView):
-    """An IDView that keeps track of node ids.
+    """An IDView that keeps track of edge ids.
 
     Parameters
     ----------
