@@ -15,7 +15,7 @@ jobs:
       max-parallel: 12
       matrix:
         os: [ubuntu, macos, windows]
-        python-version: [3.7, 3.8, 3.9, 3.10]
+        python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
     - uses: actions/checkout@v2
@@ -27,9 +27,9 @@ jobs:
     - name: Install dependencies
       run: |
         pip install pip==21.1.1
-        pip install -r requirements.txt
-    - name: Test with nbval
+        pip install -r requirements/default.txt -r requirements/tutorials.txt
+    - name: Test notbooks with nbval
       run: |
         pip install pytest
-        find ../tutorials/ -name "*.md" -exec jupytext --to notebook {} \;
+        find tutorials/ -name "*.md" -exec jupytext --to notebook {} \;
         pytest --nbval-lax content/
