@@ -441,7 +441,7 @@ class NodeView(IDView):
 
         """
         try:
-            return self._id_dict[n]
+            return self._id_dict[n].copy()
         except KeyError:
             raise XGIError(f"The node ID {n} is not in the hypergraph")
         except TypeError:
@@ -503,7 +503,7 @@ class EdgeView(IDView):
                 raise XGIError(f"Unrecognized dtype {dtype}")
 
         try:
-            return self._id_dict[e]
+            return self._id_dict[e].copy()
         except KeyError:
             raise XGIError(f"The edge ID {e} is not in the hypergraph")
         except TypeError:
