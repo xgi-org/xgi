@@ -26,7 +26,6 @@ jobs:
   
     - name: Install dependencies
       run: |
-        pip install pip==21.1.1
         pip install -r requirements/default.txt -r requirements/tutorials.txt
     - name: Test notbooks with nbval
       run: |
