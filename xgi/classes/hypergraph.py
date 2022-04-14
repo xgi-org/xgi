@@ -7,10 +7,26 @@ import numpy as np
 import xgi
 import xgi.convert as convert
 from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
-from xgi.exception import XGIError
+from xgi.exception import XGIError, IDNotFound
 from xgi.utils import XGICounter
 
 __all__ = ["Hypergraph"]
+
+
+class IDDict(dict):
+    def __getitem__(self, item):
+        try:
+            return super().__getitem__(item)
+        except KeyError as e:
+            raise IDNotFound(f'ID {item} not found') from e
+
+    def __setitem__(self, item, value):
+        if item is None:
+            raise XGIError('None cannot be a node or edge')
+        try:
+            return super().__setitem__(item, value)
+        except KeyError as e:
+            raise IDNotFound(f'ID {item} not found') from e
 
 
 class Hypergraph:
@@ -58,10 +74,10 @@ class Hypergraph:
     EdgeView((0, 1, 2, 3))
 
     """
-    node_dict_factory = dict
-    node_attr_dict_factory = dict
-    hyperedge_dict_factory = dict
-    hyperedge_attr_dict_factory = dict
+    node_dict_factory = IDDict
+    node_attr_dict_factory = IDDict
+    hyperedge_dict_factory = IDDict
+    hyperedge_attr_dict_factory = IDDict
     hypergraph_attr_dict_factory = dict
 
     def __init__(self, incoming_data=None, **attr):
@@ -224,8 +240,6 @@ class Hypergraph:
         {1, 3, 4}
 
         """
-        if n not in self._node:
-            raise XGIError("Invalid node ID.")
         return {i for e in self._node[n] for i in self._edge[e]}.difference({n})
 
     def egonet(self, n, include_self=False):
@@ -292,8 +306,6 @@ class Hypergraph:
 
         """
         if node not in self._node:
-            if node is None:
-                raise ValueError("None cannot be a node")
             self._node[node] = []
             self._node_attr[node] = self.node_attr_dict_factory()
         self._node_attr[node].update(attr)
@@ -328,8 +340,6 @@ class Hypergraph:
                 newdict = attr.copy()
                 newdict.update(ndict)
             if newnode:
-                if n is None:
-                    raise ValueError("None cannot be a node")
                 self._node[n] = []
                 self._node_attr[n] = self.node_attr_dict_factory()
             self._node_attr[n].update(newdict)
@@ -497,8 +507,6 @@ class Hypergraph:
         self._edge[uid] = []
         for node in members:
             if node not in self._node:
-                if node is None:
-                    raise ValueError("None cannot be a node")
                 self._node[node] = []
                 self._node_attr[node] = self.node_attr_dict_factory()
             self._node[node].append(uid)
@@ -540,20 +548,15 @@ class Hypergraph:
                 continue
 
             uid = self._edge_uid()
+            self._edge[uid] = []
             for n in e:
                 if n not in self._node:
-                    if n is None:
-                        raise ValueError("None cannot be a node")
-                    self._node[n] = list()
+                    self._node[n] = []
                     self._node_attr[n] = self.node_attr_dict_factory()
                 self._node[n].append(uid)
+                self._edge[uid].append(n)
 
-            try:
-                self._edge[uid] = list(e)
-                self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
-            except TypeError:
-                raise XGIError("The edge cannot be cast to a list.")
-
+            self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
             self._edge_attr[uid].update(attr)
             self._edge_attr[uid].update(dd)
 
@@ -624,13 +627,10 @@ class Hypergraph:
         --------
         remove_edges_from : remove a collection of edges
         """
-        try:
-            for node in self.edges.members(id):
-                self._node[node].remove(id)
-            del self._edge[id]
-            del self._edge_attr[id]
-        except KeyError as e:
-            raise XGIError(f"Edge {id} is not in the graph") from e
+        for node in self.edges.members(id):
+            self._node[node].remove(id)
+        del self._edge[id]
+        del self._edge_attr[id]
 
     def remove_edges_from(self, ebunch):
         """Remove multiple edges.
@@ -650,10 +650,10 @@ class Hypergraph:
 
         """
         for id in ebunch:
-            if id not in self._edge:
-                warn(f'Node {n} not in hypergraph')
-                continue
-            self.remove_edge(id)
+            for node in self.edges.members(id):
+                self._node[node].remove(id)
+            del self._edge[id]
+            del self._edge_attr[id]
 
     def remove_node_from_edge(self, edge, node):
         """Remove a node from an existing edge.
@@ -676,12 +676,11 @@ class Hypergraph:
         removed.
 
         """
-        try:
-            self._edge[edge].remove(node)
-        except KeyError as e:
-            raise XGIError(f"Edge {edge} not in the hypergraph") from e
-        except ValueError as e:
-            raise XGIError(f"Node {node} not in edge {edge}") from e
+        self._edge[edge].remove(node)
+        self._node[node].remove(edge)
+        if len(self._edge[edge]) == 0:
+            del self._edge[edge]
+            del self._edge_attr[edge]
 
         try:
             self._node[node].remove(edge)
