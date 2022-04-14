@@ -53,7 +53,6 @@ def test_string():
     H1 = xgi.Hypergraph()
     assert str(H1) == "Unnamed Hypergraph with 0 nodes and 0 hyperedges"
     H2 = xgi.Hypergraph(name="test")
-    # H2["name"] = "test"
     assert str(H2) == "Hypergraph named test with 0 nodes and 0 hyperedges"
 
 

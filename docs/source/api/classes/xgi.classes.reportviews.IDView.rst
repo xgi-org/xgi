@@ -13,6 +13,7 @@ xgi.classes.reportviews.IDView
    .. autosummary::
       :nosignatures:
       
+      ~IDView.from_view
 
    
    
