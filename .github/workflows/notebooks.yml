@@ -1,6 +1,12 @@
 name: XGI Notebooks
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
 
 jobs:
   build:
@@ -21,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements/default.txt -r requirements/tutorials.txt
-    - name: Test notbooks with nbval
+    - name: Test notebooks with nbval
       run: |
         pip install pytest
         find tutorials/ -name "*.md" -exec jupytext --to notebook {} \;
