@@ -1,4 +1,5 @@
 """Read from and write to JSON."""
+from io import TextIOWrapper
 import json
 
 import xgi
@@ -8,7 +9,7 @@ from xgi.utils import open_file
 __all__ = ["write_hypergraph_json", "read_hypergraph_json"]
 
 
-@open_file(1, mode="wb")
+@open_file(1, mode="w")
 def write_hypergraph_json(H, path):
     """
     A function to write a file in a standardized JSON format.
@@ -47,11 +48,9 @@ def write_hypergraph_json(H, path):
     datastring = json.dumps(data)
 
     path.write(datastring)
-    # with open(path, "w") as output_file:
-    #     output_file.write(datastring)
 
 
-@open_file(0, mode="rb")
+@open_file(0, mode="r")
 def read_hypergraph_json(path, nodetype=None, edgetype=None):
     """
     A function to read a file in a standardized JSON format.
@@ -80,8 +79,13 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
         >>> import xgi
         >>> H = xgi.read_hypergraph_json("test.json")
     """
-    # with open(path) as file:
-    #     data = json.loads(file.read())
+
+    if not isinstance(path, dict):
+        try:
+            path = json.load(path)
+        except Exception as e:
+            raise XGIError(f"{type(path)} is an invalid format!")
+    
     H = xgi.empty_hypergraph()
     try:
         H._hypergraph.update(path["hypergraph-data"])
@@ -127,7 +131,7 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
             H,
             path["edge-data"]
             if edgetype is None
-            else {edgetype(e): dd for e, dd in path["edge-data"]},
+            else {edgetype(e): dd for e, dd in path["edge-data"].items()},
         )
     except KeyError:
         raise XGIError("Failed to import edge attributes.")

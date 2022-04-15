@@ -306,10 +306,8 @@ def test_laplacian(edgelist2, edgelist6):
 
 
 def test_multiorder_laplacian(edgelist2, edgelist6):
-    el1 = edgelist6
-    H1 = xgi.Hypergraph(el1)
-    el2 = edgelist2
-    H2 = xgi.Hypergraph(el2)
+    H1 = xgi.Hypergraph(edgelist6)
+    H2 = xgi.Hypergraph(edgelist2)
 
     L1, node_dict1 = xgi.multiorder_laplacian(
         H1, orders=[1, 2], weights=[1, 1], index=True
