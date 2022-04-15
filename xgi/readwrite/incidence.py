@@ -2,13 +2,14 @@
 import numpy as np
 
 import xgi
+from xgi.utils import open_file
 
 __all__ = [
     "read_incidence_matrix",
     "write_incidence_matrix",
 ]
 
-
+@open_file(0, mode="rb")
 def read_incidence_matrix(
     path, comments="#", delimiter=None, create_using=None, encoding="utf-8"
 ):
@@ -49,7 +50,7 @@ def read_incidence_matrix(
         create_using=create_using,
     )
 
-
+@open_file(1, mode="wb")
 def write_incidence_matrix(H, path, delimiter=" ", encoding="utf-8"):
     """Write a Hypergraph object to a file
     as an incidence matrix.

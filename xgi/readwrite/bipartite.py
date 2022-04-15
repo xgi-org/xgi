@@ -1,6 +1,7 @@
 """Read from and write to bipartite formats."""
 import xgi
 from xgi.exception import XGIError
+from xgi.utils import open_file
 
 __all__ = [
     "read_bipartite_edgelist",
@@ -29,7 +30,7 @@ def generate_bipartite_edgelist(H, delimiter=" "):
         for node in H.edges.members(id):
             yield delimiter.join(map(str, [node, id]))
 
-
+@open_file(1, mode="wb")
 def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     """Write a Hypergraph object to a file
     as a bipartite edgelist.
@@ -57,12 +58,11 @@ def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
         >>> H = xgi.random_hypergraph(n, ps)
         >>> xgi.write_bipartite_edgelist(H, "test.csv", delimiter=",")
     """
-    with open(path, "wb") as file:
-        for line in generate_bipartite_edgelist(H, delimiter):
-            line += "\n"
-            file.write(line.encode(encoding))
+    for line in generate_bipartite_edgelist(H, delimiter):
+        line += "\n"
+        path.write(line.encode(encoding))
 
-
+@open_file(0, mode="rb")
 def read_bipartite_edgelist(
     path,
     comments="#",
@@ -110,19 +110,19 @@ def read_bipartite_edgelist(
         >>> import xgi
         >>> H = xgi.read_bipartite_edgelist("test.csv", delimiter=",")
     """
-    with open(path, "rb") as file:
-        lines = (
-            line if isinstance(line, str) else line.decode(encoding) for line in file
-        )
-        return parse_bipartite_edgelist(
-            lines,
-            comments=comments,
-            delimiter=delimiter,
-            create_using=create_using,
-            nodetype=nodetype,
-            edgetype=edgetype,
-            dual=dual,
-        )
+
+    lines = (
+        line if isinstance(line, str) else line.decode(encoding) for line in path
+    )
+    return parse_bipartite_edgelist(
+        lines,
+        comments=comments,
+        delimiter=delimiter,
+        create_using=create_using,
+        nodetype=nodetype,
+        edgetype=edgetype,
+        dual=dual,
+    )
 
 
 def parse_bipartite_edgelist(

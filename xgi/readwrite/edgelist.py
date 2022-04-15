@@ -1,12 +1,12 @@
 """Read from and write to edgelists."""
 import xgi
+from xgi.utils import open_file
 
 __all__ = [
     "read_edgelist",
     "write_edgelist",
     "parse_edgelist",
 ]
-
 
 def generate_edgelist(H, delimiter=" "):
     """
@@ -29,6 +29,7 @@ def generate_edgelist(H, delimiter=" "):
         yield delimiter.join(map(str, e))
 
 
+@open_file(1, mode="wb")
 def write_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     """Create a file containing a hyperedge list from a Hypergraph object.
 
@@ -51,12 +52,12 @@ def write_edgelist(H, path, delimiter=" ", encoding="utf-8"):
         >>> H = xgi.random_hypergraph(n, ps)
         >>> xgi.write_edgelist(H, "test.csv", delimiter=",")
     """
-    with open(path, "wb") as file:
-        for line in generate_edgelist(H, delimiter):
-            line += "\n"
-            file.write(line.encode(encoding))
+    for line in generate_edgelist(H, delimiter):
+        line += "\n"
+        path.write(line.encode(encoding))
 
 
+@open_file(0, mode="rb")
 def read_edgelist(
     path,
     comments="#",
@@ -97,17 +98,17 @@ def read_edgelist(
         >>> import xgi
         >>> H = xgi.read_edgelist("test.csv", delimiter=",")
     """
-    with open(path, "rb") as file:
-        lines = (
-            line if isinstance(line, str) else line.decode(encoding) for line in file
-        )
-        return parse_edgelist(
-            lines,
-            comments=comments,
-            delimiter=delimiter,
-            create_using=create_using,
-            nodetype=nodetype,
-        )
+
+    lines = (
+        line if isinstance(line, str) else line.decode(encoding) for line in path
+    )
+    return parse_edgelist(
+        lines,
+        comments=comments,
+        delimiter=delimiter,
+        create_using=create_using,
+        nodetype=nodetype,
+    )
 
 
 def parse_edgelist(
