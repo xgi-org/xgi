@@ -2,7 +2,7 @@ import tempfile
 
 import xgi
 
-json_string = """
+data = """
 {
     "hypergraph-data": {
       "name": "test",
@@ -55,7 +55,7 @@ json_string = """
 def test_read_hypergraph_json():
     _, filename = tempfile.mkstemp()
     with open(filename, "w") as file:
-        file.write(json_string)
+        file.write(data)
 
     H1 = xgi.read_hypergraph_json(filename, nodetype=int)
     H2 = xgi.read_hypergraph_json(filename)
@@ -66,11 +66,7 @@ def test_read_hypergraph_json():
     assert list(H2.nodes) == ["1", "2", "3", "4"]
     assert H1["name"] == "test"
     assert H1["author"] == "Nicholas Landry"
-    assert [H1.edges.members(id) for id in H1.edges] == [
-        [1, 2],
-        [2, 3, 4],
-        [1, 4]
-    ]
+    assert [H1.edges.members(id) for id in H1.edges] == [[1, 2], [2, 3, 4], [1, 4]]
     assert [H2.edges.members(id) for id in H2.edges] == [
         ["1", "2"],
         ["2", "3", "4"],
