@@ -1,5 +1,4 @@
 """General utilities."""
-import json
 from collections import defaultdict
 
 import requests
@@ -8,13 +7,6 @@ import xgi
 from xgi.exception import XGIError
 
 __all__ = ["XGICounter", "get_dual", "load_xgi_data"]
-
-dataset_urls = {
-    "congress-bills": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/congress-bills/congress-bills.json",
-    "tags-ask-ubuntu": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/tags-ask-ubuntu/tags-ask-ubuntu.json",
-    "email-eu": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/email-Eu/email-Eu.json",
-    "email-enron": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/email-Enron/email-Enron.json",
-}
 
 
 class XGICounter:
@@ -78,6 +70,14 @@ def get_dual(edge_dict):
             node_dict[node].append(edge_id)
 
     return dict(node_dict)
+
+
+dataset_urls = {
+    "congress-bills": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/congress-bills/congress-bills.json",
+    "tags-ask-ubuntu": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/tags-ask-ubuntu/tags-ask-ubuntu.json",
+    "email-eu": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/email-Eu/email-Eu.json",
+    "email-enron": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/email-Enron/email-Enron.json",
+}
 
 
 def load_xgi_data(dataset, nodetype=None, edgetype=None):

@@ -30,6 +30,7 @@ def generate_bipartite_edgelist(H, delimiter=" "):
         for node in H.edges.members(id):
             yield delimiter.join(map(str, [node, id]))
 
+
 @open_file(1, mode="wb")
 def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     """Write a Hypergraph object to a file
@@ -61,6 +62,7 @@ def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     for line in generate_bipartite_edgelist(H, delimiter):
         line += "\n"
         path.write(line.encode(encoding))
+
 
 @open_file(0, mode="rb")
 def read_bipartite_edgelist(
@@ -111,9 +113,7 @@ def read_bipartite_edgelist(
         >>> H = xgi.read_bipartite_edgelist("test.csv", delimiter=",")
     """
 
-    lines = (
-        line if isinstance(line, str) else line.decode(encoding) for line in path
-    )
+    lines = (line if isinstance(line, str) else line.decode(encoding) for line in path)
     return parse_bipartite_edgelist(
         lines,
         comments=comments,

@@ -1,5 +1,4 @@
 """Read from and write to JSON."""
-from io import TextIOWrapper
 import json
 
 import xgi
@@ -85,7 +84,7 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
             path = json.load(path)
         except Exception as e:
             raise XGIError(f"{type(path)} is an invalid format!")
-    
+
     H = xgi.empty_hypergraph()
     try:
         H._hypergraph.update(path["hypergraph-data"])

@@ -8,6 +8,7 @@ __all__ = [
     "parse_edgelist",
 ]
 
+
 def generate_edgelist(H, delimiter=" "):
     """
     A helper function to generate a hyperedge list from a Hypergraph object.
@@ -99,9 +100,7 @@ def read_edgelist(
         >>> H = xgi.read_edgelist("test.csv", delimiter=",")
     """
 
-    lines = (
-        line if isinstance(line, str) else line.decode(encoding) for line in path
-    )
+    lines = (line if isinstance(line, str) else line.decode(encoding) for line in path)
     return parse_edgelist(
         lines,
         comments=comments,

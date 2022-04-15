@@ -340,7 +340,7 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
 
     """
 
-    if len(orders)!=len(weights):
+    if len(orders) != len(weights):
         raise ValueError("orders and weights must have the same length.")
 
     Ls = [laplacian(H, order=i, rescale_per_node=rescale_per_node) for i in orders]
@@ -348,10 +348,12 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
 
     L_multi = np.zeros((H.num_nodes, H.num_nodes))
     for L, K, w, d in zip(Ls, Ks, weights, orders):
-        if np.all(K==0):
+        if np.all(K == 0):
             # avoid getting nans from dividing by 0
             # manually setting contribution to 0 as it should be
-            warn(f"No edges of order {d}. Contribution of that order is zero. Its weight is effectively zero.")  
+            warn(
+                f"No edges of order {d}. Contribution of that order is zero. Its weight is effectively zero."
+            )
         else:
             L_multi += L * w / np.mean(K)
 

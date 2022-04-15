@@ -9,6 +9,7 @@ __all__ = [
     "write_incidence_matrix",
 ]
 
+
 @open_file(0, mode="rb")
 def read_incidence_matrix(
     path, comments="#", delimiter=None, create_using=None, encoding="utf-8"
@@ -49,6 +50,7 @@ def read_incidence_matrix(
         np.loadtxt(path, comments=comments, delimiter=delimiter, encoding=encoding),
         create_using=create_using,
     )
+
 
 @open_file(1, mode="wb")
 def write_incidence_matrix(H, path, delimiter=" ", encoding="utf-8"):

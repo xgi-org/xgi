@@ -7,7 +7,7 @@ import numpy as np
 import xgi
 import xgi.convert as convert
 from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
-from xgi.exception import XGIError, IDNotFound
+from xgi.exception import IDNotFound, XGIError
 from xgi.utils import XGICounter
 
 __all__ = ["Hypergraph"]
@@ -18,15 +18,15 @@ class IDDict(dict):
         try:
             return super().__getitem__(item)
         except KeyError as e:
-            raise IDNotFound(f'ID {item} not found') from e
+            raise IDNotFound(f"ID {item} not found") from e
 
     def __setitem__(self, item, value):
         if item is None:
-            raise XGIError('None cannot be a node or edge')
+            raise XGIError("None cannot be a node or edge")
         try:
             return super().__setitem__(item, value)
         except KeyError as e:
-            raise IDNotFound(f'ID {item} not found') from e
+            raise IDNotFound(f"ID {item} not found") from e
 
 
 class Hypergraph:
@@ -90,7 +90,7 @@ class Hypergraph:
 
         if incoming_data is not None:
             convert.convert_to_hypergraph(incoming_data, create_using=self)
-        self._hypergraph.update(attr) # must be after convert
+        self._hypergraph.update(attr)  # must be after convert
 
     def __str__(self):
         """Returns a short summary of the hypergraph.
@@ -389,7 +389,7 @@ class Hypergraph:
         """
         for n in nodes:
             if n not in self._node:
-                warn(f'Node {n} not in hypergraph')
+                warn(f"Node {n} not in hypergraph")
                 continue
             self.remove_node(n)
 
