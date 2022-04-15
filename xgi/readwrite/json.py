@@ -87,7 +87,6 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
     except KeyError:
         raise TypeError("Failed to get hypergraph data attributes.")
 
-    
     try:
         for id, dd in path["node-data"].items():
             if nodetype is not None:
@@ -117,6 +116,11 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
                 raise TypeError(f"Failed to convert nodes to type {nodetype}.") from e
         H.add_edge(edge, id)
 
-    xgi.set_edge_attributes(H, path["edge-data"] if edgetype is None else {edgetype(e): dd for e, dd in path["edge-data"]})
+    xgi.set_edge_attributes(
+        H,
+        path["edge-data"]
+        if edgetype is None
+        else {edgetype(e): dd for e, dd in path["edge-data"]},
+    )
 
     return H

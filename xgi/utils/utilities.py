@@ -1,10 +1,11 @@
 """General utilities."""
-from collections import defaultdict
-import requests
 import json
+from collections import defaultdict
+
+import requests
+
 import xgi
 from xgi.exception import XGIError
-
 
 __all__ = ["XGICounter", "get_dual", "load_xgi_data"]
 
@@ -12,7 +13,7 @@ dataset_urls = {
     "congress-bills": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/congress-bills/congress-bills.json",
     "tags-ask-ubuntu": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/tags-ask-ubuntu/tags-ask-ubuntu.json",
     "email-eu": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/email-Eu/email-Eu.json",
-    "email-enron": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/email-Enron/email-Enron.json"
+    "email-enron": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/email-Enron/email-Enron.json",
 }
 
 
@@ -85,5 +86,5 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None):
         raise XGIError("Invalid dataset specifier!")
 
     r = requests.get(dataset_urls[dataset])
-    
+
     return xgi.read_hypergraph_json(r.json(), nodetype=nodetype, edgetype=edgetype)

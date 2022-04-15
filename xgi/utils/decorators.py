@@ -5,10 +5,10 @@ Ported from networkx
 import collections
 import inspect
 import re
+from collections import defaultdict
 from contextlib import contextmanager
 from os.path import splitext
 from pathlib import Path
-from collections import defaultdict
 
 import networkx as nx
 from networkx.utils import create_py_random_state, create_random_state
@@ -23,6 +23,7 @@ __all__ = [
 ]
 
 _dispatch_dict = defaultdict(lambda: open)
+
 
 def open_file(path_arg, mode="r"):
     """Decorator to ensure clean opening and closing of files.
