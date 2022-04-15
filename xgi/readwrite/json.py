@@ -2,7 +2,8 @@
 import json
 
 import xgi
-from xgi.utils import get_dual, open_file
+from xgi.exception import XGIError
+from xgi.utils import open_file
 
 __all__ = ["write_hypergraph_json", "read_hypergraph_json"]
 
@@ -85,7 +86,7 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
     try:
         H._hypergraph.update(path["hypergraph-data"])
     except KeyError:
-        raise TypeError("Failed to get hypergraph data attributes.")
+        raise XGIError("Failed to get hypergraph data attributes.")
 
     try:
         for id, dd in path["node-data"].items():
@@ -98,29 +99,37 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
                     ) from e
             H.add_node(id, **dd)
     except KeyError:
-        raise TypeError("Failed to import node attributes.")
+        raise XGIError("Failed to import node attributes.")
 
-    for id, edge in path["edge-dict"].items():
-        if edgetype is not None:
-            try:
-                id = edgetype(id)
-            except Exception as e:
-                raise TypeError(
-                    f"Failed to convert the edge with ID {id} to type {edgetype}."
-                ) from e
+    try:
+        for id, edge in path["edge-dict"].items():
+            if edgetype is not None:
+                try:
+                    id = edgetype(id)
+                except Exception as e:
+                    raise TypeError(
+                        f"Failed to convert the edge with ID {id} to type {edgetype}."
+                    ) from e
 
-        if nodetype is not None:
-            try:
-                edge = [nodetype(n) for n in edge]
-            except Exception as e:
-                raise TypeError(f"Failed to convert nodes to type {nodetype}.") from e
-        H.add_edge(edge, id)
+            if nodetype is not None:
+                try:
+                    edge = [nodetype(n) for n in edge]
+                except Exception as e:
+                    raise TypeError(
+                        f"Failed to convert nodes to type {nodetype}."
+                    ) from e
+            H.add_edge(edge, id)
+    except:
+        raise XGIError("Failed to import edge dictionary.")
 
-    xgi.set_edge_attributes(
-        H,
-        path["edge-data"]
-        if edgetype is None
-        else {edgetype(e): dd for e, dd in path["edge-data"]},
-    )
+    try:
+        xgi.set_edge_attributes(
+            H,
+            path["edge-data"]
+            if edgetype is None
+            else {edgetype(e): dd for e, dd in path["edge-data"]},
+        )
+    except KeyError:
+        raise XGIError("Failed to import edge attributes.")
 
     return H
