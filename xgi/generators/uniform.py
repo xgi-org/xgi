@@ -1,5 +1,4 @@
 """Generate random uniform hypergraphs."""
-import random
 import warnings
 
 import xgi

@@ -60,7 +60,7 @@ from collections.abc import Mapping, Set
 
 import numpy as np
 
-from xgi.exception import XGIError, IDNotFound
+from xgi.exception import IDNotFound, XGIError
 
 __all__ = [
     "NodeView",
@@ -466,7 +466,7 @@ class EdgeView(IDView):
 
     def __call__(self, order):
         """Filter the results by size."""
-        return super().__call__(size=order+1)
+        return super().__call__(size=order + 1)
 
     def members(self, e=None, dtype=list):
         """Get the nodes that are members of an edge.

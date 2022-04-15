@@ -1,7 +1,7 @@
 import pytest
 
 import xgi
-from xgi.exception import XGIError, IDNotFound
+from xgi.exception import IDNotFound, XGIError
 
 
 def test_degree_histogram(edgelist1, edgelist2, edgelist3):

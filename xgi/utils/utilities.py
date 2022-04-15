@@ -1,7 +1,8 @@
 """General utilities."""
 from collections import defaultdict
 
-__all__ = ['XGICounter', 'get_dual']
+__all__ = ["XGICounter", "get_dual"]
+
 
 class XGICounter:
     """
