@@ -1,8 +1,4 @@
-import pytest
-
-import xgi
-from xgi.exception import XGIError
-from xgi.utils import load_xgi_data
+from xgi.utils import XGICounter, get_dual, load_xgi_data
 
 
 def test_load_xgi_data():
@@ -15,7 +11,7 @@ def test_load_xgi_data():
 
 
 def test_get_dual(dict5):
-    dual = xgi.utils.get_dual(dict5)
+    dual = get_dual(dict5)
     assert dual[0] == [0]
     assert dual[1] == [0]
     assert dual[2] == [0]
@@ -28,6 +24,6 @@ def test_get_dual(dict5):
 
 
 def test_xgi_counter():
-    count = xgi.XGICounter()
+    count = XGICounter()
     assert count() == 0
     assert count() == 1
