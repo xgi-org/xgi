@@ -15,7 +15,8 @@ __all__ = [
     "dcsbm_hypergraph",
     "random_hypergraph",
     "random_simplicial_complex",
-    "random_maximal_simplicial_complex_d2",
+    "random_flag_complex_d2",
+    "random_flag_complex"
 ]
 
 
@@ -360,7 +361,7 @@ def random_simplicial_complex(N, ps, seed=None):
 
 
 @py_random_state(2)
-def random_maximal_simplicial_complex_d2(N, p, seed=None):
+def random_flag_complex_d2(N, p, seed=None):
     """Generate a maximal simplicial complex (up to order 2) from a
     $G_{N,p}$ Erdős-Rényi random graph by filling all empty triangles with 2-simplices.
 
@@ -400,5 +401,47 @@ def random_maximal_simplicial_complex_d2(N, p, seed=None):
     S = xgi.SimplicialComplex()
     S.add_nodes_from(nodes)
     S.add_simplices_from(simplices)
+
+    return S
+
+
+@py_random_state(2)
+def random_flag_complex(N, p, seed=None, max_order=2):
+    """Generate a flag (or clique) complex from a
+    $G_{N,p}$ Erdős-Rényi random graph by filling all cliques up to dimension max_order.
+
+    Parameters
+    ----------
+    N : int
+        Number of nodes
+    p : float
+        Probabilities (between 0 and 1) to create an edge
+        between any 2 nodes
+
+    Returns
+    -------
+    hyperedges_final : list of tuples
+        List of hyperedges, i.e. tuples of length 2 and 3.
+
+    Notes
+    -----
+    Computing all cliques quickly becomes heavy for large networks.
+
+    """
+
+    if (p < 0) or (p > 1):
+        raise ValueError("p must be between 0 and 1 included.")
+
+    G = nx.fast_gnp_random_graph(N, p, seed=seed)
+
+    nodes = G.nodes()
+    edges = list(G.edges())
+
+    # compute all triangles to fill
+    max_cliques = list(nx.find_cliques(G))
+
+    S = xgi.SimplicialComplex()
+    S.add_nodes_from(nodes)
+    S.add_simplices_from(max_cliques, max_order=max_order);
 
     return S
