@@ -20,7 +20,7 @@ __all__ = [
 ]
 
 
-def degree_histogram(H):
+def degree_counts(H):
     """Returns a list of the frequency of each degree value.
 
     Parameters
@@ -44,11 +44,44 @@ def degree_histogram(H):
     >>> import xgi
     >>> hyperedge_list = [[1, 2], [2, 3, 4]]
     >>> H = xgi.Hypergraph(hyperedge_list)
-    >>> xgi.degree_histogram(H)
+    >>> xgi.degree_counts(H)
     [0, 3, 1]
     """
     counts = Counter(d for n, d in H.degree())
     return [counts.get(i, 0) for i in range(max(counts) + 1)]
+
+
+def degree_histogram(H):
+    """Returns a degree histogram including bin centers (degree values).
+
+    Parameters
+    ----------
+    H : Hypergraph object
+        The hypergraph of interest
+
+    Returns
+    -------
+    tuple of lists
+        First entry is degrees, second entry is histogram height
+    Notes
+    -----
+    Note: the bins are width one, hence there will be an entry
+    for every observed degree.
+
+    Examples
+    --------
+    >>> import xgi
+    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+    >>> H = xgi.Hypergraph(hyperedge_list)
+    >>> xgi.degree_histogram(H)
+    ([1, 2], [3, 1])
+    """
+    counts = Counter(d for n, d in H.degree())
+    degrees = []; heights = []
+    for d, c in sorted(counts.items(), key=lambda kv: kv[0]):
+        degrees.append(d)
+        heights.append(c)
+    return degrees, heights
 
 
 def unique_edge_sizes(H):
