@@ -4,14 +4,14 @@ import xgi
 from xgi.exception import IDNotFound, XGIError
 
 
-def test_degree_histogram(edgelist1, edgelist2, edgelist3):
+def test_degree_counts(edgelist1, edgelist2, edgelist3):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist2)
     H3 = xgi.Hypergraph(edgelist3)
 
-    assert xgi.degree_histogram(H1) == [0, 7, 1]
-    assert xgi.degree_histogram(H2) == [0, 5, 1]
-    assert xgi.degree_histogram(H3) == [0, 4, 2]
+    assert xgi.degree_counts(H1) == [0, 7, 1]
+    assert xgi.degree_counts(H2) == [0, 5, 1]
+    assert xgi.degree_counts(H3) == [0, 4, 2]
 
 
 def test_unique_edge_sizes(edgelist1, edgelist2, edgelist4, edgelist5):
