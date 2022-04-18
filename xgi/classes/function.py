@@ -62,7 +62,8 @@ def degree_histogram(H):
     Returns
     -------
     tuple of lists
-        First entry is degrees, second entry is histogram height
+        First entry is observed degrees (bin centers),
+            second entry is degree count (histogram height)
     Notes
     -----
     Note: the bins are width one, hence there will be an entry
