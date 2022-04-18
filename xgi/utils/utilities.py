@@ -81,7 +81,33 @@ dataset_urls = {
 
 
 def load_xgi_data(dataset, nodetype=None, edgetype=None):
+    """_summary_
 
+    Parameters
+    ----------
+    dataset : str
+        Dataset name. Valid options are the following:
+
+        * congress-bills
+        * email-enron
+        * email-eu
+        * tags-ask-ubuntu
+
+    nodetype : type, optional
+        type to cast the node ID to
+    edgetype : type, optional
+        type to cast the edge ID to
+
+    Returns
+    -------
+    xgi.Hypergraph
+        The loaded hypergraph
+
+    Raises
+    ------
+    XGIError
+       The specified dataset does not exist.
+    """
     if dataset not in dataset_urls:
         raise XGIError("Invalid dataset specifier!")
 
@@ -96,27 +122,26 @@ def _dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
 
     Parameters
     ----------
-    path: string
-        The path of the file to read from
+    hypergraph_dict: dict
+        A dictionary in the hypergraph JSON format
+    nodetype: type, optional
+        type that the node IDs will be cast to
+    edgetype: type, optional
+        type that the edge IDs will be cast to
 
     Returns
     -------
     A Hypergraph object
         The loaded hypergraph
-    nodetype: type
-        type that the node labels will be cast to
-    edgetype: type
-        type that the edge labels will be cast to
-
+    
     Raises
     ------
     XGIError
-        If the json is not in a format that can be loaded.
+        If the JSON is not in a format that can be loaded.
 
-    Examples
+    See Also
     --------
-        >>> import xgi
-        >>> H = xgi.read_hypergraph_json("test.json")
+    read_hypergraph_json
     """
 
     H = xgi.empty_hypergraph()

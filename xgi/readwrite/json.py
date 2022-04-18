@@ -54,22 +54,22 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
 
     Parameters
     ----------
-    path: string
-        The path of the file to read from
+    hypergraph_dict: dict
+        A dictionary in the hypergraph JSON format
+    nodetype: type, optional
+        type that the node IDs will be cast to
+    edgetype: type, optional
+        type that the edge IDs will be cast to
 
     Returns
     -------
     A Hypergraph object
         The loaded hypergraph
-    nodetype: type
-        type that the node labels will be cast to
-    edgetype: type
-        type that the edge labels will be cast to
-
+    
     Raises
     ------
     XGIError
-        If the json is not in a format that can be loaded.
+        If the JSON is not in a format that can be loaded.
 
     Examples
     --------
