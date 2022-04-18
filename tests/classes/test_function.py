@@ -14,6 +14,16 @@ def test_degree_counts(edgelist1, edgelist2, edgelist3):
     assert xgi.degree_counts(H3) == [0, 4, 2]
 
 
+def test_degree_histogram(edgelist1, edgelist2, edgelist3):
+    H1 = xgi.Hypergraph(edgelist1)
+    H2 = xgi.Hypergraph(edgelist2)
+    H3 = xgi.Hypergraph(edgelist3)
+
+    assert xgi.degree_histogram(H1) == ([1, 2], [7, 1])
+    assert xgi.degree_histogram(H2) == ([1, 2], [5, 1])
+    assert xgi.degree_histogram(H3) == ([1, 2], [4, 2])
+
+
 def test_unique_edge_sizes(edgelist1, edgelist2, edgelist4, edgelist5):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist2)

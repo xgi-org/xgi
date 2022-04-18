@@ -7,6 +7,7 @@ import xgi
 from xgi.exception import XGIError
 
 __all__ = [
+    "degree_counts",
     "degree_histogram",
     "unique_edge_sizes",
     "freeze",
