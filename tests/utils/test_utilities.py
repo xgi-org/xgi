@@ -1,6 +1,10 @@
+import pytest
+
 from xgi.utils import XGICounter, get_dual, load_xgi_data
 
 
+@pytest.mark.webtest
+@pytest.mark.slow
 def test_load_xgi_data():
     H = load_xgi_data("email-enron")
     assert H.num_nodes == 148
