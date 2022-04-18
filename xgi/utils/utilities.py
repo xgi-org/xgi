@@ -89,6 +89,7 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None):
 
     return _dict_to_hypergraph(r.json(), nodetype=nodetype, edgetype=edgetype)
 
+
 def _dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
     """
     A function to read a file in a standardized JSON format.
