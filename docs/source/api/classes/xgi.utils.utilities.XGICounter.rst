@@ -8,11 +8,11 @@ xgi.utils.utilities.XGICounter
    :members:
 
    
+   
+
+   
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
       
-
-   
-   

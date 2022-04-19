@@ -8,11 +8,11 @@ xgi.classes.reportviews.IDDegreeView
    :members:
 
    
+   
+
+   
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
       
-
-   
-   

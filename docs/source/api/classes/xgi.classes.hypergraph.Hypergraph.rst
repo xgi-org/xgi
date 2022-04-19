@@ -8,6 +8,17 @@ xgi.classes.hypergraph.Hypergraph
    :members:
 
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+      
+      ~Hypergraph.edges
+      ~Hypergraph.nodes
+      ~Hypergraph.num_edges
+      ~Hypergraph.num_nodes
+   
+
+   
    .. rubric:: Methods
 
    .. autosummary::
@@ -48,14 +59,3 @@ xgi.classes.hypergraph.Hypergraph
       ~Hypergraph.singleton_edges
       ~Hypergraph.subhypergraph
       ~Hypergraph.update
-
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-      
-      ~Hypergraph.edges
-      ~Hypergraph.nodes
-      ~Hypergraph.num_edges
-      ~Hypergraph.num_nodes
-   

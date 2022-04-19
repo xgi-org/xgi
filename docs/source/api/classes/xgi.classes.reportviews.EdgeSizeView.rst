@@ -8,11 +8,11 @@ xgi.classes.reportviews.EdgeSizeView
    :members:
 
    
+   
+
+   
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
       
-
-   
-   

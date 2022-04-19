@@ -13,6 +13,8 @@ xgi.classes.hypergraph
       
         Hypergraph
       
+        IDDict
+      
    
 
    
