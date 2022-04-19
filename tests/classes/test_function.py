@@ -1,7 +1,7 @@
 import pytest
 
 import xgi
-from xgi.exception import XGIError
+from xgi.exception import IDNotFound, XGIError
 
 
 def test_degree_histogram(edgelist1, edgelist2, edgelist3):
@@ -190,7 +190,7 @@ def test_set_edge_attributes(edgelist1):
 
     H3 = xgi.Hypergraph(edgelist1)
 
-    with pytest.raises(XGIError):
+    with pytest.raises(IDNotFound):
         xgi.set_node_attributes(H3, attr_dict2)
 
     with pytest.raises(XGIError):

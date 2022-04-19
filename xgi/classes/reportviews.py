@@ -8,7 +8,7 @@ edge size of a hypergraph.  Views are automatically updaed when the hypergraph c
 from collections.abc import Mapping, Set
 
 import numpy as np
-from xgi.exception import XGIError
+from xgi.exception import IDNotFound, XGIError
 
 __all__ = [
     "NodeView",
@@ -114,7 +114,7 @@ class IDView(Mapping, Set):
 
         """
         if id not in self._ids:
-            raise XGIError(f"The ID {id} is not in this view")
+            raise IDNotFound(f"The ID {id} is not in this view")
 
         try:
             return self._id_attr[id]
@@ -358,10 +358,10 @@ class NodeView(IDView):
 
         """
         try:
-            return self._id_dict[n]
+            return self._id_dict[n].copy()
         except KeyError as e:
             raise XGIError(f"The node ID {n} is not in the hypergraph") from e
-        except TypeError as e:
+        except TypeError:
             if isinstance(n, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
@@ -388,8 +388,8 @@ class EdgeView(IDView):
             super().__init__(hypergraph._edge, hypergraph._edge_attr, bunch)
 
     def __call__(self, order):
-        """Return a new view that keeps track only of the nodes of the given order."""
-        return super().__call__(size=order+1)
+        """Filter the results by size."""
+        return super().__call__(size=order + 1)
 
     def members(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
@@ -426,7 +426,7 @@ class EdgeView(IDView):
             raise XGIError(f"Item {e} not in this view")
 
         try:
-            return self._id_dict[e]
+            return self._id_dict[e].copy()
         except KeyError as e:
             raise XGIError(f"The edge ID {e} is not in the hypergraph") from e
         except TypeError as e:

@@ -37,7 +37,7 @@ extensions = []
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
-# copybutton options 
+# copybutton options
 copybutton_prompt_text = "myinputprompt"
 copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
 copybutton_prompt_is_regexp = True
@@ -135,8 +135,8 @@ exclude_patterns = []
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-#pygments_style = "sphinx"
-pygments_style = 'friendly'
+# pygments_style = "sphinx"
+pygments_style = "friendly"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
