@@ -106,6 +106,7 @@ def draw(
         if d == 1:
             # Drawing the edges
             for he in H.edges(order=d).members():
+                he = list(he)
                 x_coords = [pos[he[0]][0], pos[he[1]][0]]
                 y_coords = [pos[he[0]][1], pos[he[1]][1]]
                 line = plt.Line2D(x_coords, y_coords, color=edge_lc, lw=edge_lw)
