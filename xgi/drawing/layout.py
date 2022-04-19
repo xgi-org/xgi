@@ -118,6 +118,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
 
     # Adding links (edges composed by two nodes only, for which we don't use phantom nodes
     for i, j in H.edges(order=1).members():
+
         G.add_edge(i, j)
 
     # Adding phantom nodes and connections therein
