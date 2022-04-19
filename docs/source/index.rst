@@ -5,6 +5,7 @@ XGI
 .. image:: ../../logo/logo.svg
   :width: 200
 
+
 About
 =====
 
@@ -35,17 +36,46 @@ To install for development purposes, first clone the repository and then execute
 XGI was developed and tested for Python 3.7-3.10 on Mac OS, Windows, and Ubuntu.
 
 
-Contributing
-============
+Tutorials
+=========
 
-If you want to contribute to this project, please make sure to read the
-`code of conduct
-<https://github.com/ComplexGroupInteractions/xgi/blob/main/CODE_OF_CONDUCT.md>`_
-and the `contributing guidelines
-<https://github.com/ComplexGroupInteractions/xgi/blob/main/CONTRIBUTING.md>`_.
+.. toctree::
+   :maxdepth: 2
+
+   Quickstart <tutorials/quickstart.rst>
+   Main classes <tutorials/classes.rst>
+   Examples <tutorials/examples.rst>
 
 
-Relevant References
+Quick reference links
+=====================
+
+Links to the most important API documentation pages.
+
+.. toctree::
+   :maxdepth: 1
+
+   Hypergraph class <api/classes/xgi.classes.hypergraph.Hypergraph.rst>
+
+
+Complete API Reference
+======================
+
+Complete API reference to every subpackage, module, class, method, and function.
+
+.. toctree::
+   :maxdepth: 2
+
+   Core classes <api/classes.rst>
+   Algorithms <api/algorithms.rst>
+   Generative Models <api/generators.rst>
+   Linear Algebra <api/linalg.rst>
+   Read/Write <api/readwrite.rst>
+   Converting to and from other data formats <api/convert.rst>
+   Utilities <api/utils.rst>
+
+
+Academic References
 ===================
 
 * `The Why, How, and When of Representations for Complex Systems
@@ -61,43 +91,42 @@ Relevant References
   Elizabeth Gross, Heather A. Harrington, Michael T. Schaub.
 
 
-Tutorials
-=========
+Contributing
+============
 
-.. toctree::
-   :maxdepth: 2
+If you want to contribute to this project, please make sure to read the
+`code of conduct
+<https://github.com/ComplexGroupInteractions/xgi/blob/main/CODE_OF_CONDUCT.md>`_
+and the `contributing guidelines
+<https://github.com/ComplexGroupInteractions/xgi/blob/main/CONTRIBUTING.md>`_.
 
-   Quickstart <tutorials/quickstart.rst>
-   Main classes <tutorials/classes.rst>
-   Examples <tutorials/examples.rst>
+The best way to contribute to XGI is by submitting a bug or request a new feature by
+opening a `new issue <https://github.com/ComplexGroupInteractions/xgi/issues/new>`_.
+
+To get more actively involved, you are invited to browse the `issues page
+<https://github.com/ComplexGroupInteractions/xgi/issues>`_ and choose one that you can
+work on.  The core developers will be happy to help you understand the codebase and any
+other doubts you may have while working on your contribution.
+
+If you are interested in the daily goings-on of XGI, you are invited to join our `Zulip
+channel <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_.
 
 
-Quick reference links
-======================
+Contributors
+============
 
-Links to the most important API documentation pages.
+The core XGI team members:
 
-.. toctree::
-   :maxdepth: 1
+* Nicholas Landry
+* Leo Torres
+* Maxime Lucas
+* Iacopo Iacopini
+* Giovanni Petri
+* Alice Patania
 
-   Hypergraph class <api/classes/xgi.classes.hypergraph.Hypergraph.rst>
+Other contributors:
 
-
-Complete API Reference
-======================
-
-Complete API reference to every subpackage, module, class, and function.
-
-.. toctree::
-   :maxdepth: 2
-
-   Core classes <api/classes.rst>
-   Algorithms <api/algorithms.rst>
-   Generative Models <api/generators.rst>
-   Linear Algebra <api/linalg.rst>
-   Read/Write <api/readwrite.rst>
-   Converting to and from other data formats <api/convert.rst>
-   Utilities <api/utils.rst>
+* Tim LaRock
 
 
 License
@@ -105,3 +134,6 @@ License
 
 This project is licensed under the `BSD 3-Clause License
 <https://github.com/ComplexGroupInteractions/xgi/blob/main/LICENSE.md>`_.
+
+Copyright (C) 2021 XGI Developers
+
