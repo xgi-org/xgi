@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 import scipy as sp
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import norm as spnorm
@@ -312,10 +313,10 @@ def test_multiorder_laplacian(edgelist2, edgelist6):
     H1 = xgi.Hypergraph(el1)
     el2 = edgelist2
     H2 = xgi.Hypergraph(el2)
-
-    L1, node_dict1 = xgi.multiorder_laplacian(
-        H1, orders=[1, 2], weights=[1, 1], index=True
-    )
+    with pytest.warns(Warning):
+        L1, node_dict1 = xgi.multiorder_laplacian(
+            H1, orders=[1, 2], weights=[1, 1], index=True
+        )
     node_dict1 = {k: v for v, k in node_dict1.items()}
     assert L1.shape == (5, 5)
     assert np.all((L1.T == L1))
