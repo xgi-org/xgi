@@ -28,11 +28,9 @@ xgi.classes.hypergraph.Hypergraph
       ~Hypergraph.duplicate_edges
       ~Hypergraph.edge_size
       ~Hypergraph.edge_subhypergraph
-      ~Hypergraph.edges_of_order
       ~Hypergraph.egonet
       ~Hypergraph.get_edge_data
       ~Hypergraph.has_edge
-      ~Hypergraph.has_edge_id
       ~Hypergraph.has_node
       ~Hypergraph.is_possible_order
       ~Hypergraph.is_uniform

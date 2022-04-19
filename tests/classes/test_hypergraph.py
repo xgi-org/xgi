@@ -136,8 +136,9 @@ def test_singleton_edges(edgelist1, edgelist2):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist2)
 
-    assert H1.singleton_edges() == {1: [4]}
-    assert H2.singleton_edges() == {}
+    assert len(H1.singleton_edges()) == 1
+    assert 1 in H1.singleton_edges()
+    assert len(H2.singleton_edges()) == 0
 
 
 def test_remove_singleton_edges(edgelist1, edgelist2):
@@ -218,3 +219,48 @@ def test_egonet(edgelist3):
     assert H.egonet(3, include_self=True) == [[1, 2, 3], [3, 4]]
     with pytest.raises(IDNotFound):
         H.egonet(7)
+
+
+def test_add_edge():
+    for edge in [[1, 2, 3], {1, 2, 3}, iter([1, 2, 3])]:
+        H = xgi.Hypergraph()
+        H.add_edge(edge)
+        assert (1 in H) and (2 in H) and (3 in H)
+        assert 0 in H.edges
+        assert [1, 2, 3] in H.edges.members()
+        assert [1, 2, 3] == H.edges.members(0)
+        assert H.edges.members(dtype=dict) == {0: [1, 2, 3]}
+
+    H = xgi.Hypergraph()
+    for edge in [[], set(), iter([])]:
+        with pytest.raises(XGIError):
+            H.add_edge(edge)
+
+
+def test_add_edge_with_id():
+    H = xgi.Hypergraph()
+    H.add_edge([1, 2, 3], id='myedge')
+    assert (1 in H) and (2 in H) and (3 in H)
+    assert 'myedge' in H.edges
+    assert [1, 2, 3] in H.edges.members()
+    assert [1, 2, 3] == H.edges.members('myedge')
+    assert H.edges.members(dtype=dict) == {'myedge': [1, 2, 3]}
+
+
+def test_add_edge_with_attr():
+    H = xgi.Hypergraph()
+    H.add_edge([1, 2, 3], color='red', place='peru')
+    assert (1 in H) and (2 in H) and (3 in H)
+    assert 0 in H.edges
+    assert [1, 2, 3] in H.edges.members()
+    assert [1, 2, 3] == H.edges.members(0)
+    assert H.edges.members(dtype=dict) == {0: [1, 2, 3]}
+    assert H.edges[0] == {'color': 'red', 'place': 'peru'}
+
+
+def test_add_node_to_edge():
+    H = xgi.Hypergraph()
+    H.add_edge(['apple', 'banana'], 'fruits')
+    H.add_node_to_edge('fruits', 'pear')
+    H.add_node_to_edge('veggies', 'lettuce')
+    assert H.edges.members(dtype=dict) == {'fruits': ['apple', 'banana', 'pear'], 'veggies': ['lettuce']}

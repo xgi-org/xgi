@@ -118,7 +118,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     G.add_nodes_from(list(H.nodes))
 
     # Adding links (edges composed by two nodes only, for which we don't use phantom nodes
-    for i, j in H.edges_of_order(1).values():
+    for i, j in H.edges(order=1).values():
         G.add_edge(i, j)
 
     # Adding phantom nodes and connections therein
@@ -126,7 +126,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     # Looping over the hyperedges of different order (from triples up)
     for d in range(2, H.max_edge_order() + 1):
         # Hyperedges of order d (d=2: triplets, etc.)
-        for he in H.edges_of_order(d).values():
+        for he in H.edges(order=d).values():
             # Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
             for n in he:
                 G.add_edge(phantom_node_id, n)

@@ -7,15 +7,30 @@ Multi-simplices are not allowed.
 """
 
 from itertools import combinations
-
+import xgi.convert as convert
 from xgi.classes import Hypergraph
 from xgi.exception import XGIError
+from xgi.utils import XGICounter
+
 
 __all__ = ["SimplicialComplex"]
 
 
 class SimplicialComplex(Hypergraph):
     """A class to represent undirected simplicial complexes."""
+
+    def __init__(self, incoming_data=None, **attr):
+        self._edge_uid = XGICounter()
+        self._hypergraph = self._hypergraph_attr_dict_factory()
+        self._node = self._node_dict_factory()
+        self._node_attr = self._node_attr_dict_factory()
+        self._edge = self._hyperedge_dict_factory()
+        self._edge_attr = self._hyperedge_attr_dict_factory()
+
+        if incoming_data is not None:
+            convert.convert_to_simplicial_complex(incoming_data, create_using=self)
+        self._hypergraph.update(attr) # must be after convert
+
 
     def __str__(self):
         """Returns a short summary of the simplicial complex.
@@ -35,7 +50,7 @@ class SimplicialComplex(Hypergraph):
         """
         try:
             return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} simplices"
-        except KeyError:
+        except XGIError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} simplices"
 
     def add_edge(self, edge, **attr):
@@ -98,12 +113,12 @@ class SimplicialComplex(Hypergraph):
                     if node is None:
                         raise ValueError("None cannot be a node")
                     self._node[node] = list()
-                    self._node_attr[node] = self.node_attr_dict_factory()
+                    self._node_attr[node] = self._node_attr_dict_factory()
                 self._node[node].append(uid)
 
             try:
                 self._edge[uid] = frozenset(simplex)
-                self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
+                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             except TypeError:
                 raise XGIError("The simplex cannot be cast to a frozenset.")
 
@@ -120,7 +135,6 @@ class SimplicialComplex(Hypergraph):
         for n in range(size, 2, -1):
             for face in combinations(simplex, n - 1):
                 faces.append(face)
-
         return faces
 
     def _supfaces(self, simplex):
@@ -133,7 +147,7 @@ class SimplicialComplex(Hypergraph):
 
         return [id_ for id_, s in self._edge.items() if simplex < s]
 
-    def add_simplices_from(self, ebunch_to_add, **attr):
+    def add_simplices_from(self, ebunch_to_add, max_order=None, **attr):
         """Add all the simplices in ebunch_to_add.
 
         Parameters
@@ -157,6 +171,16 @@ class SimplicialComplex(Hypergraph):
         cannot add empty simplices; the method skips over them.
         """
 
+        if max_order!=None:
+            new_ebunch_to_add = []
+            for edge in ebunch_to_add:
+                if len(edge)>max_order+1:
+                    combos = combinations(edge, max_order+1);
+                    new_ebunch_to_add.extend(list(combos)); 
+                else:
+                    new_ebunch_to_add.append(edge)
+            ebunch_to_add = new_ebunch_to_add;
+
         for simplex in ebunch_to_add:
 
             if isinstance(simplex[-1], dict):
@@ -173,12 +197,12 @@ class SimplicialComplex(Hypergraph):
                         if n is None:
                             raise ValueError("None cannot be a node")
                         self._node[n] = list()
-                        self._node_attr[n] = self.node_attr_dict_factory()
+                        self._node_attr[n] = self._node_attr_dict_factory()
                     self._node[n].append(uid)
 
                 try:
                     self._edge[uid] = frozenset(simplex)
-                    self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
+                    self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
                 except TypeError:
                     raise XGIError("The simplex cannot be cast to a frozenset.")
 
@@ -189,7 +213,34 @@ class SimplicialComplex(Hypergraph):
                 faces = self._subfaces(simplex)
                 self.add_simplices_from(faces)
 
-    def add_weighted_simplices_from(self, ebunch_to_add, weight="weight", **attr):
+
+    def close(self):
+        """Adds all missing subfaces to the complex.
+
+        See Also
+        --------
+        add_simplex : add a single simplex
+        add_weighted_simplices_from : convenient way to add weighted simplices
+
+        Notes
+        -----
+        Adding the same simplex twice will add it only once. Currently
+        cannot add empty simplices; the method skips over them.
+        """
+        ebunch_to_close = list(map(list, self.edges.members()))
+        for simplex in ebunch_to_close:
+            if isinstance(simplex[-1], dict):
+                dd = simplex[-1]
+                simplex = simplex[:-1]
+            else:
+                dd = {}
+
+            if simplex:
+                new_faces = self._subfaces(simplex)
+                self.add_simplices_from(new_faces)
+                
+
+    def add_weighted_simplices_from(self, ebunch_to_add, max_order=None, weight="weight", **attr):
         """Add weighted simplices in `ebunch_to_add` with specified weight attr
 
         Parameters
@@ -213,8 +264,8 @@ class SimplicialComplex(Hypergraph):
         """
 
         try:
-            self.add_edges_from(
-                ((edge[:-1], {weight: edge[-1]}) for edge in ebunch_to_add), **attr
+            self.add_simplices_from(
+                ((edge[:-1], {weight: edge[-1]}) for edge in ebunch_to_add), max_order=max_order, **attr
             )
         except KeyError:
             XGIError("Empty or invalid edges specified.")

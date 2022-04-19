@@ -13,6 +13,7 @@ xgi.linalg.matrix
    .. autofunction:: incidence_matrix
    .. autofunction:: intersection_profile
    .. autofunction:: laplacian
+   .. autofunction:: multiorder_laplacian
 
    
    

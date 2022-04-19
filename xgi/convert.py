@@ -5,14 +5,17 @@ import pandas as pd
 from networkx.algorithms import bipartite
 from numpy import matrix, ndarray
 from scipy.sparse import coo_matrix, csc_matrix, csr_matrix, lil_matrix
+from collections import defaultdict
 
 import xgi
 from xgi.exception import XGIError
 from xgi.utils.utilities import get_dual
 
+
 __all__ = [
     "convert_to_hypergraph",
     "convert_to_graph",
+    "convert_to_simplicial_complex",
     "from_hyperedge_list",
     "to_hyperedge_list",
     "from_hyperedge_dict",
@@ -99,8 +102,57 @@ def convert_to_graph(H):
     G = nx.relabel_nodes(G, {i: node for i, node in enumerate(H.nodes)})
     return G
 
+def convert_to_simplicial_complex(data, create_using=None):
+    """Make a hypergraph from a known data structure.
+    The preferred way to call this is automatically
+    from the class constructor.
 
-def from_hyperedge_list(d, create_using=None):
+    Parameters
+    ----------
+    data : object to be converted
+        Current known types are:
+         * a Hypergraph object
+         * list-of-lists
+         * dict-of-lists
+         * Pandas DataFrame (bipartite edgelist)
+         * numpy matrix
+         * numpy ndarray
+         * scipy sparse matrix
+    create_using : Hypergraph graph constructor, optional (default=xgi.Hypergraph)
+        Hypergraph type to create. If hypergraph instance, then cleared before populated.
+
+    Returns
+    -------
+    Hypergraph object
+        A hypergraph constructed from the data
+    """
+
+    if data is None:
+        xgi.empty_hypergraph(create_using)
+
+    elif isinstance(data, xgi.SimplicialComplex):
+        H = xgi.empty_hypergraph(create_using)
+        # copy hypergraph
+        H._node = deepcopy(data._node)
+        H._node_attr = deepcopy(data._node_attr)
+        H._edge = deepcopy(data._edge)
+        H._edge_attr = deepcopy(data._edge_attr)
+        H._hypergraph = deepcopy(data._hypergraph)
+
+    elif isinstance(data, list):
+        # edge list
+        from_hyperedge_list(data, create_using)
+
+    elif isinstance(data, pd.DataFrame):
+        from_bipartite_pandas_dataframe(data, create_using);
+
+    elif isinstance(data, dict):
+        # edge dict in the form we need
+        raise XGIError("Cannot generate SimplicialComplex from hyperedge dictionary")
+
+
+
+def from_hyperedge_list(d, create_using=None, max_order=None):
     """Generate a hypergraph from a list of lists.
 
     Parameters
@@ -120,8 +172,11 @@ def from_hyperedge_list(d, create_using=None):
     to_hyperedge_list
     """
     H = xgi.empty_hypergraph(create_using)
-    H.add_edges_from(d)
-    return H
+    if isinstance(H, xgi.classes.simplicialcomplex.SimplicialComplex):
+        H.add_simplices_from(d,max_order=max_order);
+    else:
+        H.add_edges_from(d)
+    return H;
 
 
 def to_hyperedge_list(H):
@@ -164,11 +219,14 @@ def from_hyperedge_dict(d, create_using=None):
     --------
     to_hyperedge_dict
     """
+ 
+ 
     H = xgi.empty_hypergraph(create_using)
     H._edge = d
     H._edge_attr = {id: dict() for id in H.edges}
     H._node = get_dual(d)
     H._node = {id: dict() for id in H.nodes}
+
     return H
 
 
@@ -224,6 +282,7 @@ def from_bipartite_pandas_dataframe(
         Raises an error if the user specifies invalid column names
     """
     H = xgi.empty_hypergraph(create_using)
+
     # try to get by labels first
     try:
         d = df[[node_column, edge_column]]
@@ -235,12 +294,20 @@ def from_bipartite_pandas_dataframe(
         except KeyError:
             raise XGIError("Invalid columns specified")
 
-    for line in d.itertuples(index=False):
-        node = line[0]
-        edge = line[1]
-        H.add_node_to_edge(edge, node)
+    if isinstance(H, xgi.SimplicialComplex):
+        simplex_list = defaultdict(list)
+        for line in d.itertuples(index=False):
+            if line[0] not in simplex_list[line[1]]:
+                simplex_list[line[1]].append(line[0])
 
-    return H
+        H.add_simplices_from(list(simplex_list.values()))
+    else:
+        for line in d.itertuples(index=False):
+            node = line[0]
+            edge = line[1]
+            H.add_node_to_edge(edge, node)
+
+    return H;
 
 
 def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None):

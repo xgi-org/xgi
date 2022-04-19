@@ -116,3 +116,12 @@ def test_edge_members(edgelist3):
     assert H.edges.members(0) == [1, 2, 3]
     assert H.edges.members() == [[1, 2, 3], [3, 4], [4, 5, 6]]
     assert H.edges.members(dtype=dict) == {0: [1, 2, 3], 1: [3, 4], 2: [4, 5, 6]}
+
+
+def test_bunch_view(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    bunch_view = H.edges.from_view(H.edges, bunch=[1, 2])
+    assert len(bunch_view) == 2
+    assert (1 in bunch_view) and (2 in bunch_view)
+    assert 0 not in bunch_view
+    assert bunch_view.members(dtype=dict) == {1: [4], 2: [5, 6]}

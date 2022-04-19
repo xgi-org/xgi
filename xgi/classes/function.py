@@ -191,9 +191,9 @@ def create_empty_copy(H, with_data=True):
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> H_copy = xgi.create_empty_copy(H)
     >>> H_copy.nodes
-    NodeView([1, 2, 3, 4])
+    NodeView((1, 2, 3, 4))
     >>> H_copy.edges
-    EdgeView([])
+    EdgeView(())
     """
     H_copy = H.__class__()
     H_copy.add_nodes_from(H.nodes)
