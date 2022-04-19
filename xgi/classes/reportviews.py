@@ -115,13 +115,7 @@ class IDView(Mapping, Set):
         """
         if id not in self._ids:
             raise IDNotFound(f"The ID {id} is not in this view")
-
-        try:
-            return self._id_attr[id]
-        except KeyError as e:
-            raise XGIError(f"The ID {id} is not in the hypergraph") from e
-        except TypeError as e:
-            raise XGIError(f"The ID {id} is not hashable") from e
+        return self._id_attr[id]
 
     def __contains__(self, id):
         """Checks whether the ID is in the hypergraph"""
@@ -361,7 +355,7 @@ class NodeView(IDView):
             return self._id_dict[n].copy()
         except KeyError as e:
             raise XGIError(f"The node ID {n} is not in the hypergraph") from e
-        except TypeError:
+        except TypeError as e:
             if isinstance(n, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
@@ -423,12 +417,10 @@ class EdgeView(IDView):
                 raise XGIError(f"Unrecognized dtype {dtype}")
 
         if e not in self._ids:
-            raise XGIError(f"Item {e} not in this view")
+            raise IDNotFound(f"Item {e} not in this view")
 
         try:
             return self._id_dict[e].copy()
-        except KeyError as e:
-            raise XGIError(f"The edge ID {e} is not in the hypergraph") from e
         except TypeError as e:
             if isinstance(e, slice):
                 raise XGIError(

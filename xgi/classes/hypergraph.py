@@ -77,11 +77,11 @@ class Hypergraph:
     EdgeView((0, 1, 2, 3))
 
     """
-    node_dict_factory = IDDict
-    node_attr_dict_factory = IDDict
-    hyperedge_dict_factory = IDDict
-    hyperedge_attr_dict_factory = IDDict
-    hypergraph_attr_dict_factory = dict
+    _node_dict_factory = IDDict
+    _node_attr_dict_factory = IDDict
+    _hyperedge_dict_factory = IDDict
+    _hyperedge_attr_dict_factory = IDDict
+    _hypergraph_attr_dict_factory = dict
 
     def __init__(self, incoming_data=None, **attr):
         self._edge_uid = XGICounter()
@@ -577,11 +577,11 @@ class Hypergraph:
             for n in e:
                 if n not in self._node:
                     self._node[n] = []
-                    self._node_attr[n] = self.node_attr_dict_factory()
+                    self._node_attr[n] = self._node_attr_dict_factory()
                 self._node[n].append(uid)
                 self._edge[uid].append(n)
 
-            self._edge_attr[uid] = self.hyperedge_attr_dict_factory()
+            self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             self._edge_attr[uid].update(attr)
             self._edge_attr[uid].update(dd)
 
