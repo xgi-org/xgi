@@ -3,10 +3,10 @@ from copy import deepcopy
 from warnings import warn
 
 import numpy as np
-
 import xgi
 import xgi.convert as convert
-from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
+from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
+                                     NodeView)
 from xgi.exception import XGIError
 from xgi.utils import XGICounter
 
@@ -807,7 +807,7 @@ class Hypergraph:
             return default
 
     def degree(self, nbunch=None, weight=None, order=None, dtype="dict"):
-        """A NodeDegreeView for the Hypergraph.
+        """A DegreeView for the Hypergraph.
 
         The degree is the number of edges adjacent to the node.
         The weighted node degree is the sum of the edge weights for

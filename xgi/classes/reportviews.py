@@ -399,7 +399,7 @@ class EdgeView(IDView):
         e : hashable
             Edge ID.
         dtype : type, default list
-            Spectify the type of the return value.
+            Specify the type of the return value.
 
         Returns
         -------
