@@ -1,5 +1,7 @@
 import numpy as np
+import scipy as sp
 from scipy.sparse import csr_matrix
+from scipy.sparse.linalg import norm as spnorm
 
 import xgi
 
@@ -195,7 +197,7 @@ def test_adjacency_matrix(edgelist1, edgelist4):
     for i in range(np.size(A3, axis=0)):
         assert A3[i, i] == 0
 
-    assert np.all((A3.T == A3).todense())
+    assert spnorm(A3.T - A3) < 1e-6
 
     assert A3[node_dict3[5], node_dict3[6]] == 1
     assert A3[node_dict3[1], node_dict3[2]] == 0
@@ -219,7 +221,7 @@ def test_adjacency_matrix(edgelist1, edgelist4):
     for i in range(np.size(A4, axis=0)):
         assert A4[i, i] == 0
 
-    assert np.all((A4.T == A4).todense())
+    assert spnorm(A4.T - A4) < 1e-6
 
     assert A4[node_dict4[6], node_dict4[7]] == 1
     assert A4[node_dict4[6], node_dict4[8]] == 1
