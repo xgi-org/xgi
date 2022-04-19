@@ -104,7 +104,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     return H
 
 
-@py_random_state(2)
+@py_random_state(5)
 def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     """A function to generate a DCSBM hypergraph.
 
@@ -375,8 +375,7 @@ def random_flag_complex_d2(N, p, seed=None):
 
     Returns
     -------
-    hyperedges_final : list of tuples
-        List of hyperedges, i.e. tuples of length 2 and 3.
+    S : xgi.SimplicialComplex
 
     Notes
     -----
@@ -405,8 +404,8 @@ def random_flag_complex_d2(N, p, seed=None):
     return S
 
 
-@py_random_state(2)
-def random_flag_complex(N, p, seed=None, max_order=2):
+@py_random_state(3)
+def random_flag_complex(N, p, max_order=2, seed=None):
     """Generate a flag (or clique) complex from a
     $G_{N,p}$ Erdős-Rényi random graph by filling all cliques up to dimension max_order.
 
@@ -417,11 +416,13 @@ def random_flag_complex(N, p, seed=None, max_order=2):
     p : float
         Probabilities (between 0 and 1) to create an edge
         between any 2 nodes
+    
+    max_order : int
+        maximal dimension of simplices to add to the output simplicial complex
 
     Returns
     -------
-    hyperedges_final : list of tuples
-        List of hyperedges, i.e. tuples of length 2 and 3.
+    S : xgi.SimplicialComplex
 
     Notes
     -----

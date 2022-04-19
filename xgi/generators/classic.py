@@ -6,10 +6,10 @@ hypergraph).
 """
 
 from itertools import combinations
+import networkx as nx 
+from xgi.classes import Hypergraph, SimplicialComplex
 
-from xgi.classes import Hypergraph
-
-__all__ = ["empty_hypergraph", "star_clique"]
+__all__ = ["empty_hypergraph", "star_clique", "flag_complex"]
 
 
 def empty_hypergraph(create_using=None, default=Hypergraph):
@@ -106,3 +106,40 @@ def star_clique(n_star, n_clique, d_max):
     )
 
     return H
+
+
+
+def flag_complex(g, max_order=2, seed=None):
+    """Generate a flag (or clique) complex from a
+    NetworkX graph by filling all cliques up to dimension max_order.
+
+    Parameters
+    ----------
+    g : Networkx Graph
+      
+    max_order : int
+        maximal dimension of simplices to add to the output simplicial complex
+
+    Returns
+    -------
+    S : xgi.SimplicialComplex
+
+    Notes
+    -----
+    Computing all cliques quickly becomes heavy for large networks.
+
+    """
+
+    
+    nodes = g.nodes()
+    edges = list(g.edges())
+
+    # compute all triangles to fill
+    max_cliques = list(nx.find_cliques(g))
+
+    S = SimplicialComplex()
+    S.add_nodes_from(nodes)
+    S.add_simplices_from(max_cliques, max_order=max_order);
+
+    return S;
+
