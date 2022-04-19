@@ -8,12 +8,12 @@ xgi.classes.reportviews.IDView
    :members:
 
    
+   
+
+   
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
       
       ~IDView.from_view
-
-   
-   
