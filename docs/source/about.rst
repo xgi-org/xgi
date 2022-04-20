@@ -1,41 +1,5 @@
-
 .. image:: ../../logo/logo.svg
   :width: 200
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Home
-   :hidden:
-
-   about
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Tutorials
-   :hidden:
-
-   See on GitHub <https://github.com/ComplexGroupInteractions/xgi/tree/main/tutorials>
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Quick reference links
-   :hidden:
-
-   Hypergraph class <api/classes/xgi.classes.hypergraph.Hypergraph.rst>
-   Simplicial Complex class <api/classes/xgi.classes.simplicialcomplex.SimplicialComplex.rst>
-
-.. toctree::
-   :maxdepth: 2
-   :caption: API Reference
-   :hidden:
-
-   Core classes <api/classes.rst>
-   Algorithms <api/algorithms.rst>
-   Generative Models <api/generators.rst>
-   Linear Algebra <api/linalg.rst>
-   Read/Write <api/readwrite.rst>
-   Converting to and from other data formats <api/convert.rst>
-   Utilities <api/utils.rst>
 
 
 About

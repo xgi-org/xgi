@@ -8,12 +8,12 @@ xgi.classes.reportviews.EdgeView
    :members:
 
    
+   
+
+   
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
       
       ~EdgeView.members
-
-   
-   

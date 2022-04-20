@@ -8,12 +8,12 @@ xgi.classes.reportviews.NodeView
    :members:
 
    
+   
+
+   
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
       
       ~NodeView.memberships
-
-   
-   

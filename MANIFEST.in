@@ -6,6 +6,7 @@ include README.md
 include LICENSE.md
 include CITATION.cff
 include CODE_OF_CONDUCT.md
+include pytest.ini
 
 recursive-include data *.txt
 recursive-include tutorials *.ipynb

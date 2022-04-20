@@ -8,6 +8,7 @@ classes package
    :toctree: classes
 
    ~xgi.classes.hypergraph
+   ~xgi.classes.simplicialcomplex
    ~xgi.classes.reportviews
    ~xgi.classes.hypergraphviews
    ~xgi.classes.function
