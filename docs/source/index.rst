@@ -14,9 +14,7 @@
    :caption: Tutorials
    :hidden:
 
-   Quickstart <tutorials/quickstart.rst>
-   Main classes <tutorials/classes.rst>
-   Examples <tutorials/examples.rst>
+   See on GitHub <https://github.com/ComplexGroupInteractions/xgi/tree/main/tutorials>
 
 .. toctree::
    :maxdepth: 2
@@ -24,6 +22,7 @@
    :hidden:
 
    Hypergraph class <api/classes/xgi.classes.hypergraph.Hypergraph.rst>
+   Simplicial Complex class <api/classes/xgi.classes.simplicialcomplex.SimplicialComplex.rst>
 
 .. toctree::
    :maxdepth: 2

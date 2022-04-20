@@ -8,6 +8,7 @@ xgi.classes.function
    .. rubric:: Functions
    
    .. autofunction:: create_empty_copy
+   .. autofunction:: degree_counts
    .. autofunction:: degree_histogram
    .. autofunction:: freeze
    .. autofunction:: frozen
