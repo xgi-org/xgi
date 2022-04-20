@@ -1277,7 +1277,7 @@ class Hypergraph:
 
         >>> H = xgi.Hypergraph([(0, 1, 2), (1, 2, 3), (2, 3, 4)])
         >>> H.is_uniform()
-        3
+        2
         >>> if H.is_uniform(): print('H is uniform!')
         H is uniform!
 

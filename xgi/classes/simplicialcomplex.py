@@ -176,7 +176,7 @@ class SimplicialComplex(Hypergraph):
             for edge in ebunch_to_add:
                 if len(edge)>max_order+1:
                     combos = combinations(edge, max_order+1);
-                    new_ebunch_to_add.extend(list(combos)); 
+                    new_ebunch_to_add.extend(list(combos));
                 else:
                     new_ebunch_to_add.append(edge)
             ebunch_to_add = new_ebunch_to_add;
@@ -238,7 +238,7 @@ class SimplicialComplex(Hypergraph):
             if simplex:
                 new_faces = self._subfaces(simplex)
                 self.add_simplices_from(new_faces)
-                
+
 
     def add_weighted_simplices_from(self, ebunch_to_add, max_order=None, weight="weight", **attr):
         """Add weighted simplices in `ebunch_to_add` with specified weight attr
@@ -344,11 +344,11 @@ class SimplicialComplex(Hypergraph):
         Examples
         --------
         >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.SimplicialComplex(hyperedge_list)
+        >>> H = xgi.SimplicialComplex([[1, 2], [2, 3, 4]])
         >>> H.has_simplex([1, 2])
         True
         >>> H.has_simplex({1, 3})
         False
+
         """
         return set(simplex) in (set(self.edges.members(s)) for s in self.edges)

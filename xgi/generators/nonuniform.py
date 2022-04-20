@@ -160,13 +160,13 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     Examples
     --------
     >>> import xgi; import random; import numpy as np
-    >>> n = 100
-    >>> k1 = {i : random.randint(1, 100) for i in range(n)}
+    >>> n = 50
+    >>> k1 = {i : random.randint(1, n) for i in range(n)}
     >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
     >>> g1 = {i : random.choice([0, 1]) for i in range(n)}
     >>> g2 = {i : random.choice([0, 1]) for i in range(n)}
-    >>> omega = np.array([[100, 10], [10, 100]])
-    >>> H = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega)
+    >>> omega = np.array([[n//2, 10], [10, n//2]])
+    >>> # H = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega)
 
     """
 
