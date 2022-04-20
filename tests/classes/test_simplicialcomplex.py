@@ -1,5 +1,4 @@
 import pytest
-
 import xgi
 from xgi.exception import XGIError
 
@@ -26,6 +25,22 @@ def test_add_edge():
     S = xgi.SimplicialComplex()
     with pytest.raises(XGIError):
         S.add_edge([1, 2, 3])
+
+
+def test_add_simplices_from(edgelist5):
+    S1 = xgi.SimplicialComplex()
+    S1.add_simplices_from(edgelist5, max_order=None)
+
+    S2 = xgi.SimplicialComplex()
+    S2.add_simplices_from(edgelist5, max_order=2)
+
+    assert S1.nodes == S2.nodes
+
+    assert S1.max_edge_order() == 3
+    assert S2.max_edge_order() == 2
+
+    assert set(S1.edges(order=1).members()) == set(S2.edges(order=1).members())
+    assert set(S1.edges(order=2).members()) == set(S2.edges(order=2).members())
 
 
 def test_remove_simplex_id(edgelist6):
