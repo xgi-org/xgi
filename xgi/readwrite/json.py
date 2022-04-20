@@ -65,7 +65,7 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
     -------
     A Hypergraph object
         The loaded hypergraph
-    
+
     Raises
     ------
     XGIError

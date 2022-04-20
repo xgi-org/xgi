@@ -79,7 +79,8 @@ def degree_histogram(H):
     ([1, 2], [3, 1])
     """
     counts = Counter(d for n, d in H.degree())
-    degrees = []; heights = []
+    degrees = []
+    heights = []
     for d, c in sorted(counts.items(), key=lambda kv: kv[0]):
         degrees.append(d)
         heights.append(c)
