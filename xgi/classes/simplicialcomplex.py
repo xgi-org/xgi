@@ -23,14 +23,14 @@ class SimplicialComplex(Hypergraph):
     It is a pair :math:`(V, E)`, where :math:`V` is a set of elements called
     *nodes* or *vertices*, and :math:`E` is a set whose elements are subsets of
     :math:`V`, that is, each :math:`e \in E` satisfies :math:`e \subset V`.  The
-    elements of :math:`E` are called *simplices*. Additionally, if a simplex is part of 
+    elements of :math:`E` are called *simplices*. Additionally, if a simplex is part of
     a simplicial complex, all its faces must be too. This makes simplicial complexes
     a special case of hypergraphs.
 
     The SimplicialComplex class allows any hashable object as a node and can associate
     attributes to each node, edge, or the simplicial complex itself, in the form of key/value
     pairs.
-    
+
 
     Parameters
     ----------
@@ -78,8 +78,7 @@ class SimplicialComplex(Hypergraph):
 
         if incoming_data is not None:
             convert.convert_to_simplicial_complex(incoming_data, create_using=self)
-        self._hypergraph.update(attr) # must be after convert
-
+        self._hypergraph.update(attr)  # must be after convert
 
     def __str__(self):
         """Returns a short summary of the simplicial complex.
@@ -148,7 +147,7 @@ class SimplicialComplex(Hypergraph):
 
         See Also
         --------
-        add_simplices_from : add a collection of simplexs
+        add_simplices_from : Add a collection of simplices.
 
         Notes
         -----
@@ -225,15 +224,15 @@ class SimplicialComplex(Hypergraph):
         cannot add empty simplices; the method skips over them.
         """
 
-        if max_order!=None:
+        if max_order != None:
             new_ebunch_to_add = []
             for edge in ebunch_to_add:
-                if len(edge)>max_order+1:
-                    combos = combinations(edge, max_order+1);
-                    new_ebunch_to_add.extend(list(combos)); 
+                if len(edge) > max_order + 1:
+                    combos = combinations(edge, max_order + 1)
+                    new_ebunch_to_add.extend(list(combos))
                 else:
                     new_ebunch_to_add.append(edge)
-            ebunch_to_add = new_ebunch_to_add;
+            ebunch_to_add = new_ebunch_to_add
 
         for simplex in ebunch_to_add:
 
@@ -267,7 +266,6 @@ class SimplicialComplex(Hypergraph):
                 faces = self._subfaces(simplex)
                 self.add_simplices_from(faces)
 
-
     def close(self):
         """Adds all missing subfaces to the complex.
 
@@ -292,9 +290,10 @@ class SimplicialComplex(Hypergraph):
             if simplex:
                 new_faces = self._subfaces(simplex)
                 self.add_simplices_from(new_faces)
-                
 
-    def add_weighted_simplices_from(self, ebunch_to_add, max_order=None, weight="weight", **attr):
+    def add_weighted_simplices_from(
+        self, ebunch_to_add, max_order=None, weight="weight", **attr
+    ):
         """Add weighted simplices in `ebunch_to_add` with specified weight attr
 
         Parameters
@@ -319,7 +318,9 @@ class SimplicialComplex(Hypergraph):
 
         try:
             self.add_simplices_from(
-                ((edge[:-1], {weight: edge[-1]}) for edge in ebunch_to_add), max_order=max_order, **attr
+                ((edge[:-1], {weight: edge[-1]}) for edge in ebunch_to_add),
+                max_order=max_order,
+                **attr,
             )
         except KeyError:
             XGIError("Empty or invalid edges specified.")
