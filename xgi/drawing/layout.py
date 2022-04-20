@@ -72,6 +72,11 @@ def pairwise_spring_layout(H):
     pos : dict
         A dictionary of positions keyed by node
 
+    See also
+    --------
+    barycenter_spring_layout
+    weighted_barycenter_spring_layout
+
     Examples
     --------
     >>> import xgi
@@ -102,6 +107,11 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     pos : dict
         A dictionary of positions keyed by node
 
+    See also
+    --------
+    pairwise_spring_layout
+    weighted_barycenter_spring_layout
+
     Examples
     --------
     >>> import xgi
@@ -118,7 +128,8 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     G.add_nodes_from(list(H.nodes))
 
     # Adding links (edges composed by two nodes only, for which we don't use phantom nodes
-    for i, j in H.edges(order=1).values():
+    for i, j in H.edges(order=1).members():
+
         G.add_edge(i, j)
 
     # Adding phantom nodes and connections therein
@@ -126,7 +137,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     # Looping over the hyperedges of different order (from triples up)
     for d in range(2, H.max_edge_order() + 1):
         # Hyperedges of order d (d=2: triplets, etc.)
-        for he in H.edges(order=d).values():
+        for he in H.edges(order=d).members():
             # Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
             for n in he:
                 G.add_edge(phantom_node_id, n)
@@ -164,6 +175,11 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     pos : dict
         A dictionary of positions keyed by node
 
+    See also
+    --------
+    pairwise_spring_layout
+    barycenter_spring_layout
+
     Examples
     --------
     >>> import xgi
@@ -181,7 +197,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
 
     # Adding links (edges composed by two nodes only, for which we don't use phantom nodes)
     d = 1
-    for i, j in H.edges_of_order(d).values():
+    for i, j in H.edges(order=d).members():
         G.add_edge(i, j, weight=d)
 
     # Adding phantom nodes and connections therein
@@ -189,7 +205,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     # Looping over the hyperedges of different order (from triples up)
     for d in range(2, H.max_edge_order() + 1):
         # Hyperedges of order d (d=2: triplets, etc.)
-        for he_id, members in H.edges_of_order(d).items():
+        for he_id, members in H.edges(order=d).members(dtype=dict).items():
             # Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
             for n in members:
                 G.add_edge(phantom_node_id, n, weight=d)

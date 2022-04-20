@@ -133,7 +133,7 @@ def _dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
     -------
     A Hypergraph object
         The loaded hypergraph
-    
+
     Raises
     ------
     XGIError

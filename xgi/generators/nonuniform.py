@@ -6,7 +6,6 @@ from itertools import combinations
 
 import networkx as nx
 import numpy as np
-
 import xgi
 from xgi.utils import py_random_state
 
@@ -16,7 +15,7 @@ __all__ = [
     "random_hypergraph",
     "random_simplicial_complex",
     "random_flag_complex_d2",
-    "random_flag_complex"
+    "random_flag_complex",
 ]
 
 
@@ -358,7 +357,7 @@ def random_simplicial_complex(N, ps, seed=None):
 @py_random_state('seed')
 def random_flag_complex_d2(N, p, seed=None):
     """Generate a maximal simplicial complex (up to order 2) from a
-    $G_{N,p}$ Erdős-Rényi random graph by filling all empty triangles with 2-simplices.
+    :math:`G_{N,p}` Erdős-Rényi random graph by filling all empty triangles with 2-simplices.
 
     Parameters
     ----------
@@ -370,13 +369,11 @@ def random_flag_complex_d2(N, p, seed=None):
 
     Returns
     -------
-    hyperedges_final : list of tuples
-        List of hyperedges, i.e. tuples of length 2 and 3.
+    S : xgi.SimplicialComplex
 
     Notes
     -----
     Computing all cliques quickly becomes heavy for large networks.
-
     """
 
     if (p < 0) or (p > 1):
@@ -400,10 +397,10 @@ def random_flag_complex_d2(N, p, seed=None):
     return S
 
 
-@py_random_state(2)
-def random_flag_complex(N, p, seed=None, max_order=2):
+@py_random_state(3)
+def random_flag_complex(N, p, max_order=2, seed=None):
     """Generate a flag (or clique) complex from a
-    $G_{N,p}$ Erdős-Rényi random graph by filling all cliques up to dimension max_order.
+    :math:`G_{N,p}` Erdős-Rényi random graph by filling all cliques up to dimension max_order.
 
     Parameters
     ----------
@@ -413,15 +410,16 @@ def random_flag_complex(N, p, seed=None, max_order=2):
         Probabilities (between 0 and 1) to create an edge
         between any 2 nodes
 
+    max_order : int
+        maximal dimension of simplices to add to the output simplicial complex
+
     Returns
     -------
-    hyperedges_final : list of tuples
-        List of hyperedges, i.e. tuples of length 2 and 3.
+    S : xgi.SimplicialComplex
 
     Notes
     -----
     Computing all cliques quickly becomes heavy for large networks.
-
     """
 
     if (p < 0) or (p > 1):
@@ -437,6 +435,6 @@ def random_flag_complex(N, p, seed=None, max_order=2):
 
     S = xgi.SimplicialComplex()
     S.add_nodes_from(nodes)
-    S.add_simplices_from(max_cliques, max_order=max_order);
+    S.add_simplices_from(max_cliques, max_order=max_order)
 
     return S

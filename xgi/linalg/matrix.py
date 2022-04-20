@@ -1,5 +1,6 @@
 """Matrices associated to hypergraphs."""
 from warnings import warn
+
 import numpy as np
 from scipy.sparse import csr_matrix, diags
 
