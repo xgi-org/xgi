@@ -3,6 +3,20 @@ import xgi
 from xgi.exception import XGIError
 
 
+def test_constructor(edgelist5, dict5, incidence5, dataframe5):
+    S_list = xgi.SimplicialComplex(edgelist5)
+    S_df = xgi.SimplicialComplex(dataframe5)
+
+    with pytest.raises(XGIError):
+        S_dict = xgi.SimplicialComplex(dict5)
+    with pytest.raises(XGIError):
+        S_mat = xgi.SimplicialComplex(incidence5)
+
+    assert list(S_list.nodes) == list(S_df.nodes)
+    assert list(S_list.edges) == list(S_df.edges)
+    assert list(S_list.edges.members(0)) == list(S_df.edges.members(0))
+
+
 def test_add_simplex():
     S = xgi.SimplicialComplex()
     S.add_simplex([1, 2, 3])

@@ -3,11 +3,10 @@ from copy import deepcopy
 
 import networkx as nx
 import pandas as pd
+import xgi
 from networkx.algorithms import bipartite
 from numpy import matrix, ndarray
 from scipy.sparse import coo_matrix, csc_matrix, csr_matrix, lil_matrix
-
-import xgi
 from xgi.exception import XGIError
 from xgi.utils.utilities import get_dual
 
@@ -148,7 +147,14 @@ def convert_to_simplicial_complex(data, create_using=None):
 
     elif isinstance(data, dict):
         # edge dict in the form we need
-        raise XGIError("Cannot generate SimplicialComplex from hyperedge dictionary")
+        raise XGIError("Cannot generate SimplicialComplex from simplex dictionary")
+    elif isinstance(
+        data, (ndarray, matrix, csr_matrix, csc_matrix, coo_matrix, lil_matrix)
+    ):
+        # incidence matrix
+        raise XGIError(
+            "Not implemented: construction of a SimplicialComplex from incidence matrix"
+        )
 
 
 def from_hyperedge_list(d, create_using=None, max_order=None):
