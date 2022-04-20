@@ -6,7 +6,6 @@ from itertools import combinations
 
 import networkx as nx
 import numpy as np
-
 import xgi
 from xgi.utils import py_random_state
 
@@ -380,14 +379,6 @@ def random_flag_complex_d2(N, p, seed=None):
     Notes
     -----
     Computing all cliques quickly becomes heavy for large networks.
-
-    Example
-    -------
-    >>> import xgi
-    >>> N = 100
-    >>> p = 0.05
-    >>> S = xgi.random_flag_complex_d2(N, p)
-
     """
 
     if (p < 0) or (p > 1):
@@ -434,14 +425,6 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     Notes
     -----
     Computing all cliques quickly becomes heavy for large networks.
-
-    Example
-    -------
-    >>> import xgi
-    >>> N = 100
-    >>> p = 0.05
-    >>> S = xgi.random_flag_complex(N, p, max_order=2)
-
     """
 
     if (p < 0) or (p > 1):
