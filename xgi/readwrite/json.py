@@ -18,16 +18,9 @@ def write_hypergraph_json(H, path):
     path: string
         The path of the file to read from
 
-    Examples
-    --------
-        >>> import xgi
-        >>> n = 1000
-        >>> ps = [0.01, 0.001]
-        >>> H = xgi.random_hypergraph(n, ps)
-        >>> xgi.write_hypergraph_json(H, "test.json")
     """
     # initialize empty data
-    data = dict()
+    data = {}
 
     # get overall hypergraph attributes, name always gets written (default is an empty string)
     data["hypergraph-data"] = dict()
@@ -65,16 +58,12 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
     -------
     A Hypergraph object
         The loaded hypergraph
-    
+
     Raises
     ------
     XGIError
         If the JSON is not in a format that can be loaded.
 
-    Examples
-    --------
-        >>> import xgi
-        >>> H = xgi.read_hypergraph_json("test.json")
     """
     with open(path) as file:
         data = json.loads(file.read())

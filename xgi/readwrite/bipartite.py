@@ -52,10 +52,9 @@ def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     Example
     -------
         >>> import xgi
-        >>> n = 1000
-        >>> ps = [0.01, 0.001]
-        >>> H = xgi.random_hypergraph(n, ps)
-        >>> xgi.write_bipartite_edgelist(H, "test.csv", delimiter=",")
+        >>> H = xgi.random_hypergraph(50, [0.01, 0.001])
+        >>> # xgi.write_bipartite_edgelist(H, "test.csv", delimiter=",")
+
     """
     with open(path, "wb") as file:
         for line in generate_bipartite_edgelist(H, delimiter):
@@ -108,7 +107,8 @@ def read_bipartite_edgelist(
     Example
     -------
         >>> import xgi
-        >>> H = xgi.read_bipartite_edgelist("test.csv", delimiter=",")
+        >>> # H = xgi.read_bipartite_edgelist("test.csv", delimiter=",")
+
     """
     with open(path, "rb") as file:
         lines = (

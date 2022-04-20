@@ -41,8 +41,9 @@ def read_incidence_matrix(
 
     Examples
     --------
-        >>> import xgi
-        >>> H = xgi.read_incidence_matrix("test.csv", delimiter=",")
+    >>> import xgi
+    >>> # H = xgi.read_incidence_matrix("test.csv", delimiter=",")
+
     """
     return xgi.from_incidence_matrix(
         np.loadtxt(path, comments=comments, delimiter=delimiter, encoding=encoding),
@@ -51,8 +52,7 @@ def read_incidence_matrix(
 
 
 def write_incidence_matrix(H, path, delimiter=" ", encoding="utf-8"):
-    """Write a Hypergraph object to a file
-    as an incidence matrix.
+    """Write a Hypergraph object to a file as an incidence matrix.
 
     Parameters
     ----------
@@ -71,11 +71,10 @@ def write_incidence_matrix(H, path, delimiter=" ", encoding="utf-8"):
 
     Examples
     --------
-        >>> import xgi
-        >>> n = 1000
-        >>> ps = [0.01, 0.001]
-        >>> H = xgi.random_hypergraph(n, ps)
-        >>> xgi.write_incidence_matrix(H, "test.csv", delimiter=",")
+    >>> import xgi
+    >>> H = xgi.random_hypergraph(50, [0.01, 0.001])
+    >>> # xgi.write_incidence_matrix(H, "test.csv", delimiter=",")
+
     """
     I = xgi.incidence_matrix(H, sparse=False)
     np.savetxt(path, I, delimiter=delimiter, newline="\n", encoding=encoding)

@@ -20,7 +20,7 @@ __all__ = [
 ]
 
 
-@py_random_state(2)
+@py_random_state('seed')
 def chung_lu_hypergraph(k1, k2, seed=None):
     """A function to generate a Chung-Lu hypergraph
 
@@ -64,8 +64,8 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     >>> k1 = {i : random.randint(1, 100) for i in range(n)}
     >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
     >>> H = xgi.chung_lu_hypergraph(k1, k2)
-    """
 
+    """
     # sort dictionary by degree in decreasing order
     Nlabels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
     Mlabels = [m for m, _ in sorted(k2.items(), key=lambda d: d[1], reverse=True)]
@@ -104,23 +104,23 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     return H
 
 
-@py_random_state(2)
+@py_random_state('seed')
 def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     """A function to generate a DCSBM hypergraph.
 
     Parameters
     ----------
-    k1 : dictionary
+    k1 : dict
         This is a dictionary where the keys are node ids
         and the values are node degrees.
-    k2 : dictionary
+    k2 : dict
         This is a dictionary where the keys are edge ids
-        and the values are edge degrees also known as edge sizes.
-    g1 : dictionary
+        and the values are edge sizes.
+    g1 : dict
         This a dictionary where the keys are node ids
         and the values are the group ids to which the node belongs.
         The keys must match the keys of k1.
-    g2 : dictionary
+    g2 : dict
         This a dictionary where the keys are edge ids
         and the values are the group ids to which the edge belongs.
         The keys must match the keys of k2.
@@ -130,13 +130,12 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
         The number of rows must match the number of node communities
         and the number of columns must match the number of edge
         communities.
-    seed : integer, random_state, or None (default)
-            Indicator of random number generation state.
+    seed : int, random_state, or None (default)
+        Indicator of random number generation state.
 
     Returns
     -------
-    Hypergraph object
-        The generated hypergraph
+    xgi.Hypergraph
 
     Warns
     -----
@@ -242,7 +241,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     return H
 
 
-@py_random_state(2)
+@py_random_state('seed')
 def random_hypergraph(N, ps, seed=None):
     """Generates a random hypergraph
 
@@ -273,9 +272,7 @@ def random_hypergraph(N, ps, seed=None):
     Example
     -------
     >>> import xgi
-    >>> N = 100
-    >>> ps = [0.1, 0.01]
-    >>> H = xgi.random_hypergraph(N, ps)
+    >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
 
     """
 
@@ -301,7 +298,7 @@ def random_hypergraph(N, ps, seed=None):
     return H
 
 
-@py_random_state(2)
+@py_random_state('seed')
 def random_simplicial_complex(N, ps, seed=None):
     """Generates a random hypergraph
 
@@ -334,9 +331,7 @@ def random_simplicial_complex(N, ps, seed=None):
     Example
     -------
     >>> import xgi
-    >>> N = 100
-    >>> ps = [0.1, 0.01]
-    >>> H = xgi.random_simplicial_complex(N, ps)
+    >>> H = xgi.random_simplicial_complex(50, [0.1, 0.01])
 
     """
 
@@ -360,7 +355,7 @@ def random_simplicial_complex(N, ps, seed=None):
     return S
 
 
-@py_random_state(2)
+@py_random_state('seed')
 def random_flag_complex_d2(N, p, seed=None):
     """Generate a maximal simplicial complex (up to order 2) from a
     $G_{N,p}$ Erdős-Rényi random graph by filling all empty triangles with 2-simplices.
