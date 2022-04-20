@@ -1,0 +1,5 @@
+.wy-menu p {
+    margin-block-start: 1em;
+    margin-block-end: 0;
+    padding-inline-start: 0.5em;
+}
