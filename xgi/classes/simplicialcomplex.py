@@ -28,7 +28,7 @@ class SimplicialComplex(Hypergraph):
     a special case of hypergraphs.
 
     The SimplicialComplex class allows any hashable object as a node and can associate
-    attributes to each node, edge, or the simplicial complex itself, in the form of key/value
+    attributes to each node, simplex, or the simplicial complex itself, in the form of key/value
     pairs.
 
 
@@ -60,11 +60,11 @@ class SimplicialComplex(Hypergraph):
     Examples
     --------
     >>> import xgi
-    >>> H = xgi.SimplicialComplex([[1, 2, 3], [4], [5, 6], [6, 7, 8]])
-    >>> H.nodes
+    >>> S = xgi.SimplicialComplex([[1, 2, 3], [4], [5, 6], [6, 7, 8]])
+    >>> S.nodes
     NodeView((1, 2, 3, 4, 5, 6, 7, 8))
-    >>> H.edges
-    EdgeView((0, 1, 2, 3))
+    >>> S.edges
+    EdgeView((0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
 
     """
 
