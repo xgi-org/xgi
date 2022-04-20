@@ -8,6 +8,7 @@ hypergraph).
 from itertools import combinations
 
 import networkx as nx
+
 from xgi.classes import Hypergraph, SimplicialComplex
 
 __all__ = ["empty_hypergraph", "star_clique", "flag_complex"]

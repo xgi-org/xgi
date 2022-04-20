@@ -1,3 +1,4 @@
+from collections import defaultdict
 from copy import deepcopy
 
 import networkx as nx
@@ -5,12 +6,10 @@ import pandas as pd
 from networkx.algorithms import bipartite
 from numpy import matrix, ndarray
 from scipy.sparse import coo_matrix, csc_matrix, csr_matrix, lil_matrix
-from collections import defaultdict
 
 import xgi
 from xgi.exception import XGIError
 from xgi.utils.utilities import get_dual
-
 
 __all__ = [
     "convert_to_hypergraph",
@@ -102,6 +101,7 @@ def convert_to_graph(H):
     G = nx.relabel_nodes(G, {i: node for i, node in enumerate(H.nodes)})
     return G
 
+
 def convert_to_simplicial_complex(data, create_using=None):
     """Make a hypergraph from a known data structure.
     The preferred way to call this is automatically
@@ -144,12 +144,11 @@ def convert_to_simplicial_complex(data, create_using=None):
         from_hyperedge_list(data, create_using)
 
     elif isinstance(data, pd.DataFrame):
-        from_bipartite_pandas_dataframe(data, create_using);
+        from_bipartite_pandas_dataframe(data, create_using)
 
     elif isinstance(data, dict):
         # edge dict in the form we need
         raise XGIError("Cannot generate SimplicialComplex from hyperedge dictionary")
-
 
 
 def from_hyperedge_list(d, create_using=None, max_order=None):
@@ -173,10 +172,10 @@ def from_hyperedge_list(d, create_using=None, max_order=None):
     """
     H = xgi.empty_hypergraph(create_using)
     if isinstance(H, xgi.classes.simplicialcomplex.SimplicialComplex):
-        H.add_simplices_from(d,max_order=max_order);
+        H.add_simplices_from(d, max_order=max_order)
     else:
         H.add_edges_from(d)
-    return H;
+    return H
 
 
 def to_hyperedge_list(H):
@@ -219,8 +218,7 @@ def from_hyperedge_dict(d, create_using=None):
     --------
     to_hyperedge_dict
     """
- 
- 
+
     H = xgi.empty_hypergraph(create_using)
     H._edge = d
     H._edge_attr = {id: dict() for id in H.edges}
@@ -307,7 +305,7 @@ def from_bipartite_pandas_dataframe(
             edge = line[1]
             H.add_node_to_edge(edge, node)
 
-    return H;
+    return H
 
 
 def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None):

@@ -6,6 +6,7 @@ from itertools import combinations
 
 import networkx as nx
 import numpy as np
+
 import xgi
 from xgi.utils import py_random_state
 

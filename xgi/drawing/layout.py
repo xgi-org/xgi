@@ -1,4 +1,5 @@
 import networkx as nx
+
 import xgi
 from xgi.utils import py_random_state
 

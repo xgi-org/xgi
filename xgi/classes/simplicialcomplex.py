@@ -323,7 +323,7 @@ class SimplicialComplex(Hypergraph):
                 **attr,
             )
         except KeyError:
-            XGIError("Empty or invalid edges specified.")
+            XGIError("Empty or invalid simplices specified.")
 
     def remove_simplex_id(self, id):
         """Remove a simplex with a given id.

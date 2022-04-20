@@ -8,6 +8,7 @@ edge size of a hypergraph.  Views are automatically updaed when the hypergraph c
 from collections.abc import Mapping, Set
 
 import numpy as np
+
 from xgi.exception import IDNotFound, XGIError
 
 __all__ = [
@@ -82,7 +83,7 @@ class IDView(Mapping, Set):
                 self._ids = list(id_dict.keys())
             else:
                 if not set(ids).issubset(id_dict.keys()):
-                    raise XGIError('ids must be a subset of the keys of id_dict')
+                    raise XGIError("ids must be a subset of the keys of id_dict")
                 self._ids = list(ids)
 
     def __len__(self):
