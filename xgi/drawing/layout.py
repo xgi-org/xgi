@@ -71,6 +71,11 @@ def pairwise_spring_layout(H):
     pos : dict
         A dictionary of positions keyed by node
 
+    See also
+    --------
+    barycenter_spring_layout
+    weighted_barycenter_spring_layout
+
     Examples
     --------
     >>> import xgi
@@ -100,6 +105,11 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     -------
     pos : dict
         A dictionary of positions keyed by node
+
+    See also
+    --------
+    pairwise_spring_layout
+    weighted_barycenter_spring_layout
 
     Examples
     --------
@@ -163,6 +173,11 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     -------
     pos : dict
         A dictionary of positions keyed by node
+
+    See also
+    --------
+    pairwise_spring_layout
+    barycenter_spring_layout
 
     Examples
     --------
