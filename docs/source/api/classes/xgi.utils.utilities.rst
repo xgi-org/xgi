@@ -1,4 +1,4 @@
-xgi.utils.utilities
+﻿xgi.utils.utilities
 ===================
 
 .. currentmodule:: xgi.utils.utilities

@@ -1,4 +1,4 @@
-xgi.classes.reportviews
+﻿xgi.classes.reportviews
 =======================
 
 .. currentmodule:: xgi.classes.reportviews
