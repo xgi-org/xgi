@@ -1,5 +1,5 @@
+import networkx as nx
 import pytest
-
 import xgi
 
 
@@ -23,3 +23,20 @@ def test_star_clique():
     assert H.num_nodes == 13
     assert H.num_edges == 97
     assert H.max_edge_order() == 3
+
+
+def test_flag_complex():
+    edges = [[0, 1], [1, 2], [2, 0], [0, 3]]
+    G = nx.Graph(edges)
+
+    S = xgi.flag_complex(G)
+
+    simplices = [
+        frozenset({0, 1, 2}),
+        frozenset({0, 1}),
+        frozenset({0, 2}),
+        frozenset({1, 2}),
+        frozenset({0, 3}),
+    ]
+
+    assert S.edges.members() == simplices

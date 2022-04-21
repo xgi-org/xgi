@@ -6,6 +6,11 @@ Matplotlib
 Draw hypergraphs with matplotlib.
 """
 
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib import cm
+from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+
 __all__ = [
     "draw",
 ]
@@ -13,7 +18,7 @@ __all__ = [
 
 def draw(
     H,
-    pos,
+    pos=None,
     cmap=None,
     ax=None,
     edge_lc="black",
@@ -32,6 +37,7 @@ def draw(
 
     pos : dict (default=None)
         If passed, this dictionary of positions d:(x,y) is used for placing the 0-simplices.
+        If None (default), use the `barycenter_spring_layout` to compute the positions.
 
     cmap : `matplotlib.colors.ListedColormap`, default: `matplotlib.cm.Paired`
         The qualitative colormap used to distinguish edges of different order.
@@ -64,10 +70,9 @@ def draw(
     >>> H.add_edges_from([[1,2,3],[3,4],[4,5,6,7],[7,8,9,10,11]])
     >>> xgi.draw(H, pos=xgi.barycenter_spring_layout(H))
     """
-    import matplotlib.pyplot as plt
-    import numpy as np
-    from matplotlib import cm
-    from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+
+    if pos is None:
+        pos = xgi.barycenter_spring_layout(H)
 
     def CCW_sort(p):
         """
@@ -106,6 +111,7 @@ def draw(
         if d == 1:
             # Drawing the edges
             for he in H.edges(order=d).members():
+                he = list(he)
                 x_coords = [pos[he[0]][0], pos[he[1]][0]]
                 y_coords = [pos[he[0]][1], pos[he[1]][1]]
                 line = plt.Line2D(x_coords, y_coords, color=edge_lc, lw=edge_lw)

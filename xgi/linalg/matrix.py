@@ -1,7 +1,8 @@
 """Matrices associated to hypergraphs."""
 from warnings import warn
+
 import numpy as np
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_matrix, diags
 
 __all__ = [
     "incidence_matrix",
@@ -152,12 +153,12 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
         return (A, {}) if index else A
 
     A = I.dot(I.T)
-    A.setdiag(0)
+    A = A - diags(A.diagonal())
 
     if not weighted:
         A = (A >= s) * 1
     else:
-        A[A < s] = 0
+        A.data[np.where(A.data < s)] = 0
 
     if index:
         return A, rowdict
@@ -337,7 +338,6 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
         Physical Review Research, 2(3), 033410.
 
     """
-
     if len(orders) != len(weights):
         raise ValueError("orders and weights must have the same length.")
 
