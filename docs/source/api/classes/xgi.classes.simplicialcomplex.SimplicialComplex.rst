@@ -17,8 +17,10 @@ xgi.classes.simplicialcomplex.SimplicialComplex
       ~SimplicialComplex.num_edges
       ~SimplicialComplex.num_nodes
    
-   
+
    .. rubric:: Methods that modify the structure
+
+   .. autosummary::
       :nosignatures:
 
       ~SimplicialComplex.add_simplex
@@ -29,6 +31,8 @@ xgi.classes.simplicialcomplex.SimplicialComplex
       ~SimplicialComplex.close
 
    .. rubric:: Methods that query nodes and edges
+
+   .. autosummary::
       :nosignatures:
 
       ~SimplicialComplex.has_simplex
