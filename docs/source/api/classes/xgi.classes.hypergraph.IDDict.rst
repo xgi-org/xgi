@@ -1,4 +1,4 @@
-xgi.classes.hypergraph.IDDict
+﻿xgi.classes.hypergraph.IDDict
 =============================
 
 .. currentmodule:: xgi.classes.hypergraph

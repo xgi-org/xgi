@@ -6,8 +6,7 @@ import numpy as np
 
 import xgi
 import xgi.convert as convert
-from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
-                                     NodeView)
+from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
 from xgi.exception import IDNotFound, XGIError
 from xgi.utils import XGICounter
 
