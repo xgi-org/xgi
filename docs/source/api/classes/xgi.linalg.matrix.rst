@@ -1,4 +1,4 @@
-xgi.linalg.matrix
+﻿xgi.linalg.matrix
 =================
 
 .. currentmodule:: xgi.linalg.matrix

@@ -1,4 +1,4 @@
-xgi.classes.reportviews
+﻿xgi.classes.reportviews
 =======================
 
 .. currentmodule:: xgi.classes.reportviews
@@ -10,24 +10,10 @@ xgi.classes.reportviews
    .. autosummary::
       :toctree: .
       :nosignatures:
-      
-        DegreeView
-      
-        EdgeSizeView
-      
-        EdgeView
-      
-        IDDegreeView
-      
+
         IDView
-      
         NodeView
-      
-   
-
-   
-   
-   
-
-
-
+        EdgeView
+        IDDegreeView
+        DegreeView
+        EdgeSizeView

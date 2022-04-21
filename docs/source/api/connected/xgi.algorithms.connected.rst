@@ -1,4 +1,4 @@
-xgi.algorithms.connected
+﻿xgi.algorithms.connected
 ========================
 
 .. currentmodule:: xgi.algorithms.connected
