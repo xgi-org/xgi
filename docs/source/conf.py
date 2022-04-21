@@ -88,6 +88,7 @@ extensions = [
 
 # Automatically generate stub pages when using the .. autosummary directive
 autosummary_generate = True
+autosummary_generate_overwrite = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

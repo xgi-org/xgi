@@ -10,24 +10,10 @@
    .. autosummary::
       :toctree: .
       :nosignatures:
-      
-        DegreeView
-      
-        EdgeSizeView
-      
-        EdgeView
-      
-        IDDegreeView
-      
+
         IDView
-      
         NodeView
-      
-   
-
-   
-   
-   
-
-
-
+        EdgeView
+        IDDegreeView
+        DegreeView
+        EdgeSizeView
