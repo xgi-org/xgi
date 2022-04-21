@@ -46,10 +46,9 @@ def write_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     Examples
     --------
         >>> import xgi
-        >>> n = 1000
-        >>> ps = [0.01, 0.001]
-        >>> H = xgi.random_hypergraph(n, ps)
-        >>> xgi.write_edgelist(H, "test.csv", delimiter=",")
+        >>> H = xgi.random_hypergraph(50, [0.01, 0.001])
+        >>> # xgi.write_edgelist(H, "test.csv", delimiter=",")
+
     """
     with open(path, "wb") as file:
         for line in generate_edgelist(H, delimiter):
@@ -95,7 +94,8 @@ def read_edgelist(
     Examples
     --------
         >>> import xgi
-        >>> H = xgi.read_edgelist("test.csv", delimiter=",")
+        >>> # H = xgi.read_edgelist("test.csv", delimiter=",")
+
     """
     with open(path, "rb") as file:
         lines = (
@@ -134,6 +134,7 @@ def parse_edgelist(
     -------
     Hypergraph object
         The loaded hypergraph
+
     """
     H = xgi.empty_hypergraph(create_using)
     for line in lines:

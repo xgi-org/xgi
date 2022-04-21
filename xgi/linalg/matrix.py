@@ -45,14 +45,6 @@ def incidence_matrix(
     coldict: dict
         The dictionary mapping indices to edge IDs, if index is True
 
-    Examples
-    --------
-        >>> import xgi
-        >>> N = 100
-        >>> ps = [0.1, 0.01]
-        >>> H = xgi.random_hypergraph(N, ps)
-        >>> I = xgi.incidence_matrix(H)
-
     """
     edge_ids = H.edges
     if order is not None:
@@ -134,14 +126,6 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
     else:
         return A
 
-    Examples
-    --------
-        >>> import xgi
-        >>> n = 1000
-        >>> ps = [0.01, 0.001]
-        >>> H = xgi.random_hypergraph(n, ps)
-        >>> A = xgi.adjacency_matrix(H)
-
     """
     I, rowdict, coldict = incidence_matrix(H, index=True, order=order)
 
@@ -187,13 +171,6 @@ def intersection_profile(H, order=None, index=False):
     else:
         return P
 
-    Examples
-    --------
-        >>> import xgi
-        >>> N = 100
-        >>> ps = [0.1, 0.01]
-        >>> H = xgi.random_hypergraph(N, ps)
-        >>> P = xgi.intersection_profile(H)
     """
 
     if index:
@@ -228,6 +205,7 @@ def degree_matrix(H, order=None, index=False):
         return K, rowdict
     else:
         return K
+
     """
     I, rowdict, _ = incidence_matrix(H, order=order, index=True)
 
@@ -262,14 +240,6 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
     See also
     --------
     multiorder_laplacian
-
-    Examples
-    --------
-        >>> import xgi
-        >>> N = 100
-        >>> ps = [0.1, 0.01]
-        >>> H = xgi.random_hypergraph(N, ps)
-        >>> L = xgi.laplacian(H, order=2, rescale_per_node=True)
 
     References
     ----------
@@ -322,14 +292,6 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
     See also
     --------
     laplacian
-
-    Examples
-    --------
-        >>> import xgi
-        >>> N = 100
-        >>> ps = [0.1, 0.01]
-        >>> H = xgi.random_hypergraph(N, ps)
-        >>> L = xgi.multiorder_laplacian(H, orders=[1,2], weights=[0.7, 0.3])
 
     References
     ----------
@@ -388,13 +350,6 @@ def clique_motif_matrix(H, index=False):
     by Austin Benson, David Gleich, and Jure Leskovic
     https://doi.org/10.1126/science.aad9029
 
-    Examples
-    --------
-        >>> import xgi
-        >>> N = 100
-        >>> ps = [0.1, 0.01]
-        >>> H = xgi.random_hypergraph(N, ps)
-        >>> W = xgi.clique_motif_matrix(H)
     """
     if index:
         I, rowdict, _ = incidence_matrix(H, index=True)

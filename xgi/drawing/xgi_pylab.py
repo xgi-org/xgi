@@ -69,6 +69,7 @@ def draw(
     >>> H=xgi.Hypergraph()
     >>> H.add_edges_from([[1,2,3],[3,4],[4,5,6,7],[7,8,9,10,11]])
     >>> xgi.draw(H, pos=xgi.barycenter_spring_layout(H))
+
     """
 
     if pos is None:
