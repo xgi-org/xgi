@@ -1,4 +1,4 @@
-xgi.classes.hypergraphviews
+﻿xgi.classes.hypergraphviews
 ===========================
 
 .. currentmodule:: xgi.classes.hypergraphviews
