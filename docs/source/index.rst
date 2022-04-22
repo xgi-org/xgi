@@ -41,7 +41,7 @@
 About
 =====
 
-The Comple*X* *G*roup *I*nteractions `(XGI) <https://github.com/ComplexGroupInteractions/xgi>`_ 
+The Comple**X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/ComplexGroupInteractions/xgi>`_ 
 library provides data structures and algorithms for modeling and analyzing complex systems 
 with group (higher-order) interactions.
 
