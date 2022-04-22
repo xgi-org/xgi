@@ -6,8 +6,10 @@ Matplotlib
 Draw hypergraphs with matplotlib.
 """
 
+from itertools import combinations
 import matplotlib.pyplot as plt
 import numpy as np
+import xgi
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 
@@ -29,11 +31,11 @@ def draw(
     node_size=0.03,
 ):
     """
-    Draw hypergraph.
+    Draw hypergraph or simplicial complex.
 
     Parameters
     ----
-    H : xgi Hypergraph.
+    H : xgi Hypergraph or SimplicialComplex.
 
     pos : dict (default=None)
         If passed, this dictionary of positions d:(x,y) is used for placing the 0-simplices.
@@ -107,32 +109,70 @@ def draw(
     ax.get_yaxis().set_ticks([])
     ax.axis("off")
 
-    # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
-    for d in reversed(range(1, d_max + 1)):
-        if d == 1:
-            # Drawing the edges
-            for he in H.edges(order=d).members():
-                he = list(he)
-                x_coords = [pos[he[0]][0], pos[he[1]][0]]
-                y_coords = [pos[he[0]][1], pos[he[1]][1]]
-                line = plt.Line2D(x_coords, y_coords, color=edge_lc, lw=edge_lw)
-                ax.add_line(line)
+    if type(H)==xgi.classes.hypergraph.Hypergraph:
+        # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
+        for d in reversed(range(1, d_max + 1)):
+            if d == 1:
+                # Drawing the edges
+                for he in H.edges(order=d).members():
+                    he = list(he)
+                    x_coords = [pos[he[0]][0], pos[he[1]][0]]
+                    y_coords = [pos[he[0]][1], pos[he[1]][1]]
+                    line = plt.Line2D(x_coords, y_coords, color=edge_lc, lw=edge_lw)
+                    ax.add_line(line)
 
-        else:
-            # Hyperedges of order d (d=1: links, etc.)
-            for he in H.edges(order=d).members():
-                # Filling the polygon
-                coordinates = [[pos[n][0], pos[n][1]] for n in he]
-                # Sorting the points counterclockwise (needed to have the correct filling)
-                sorted_coordinates = CCW_sort(coordinates)
-                obj = plt.Polygon(
-                    sorted_coordinates,
-                    edgecolor=edge_lc,
-                    facecolor=colors[d - 1],
-                    alpha=0.4,
-                    lw=0.5,
-                )
-                ax.add_patch(obj)
+            else:
+                # Hyperedges of order d (d=1: links, etc.)
+                for he in H.edges(order=d).members():
+                    # Filling the polygon
+                    coordinates = [[pos[n][0], pos[n][1]] for n in he]
+                    # Sorting the points counterclockwise (needed to have the correct filling)
+                    sorted_coordinates = CCW_sort(coordinates)
+                    obj = plt.Polygon(
+                        sorted_coordinates,
+                        edgecolor=edge_lc,
+                        facecolor=colors[d - 1],
+                        alpha=0.4,
+                        lw=0.5,
+                    )
+                    ax.add_patch(obj)
+    elif type(H)==xgi.classes.simplicialcomplex.SimplicialComplex:
+        #I will only plot the maximal simplices, so I convert the SC to H
+        H_ = xgi.from_simplicial_complex_to_hypergraph(H)
+        
+        # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
+        for d in reversed(range(1, d_max + 1)):
+            if d == 1:
+                # Drawing the edges
+                for he in H_.edges(order=d).members():
+                    he = list(he)
+                    x_coords = [pos[he[0]][0], pos[he[1]][0]]
+                    y_coords = [pos[he[0]][1], pos[he[1]][1]]
+                    line = plt.Line2D(x_coords, y_coords, color=edge_lc, lw=edge_lw)
+                    ax.add_line(line)
+            else:
+                # Hyperedges of order d (d=1: links, etc.)
+                for he in H_.edges(order=d).members():
+                    # Filling the polygon
+                    coordinates = [[pos[n][0], pos[n][1]] for n in he]
+                    # Sorting the points counterclockwise (needed to have the correct filling)
+                    sorted_coordinates = CCW_sort(coordinates)
+                    obj = plt.Polygon(
+                        sorted_coordinates,
+                        edgecolor=edge_lc,
+                        facecolor=colors[d - 1],
+                        alpha=0.4,
+                        lw=0.5,
+                    )
+                    ax.add_patch(obj)
+                    #Drawing the all the edges within
+                    for i, j in combinations(sorted_coordinates, 2):
+                        x_coords = [i[0],j[0]]
+                        y_coords = [i[1],j[1]]
+                        line = plt.Line2D(x_coords, y_coords, color=edge_lc, lw=edge_lw)
+                        ax.add_line(line)
+    else:
+        raise XGIError("The input must be a xgi.SimplicialComplex or xgi.Hypergraph")
 
     # Drawing the nodes
     for i in list(H.nodes):
