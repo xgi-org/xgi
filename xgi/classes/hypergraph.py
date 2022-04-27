@@ -3,10 +3,10 @@ from copy import deepcopy
 from warnings import warn
 
 import numpy as np
-
 import xgi
 import xgi.convert as convert
-from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
+from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
+                                     NodeView)
 from xgi.exception import IDNotFound, XGIError
 from xgi.utils import XGICounter
 
@@ -460,7 +460,7 @@ class Hypergraph:
         Parameters
         ----------
         edge : Iterable
-            A container of hashables that specifies an edge.
+            A container of hashables that specifies an edge by its member nodes.
 
         Returns
         -------
@@ -592,7 +592,8 @@ class Hypergraph:
         ----------
         ebunch_to_add : container of edges
             Each edge given in the list or container will be added
-            to the graph. The edges must be given as containers.
+            to the graph. The edges must be given as containers of 
+            the form (node1, node2, ..., noden, weight).
         weight : string, optional (default= 'weight')
             The attribute name for the edge weights to be added.
         attr : keyword arguments, optional (default= no attributes)
@@ -606,6 +607,15 @@ class Hypergraph:
         Notes
         -----
         Adding the same edge twice creates a multiedge.
+
+        Example
+        -------
+        >>> H = xgi.Hypergraph()
+        >>> edges = [(0, 1, 0.3), (0, 2, 0.8)]
+        >>> H.add_weighted_edges_from(edges)
+        >>> H.edges[0]
+        {'weight': 0.3}
+
 
         """
         try:

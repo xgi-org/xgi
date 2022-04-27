@@ -300,7 +300,8 @@ class SimplicialComplex(Hypergraph):
         ----------
         ebunch_to_add : container of simplices
             Each simplex given in the list or container will be added
-            to the graph. The simplices must be given as containers.
+            to the graph. The simplices must be given as containers of 
+            the form (node1, node2, ..., noden, weight).
         weight : string, optional (default= 'weight')
             The attribute name for the simplex weights to be added.
         attr : keyword arguments, optional (default= no attributes)
@@ -314,6 +315,14 @@ class SimplicialComplex(Hypergraph):
         Notes
         -----
         Adding the same simplex twice will add it only once.
+
+        Example
+        -------
+        >>> S = xgi.SimplicialComplex()
+        >>> simplices = [(0, 1, 0.3), (0, 2, 0.8)]
+        >>> S.add_weighted_simplices_from(simplices)
+        >>> S.edges[0]
+        {'weight': 0.3}
         """
 
         try:
