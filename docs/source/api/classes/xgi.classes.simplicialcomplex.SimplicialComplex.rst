@@ -38,7 +38,7 @@ xgi.classes.simplicialcomplex.SimplicialComplex
       ~SimplicialComplex.has_simplex
 
 
-   .. rubric:: Inherited method that cannot be used
+   .. rubric:: Inherited methods that cannot be used
 
    .. autosummary::
       :nosignatures:
