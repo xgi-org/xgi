@@ -3,10 +3,10 @@ from copy import deepcopy
 from warnings import warn
 
 import numpy as np
-
 import xgi
 import xgi.convert as convert
-from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
+from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
+                                     NodeView)
 from xgi.exception import IDNotFound, XGIError
 from xgi.utils import XGICounter
 
@@ -318,10 +318,10 @@ class Hypergraph:
 
         Parameters
         ----------
-        nodes_for_adding : iterable container
-            A container of nodes (list, dict, set, etc.).
+        nodes_for_adding : iterable
+            An iterable of nodes (list, dict, set, etc.).
             OR
-            A container of (node, attribute dict) tuples.
+            An iterable of (node, attribute dict) tuples.
             Node attributes are updated using the attribute dict.
         attr : keyword arguments, optional (default= no attributes)
             Update attributes for all nodes in nodes.
@@ -460,7 +460,7 @@ class Hypergraph:
         Parameters
         ----------
         edge : Iterable
-            A container of hashables that specifies an edge.
+            An iterable of hashables that specifies an edge.
 
         Returns
         -------
@@ -544,10 +544,10 @@ class Hypergraph:
 
         Parameters
         ----------
-        ebunch_to_add : container of edges
-            Each edge given in the container will be added to the
-            graph. Each edge must be given as as a container of nodes
-            or a container with the last entry as a dictionary.
+        ebunch_to_add : iterable of edges
+            Each edge given in the iterable will be added to the
+            graph. Each edge must be given as as an iterable of nodes
+            or an iterable with the last entry as a dictionary.
         attr : keyword arguments, optional
             Edge data (or labels or objects) can be assigned using
             keyword arguments.
@@ -590,9 +590,9 @@ class Hypergraph:
 
         Parameters
         ----------
-        ebunch_to_add : container of edges
-            Each edge given in the list or container will be added
-            to the graph. The edges must be given as containers.
+        ebunch_to_add : iterable of edges
+            Each edge given in the list or iterable will be added
+            to the graph. The edges must be given as iterables.
         weight : string, optional (default= 'weight')
             The attribute name for the edge weights to be added.
         attr : keyword arguments, optional (default= no attributes)
@@ -817,7 +817,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        nbunch : single node, container, or None, default: None
+        nbunch : single node, iterable, or None, default: None
             The view will only report edges incident to these nodes. If None
             is specified, the degree of all nodes is computed.
         weight : string or None, default: None
@@ -863,7 +863,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        ebunch : single edge, container, or all edges (default= all edges)
+        ebunch : single edge, iterable, or all edges (default= all edges)
             The view will only report sizes of these edges.
         weight : string or None, optional (default=None)
            The name of an node attribute that holds the numerical value used
@@ -990,7 +990,7 @@ class Hypergraph:
         Parameters
         ----------
         nodes : list, iterable
-            A container of nodes which will be iterated through once.
+            An iterable of nodes which will be iterated through once.
 
         Returns
         -------
@@ -1022,7 +1022,7 @@ class Hypergraph:
         Parameters
         ----------
         edges : list, iterable
-            A container of edge ids which will be iterated through once.
+            An iterable of edge ids which will be iterated through once.
 
         Returns
         -------
@@ -1053,10 +1053,10 @@ class Hypergraph:
         Parameters
         ----------
         nodes : list, iterable
-            A container of nodes which will be iterated through once.
+            An iterable of nodes which will be iterated through once.
 
         edges : list, iterable
-            A container of edge ids which will be iterated through once.
+            An iterable of edge ids which will be iterated through once.
 
         Returns
         -------
@@ -1083,7 +1083,7 @@ class Hypergraph:
 
         Parameters
         ----------
-        nbunch : single node, container, or all nodes (default= all nodes)
+        nbunch : single node, iterable, or all nodes (default= all nodes)
             The view will only report edges incident to these nodes.
 
         Returns
