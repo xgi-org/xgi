@@ -8,7 +8,6 @@ edge size of a hypergraph.  Views are automatically updaed when the hypergraph c
 from collections.abc import Mapping, Set
 
 import numpy as np
-
 from xgi.exception import IDNotFound, XGIError
 
 __all__ = [
@@ -188,7 +187,7 @@ class IDDegreeView:
     neighbor_ids : dict
         A dictionary with neighboring IDs as keys and a list of bipartite neighbors as
         values. Used when the degree order is specified.
-    nbunch : ID, container of IDs, or None meaning all IDs (default=None)
+    nbunch : ID, iterable of IDs, or None meaning all IDs (default=None)
         The IDs for which to find the degree
     weight : hashable, optional
         The name of the attribute to weight the degree, by default None.
