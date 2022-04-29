@@ -72,26 +72,14 @@ def get_dual(edge_dict):
     return dict(node_dict)
 
 
-dataset_urls = {
-    "congress-bills": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/congress-bills/congress-bills.json",
-    "tags-ask-ubuntu": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/tags-ask-ubuntu/tags-ask-ubuntu.json",
-    "email-eu": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/email-Eu/email-Eu.json",
-    "email-enron": "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/data/email-Enron/email-Enron.json",
-}
-
-
 def load_xgi_data(dataset, nodetype=None, edgetype=None):
     """_summary_
 
     Parameters
     ----------
     dataset : str
-        Dataset name. Valid options are the following:
-
-        * congress-bills
-        * email-enron
-        * email-eu
-        * tags-ask-ubuntu
+        Dataset name. Valid options are the top-level tags of the
+        index.json file in the xgi-data repository.
 
     nodetype : type, optional
         type to cast the node ID to
@@ -108,10 +96,12 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None):
     XGIError
        The specified dataset does not exist.
     """
-    if dataset not in dataset_urls:
+    index_url = "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/index.json"
+    index = requests.get(index_url).json()
+    if dataset not in index:
         raise XGIError("Invalid dataset specifier!")
 
-    r = requests.get(dataset_urls[dataset])
+    r = requests.get(index[dataset]["url"])
 
     return _dict_to_hypergraph(r.json(), nodetype=nodetype, edgetype=edgetype)
 

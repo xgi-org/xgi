@@ -139,7 +139,7 @@ class SimplicialComplex(Hypergraph):
 
         Parameters
         ----------
-        simplex : an container or iterable of hashables
+        simplex : an iterable of hashables
             A list of node ids
         attr : keyword arguments, optional
             Simplex data (or labels or objects) can be assigned using
@@ -205,10 +205,10 @@ class SimplicialComplex(Hypergraph):
 
         Parameters
         ----------
-        ebunch_to_add : container of simplices
-            Each simplex given in the container will be added to the
-            graph. Each simplex must be given as as a container of nodes
-            or a container with the last entry as a dictionary.
+        ebunch_to_add : iterable of simplices
+            Each simplex given in the iterable will be added to the
+            graph. Each simplex must be given as as an iterable of nodes
+            or an iterable with the last entry as a dictionary.
         attr : keyword arguments, optional
             Simplex data (or labels or objects) can be assigned using
             keyword arguments.
@@ -298,9 +298,9 @@ class SimplicialComplex(Hypergraph):
 
         Parameters
         ----------
-        ebunch_to_add : container of simplices
-            Each simplex given in the list or container will be added
-            to the graph. The simplices must be given as containers.
+        ebunch_to_add : iterable of simplices
+            Each simplex given in the list or iterable will be added
+            to the graph. The simplices must be given as iterables.
         weight : string, optional (default= 'weight')
             The attribute name for the simplex weights to be added.
         attr : keyword arguments, optional (default= no attributes)
@@ -365,8 +365,8 @@ class SimplicialComplex(Hypergraph):
 
         Parameters
         ----------
-        ebunch: list or container of hashables
-            Each edge id given in the list or container will be removed
+        ebunch: list or iterable of hashables
+            Each edge id given in the list or iterable will be removed
             from the Simplicialcomplex.
 
         See Also
@@ -389,7 +389,7 @@ class SimplicialComplex(Hypergraph):
         Parameters
         ----------
         simplex : list or set
-            A container of hashables that specifies an simplex
+            An iterable of hashables that specifies an simplex
 
         Returns
         -------
