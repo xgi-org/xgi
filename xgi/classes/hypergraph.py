@@ -460,7 +460,7 @@ class Hypergraph:
         Parameters
         ----------
         edge : Iterable
-            An iterable of hashables that specifies an edge.
+            An iterable of hashables that specifies an edge by its member nodes.
 
         Returns
         -------
@@ -591,8 +591,9 @@ class Hypergraph:
         Parameters
         ----------
         ebunch_to_add : iterable of edges
-            Each edge given in the list or iterable will be added
-            to the graph. The edges must be given as iterables.
+            Each edge given in the list or container will be added
+            to the graph. The edges must be given as tuples of 
+            the form (node1, node2, ..., noden, weight).
         weight : string, optional (default= 'weight')
             The attribute name for the edge weights to be added.
         attr : keyword arguments, optional (default= no attributes)
@@ -606,6 +607,15 @@ class Hypergraph:
         Notes
         -----
         Adding the same edge twice creates a multiedge.
+
+        Example
+        -------
+        >>> H = xgi.Hypergraph()
+        >>> edges = [(0, 1, 0.3), (0, 2, 0.8)]
+        >>> H.add_weighted_edges_from(edges)
+        >>> H.edges[0]
+        {'weight': 0.3}
+
 
         """
         try:

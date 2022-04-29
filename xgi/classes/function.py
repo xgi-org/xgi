@@ -18,6 +18,7 @@ __all__ = [
     "set_edge_attributes",
     "get_edge_attributes",
     "is_empty",
+    "maximal_simplices",
 ]
 
 
@@ -443,3 +444,38 @@ def is_empty(H):
     False
     """
     return len(H.edges) == 0
+
+def maximal_simplices(SC):
+    """
+    Return the IDs associated to the maximal simplices of the input SC.
+    
+    Parameters
+    ----------
+    SC : xgi SimplicialComplex
+
+    Returns
+    -------
+    maximal_simplices : list(int)
+        A list of IDs correspondent to the maximal simplices in the provided simplicial complex.
+
+    Notes
+    --------
+    The output is not a xgi's SimplicialComplex since, by construction,
+    that would automatically add back the non-maximal simplices just removed.
+    """
+
+    if type(SC)!=xgi.classes.simplicialcomplex.SimplicialComplex:
+        raise XGIError("The input must be a xgi.SimplicialComplex")
+    
+    maximal_simplices = []
+    
+    for i in SC.edges:
+        maximal=True
+        for j in SC.edges:
+            # i is a subface of j, I remove it
+            if SC.edges.members(i)<SC.edges.members(j) : 
+                maximal = False
+                break
+        if maximal: 
+            maximal_simplices.append(i)
+    return maximal_simplices

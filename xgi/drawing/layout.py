@@ -10,7 +10,6 @@ __all__ = [
     "weighted_barycenter_spring_layout",
 ]
 
-
 @py_random_state(2)
 def random_layout(H, center=None, dim=2, seed=None):
     """Position nodes uniformly at random in the unit square. Exactly as networkx does.
@@ -56,21 +55,26 @@ def random_layout(H, center=None, dim=2, seed=None):
 
     return pos
 
-
 def pairwise_spring_layout(H):
     """
     Position the nodes using Fruchterman-Reingold force-directed
-    algorithm using the graph projection of the hypergraph.
+    algorithm using the graph projection of the hypergraph
+    or the hypergraph constructed from the simplicial complex.
 
     Parameters
     ----------
-    H : xgi Hypergraph
+    H : xgi Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
 
     Returns
     -------
     pos : dict
         A dictionary of positions keyed by node
+        
+    Notes
+    -----
+    If a simplicial complex is provided the results will be based on the
+    hypergraph constructed from its maximal simplices.
 
     See also
     --------
@@ -85,21 +89,24 @@ def pairwise_spring_layout(H):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.pairwise_spring_layout(H)
     """
+    if type(H)==xgi.classes.simplicialcomplex.SimplicialComplex:
+        H = xgi.from_simplicial_complex_to_hypergraph(H)
     G = xgi.convert_to_graph(H)
     pos = nx.spring_layout(G)
     return pos
-
 
 def barycenter_spring_layout(H, return_phantom_graph=False):
     """
     Position the nodes using Fruchterman-Reingold force-directed
     algorithm using an augmented version of the the graph projection
-    of the hypergraph, where phantom nodes (barycenters) are created
-    for each edge composed by more than two nodes.
+    of the hypergraph (or simplicial complex), where phantom nodes
+    (barycenters) are created for each edge composed by more than two nodes.
+    If a simplicial complex is provided the results will be based on the
+    hypergraph constructed from its maximal simplices.
 
     Parameters
     ----------
-    H : xgi Hypergraph
+    H : xgi Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
 
     Returns
@@ -120,6 +127,9 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.barycenter_spring_layout(H)
     """
+    
+    if type(H)==xgi.classes.simplicialcomplex.SimplicialComplex:
+        H = xgi.from_simplicial_complex_to_hypergraph(H)
 
     # Creating the projected networkx Graph, I will fill it manually
     G = nx.Graph()
@@ -154,20 +164,21 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     else:
         return pos
 
-
 def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     """
     Position the nodes using Fruchterman-Reingold force-directed
     algorithm using an augmented version of the the graph projection
-    of the hypergraph, where phantom nodes (barycenters) are created
+    of the hypergraph (or simplicial complex), where phantom nodes (barycenters) are created
     for each edge of order d>1 (composed by more than two nodes).
     Weights are assigned to all hyperedges of order 1 (links) and
     to all connections to phantom nodes within each hyperedge
     to keep them together. Weights scale as the order d.
+    If a simplicial complex is provided the results will be based on the
+    hypergraph constructed from its maximal simplices.
 
     Parameters
     ----------
-    H : xgi Hypergraph
+    H : xgi Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
 
     Returns
@@ -188,6 +199,8 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.weighted_barycenter_spring_layout(H)
     """
+    if type(H)==xgi.classes.simplicialcomplex.SimplicialComplex:
+        H = xgi.from_simplicial_complex_to_hypergraph(H)
 
     # Creating the projected networkx Graph, I will fill it manually
     G = nx.Graph()

@@ -20,6 +20,7 @@ __all__ = [
     "to_hyperedge_dict",
     "from_bipartite_pandas_dataframe",
     "from_incidence_matrix",
+    "from_simplicial_complex_to_hypergraph",
     "to_incidence_matrix",
     "from_bipartite_graph",
     "to_bipartite_graph",
@@ -371,6 +372,26 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
 
     return H
 
+def from_simplicial_complex_to_hypergraph(SC):
+    """Returns a hypergraph constructed from the
+    maximal simpices of the provided simplicial complex.
+
+    Parameters
+    ----------
+    SC : xgi.SimplicialComplex object
+
+    Returns
+    -------
+    H : xgi.Hypergraph
+    """
+    
+    if type(SC)!=xgi.classes.simplicialcomplex.SimplicialComplex:
+        raise XGIError("The input must be a xgi.SimplicialComplex")
+
+    maximal_simplices = xgi.maximal_simplices(SC)
+    H = xgi.Hypergraph()
+    H.add_edges_from([list(SC.edges.members(e)) for e in maximal_simplices])
+    return H
 
 def to_incidence_matrix(H, sparse=True, index=False):
     """Convert a hypergraph to an incidence matrix.
