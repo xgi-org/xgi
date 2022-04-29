@@ -460,7 +460,7 @@ class Hypergraph:
         Parameters
         ----------
         edge : Iterable
-            A container of hashables that specifies an edge by its member nodes.
+            An iterable of hashables that specifies an edge by its member nodes.
 
         Returns
         -------
@@ -590,9 +590,9 @@ class Hypergraph:
 
         Parameters
         ----------
-        ebunch_to_add : container of edges
+        ebunch_to_add : iterable of edges
             Each edge given in the list or container will be added
-            to the graph. The edges must be given as containers of 
+            to the graph. The edges must be given as tuples of 
             the form (node1, node2, ..., noden, weight).
         weight : string, optional (default= 'weight')
             The attribute name for the edge weights to be added.
