@@ -28,6 +28,11 @@ To install for development purposes, first clone the repository and then execute
 
    pip install -e .['all']
 
+If that command does not work, you may try the following instead
+
+.. code:: zsh
+
+   pip install -e .\[all\]
 
 XGI was developed and tested for Python 3.7-3.10 on Mac OS, Windows, and Ubuntu.
 
