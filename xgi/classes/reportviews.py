@@ -298,14 +298,14 @@ class IDDegreeView:
             if self._weight is None:
                 for id, nbrs in self._ids.items():
                     degrees[id] = len(
-                        [i for i in nbrs if len(self._neighbor_ids[i]) == self._order]
+                        [i for i in nbrs if len(self._neighbor_ids[i]) == self._order + 1]
                     )
             else:
                 for id, nbrs in self._ids.items():
                     degrees[id] = sum(
                         self._id_attrs[i].get(self._weight, 1)
                         for i in nbrs
-                        if len(self._neighbor_ids[i]) == self._order
+                        if len(self._neighbor_ids[i]) == self._order + 1
                     )
         return degrees
 
