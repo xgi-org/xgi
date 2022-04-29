@@ -5,7 +5,7 @@ a hypergraph to exclude some nodes or edges. It should be better
 to do that via a view than to remove and then re-add. This module provides those graph views.
 
 The resulting views are essentially read-only graphs that
-report data from the original graph object. 
+report data from the original graph object.
 
 Note: Since hypergraphviews look like hypergraphs, one can end up with
 view-of-view-of-view chains. Be careful with chains because
@@ -15,44 +15,10 @@ they become very slow with about 15 nested views. Often it is easiest to use .co
 
 import xgi
 
-__all__ = ["generic_hypergraph_view", "subhypergraph_view"]
+__all__ = ["subhypergraph"]
 
 
-def generic_hypergraph_view(H, create_using=None):
-    """Create a read-only view of the hypergraph
-
-    The read-only view shares the same memory as the original hypergraph
-    and "freezes" the hypergraph by removing the methods that can modify
-    the hypergraph.
-
-    Parameters
-    ----------
-    H : Hypergraph object
-        The hypergraph of interest
-    create_using : Hypergraph constructor, optional
-        The hypergraph object to add the data to, by default None
-
-    Returns
-    -------
-    Hypergraph object
-        A read-only view of the hypergraph
-    """
-    if create_using is None:
-        newH = H.__class__()
-    else:
-        newH = xgi.empty_hypergraph(create_using)
-    newH = xgi.freeze(newH)
-
-    # create view by assigning attributes from G
-    newH._hypergraph = H._hypergraph
-    newH._node = H._node
-    newH._node_attr = H._node_attr
-    newH._edge = H._edge
-    newH._edge_attr = H._edge_attr
-    return newH
-
-
-def subhypergraph_view(H, filtered_nodes=None, filtered_edges=None):
+def subhypergraph(H, filtered_nodes=None, filtered_edges=None):
     """View of `H` applying a filter on nodes and edges.
 
     `subhypergraph_view` provides a read-only view of the induced subhypergraph that
