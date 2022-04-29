@@ -84,25 +84,25 @@ def test_id_degree_view(edgelist1, edgelist4):
     assert (H1.degree(dtype="nparray")[H1.nodes] == np.array([1, 2, 3, 2, 2])).all()
 
     # test order
+    assert H2.degree(1, order=0) == 0
+    assert H2.degree(4, order=0) == 1
+    assert H2.degree(5, order=0) == 0
+
     assert H2.degree(1, order=1) == 0
-    assert H2.degree(4, order=1) == 1
-    assert H2.degree(5, order=1) == 0
+    assert H2.degree(4, order=1) == 0
+    assert H2.degree(6, order=1) == 1
 
-    assert H2.degree(1, order=2) == 0
-    assert H2.degree(4, order=2) == 0
-    assert H2.degree(6, order=2) == 1
-
-    assert H1.degree(3, order=2) == 0
-    assert H1.degree(3, order=3) == 2
-    assert H1.degree(3, order=4) == 1
-    assert H1.degree(5, order=3) == 1
+    assert H1.degree(3, order=1) == 0
+    assert H1.degree(3, order=2) == 2
+    assert H1.degree(3, order=3) == 1
+    assert H1.degree(5, order=2) == 1
 
     # test weights
     attr_dict1 = {0: {"weight": -2}, 1: {"weight": 4.0}, 2: {"weight": 0.3}}
     xgi.set_edge_attributes(H1, attr_dict1)
 
     assert H1.degree(weight="weight")[H1.nodes] == {1: -2, 2: 2, 3: 2.3, 4: 4.3, 5: 4.3}
-    assert H1.degree(weight="weight", order=3)[H1.nodes] == {
+    assert H1.degree(weight="weight", order=2)[H1.nodes] == {
         1: -2,
         2: -2,
         3: -1.7,
