@@ -33,6 +33,10 @@ To install this package locally:
 ```sh
 pip install -e .["all"]
 ```
+* If that command does not work, you may try the following instead
+````zsh
+pip install -e .\[all\]
+````
 
 ## Getting Started
 
