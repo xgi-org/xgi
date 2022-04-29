@@ -1,6 +1,8 @@
 # Changelog
 
 ## Current release
+
+## v0.3
 * Added the ability to convert to and from a NetworkX bipartite graph.
 * Removed the `shape` property from `Hypergraph` and renamed the `number_of_nodes()` and `number_of_edges()` methods to the `num_nodes` and `num_edges` properties, respectively.
 * Added random seed decorator as in NetworkX.
