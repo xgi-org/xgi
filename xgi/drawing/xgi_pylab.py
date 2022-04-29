@@ -7,11 +7,13 @@ Draw hypergraphs with matplotlib.
 """
 
 from itertools import combinations
+
 import matplotlib.pyplot as plt
 import numpy as np
-import xgi
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+
+import xgi
 
 __all__ = [
     "draw",
@@ -109,7 +111,7 @@ def draw(
     ax.get_yaxis().set_ticks([])
     ax.axis("off")
 
-    if type(H)==xgi.classes.hypergraph.Hypergraph:
+    if type(H) == xgi.classes.hypergraph.Hypergraph:
         # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
         for d in reversed(range(1, d_max + 1)):
             if d == 1:
@@ -136,10 +138,10 @@ def draw(
                         lw=0.5,
                     )
                     ax.add_patch(obj)
-    elif type(H)==xgi.classes.simplicialcomplex.SimplicialComplex:
-        #I will only plot the maximal simplices, so I convert the SC to H
+    elif type(H) == xgi.classes.simplicialcomplex.SimplicialComplex:
+        # I will only plot the maximal simplices, so I convert the SC to H
         H_ = xgi.from_simplicial_complex_to_hypergraph(H)
-        
+
         # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
         for d in reversed(range(1, d_max + 1)):
             if d == 1:
@@ -165,10 +167,10 @@ def draw(
                         lw=0.5,
                     )
                     ax.add_patch(obj)
-                    #Drawing the all the edges within
+                    # Drawing the all the edges within
                     for i, j in combinations(sorted_coordinates, 2):
-                        x_coords = [i[0],j[0]]
-                        y_coords = [i[1],j[1]]
+                        x_coords = [i[0], j[0]]
+                        y_coords = [i[1], j[1]]
                         line = plt.Line2D(x_coords, y_coords, color=edge_lc, lw=edge_lw)
                         ax.add_line(line)
     else:

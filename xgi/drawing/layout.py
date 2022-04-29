@@ -10,6 +10,7 @@ __all__ = [
     "weighted_barycenter_spring_layout",
 ]
 
+
 @py_random_state(2)
 def random_layout(H, center=None, dim=2, seed=None):
     """Position nodes uniformly at random in the unit square. Exactly as networkx does.
@@ -55,6 +56,7 @@ def random_layout(H, center=None, dim=2, seed=None):
 
     return pos
 
+
 def pairwise_spring_layout(H):
     """
     Position the nodes using Fruchterman-Reingold force-directed
@@ -70,7 +72,7 @@ def pairwise_spring_layout(H):
     -------
     pos : dict
         A dictionary of positions keyed by node
-        
+
     Notes
     -----
     If a simplicial complex is provided the results will be based on the
@@ -89,11 +91,12 @@ def pairwise_spring_layout(H):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.pairwise_spring_layout(H)
     """
-    if type(H)==xgi.classes.simplicialcomplex.SimplicialComplex:
+    if type(H) == xgi.classes.simplicialcomplex.SimplicialComplex:
         H = xgi.from_simplicial_complex_to_hypergraph(H)
     G = xgi.convert_to_graph(H)
     pos = nx.spring_layout(G)
     return pos
+
 
 def barycenter_spring_layout(H, return_phantom_graph=False):
     """
@@ -127,8 +130,8 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.barycenter_spring_layout(H)
     """
-    
-    if type(H)==xgi.classes.simplicialcomplex.SimplicialComplex:
+
+    if type(H) == xgi.classes.simplicialcomplex.SimplicialComplex:
         H = xgi.from_simplicial_complex_to_hypergraph(H)
 
     # Creating the projected networkx Graph, I will fill it manually
@@ -163,6 +166,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
         return pos, G
     else:
         return pos
+
 
 def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     """
@@ -199,7 +203,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.weighted_barycenter_spring_layout(H)
     """
-    if type(H)==xgi.classes.simplicialcomplex.SimplicialComplex:
+    if type(H) == xgi.classes.simplicialcomplex.SimplicialComplex:
         H = xgi.from_simplicial_complex_to_hypergraph(H)
 
     # Creating the projected networkx Graph, I will fill it manually

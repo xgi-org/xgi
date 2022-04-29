@@ -1,5 +1,6 @@
 import networkx as nx
 import pytest
+
 import xgi
 
 

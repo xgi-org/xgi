@@ -8,6 +8,7 @@ edge size of a hypergraph.  Views are automatically updaed when the hypergraph c
 from collections.abc import Mapping, Set
 
 import numpy as np
+
 from xgi.exception import IDNotFound, XGIError
 
 __all__ = [
@@ -298,7 +299,11 @@ class IDDegreeView:
             if self._weight is None:
                 for id, nbrs in self._ids.items():
                     degrees[id] = len(
-                        [i for i in nbrs if len(self._neighbor_ids[i]) == self._order + 1]
+                        [
+                            i
+                            for i in nbrs
+                            if len(self._neighbor_ids[i]) == self._order + 1
+                        ]
                     )
             else:
                 for id, nbrs in self._ids.items():

@@ -300,7 +300,7 @@ class SimplicialComplex(Hypergraph):
         ----------
         ebunch_to_add : iterable of simplices
             Each simplex given in the list or container will be added
-            to the graph. The simplices must be given as tuples of 
+            to the graph. The simplices must be given as tuples of
             the form (node1, node2, ..., noden, weight).
         weight : string, optional (default= 'weight')
             The attribute name for the simplex weights to be added.

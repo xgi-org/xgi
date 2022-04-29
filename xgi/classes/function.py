@@ -445,10 +445,11 @@ def is_empty(H):
     """
     return len(H.edges) == 0
 
+
 def maximal_simplices(SC):
     """
     Return the IDs associated to the maximal simplices of the input SC.
-    
+
     Parameters
     ----------
     SC : xgi SimplicialComplex
@@ -464,18 +465,18 @@ def maximal_simplices(SC):
     that would automatically add back the non-maximal simplices just removed.
     """
 
-    if type(SC)!=xgi.classes.simplicialcomplex.SimplicialComplex:
+    if type(SC) != xgi.classes.simplicialcomplex.SimplicialComplex:
         raise XGIError("The input must be a xgi.SimplicialComplex")
-    
+
     maximal_simplices = []
-    
+
     for i in SC.edges:
-        maximal=True
+        maximal = True
         for j in SC.edges:
             # i is a subface of j, I remove it
-            if SC.edges.members(i)<SC.edges.members(j) : 
+            if SC.edges.members(i) < SC.edges.members(j):
                 maximal = False
                 break
-        if maximal: 
+        if maximal:
             maximal_simplices.append(i)
     return maximal_simplices

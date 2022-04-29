@@ -6,6 +6,7 @@ from itertools import combinations
 
 import networkx as nx
 import numpy as np
+
 import xgi
 from xgi.utils import py_random_state
 
@@ -19,7 +20,7 @@ __all__ = [
 ]
 
 
-@py_random_state('seed')
+@py_random_state("seed")
 def chung_lu_hypergraph(k1, k2, seed=None):
     """A function to generate a Chung-Lu hypergraph
 
@@ -103,7 +104,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     return H
 
 
-@py_random_state('seed')
+@py_random_state("seed")
 def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     """A function to generate a DCSBM hypergraph.
 
@@ -240,7 +241,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     return H
 
 
-@py_random_state('seed')
+@py_random_state("seed")
 def random_hypergraph(N, ps, seed=None):
     """Generates a random hypergraph
 
@@ -297,7 +298,7 @@ def random_hypergraph(N, ps, seed=None):
     return H
 
 
-@py_random_state('seed')
+@py_random_state("seed")
 def random_simplicial_complex(N, ps, seed=None):
     """Generates a random hypergraph
 
@@ -354,7 +355,7 @@ def random_simplicial_complex(N, ps, seed=None):
     return S
 
 
-@py_random_state('seed')
+@py_random_state("seed")
 def random_flag_complex_d2(N, p, seed=None):
     """Generate a maximal simplicial complex (up to order 2) from a
     :math:`G_{N,p}` Erdős-Rényi random graph by filling all empty triangles with 2-simplices.

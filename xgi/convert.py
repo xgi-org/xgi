@@ -3,10 +3,11 @@ from copy import deepcopy
 
 import networkx as nx
 import pandas as pd
-import xgi
 from networkx.algorithms import bipartite
 from numpy import matrix, ndarray
 from scipy.sparse import coo_matrix, csc_matrix, csr_matrix, lil_matrix
+
+import xgi
 from xgi.exception import XGIError
 from xgi.utils.utilities import get_dual
 
@@ -372,6 +373,7 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
 
     return H
 
+
 def from_simplicial_complex_to_hypergraph(SC):
     """Returns a hypergraph constructed from the
     maximal simpices of the provided simplicial complex.
@@ -384,14 +386,15 @@ def from_simplicial_complex_to_hypergraph(SC):
     -------
     H : xgi.Hypergraph
     """
-    
-    if type(SC)!=xgi.classes.simplicialcomplex.SimplicialComplex:
+
+    if type(SC) != xgi.classes.simplicialcomplex.SimplicialComplex:
         raise XGIError("The input must be a xgi.SimplicialComplex")
 
     maximal_simplices = xgi.maximal_simplices(SC)
     H = xgi.Hypergraph()
     H.add_edges_from([list(SC.edges.members(e)) for e in maximal_simplices])
     return H
+
 
 def to_incidence_matrix(H, sparse=True, index=False):
     """Convert a hypergraph to an incidence matrix.

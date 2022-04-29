@@ -3,10 +3,10 @@ from copy import deepcopy
 from warnings import warn
 
 import numpy as np
+
 import xgi
 import xgi.convert as convert
-from xgi.classes.reportviews import (DegreeView, EdgeSizeView, EdgeView,
-                                     NodeView)
+from xgi.classes.reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
 from xgi.exception import IDNotFound, XGIError
 from xgi.utils import XGICounter
 
@@ -592,7 +592,7 @@ class Hypergraph:
         ----------
         ebunch_to_add : iterable of edges
             Each edge given in the list or container will be added
-            to the graph. The edges must be given as tuples of 
+            to the graph. The edges must be given as tuples of
             the form (node1, node2, ..., noden, weight).
         weight : string, optional (default= 'weight')
             The attribute name for the edge weights to be added.
