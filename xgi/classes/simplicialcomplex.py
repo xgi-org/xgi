@@ -93,11 +93,11 @@ class SimplicialComplex(Hypergraph):
         >>> import xgi
         >>> H = xgi.SimplicialComplex(name="foo")
         >>> str(H)
-        "SimplicialComplex named 'foo' with 0 nodes and 0 edges"
+        "SimplicialComplex named 'foo' with 0 nodes and 0 simplices"
 
         """
         try:
-            return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} simplices"
+            return f"{type(self).__name__} named '{self['name']}' with {self.num_nodes} nodes and {self.num_edges} simplices"
         except XGIError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} simplices"
 
@@ -318,6 +318,7 @@ class SimplicialComplex(Hypergraph):
 
         Example
         -------
+        >>> import xgi
         >>> S = xgi.SimplicialComplex()
         >>> simplices = [(0, 1, 0.3), (0, 2, 0.8)]
         >>> S.add_weighted_simplices_from(simplices)

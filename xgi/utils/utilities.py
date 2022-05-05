@@ -29,8 +29,8 @@ class XGICounter:
 
         Examples
         --------
-        >>> from hypergraph import HypergraphCounter
-        >>> counter = HypergraphCounter()
+        >>> from xgi import XGICounter
+        >>> counter = XGICounter()
         >>> counter()
         0
         >>> counter()
