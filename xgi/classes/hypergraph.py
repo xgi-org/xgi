@@ -427,36 +427,6 @@ class Hypergraph:
         self.__dict__["nodes"] = nodes
         return nodes
 
-    def has_node(self, n):
-        """Whether the specified node is in the hypergraph.
-
-        Identical to ``n in H`` and ``n in H.nodes``.
-
-        Parameters
-        ----------
-        n : node
-
-        Returns
-        -------
-        bool
-            Whether the node exists in the hypergraph
-
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.has_node(1), 1 in H, 1 in H.nodes
-        (True, True, True)
-        >>> H.has_node(0), 0 in H, 0 in H.nodes
-        (False, False, False)
-
-        """
-        try:
-            return n in self._node
-        except TypeError:
-            return False
-
     def has_edge(self, edge):
         """Whether an edge is in the hypergraph.
 
