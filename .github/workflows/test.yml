@@ -52,32 +52,6 @@ jobs:
         cd tutorials/
         pytest --color=yes
 
-  doctest:
-    runs-on: ${{ matrix.os }}-latest
-    strategy:
-      matrix:
-        os: [ubuntu, macos, windows]
-        python-version: ['3.7', '3.8', '3.9', '3.10']
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-
-    - name: Install packages
-      run: |
-        python -m pip install --upgrade pip wheel setuptools
-        python -m pip install -r requirements/default.txt -r requirements/test.txt
-        python -m pip install .
-        python -m pip list
-
-    - name: Run doctests
-      run: |
-        cd docs/
-        sphinx-build -b doctest source/ build/doctest/
-
   pytest:
     runs-on: ${{ matrix.os }}-latest
     strategy:
@@ -95,7 +69,7 @@ jobs:
     - name: Install packages
       run: |
         python -m pip install --upgrade pip wheel setuptools
-        python -m pip install -r requirements/default.txt -r requirements/test.txt
+        python -m pip install -r requirements/default.txt -r requirements/test.txt -r requirements/documentation.txt
         python -m pip install .
         python -m pip list
 
@@ -103,3 +77,7 @@ jobs:
       run: |
         cd ../
         pytest --color=yes
+
+    - name: Run doctest
+        cd xgi/docs/
+        sphinx-build -b doctest source/ build/doctest/
