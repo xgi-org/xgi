@@ -18,6 +18,7 @@ jobs:
         python-version: ['3.7', '3.8', '3.9', '3.10']
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -29,8 +30,25 @@ jobs:
         python -m pip install -r requirements/default.txt -r requirements/test.txt
         python -m pip install .
         python -m pip list
+
+    - name: Prepare tutorial notebooks to be tested
+      run: |
+        # go into tutorial location
+        cd tutorials/
+        # convert each notebook into a python file
+        jupyter nbconvert --to script *ipynb
+        # rename the files so they are found by pytest: add 'test' at the beggining
+        rename 's/(.*)\.py/test $1.py/' *
+        # rename the files so they are found by pytest: change spaces to underscores
+        rename 's/ /_/g' test*
+        # modify each file by adding one level of indentation to each line
+        sed -i 's/^/    /' test*.py
+        # modify each file by adding 'def test_<something>():' at the top
+        sed -i '1s;^;def test_func():\n;' test*.py
+        # move back out to the project root
+        cd ../
+
     - name: Test XGI
       run: |
-        cd ..
-        pytest xgi
-      
+        cd ../
+        pytest
