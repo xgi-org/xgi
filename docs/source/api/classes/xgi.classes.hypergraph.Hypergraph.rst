@@ -49,9 +49,6 @@
 
       ~Hypergraph.copy
       ~Hypergraph.dual
-      ~Hypergraph.subhypergraph
-      ~Hypergraph.edge_subhypergraph
-      ~Hypergraph.arbitrary_subhypergraph
 
 
    .. rubric:: Methods that query nodes and edges
