@@ -10,6 +10,43 @@ on:
 
 jobs:
 
+  test-tutorials:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10']
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install packages
+      run: |
+        python -m pip install --upgrade pip wheel setuptools
+        python -m pip install -r requirements/default.txt -r requirements/test.txt -r requirements/tutorial.txt
+        python -m pip install .
+        python -m pip list
+
+    - name: Test tutorial notebooks
+      run: |
+        # go into tutorial location
+        cd tutorials/
+        # convert each notebook into a python file
+        jupyter nbconvert --to script *ipynb
+        # rename the files so they are found by pytest: add 'test' at the beggining
+        rename 's/(.*)\.py/test $1.py/' *
+        # rename the files so they are found by pytest: change spaces to underscores
+        rename 's/ /_/g' test*
+        # modify each file by adding one level of indentation to each line
+        sed -i 's/^/    /' test*.py
+        # modify each file by adding 'def test_<something>():' at the top
+        sed -i '1s;^;def test_func():\n;' test*.py
+        # run pytest ONLY on the tutorials
+        pytest
+
   default:
     runs-on: ${{ matrix.os }}-latest
     strategy:
@@ -27,26 +64,9 @@ jobs:
     - name: Install packages
       run: |
         python -m pip install --upgrade pip wheel setuptools
-        python -m pip install -r requirements/default.txt -r requirements/test.txt -r requirements/tutorial.txt
+        python -m pip install -r requirements/default.txt -r requirements/test.txt -r
         python -m pip install .
         python -m pip list
-
-    - name: Prepare tutorial notebooks to be tested
-      run: |
-        # go into tutorial location
-        cd tutorials/
-        # convert each notebook into a python file
-        jupyter nbconvert --to script *ipynb
-        # rename the files so they are found by pytest: add 'test' at the beggining
-        rename 's/(.*)\.py/test $1.py/' *
-        # rename the files so they are found by pytest: change spaces to underscores
-        rename 's/ /_/g' test*
-        # modify each file by adding one level of indentation to each line
-        sed -i 's/^/    /' test*.py
-        # modify each file by adding 'def test_<something>():' at the top
-        sed -i '1s;^;def test_func():\n;' test*.py
-        # move back out to the project root
-        cd ../
 
     - name: Test XGI
       run: |
