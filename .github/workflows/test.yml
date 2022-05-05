@@ -49,7 +49,8 @@ jobs:
     - name: Test tutorial notebooks
       run: |
         # run pytest ONLY on the tutorials
-        pytest
+        cd tutorials/
+        pytest color=yes
 
   pytest:
     runs-on: ${{ matrix.os }}-latest
@@ -75,4 +76,4 @@ jobs:
     - name: Test XGI
       run: |
         cd ../
-        pytest
+        pytest color=yes
