@@ -60,7 +60,6 @@
       ~Hypergraph.edge_size
       ~Hypergraph.isolates
       ~Hypergraph.duplicate_edges
-      ~Hypergraph.get_edge_data
       ~Hypergraph.has_edge
       ~Hypergraph.has_node
       ~Hypergraph.is_possible_order
