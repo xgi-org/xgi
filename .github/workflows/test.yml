@@ -43,7 +43,7 @@ jobs:
         rename 's/ /_/g' test*
         # modify each file by adding one level of indentation to each line
         sed -i 's/^/    /' test*.py
-        # modify each file by adding 'def test_<something>():' at the top
+        # modify each file by adding 'def test_func():' at the top
         sed -i '1s;^;def test_func():\n;' test*.py
 
     - name: Test tutorial notebooks
