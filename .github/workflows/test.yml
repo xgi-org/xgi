@@ -10,7 +10,7 @@ on:
 
 jobs:
 
-  test-tutorials:
+  tutorials:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -31,12 +31,12 @@ jobs:
         python -m pip install .
         python -m pip list
 
-    - name: Test tutorial notebooks
+    - name: Prepare tutorial notebooks
       run: |
         # go into tutorial location
         cd tutorials/
         # convert each notebook into a python file
-        jupyter nbconvert --to script *ipynb
+        jupyter nbconvert --to script Tutorial*ipynb
         # rename the files so they are found by pytest: add 'test' at the beggining
         rename 's/(.*)\.py/test $1.py/' *
         # rename the files so they are found by pytest: change spaces to underscores
@@ -45,6 +45,9 @@ jobs:
         sed -i 's/^/    /' test*.py
         # modify each file by adding 'def test_<something>():' at the top
         sed -i '1s;^;def test_func():\n;' test*.py
+
+    - name: Test tutorial notebooks
+      run: |
         # run pytest ONLY on the tutorials
         pytest
 
