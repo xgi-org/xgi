@@ -77,7 +77,3 @@ jobs:
       run: |
         cd ../
         pytest --color=yes
-
-    - name: Run doctest
-        cd xgi/docs/
-        sphinx-build -b doctest source/ build/doctest/
