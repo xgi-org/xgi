@@ -119,6 +119,7 @@ def frozen(*args, **kwargs):
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> xgi.freeze(H)
     >>> H.add_node(5)
+    Traceback (most recent call last):
     XGIError: "Frozen hypergraph can't be modified"
     """
     raise XGIError("Frozen hypergraph can't be modified")
@@ -150,6 +151,7 @@ def freeze(H):
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> xgi.freeze(H)
     >>> H.add_node(5)
+    Traceback (most recent call last):
     XGIError: "Frozen hypergraph can't be modified"
     """
     H.add_node = frozen
@@ -165,7 +167,6 @@ def freeze(H):
     H.remove_node_from_edge = frozen
     H.clear = frozen
     H.frozen = True
-    return H
 
 
 def is_frozen(H):
