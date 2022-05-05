@@ -69,11 +69,10 @@ jobs:
     - name: Install packages
       run: |
         python -m pip install --upgrade pip wheel setuptools
-        python -m pip install -r requirements/default.txt -r requirements/test.txt
+        python -m pip install -r requirements/default.txt -r requirements/test.txt -r requirements/documentation.txt
         python -m pip install .
         python -m pip list
 
     - name: Test XGI
       run: |
-        cd ../
         pytest --color=yes
