@@ -200,7 +200,7 @@ def test_set_edge_attributes(edgelist1):
 
     H3 = xgi.Hypergraph(edgelist1)
 
-    with pytest.raises(IDNotFound):
+    with pytest.raises(XGIError):
         xgi.set_node_attributes(H3, attr_dict2)
 
     with pytest.raises(XGIError):

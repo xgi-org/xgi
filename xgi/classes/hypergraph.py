@@ -28,6 +28,12 @@ class IDDict(dict):
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
 
+    def __delitem__(self, item):
+        try:
+            return super().__delitem__(item)
+        except KeyError as e:
+            raise IDNotFound(f"ID {item} not found") from e
+
 
 class Hypergraph:
     r"""A hypergraph is a collection of subsets of a set of *nodes* or *vertices*.
@@ -365,12 +371,9 @@ class Hypergraph:
         remove_nodes_from
 
         """
-        try:
-            edge_neighbors = self._node[n]
-            del self._node[n]
-            del self._node_attr[n]
-        except KeyError as e:
-            raise XGIError(f"The node {n} is not in the graph.") from e
+        edge_neighbors = self._node[n]
+        del self._node[n]
+        del self._node_attr[n]
         for edge in edge_neighbors:
             self._edge[edge].remove(n)
             if not self._edge[edge]:
@@ -790,30 +793,6 @@ class Hypergraph:
         # setattr doesn't work because attribute already exists
         self.__dict__["edges"] = edges
         return edges
-
-    def get_edge_data(self, id, default=None):
-        """Get the attributes of an edge.
-
-        This is identical to `H._edge_attr[id]` except the default is returned
-        instead of an exception if the edge doesn't exist.
-
-        Parameters
-        ----------
-        id : Hashable
-            edge ID
-        default: Any, default None
-            Value to return if the edge ID is not found.
-
-        Returns
-        -------
-        edge_dict : dictionary
-            The edge attribute dictionary.
-
-        """
-        try:
-            return self.edges[id]
-        except KeyError:
-            return default
 
     def degree(self, nbunch=None, weight=None, order=None, dtype="dict"):
         """A DegreeView for the Hypergraph.
