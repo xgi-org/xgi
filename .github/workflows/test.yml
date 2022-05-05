@@ -75,5 +75,4 @@ jobs:
 
     - name: Test XGI
       run: |
-        cd ../
         pytest --color=yes
