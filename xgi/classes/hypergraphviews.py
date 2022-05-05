@@ -18,7 +18,7 @@ import xgi
 __all__ = ["subhypergraph"]
 
 
-def subhypergraph(H, filtered_nodes=None, filtered_edges=None):
+def subhypergraph(H, nodes=None, edges=None):
     """View of `H` applying a filter on nodes and edges.
 
     `subhypergraph_view` provides a read-only view of the induced subhypergraph that
@@ -40,10 +40,10 @@ def subhypergraph(H, filtered_nodes=None, filtered_edges=None):
     ----------
     H : hypergraph.Hypergraph
         A hypergraph
-    filtered_nodes : list or set, default: None
+    nodes : list or set, default: None
         A list of the nodes desired for the subhypergraph.
         If None, uses all the nodes.
-    filtered_edges : list or set, default: None
+    edges : list or set, default: None
         A list of the edges desired for the subhypergraph.
         If None, uses all the edges.
 
@@ -57,16 +57,8 @@ def subhypergraph(H, filtered_nodes=None, filtered_edges=None):
     # create view by assigning attributes from G
     newH._hypergraph = H._hypergraph
     # intersection of the selected nodes and edges with the existing edges
-    nodes = (
-        H.nodes
-        if filtered_nodes is None
-        else {node for node in filtered_nodes if node in H.nodes}
-    )
-    edges = (
-        H.edges
-        if filtered_edges is None
-        else {edge for edge in filtered_edges if edge in H.edges}
-    )
+    nodes = H.nodes if nodes is None else {node for node in nodes if node in H.nodes}
+    edges = H.edges if edges is None else {edge for edge in edges if edge in H.edges}
 
     # Add edges that are a subset of the filtered nodes
     newH._edge = {

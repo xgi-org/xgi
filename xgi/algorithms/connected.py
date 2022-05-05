@@ -241,6 +241,6 @@ def largest_connected_hypergraph(H, in_place=False):
     """
     connected_nodes = max(connected_components(H), key=len)
     if not in_place:
-        return xgi.subhypergraph(H, filtered_nodes=connected_nodes).copy()
+        return xgi.subhypergraph(H, nodes=connected_nodes).copy()
     else:
         H.remove_nodes_from(set(H.nodes).difference(connected_nodes))
