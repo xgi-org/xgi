@@ -63,6 +63,7 @@ jobs:
 
     - name: Install packages
       run: |
+        sudo apt-get install -y rename
         python -m pip install --upgrade pip wheel setuptools
         python -m pip install -r requirements/default.txt -r requirements/test.txt
         python -m pip install .
