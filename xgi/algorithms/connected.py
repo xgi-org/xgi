@@ -38,7 +38,7 @@ def is_connected(H):
     Example
     -------
     >>> import xgi
-    >>> H = xgi.random_hypergraph(50, [0.01, 0.001])
+    >>> H = xgi.random_hypergraph(10, [0.5, 0.01])
     >>> print(xgi.is_connected(H))
     True
 
