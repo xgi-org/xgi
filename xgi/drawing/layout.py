@@ -42,7 +42,7 @@ def random_layout(H, center=None, dim=2, seed=None):
     Examples
     --------
     >>> import xgi
-    >>> N = 100
+    >>> N = 50
     >>> ps = [0.1, 0.01]
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.random_layout(H)
@@ -86,7 +86,7 @@ def pairwise_spring_layout(H):
     Examples
     --------
     >>> import xgi
-    >>> N = 100
+    >>> N = 50
     >>> ps = [0.1, 0.01]
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.pairwise_spring_layout(H)
@@ -125,7 +125,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     Examples
     --------
     >>> import xgi
-    >>> N = 100
+    >>> N = 50
     >>> ps = [0.1, 0.01]
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.barycenter_spring_layout(H)
@@ -198,7 +198,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     Examples
     --------
     >>> import xgi
-    >>> N = 100
+    >>> N = 50
     >>> ps = [0.1, 0.01]
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.weighted_barycenter_spring_layout(H)
