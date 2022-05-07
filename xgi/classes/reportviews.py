@@ -413,17 +413,6 @@ class EdgeView(IDView):
             If `e` is a slice or if `e` does not exist in the hypergraph.
 
         """
-        if e is None:
-            if dtype is dict:
-                return {key: self._id_dict[key] for key in self._ids}
-            elif dtype is list:
-                return [self._id_dict[key] for key in self._ids]
-            else:
-                raise XGIError(f"Unrecognized dtype {dtype}")
-
-        if e not in self._ids:
-            raise IDNotFound(f"Item {e} not in this view")
-
         try:
             return self._id_dict[e].copy()
         except TypeError as e:
@@ -432,6 +421,15 @@ class EdgeView(IDView):
                     f"{type(self).__name__} does not support slicing, "
                     f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
                 ) from e
+        except IDNotFound:
+            if e is None:
+                if dtype is dict:
+                    return {key: self._id_dict[key] for key in self._ids}
+                elif dtype is list:
+                    return [self._id_dict[key] for key in self._ids]
+                else:
+                    raise XGIError(f"Unrecognized dtype {dtype}")
+            raise IDNotFound(f"Item {e} not in this view")
 
 
 class DegreeView(IDDegreeView):
