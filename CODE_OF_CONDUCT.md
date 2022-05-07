@@ -61,7 +61,7 @@ Community members asked to stop any inappropriate behavior are expected to compl
 
 This Code of Conduct applies to the following online spaces:
 
-- The [XGI GitHub Project](https://github.com/nwlandry/xgi)
+- The [XGI GitHub Project](https://github.com/ComplexGroupInteractions/xgi)
 
 This Code of Conduct applies to every member in official XGI Community online spaces, including:
 
