@@ -415,12 +415,12 @@ class EdgeView(IDView):
         """
         try:
             return self._id_dict[e].copy()
-        except TypeError as e:
+        except TypeError:
             if isinstance(e, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
                     f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
-                ) from e
+                )
         except IDNotFound:
             if e is None:
                 if dtype is dict:
