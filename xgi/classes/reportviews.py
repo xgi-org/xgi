@@ -76,15 +76,16 @@ class IDView(Mapping, Set):
     def __init__(self, id_dict, id_attr, ids=None):
         self._id_dict = id_dict
         self._id_attr = id_attr
+
         if id_dict is None:
             self._ids = None
         else:
             if ids is None:
-                self._ids = list(id_dict.keys())
+                self._ids = id_dict.keys()
             else:
                 if not set(ids).issubset(id_dict.keys()):
                     raise XGIError("ids must be a subset of the keys of id_dict")
-                self._ids = list(ids)
+                self._ids = ids
 
     def __len__(self):
         """The number of IDs."""
