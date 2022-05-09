@@ -52,7 +52,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     >>> import random
     >>> n = 1000
     >>> m = 3
-    >>> k = {i: random.randint(10, 20) for i in range(n)}
+    >>> k = {1: 1, 2: 2, 3: 3, 4: 3}
     >>> H = xgi.uniform_hypergraph_configuration_model(k, m)
     """
     # Making sure we have the right number of stubs
