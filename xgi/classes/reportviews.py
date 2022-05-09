@@ -409,18 +409,16 @@ class EdgeView(IDView):
 
         Raises
         ------
+        TypeError
+            If `e` is not None or a hashable
         XGIError
-            If `e` is a slice or if `e` does not exist in the hypergraph.
+            If `dtype` is not dict or list
+        IDNotFound
+            If `e` does not exist in the hypergraph
 
         """
         try:
             return self._id_dict[e].copy()
-        except TypeError:
-            if isinstance(e, slice):
-                raise XGIError(
-                    f"{type(self).__name__} does not support slicing, "
-                    f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
-                )
         except IDNotFound:
             if e is None:
                 if dtype is dict:
