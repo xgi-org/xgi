@@ -119,14 +119,6 @@ class IDView(Mapping, Set):
             raise IDNotFound(f"The ID {id} is not in this view")
         return self._id_attr[id]
 
-    def __contains__(self, id):
-        """Checks whether the ID is in the hypergraph"""
-        return id in self._ids
-
-    def __str__(self):
-        """Returns a string of the list of IDs."""
-        return str(list(self))
-
     def __repr__(self):
         """Returns a summary of the class"""
         return f"{self.__class__.__name__}({tuple(self)})"
@@ -359,14 +351,14 @@ class NodeView(IDView):
         """
         try:
             return self._id_dict[n].copy()
-        except KeyError as e:
-            raise XGIError(f"The node ID {n} is not in the hypergraph") from e
         except TypeError as e:
             if isinstance(n, slice):
                 raise XGIError(
                     f"{type(self).__name__} does not support slicing, "
                     f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
                 ) from e
+            else:
+                raise e
 
 
 class EdgeView(IDView):
@@ -430,7 +422,7 @@ class EdgeView(IDView):
                     raise XGIError(f"Unrecognized dtype {dtype}")
             raise IDNotFound(f"Item {e} not in this view")
 
-
+            
 class DegreeView(IDDegreeView):
     """An IDDegreeView that keeps track of node degree."""
 

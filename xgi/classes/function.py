@@ -306,10 +306,8 @@ def set_node_attributes(H, values, name=None):
                     H._node_attr[n].update(d)
                 except KeyError:
                     pass
-        except (ValueError, TypeError, AttributeError):
-            raise XGIError(
-                "name property has not been set and a dict-of-dicts has not been provided."
-            )
+        except (TypeError, ValueError, AttributeError):
+            raise XGIError("Must pass a dictionary of dictionaries")
 
 
 def get_node_attributes(H, name=None):
