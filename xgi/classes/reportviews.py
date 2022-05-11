@@ -76,15 +76,16 @@ class IDView(Mapping, Set):
     def __init__(self, id_dict, id_attr, ids=None):
         self._id_dict = id_dict
         self._id_attr = id_attr
+
         if id_dict is None:
             self._ids = None
         else:
             if ids is None:
-                self._ids = list(id_dict.keys())
+                self._ids = id_dict.keys()
             else:
                 if not set(ids).issubset(id_dict.keys()):
                     raise XGIError("ids must be a subset of the keys of id_dict")
-                self._ids = list(ids)
+                self._ids = ids
 
     def __len__(self):
         """The number of IDs."""
@@ -401,33 +402,27 @@ class EdgeView(IDView):
 
         Raises
         ------
+        TypeError
+            If `e` is not None or a hashable
         XGIError
-            If `e` is a slice or if `e` does not exist in the hypergraph.
+            If `dtype` is not dict or list
+        IDNotFound
+            If `e` does not exist in the hypergraph
 
         """
-        if e is None:
-            if dtype is dict:
-                return {key: self._id_dict[key] for key in self._ids}
-            elif dtype is list:
-                return [self._id_dict[key] for key in self._ids]
-            else:
-                raise XGIError(f"Unrecognized dtype {dtype}")
-
-        if e not in self._ids:
-            raise IDNotFound(f"Item {e} not in this view")
-
         try:
             return self._id_dict[e].copy()
-        except TypeError as e:
-            if isinstance(e, slice):
-                raise XGIError(
-                    f"{type(self).__name__} does not support slicing, "
-                    f"try list(H.edges)[{e.start}:{e.stop}:{e.step}]"
-                ) from e
-            else:
-                raise e
+        except IDNotFound:
+            if e is None:
+                if dtype is dict:
+                    return {key: self._id_dict[key] for key in self._ids}
+                elif dtype is list:
+                    return [self._id_dict[key] for key in self._ids]
+                else:
+                    raise XGIError(f"Unrecognized dtype {dtype}")
+            raise IDNotFound(f"Item {e} not in this view")
 
-
+            
 class DegreeView(IDDegreeView):
     """An IDDegreeView that keeps track of node degree."""
 

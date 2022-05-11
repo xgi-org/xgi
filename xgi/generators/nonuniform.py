@@ -331,7 +331,7 @@ def random_simplicial_complex(N, ps, seed=None):
     Example
     -------
     >>> import xgi
-    >>> H = xgi.random_simplicial_complex(50, [0.1, 0.01])
+    >>> H = xgi.random_simplicial_complex(20, [0.1, 0.01])
 
     """
 

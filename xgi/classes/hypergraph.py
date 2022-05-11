@@ -420,12 +420,7 @@ class Hypergraph:
         equivalent to ``for n in H.nodes``.
 
         """
-        nodes = NodeView(self)
-        # Lazy View creation: overload the (class) property on the instance
-        # Then future H.nodes use the existing View
-        # setattr doesn't work because attribute already exists
-        self.__dict__["nodes"] = nodes
-        return nodes
+        return NodeView(self)
 
     def has_edge(self, edge):
         """Whether an edge is in the hypergraph.
@@ -757,12 +752,7 @@ class Hypergraph:
             A view of edges in the hypergraph.
 
         """
-        edges = EdgeView(self)
-        # Lazy View creation: overload the (class) property on the instance
-        # Then future H.edges use the existing View
-        # setattr doesn't work because attribute already exists
-        self.__dict__["edges"] = edges
-        return edges
+        return EdgeView(self)
 
     def degree(self, nbunch=None, weight=None, order=None, dtype="dict"):
         """A DegreeView for the Hypergraph.

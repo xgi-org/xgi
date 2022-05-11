@@ -38,7 +38,7 @@ def is_connected(H):
     Example
     -------
     >>> import xgi
-    >>> H = xgi.random_hypergraph(50, [0.01, 0.001])
+    >>> H = xgi.random_hypergraph(10, [0.5, 0.01], seed=1)
     >>> print(xgi.is_connected(H))
     True
 
@@ -70,7 +70,7 @@ def connected_components(H):
     Example
     -------
     >>> import xgi
-    >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
+    >>> H = xgi.random_hypergraph(50, [0.1, 0.01], seed=1)
     >>> print([len(component) for component in xgi.connected_components(H)])
     [50]
 
@@ -107,7 +107,7 @@ def number_connected_components(H):
     Example
     -------
     >>> import xgi
-    >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
+    >>> H = xgi.random_hypergraph(50, [0.1, 0.01], seed=1)
     >>> print(xgi.number_connected_components(H))
     1
 
@@ -146,7 +146,7 @@ def largest_connected_component(H):
     Example
     -------
     >>> import xgi
-    >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
+    >>> H = xgi.random_hypergraph(50, [0.1, 0.01], seed=1)
     >>> print(xgi.number_connected_components(H))
     1
 
@@ -179,7 +179,7 @@ def node_connected_component(H, n):
     Example
     -------
     >>> import xgi
-    >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
+    >>> H = xgi.random_hypergraph(50, [0.1, 0.01], seed=1)
     >>> comp = xgi.node_connected_component(H, 0)
     >>> print(type(comp), len(comp))
     <class 'set'> 50
@@ -235,7 +235,7 @@ def largest_connected_hypergraph(H, in_place=False):
     Example
     -------
     >>> import xgi
-    >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
+    >>> H = xgi.random_hypergraph(50, [0.1, 0.01], seed=1)
     >>> print(xgi.number_connected_components(H))
     1
     """

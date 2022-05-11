@@ -117,9 +117,11 @@ def frozen(*args, **kwargs):
     >>> import xgi
     >>> hyperedge_list = [[1, 2], [2, 3, 4]]
     >>> H = xgi.Hypergraph(hyperedge_list)
-    >>> xgi.freeze(H)
+    >>> xgi.freeze(H) # doctest: +ELLIPSIS
+    <xgi.classes.hypergraph.Hypergraph object at 0x...>
     >>> H.add_node(5)
-    XGIError: "Frozen hypergraph can't be modified"
+    Traceback (most recent call last):
+    xgi.exception.XGIError: Frozen hypergraph can't be modified
     """
     raise XGIError("Frozen hypergraph can't be modified")
 
@@ -148,9 +150,11 @@ def freeze(H):
     >>> import xgi
     >>> hyperedge_list = [[1, 2], [2, 3, 4]]
     >>> H = xgi.Hypergraph(hyperedge_list)
-    >>> xgi.freeze(H)
+    >>> xgi.freeze(H) # doctest: +ELLIPSIS
+    <xgi.classes.hypergraph.Hypergraph object at 0x...>
     >>> H.add_node(5)
-    XGIError: "Frozen hypergraph can't be modified"
+    Traceback (most recent call last):
+    xgi.exception.XGIError: Frozen hypergraph can't be modified
     """
     H.add_node = frozen
     H.add_nodes_from = frozen
@@ -190,7 +194,8 @@ def is_frozen(H):
     >>> import xgi
     >>> hyperedge_list = [[1, 2], [2, 3, 4]]
     >>> H = xgi.Hypergraph(hyperedge_list)
-    >>> xgi.freeze(H)
+    >>> xgi.freeze(H) # doctest: +ELLIPSIS
+    <xgi.classes.hypergraph.Hypergraph object at 0x...>
     >>> xgi.is_frozen(H)
     True
     """

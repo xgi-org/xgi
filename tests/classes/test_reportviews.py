@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import xgi
-from xgi.exception import XGIError
+from xgi.exception import IDNotFound, XGIError
 
 
 def test_edge_order(edgelist3):
@@ -116,6 +116,17 @@ def test_edge_members(edgelist3):
     assert H.edges.members(0) == [1, 2, 3]
     assert H.edges.members() == [[1, 2, 3], [3, 4], [4, 5, 6]]
     assert H.edges.members(dtype=dict) == {0: [1, 2, 3], 1: [3, 4], 2: [4, 5, 6]}
+    with pytest.raises(XGIError):
+        H.edges.members(dtype=np.array)
+
+    with pytest.raises(TypeError):
+        H.edges.members(slice(1, 4, 1))
+
+    with pytest.raises(TypeError):
+        H.edges.members([1, 2])
+
+    with pytest.raises(IDNotFound):
+        H.edges.members("test")
 
 
 def test_bunch_view(edgelist1):
