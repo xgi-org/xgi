@@ -338,7 +338,7 @@ class NodeView(IDView):
         """Return a new view that keeps track only of the nodes of the given degree."""
         return super().__call__(size=degree)
 
-    def memberships(self, n):
+    def memberships(self, n=None):
         """Get the edge ids of which a node is a member.
 
         Parameters
@@ -357,6 +357,8 @@ class NodeView(IDView):
             If `n` is not hashable or if it is not in the hypergraph.
 
         """
+        if n is None:
+            return self._id_dict.copy()
         try:
             return self._id_dict[n].copy()
         except TypeError as e:
