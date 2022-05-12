@@ -51,24 +51,19 @@ def subhypergraph(H, nodes=None, edges=None):
     -------
     Hypergraph object
         A read-only hypergraph view of the input hypergraph.
+
     """
-    newH = xgi.freeze(H.__class__())
+    new = H.__class__()
 
-    # create view by assigning attributes from G
-    newH._hypergraph = H._hypergraph
-    # intersection of the selected nodes and edges with the existing edges
-    nodes = H.nodes if nodes is None else {node for node in nodes if node in H.nodes}
-    edges = H.edges if edges is None else {edge for edge in edges if edge in H.edges}
+    new._hypergraph = H._hypergraph
+    nodes = set(H.nodes) if nodes is None else (set(nodes) & set(H.nodes))
+    edges = set(H.edges) if edges is None else (set(edges) & set(H.edges))
 
-    # Add edges that are a subset of the filtered nodes
-    newH._edge = {
-        edge: H._edge[edge] for edge in edges if set(H._edge[edge]).issubset(nodes)
-    }
-    newH._edge_attr = {edge: H._edge_attr[edge] for edge in newH._edge}
+    new.add_nodes_from((uid, attr) for uid, attr in H.nodes.items() if uid in nodes)
+    new.add_edges_from(
+        (H.edges.members(uid), uid, attr)
+        for uid, attr in H.edges.items()
+        if uid in edges and set(H.edges.members(uid)).issubset(nodes)
+    )
 
-    # Add the filtered nodes with connections to the remaining edges after filtering
-    newH._node = {
-        node: set(H._node[node]).intersection(newH._edge.keys()) for node in nodes
-    }
-    newH._node_attr = {node: H._node_attr[node] for node in nodes}
-    return newH
+    return xgi.freeze(new)

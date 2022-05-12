@@ -1,6 +1,7 @@
 """Base class for undirected hypergraphs."""
 from copy import deepcopy
 from warnings import warn
+from collections.abc import Iterable
 
 import numpy as np
 
@@ -512,10 +513,20 @@ class Hypergraph:
 
         Parameters
         ----------
-        ebunch_to_add : iterable of edges
-            Each edge given in the iterable will be added to the
-            graph. Each edge must be given as as an iterable of nodes
-            or an iterable with the last entry as a dictionary.
+        ebunch_to_add : iterable
+
+            An iterable of edges, in one of the following formats.
+
+            * Format 1: Iterable of hashables (id1, id2, ...), or
+            * Format 2: 2-tuple (members, id), or
+            * Format 3: 2-tuple (members, attr), or
+            * Format 4: 3-tuple (members, id, attr),
+
+            where `members` is an iterable of node IDs, each `id` is a hashable to use
+            as edge ID, and `attr` is a dict of attributes. The second and third formats
+            are unambiguous because `attr` dicts are not hashable, while `id`s must be.
+            In all except the first format, each element of `ebunch_to_add` must have
+            the same length.
         attr : keyword arguments, optional
             Edge data (or labels or objects) can be assigned using
             keyword arguments.
@@ -531,27 +542,53 @@ class Hypergraph:
         cannot add empty edges; the method skips over them.
 
         """
-        for e in ebunch_to_add:
-            if isinstance(e[-1], dict):
-                dd = e[-1]
-                e = e[:-1]
-            else:
-                dd = {}
-            if not e:
-                continue
+        new_edges = iter(ebunch_to_add)
+        try:
+            first_edge = next(new_edges)
+        except StopIteration:
+            return
+        try:
+            first_elem = list(first_edge)[0]
+        except TypeError:
+            first_elem = None
 
-            uid = self._edge_uid()
-            self._edge[uid] = []
-            for n in e:
+        format1, format2, format3, format4 = False, False, False, False
+        if isinstance(first_elem, Iterable):
+            if len(first_edge) == 2 and hasattr(first_edge[1], "__hash__"):
+                format2 = True
+            elif len(first_edge) == 2:  # and not hasattr(first_edge[1], "__hash__")
+                format3 = True
+            elif len(first_edge) == 3:
+                format4 = True
+        else:
+            format1 = True
+
+        e = first_edge
+        while True:
+            if format1:
+                members, uid, eattr = e, self._edge_uid(), {}
+            elif format2:
+                members, uid, eattr = e[0], e[1], {}
+            elif format3:
+                members, uid, eattr = e[0], self._edge_uid(), e[1]
+            elif format4:
+                members, uid, eattr = e[0], e[1], e[2]
+
+            self._edge[uid] = list(members)
+            for n in members:
                 if n not in self._node:
                     self._node[n] = []
                     self._node_attr[n] = self._node_attr_dict_factory()
                 self._node[n].append(uid)
-                self._edge[uid].append(n)
 
             self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             self._edge_attr[uid].update(attr)
-            self._edge_attr[uid].update(dd)
+            self._edge_attr[uid].update(eattr)
+
+            try:
+                e = next(new_edges)
+            except StopIteration:
+                break
 
     def add_weighted_edges_from(self, ebunch, weight="weight", **attr):
         """Add multiple weighted edges with optional attributes.
@@ -923,11 +960,14 @@ class Hypergraph:
 
         """
         dual = self.__class__()
+        nn = self.nodes
+        dual.add_edges_from(
+            (nn.memberships(n), n, deepcopy(attr)) for n, attr in nn.items()
+        )
+        ee = self.edges
+        dual.add_nodes_from((e, deepcopy(attr)) for e, attr in ee.items())
         dual._hypergraph = deepcopy(self._hypergraph)
-        dual._node = deepcopy(self._edge)
-        dual._node_attr = deepcopy(self._edge_attr)
-        dual._edge = deepcopy(self._node)
-        dual._edge_attr = deepcopy(self._node_attr)
+
         return dual
 
     def max_edge_order(self):

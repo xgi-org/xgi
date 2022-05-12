@@ -51,18 +51,16 @@ def convert_to_hypergraph(data, create_using=None):
     -------
     Hypergraph object
         A hypergraph constructed from the data
-    """
 
+    """
     if data is None:
         xgi.empty_hypergraph(create_using)
 
     elif isinstance(data, xgi.Hypergraph):
         H = xgi.empty_hypergraph(create_using)
-        # copy hypergraph
-        H._node = deepcopy(data._node)
-        H._node_attr = deepcopy(data._node_attr)
-        H._edge = deepcopy(data._edge)
-        H._edge_attr = deepcopy(data._edge_attr)
+        H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
+        ee = data.edges
+        H.add_edges_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
         H._hypergraph = deepcopy(data._hypergraph)
 
     elif isinstance(data, list):
@@ -132,12 +130,10 @@ def convert_to_simplicial_complex(data, create_using=None):
         xgi.empty_hypergraph(create_using)
 
     elif isinstance(data, xgi.SimplicialComplex):
-        H = xgi.empty_hypergraph(create_using)
-        # copy hypergraph
-        H._node = deepcopy(data._node)
-        H._node_attr = deepcopy(data._node_attr)
-        H._edge = deepcopy(data._edge)
-        H._edge_attr = deepcopy(data._edge_attr)
+        H = xgi.empty_simplicial_complex(create_using)
+        H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
+        ee = data.edges
+        H.add_edges_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
         H._hypergraph = deepcopy(data._hypergraph)
 
     elif isinstance(data, list):
@@ -225,14 +221,11 @@ def from_hyperedge_dict(d, create_using=None):
     See Also
     --------
     to_hyperedge_dict
+
     """
-
     H = xgi.empty_hypergraph(create_using)
-    H._edge = d
-    H._edge_attr = {id: dict() for id in H.edges}
-    H._node = get_dual(d)
-    H._node = {id: dict() for id in H.nodes}
-
+    H.add_nodes_from(get_dual(d))
+    H.add_edges_from((members, uid) for uid, members in d.items())
     return H
 
 
