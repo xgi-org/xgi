@@ -9,24 +9,28 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     H_dict = xgi.Hypergraph(dict5)
     H_mat = xgi.Hypergraph(incidence5)
     H_df = xgi.Hypergraph(dataframe5)
+    H_hg = xgi.Hypergraph(H_list)
 
     assert (
         list(H_list.nodes)
         == list(H_dict.nodes)
         == list(H_mat.nodes)
         == list(H_df.nodes)
+        == list(H_hg.nodes)
     )
     assert (
         list(H_list.edges)
         == list(H_dict.edges)
         == list(H_mat.edges)
         == list(H_df.edges)
+        == list(H_hg.edges)
     )
     assert (
         list(H_list.edges.members(0))
         == list(H_dict.edges.members(0))
         == list(H_mat.edges.members(0))
         == list(H_df.edges.members(0))
+        == list(H_hg.edges.members(0))
     )
 
 
