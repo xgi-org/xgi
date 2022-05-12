@@ -60,3 +60,12 @@ def test_subhypergraph(edgelist1):
     assert list(new_H.nodes) == [1, 2, 3, 4, 5]
     assert list(new_H.edges) == [1]
     assert new_H.isolates(ignore_singletons=False) == {1, 2, 3, 5}
+
+    new_H = xgi.classes.hypergraphviews.subhypergraph(H, nodes=[4], edges=[0, 1, 2])
+    assert list(new_H.nodes) == [4]
+    assert list(new_H.edges) == [1]
+
+    new_H = xgi.classes.hypergraphviews.subhypergraph(H, nodes=[3, 4, 5, 6], edges=[2])
+    assert list(new_H.nodes) == [3, 4, 5, 6]
+    assert list(new_H.edges) == [2]
+    assert new_H.isolates(ignore_singletons=False) == {3, 4}

@@ -36,9 +36,9 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
 
 def test_hypergraph_attrs():
     H = xgi.Hypergraph()
-    assert H._hypergraph == dict()
+    assert H._hypergraph == {}
     with pytest.raises(XGIError):
-        name = H["name"]
+        H["name"]
     H = xgi.Hypergraph(name="test")
     assert H["name"] == "test"
 
