@@ -271,3 +271,128 @@ def test_add_node_to_edge():
         "fruits": ["apple", "banana", "pear"],
         "veggies": ["lettuce"],
     }
+
+
+def test_add_edges_from_format1():
+    edges = [[0, 1], [1, 2], [2, 3, 4]]
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    assert list(H.edges.members()) == edges
+
+    H1 = xgi.Hypergraph(edges)
+    H = xgi.Hypergraph(H1.edges)
+    H.add_edges_from(edges)
+    assert list(H.edges.members()) == edges
+
+    edges = {frozenset([0, 1]), frozenset([1, 2]), frozenset([2, 3, 4])}
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    assert list(H.edges.members()) == [list(e) for e in edges]
+
+    edges = [[0, 1], frozenset([1, 2]), (2, 3, 4)]
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    assert list(H.edges.members()) == [list(e) for e in edges]
+
+    edges = [["foo", "bar"], ["bar", "baz"], ["foo", "bar", "baz"]]
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    assert list(H.nodes) == ["foo", "bar", "baz"]
+    assert list(H.edges.members()) == [list(e) for e in edges]
+
+    edges = [["a", "b"], ["b", "c"], ["c", "d", "e"]]
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    assert list(H.nodes) == ["a", "b", "c", "d", "e"]
+    assert list(H.edges.members()) == [list(e) for e in edges]
+
+
+def test_add_edges_from_format2():
+    edges = [([0, 1], 0), ([1, 2], 1), ([2, 3, 4], 2)]
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    assert list(H.edges) == [e[1] for e in edges]
+    assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
+
+    edges = [([0, 1], "a"), ([1, 2], "b"), ([2, 3, 4], "foo")]
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    assert list(H.edges) == [e[1] for e in edges]
+    assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
+
+    edges = [([0, 1], "a"), ([1, 2], "b"), ([2, 3, 4], 100)]
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    assert list(H.edges) == [e[1] for e in edges]
+    assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
+
+
+def test_add_edges_from_format3():
+    edges = [
+        ([0, 1], {"color": "red"}),
+        ([1, 2], {"age": 30}),
+        ([2, 3, 4], {"color": "blue", "age": 40}),
+    ]
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    assert list(H.edges) == list(range(len(edges)))
+    assert H.edges.members() == [e[0] for e in edges]
+    for idx, e in enumerate(H.edges):
+        assert H.edges[e] == edges[idx][1]
+
+
+def test_add_edges_from_format4():
+    edges = [
+        ([0, 1], "one", {"color": "red"}),
+        ([1, 2], "two", {"age": 30}),
+        ([2, 3, 4], "three", {"color": "blue", "age": 40}),
+    ]
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    assert list(H.edges) == [e[1] for e in edges]
+    assert H.edges.members() == [e[0] for e in edges]
+    for idx, e in enumerate(H.edges):
+        assert H.edges[e] == edges[idx][2]
+
+
+def test_add_edges_from_format5():
+    edges = {"one": [0, 1], "two": [1, 2], "three": [2, 3, 4]}
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    assert list(H.edges) == ["one", "two", "three"]
+    assert H.edges.members() == list(edges.values())
+
+
+def test_add_edges_from_wrong_format():
+    edges = [0, 1, 2]
+    with pytest.raises(XGIError):
+        xgi.Hypergraph().add_edges_from(edges)
+
+    edges = [
+        ("foo", {"color": "red"}),
+        ("bar", {"age": 30}),
+        ("baz", {"color": "blue", "age": 40}),
+    ]
+
+    with pytest.raises(XGIError):
+        xgi.Hypergraph().add_edges_from(edges)
+
+    edges = [
+        ("foo", "one", {"color": "red"}),
+        ("bar", "two", {"age": 30}),
+        ("baz", "three", {"color": "blue", "age": 40}),
+    ]
+    with pytest.raises(XGIError):
+        xgi.Hypergraph().add_edges_from(edges)
+
+    edges = ["a", "b", "c"]
+    with pytest.raises(XGIError):
+        xgi.Hypergraph().add_edges_from(edges)
+
+    edges = ["foo", "bar", "baz"]
+    with pytest.raises(XGIError):
+        xgi.Hypergraph().add_edges_from(edges)
+
+    edges = ["foo", [1, 2], [2, 3, 4]]
+    with pytest.raises(XGIError):
+        xgi.Hypergraph().add_edges_from(edges)

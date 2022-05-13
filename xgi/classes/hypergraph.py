@@ -1,7 +1,7 @@
 """Base class for undirected hypergraphs."""
 from copy import deepcopy
 from warnings import warn
-from collections.abc import Iterable
+from collections.abc import Iterable, Hashable
 
 import numpy as np
 
@@ -513,20 +513,21 @@ class Hypergraph:
 
         Parameters
         ----------
-        ebunch_to_add : iterable
+        ebunch_to_add : Iterable
 
             An iterable of edges, in one of the following formats.
 
-            * Format 1: Iterable of hashables (id1, id2, ...), or
+            * Format 1: Iterable (edge1_members, edge2_members), or
             * Format 2: 2-tuple (members, id), or
             * Format 3: 2-tuple (members, attr), or
             * Format 4: 3-tuple (members, id, attr),
+            * Format 5: a dict of the form {id: members}
 
             where `members` is an iterable of node IDs, each `id` is a hashable to use
             as edge ID, and `attr` is a dict of attributes. The second and third formats
             are unambiguous because `attr` dicts are not hashable, while `id`s must be.
-            In all except the first format, each element of `ebunch_to_add` must have
-            the same length.
+            In Formats 2-4, each element of `ebunch_to_add` must have the same length.
+            The variables containing edge members cannot be strings.
         attr : keyword arguments, optional
             Edge data (or labels or objects) can be assigned using
             keyword arguments.
@@ -542,6 +543,23 @@ class Hypergraph:
         cannot add empty edges; the method skips over them.
 
         """
+        # format 5 is the easiest one
+        if isinstance(ebunch_to_add, dict):
+            for uid, members in ebunch_to_add.items():
+                try:
+                    self._edge[uid] = list(members)
+                except TypeError as e:
+                    raise XGIError("Invalid ebunch format") from e
+                for n in members:
+                    if n not in self._node:
+                        self._node[n] = []
+                        self._node_attr[n] = self._node_attr_dict_factory()
+                    self._node[n].append(uid)
+                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+            return
+
+        # in formats 1-4 we only know that ebunch_to_add is an iterable, so we iterate
+        # over it and use the firs element to determine which format we are working with
         new_edges = iter(ebunch_to_add)
         try:
             first_edge = next(new_edges)
@@ -554,15 +572,23 @@ class Hypergraph:
 
         format1, format2, format3, format4 = False, False, False, False
         if isinstance(first_elem, Iterable):
-            if len(first_edge) == 2 and hasattr(first_edge[1], "__hash__"):
+            if all(isinstance(e, str) for e in first_edge):
+                format1 = True
+            elif len(first_edge) == 2 and issubclass(type(first_edge[1]), Hashable):
                 format2 = True
-            elif len(first_edge) == 2:  # and not hasattr(first_edge[1], "__hash__")
+            elif len(first_edge) == 2:
                 format3 = True
             elif len(first_edge) == 3:
                 format4 = True
         else:
             format1 = True
 
+        if (format1 and isinstance(first_edge, str)) or (
+            not format1 and isinstance(first_elem, str)
+        ):
+            raise XGIError("Members cannot be specified as a string")
+
+        # now we may iterate over the rest
         e = first_edge
         while True:
             if format1:
@@ -574,7 +600,11 @@ class Hypergraph:
             elif format4:
                 members, uid, eattr = e[0], e[1], e[2]
 
-            self._edge[uid] = list(members)
+            try:
+                self._edge[uid] = list(members)
+            except TypeError as e:
+                raise XGIError("Invalid ebunch format") from e
+
             for n in members:
                 if n not in self._node:
                     self._node[n] = []
