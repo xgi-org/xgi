@@ -357,18 +357,7 @@ class NodeView(IDView):
             If `n` is not hashable or if it is not in the hypergraph.
 
         """
-        if n is None:
-            return self._id_dict.copy()
-        try:
-            return self._id_dict[n].copy()
-        except TypeError as e:
-            if isinstance(n, slice):
-                raise XGIError(
-                    f"{type(self).__name__} does not support slicing, "
-                    f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
-                ) from e
-            else:
-                raise e
+        return self._id_dict.copy() if n is None else self._id_dict[n].copy()
 
 
 class EdgeView(IDView):

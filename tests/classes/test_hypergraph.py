@@ -202,7 +202,7 @@ def test_members(edgelist1):
     assert H.nodes.memberships(6) == [2, 3]
     with pytest.raises(IDNotFound):
         H.nodes.memberships(0)
-    with pytest.raises(XGIError):
+    with pytest.raises(TypeError):
         H.nodes.memberships(slice(1, 4))
 
 

@@ -119,10 +119,10 @@ def test_edge_members(edgelist3):
     with pytest.raises(XGIError):
         H.edges.members(dtype=np.array)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(IDNotFound):
         H.edges.members(slice(1, 4, 1))
 
-    with pytest.raises(TypeError):
+    with pytest.raises(IDNotFound):
         H.edges.members([1, 2])
 
     with pytest.raises(IDNotFound):
