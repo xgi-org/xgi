@@ -84,8 +84,15 @@ class IDView(Mapping, Set):
 
     @property
     def ids(self):
-        """The ids in this view."""
-        return list(self._id_dict.keys()) if self._ids is None else self._ids
+        """The ids in this view.
+
+        Notes
+        -----
+        DO NOT use this property for membership check: instead of `x in view.ids` always
+        use `x in view`.
+
+        """
+        return set(self._id_dict.keys()) if self._ids is None else self._ids
 
     def __len__(self):
         """The number of IDs."""
@@ -115,13 +122,16 @@ class IDView(Mapping, Set):
             hypergraph, or if id is not hashable.
 
         """
-        if id not in self.ids:
+        if id not in self:
             raise IDNotFound(f"The ID {id} is not in this view")
         return self._id_attr[id]
 
     def __contains__(self, id):
         """Checks whether the ID is in the hypergraph"""
-        return id in self.ids
+        if self._ids is None:
+            return id in self._id_dict
+        else:
+            return id in self._ids
 
     def __str__(self):
         """Returns a string of the list of IDs."""
@@ -411,11 +421,15 @@ class EdgeView(IDView):
         """
         if e is None:
             if dtype is dict:
-                return {key: self._id_dict[key] for key in self.ids}
+                return {key: self._id_dict[key] for key in self}
             elif dtype is list:
-                return [self._id_dict[key] for key in self.ids]
+                return [self._id_dict[key] for key in self]
             else:
                 raise XGIError(f"Unrecognized dtype {dtype}")
+
+        if e not in self:
+            raise IDNotFound(f'ID "{e}" not in this view')
+
         try:
             return self._id_dict[e].copy()
         except IDNotFound:
