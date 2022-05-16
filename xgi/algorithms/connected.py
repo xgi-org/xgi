@@ -211,7 +211,7 @@ def largest_connected_hypergraph(H, in_place=False):
 
     Parameters
     ----------
-    H: Hypergraph object
+    H: Hypergraph
         The hypergraph of interest
     in_place: bool, optional
         If False, creates a copy; if True, modifies the existing hypergraph
@@ -238,6 +238,7 @@ def largest_connected_hypergraph(H, in_place=False):
     >>> H = xgi.random_hypergraph(50, [0.1, 0.01], seed=1)
     >>> print(xgi.number_connected_components(H))
     1
+
     """
     connected_nodes = max(connected_components(H), key=len)
     if not in_place:
