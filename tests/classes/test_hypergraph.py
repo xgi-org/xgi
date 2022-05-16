@@ -396,3 +396,18 @@ def test_add_edges_from_wrong_format():
     edges = ["foo", [1, 2], [2, 3, 4]]
     with pytest.raises(XGIError):
         xgi.Hypergraph().add_edges_from(edges)
+
+
+def test_copy(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    copy = H.copy()
+    assert list(copy.nodes) == list(H.nodes)
+    assert list(copy.edges) == list(H.edges)
+    assert list(copy.edges.members()) == list(H.edges.members())
+
+    H.add_node(10)
+    assert list(copy.nodes) != list(H.nodes)
+    assert list(copy.edges) == list(H.edges)
+
+    H.add_edge([1, 3, 5])
+    assert list(copy.edges) != list(H.edges)
