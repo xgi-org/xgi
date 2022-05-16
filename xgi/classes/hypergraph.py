@@ -889,54 +889,18 @@ class Hypergraph:
         self._edge.clear()
         self._edge_attr.clear()
 
-    def copy(self, as_view=False):
-        """A copy of the hypergraph.
+    def copy(self):
+        """A deep copy of the hypergraph.
 
-        The copy method by default returns a deep copy of the hypergraph
-        and attributes. Use the "as_view" flag to for a frozen copy of
-        the hypergraph with references to the original
-
-        If `as_view` is True then a view is returned instead of a copy.
-
-        Parameters
-        ----------
-        as_view : bool, optional (default=False)
-            If True, the returned hypergraph view provides a read-only view
-            of the original hypergraph without actually copying any data.
+        A deep copy of the hypergraph, including node, edge, and hypergraph attributes.
 
         Returns
         -------
         H : Hypergraph
             A copy of the hypergraph.
 
-        Notes
-        -----
-        All copies reproduce the hypergraph structure, but data attributes
-        may be handled in different ways. There are two options that this
-        method provides.
-
-        Deepcopy -- A "deepcopy" copies the graph structure as well as
-        all data attributes and any objects they might contain.
-        The entire hypergraph object is new so that changes in the copy
-        do not affect the original object. (see Python's copy.deepcopy)
-
-        View -- Inspired by dict-views, graph-views act like read-only
-        versions of the original graph, providing a copy of the original
-        structure without requiring any memory for copying the information.
-
-        See the Python copy module for more information on shallow
-        and deep copies, https://docs.python.org/3/library/copy.html.
-
         """
-        if as_view is True:
-            return xgi.hypergraphviews.generic_hypergraph_view(self)
-        H = self.__class__()
-        H._hypergraph = deepcopy(self._hypergraph)
-        H._node = deepcopy(self._node)
-        H._node_attr = deepcopy(self._node_attr)
-        H._edge = deepcopy(self._edge)
-        H._edge_attr = deepcopy(self._edge_attr)
-        return H
+        return xgi.hypergraphviews.subhypergraph(self)
 
     def dual(self):
         """The dual of the hypergraph.
