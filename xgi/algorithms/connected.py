@@ -43,7 +43,7 @@ def is_connected(H):
     True
 
     """
-    return len(_plain_bfs(H, random.choice(list(H.nodes)))) == len(H)
+    return len(_plain_bfs(H, list(H.nodes)[0])) == len(H)
 
 
 def connected_components(H):
