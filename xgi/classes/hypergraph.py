@@ -504,16 +504,17 @@ class Hypergraph:
             Alternatively, each element could also be a tuple in any of the following
             formats:
 
-            * Format 1: 2-tuple (members, id), or
+            * Format 1: 2-tuple (members, edge_id), or
             * Format 2: 2-tuple (members, attr), or
-            * Format 3: 3-tuple (members, id, attr),
+            * Format 3: 3-tuple (members, edge_id, attr),
 
-            where `members` is an iterable of node IDs, each `id` is a hashable to use
+            where `members` is an iterable of node IDs, `edge_id` is a hashable to use
             as edge ID, and `attr` is a dict of attributes. The first and second formats
             are unambiguous because `attr` dicts are not hashable, while `id`s must be.
             In Formats 1-3, each element of `ebunch_to_add` must have the same length,
             i.e. you cannot mix different formats.  The iterables containing edge
             members cannot be strings.
+
         attr : **kwargs, optional
             Additional attributes to be assigned to all edges. Attribues specified via
             `ebunch_to_add` take precedence over `attr`.
