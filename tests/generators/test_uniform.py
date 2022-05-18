@@ -15,4 +15,4 @@ def test_uniform_configuration_model_hypergraph():
         m = 3
         k = {1: 1, 2: 6}
         H = xgi.uniform_hypergraph_configuration_model(k, m)
-    assert sum([deg for _, deg in H.degree()]) % m == 0
+    assert sum([deg for _, deg in H.degree().items()]) % m == 0
