@@ -74,3 +74,31 @@ def test_single_node(edgelist1):
         H.degree(-1)
     with pytest.raises(KeyError):
         H.nodes.degree(-1)
+
+
+def test_degree(edgelist1, edgelist8):
+    H = xgi.Hypergraph(edgelist1)
+    degs = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
+    assert H.degree() == degs
+    assert H.nodes.degree.asdict() == degs
+    assert H.nodes.degree.aslist() == list(degs.values())
+
+    H = xgi.Hypergraph(edgelist8)
+    degs = {0: 6, 1: 5, 2: 4, 3: 4, 4: 3, 5: 2, 6: 2}
+    assert H.degree() == degs
+    assert H.nodes.degree.asdict() == degs
+    assert H.nodes.degree.aslist() == list(degs.values())
+
+
+def test_average_neighbor_degree(edgelist1, edgelist8):
+    H = xgi.Hypergraph(edgelist1)
+    vals = {1: 1.0, 2: 1.0, 3: 1.0, 4: 0, 5: 2.0, 6: 1.0, 7: 1.5, 8: 1.5}
+    assert H.average_neighbor_degree() == vals
+    assert H.nodes.average_neighbor_degree().asdict() == vals
+    assert H.nodes.average_neighbor_degree().aslist() == list(vals.values())
+
+    H = xgi.Hypergraph(edgelist8)
+    vals = {0: 3.6, 1: 3.5, 2: 4.0, 3: 4.0, 4: 4.2, 5: 4.0, 6: 5.5}
+    assert H.average_neighbor_degree() == vals
+    assert H.nodes.average_neighbor_degree().asdict() == vals
+    assert H.nodes.average_neighbor_degree().aslist() == list(vals.values())
