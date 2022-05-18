@@ -54,8 +54,10 @@ def test_add_simplices_from(edgelist5):
     assert xgi.max_edge_order(S1) == 3
     assert xgi.max_edge_order(S2) == 2
 
-    assert set(S1.edges(order=1).members()) == set(S2.edges(order=1).members())
-    assert set(S1.edges(order=2).members()) == set(S2.edges(order=2).members())
+    s1o1, s1o2 = S1.edges.filterby("order", 1), S1.edges.filterby("order", 2)
+    s2o1, s2o2 = S2.edges.filterby("order", 1), S2.edges.filterby("order", 2)
+    assert set(s1o1.members()) == set(s2o1.members())
+    assert set(s1o2.members()) == set(s2o2.members())
 
 
 def test_remove_simplex_id(edgelist6):

@@ -14,8 +14,6 @@ from xgi.exception import IDNotFound, XGIError
 __all__ = [
     "NodeView",
     "EdgeView",
-    "DegreeView",
-    "EdgeSizeView",
 ]
 
 
@@ -141,21 +139,20 @@ class IDView(Mapping, Set):
         """Returns a summary of the class"""
         return f"{self.__class__.__name__}({tuple(self)})"
 
-    def __call__(self, size):
-        """Filter the results by size.
+    def __call__(self, bunch):
+        """Filter to the given bunch.
 
         Parameters
         ----------
-        size : int
-            The size of the ids to keep track of.
+        bunch : Iterable
+            Iterable of IDs
 
         Returns
         -------
         IDView
-            A View that keeps track only of the ids in this view with the given size.
+            A new view that keeps track only of the IDs in the bunch.
 
         """
-        bunch = [id for id in self._id_dict if len(self._id_dict[id]) == size]
         return self.from_view(self, bunch)
 
     @classmethod
@@ -185,147 +182,6 @@ class IDView(Mapping, Set):
         return newview
 
 
-class IDDegreeView:
-    """Base View class for the size (node degree or edge order) of IDs in a Hypergraph.
-
-    Parameters
-    ----------
-    ids : dict
-        A dictionary with IDs as keys and a list of bipartite relations
-        as values.
-    id_attrs : dict
-        A dictionary with IDs as keys and a dictionary of properties as values.  Used to
-        weight the degree.
-    neighbor_ids : dict
-        A dictionary with neighboring IDs as keys and a list of bipartite neighbors as
-        values. Used when the degree order is specified.
-    nbunch : ID, iterable of IDs, or None meaning all IDs (default=None)
-        The IDs for which to find the degree
-    weight : hashable, optional
-        The name of the attribute to weight the degree, by default None.
-    order : int, default: None
-        Specifies the size of the neighbors for which
-        the degree should be computed.
-    dtype : str, default : dict
-        Specifies the data type when __getitem__ is called. Valid choices are
-        dict, list, or nparray.
-
-    """
-
-    __slots__ = ("_ids", "_id_attrs", "_weight")
-
-    def __init__(
-        self,
-        ids,
-        id_attrs,
-        neighbor_ids,
-        id_bunch=None,
-        weight=None,
-        order=None,
-        dtype="dict",
-    ):
-        self._id_attrs = id_attrs
-        self._neighbor_ids = neighbor_ids
-        self._weight = weight
-        self._order = order
-        if dtype not in {"dict", "list", "nparray"}:
-            raise XGIError("Invalid datatype!")
-        self._dtype = dtype
-
-        if id_bunch is None:
-            self._ids = ids
-        elif isinstance(id_bunch, int):
-            if id_bunch in ids:
-                self._ids = {id_bunch: ids[id_bunch]}
-            else:
-                raise XGIError("ID does not exist in the hypergraph!")
-        else:
-            self._ids = {id: val for id, val in ids.items() if id in id_bunch}
-
-        self._deg = self._get_degrees()
-
-    def __getitem__(self, id_bunch):
-        """Get the degree for an ID.
-
-        Parameters
-        ----------
-        id : hashable
-            Unique ID.
-
-        Returns
-        -------
-        float
-            The degree of an ID, weighted or unweighted.
-
-        """
-        try:
-            return self._deg[id_bunch]
-        except TypeError:
-            degs = {id: deg for id, deg in self if id in id_bunch}
-            if self._dtype == "dict":
-                return degs
-            elif self._dtype == "list":
-                return list(degs.values())
-            elif self._dtype == "nparray":
-                return np.array(list(degs.values()))
-        except KeyError:
-            raise XGIError("Invalid ID specified!")
-
-    def __iter__(self):
-        """Returns an iterator of ID, degree pairs.
-
-        Yields
-        -------
-        iterator of tuples
-            Each entry is an ID, degree (Weighted or unweighted) pair.
-
-        """
-        for id, deg in self._deg.items():
-            yield (id, deg)
-
-    def __len__(self):
-        """Returns the number of IDs/degrees."""
-        return len(self._ids)
-
-    def __str__(self):
-        """Returns a string of IDs."""
-        return str(list(self._ids))
-
-    def __repr__(self):
-        """A string representation of the degrees."""
-        return f"{self.__class__.__name__}({dict(self)})"
-
-    def _get_degrees(self):
-        degrees = dict()
-        if self._order is None:
-            if self._weight is None:
-                for id, nbrs in self._ids.items():
-                    degrees[id] = len(nbrs)
-            else:
-                for id, nbrs in self._ids.items():
-                    degrees[id] = sum(
-                        self._id_attrs[dd].get(self._weight, 1) for dd in nbrs
-                    )
-        else:
-            if self._weight is None:
-                for id, nbrs in self._ids.items():
-                    degrees[id] = len(
-                        [
-                            i
-                            for i in nbrs
-                            if len(self._neighbor_ids[i]) == self._order + 1
-                        ]
-                    )
-            else:
-                for id, nbrs in self._ids.items():
-                    degrees[id] = sum(
-                        self._id_attrs[i].get(self._weight, 1)
-                        for i in nbrs
-                        if len(self._neighbor_ids[i]) == self._order + 1
-                    )
-        return degrees
-
-
 class NodeView(IDView):
     """An IDView that keeps track of node ids.
 
@@ -343,10 +199,6 @@ class NodeView(IDView):
             super().__init__(None, None, bunch)
         else:
             super().__init__(hypergraph._node, hypergraph._node_attr, bunch)
-
-    def __call__(self, degree):
-        """Return a new view that keeps track only of the nodes of the given degree."""
-        return super().__call__(size=degree)
 
     def memberships(self, n=None):
         """Get the edge ids of which a node is a member.
@@ -387,10 +239,6 @@ class EdgeView(IDView):
             super().__init__(None, None, bunch)
         else:
             super().__init__(hypergraph._edge, hypergraph._edge_attr, bunch)
-
-    def __call__(self, order):
-        """Filter the results by size."""
-        return super().__call__(size=order + 1)
 
     def members(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
@@ -441,32 +289,3 @@ class EdgeView(IDView):
                 else:
                     raise XGIError(f"Unrecognized dtype {dtype}")
             raise IDNotFound(f"Item {e} not in this view")
-
-
-class DegreeView(IDDegreeView):
-    """An IDDegreeView that keeps track of node degree."""
-
-    def __init__(self, hypergraph, nbunch=None, weight=None, order=None, dtype="dict"):
-        super().__init__(
-            hypergraph._node,
-            hypergraph._edge_attr,
-            hypergraph._edge,
-            id_bunch=nbunch,
-            weight=weight,
-            order=order,
-            dtype=dtype,
-        )
-
-
-class EdgeSizeView(IDDegreeView):
-    """An IDDegreeView that keeps track of edge size."""
-
-    def __init__(self, hypergraph, ebunch=None, weight=None, dtype="dict"):
-        super().__init__(
-            hypergraph._edge,
-            hypergraph._node_attr,
-            hypergraph._node,
-            id_bunch=ebunch,
-            weight=weight,
-            dtype=dtype,
-        )
