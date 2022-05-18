@@ -155,6 +155,18 @@ class IDView(Mapping, Set):
         """
         return self.from_view(self, bunch)
 
+    def filterby(self, stat, val, mode="eq"):
+        try:
+            stat = getattr(self.dispatcher, stat)
+        except AttributeError as e:
+            raise AttributeError(f'Node statistic with name "{stat}" not found') from e
+        values = stat.asdict()
+        if mode == "eq":
+            bunch = [node for node in self.ids if values[node] == val]
+        else:
+            raise ValueError(f"Unrecognized mode {mode}")
+        return IDView.from_view(self, bunch)
+
     @classmethod
     def from_view(cls, view, bunch=None):
         """Create a view from another view.
