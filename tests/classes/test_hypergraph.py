@@ -363,6 +363,19 @@ def test_add_edges_from_dict():
     assert H.edges.members() == list(edges.values())
 
 
+def test_add_edges_from_attr_precedence():
+    H = xgi.Hypergraph()
+    edges = [
+        ([0, 1], "one", {"color": "red"}),
+        ([1, 2], "two", {"age": 30}),
+        ([2, 3, 4], "three", {"color": "blue", "age": 40}),
+    ]
+    H.add_edges_from(edges, color="black")
+    assert H.edges["one"] == {"color": "red"}
+    assert H.edges["two"] == {"age": 30, "color": "black"}
+    assert H.edges["three"] == {"age": 40, "color": "blue"}
+
+
 def test_add_edges_from_wrong_format():
     edges = [0, 1, 2]
     with pytest.raises(XGIError):
