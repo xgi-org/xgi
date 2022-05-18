@@ -1,6 +1,7 @@
 """Base class for undirected hypergraphs."""
 from copy import deepcopy
 from warnings import warn
+from collections.abc import Iterable, Hashable
 
 import numpy as np
 
@@ -96,6 +97,12 @@ class Hypergraph:
         self._node_attr = self._node_attr_dict_factory()
         self._edge = self._hyperedge_dict_factory()
         self._edge_attr = self._hyperedge_attr_dict_factory()
+
+        self.nodes = NodeView(self)
+        """A :class:`~xgi.classes.reportviews.NodeView` of the hypergraph."""
+
+        self.edges = EdgeView(self)
+        """An :class:`~xgi.classes.reportviews.EdgeView` of the hypergraph."""
 
         if incoming_data is not None:
             convert.convert_to_hypergraph(incoming_data, create_using=self)
@@ -399,29 +406,6 @@ class Hypergraph:
                 continue
             self.remove_node(n)
 
-    @property
-    def nodes(self):
-        """A NodeView of the hypergraph.
-
-        Can be used as `H.nodes` for data lookup and for set-like operations.
-        Can also be used as `H.nodes[id]` to return a
-        dictionary of the node attributes.
-
-        Returns
-        -------
-        NodeView
-            Allows set-like operations over the nodes as well as node
-            attribute dict lookup.
-
-        Notes
-        -----
-        Membership tests and iterating over nodes can also be done via the hpyergraph.
-        That is, ``n in H.nodes`` is equivalent to ``n in H``, and ``for n in H`` is
-        equivalent to ``for n in H.nodes``.
-
-        """
-        return NodeView(self)
-
     def has_edge(self, edge):
         """Whether an edge is in the hypergraph.
 
@@ -512,13 +496,28 @@ class Hypergraph:
 
         Parameters
         ----------
-        ebunch_to_add : iterable of edges
-            Each edge given in the iterable will be added to the
-            graph. Each edge must be given as as an iterable of nodes
-            or an iterable with the last entry as a dictionary.
-        attr : keyword arguments, optional
-            Edge data (or labels or objects) can be assigned using
-            keyword arguments.
+        ebunch_to_add : Iterable
+
+            An iterable of edges.  This may be a dict of the form `{edge_id:
+            edge_members}`, or it may be an iterable of iterables, wher each element
+            contains the members of the edge specified as valid node IDs.
+            Alternatively, each element could also be a tuple in any of the following
+            formats:
+
+            * Format 1: 2-tuple (members, edge_id), or
+            * Format 2: 2-tuple (members, attr), or
+            * Format 3: 3-tuple (members, edge_id, attr),
+
+            where `members` is an iterable of node IDs, `edge_id` is a hashable to use
+            as edge ID, and `attr` is a dict of attributes. The first and second formats
+            are unambiguous because `attr` dicts are not hashable, while `id`s must be.
+            In Formats 1-3, each element of `ebunch_to_add` must have the same length,
+            i.e. you cannot mix different formats.  The iterables containing edge
+            members cannot be strings.
+
+        attr : **kwargs, optional
+            Additional attributes to be assigned to all edges. Attribues specified via
+            `ebunch_to_add` take precedence over `attr`.
 
         See Also
         --------
@@ -530,28 +529,141 @@ class Hypergraph:
         Adding the same edge twice will create a multi-edge. Currently
         cannot add empty edges; the method skips over them.
 
-        """
-        for e in ebunch_to_add:
-            if isinstance(e[-1], dict):
-                dd = e[-1]
-                e = e[:-1]
-            else:
-                dd = {}
-            if not e:
-                continue
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph()
 
-            uid = self._edge_uid()
-            self._edge[uid] = []
-            for n in e:
+        When Specify edges by their members only, numeric edge IDs will be assigned
+        automatically.
+
+        >>> H.add_edges_from([[0, 1], [1, 2], [2, 3, 4]])
+        >>> H.edges.members(dtype=dict)
+        {0: [0, 1], 1: [1, 2], 2: [2, 3, 4]}
+
+        Custom edge ids can be specified using a dict.
+
+        >>> H = xgi.Hypergraph()
+        >>> H.add_edges_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
+        >>> H.edges.members(dtype=dict)
+        {'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]}
+
+        You can use the dict format to easily add edges from another hypergraph.
+
+        >>> H2 = xgi.Hypergraph()
+        >>> H2.add_edges_from(H.edges.members(dtype=dict))
+        >>> H.edges == H2.edges
+        True
+
+        Alternatively, edge ids can be specified using an iterable of 2-tuples.
+
+        >>> H = xgi.Hypergraph()
+        >>> H.add_edges_from([([0, 1], 'one'), ([1, 2], 'two'), ([2, 3, 4], 'three')])
+        >>> H.edges.members(dtype=dict)
+        {'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]}
+
+        Attributes for each edge may be specified using a 2-tuple for each edge.
+        Numeric IDs will be assigned automatically.
+
+        >>> H = xgi.Hypergraph()
+        >>> edges = [
+        ...     ([0, 1], {'color': 'red'}),
+        ...     ([1, 2], {'age': 30}),
+        ...     ([2, 3, 4], {'color': 'blue', 'age': 40}),
+        ... ]
+        >>> H.add_edges_from(edges)
+        >>> {e: H.edges[e] for e in H.edges}
+        {0: {'color': 'red'}, 1: {'age': 30}, 2: {'color': 'blue', 'age': 40}}
+
+        Attributes and custom IDs may be specified using a 3-tuple for each edge.
+
+        >>> H = xgi.Hypergraph()
+        >>> edges = [
+        ...     ([0, 1], 'one', {'color': 'red'}),
+        ...     ([1, 2], 'two', {'age': 30}),
+        ...     ([2, 3, 4], 'three', {'color': 'blue', 'age': 40}),
+        ... ]
+        >>> H.add_edges_from(edges)
+        >>> {e: H.edges[e] for e in H.edges}
+        {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40}}
+
+        """
+        # format 5 is the easiest one
+        if isinstance(ebunch_to_add, dict):
+            for uid, members in ebunch_to_add.items():
+                try:
+                    self._edge[uid] = list(members)
+                except TypeError as e:
+                    raise XGIError("Invalid ebunch format") from e
+                for n in members:
+                    if n not in self._node:
+                        self._node[n] = []
+                        self._node_attr[n] = self._node_attr_dict_factory()
+                    self._node[n].append(uid)
+                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+            return
+
+        # in formats 1-4 we only know that ebunch_to_add is an iterable, so we iterate
+        # over it and use the firs element to determine which format we are working with
+        new_edges = iter(ebunch_to_add)
+        try:
+            first_edge = next(new_edges)
+        except StopIteration:
+            return
+        try:
+            first_elem = list(first_edge)[0]
+        except TypeError:
+            first_elem = None
+
+        format1, format2, format3, format4 = False, False, False, False
+        if isinstance(first_elem, Iterable):
+            if all(isinstance(e, str) for e in first_edge):
+                format1 = True
+            elif len(first_edge) == 2 and issubclass(type(first_edge[1]), Hashable):
+                format2 = True
+            elif len(first_edge) == 2:
+                format3 = True
+            elif len(first_edge) == 3:
+                format4 = True
+        else:
+            format1 = True
+
+        if (format1 and isinstance(first_edge, str)) or (
+            not format1 and isinstance(first_elem, str)
+        ):
+            raise XGIError("Members cannot be specified as a string")
+
+        # now we may iterate over the rest
+        e = first_edge
+        while True:
+            if format1:
+                members, uid, eattr = e, self._edge_uid(), {}
+            elif format2:
+                members, uid, eattr = e[0], e[1], {}
+            elif format3:
+                members, uid, eattr = e[0], self._edge_uid(), e[1]
+            elif format4:
+                members, uid, eattr = e[0], e[1], e[2]
+
+            try:
+                self._edge[uid] = list(members)
+            except TypeError as e:
+                raise XGIError("Invalid ebunch format") from e
+
+            for n in members:
                 if n not in self._node:
                     self._node[n] = []
                     self._node_attr[n] = self._node_attr_dict_factory()
                 self._node[n].append(uid)
-                self._edge[uid].append(n)
 
             self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             self._edge_attr[uid].update(attr)
-            self._edge_attr[uid].update(dd)
+            self._edge_attr[uid].update(eattr)
+
+            try:
+                e = next(new_edges)
+            except StopIteration:
+                break
 
     def add_weighted_edges_from(self, ebunch, weight="weight", **attr):
         """Add multiple weighted edges with optional attributes.
@@ -734,26 +846,6 @@ class Hypergraph:
         if edges:
             self.add_edges_from(edges)
 
-    @property
-    def edges(self):
-        """An EdgeView of the hypergraph.
-
-        The EdgeView provides set-like operations on the edge IDs as well as edge
-        attribute lookup.
-
-        Parameters
-        ----------
-        e : hashable or None (default = None)
-            The edge ID to access
-
-        Returns
-        -------
-        edges : EdgeView
-            A view of edges in the hypergraph.
-
-        """
-        return EdgeView(self)
-
     def degree(self, nbunch=None, weight=None, order=None, dtype="dict"):
         """A DegreeView for the Hypergraph.
 
@@ -862,54 +954,18 @@ class Hypergraph:
         self._edge.clear()
         self._edge_attr.clear()
 
-    def copy(self, as_view=False):
-        """A copy of the hypergraph.
+    def copy(self):
+        """A deep copy of the hypergraph.
 
-        The copy method by default returns a deep copy of the hypergraph
-        and attributes. Use the "as_view" flag to for a frozen copy of
-        the hypergraph with references to the original
-
-        If `as_view` is True then a view is returned instead of a copy.
-
-        Parameters
-        ----------
-        as_view : bool, optional (default=False)
-            If True, the returned hypergraph view provides a read-only view
-            of the original hypergraph without actually copying any data.
+        A deep copy of the hypergraph, including node, edge, and hypergraph attributes.
 
         Returns
         -------
         H : Hypergraph
             A copy of the hypergraph.
 
-        Notes
-        -----
-        All copies reproduce the hypergraph structure, but data attributes
-        may be handled in different ways. There are two options that this
-        method provides.
-
-        Deepcopy -- A "deepcopy" copies the graph structure as well as
-        all data attributes and any objects they might contain.
-        The entire hypergraph object is new so that changes in the copy
-        do not affect the original object. (see Python's copy.deepcopy)
-
-        View -- Inspired by dict-views, graph-views act like read-only
-        versions of the original graph, providing a copy of the original
-        structure without requiring any memory for copying the information.
-
-        See the Python copy module for more information on shallow
-        and deep copies, https://docs.python.org/3/library/copy.html.
-
         """
-        if as_view is True:
-            return xgi.hypergraphviews.generic_hypergraph_view(self)
-        H = self.__class__()
-        H._hypergraph = deepcopy(self._hypergraph)
-        H._node = deepcopy(self._node)
-        H._node_attr = deepcopy(self._node_attr)
-        H._edge = deepcopy(self._edge)
-        H._edge_attr = deepcopy(self._edge_attr)
-        return H
+        return xgi.hypergraphviews.subhypergraph(self)
 
     def dual(self):
         """The dual of the hypergraph.
@@ -923,11 +979,14 @@ class Hypergraph:
 
         """
         dual = self.__class__()
+        nn = self.nodes
+        dual.add_edges_from(
+            (nn.memberships(n), n, deepcopy(attr)) for n, attr in nn.items()
+        )
+        ee = self.edges
+        dual.add_nodes_from((e, deepcopy(attr)) for e, attr in ee.items())
         dual._hypergraph = deepcopy(self._hypergraph)
-        dual._node = deepcopy(self._edge)
-        dual._node_attr = deepcopy(self._edge_attr)
-        dual._edge = deepcopy(self._node)
-        dual._edge_attr = deepcopy(self._node_attr)
+
         return dual
 
     def max_edge_order(self):

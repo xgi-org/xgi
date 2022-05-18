@@ -80,20 +80,27 @@ class IDView(Mapping, Set):
         if id_dict is None:
             self._ids = None
         else:
-            if ids is None:
-                self._ids = id_dict.keys()
-            else:
-                if not set(ids).issubset(id_dict.keys()):
-                    raise XGIError("ids must be a subset of the keys of id_dict")
-                self._ids = ids
+            self._ids = ids
+
+    @property
+    def ids(self):
+        """The ids in this view.
+
+        Notes
+        -----
+        Do not use this property for membership check. Instead of `x in view.ids`,
+        always use `x in view`.  The latter is always faster.
+
+        """
+        return set(self._id_dict.keys()) if self._ids is None else self._ids
 
     def __len__(self):
         """The number of IDs."""
-        return len(self._ids)
+        return len(self._id_dict) if self._ids is None else len(self._ids)
 
     def __iter__(self):
         """Returns an iterator over the IDs."""
-        return iter(self._ids)
+        return iter(self._id_dict.keys()) if self._ids is None else iter(self._ids)
 
     def __getitem__(self, id):
         """Get the attributes of the ID.
@@ -115,9 +122,20 @@ class IDView(Mapping, Set):
             hypergraph, or if id is not hashable.
 
         """
-        if id not in self._ids:
+        if id not in self:
             raise IDNotFound(f"The ID {id} is not in this view")
         return self._id_attr[id]
+
+    def __contains__(self, id):
+        """Checks whether the ID is in the hypergraph"""
+        if self._ids is None:
+            return id in self._id_dict
+        else:
+            return id in self._ids
+
+    def __str__(self):
+        """Returns a string of the list of IDs."""
+        return str(list(self))
 
     def __repr__(self):
         """Returns a summary of the class"""
@@ -330,7 +348,7 @@ class NodeView(IDView):
         """Return a new view that keeps track only of the nodes of the given degree."""
         return super().__call__(size=degree)
 
-    def memberships(self, n):
+    def memberships(self, n=None):
         """Get the edge ids of which a node is a member.
 
         Parameters
@@ -349,16 +367,7 @@ class NodeView(IDView):
             If `n` is not hashable or if it is not in the hypergraph.
 
         """
-        try:
-            return self._id_dict[n].copy()
-        except TypeError as e:
-            if isinstance(n, slice):
-                raise XGIError(
-                    f"{type(self).__name__} does not support slicing, "
-                    f"try list(H.nodes)[{n.start}:{n.stop}:{n.step}]"
-                ) from e
-            else:
-                raise e
+        return self._id_dict.copy() if n is None else self._id_dict[n].copy()
 
 
 class EdgeView(IDView):
@@ -410,6 +419,17 @@ class EdgeView(IDView):
             If `e` does not exist in the hypergraph
 
         """
+        if e is None:
+            if dtype is dict:
+                return {key: self._id_dict[key] for key in self}
+            elif dtype is list:
+                return [self._id_dict[key] for key in self]
+            else:
+                raise XGIError(f"Unrecognized dtype {dtype}")
+
+        if e not in self:
+            raise IDNotFound(f'ID "{e}" not in this view')
+
         try:
             return self._id_dict[e].copy()
         except IDNotFound:
@@ -422,7 +442,7 @@ class EdgeView(IDView):
                     raise XGIError(f"Unrecognized dtype {dtype}")
             raise IDNotFound(f"Item {e} not in this view")
 
-            
+
 class DegreeView(IDDegreeView):
     """An IDDegreeView that keeps track of node degree."""
 

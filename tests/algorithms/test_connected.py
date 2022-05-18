@@ -74,9 +74,9 @@ def test_largest_connected_hypergraph(edgelist1, edgelist2):
     H2 = xgi.Hypergraph(edgelist2)
 
     H1_lcc = xgi.largest_connected_hypergraph(H1)
-    xgi.largest_connected_hypergraph(H2, in_place=True)
-
     assert xgi.is_connected(H1_lcc)
     assert sorted(H1_lcc.nodes) == [5, 6, 7, 8]
+
+    xgi.largest_connected_hypergraph(H2, in_place=True)
     assert xgi.is_connected(H2)
     assert sorted(H2.nodes) == [3, 4, 5, 6]

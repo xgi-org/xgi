@@ -129,6 +129,16 @@ def test_edge_members(edgelist3):
         H.edges.members("test")
 
 
+def test_view_len(edgelist2):
+    H = xgi.Hypergraph(edgelist2)
+    nodes = H.nodes
+    assert len(nodes) == len(H._node)
+    H.add_node(10)
+    assert len(nodes) == len(H._node)
+    H.add_nodes_from(range(10, 20))
+    assert len(nodes) == len(H._node)
+
+
 def test_bunch_view(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     bunch_view = H.edges.from_view(H.edges, bunch=[1, 2])
@@ -136,3 +146,5 @@ def test_bunch_view(edgelist1):
     assert (1 in bunch_view) and (2 in bunch_view)
     assert 0 not in bunch_view
     assert bunch_view.members(dtype=dict) == {1: [4], 2: [5, 6]}
+    with pytest.raises(IDNotFound):
+        bunch_view.members(0)
