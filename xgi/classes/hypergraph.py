@@ -99,7 +99,10 @@ class Hypergraph:
         self._edge_attr = self._hyperedge_attr_dict_factory()
 
         self.nodes = NodeView(self)
+        """A :class:`~xgi.classes.reportviews.NodeView` of the hypergraph."""
+
         self.edges = EdgeView(self)
+        """An :class:`~xgi.classes.reportviews.EdgeView` of the hypergraph."""
 
         if incoming_data is not None:
             convert.convert_to_hypergraph(incoming_data, create_using=self)
