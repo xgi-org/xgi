@@ -36,6 +36,12 @@ def test_node_degree(edgelist3):
     with pytest.raises(TypeError):
         H.edges()
 
+    assert H.degree() == {1: 1, 2: 1, 3: 2, 4: 2, 5: 1, 6: 1}
+    assert H.degree(1) == 1
+    assert H.degree(4) == 2
+    with pytest.raises(KeyError):
+        H.degree(-1)
+
     assert len(H.nodes.filterby("degree", 1)) == 4
     assert len(H.nodes.filterby("degree", 3)) == 0
     deg2 = H.nodes.filterby("degree", 2)
@@ -53,56 +59,46 @@ def test_node_degree(edgelist3):
     assert 7 in H.nodes.filterby("degree", 2)
 
 
-def test_id_degree_view(edgelist1, edgelist4):
+def test_degree(edgelist1, edgelist4):
     H1 = xgi.Hypergraph(edgelist4)
     H2 = xgi.Hypergraph(edgelist1)
     # test basic functionality
     assert H1.degree(1) == 1
     assert H1.degree(2) == 2
     assert H1.degree(3) == 3
-    with pytest.raises(XGIError):
+    with pytest.raises(KeyError):
         H1.degree(0)
 
-    assert H1.edge_size()[H1.edges] == {0: 3, 1: 4, 2: 3}
-    assert H2.edge_size()[H2.edges] == {0: 3, 1: 1, 2: 2, 3: 3}
+    assert H1.edges.size.asdict() == {0: 3, 1: 4, 2: 3}
+    assert H2.edges.size.asdict() == {0: 3, 1: 1, 2: 2, 3: 3}
 
     # check len
-    assert len(H1.degree([1, 2])) == 2
     assert len(H1.degree()) == 5
 
-    # check string
-    assert str(H1.degree()) == "[1, 2, 3, 4, 5]"
-
-    # check representation
-    assert repr(H1.degree()) == "DegreeView({1: 1, 2: 2, 3: 3, 4: 2, 5: 2})"
-
-    # check __iter__
-    assert {id: deg for id, deg in H1.degree()} == {1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
-
-    # check dtype parameter
-    assert H1.degree(dtype="list")[H1.nodes] == [1, 2, 3, 2, 2]
-    assert (H1.degree(dtype="nparray")[H1.nodes] == np.array([1, 2, 3, 2, 2])).all()
-
     # test order
-    assert H2.degree(1, order=0) == 0
-    assert H2.degree(4, order=0) == 1
-    assert H2.degree(5, order=0) == 0
-
-    assert H2.degree(1, order=1) == 0
-    assert H2.degree(4, order=1) == 0
-    assert H2.degree(6, order=1) == 1
-
-    assert H1.degree(3, order=1) == 0
-    assert H1.degree(3, order=2) == 2
-    assert H1.degree(3, order=3) == 1
-    assert H1.degree(5, order=2) == 1
+    assert H2.nodes.degree(1, order=0) == 0
+    assert H2.nodes.degree(4, order=0) == 1
+    assert H2.nodes.degree(5, order=0) == 0
+    assert H2.nodes.degree(1, order=1) == 0
+    assert H2.nodes.degree(4, order=1) == 0
+    assert H2.nodes.degree(6, order=1) == 1
+    assert H1.nodes.degree(3, order=1) == 0
+    assert H1.nodes.degree(3, order=2) == 2
+    assert H1.nodes.degree(3, order=3) == 1
+    assert H1.nodes.degree(5, order=2) == 1
 
     # test weights
     attr_dict1 = {0: {"weight": -2}, 1: {"weight": 4.0}, 2: {"weight": 0.3}}
     xgi.set_edge_attributes(H1, attr_dict1)
 
-    assert H1.degree(weight="weight")[H1.nodes] == {1: -2, 2: 2, 3: 2.3, 4: 4.3, 5: 4.3}
-    assert H1.degree(weight="weight", order=2)[H1.nodes] == {
+    assert H1.nodes.degree(weight="weight").asdict() == {
+        1: -2,
+        2: 2,
+        3: 2.3,
+        4: 4.3,
+        5: 4.3,
+    }
+    assert H1.nodes.degree(weight="weight", order=2).asdict() == {
         1: -2,
         2: -2,
         3: -1.7,
@@ -148,3 +144,21 @@ def test_bunch_view(edgelist1):
     assert bunch_view.members(dtype=dict) == {1: [4], 2: [5, 6]}
     with pytest.raises(IDNotFound):
         bunch_view.members(0)
+
+
+def test_call_wrong_bunch():
+    H = xgi.Hypergraph()
+    with pytest.raises(IDNotFound):
+        H.nodes([0])
+
+    H.add_node(0)
+    assert len(H.nodes([0]))
+    with pytest.raises(TypeError):
+        H.nodes(0)
+
+
+def test_call(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert len(H.nodes([])) == 0
+    assert H.nodes(list(H.nodes)) == H.nodes
+    assert H.nodes(H.nodes) == H.nodes
