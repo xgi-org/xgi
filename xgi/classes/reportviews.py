@@ -208,9 +208,18 @@ class IDView(Mapping, Set):
 
         """
         newview = cls(None)
+        newview._dispatcher = view._dispatcher.__class__(view._dispatcher.net, newview)
         newview._id_dict = view._id_dict
         newview._id_attr = view._id_attr
-        newview._ids = set(view._id_dict.keys()) if bunch is None else set(bunch)
+        all_ids = set(view._id_dict.keys())
+        if bunch is None:
+            newview._ids = all_ids
+        else:
+            bunch = set(bunch)
+            wrong = bunch - all_ids
+            if wrong:
+                raise IDNotFound(f"Nodes {wrong} not in the hypergraph")
+            newview._ids = bunch
         return newview
 
 
