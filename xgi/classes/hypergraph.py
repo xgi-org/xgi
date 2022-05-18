@@ -495,22 +495,24 @@ class Hypergraph:
         ----------
         ebunch_to_add : Iterable
 
-            An iterable of edges, in one of the following formats.
+            An iterable of edges.  This may be a dict of the form `{edge_id:
+            edge_members}`, or it may be an iterable of iterables, wher each element
+            contains the members of the edge. Alternatively, each element could also be
+            a tuple in any of the following formats:
 
-            * Format 1: Iterable (edge1_members, edge2_members), or
-            * Format 2: 2-tuple (members, id), or
-            * Format 3: 2-tuple (members, attr), or
-            * Format 4: 3-tuple (members, id, attr),
-            * Format 5: a dict of the form {id: members}
+            * Format 1: 2-tuple (members, id), or
+            * Format 2: 2-tuple (members, attr), or
+            * Format 3: 3-tuple (members, id, attr),
 
             where `members` is an iterable of node IDs, each `id` is a hashable to use
-            as edge ID, and `attr` is a dict of attributes. The second and third formats
+            as edge ID, and `attr` is a dict of attributes. The first and second formats
             are unambiguous because `attr` dicts are not hashable, while `id`s must be.
-            In Formats 2-4, each element of `ebunch_to_add` must have the same length.
-            The variables containing edge members cannot be strings.
-        attr : keyword arguments, optional
-            Edge data (or labels or objects) can be assigned using
-            keyword arguments.
+            In Formats 1-3, each element of `ebunch_to_add` must have the same length,
+            i.e. you cannot mix different formats.  The iterables containing edge
+            members cannot be strings.
+        attr : **kwargs, optional
+            Additional attributes to be assigned to all edges. Attribues specified via
+            `ebunch_to_add` take precedence over `attr`.
 
         See Also
         --------
@@ -521,6 +523,57 @@ class Hypergraph:
         -----
         Adding the same edge twice will create a multi-edge. Currently
         cannot add empty edges; the method skips over them.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph()
+
+        When Specify edges by their members only, numeric edge IDs will be assigned
+        automatically.
+
+        >>> H.add_edges_from([[0, 1], [1, 2], [2, 3, 4]])
+        >>> H.edges.members(dtype=dict)
+        {0: [0, 1], 1: [1, 2], 2: [2, 3, 4]}
+
+        Custom edge ids can be specified using a dict.
+
+        >>> H = xgi.Hypergraph()
+        >>> H.add_edges_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
+        >>> H.edges.members(dtype=dict)
+        {'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]}
+
+        Alternatively, edge ids can be specified using an iterable of 2-tuples.
+
+        >>> H = xgi.Hypergraph()
+        >>> H.add_edges_from([([0, 1], 'one'), ([1, 2], 'two'), ([2, 3, 4], 'three')])
+        >>> H.edges.members(dtype=dict)
+        {'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]}
+
+        Attributes for each edge may be specified using a 2-tuple for each edge.
+        Numeric IDs will be assigned automatically.
+
+        >>> H = xgi.Hypergraph()
+        >>> edges = [
+        ...     ([0, 1], {'color': 'red'}),
+        ...     ([1, 2], {'age': 30}),
+        ...     ([2, 3, 4], {'color': 'blue', 'age': 40}),
+        ... ]
+        >>> H.add_edges_from(edges)
+        >>> {e: H.edges[e] for e in H.edges}
+        {0: {'color': 'red'}, 1: {'age': 30}, 2: {'color': 'blue', 'age': 40}}
+
+        Attributes and custom IDs may be specified using a 3-tuple for each edge.
+
+        >>> H = xgi.Hypergraph()
+        >>> edges = [
+        ...     ([0, 1], 'one', {'color': 'red'}),
+        ...     ([1, 2], 'two', {'age': 30}),
+        ...     ([2, 3, 4], 'three', {'color': 'blue', 'age': 40}),
+        ... ]
+        >>> H.add_edges_from(edges)
+        >>> {e: H.edges[e] for e in H.edges}
+        {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40}}
 
         """
         # format 5 is the easiest one
