@@ -103,7 +103,10 @@ class IDView(Mapping, Set):
 
     def __iter__(self):
         """Returns an iterator over the IDs."""
-        return iter(self._id_dict.keys()) if self._ids is None else iter(self._ids)
+        if self._ids is None:
+            return iter({}) if self._id_dict is None else iter(self._id_dict.keys())
+        else:
+            return iter(self._ids)
 
     def __getitem__(self, id):
         """Get the attributes of the ID.
