@@ -9,6 +9,7 @@ from xgi import (
     linalg,
     readwrite,
     utils,
+    stats,
 )
 from xgi.algorithms import *
 from xgi.classes import *
@@ -18,5 +19,6 @@ from xgi.generators import *
 from xgi.linalg import *
 from xgi.readwrite import *
 from xgi.utils import *
+from xgi.stats import *
 
 __version__ = pkg_resources.require("xgi")[0].version

@@ -9,6 +9,7 @@ from collections.abc import Mapping, Set
 
 import numpy as np
 
+from xgi.stats import NodeStatDispatcher, EdgeStatDispatcher
 from xgi.exception import IDNotFound, XGIError
 
 __all__ = [
@@ -39,7 +40,7 @@ class IDView(Mapping, Set):
 
     """
 
-    __slots__ = ("_id_dict", "_id_attr", "_ids")
+    __slots__ = ("_dispatcher", "_id_dict", "_id_attr", "_ids")
 
     def __getstate__(self):
         """Function that allows pickling.
@@ -71,7 +72,8 @@ class IDView(Mapping, Set):
         self._id_attr = state["_id_attr"]
         self._ids = state["_ids"]
 
-    def __init__(self, id_dict, id_attr, ids=None):
+    def __init__(self, H, id_dict, id_attr, dispatcherclass, ids=None):
+        self._dispatcher = dispatcherclass(H, self)
         self._id_dict = id_dict
         self._id_attr = id_attr
 
@@ -79,6 +81,9 @@ class IDView(Mapping, Set):
             self._ids = None
         else:
             self._ids = ids
+
+    def __getattr__(self, attr):
+        return getattr(self._dispatcher, attr)
 
     @property
     def ids(self):
@@ -206,11 +211,11 @@ class NodeView(IDView):
 
     """
 
-    def __init__(self, hypergraph, bunch=None):
-        if hypergraph is None:
-            super().__init__(None, None, bunch)
+    def __init__(self, H, bunch=None):
+        if H is None:
+            super().__init__(None, None, None, NodeStatDispatcher, bunch)
         else:
-            super().__init__(hypergraph._node, hypergraph._node_attr, bunch)
+            super().__init__(H, H._node, H._node_attr, NodeStatDispatcher, bunch)
 
     def memberships(self, n=None):
         """Get the edge ids of which a node is a member.
@@ -246,11 +251,11 @@ class EdgeView(IDView):
 
     """
 
-    def __init__(self, hypergraph, bunch=None):
-        if hypergraph is None:
-            super().__init__(None, None, bunch)
+    def __init__(self, H, bunch=None):
+        if H is None:
+            super().__init__(None, None, None, EdgeStatDispatcher, bunch)
         else:
-            super().__init__(hypergraph._edge, hypergraph._edge_attr, bunch)
+            super().__init__(H, H._edge, H._edge_attr, EdgeStatDispatcher, bunch)
 
     def members(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.

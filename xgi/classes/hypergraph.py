@@ -177,6 +177,16 @@ class Hypergraph:
         """Write hypergraph attribute."""
         self._hypergraph[attr] = val
 
+    def __getattr__(self, attr):
+        stat = getattr(self.nodes, attr, None)
+        if stat is None:
+            stat = getattr(self.edges, attr, None)
+        if stat is None:
+            raise AttributeError(
+                f'stat "{attr}" not among available node or edge stats'
+            )
+        return lambda node=None: stat.asdict() if node is None else stat.asdict()[node]
+
     @property
     def nodes(self):
         return self._nodeview
