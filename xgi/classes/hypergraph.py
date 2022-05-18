@@ -497,8 +497,9 @@ class Hypergraph:
 
             An iterable of edges.  This may be a dict of the form `{edge_id:
             edge_members}`, or it may be an iterable of iterables, wher each element
-            contains the members of the edge. Alternatively, each element could also be
-            a tuple in any of the following formats:
+            contains the members of the edge specified as valid node IDs.
+            Alternatively, each element could also be a tuple in any of the following
+            formats:
 
             * Format 1: 2-tuple (members, id), or
             * Format 2: 2-tuple (members, attr), or
@@ -542,6 +543,13 @@ class Hypergraph:
         >>> H.add_edges_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
         >>> H.edges.members(dtype=dict)
         {'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]}
+
+        You can use the dict format to easily add edges from another hypergraph.
+
+        >>> H2 = xgi.Hypergraph()
+        >>> H2.add_edges_from(H.edges.members(dtype=dict))
+        >>> H.edges == H2.edges
+        True
 
         Alternatively, edge ids can be specified using an iterable of 2-tuples.
 

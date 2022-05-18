@@ -88,8 +88,8 @@ class IDView(Mapping, Set):
 
         Notes
         -----
-        DO NOT use this property for membership check: instead of `x in view.ids` always
-        use `x in view`.
+        Do not use this property for membership check. Instead of `x in view.ids`,
+        always use `x in view`.  The latter is always faster.
 
         """
         return set(self._id_dict.keys()) if self._ids is None else self._ids
