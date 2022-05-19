@@ -170,21 +170,25 @@ class IDView(Mapping, Set):
             raise AttributeError(f'Statistic with name "{stat}" not found') from e
         values = stat.asdict()
         if mode == "eq":
-            bunch = [node for node in self.ids if values[node] == val]
+            bunch = [idx for idx in self if values[idx] == val]
         elif mode == "neq":
-            bunch = [node for node in self.ids if values[node] != val]
+            bunch = [idx for idx in self if values[idx] != val]
         elif mode == "lt":
-            bunch = [node for node in self.ids if values[node] < val]
+            bunch = [idx for idx in self if values[idx] < val]
         elif mode == "gt":
-            bunch = [node for node in self.ids if values[node] > val]
+            bunch = [idx for idx in self if values[idx] > val]
         elif mode == "leq":
-            bunch = [node for node in self.ids if values[node] <= val]
+            bunch = [idx for idx in self if values[idx] <= val]
         elif mode == "geq":
-            bunch = [node for node in self.ids if values[node] >= val]
+            bunch = [idx for idx in self if values[idx] >= val]
         elif mode == "between":
-            bunch = [node for node in self.ids if val[0] <= values[node] <= val[1]]
+            bunch = [node for node in self if val[0] <= values[node] <= val[1]]
         else:
             raise ValueError(f"Unrecognized mode {mode}")
+        return type(self).from_view(self, bunch)
+
+    def filterby_attr(self, attr, val, mode="eq"):
+        bunch = [idx for idx in self if self._id_attr[idx][attr] == val]
         return type(self).from_view(self, bunch)
 
     @classmethod

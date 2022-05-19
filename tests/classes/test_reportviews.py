@@ -59,6 +59,15 @@ def test_node_degree(edgelist3):
     assert 7 in H.nodes.filterby("degree", 2)
 
 
+def test_size_degree(edgelist1, edgelist4):
+    H1 = xgi.Hypergraph(edgelist4)
+    H2 = xgi.Hypergraph(edgelist1)
+    assert H1.edges.size.asdict() == {0: 3, 1: 4, 2: 3}
+    assert H2.edges.size.asdict() == {0: 3, 1: 1, 2: 2, 3: 3}
+    assert H1.edges.order.asdict() == {0: 2, 1: 3, 2: 2}
+    assert H2.edges.order.asdict() == {0: 2, 1: 0, 2: 1, 3: 2}
+
+
 def test_degree(edgelist1, edgelist4):
     H1 = xgi.Hypergraph(edgelist4)
     H2 = xgi.Hypergraph(edgelist1)
@@ -69,23 +78,40 @@ def test_degree(edgelist1, edgelist4):
     with pytest.raises(KeyError):
         H1.degree(0)
 
-    assert H1.edges.size.asdict() == {0: 3, 1: 4, 2: 3}
-    assert H2.edges.size.asdict() == {0: 3, 1: 1, 2: 2, 3: 3}
-
     # check len
     assert len(H1.degree()) == 5
 
     # test order
-    assert H2.nodes.degree(1, order=0) == 0
-    assert H2.nodes.degree(4, order=0) == 1
-    assert H2.nodes.degree(5, order=0) == 0
-    assert H2.nodes.degree(1, order=1) == 0
-    assert H2.nodes.degree(4, order=1) == 0
-    assert H2.nodes.degree(6, order=1) == 1
-    assert H1.nodes.degree(3, order=1) == 0
-    assert H1.nodes.degree(3, order=2) == 2
-    assert H1.nodes.degree(3, order=3) == 1
-    assert H1.nodes.degree(5, order=2) == 1
+    assert H2.nodes.degree(order=0).asdict() == {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 1,
+        5: 0,
+        6: 0,
+        7: 0,
+        8: 0,
+    }
+    assert H2.nodes.degree(order=1).asdict() == {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 1,
+        6: 1,
+        7: 0,
+        8: 0,
+    }
+    assert H2.nodes.degree(order=2).asdict() == {
+        1: 1,
+        2: 1,
+        3: 1,
+        4: 0,
+        5: 0,
+        6: 1,
+        7: 1,
+        8: 1,
+    }
 
     # test weights
     attr_dict1 = {0: {"weight": -2}, 1: {"weight": 4.0}, 2: {"weight": 0.3}}
