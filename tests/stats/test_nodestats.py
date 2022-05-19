@@ -464,3 +464,27 @@ def test_different_views(edgelist1):
         H.nodes.multi([H.nodes.degree, H.nodes([1, 2]).degree]).asdict()
     with pytest.raises(KeyError):
         H.nodes.multi([H.nodes.attrs("color"), H.nodes([1, 2]).attrs("color")]).asdict()
+
+
+def test_user_defined(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+
+    with pytest.raises(AttributeError):
+        H.my_degree
+    with pytest.raises(AttributeError):
+        H.nodes.my_degree
+
+    @xgi.nodestat
+    def my_degree(net, bunch):
+        return {n: 10 * net.degree(n) for n in bunch}
+
+    vals = {n: 10 * H.degree(n) for n in H}
+    assert H.my_degree() == vals
+    assert H.nodes.my_degree.asdict() == vals
+    assert H.nodes.my_degree.aslist() == [vals[n] for n in H]
+    assert (
+        list(H.nodes.filterby("my_degree", 20))
+        == list(H.nodes.filterby("degree", 2))
+        == [6]
+    )
+    assert H.nodes.filterby("degree", 2).my_degree.asdict() == {6: 20}

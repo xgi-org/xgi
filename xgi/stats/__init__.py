@@ -7,7 +7,7 @@ from . import nodestats
 from . import edgestats
 
 
-__all__ = ["EdgeStatDispatcher", "NodeStatDispatcher"]
+__all__ = ["nodestat", "EdgeStatDispatcher", "NodeStatDispatcher"]
 
 
 class StatDispatcher:
@@ -188,3 +188,7 @@ class MultiNodeStat(NodeStat):
         result = {s.name: s.val for s in self.stats}
         series = [pd.Series(v, name=k) for k, v in result.items()]
         return pd.concat(series, axis=1)
+
+
+def nodestat(func):
+    setattr(nodestats, func.__name__, func)
