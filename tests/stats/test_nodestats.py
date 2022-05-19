@@ -402,3 +402,34 @@ def test_multi_stats_aspandas(edgelist1, edgelist8):
     )
     df = pd.DataFrame(multi.asdict(transpose=True))
     pd.testing.assert_frame_equal(df, multi.aspandas())
+
+
+def test_multi_with_attrs(hyperwithattrs, attr1, attr2, attr3, attr4, attr5):
+    H = hyperwithattrs
+    multi = H.nodes.multi([H.nodes.attrs("color")])
+    assert multi.asdict() == {
+        1: {"attrs(color)": "red"},
+        2: {"attrs(color)": "blue"},
+        3: {"attrs(color)": "yellow"},
+        4: {"attrs(color)": "red"},
+        5: {"attrs(color)": "blue"},
+    }
+    assert multi.asdict(transpose=True) == {
+        "attrs(color)": {1: "red", 2: "blue", 3: "yellow", 4: "red", 5: "blue"}
+    }
+
+    multi = H.nodes.multi([H.nodes.degree, H.nodes.attrs("color")])
+    assert multi.asdict() == {
+        1: {"degree": 1, "attrs(color)": "red"},
+        2: {"degree": 2, "attrs(color)": "blue"},
+        3: {"degree": 3, "attrs(color)": "yellow"},
+        4: {"degree": 2, "attrs(color)": "red"},
+        5: {"degree": 2, "attrs(color)": "blue"},
+    }
+    assert multi.asdict(list) == {
+        1: [1, "red"],
+        2: [2, "blue"],
+        3: [3, "yellow"],
+        4: [2, "red"],
+        5: [2, "blue"],
+    }
