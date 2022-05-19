@@ -80,12 +80,14 @@ def test_degree(edgelist1, edgelist8):
     H = xgi.Hypergraph(edgelist1)
     degs = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
     assert H.degree() == degs
+    assert H.degree(order=2) == {1: 1, 2: 1, 3: 1, 4: 0, 5: 0, 6: 1, 7: 1, 8: 1}
     assert H.nodes.degree.asdict() == degs
     assert H.nodes.degree.aslist() == list(degs.values())
 
     H = xgi.Hypergraph(edgelist8)
     degs = {0: 6, 1: 5, 2: 4, 3: 4, 4: 3, 5: 2, 6: 2}
     assert H.degree() == degs
+    assert H.degree(order=2) == {0: 3, 1: 2, 2: 3, 3: 3, 4: 2, 5: 2, 6: 0}
     assert H.nodes.degree.asdict() == degs
     assert H.nodes.degree.aslist() == list(degs.values())
 
@@ -404,7 +406,7 @@ def test_multi_stats_aspandas(edgelist1, edgelist8):
     pd.testing.assert_frame_equal(df, multi.aspandas())
 
 
-def test_multi_with_attrs(hyperwithattrs, attr1, attr2, attr3, attr4, attr5):
+def test_multi_with_attrs(hyperwithattrs):
     H = hyperwithattrs
     multi = H.nodes.multi([H.nodes.attrs("color")])
     assert multi.asdict() == {
@@ -433,3 +435,32 @@ def test_multi_with_attrs(hyperwithattrs, attr1, attr2, attr3, attr4, attr5):
         4: [2, "red"],
         5: [2, "blue"],
     }
+
+
+def test_missing_attrs(hyperwithattrs):
+    H = hyperwithattrs
+    H.add_node(10)
+    assert H.nodes.attrs("color").asdict() == {
+        1: "red",
+        2: "blue",
+        3: "yellow",
+        4: "red",
+        5: "blue",
+        10: None,
+    }
+    assert H.nodes.attrs("color", missing="missingval").asdict() == {
+        1: "red",
+        2: "blue",
+        3: "yellow",
+        4: "red",
+        5: "blue",
+        10: "missingval",
+    }
+
+
+def test_different_views(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    with pytest.raises(KeyError):
+        H.nodes.multi([H.nodes.degree, H.nodes([1, 2]).degree]).asdict()
+    with pytest.raises(KeyError):
+        H.nodes.multi([H.nodes.attrs("color"), H.nodes([1, 2]).attrs("color")]).asdict()

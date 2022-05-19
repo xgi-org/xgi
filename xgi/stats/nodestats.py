@@ -12,9 +12,9 @@ __all__ = [
 # should also close #64, after we implemen the frozen stuff
 
 
-def attrs(net, bunch, attr=None):
+def attrs(net, bunch, attr=None, missing=None):
     if isinstance(attr, str):
-        return {n: net._node_attr[n][attr] for n in bunch}
+        return {n: net._node_attr[n].get(attr, missing) for n in bunch}
     elif attr is None:
         return {n: net._node_attr[n] for n in bunch}
     else:

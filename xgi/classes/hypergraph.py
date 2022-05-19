@@ -185,7 +185,12 @@ class Hypergraph:
             raise AttributeError(
                 f'stat "{attr}" not among available node or edge stats'
             )
-        return lambda node=None: stat.asdict() if node is None else stat.asdict()[node]
+
+        def func(node=None, /, *args, **kwargs):
+            val = stat(*args, **kwargs).asdict()
+            return val if node is None else val[node]
+
+        return func
 
     @property
     def nodes(self):
