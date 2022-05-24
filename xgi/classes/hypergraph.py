@@ -98,10 +98,10 @@ class Hypergraph:
         self._edge = self._hyperedge_dict_factory()
         self._edge_attr = self._hyperedge_attr_dict_factory()
 
-        self.nodes = NodeView(self)
+        self._nodeview = NodeView(self)
         """A :class:`~xgi.classes.reportviews.NodeView` of the hypergraph."""
 
-        self.edges = EdgeView(self)
+        self._edgeview = EdgeView(self)
         """An :class:`~xgi.classes.reportviews.EdgeView` of the hypergraph."""
 
         if incoming_data is not None:
@@ -176,6 +176,14 @@ class Hypergraph:
     def __setitem__(self, attr, val):
         """Write hypergraph attribute."""
         self._hypergraph[attr] = val
+    
+    @property
+    def nodes(self):
+        return self._nodeview
+    
+    @property
+    def edges(self):
+        return self._edgeview
 
     @property
     def num_nodes(self):
