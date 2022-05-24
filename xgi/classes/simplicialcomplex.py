@@ -10,7 +10,7 @@ from itertools import combinations
 
 from xgi import convert
 from xgi.classes import Hypergraph
-from xgi.classes.reportviews import NodeView, EdgeView
+from xgi.classes.reportviews import EdgeView, NodeView
 from xgi.exception import XGIError
 from xgi.utils import XGICounter
 

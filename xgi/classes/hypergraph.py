@@ -1,7 +1,7 @@
 """Base class for undirected hypergraphs."""
+from collections.abc import Hashable, Iterable
 from copy import deepcopy
 from warnings import warn
-from collections.abc import Iterable, Hashable
 
 import numpy as np
 
@@ -176,11 +176,11 @@ class Hypergraph:
     def __setitem__(self, attr, val):
         """Write hypergraph attribute."""
         self._hypergraph[attr] = val
-    
+
     @property
     def nodes(self):
         return self._nodeview
-    
+
     @property
     def edges(self):
         return self._edgeview
