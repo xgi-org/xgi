@@ -77,8 +77,8 @@ class SimplicialComplex(Hypergraph):
         self._edge = self._hyperedge_dict_factory()
         self._edge_attr = self._hyperedge_attr_dict_factory()
 
-        self.nodes = NodeView(self)
-        self.edges = EdgeView(self)
+        self._nodeview = NodeView(self)
+        self._edgeview = EdgeView(self)
 
         if incoming_data is not None:
             convert.convert_to_simplicial_complex(incoming_data, create_using=self)
