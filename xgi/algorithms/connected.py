@@ -1,6 +1,4 @@
 """Algorithms related to connected components of a hypergraph."""
-import random
-
 import xgi
 from xgi.exception import XGIError
 
