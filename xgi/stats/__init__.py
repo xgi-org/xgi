@@ -110,13 +110,7 @@ class NodeStat:
         return self.asnumpy().std()
 
     def var(self):
-        return self.asnumpy().var()
-
-    def argmax(self):
-        return list(self.view)[self.asnumpy().argmax()]
-
-    def argmin(self):
-        return list(self.view)[self.asnumpy().argmin()]
+        return self.asnumpy().var(axis=0)
 
     def dist(self):
         return np.histogram(self.asnumpy(), density=True)
