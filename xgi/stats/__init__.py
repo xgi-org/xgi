@@ -95,19 +95,19 @@ class NodeStat:
         return pd.Series(self.val)
 
     def max(self):
-        return self.asnumpy().max()
+        return self.asnumpy().max(axis=0)
 
     def min(self):
-        return self.asnumpy().min()
+        return self.asnumpy().min(axis=0)
 
     def mean(self):
-        return self.asnumpy().mean()
+        return self.asnumpy().mean(axis=0)
 
     def median(self):
-        return np.median(self.asnumpy())
+        return np.median(self.asnumpy(), axis=0)
 
     def std(self):
-        return self.asnumpy().std()
+        return self.asnumpy().std(axis=0)
 
     def var(self):
         return self.asnumpy().var(axis=0)
@@ -182,6 +182,9 @@ class MultiNodeStat(NodeStat):
         result = {s.name: s.val for s in self.stats}
         series = [pd.Series(v, name=k) for k, v in result.items()]
         return pd.concat(series, axis=1)
+
+    def dist(self):
+        return [np.histogram(data, density=True) for data in self.asnumpy().T]
 
 
 def nodestat(func):
