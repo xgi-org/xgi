@@ -1,3 +1,1 @@
-jupyter>=1.0
-julia>=0.5
-rpy2>=3.0
+hypernetx>=1.0
