@@ -144,3 +144,7 @@ cython_debug/
 # test files
 test.*
 tutorials/test.*
+
+# airspeed velocity files
+benchmarks/html/
+benchmarks/results/
