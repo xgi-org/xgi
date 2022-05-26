@@ -145,3 +145,7 @@ cython_debug/
 test.*
 tutorials/test.*
 /.vscode
+
+# airspeed velocity files
+benchmarks/html/
+benchmarks/results/
