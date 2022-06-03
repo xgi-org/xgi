@@ -80,6 +80,12 @@ def test_neighbors(edgelist1, edgelist2):
     assert H2.neighbors(4) == {3, 5, 6}
     assert H2.neighbors(1) == {2}
 
+    # test edge neighbors
+    assert H1.neighbors(0, edges=True) == set()
+    assert H1.neighbors(1, edges=True) == set()
+    assert H1.neighbors(2, edges=True) == {3}
+    assert H1.neighbors(3, edges=True) == {2}
+
 
 def test_dual(edgelist1, edgelist2, edgelist4):
     el1 = edgelist1
@@ -214,15 +220,6 @@ def test_has_edge(edgelist1):
     assert not H.has_edge([4, 5])
     assert not H.has_edge([3])
     assert not H.has_edge([1, 2])
-
-
-def test_egonet(edgelist3):
-    H = xgi.Hypergraph(edgelist3)
-    assert H.neighbors(3) == {1, 2, 4}
-    assert H.egonet(3) == [[1, 2], [4]]
-    assert H.egonet(3, include_self=True) == [[1, 2, 3], [3, 4]]
-    with pytest.raises(IDNotFound):
-        H.egonet(7)
 
 
 def test_add_edge():
