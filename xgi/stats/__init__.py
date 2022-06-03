@@ -199,7 +199,7 @@ class MultiNodeStat(NodeStat):
 
 
 def nodestat(func):
-    """Decorator that allows arbitrary functions to behave like :class:`Stat` objects.
+    """Decorator that allows arbitrary functions to behave like :class:`NodeStat` objects.
 
     Parameters
     ----------
@@ -218,6 +218,7 @@ def nodestat(func):
     See Also
     --------
     :class:`Stat`
+    :class:`edgestat`
 
     Notes
     -----
@@ -289,4 +290,28 @@ def nodestat(func):
 
     """
     setattr(nodestats, func.__name__, func)
+    return func
+
+
+def edgestat(func):
+    """Decorator that allows arbitrary functions to behave like :class:`EdgeStat` objects.
+
+    Works identically to :func:`nodestat`.  For extended documentation, see
+    :func:`nodestat`.
+
+    Parameters
+    ----------
+    func : callable
+        Function or callable with signature `func(net, bunch)`, where `net` is the
+        network and `bunch` is an iterable of edges in `net`.  The call `func(net,
+        bunch)` must return a dict with pairs of the form `(edge: value)` where `edge`
+        is in `bunch` and `value` is the value of the statistic at `edge`.
+
+    See Also
+    --------
+    :class:`Stat`
+    :class:`nodestat`
+
+    """
+    setattr(edgestats, func.__name__, func)
     return func

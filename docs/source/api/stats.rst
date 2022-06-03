@@ -32,3 +32,4 @@ stats package
    :nosignatures:
 
    ~xgi.stats.nodestat
+   ~xgi.stats.edgestat
