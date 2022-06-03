@@ -191,15 +191,15 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
         )
 
     # get indices for each community
-    community1Indices = defaultdict(list)
+    community1_nodes = defaultdict(list)
     for label in node_labels:
         group = g1[label]
-        community1Indices[group].append(label)
+        community1_nodes[group].append(label)
 
-    community2Indices = defaultdict(list)
+    community2_nodes = defaultdict(list)
     for label in edge_labels:
         group = g2[label]
-        community2Indices[group].append(label)
+        community2_nodes[group].append(label)
 
     H = xgi.empty_hypergraph()
     H.add_nodes_from(node_labels)
@@ -211,31 +211,31 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     for id, g in g2.items():
         kappa2[g] += k2[id]
 
-    for group1 in community1Indices.keys():
-        for group2 in community2Indices.keys():
+    for group1 in community1_nodes.keys():
+        for group2 in community2_nodes.keys():
             # for each constant probability patch
             try:
-                groupConstant = omega[group1, group2] / (
+                group_constant = omega[group1, group2] / (
                     kappa1[group1] * kappa2[group2]
                 )
             except ZeroDivisionError:
-                groupConstant = 0
+                group_constant = 0
 
-            for u in community1Indices[group1]:
+            for u in community1_nodes[group1]:
                 j = 0
-                v = community2Indices[group2][j]  # start from beginning every time
+                v = community2_nodes[group2][j]  # start from beginning every time
                 # max probability
-                p = min(k1[u] * k2[v] * groupConstant, 1)
-                while j < len(community2Indices[group2]):
+                p = min(k1[u] * k2[v] * group_constant, 1)
+                while j < len(community2_nodes[group2]):
                     if p != 1:
                         r = seed.random()
                         try:
                             j = j + math.floor(math.log(r) / math.log(1 - p))
                         except ZeroDivisionError:
                             j = np.inf
-                    if j < len(community2Indices[group2]):
-                        v = community2Indices[group2][j]
-                        q = min((k1[u] * k2[v]) * groupConstant, 1)
+                    if j < len(community2_nodes[group2]):
+                        v = community2_nodes[group2][j]
+                        q = min((k1[u] * k2[v]) * group_constant, 1)
                         r = seed.random()
                         if r < q / p:
                             # no duplicates
