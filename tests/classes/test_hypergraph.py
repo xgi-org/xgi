@@ -424,3 +424,26 @@ def test_copy(edgelist1):
 
     H.add_edge([1, 3, 5])
     assert list(copy.edges) != list(H.edges)
+
+
+def test_double_edge_swap(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+
+    with pytest.raises(XGIError):
+        H.double_edge_swap(5, 6, 2, 3, is_loopy=False)
+
+    H.double_edge_swap(1, 6, 0, 3)
+    assert H.edges.members() == [[6, 2, 3], [4], [5, 6], [1, 7, 8]]
+
+    H.double_edge_swap(3, 4, 0, 1)
+    assert H.edges.members() == [[6, 2, 4], [3], [5, 6], [1, 7, 8]]
+
+    with pytest.raises(IDNotFound):
+        H.double_edge_swap(10, 3, 0, 1)
+
+    with pytest.raises(XGIError):
+        H.double_edge_swap(8, 3, 0, 1)
+
+    # loopy swap
+    H.double_edge_swap(4, 6, 0, 2)
+    assert H.edges.members() == [[6, 2, 6], [3], [5, 4], [1, 7, 8]]
