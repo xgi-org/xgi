@@ -147,3 +147,24 @@ def flag_complex(g, max_order=2, seed=None):
     S.add_simplices_from(max_cliques, max_order=max_order)
 
     return S
+
+
+def lattice(n, d, k, l):
+    """A lattice hypergraph.
+
+    A d-uniform hypergraph on n nodes where each node is part of k edges and the
+    overlap between consecutive edges is d-l.
+
+    Notes
+    -----
+
+    lattice(n, 2, k, 0) is a ring lattice graph where each node has k//2 edges on either
+    side.
+
+    """
+    edges = [
+        [node] + [(start + l + i) % n for i in range(d - 1)]
+        for node in range(n)
+        for start in range(node + 1, node + k // 2 + 1)
+    ]
+    return Hypergraph(edges)
