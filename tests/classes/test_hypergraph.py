@@ -80,12 +80,6 @@ def test_neighbors(edgelist1, edgelist2):
     assert H2.neighbors(4) == {3, 5, 6}
     assert H2.neighbors(1) == {2}
 
-    # test edge neighbors
-    assert H1.neighbors(0, edges=True) == set()
-    assert H1.neighbors(1, edges=True) == set()
-    assert H1.neighbors(2, edges=True) == {3}
-    assert H1.neighbors(3, edges=True) == {2}
-
 
 def test_dual(edgelist1, edgelist2, edgelist4):
     el1 = edgelist1
