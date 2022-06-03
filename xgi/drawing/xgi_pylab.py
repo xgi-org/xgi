@@ -14,6 +14,7 @@ from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 
 import xgi
+from xgi.exception import XGIError
 
 __all__ = [
     "draw",
@@ -90,7 +91,7 @@ def draw(
         return p[np.argsort(s), :]
 
     # Defining colors, one for each dimension
-    d_max = H.max_edge_order()
+    d_max = xgi.max_edge_order(H)
     if cmap is None:
         cmap = cm.Paired
         colors = [cmap(i) for i in range(0, d_max + 1)]

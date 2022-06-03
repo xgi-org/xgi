@@ -1011,38 +1011,6 @@ class Hypergraph:
 
         return dual
 
-    def max_edge_order(self):
-        """The maximum order of edges in the hypergraph.
-
-        Returns
-        -------
-        int
-            Maximum order of edges in hypergraph.
-
-        """
-        if self._edge:
-            d_max = max(len(edge) for edge in self._edge.values()) - 1
-        else:
-            d_max = 0 if self._node else None
-        return d_max
-
-    def is_possible_order(self, d):
-        """Whether the specified order is between 1 and the maximum order.
-
-        Parameters
-        ----------
-        d : int
-            Order for which to check.
-
-        Returns
-        -------
-        bool
-            Whether `d` is a possible order.
-
-        """
-        d_max = self.max_edge_order()
-        return (d >= 1) and (d <= d_max)
-
     def singleton_edges(self):
         """Edges with a single member.
 
@@ -1126,37 +1094,3 @@ class Hypergraph:
         edges = [tuple(e) for e in self._edge.values()]
         edges_unique, counts = np.unique(edges, return_counts=True)
         return list(edges_unique[np.where(counts > 1)])
-
-    def is_uniform(self):
-        """Order of uniformity if the hypergraph is uniform, or False.
-
-        A hypergraph is uniform if all its edges have the same order.
-
-        Returns d if the hypergraph is d-uniform, that is if all edges
-        in the hypergraph (excluding singletons) have the same degree d.
-        Returns False if not uniform.
-
-        Returns
-        -------
-        d : int or False
-            If the hypergraph is d-uniform, return d, or False otherwise.
-
-        Examples
-        --------
-        This function can be used as a boolean check:
-
-        >>> H = xgi.Hypergraph([(0, 1, 2), (1, 2, 3), (2, 3, 4)])
-        >>> H.is_uniform()
-        2
-        >>> if H.is_uniform(): print('H is uniform!')
-        H is uniform!
-
-        """
-        edge_sizes = {len(members) for _, members in self._edge.items()}
-        if 1 in edge_sizes:
-            edge_sizes.remove(1)  # discard singleton edges
-
-        if not edge_sizes or len(edge_sizes) != 1:
-            return False
-
-        return edge_sizes.pop() - 1  # order of all edges

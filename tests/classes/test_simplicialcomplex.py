@@ -51,8 +51,8 @@ def test_add_simplices_from(edgelist5):
 
     assert S1.nodes == S2.nodes
 
-    assert S1.max_edge_order() == 3
-    assert S2.max_edge_order() == 2
+    assert xgi.max_edge_order(S1) == 3
+    assert xgi.max_edge_order(S2) == 2
 
     assert set(S1.edges(order=1).members()) == set(S2.edges(order=1).members())
     assert set(S1.edges(order=2).members()) == set(S2.edges(order=2).members())
