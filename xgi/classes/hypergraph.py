@@ -726,11 +726,11 @@ class Hypergraph:
             The ID of the first edge.
         e_id2 : hashable
             The ID of the second edge.
-        is_loopy : hashable, default True
+        is_loopy : bool, default True
             Whether edges can be loopy.
 
         Raises
-        -----
+        ------
         XGIError
             If loopy hyperedges are created
         IDNotFound
