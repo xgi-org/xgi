@@ -488,7 +488,7 @@ class Hypergraph:
             i.e. you cannot mix different formats.  The iterables containing edge
             members cannot be strings.
 
-        attr : **kwargs, optional
+        attr : \*\*kwargs, optional
             Additional attributes to be assigned to all edges. Attribues specified via
             `ebunch_to_add` take precedence over `attr`.
 

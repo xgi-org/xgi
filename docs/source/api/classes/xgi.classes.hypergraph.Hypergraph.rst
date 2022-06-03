@@ -56,12 +56,9 @@
    .. autosummary::
       :nosignatures:
 
-      ~Hypergraph.degree
-      ~Hypergraph.edge_size
       ~Hypergraph.isolates
       ~Hypergraph.duplicate_edges
       ~Hypergraph.has_edge
-      ~Hypergraph.has_node
       ~Hypergraph.is_possible_order
       ~Hypergraph.max_edge_order
       ~Hypergraph.neighbors
@@ -75,4 +72,3 @@
       :nosignatures:
 
       ~Hypergraph.is_uniform
-      ~Hypergraph.nbunch_iter
