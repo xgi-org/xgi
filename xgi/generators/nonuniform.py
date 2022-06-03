@@ -67,8 +67,8 @@ def chung_lu_hypergraph(k1, k2, seed=None):
 
     """
     # sort dictionary by degree in decreasing order
-    Nlabels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
-    Mlabels = [m for m, _ in sorted(k2.items(), key=lambda d: d[1], reverse=True)]
+    node_labels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
+    edge_labels = [m for m, _ in sorted(k2.items(), key=lambda d: d[1], reverse=True)]
 
     m = len(k2)
 
@@ -80,19 +80,23 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     S = sum(k1.values())
 
     H = xgi.empty_hypergraph()
-    H.add_nodes_from(Nlabels)
+    H.add_nodes_from(node_labels)
 
-    for u in Nlabels:
+    for u in node_labels:
         j = 0
-        v = Mlabels[j]  # start from beginning every time
+        v = edge_labels[j]  # start from beginning every time
         p = min((k1[u] * k2[v]) / S, 1)
 
         while j < m:
             if p != 1:
                 r = seed.random()
-                j = j + math.floor(math.log(r) / math.log(1 - p))
+                try:
+                    j = j + math.floor(math.log(r) / math.log(1 - p))
+                except ZeroDivisionError:
+                    j = np.inf
+
             if j < m:
-                v = Mlabels[j]
+                v = edge_labels[j]
                 q = min((k1[u] * k2[v]) / S, 1)
                 r = seed.random()
                 if r < q / p:
@@ -171,8 +175,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     """
 
     # sort dictionary by degree in decreasing order
-    Nlabels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
-    Mlabels = [m for m, _ in sorted(k2.items(), key=lambda d: d[1], reverse=True)]
+    node_labels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
+    edge_labels = [m for m, _ in sorted(k2.items(), key=lambda d: d[1], reverse=True)]
 
     # these checks verify that the sum of node and edge degrees and the sum of node degrees
     # and the sum of community connection matrix differ by less than a single edge.
@@ -188,17 +192,17 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
 
     # get indices for each community
     community1Indices = defaultdict(list)
-    for label in Nlabels:
+    for label in node_labels:
         group = g1[label]
         community1Indices[group].append(label)
 
     community2Indices = defaultdict(list)
-    for label in Mlabels:
+    for label in edge_labels:
         group = g2[label]
         community2Indices[group].append(label)
 
     H = xgi.empty_hypergraph()
-    H.add_nodes_from(Nlabels)
+    H.add_nodes_from(node_labels)
 
     kappa1 = defaultdict(lambda: 0)
     kappa2 = defaultdict(lambda: 0)
