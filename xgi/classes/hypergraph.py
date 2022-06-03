@@ -713,6 +713,70 @@ class Hypergraph:
         except KeyError:
             XGIError("Empty or invalid edges specified.")
 
+    def double_edge_swap(self, n_id1, n_id2, e_id1, e_id2, is_loopy=True):
+        """Swap the edge memberships of two selected nodes, given two edges.
+
+        Parameters
+        ----------
+        n_id1 : hashable
+            The ID of the first node, originally a member of the first edge.
+        n_id2 : hashable
+            The ID of the second node, originally a member of the second edge.
+        e_id1 : hashable
+            The ID of the first edge.
+        e_id2 : hashable
+            The ID of the second edge.
+        is_loopy : bool, default True
+            Whether edges can be loopy.
+
+        Raises
+        ------
+        XGIError
+            If loopy hyperedges are created
+        IDNotFound
+            If user specifies nodes or edges that do not exist or
+            nodes that are not part of edges.
+
+        Examples
+        --------
+        Swap the memberships of two nodes.
+
+        >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4]])
+        >>> H.double_edge_swap(1, 4, 0, 1)
+        >>> H.edges.members()
+        [[4, 2, 3], [3, 1]]
+        """
+        # Assign edges to modify
+        try:
+            temp_memberships1 = list(self._node[n_id1])
+            temp_memberships1[self._node[n_id1].index(e_id1)] = e_id2
+
+            temp_memberships2 = list(self._node[n_id2])
+            temp_memberships2[self._node[n_id2].index(e_id2)] = e_id1
+
+            temp_members1 = list(self._edge[e_id1])
+            temp_members1[self._edge[e_id1].index(n_id1)] = n_id2
+
+            temp_members2 = list(self._edge[e_id2])
+            temp_members2[self._edge[e_id2].index(n_id2)] = n_id1
+
+        except ValueError:
+            raise XGIError(
+                "One of the nodes specified doesn't belong to the specified edge."
+            )
+
+        if not is_loopy and (
+            len(set(temp_members1)) < len(set(self._edge[e_id1]))
+            or len(set(temp_members2)) < len(set(self._edge[e_id2]))
+        ):
+            raise XGIError("This will create a loopy hyperedge.")
+
+        self._node[n_id1] = temp_memberships1
+        self._node[n_id2] = temp_memberships2
+
+        self._edge[e_id1] = temp_members1
+        self._edge[e_id2] = temp_members2
+
     def add_node_to_edge(self, edge, node):
         """Add one node to an existing edge.
 
