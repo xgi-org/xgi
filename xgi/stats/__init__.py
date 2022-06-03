@@ -199,4 +199,94 @@ class MultiNodeStat(NodeStat):
 
 
 def nodestat(func):
+    """Decorator that allows arbitrary functions to behave like :class:`Stat` objects.
+
+    Parameters
+    ----------
+    func : callable
+        Function or callable with signature `func(net, bunch)`, where `net` is the
+        network and `bunch` is an iterable of nodes in `net`.  The call `func(net,
+        bunch)` must return a dict with pairs of the form `(node: value)` where `node` is
+        in `bunch` and `value` is the value of the statistic at `node`.
+
+    Returns
+    -------
+    callable
+        The decorated callable unmodified, after registering it in the :class:`Stat`
+        framework.
+
+    See Also
+    --------
+    :class:`Stat`
+
+    Notes
+    -----
+    The user must make sure that `func` is such that, if `res` is defined as `res =
+    func(net, bunch)`, then `res` has keys in the same order as they are found in
+    `bunch`.  Since python dicts preserve order, it is enough for `func` to create the
+    returned dict by iterating over `bunch`.
+
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.Hypergraph([[1, 2], [3, 4], [4, 5, 6]])
+
+    The following function defines a node-integer mapping.
+
+    >>> def my_degree(net, bunch):
+    ...     return {n: 10 * net.degree(n) for n in bunch}
+
+    Node statistics can be called from the network or from the NodeView.
+
+    >>> H.degree()
+    {1: 1, 2: 1, 3: 1, 4: 2, 5: 1, 6: 1}
+    >>> H.nodes.degree
+    NodeStat('degree')
+
+    However, `my_degree` is not recognized as a node statistic.
+
+    >>> H.my_degree()
+    Traceback (most recent call last):
+    AttributeError: stat "my_degree" not among available node or edge stats
+    >>> H.nodes.my_degree
+    Traceback (most recent call last):
+    AttributeError: Stat 'my_degree' not defined
+
+    Use the `nodestat` decorator to turn `my_degree` into a valid stat.
+
+    >>> original_my_degree = my_degree
+    >>> my_degree = xgi.nodestat(my_degree)
+    >>> H.my_degree()
+    {1: 10, 2: 10, 3: 10, 4: 20, 5: 10, 6: 10}
+    >>> H.nodes.my_degree
+    NodeStat('my_degree')
+
+    Now the entirety of the interface of stat objects is available.
+
+    >>> H.nodes.filterby('my_degree', 20)
+    NodeView((4,))
+    >>> H.nodes.multi(['degree', 'my_degree']).aspandas()
+       degree  my_degree
+    1       1         10
+    2       1         10
+    3       1         10
+    4       2         20
+    5       1         10
+    6       1         10
+
+    Note the passed function is left unmodified.
+
+    >>> my_degree is original_my_degree
+    True
+
+    The previous usage of `nodestat` is made for explanatory purposes.  A more typical
+    use of `nodestat` is the following.
+
+    >>> @xgi.nodestat
+    ... def my_degree(net, bunch):
+    ...     return {n: 10 * net.degree(n) for n in bunch}
+
+    """
     setattr(nodestats, func.__name__, func)
+    return func

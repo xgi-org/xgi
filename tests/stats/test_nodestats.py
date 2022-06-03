@@ -464,21 +464,21 @@ def test_user_defined(edgelist1):
     H = xgi.Hypergraph(edgelist1)
 
     with pytest.raises(AttributeError):
-        H.my_degree
+        H.user_degree
     with pytest.raises(AttributeError):
-        H.nodes.my_degree
+        H.nodes.user_degree
 
     @xgi.nodestat
-    def my_degree(net, bunch):
+    def user_degree(net, bunch):
         return {n: 10 * net.degree(n) for n in bunch}
 
     vals = {n: 10 * H.degree(n) for n in H}
-    assert H.my_degree() == vals
-    assert H.nodes.my_degree.asdict() == vals
-    assert H.nodes.my_degree.aslist() == [vals[n] for n in H]
+    assert H.user_degree() == vals
+    assert H.nodes.user_degree.asdict() == vals
+    assert H.nodes.user_degree.aslist() == [vals[n] for n in H]
     assert (
-        list(H.nodes.filterby("my_degree", 20))
+        list(H.nodes.filterby("user_degree", 20))
         == list(H.nodes.filterby("degree", 2))
         == [6]
     )
-    assert H.nodes.filterby("degree", 2).my_degree.asdict() == {6: 20}
+    assert H.nodes.filterby("degree", 2).user_degree.asdict() == {6: 20}
