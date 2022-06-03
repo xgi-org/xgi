@@ -1,15 +1,14 @@
 """Node statisics."""
 
+import xgi
+from itertools import combinations
+
 __all__ = [
     "attrs",
     "degree",
     "average_neighbor_degree",
+    "clustering",
 ]
-
-
-# should close #78
-# interacts with #30
-# should also close #64, after we implemen the frozen stuff
 
 
 def attrs(net, bunch, attr=None, missing=None):
@@ -51,4 +50,18 @@ def average_neighbor_degree(net, bunch):
         neighbors = net.neighbors(n)
         result[n] = sum(len(net._node[nbr]) for nbr in neighbors)
         result[n] = result[n] / len(neighbors) if neighbors else 0
+    return result
+
+
+def clustering(net, bunch):
+    adj = xgi.adjacency_matrix(net)
+    mat = adj.dot(adj).dot(adj)
+    result = {}
+    for n in bunch:
+        deg = len(net.nodes.memberships(n))
+        denom = deg * (deg - 1) / 2
+        if denom <= 0:
+            result[n] = 0.0
+        else:
+            result[n] = mat[n, n] / denom / 2
     return result
