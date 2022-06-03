@@ -23,7 +23,7 @@ def test_star_clique():
     H = xgi.star_clique(6, 7, 3)
     assert H.num_nodes == 13
     assert H.num_edges == 97
-    assert H.max_edge_order() == 3
+    assert xgi.max_edge_order(H) == 3
 
 
 def test_flag_complex():

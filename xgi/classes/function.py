@@ -7,6 +7,10 @@ import xgi
 from xgi.exception import XGIError
 
 __all__ = [
+    "max_edge_order",
+    "is_possible_order",
+    "is_uniform",
+    "egonet",
     "degree_counts",
     "degree_histogram",
     "unique_edge_sizes",
@@ -20,6 +24,128 @@ __all__ = [
     "is_empty",
     "maximal_simplices",
 ]
+
+
+def max_edge_order(H):
+    """The maximum order of edges in the hypergraph.
+
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        The hypergraph of interest.
+
+    Returns
+    -------
+    int
+        Maximum order of edges in hypergraph.
+
+    """
+    if H._edge:
+        d_max = max(len(edge) for edge in H._edge.values()) - 1
+    else:
+        d_max = 0 if H._node else None
+    return d_max
+
+
+def is_possible_order(H, d):
+    """Whether the specified order is between 1 and the maximum order.
+
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        The hypergraph of interest.
+    d : int
+        Order for which to check.
+
+    Returns
+    -------
+    bool
+        Whether `d` is a possible order.
+
+    """
+    d_max = xgi.max_edge_order(H)
+    return (d >= 1) and (d <= d_max)
+
+
+def is_uniform(H):
+    """Order of uniformity if the hypergraph is uniform, or False.
+
+    A hypergraph is uniform if all its edges have the same order.
+
+    Returns d if the hypergraph is d-uniform, that is if all edges
+    in the hypergraph (excluding singletons) have the same degree d.
+    Returns False if not uniform.
+
+    Returns
+    -------
+    d : int or False
+        If the hypergraph is d-uniform, return d, or False otherwise.
+
+    Examples
+    --------
+    This function can be used as a boolean check:
+
+    >>> H = xgi.Hypergraph([(0, 1, 2), (1, 2, 3), (2, 3, 4)])
+    >>> xgi.is_uniform(H)
+    2
+    >>> if xgi.is_uniform(H): print('H is uniform!')
+    H is uniform!
+
+    """
+    edge_sizes = {len(members) for _, members in H._edge.items()}
+    if 1 in edge_sizes:
+        edge_sizes.remove(1)  # discard singleton edges
+
+    if not edge_sizes or len(edge_sizes) != 1:
+        return False
+
+    return edge_sizes.pop() - 1  # order of all edges
+
+
+def egonet(H, n, include_self=False):
+    """The egonet of the specified node.
+
+    The egonet of a node `n` in a hypergraph `H` is another hypergraph whose nodes
+    are the neighbors of `n` and its edges are all the edges in `H` that contain
+    `n`.  Usually, the egonet do not include `n` itself.  This can be controlled
+    with `include_self`.
+
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        THe hypergraph of interest
+    n : node
+        Node whose egonet is needed.
+    include_self : bool (default False)
+        Whether the egonet contains `n`.
+
+    Returns
+    -------
+    list
+        An edgelist of the egonet of `n`.
+
+    See Also
+    --------
+    neighbors
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5, 6]])
+    >>> H.neighbors(3)
+    {1, 2, 4}
+    >>> xgi.egonet(H, 3)
+    [[1, 2], [4]]
+    >>> xgi.egonet(H, 3, include_self=True)
+    [[1, 2, 3], [3, 4]]
+
+    """
+    if include_self:
+        return [H.edges.members(e) for e in H.nodes.memberships(n)]
+    else:
+        return [
+            [x for x in H.edges.members(e) if x != n] for e in H.nodes.memberships(n)
+        ]
 
 
 def degree_counts(H):

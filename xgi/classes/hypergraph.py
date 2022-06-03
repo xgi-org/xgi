@@ -235,24 +235,19 @@ class Hypergraph:
 
     def neighbors(self, n):
         """Find the neighbors of a node.
-
         The neighbors of a node are those nodes that appear in at least one edge with
         said node.
-
         Parameters
         ----------
         n : node
             Node to find neighbors of.
-
         Returns
         -------
         set
             A set of the neighboring nodes
-
         See Also
         --------
         egonet
-
         Examples
         --------
         >>> import xgi
@@ -262,53 +257,8 @@ class Hypergraph:
         {2}
         >>> H.neighbors(2)
         {1, 3, 4}
-
         """
         return {i for e in self._node[n] for i in self._edge[e]}.difference({n})
-
-    def egonet(self, n, include_self=False):
-        """The egonet of the specified node.
-
-        The egonet of a node `n` in a hypergraph `H` is another hypergraph whose nodes
-        are the neighbors of `n` and its edges are all the edges in `H` that contain
-        `n`.  Usually, the egonet do not include `n` itself.  This can be controlled
-        with `include_self`.
-
-        Parameters
-        ----------
-        n : node
-            Node whose egonet is needed.
-        include_self : bool (default False)
-            Whether the egonet contains `n`.
-
-        Returns
-        -------
-        list
-            An edgelist of the egonet of `n`.
-
-        See Also
-        --------
-        neighbors
-
-        Examples
-        --------
-        >>> import xgi
-        >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5, 6]])
-        >>> H.neighbors(3)
-        {1, 2, 4}
-        >>> H.egonet(3)
-        [[1, 2], [4]]
-        >>> H.egonet(3, include_self=True)
-        [[1, 2, 3], [3, 4]]
-
-        """
-        if include_self:
-            return [self.edges.members(e) for e in self.nodes.memberships(n)]
-        else:
-            return [
-                [x for x in self.edges.members(e) if x != n]
-                for e in self.nodes.memberships(n)
-            ]
 
     def add_node(self, node, **attr):
         """Add one node with optional attributes.
@@ -1061,38 +1011,6 @@ class Hypergraph:
 
         return dual
 
-    def max_edge_order(self):
-        """The maximum order of edges in the hypergraph.
-
-        Returns
-        -------
-        int
-            Maximum order of edges in hypergraph.
-
-        """
-        if self._edge:
-            d_max = max(len(edge) for edge in self._edge.values()) - 1
-        else:
-            d_max = 0 if self._node else None
-        return d_max
-
-    def is_possible_order(self, d):
-        """Whether the specified order is between 1 and the maximum order.
-
-        Parameters
-        ----------
-        d : int
-            Order for which to check.
-
-        Returns
-        -------
-        bool
-            Whether `d` is a possible order.
-
-        """
-        d_max = self.max_edge_order()
-        return (d >= 1) and (d <= d_max)
-
     def singleton_edges(self):
         """Edges with a single member.
 
@@ -1176,37 +1094,3 @@ class Hypergraph:
         edges = [tuple(e) for e in self._edge.values()]
         edges_unique, counts = np.unique(edges, return_counts=True)
         return list(edges_unique[np.where(counts > 1)])
-
-    def is_uniform(self):
-        """Order of uniformity if the hypergraph is uniform, or False.
-
-        A hypergraph is uniform if all its edges have the same order.
-
-        Returns d if the hypergraph is d-uniform, that is if all edges
-        in the hypergraph (excluding singletons) have the same degree d.
-        Returns False if not uniform.
-
-        Returns
-        -------
-        d : int or False
-            If the hypergraph is d-uniform, return d, or False otherwise.
-
-        Examples
-        --------
-        This function can be used as a boolean check:
-
-        >>> H = xgi.Hypergraph([(0, 1, 2), (1, 2, 3), (2, 3, 4)])
-        >>> H.is_uniform()
-        2
-        >>> if H.is_uniform(): print('H is uniform!')
-        H is uniform!
-
-        """
-        edge_sizes = {len(members) for _, members in self._edge.items()}
-        if 1 in edge_sizes:
-            edge_sizes.remove(1)  # discard singleton edges
-
-        if not edge_sizes or len(edge_sizes) != 1:
-            return False
-
-        return edge_sizes.pop() - 1  # order of all edges

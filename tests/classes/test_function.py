@@ -4,6 +4,52 @@ import xgi
 from xgi.exception import IDNotFound, XGIError
 
 
+def test_max_edge_order(edgelist1, edgelist4, edgelist5):
+    H0 = xgi.empty_hypergraph()
+    H1 = xgi.empty_hypergraph()
+    H1.add_nodes_from(range(5))
+    H2 = xgi.Hypergraph(edgelist1)
+    H3 = xgi.Hypergraph(edgelist4)
+    H4 = xgi.Hypergraph(edgelist5)
+
+    assert xgi.max_edge_order(H0) == None
+    assert xgi.max_edge_order(H1) == 0
+    assert xgi.max_edge_order(H2) == 2
+    assert xgi.max_edge_order(H3) == 3
+    assert xgi.max_edge_order(H4) == 3
+
+
+def test_is_possible_order(edgelist1):
+    H1 = xgi.Hypergraph(edgelist1)
+
+    assert xgi.is_possible_order(H1, -1) == False
+    assert xgi.is_possible_order(H1, 0) == False
+    assert xgi.is_possible_order(H1, 1) == True
+    assert xgi.is_possible_order(H1, 2) == True
+    assert xgi.is_possible_order(H1, 3) == False
+
+
+def test_is_uniform(edgelist1, edgelist6, edgelist7):
+    H0 = xgi.Hypergraph(edgelist1)
+    H1 = xgi.Hypergraph(edgelist6)
+    H2 = xgi.Hypergraph(edgelist7)
+    H3 = xgi.empty_hypergraph()
+
+    assert xgi.is_uniform(H0) == False
+    assert xgi.is_uniform(H1) == 2
+    assert xgi.is_uniform(H2) == 2
+    assert xgi.is_uniform(H3) == False
+
+
+def test_egonet(edgelist3):
+    H = xgi.Hypergraph(edgelist3)
+    assert H.neighbors(3) == {1, 2, 4}
+    assert xgi.egonet(H, 3) == [[1, 2], [4]]
+    assert xgi.egonet(H, 3, include_self=True) == [[1, 2, 3], [3, 4]]
+    with pytest.raises(IDNotFound):
+        xgi.egonet(H, 7)
+
+
 def test_degree_counts(edgelist1, edgelist2, edgelist3):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist2)
