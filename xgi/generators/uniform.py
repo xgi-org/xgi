@@ -71,6 +71,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
         stubs.extend([id] * int(k[id]))
 
     H = xgi.empty_hypergraph()
+    H.add_nodes_from(k.keys())
 
     while len(stubs) != 0:
         u = seed.sample(range(len(stubs)), m)
