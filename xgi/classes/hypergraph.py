@@ -15,6 +15,13 @@ __all__ = ["Hypergraph"]
 
 
 class IDDict(dict):
+    """A dict that holds (node or edge) IDs.
+
+    For internal use only.  Adds input validation functionality to the internal dicts
+    that hold nodes and edges in a network.
+
+    """
+
     def __getitem__(self, item):
         try:
             return super().__getitem__(item)

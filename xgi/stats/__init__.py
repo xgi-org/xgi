@@ -11,6 +11,8 @@ __all__ = ["nodestat", "EdgeStatDispatcher", "NodeStatDispatcher"]
 
 
 class StatDispatcher:
+    """Create :class:`NodeStat` or :class:`EdgeStat` objects."""
+
     def __init__(self, network, view, module):
         self.net = network
         self.view = view
@@ -26,20 +28,27 @@ class StatDispatcher:
         return stat
 
     def multi(self, stats):
+        """Create a :class:`MultiStat` object."""
         return MultiNodeStat(self.net, self.view, stats)
 
 
 class EdgeStatDispatcher(StatDispatcher):
+    """A StatDispatcher for edge stats."""
+
     def __init__(self, network, view):
         super().__init__(network, view, edgestats)
 
 
 class NodeStatDispatcher(StatDispatcher):
+    """A StatDispatcher for node stats."""
+
     def __init__(self, network, view):
         super().__init__(network, view, nodestats)
 
 
 class NodeStat:
+    """Mapping between nodes or edges and a quantity or property."""
+
     def __init__(self, network, view, func, args=None, kwargs=None):
         self.view = view
         self.net = network
@@ -117,6 +126,8 @@ class NodeStat:
 
 
 class MultiNodeStat(NodeStat):
+    """Multiple mappings."""
+
     def __init__(self, network, view, stats):
         super().__init__(network, view, None)
         if isinstance(stats, NodeStat):
