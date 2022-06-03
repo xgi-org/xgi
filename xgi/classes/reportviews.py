@@ -72,8 +72,8 @@ class IDView(Mapping, Set):
         self._id_attr = state["_id_attr"]
         self._ids = state["_ids"]
 
-    def __init__(self, H, id_dict, id_attr, dispatcherclass, ids=None):
-        self._dispatcher = dispatcherclass(H, self)
+    def __init__(self, H, id_dict, id_attr, dispatcher, ids=None):
+        self._dispatcher = dispatcher
         self._id_dict = id_dict
         self._id_attr = id_attr
 
@@ -240,10 +240,11 @@ class NodeView(IDView):
     """
 
     def __init__(self, H, bunch=None):
+        dispatcher = NodeStatDispatcher(H, self)
         if H is None:
-            super().__init__(None, None, None, NodeStatDispatcher, bunch)
+            super().__init__(None, None, None, dispatcher, bunch)
         else:
-            super().__init__(H, H._node, H._node_attr, NodeStatDispatcher, bunch)
+            super().__init__(H, H._node, H._node_attr, dispatcher, bunch)
 
     def memberships(self, n=None):
         """Get the edge ids of which a node is a member.
@@ -280,10 +281,11 @@ class EdgeView(IDView):
     """
 
     def __init__(self, H, bunch=None):
+        dispatcher = EdgeStatDispatcher(H, self)
         if H is None:
-            super().__init__(None, None, None, EdgeStatDispatcher, bunch)
+            super().__init__(None, None, None, dispatcher, bunch)
         else:
-            super().__init__(H, H._edge, H._edge_attr, EdgeStatDispatcher, bunch)
+            super().__init__(H, H._edge, H._edge_attr, dispatcher, bunch)
 
     def members(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
