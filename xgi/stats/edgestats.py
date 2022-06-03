@@ -1,4 +1,4 @@
-"""Edge statisics."""
+"""Edge statistics."""
 
 __all__ = [
     "attrs",

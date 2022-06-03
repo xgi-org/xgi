@@ -1,4 +1,4 @@
-"""Node statisics."""
+"""Node statistics."""
 
 import xgi
 from itertools import combinations
@@ -12,6 +12,77 @@ __all__ = [
 
 
 def attrs(net, bunch, attr=None, missing=None):
+    """Access node attributes.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Nodes in `net`.
+    attr : str | None (default)
+        If None, return all attributes.  Otherwise, return a single attribute with name
+        `attr`.
+    missing : Any
+        Value to impute in case a node does not have an attribute with name `attr`.
+        Default is None.
+
+    Returns
+    -------
+    dict
+        If attr is None, return a nested dict of the form `{node: {"attr": val}}`.
+        Otherwise, return a simple dict of the form `{node: val}`.
+
+    Notes
+    -----
+    When requesting all attributes (i.e. when `attr` is None), no value is imputed.
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+    >>> H.add_nodes_from([
+    ...         (1, {"color": "red", "name": "horse"}),
+    ...         (2, {"color": "blue", "name": "pony"}),
+    ...         (3, {"color": "yellow", "name": "zebra"}),
+    ...         (4, {"color": "red", "name": "orangutan", "age": 20}),
+    ...         (5, {"color": "blue", "name": "fish", "age": 2}),
+    ...     ])
+
+    Access all attributes as different types.
+
+    >>> H.nodes.attrs.asdict() # doctest: +NORMALIZE_WHITESPACE
+    {1: {'color': 'red', 'name': 'horse'},
+     2: {'color': 'blue', 'name': 'pony'},
+     3: {'color': 'yellow', 'name': 'zebra'},
+     4: {'color': 'red', 'name': 'orangutan', 'age': 20},
+     5: {'color': 'blue', 'name': 'fish', 'age': 2}}
+    >>> H.nodes.attrs.asnumpy() # doctest: +NORMALIZE_WHITESPACE
+    array([{'color': 'red', 'name': 'horse'},
+           {'color': 'blue', 'name': 'pony'},
+           {'color': 'yellow', 'name': 'zebra'},
+           {'color': 'red', 'name': 'orangutan', 'age': 20},
+           {'color': 'blue', 'name': 'fish', 'age': 2}],
+          dtype=object)
+
+    Access a single attribute as different types.
+
+    >>> H.nodes.attrs('color').asdict()
+    {1: 'red', 2: 'blue', 3: 'yellow', 4: 'red', 5: 'blue'}
+    >>> H.nodes.attrs('color').aslist()
+    ['red', 'blue', 'yellow', 'red', 'blue']
+
+    By default, None is imputed when a node does not have the requested attribute.
+
+    >>> H.nodes.attrs('age').asdict()
+    {1: None, 2: None, 3: None, 4: 20, 5: 2}
+
+    Use `missing` to change the imputed value.
+
+    >>> H.nodes.attrs('age', missing=100).asdict()
+    {1: 100, 2: 100, 3: 100, 4: 20, 5: 2}
+
+    """
     if isinstance(attr, str):
         return {n: net._node_attr[n].get(attr, missing) for n in bunch}
     elif attr is None:
