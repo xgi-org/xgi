@@ -7,6 +7,7 @@ import xgi
 from xgi.exception import XGIError
 
 __all__ = [
+    "egonet",
     "degree_counts",
     "degree_histogram",
     "unique_edge_sizes",
@@ -20,6 +21,52 @@ __all__ = [
     "is_empty",
     "maximal_simplices",
 ]
+
+
+def egonet(H, n, include_self=False):
+    """The egonet of the specified node.
+
+    The egonet of a node `n` in a hypergraph `H` is another hypergraph whose nodes
+    are the neighbors of `n` and its edges are all the edges in `H` that contain
+    `n`.  Usually, the egonet do not include `n` itself.  This can be controlled
+    with `include_self`.
+
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        THe hypergraph of interest
+    n : node
+        Node whose egonet is needed.
+    include_self : bool (default False)
+        Whether the egonet contains `n`.
+
+    Returns
+    -------
+    list
+        An edgelist of the egonet of `n`.
+
+    See Also
+    --------
+    neighbors
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5, 6]])
+    >>> H.neighbors(3)
+    {1, 2, 4}
+    >>> xgi.egonet(H, 3)
+    [[1, 2], [4]]
+    >>> xgi.egonet(H, 3, include_self=True)
+    [[1, 2, 3], [3, 4]]
+
+    """
+    if include_self:
+        return [H.edges.members(e) for e in H.nodes.memberships(n)]
+    else:
+        return [
+            [x for x in H.edges.members(e) if x != n] for e in H.nodes.memberships(n)
+        ]
 
 
 def degree_counts(H):
