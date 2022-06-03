@@ -233,7 +233,7 @@ class Hypergraph:
         """
         return len(self._edge)
 
-    def neighbors(self, n):
+    def neighbors(self, id, edges=False):
         """Find the neighbors of a node.
 
         The neighbors of a node are those nodes that appear in at least one edge with
@@ -241,8 +241,10 @@ class Hypergraph:
 
         Parameters
         ----------
-        n : node
-            Node to find neighbors of.
+        id : hashable
+            ID to find neighbors of.
+        edges : bool, default True
+            If False, return node neighbors, if True return edge neighbors.
 
         Returns
         -------
@@ -264,51 +266,10 @@ class Hypergraph:
         {1, 3, 4}
 
         """
-        return {i for e in self._node[n] for i in self._edge[e]}.difference({n})
-
-    def egonet(self, n, include_self=False):
-        """The egonet of the specified node.
-
-        The egonet of a node `n` in a hypergraph `H` is another hypergraph whose nodes
-        are the neighbors of `n` and its edges are all the edges in `H` that contain
-        `n`.  Usually, the egonet do not include `n` itself.  This can be controlled
-        with `include_self`.
-
-        Parameters
-        ----------
-        n : node
-            Node whose egonet is needed.
-        include_self : bool (default False)
-            Whether the egonet contains `n`.
-
-        Returns
-        -------
-        list
-            An edgelist of the egonet of `n`.
-
-        See Also
-        --------
-        neighbors
-
-        Examples
-        --------
-        >>> import xgi
-        >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5, 6]])
-        >>> H.neighbors(3)
-        {1, 2, 4}
-        >>> H.egonet(3)
-        [[1, 2], [4]]
-        >>> H.egonet(3, include_self=True)
-        [[1, 2, 3], [3, 4]]
-
-        """
-        if include_self:
-            return [self.edges.members(e) for e in self.nodes.memberships(n)]
+        if edges:
+            return {i for n in self._edge[id] for i in self._node[n]}.difference({id})
         else:
-            return [
-                [x for x in self.edges.members(e) if x != n]
-                for e in self.nodes.memberships(n)
-            ]
+            return {i for e in self._node[id] for i in self._edge[e]}.difference({id})
 
     def add_node(self, node, **attr):
         """Add one node with optional attributes.
