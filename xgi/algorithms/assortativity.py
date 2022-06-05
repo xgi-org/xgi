@@ -60,7 +60,7 @@ def uniform_assortativity(H):
     degrees = dict(H.degree())
     try:
         k1k2 = [[degrees[n] for n in random.sample(H.edges.members(e), 2)] for e in H.edges]
-    except IndexError:
+    except ValueError:
         raise XGIError("Hypergraph must not have singleton edges.")
 
-    return np.corrcoef(*k1k2)[0, 1]
+    return np.corrcoef(list(zip(*k1k2)))[0, 1]
