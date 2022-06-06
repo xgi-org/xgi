@@ -1,4 +1,21 @@
-"""Node statistics."""
+"""Node statistics.
+
+Each name defined in this module is part of the :class:`Stat` framework, that is, the
+functions and callables defined here are assumed to define a node-quantity mapping.  As
+such, they are each accessible via a Network object, or a NodeView object.
+
+Examples
+--------
+
+>>> import xgi
+>>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+>>> H.degree()
+{1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
+>>> H.nodes.degree.asdict()
+{1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
+
+
+"""
 
 import xgi
 from itertools import combinations
@@ -116,6 +133,27 @@ def degree(net, bunch, order=None, weight=None):
 
 
 def average_neighbor_degree(net, bunch):
+    """Average neighbor degree.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Nodes in `net`.
+
+    Returns
+    -------
+    dict
+
+    Examples
+    --------
+    >>> import xgi, numpy as np
+    >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+    >>> np.round(H.nodes.average_neighbor_degree.asnumpy(), 3)
+    array([2.5  , 2.   , 1.75 , 2.333, 2.333])
+
+    """
     result = {}
     for n in bunch:
         neighbors = net.neighbors(n)

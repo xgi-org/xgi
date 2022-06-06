@@ -2,6 +2,8 @@
 stats package
 #############
 
+.. automodule:: xgi.stats
+
 .. rubric:: Modules
 
 .. autosummary::
