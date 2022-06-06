@@ -1,8 +1,9 @@
 """Node statistics.
 
-Each name defined in this module is part of the :class:`Stat` framework, that is, the
-functions and callables defined here are assumed to define a node-quantity mapping.  As
-such, they are each accessible via a Network object, or a NodeView object.
+This module is part of the stats package, and it defines node-level statistics.  That
+is, each function defined in this module is assumed to define a node-quantity mapping.
+Each callable defined here is accessible via a `Network` object, or a :class:`NodeView`
+object.
 
 Examples
 --------
@@ -13,7 +14,6 @@ Examples
 {1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
 >>> H.nodes.degree.asdict()
 {1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
-
 
 """
 
@@ -57,7 +57,7 @@ def attrs(net, bunch, attr=None, missing=None):
     Examples
     --------
     >>> import xgi
-    >>> H = H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+    >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
     >>> H.add_nodes_from([
     ...         (1, {"color": "red", "name": "horse"}),
     ...         (2, {"color": "blue", "name": "pony"}),
@@ -163,7 +163,38 @@ def average_neighbor_degree(net, bunch):
 
 
 def clustering(net, bunch):
-    adj = xgi.adjacency_matrix(net)
+    """Local clustering coefficient.
+
+    The clustering coefficient of a node `n` is defined as `num / denom`, where `num`
+    equals `A^3[n, n]` and `denom` equals `d*(d-1)/2`.  Here `A` is the adjacency matrix
+    of the network and `d` is the degree of `n`.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Nodes in `net`.
+
+    Returns
+    -------
+    dict
+
+    Notes
+    -----
+    This is a direct generalization of the definition of local clustering coefficient
+    for graphs.  It has not been tested on hypergraphs.
+
+    Examples
+    --------
+    >>> import xgi, numpy as np
+    >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+    >>> np.round(H.nodes.clustering.asnumpy(), 3)
+    array([0.   , 4.   , 1.333, 3.   , 3.   ])
+
+    """
+    adj, index = xgi.adjacency_matrix(net, index=True)
+    node_to_index = {n: i for i, n in index.items()}
     mat = adj.dot(adj).dot(adj)
     result = {}
     for n in bunch:
@@ -172,5 +203,6 @@ def clustering(net, bunch):
         if denom <= 0:
             result[n] = 0.0
         else:
-            result[n] = mat[n, n] / denom / 2
+            i = node_to_index[n]
+            result[n] = mat[i, i] / denom / 2
     return result
