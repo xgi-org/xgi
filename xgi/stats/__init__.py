@@ -343,7 +343,7 @@ class MultiIDStat(IDStat):
     @property
     def val(self):
         result = {s.name: s.asdict() for s in self.stats}
-        return {n: {s.name: result[s.name][n] for s in self.stats} for n in self.net}
+        return {n: {s.name: result[s.name][n] for s in self.stats} for n in self.view}
 
     def asdict(self, inner=dict, transpose=False):
         """transpose is used when inner=dict, otherwise ignored."""
