@@ -170,50 +170,54 @@ import pandas as pd
 from typing import Callable
 from collections import defaultdict
 
+from xgi.exception import IDNotFound
+
 from . import nodestats
 from . import edgestats
 
 
-__all__ = ["nodestat", "EdgeStatDispatcher", "NodeStatDispatcher"]
+__all__ = ["nodestat", "edgestat", "EdgeStatDispatcher", "NodeStatDispatcher"]
 
 
 class StatDispatcher:
     """Create :class:`NodeStat` or :class:`EdgeStat` objects."""
 
-    def __init__(self, network, view, module):
+    def __init__(self, network, view, module, statsclass, multistatsclass):
         self.net = network
         self.view = view
         self.module = module
+        self.statsclass = statsclass
+        self.multistatsclass = multistatsclass
 
     def __getattr__(self, name):
         try:
             func = getattr(self.module, name)
         except AttributeError as e:
             raise AttributeError(f"Stat '{name}' not defined") from e
-        stat = NodeStat(self.net, self.view, func)
+        stat = self.statsclass(self.net, self.view, func)
         self.__dict__[name] = stat
         return stat
 
     def multi(self, stats):
         """Create a :class:`MultiStat` object."""
-        return MultiNodeStat(self.net, self.view, stats)
+        return self.multistatsclass(self.net, self.view, stats)
 
 
 class EdgeStatDispatcher(StatDispatcher):
     """A StatDispatcher for edge stats."""
 
     def __init__(self, network, view):
-        super().__init__(network, view, edgestats)
+        super().__init__(network, view, edgestats, EdgeStat, MultiEdgeStat)
 
 
 class NodeStatDispatcher(StatDispatcher):
     """A StatDispatcher for node stats."""
 
     def __init__(self, network, view):
-        super().__init__(network, view, nodestats)
+        super().__init__(network, view, nodestats, NodeStat, MultiNodeStat)
 
 
-class NodeStat:
+class IDStat:
     """Mapping between nodes or edges and a quantity or property."""
 
     def __init__(self, network, view, func, args=None, kwargs=None):
@@ -224,10 +228,12 @@ class NodeStat:
         self.func = func
 
     def __call__(self, *args, **kwargs):
-        return NodeStat(self.net, self.view, self.func, args=args, kwargs=kwargs)
+        return self.__class__(self.net, self.view, self.func, args=args, kwargs=kwargs)
 
-    def __getitem__(self, node):
-        return self.func(self.net, [node], *self.args, **self.kwargs)[node]
+    def __getitem__(self, id):
+        if id not in self.view:
+            raise IDNotFound(f'ID "{id}" not in this view')
+        return self.func(self.net, [id], *self.args, **self.kwargs)[id]
 
     def __repr__(self):
         cls = self.__class__.__name__
@@ -292,24 +298,35 @@ class NodeStat:
         return np.histogram(self.asnumpy(), density=True)
 
 
-class MultiNodeStat(NodeStat):
+class NodeStat(IDStat):
+    pass
+
+
+class EdgeStat(IDStat):
+    pass
+
+
+class MultiIDStat(IDStat):
     """Multiple mappings."""
+
+    statsclass = None
+    statsmodule = None
 
     def __init__(self, network, view, stats):
         super().__init__(network, view, None)
-        if isinstance(stats, NodeStat):
-            raise TypeError("must pass an iterable of NodeStat, not a single NodeStat")
+        if isinstance(stats, IDStat):
+            raise TypeError("must pass an iterable of IDStat, not a single NodeStat")
         elif isinstance(stats, str):
-            raise TypeError("must pass an iterable of NodeStat, not str")
+            raise TypeError("must pass an iterable of IDStat, not str")
         self.stats = [self._get_stat(f) for f in stats]
 
     def _get_stat(self, s):
         if isinstance(s, str):
-            return NodeStat(self.net, self.view, getattr(nodestats, s))
-        elif isinstance(s, NodeStat):
+            return self.statsclass(self.net, self.view, getattr(self.statsmodule, s))
+        elif isinstance(s, self.statsclass):
             return s
         else:
-            raise TypeError(f"{s.__name__} must be str or NodeStat")
+            raise TypeError(f"{s.__name__} must be str or IDStat")
 
     def __repr__(self):
         return (
@@ -363,6 +380,16 @@ class MultiNodeStat(NodeStat):
 
     def dist(self):
         return [np.histogram(data, density=True) for data in self.asnumpy().T]
+
+
+class MultiNodeStat(MultiIDStat):
+    statsclass = NodeStat
+    statsmodule = nodestats
+
+
+class MultiEdgeStat(MultiIDStat):
+    statsclass = EdgeStat
+    statsmodule = edgestats
 
 
 def nodestat(func):
