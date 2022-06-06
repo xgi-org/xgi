@@ -54,9 +54,10 @@ class SimplicialComplex(Hypergraph):
     Unique IDs are assigned to each node and simplex internally and are used to refer to
     them throughout.
 
-    The attr keyword arguments are added as simplicial complex attributes. To add node or simplex
-    attributes see :meth:`add_node` and :meth:`add_simplex`. Methods such as :meth:`add_simplex`
-    replace Hypergraph methods such as :meth:`add_edge` which here raise an error.
+    The `attr` keyword arguments are added as simplicial complex attributes. To add node
+    or simplex attributes see :meth:`add_node` and :meth:`add_simplex`. Methods such as
+    :meth:`add_simplex` replace :class:`Hypergraph` methods such as :meth:`add_edge`
+    which here raise an error.
 
     Examples
     --------

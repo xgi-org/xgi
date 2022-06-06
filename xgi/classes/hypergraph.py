@@ -78,8 +78,13 @@ class Hypergraph:
     Unique IDs are assigned to each node and edge internally and are used to refer to
     them throughout.
 
-    The attr keyword arguments are added as hypergraph attributes. To add node or ede
+    The `attr` keyword arguments are added as hypergraph attributes. To add node or ede
     attributes see :meth:`add_node` and :meth:`add_edge`.
+
+    In addition to the methods listed in this page, other methods defined in the `stats`
+    package are also accessible via the `Hypergraph` class.  For more details, see the
+    `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
     Examples
     --------
@@ -201,10 +206,12 @@ class Hypergraph:
 
     @property
     def nodes(self):
+        """A :class:`NodeView` of this network."""
         return self._nodeview
 
     @property
     def edges(self):
+        """An :class:`EdgeView` of this network."""
         return self._edgeview
 
     @property

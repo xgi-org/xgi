@@ -164,6 +164,52 @@ class IDView(Mapping, Set):
         return self.from_view(self, bunch)
 
     def filterby(self, stat, val, mode="eq"):
+        """Filter the IDs in this view by a statistic.
+
+        Parameters
+        ----------
+        stat : str
+            Name of a `NodeStat`.
+        val : Any
+            Value of the statistic.  Usually a single numeric value.  When mode is
+            'between', must be a tuple of exactly two values.
+        mode : str
+            How to compare each value to `val`.  Can be one of the following.
+
+            * 'eq' (default): Return IDs whose value is exactly equal to `val`.
+            * 'neq': Return IDs whose value is not equal to `val`.
+            * 'lt': Return IDs whose value is less than `val`.
+            * 'gt': Return IDs whose value is greater than `val`.
+            * 'leq': Return IDs whose value is less than or equal to `val`.
+            * 'geq': Return IDs whose value is greater than or equal to `val`.
+            * 'between': In this mode, `val` must be a tuple `(val1, val2)`.  Return IDs
+              whose value `v` satisfies `val1 <= v <= val2`.
+
+        See Also
+        --------
+        For more details, see the `tutorial
+        <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+        >>> H.nodes.filterby('degree', 2, 'eq')
+        NodeView((2, 4, 5))
+        >>> H.nodes.filterby('degree', 2, 'neq')
+        NodeView((1, 3))
+        >>> H.nodes.filterby('degree', 2, 'lt')
+        NodeView((1,))
+        >>> H.nodes.filterby('degree', 2, 'gt')
+        NodeView((3,))
+        >>> H.nodes.filterby('degree', 2, 'leq')
+        NodeView((1, 2, 4, 5))
+        >>> H.nodes.filterby('degree', 2, 'geq')
+        NodeView((2, 3, 4, 5))
+        >>> H.nodes.filterby('degree', (2, 3), 'between')
+        NodeView((2, 3, 4, 5))
+
+        """
         try:
             stat = getattr(self._dispatcher, stat)
         except AttributeError as e:
@@ -188,6 +234,14 @@ class IDView(Mapping, Set):
         return type(self).from_view(self, bunch)
 
     def filterby_attr(self, attr, val, mode="eq"):
+        """Filter the IDs in this view by an attribute.
+
+        See Also
+        --------
+        Works identically to `filterby`.  For more details, see the `tutorial
+        <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+        """
         bunch = [idx for idx in self if self._id_attr[idx][attr] == val]
         return type(self).from_view(self, bunch)
 

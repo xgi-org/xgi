@@ -7,13 +7,15 @@ xgi.classes.reportviews.IDView
    :show-inheritance:
    :members:
 
-   
-   
 
-   
+
+
+
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
-      
+
       ~IDView.from_view
+      ~IDView.filterby
+      ~IDView.filterby_attr
