@@ -103,9 +103,9 @@ def test_user_defined(edgelist1):
 
 def test_view_val(edgelist1, edgelist2):
     H = xgi.Hypergraph(edgelist1)
-    assert H.edges.order.val == {0: 2, 1: 0, 2: 1, 3: 2}
-    assert H.edges([1, 2]).order.val == {1: 0, 2: 1}
+    assert H.edges.order._val == {0: 2, 1: 0, 2: 1, 3: 2}
+    assert H.edges([1, 2]).order._val == {1: 0, 2: 1}
 
     H = xgi.Hypergraph(edgelist2)
-    assert H.edges.order.val == {0: 1, 1: 1, 2: 2}
-    assert H.edges([1, 2]).order.val == {1: 1, 2: 2}
+    assert H.edges.order._val == {0: 1, 1: 1, 2: 2}
+    assert H.edges([1, 2]).order._val == {1: 1, 2: 2}

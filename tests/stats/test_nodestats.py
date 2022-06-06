@@ -486,9 +486,9 @@ def test_user_defined(edgelist1):
 
 def test_view_val(edgelist1, edgelist2):
     H = xgi.Hypergraph(edgelist1)
-    assert H.nodes.degree.val == {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
-    assert H.nodes([1, 2, 3]).degree.val == {1: 1, 2: 1, 3: 1}
+    assert H.nodes.degree._val == {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
+    assert H.nodes([1, 2, 3]).degree._val == {1: 1, 2: 1, 3: 1}
 
     H = xgi.Hypergraph(edgelist2)
-    assert H.nodes.degree.val == {1: 1, 2: 1, 3: 1, 4: 2, 5: 1, 6: 1}
-    assert H.nodes([4, 5, 6]).degree.val == {4: 2, 5: 1, 6: 1}
+    assert H.nodes.degree._val == {1: 1, 2: 1, 3: 1, 4: 2, 5: 1, 6: 1}
+    assert H.nodes([4, 5, 6]).degree._val == {4: 2, 5: 1, 6: 1}

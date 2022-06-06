@@ -6,19 +6,22 @@
 .. autoclass:: MultiEdgeStat
    :show-inheritance:
    :members:
+   :inherited-members:
 
-   
+
    .. rubric:: Attributes
 
    .. autosummary::
-      
-      ~MultiEdgeStat.name
-      ~MultiEdgeStat.val
-   
 
-   
+      ~MultiEdgeStat.name
+
+
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
-      
+
+      ~MultiNodeStat.asdict
+      ~MultiNodeStat.aslist
+      ~MultiNodeStat.asnumpy
+      ~MultiNodeStat.aspandas

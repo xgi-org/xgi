@@ -160,6 +160,24 @@ class IDStat:
 
     @property
     def name(self):
+        """Name of this stat.
+
+        The name of a stat is used to populate the keys of dictionaries in `MultiStat`
+        objects, as well as the names of columns of pandas dataframes.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+        >>> da, d3 = H.nodes.degree, H.nodes.degree(order=3)
+        >>> da.name, d3.name
+        ('degree', 'degree(order=3)')
+        >>> H.nodes.multi([da, d3]).asdict(transpose=True).keys()
+        dict_keys(['degree', 'degree(order=3)'])
+        >>> H.nodes.multi([da, d3]).aspandas().columns
+        Index(['degree', 'degree(order=3)'], dtype='object')
+
+        """
         name = f"{self.func.__name__}"
         if self.args or self.kwargs:
             args = [f"{s}" for s in self.args]
@@ -168,42 +186,65 @@ class IDStat:
         return name
 
     def __iter__(self):
-        return iter(self.val.items())
+        return iter(self._val.items())
 
     @property
-    def val(self):
+    def _val(self):
         return self.func(self.net, self.view.ids, *self.args, **self.kwargs)
 
     def asdict(self):
-        val = self.val
+        """Output the stat as a dict.
+
+        Notes
+        -----
+        All stats are stored as dicts and therefore this method incurs in no overhead as
+        type conversion is not necessary.
+
+        """
+        val = self._val
         return {n: val[n] for n in self.view}
 
     def aslist(self):
-        val = self.val
+        """Output the stat as a list."""
+        val = self._val
         return [val[n] for n in self.view]
 
     def asnumpy(self):
+        """Output the stat as a numpy array."""
         return np.array(self.aslist())
 
     def aspandas(self):
-        return pd.Series(self.val)
+        """Output the stat as a pandas series.
+
+        Notes
+        -----
+        The `name` attribute of the returned series is set using the `name` property.
+
+        """
+        return pd.Series(self._val, name=self.name)
 
     def max(self):
+        """The maximum value of this stat."""
         return self.asnumpy().max(axis=0)
 
     def min(self):
+        """The minimum value of this stat."""
         return self.asnumpy().min(axis=0)
 
     def mean(self):
+        """The arithmetic mean of this stat."""
         return self.asnumpy().mean(axis=0)
 
     def median(self):
+        """The median of this stat."""
         return np.median(self.asnumpy(), axis=0)
 
     def std(self):
+        """The standard deviation of this stat."""
         return self.asnumpy().std(axis=0)
 
     def var(self):
+        """The variance of this stat."""
         return self.asnumpy().var(axis=0)
 
     def dist(self):
@@ -211,18 +252,33 @@ class IDStat:
 
 
 class NodeStat(IDStat):
-    pass
+    """An arbitrary node-quantity mapping.
+
+    `NodeStat` objects represent a mapping that assigns a value to each node in a
+    network.  For more details, see the `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+    """
 
 
 class EdgeStat(IDStat):
-    pass
+    """An arbitrary edge-quantity mapping.
+
+    `EdgeStat` objects represent a mapping that assigns a value to each edge in a
+    network.  For more details, see the `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+    """
 
 
 class MultiIDStat(IDStat):
     """Multiple mappings."""
 
     statsclass = None
+    """IDStat subclass to use."""
+
     statsmodule = None
+    """Module in which to search for mappings."""
 
     def __init__(self, network, view, stats):
         super().__init__(network, view, None)
@@ -256,13 +312,40 @@ class MultiIDStat(IDStat):
         return "[" + ", ".join(s.name for s in self.stats) + "]"
 
     @property
-    def val(self):
+    def _val(self):
         result = {s.name: s.asdict() for s in self.stats}
         return {n: {s.name: result[s.name][n] for s in self.stats} for n in self.view}
 
     def asdict(self, inner=dict, transpose=False):
-        """transpose is used when inner=dict, otherwise ignored."""
-        val = self.val
+        """Output the stats as a dict of collections.
+
+        Parameters
+        ----------
+        inner : dict (default) or list
+            The type of the inner collections.  If dict (default), output a dict of
+            dicts.  If list, output a dict of lists.
+        transpose : bool (default False)
+            By default, output a dict of dicts whose outer keys are the nodes and inner
+            keys are the specified stats.  If True, the outer and inner keys are
+            reversed.  Only used when `inner` is `dict`.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+        >>> m = H.nodes.multi(['degree', 'clustering'])
+        >>> m.asdict() # doctest: +NORMALIZE_WHITESPACE
+        {1: {'degree': 1, 'clustering': 0.0},
+         2: {'degree': 2, 'clustering': 4.0},
+         3: {'degree': 3, 'clustering': 1.3333333333333333},
+         4: {'degree': 2, 'clustering': 3.0},
+         5: {'degree': 2, 'clustering': 3.0}}
+        >>> m.asdict(transpose=True) # doctest: +NORMALIZE_WHITESPACE
+        {'degree': {1: 1, 2: 2, 3: 3, 4: 2, 5: 2},
+        'clustering': {1: 0.0, 2: 4.0, 3: 1.3333333333333333, 4: 3.0, 5: 3.0}}
+
+        """
+        val = self._val
         if inner is dict:
             if not transpose:
                 return {n: val[n] for n in self.view}
@@ -274,7 +357,31 @@ class MultiIDStat(IDStat):
             raise ValueError
 
     def aslist(self, inner=list, transpose=False):
-        val = self.val
+        """Output the stats as a list of collections.
+
+        Parameters
+        ----------
+        inner : list (default) or dict
+            The type of the inner collections.  If list (default), output a list of
+            lists.  If dict, output a list of dicts.
+        transpose : bool (default False)
+
+            By default, output a list of lists where each inner list contains the stats
+            of a single node.  If True, each inner list contains the values of a single
+            stat of all nodes.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+        >>> m = H.nodes.multi(['degree', 'clustering'])
+        >>> m.aslist() # doctest:
+        [[1, 0.0], [2, 4.0], [3, 1.3333333333333333], [2, 3.0], [2, 3.0]]
+        >>> m.aslist(transpose=True)
+        [[1, 2, 3, 2, 2], [0.0, 4.0, 1.3333333333333333, 3.0, 3.0]]
+
+        """
+        val = self._val
         if inner is list:
             if not transpose:
                 return [list(val[n].values()) for n in self.view]
@@ -285,11 +392,44 @@ class MultiIDStat(IDStat):
         else:
             raise ValueError
 
-    def asarray(self):
+    def asnumpy(self):
+        """Output the stats as a numpy array.
+
+        Notes
+        -----
+        Equivalent to `np.array(self.aslist(inner=list))`.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+        >>> H.nodes.multi(['degree', 'clustering']).asnumpy()  # doctest: +NORMALIZE_WHITESPACE
+        array([[1.        , 0.        ],
+               [2.        , 4.        ],
+               [3.        , 1.33333333],
+               [2.        , 3.        ],
+               [2.        , 3.        ]])
+
+        """
         return np.array(self.aslist(inner=list))
 
     def aspandas(self):
-        result = {s.name: s.val for s in self.stats}
+        """Output the stats as a pandas dataframe.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+        >>> H.nodes.multi(['degree', 'clustering']).aspandas()  # doctest: +NORMALIZE_WHITESPACE
+           degree  clustering
+        1       1    0.000000
+        2       2    4.000000
+        3       3    1.333333
+        4       2    3.000000
+        5       2    3.000000
+
+        """
+        result = {s.name: s._val for s in self.stats}
         series = [pd.Series(v, name=k) for k, v in result.items()]
         return pd.concat(series, axis=1)
 
@@ -298,11 +438,25 @@ class MultiIDStat(IDStat):
 
 
 class MultiNodeStat(MultiIDStat):
+    """Multiple node-quantity mappings.
+
+    For more details, see the `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+    """
+
     statsclass = NodeStat
     statsmodule = nodestats
 
 
 class MultiEdgeStat(MultiIDStat):
+    """Multiple edge-quantity mappings.
+
+    For more details, see the `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+    """
+
     statsclass = EdgeStat
     statsmodule = edgestats
 

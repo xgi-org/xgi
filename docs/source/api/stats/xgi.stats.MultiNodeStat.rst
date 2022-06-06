@@ -6,24 +6,22 @@
 .. autoclass:: MultiNodeStat
    :show-inheritance:
    :members:
+   :inherited-members:
 
-   
+
    .. rubric:: Attributes
 
    .. autosummary::
-      
-      ~MultiNodeStat.name
-      ~MultiNodeStat.val
-   
 
-   
+      ~MultiNodeStat.name
+
+
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
-      
-      ~MultiNodeStat.asarray
+
       ~MultiNodeStat.asdict
       ~MultiNodeStat.aslist
+      ~MultiNodeStat.asnumpy
       ~MultiNodeStat.aspandas
-      ~MultiNodeStat.dist
