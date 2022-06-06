@@ -1,3 +1,170 @@
+"""Statistics of networks, their nodes, and edges.
+
+The stats package is one of the features that sets `xgi` apart from other libraries.  It
+provides a common interface to all statistics that can be computed from a network, its
+nodes, or edges.
+
+Consider the degree of the nodes of a network `H`.  The degree of the nodes may be
+stored in a dictionary, a list, an array, a dataframe, etc.  Through the stats package,
+`xgi` provides a simple interface that allows for this type conversion.  This is done
+via the `NodeStat` class.
+
+>>> import xgi
+>>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+>>> H.nodes.degree
+NodeStat('degree')
+
+This `NodeStat` object is essentially a wrapper over a function that computes the
+degrees of all nodes.  One of the main features of `NodeStat` objects is lazy
+evaluation: `H.nodes.degree` will not compute the degrees of nodes until a specific
+output format is requested.
+
+>>> H.nodes.degree.asdict()
+{1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
+>>> H.nodes.degree.aslist()
+[1, 2, 3, 2, 2]
+>>> H.nodes.degree.asnumpy()
+array([1, 2, 3, 2, 2])
+
+To compute the degrees of a subset of the nodes, call `degree` from a smaller `NodeView`.
+
+>>> H.nodes([3, 4, 5]).degree.asdict()
+{3: 3, 4: 2, 5: 2}
+
+Alternatively, to compute the degree of a single node, use square brackets.
+
+>>> H.nodes.degree[4]
+2
+
+Make sure the accessed node is in the underlying view.
+
+>>> H.nodes([1, 2, 3]).degree[4]
+Traceback (most recent call last):
+xgi.exception.IDNotFound: 'ID "4" not in this view'
+
+args and kwargs may be passed to `NodeStat` objects, which will be stored and used when
+the evaluation finally takes place.  For example, use the `order` keyword of `degree` to
+count only those edges of the specified order.
+
+>>> H.nodes.degree(order=3)
+NodeStat('degree', kwargs={'order': 3})
+>>> H.nodes.degree(order=3).aslist()
+[0, 1, 1, 1, 1]
+
+Some convenience functions for numerical operations exist.
+
+>>> H.nodes.degree.max(), H.nodes.degree.min()
+(3, 1)
+>>> st = H.nodes([1, 2, 3]).degree(order=3)
+>>> np.round([st.max(), st.min(), st.mean(), st.median(), st.var(), st.std()], 3)
+array([1.   , 0.   , 0.667, 1.   , 0.222, 0.471])
+
+Each node statistic may also be accessed directly through the network itself.
+
+>>> H.degree()
+{1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
+
+Note however that `H.degree` is a method that simply returns a dict, not a `NodeStat`
+object and thus does not support the features discussed above.
+
+:class:`NodeView` objects are also aware of existing :class:`NodeStat` objects via the
+:meth:`~NodeView.filterby` method.
+
+>>> H.degree()
+{1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
+>>> H.nodes.filterby('degree', 2)
+NodeView((2, 4, 5))
+>>> H.nodes([1, 2, 3]).filterby('degree', 2)
+NodeView((2,))
+
+Node attributes can be conceived of as a node-object mapping and thus they can also be
+accessed using the :class:`NodeStat` interface and all its funcitonality.
+
+>>> H.add_nodes_from([
+...         (1, {"color": "red", "name": "horse"}),
+...         (2, {"color": "blue", "name": "pony"}),
+...         (3, {"color": "yellow", "name": "zebra"}),
+...         (4, {"color": "red", "name": "orangutan", "age": 20}),
+...         (5, {"color": "blue", "name": "fish", "age": 2}),
+...     ])
+>>> H.nodes.attrs("color").aslist()
+['red', 'blue', 'yellow', 'red', 'blue']
+
+This includes filtering, via the :meth:`~NodeView.filterby_attr` method.
+
+>>> H.nodes.filterby_attr('color', 'red')
+NodeView((1, 4))
+
+Since `filterby` returns a View object, multiple filters can be chained, as well as
+other NodeStat calls.
+
+>>> H.nodes.filterby('degree', 2).filterby_attr('color', 'blue').clustering.asdict()
+{2: 4.0, 5: 3.0}
+
+One can obtain multiple node statistics at the same time via the
+:meth:`~StatDispatcher.multi` method, which returns :class:`MultiNodeStat` objects.
+
+>>> H.nodes.multi(['degree', 'clustering'])
+MultiNodeStat(degree, clustering)
+
+:class:`MultiNodeStat` also support lazy evaluation and type conversion.
+
+>>> H.nodes.multi(['degree', 'clustering']).asdict() # doctest: +NORMALIZE_WHITESPACE
+{1: {'degree': 1, 'clustering': 0.0},
+ 2: {'degree': 2, 'clustering': 4.0},
+ 3: {'degree': 3, 'clustering': 1.3333333333333333},
+ 4: {'degree': 2, 'clustering': 3.0},
+ 5: {'degree': 2, 'clustering': 3.0}}
+
+Importantly, one can immediately get a Pandas dataframe.
+
+>>> df = H.nodes.multi(['degree', 'clustering']).aspandas()
+>>> df
+   degree  clustering
+1       1    0.000000
+2       2    4.000000
+3       3    1.333333
+4       2    3.000000
+5       2    3.000000
+
+For example, get the per-degree average local clustering coefficient.
+
+>>> df.groupby('degree').agg('mean') # doctest: +NORMALIZE_WHITESPACE
+        clustering
+degree
+1         0.000000
+2         3.333333
+3         1.333333
+
+:meth:`~StatDispatcher.multi` also accepts `NodeStat` objects, useful when passing
+arguments to each NodeStat, or when requesting attributes.
+
+>>> H.nodes.multi(['degree', H.nodes.degree(order=3), H.nodes.attrs('color')]).aspandas()
+   degree  degree(order=3) attrs(color)
+1       1                0          red
+2       2                1         blue
+3       3                1       yellow
+4       2                1          red
+5       2                1         blue
+
+Every feature showcased above (lazy evaluation, type conversion, filtering, and multi
+objects) is supported for edge-quantity or edge-attribute mappings, via
+:class:`EdgeStat` objects.
+
+>>> H.edges.order
+EdgeStat('order')
+>>> H.edges.order.asdict()
+{0: 2, 1: 3, 2: 2}
+>>> H.edges.filterby('order', 3)
+EdgeView((1,))
+>>> H.edges.multi(['order', 'size']).aspandas()
+   order  size
+0      2     3
+1      3     4
+2      2     3
+
+"""
+
 import numpy as np
 import pandas as pd
 from typing import Callable
