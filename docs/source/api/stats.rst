@@ -19,12 +19,10 @@ stats package
    :toctree: stats
    :nosignatures:
 
-   ~xgi.stats.StatDispatcher
-   ~xgi.stats.EdgeStatDispatcher
-   ~xgi.stats.NodeStatDispatcher
    ~xgi.stats.NodeStat
    ~xgi.stats.EdgeStat
    ~xgi.stats.MultiNodeStat
+   ~xgi.stats.MultiEdgeStat
 
 
 .. rubric:: Decorators
@@ -35,3 +33,14 @@ stats package
 
    ~xgi.stats.nodestat
    ~xgi.stats.edgestat
+
+
+.. rubric:: Other classes (for internal use)
+
+.. autosummary::
+   :toctree: stats
+   :nosignatures:
+
+   ~xgi.stats.StatDispatcher
+   ~xgi.stats.EdgeStatDispatcher
+   ~xgi.stats.NodeStatDispatcher

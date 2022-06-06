@@ -7,12 +7,11 @@
    :show-inheritance:
    :members:
 
-   
-   
 
-   
+
+
+
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
-      

@@ -7,13 +7,13 @@
    :show-inheritance:
    :members:
 
-   
-   
 
-   
+
+
+
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
-      
+
       ~StatDispatcher.multi

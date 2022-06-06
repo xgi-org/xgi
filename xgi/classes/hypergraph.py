@@ -479,7 +479,7 @@ class Hypergraph:
         ebunch_to_add : Iterable
 
             An iterable of edges.  This may be a dict of the form `{edge_id:
-            edge_members}`, or it may be an iterable of iterables, wher each element
+            edge_members}`, or it may be an iterable of iterables, where each element
             contains the members of the edge specified as valid node IDs.
             Alternatively, each element could also be a tuple in any of the following
             formats:
@@ -514,7 +514,7 @@ class Hypergraph:
         >>> import xgi
         >>> H = xgi.Hypergraph()
 
-        When Specify edges by their members only, numeric edge IDs will be assigned
+        When specifying edges by their members only, numeric edge IDs will be assigned
         automatically.
 
         >>> H.add_edges_from([[0, 1], [1, 2], [2, 3, 4]])

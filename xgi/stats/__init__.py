@@ -1,167 +1,46 @@
 """Statistics of networks, their nodes, and edges.
 
-The stats package is one of the features that sets `xgi` apart from other libraries.  It
-provides a common interface to all statistics that can be computed from a network, its
-nodes, or edges.
+Any mapping that assigns some quantity to each node of a network is considered a node
+statistic.  For example, the degree is a node-integer mapping, while a node attribute
+that assigns a string label to each node is a node-string mapping.  The `stats` package
+provides a common interface to all such mappings.
 
-Consider the degree of the nodes of a network `H`.  The degree of the nodes may be
-stored in a dictionary, a list, an array, a dataframe, etc.  Through the stats package,
-`xgi` provides a simple interface that allows for this type conversion.  This is done
-via the `NodeStat` class.
+Each such mapping is accessible via the `H.nodes` view.  For example, the degree of all
+nodes supports type conversion using the `as*` methods.
 
 >>> import xgi
 >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
->>> H.nodes.degree
-NodeStat('degree')
-
-This `NodeStat` object is essentially a wrapper over a function that computes the
-degrees of all nodes.  One of the main features of `NodeStat` objects is lazy
-evaluation: `H.nodes.degree` will not compute the degrees of nodes until a specific
-output format is requested.
-
 >>> H.nodes.degree.asdict()
 {1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
 >>> H.nodes.degree.aslist()
 [1, 2, 3, 2, 2]
->>> H.nodes.degree.asnumpy()
-array([1, 2, 3, 2, 2])
 
-To compute the degrees of a subset of the nodes, call `degree` from a smaller `NodeView`.
+Another feature is the ability to filter the nodes of a network by degree.
 
->>> H.nodes([3, 4, 5]).degree.asdict()
-{3: 3, 4: 2, 5: 2}
-
-Alternatively, to compute the degree of a single node, use square brackets.
-
->>> H.nodes.degree[4]
-2
-
-Make sure the accessed node is in the underlying view.
-
->>> H.nodes([1, 2, 3]).degree[4]
-Traceback (most recent call last):
-xgi.exception.IDNotFound: 'ID "4" not in this view'
-
-args and kwargs may be passed to `NodeStat` objects, which will be stored and used when
-the evaluation finally takes place.  For example, use the `order` keyword of `degree` to
-count only those edges of the specified order.
-
->>> H.nodes.degree(order=3)
-NodeStat('degree', kwargs={'order': 3})
->>> H.nodes.degree(order=3).aslist()
-[0, 1, 1, 1, 1]
-
-Some convenience functions for numerical operations exist.
-
->>> H.nodes.degree.max(), H.nodes.degree.min()
-(3, 1)
->>> st = H.nodes([1, 2, 3]).degree(order=3)
->>> np.round([st.max(), st.min(), st.mean(), st.median(), st.var(), st.std()], 3)
-array([1.   , 0.   , 0.667, 1.   , 0.222, 0.471])
-
-Each node statistic may also be accessed directly through the network itself.
-
->>> H.degree()
-{1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
-
-Note however that `H.degree` is a method that simply returns a dict, not a `NodeStat`
-object and thus does not support the features discussed above.
-
-:class:`NodeView` objects are also aware of existing :class:`NodeStat` objects via the
-:meth:`~NodeView.filterby` method.
-
->>> H.degree()
-{1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
 >>> H.nodes.filterby('degree', 2)
 NodeView((2, 4, 5))
->>> H.nodes([1, 2, 3]).filterby('degree', 2)
-NodeView((2,))
 
-Node attributes can be conceived of as a node-object mapping and thus they can also be
-accessed using the :class:`NodeStat` interface and all its funcitonality.
+The power of the stats package is that any other node statistic that can be conceived of
+as a node-quantity mapping is given the same interface.  For example, node attributes
+get the same treatment:
 
 >>> H.add_nodes_from([
-...         (1, {"color": "red", "name": "horse"}),
-...         (2, {"color": "blue", "name": "pony"}),
-...         (3, {"color": "yellow", "name": "zebra"}),
-...         (4, {"color": "red", "name": "orangutan", "age": 20}),
-...         (5, {"color": "blue", "name": "fish", "age": 2}),
-...     ])
->>> H.nodes.attrs("color").aslist()
+...     (1, {"color": "red", "name": "horse"}),
+...     (2, {"color": "blue", "name": "pony"}),
+...     (3, {"color": "yellow", "name": "zebra"}),
+...     (4, {"color": "red", "name": "orangutan", "age": 20}),
+...     (5, {"color": "blue", "name": "fish", "age": 2}),
+... ])
+>>> H.nodes.attrs('color').asdict()
+{1: 'red', 2: 'blue', 3: 'yellow', 4: 'red', 5: 'blue'}
+>>> H.nodes.attrs('color').aslist()
 ['red', 'blue', 'yellow', 'red', 'blue']
-
-This includes filtering, via the :meth:`~NodeView.filterby_attr` method.
-
 >>> H.nodes.filterby_attr('color', 'red')
 NodeView((1, 4))
 
-Since `filterby` returns a View object, multiple filters can be chained, as well as
-other NodeStat calls.
-
->>> H.nodes.filterby('degree', 2).filterby_attr('color', 'blue').clustering.asdict()
-{2: 4.0, 5: 3.0}
-
-One can obtain multiple node statistics at the same time via the
-:meth:`~StatDispatcher.multi` method, which returns :class:`MultiNodeStat` objects.
-
->>> H.nodes.multi(['degree', 'clustering'])
-MultiNodeStat(degree, clustering)
-
-:class:`MultiNodeStat` also support lazy evaluation and type conversion.
-
->>> H.nodes.multi(['degree', 'clustering']).asdict() # doctest: +NORMALIZE_WHITESPACE
-{1: {'degree': 1, 'clustering': 0.0},
- 2: {'degree': 2, 'clustering': 4.0},
- 3: {'degree': 3, 'clustering': 1.3333333333333333},
- 4: {'degree': 2, 'clustering': 3.0},
- 5: {'degree': 2, 'clustering': 3.0}}
-
-Importantly, one can immediately get a Pandas dataframe.
-
->>> df = H.nodes.multi(['degree', 'clustering']).aspandas()
->>> df
-   degree  clustering
-1       1    0.000000
-2       2    4.000000
-3       3    1.333333
-4       2    3.000000
-5       2    3.000000
-
-For example, get the per-degree average local clustering coefficient.
-
->>> df.groupby('degree').agg('mean') # doctest: +NORMALIZE_WHITESPACE
-        clustering
-degree
-1         0.000000
-2         3.333333
-3         1.333333
-
-:meth:`~StatDispatcher.multi` also accepts `NodeStat` objects, useful when passing
-arguments to each NodeStat, or when requesting attributes.
-
->>> H.nodes.multi(['degree', H.nodes.degree(order=3), H.nodes.attrs('color')]).aspandas()
-   degree  degree(order=3) attrs(color)
-1       1                0          red
-2       2                1         blue
-3       3                1       yellow
-4       2                1          red
-5       2                1         blue
-
-Every feature showcased above (lazy evaluation, type conversion, filtering, and multi
-objects) is supported for edge-quantity or edge-attribute mappings, via
-:class:`EdgeStat` objects.
-
->>> H.edges.order
-EdgeStat('order')
->>> H.edges.order.asdict()
-{0: 2, 1: 3, 2: 2}
->>> H.edges.filterby('order', 3)
-EdgeView((1,))
->>> H.edges.multi(['order', 'size']).aspandas()
-   order  size
-0      2     3
-1      3     4
-2      2     3
+Many other features are available, including edge-statistics, and user-defined
+statistics.  For more details, see the `tutorial
+<https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
 """
 
@@ -180,7 +59,14 @@ __all__ = ["nodestat", "edgestat", "EdgeStatDispatcher", "NodeStatDispatcher"]
 
 
 class StatDispatcher:
-    """Create :class:`NodeStat` or :class:`EdgeStat` objects."""
+    """For internal use; create :class:`NodeStat` or :class:`EdgeStat` objects.
+
+    See Also
+    --------
+    NodeStatDispatcher
+    EdgeStatDispatcher
+
+    """
 
     def __init__(self, network, view, module, statsclass, multistatsclass):
         self.net = network
@@ -199,19 +85,45 @@ class StatDispatcher:
         return stat
 
     def multi(self, stats):
-        """Create a :class:`MultiStat` object."""
+        """Create a :class:`MultiStat` object.
+
+        See Also
+        --------
+        MultiNodeStat
+        MultiEdgeStat
+
+        Examples
+        -------
+        See the `tutorial
+        <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+        """
         return self.multistatsclass(self.net, self.view, stats)
 
 
 class EdgeStatDispatcher(StatDispatcher):
-    """A StatDispatcher for edge stats."""
+    """For internal use; a :class:`StatDispatcher` for edge stats.
+
+    Examples
+    -------
+    See the `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+    """
 
     def __init__(self, network, view):
         super().__init__(network, view, edgestats, EdgeStat, MultiEdgeStat)
 
 
 class NodeStatDispatcher(StatDispatcher):
-    """A StatDispatcher for node stats."""
+    """For internal use; a :class:`StatDispatcher` for node stats.
+
+    Examples
+    -------
+    See the `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+    """
 
     def __init__(self, network, view):
         super().__init__(network, view, nodestats, NodeStat, MultiNodeStat)
@@ -314,10 +226,13 @@ class MultiIDStat(IDStat):
 
     def __init__(self, network, view, stats):
         super().__init__(network, view, None)
-        if isinstance(stats, IDStat):
-            raise TypeError("must pass an iterable of IDStat, not a single NodeStat")
+        if isinstance(stats, self.statsclass):
+            name = self.statsclass.__name__
+            raise TypeError(f"must pass an iterable of {name}, not a single {name}")
         elif isinstance(stats, str):
-            raise TypeError("must pass an iterable of IDStat, not str")
+            raise TypeError(
+                f"must pass an iterable of {self.statsclass.__name__}, not str"
+            )
         self.stats = [self._get_stat(f) for f in stats]
 
     def _get_stat(self, s):
@@ -326,7 +241,7 @@ class MultiIDStat(IDStat):
         elif isinstance(s, self.statsclass):
             return s
         else:
-            raise TypeError(f"{s.__name__} must be str or IDStat")
+            raise TypeError(f"{s.__name__} must be str or {self.statsclass.__name__}")
 
     def __repr__(self):
         return (
@@ -406,12 +321,10 @@ def nodestat(func):
     Returns
     -------
     callable
-        The decorated callable unmodified, after registering it in the :class:`Stat`
-        framework.
+        The decorated callable unmodified, after registering it in the `stats` framework.
 
     See Also
     --------
-    :class:`Stat`
     :class:`edgestat`
 
     Notes
@@ -501,9 +414,13 @@ def edgestat(func):
         bunch)` must return a dict with pairs of the form `(edge: value)` where `edge`
         is in `bunch` and `value` is the value of the statistic at `edge`.
 
+    Returns
+    -------
+    callable
+        The decorated callable unmodified, after registering it in the `stats` framework.
+
     See Also
     --------
-    :class:`Stat`
     :class:`nodestat`
 
     """

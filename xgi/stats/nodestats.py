@@ -2,8 +2,9 @@
 
 This module is part of the stats package, and it defines node-level statistics.  That
 is, each function defined in this module is assumed to define a node-quantity mapping.
-Each callable defined here is accessible via a `Network` object, or a :class:`NodeView`
-object.
+Each callable defined here is accessible via a `Network` object, or a
+:class:`~xgi.classes.reportviews.NodeView` object.  For more details, see the `tutorial
+<https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
 Examples
 --------
@@ -109,6 +110,27 @@ def attrs(net, bunch, attr=None, missing=None):
 
 
 def degree(net, bunch, order=None, weight=None):
+    """Node degree.
+
+    The degree of a node is the number of edges it belongs to.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Nodes in `net`.
+    order : int | None
+        If not None (default), only count the edges of the given order.
+    weight : str | None
+        If not None, specifies the name of the edge attribute that determines the weight
+        of each edge.
+
+    Returns
+    -------
+    dict
+
+    """
     if order is None and weight is None:
         return {n: len(net._node[n]) for n in bunch}
     if order is None and weight:
