@@ -101,7 +101,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
                 r = seed.random()
                 if r < q / p:
                     # no duplicates
-                    H.add_node_to_edge(u, v)
+                    H.add_node_to_edge(v, u)
                 p = q
                 j = j + 1
 
@@ -239,7 +239,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                         r = seed.random()
                         if r < q / p:
                             # no duplicates
-                            H.add_node_to_edge(u, v)
+                            H.add_node_to_edge(v, u)
                         p = q
                         j = j + 1
     return H
