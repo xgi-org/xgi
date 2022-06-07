@@ -396,7 +396,7 @@ def random_flag_complex_d2(N, p, seed=None):
 
     simplices = edges + triad_cliques
 
-    S = xgi.SimplicialComplex()
+    S = SimplicialComplex()
     S.add_nodes_from(nodes)
     S.add_simplices_from(simplices)
 
