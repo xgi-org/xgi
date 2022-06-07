@@ -479,7 +479,7 @@ class Hypergraph:
         self._edge_attr[uid].update(attr)
 
     def add_edges_from(self, ebunch_to_add, **attr):
-        r"""Add multiple edges with optional attributes.
+        """Add multiple edges with optional attributes.
 
         Parameters
         ----------
