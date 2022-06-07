@@ -13,8 +13,10 @@ import numpy as np
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 
-import xgi
-from xgi.exception import XGIError
+from .. import convert
+from ..classes import Hypergraph, SimplicialComplex, max_edge_order
+from ..exception import XGIError
+from .layout import barycenter_spring_layout
 
 __all__ = [
     "draw",
@@ -38,7 +40,7 @@ def draw(
 
     Parameters
     ----
-    H : xgi Hypergraph or SimplicialComplex.
+    H : Hypergraph or SimplicialComplex.
 
     pos : dict (default=None)
         If passed, this dictionary of positions d:(x,y) is used for placing the 0-simplices.
@@ -71,14 +73,14 @@ def draw(
     Examples
     --------
     >>> import xgi
-    >>> H=xgi.Hypergraph()
+    >>> H = xgi.Hypergraph()
     >>> H.add_edges_from([[1,2,3],[3,4],[4,5,6,7],[7,8,9,10,11]])
     >>> xgi.draw(H, pos=xgi.barycenter_spring_layout(H))
 
     """
 
     if pos is None:
-        pos = xgi.barycenter_spring_layout(H)
+        pos = barycenter_spring_layout(H)
 
     def CCW_sort(p):
         """
@@ -91,7 +93,7 @@ def draw(
         return p[np.argsort(s), :]
 
     # Defining colors, one for each dimension
-    d_max = xgi.max_edge_order(H)
+    d_max = max_edge_order(H)
     if cmap is None:
         cmap = cm.Paired
         colors = [cmap(i) for i in range(0, d_max + 1)]
@@ -112,7 +114,7 @@ def draw(
     ax.get_yaxis().set_ticks([])
     ax.axis("off")
 
-    if type(H) == xgi.classes.hypergraph.Hypergraph:
+    if isinstance(H, Hypergraph):
         # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
         for d in reversed(range(1, d_max + 1)):
             if d == 1:
@@ -139,9 +141,9 @@ def draw(
                         lw=0.5,
                     )
                     ax.add_patch(obj)
-    elif type(H) == xgi.classes.simplicialcomplex.SimplicialComplex:
+    elif isinstance(H, SimplicialComplex):
         # I will only plot the maximal simplices, so I convert the SC to H
-        H_ = xgi.from_simplicial_complex_to_hypergraph(H)
+        H_ = convert.from_simplicial_complex_to_hypergraph(H)
 
         # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
         for d in reversed(range(1, d_max + 1)):
@@ -175,7 +177,7 @@ def draw(
                         line = plt.Line2D(x_coords, y_coords, color=edge_lc, lw=edge_lw)
                         ax.add_line(line)
     else:
-        raise XGIError("The input must be a xgi.SimplicialComplex or xgi.Hypergraph")
+        raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
     # Drawing the nodes
     for i in list(H.nodes):

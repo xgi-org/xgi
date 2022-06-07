@@ -1,3 +1,2 @@
-from xgi.algorithms import connected
-
+from . import connected
 from .connected import *

@@ -1,6 +1,6 @@
 import pytest
 
-from xgi.utils import XGICounter, get_dual, load_xgi_data
+from xgi.utils import get_dual, load_xgi_data
 
 
 @pytest.mark.webtest
@@ -25,9 +25,3 @@ def test_get_dual(dict5):
     assert dual[6] == [2, 3]
     assert dual[7] == [3]
     assert dual[8] == [3]
-
-
-def test_xgi_counter():
-    count = XGICounter()
-    assert count() == 0
-    assert count() == 1

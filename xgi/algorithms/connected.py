@@ -1,6 +1,7 @@
 """Algorithms related to connected components of a hypergraph."""
-import xgi
-from xgi.exception import XGIError
+
+from ..classes.hypergraphviews import subhypergraph
+from ..exception import XGIError
 
 __all__ = [
     "is_connected",
@@ -219,7 +220,7 @@ def largest_connected_hypergraph(H, in_place=False):
     None
         If in_place: modifies the existing hypergraph
 
-    xgi.Hypergraph
+    Hypergraph
         If not in_place: the hypergraph induced on the nodes of the
         largest connected component.
 
@@ -240,6 +241,6 @@ def largest_connected_hypergraph(H, in_place=False):
     """
     connected_nodes = max(connected_components(H), key=len)
     if not in_place:
-        return xgi.subhypergraph(H, nodes=connected_nodes).copy()
+        return subhypergraph(H, nodes=connected_nodes).copy()
     else:
         H.remove_nodes_from(set(H.nodes).difference(connected_nodes))

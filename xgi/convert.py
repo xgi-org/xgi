@@ -7,9 +7,16 @@ from networkx.algorithms import bipartite
 from numpy import matrix, ndarray
 from scipy.sparse import coo_matrix, csc_matrix, csr_matrix, lil_matrix
 
-import xgi
-from xgi.exception import XGIError
-from xgi.utils.utilities import get_dual
+from .classes import (
+    Hypergraph,
+    SimplicialComplex,
+    maximal_simplices,
+    set_edge_attributes,
+)
+from .exception import XGIError
+from .generators import empty_hypergraph, empty_simplicial_complex
+from .linalg import adjacency_matrix, incidence_matrix
+from .utils.utilities import get_dual
 
 __all__ = [
     "convert_to_hypergraph",
@@ -25,13 +32,14 @@ __all__ = [
     "to_incidence_matrix",
     "from_bipartite_graph",
     "to_bipartite_graph",
+    "dict_to_hypergraph",
 ]
 
 
 def convert_to_hypergraph(data, create_using=None):
     """Make a hypergraph from a known data structure.
-    The preferred way to call this is automatically
-    from the class constructor.
+
+    The preferred way to call this is automatically from the class constructor.
 
     Parameters
     ----------
@@ -44,7 +52,7 @@ def convert_to_hypergraph(data, create_using=None):
          * numpy matrix
          * numpy ndarray
          * scipy sparse matrix
-    create_using : Hypergraph graph constructor, optional (default=xgi.Hypergraph)
+    create_using : Hypergraph constructor, optional (default=Hypergraph)
         Hypergraph type to create. If hypergraph instance, then cleared before populated.
 
     Returns
@@ -54,10 +62,10 @@ def convert_to_hypergraph(data, create_using=None):
 
     """
     if data is None:
-        xgi.empty_hypergraph(create_using)
+        empty_hypergraph(create_using)
 
-    elif isinstance(data, xgi.Hypergraph):
-        H = xgi.empty_hypergraph(create_using)
+    elif isinstance(data, Hypergraph):
+        H = empty_hypergraph(create_using)
         H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
         ee = data.edges
         H.add_edges_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
@@ -95,7 +103,7 @@ def convert_to_graph(H):
         The graph projection
     """
 
-    A = xgi.adjacency_matrix(H)  # This is unweighted by design
+    A = adjacency_matrix(H)  # This is unweighted by design
     G = nx.from_scipy_sparse_matrix(A)
     G = nx.relabel_nodes(G, {i: node for i, node in enumerate(H.nodes)})
     return G
@@ -117,7 +125,7 @@ def convert_to_simplicial_complex(data, create_using=None):
          * numpy matrix
          * numpy ndarray
          * scipy sparse matrix
-    create_using : Hypergraph graph constructor, optional (default=xgi.Hypergraph)
+    create_using : Hypergraph graph constructor, optional (default=Hypergraph)
         Hypergraph type to create. If hypergraph instance, then cleared before populated.
 
     Returns
@@ -127,10 +135,10 @@ def convert_to_simplicial_complex(data, create_using=None):
     """
 
     if data is None:
-        xgi.empty_hypergraph(create_using)
+        empty_hypergraph(create_using)
 
-    elif isinstance(data, xgi.SimplicialComplex):
-        H = xgi.empty_simplicial_complex(create_using)
+    elif isinstance(data, SimplicialComplex):
+        H = empty_simplicial_complex(create_using)
         H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
         ee = data.edges
         H.add_edges_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
@@ -174,8 +182,8 @@ def from_hyperedge_list(d, create_using=None, max_order=None):
     --------
     to_hyperedge_list
     """
-    H = xgi.empty_hypergraph(create_using)
-    if isinstance(H, xgi.classes.simplicialcomplex.SimplicialComplex):
+    H = empty_hypergraph(create_using)
+    if isinstance(H, SimplicialComplex):
         H.add_simplices_from(d, max_order=max_order)
     else:
         H.add_edges_from(d)
@@ -223,7 +231,7 @@ def from_hyperedge_dict(d, create_using=None):
     to_hyperedge_dict
 
     """
-    H = xgi.empty_hypergraph(create_using)
+    H = empty_hypergraph(create_using)
     H.add_nodes_from(get_dual(d))
     H.add_edges_from((members, uid) for uid, members in d.items())
     return H
@@ -280,7 +288,7 @@ def from_bipartite_pandas_dataframe(
     XGIError
         Raises an error if the user specifies invalid column names
     """
-    H = xgi.empty_hypergraph(create_using)
+    H = empty_hypergraph(create_using)
 
     # try to get by labels first
     try:
@@ -293,7 +301,7 @@ def from_bipartite_pandas_dataframe(
         except KeyError:
             raise XGIError("Invalid columns specified")
 
-    if isinstance(H, xgi.SimplicialComplex):
+    if isinstance(H, SimplicialComplex):
         simplex_list = defaultdict(list)
         for line in d.itertuples(index=False):
             if line[0] not in simplex_list[line[1]]:
@@ -357,7 +365,7 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
     else:
         edgedict = dict(zip(range(m), edgelabels))
 
-    H = xgi.empty_hypergraph(create_using)
+    H = empty_hypergraph(create_using)
 
     for node, edge in zip(I.row, I.col):
         node = nodedict[node]
@@ -373,19 +381,19 @@ def from_simplicial_complex_to_hypergraph(SC):
 
     Parameters
     ----------
-    SC : xgi.SimplicialComplex object
+    SC : SimplicialComplex
 
     Returns
     -------
-    H : xgi.Hypergraph
+    Hypergraph
+
     """
+    if type(SC) != SimplicialComplex:
+        raise XGIError("The input must be a SimplicialComplex")
 
-    if type(SC) != xgi.classes.simplicialcomplex.SimplicialComplex:
-        raise XGIError("The input must be a xgi.SimplicialComplex")
-
-    maximal_simplices = xgi.maximal_simplices(SC)
-    H = xgi.Hypergraph()
-    H.add_edges_from([list(SC.edges.members(e)) for e in maximal_simplices])
+    max_simplices = maximal_simplices(SC)
+    H = Hypergraph()
+    H.add_edges_from([list(SC.edges.members(e)) for e in max_simplices])
     return H
 
 
@@ -417,7 +425,7 @@ def to_incidence_matrix(H, sparse=True, index=False):
     incidence_matrix
     from_incidence_matrix
     """
-    return xgi.incidence_matrix(H, sparse=sparse, index=index)
+    return incidence_matrix(H, sparse=sparse, index=index)
 
 
 def from_bipartite_graph(G, create_using=None, dual=False):
@@ -449,7 +457,7 @@ def from_bipartite_graph(G, create_using=None, dual=False):
 
     Returns
     -------
-    xgi.Hypergraph
+    Hypergraph
         The equivalent hypergraph
 
     References
@@ -487,7 +495,7 @@ def from_bipartite_graph(G, create_using=None, dual=False):
     if not bipartite.is_bipartite_node_set(G, nodes):
         raise XGIError("The network is not bipartite")
 
-    H = xgi.empty_hypergraph(create_using)
+    H = empty_hypergraph(create_using)
     H.add_nodes_from(nodes)
     for edge in edges:
         nodes_in_edge = list(G.neighbors(edge))
@@ -537,3 +545,84 @@ def to_bipartite_graph(H):
         dict(zip(range(H.num_nodes), H.nodes)),
         dict(zip(range(H.num_nodes, H.num_nodes + H.num_edges), H.edges)),
     )
+
+
+def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
+    """
+    A function to read a file in a standardized JSON format.
+
+    Parameters
+    ----------
+    hypergraph_dict: dict
+        A dictionary in the hypergraph JSON format
+    nodetype: type, optional
+        type that the node IDs will be cast to
+    edgetype: type, optional
+        type that the edge IDs will be cast to
+
+    Returns
+    -------
+    A Hypergraph object
+        The loaded hypergraph
+
+    Raises
+    ------
+    XGIError
+        If the JSON is not in a format that can be loaded.
+
+    See Also
+    --------
+    read_hypergraph_json
+
+    """
+    H = empty_hypergraph()
+    try:
+        H._hypergraph.update(hypergraph_dict["hypergraph-data"])
+    except KeyError:
+        raise XGIError("Failed to get hypergraph data attributes.")
+
+    try:
+        for id, dd in hypergraph_dict["node-data"].items():
+            if nodetype is not None:
+                try:
+                    id = nodetype(id)
+                except Exception as e:
+                    raise TypeError(
+                        f"Failed to convert edge IDs to type {nodetype}."
+                    ) from e
+            H.add_node(id, **dd)
+    except KeyError:
+        raise XGIError("Failed to import node attributes.")
+
+    try:
+        for id, edge in hypergraph_dict["edge-dict"].items():
+            if edgetype is not None:
+                try:
+                    id = edgetype(id)
+                except Exception as e:
+                    raise TypeError(
+                        f"Failed to convert the edge with ID {id} to type {edgetype}."
+                    ) from e
+
+            if nodetype is not None:
+                try:
+                    edge = [nodetype(n) for n in edge]
+                except Exception as e:
+                    raise TypeError(
+                        f"Failed to convert nodes to type {nodetype}."
+                    ) from e
+            H.add_edge(edge, id)
+    except KeyError as e:
+        raise XGIError("Failed to import edge dictionary.") from e
+
+    try:
+        set_edge_attributes(
+            H,
+            hypergraph_dict["edge-data"]
+            if edgetype is None
+            else {edgetype(e): dd for e, dd in hypergraph_dict["edge-data"].items()},
+        )
+    except KeyError as e:
+        raise XGIError("Failed to import edge attributes.") from e
+
+    return H

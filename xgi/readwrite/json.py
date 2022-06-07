@@ -1,8 +1,9 @@
 """Read from and write to JSON."""
 import json
 
-import xgi
-from xgi.exception import XGIError
+from ..classes import set_edge_attributes
+from ..exception import XGIError
+from ..generators import empty_hypergraph
 
 __all__ = ["write_hypergraph_json", "read_hypergraph_json"]
 
@@ -68,7 +69,7 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
     with open(path) as file:
         data = json.loads(file.read())
 
-    H = xgi.empty_hypergraph()
+    H = empty_hypergraph()
     try:
         H._hypergraph.update(data["hypergraph-data"])
     except KeyError:
@@ -109,7 +110,7 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
         raise XGIError("Failed to import edge dictionary.")
 
     try:
-        xgi.set_edge_attributes(
+        set_edge_attributes(
             H,
             data["edge-data"]
             if edgetype is None

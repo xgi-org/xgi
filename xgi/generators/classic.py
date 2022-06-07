@@ -9,12 +9,36 @@ from itertools import combinations
 
 import networkx as nx
 
-from xgi.classes import Hypergraph, SimplicialComplex
+__all__ = [
+    "empty_hypergraph",
+    "empty_simplicial_complex",
+    "star_clique",
+    "flag_complex",
+]
 
-__all__ = ["empty_hypergraph", "star_clique", "flag_complex"]
+
+def _empty_network(create_using, default):
+    """Return an empty network.
+
+    See Also
+    --------
+    empty_hypergraph
+    empty_simplicial_complex
+
+    """
+    if create_using is None:
+        H = default()
+    elif hasattr(create_using, "_node"):
+        # create_using is a Hypergraph object
+        create_using.clear()
+        H = create_using
+    else:
+        # try create_using as constructor
+        H = create_using()
+    return H
 
 
-def empty_hypergraph(create_using=None, default=Hypergraph):
+def empty_hypergraph(create_using=None, default=None):
     """Returns the empty hypergraph with zero nodes and edges.
 
     Parameters
@@ -22,7 +46,7 @@ def empty_hypergraph(create_using=None, default=Hypergraph):
     create_using : Hypergraph Instance, Constructor or None
         If None, use the `default` constructor.
         If a constructor, call it to create an empty hypergraph.
-    default : Hypergraph constructor (optional, default = xgi.Hypergraph)
+    default : Hypergraph constructor (default None)
         The constructor to use if create_using is None.
         If None, then xgi.Hypergraph is used.
 
@@ -35,21 +59,51 @@ def empty_hypergraph(create_using=None, default=Hypergraph):
     --------
     >>> import xgi
     >>> H = xgi.empty_hypergraph()
-    >>> H.num_nodes
-    0
-    >>> H.num_edges
-    0
+    >>> H.num_nodes, H.num_edges
+    (0, 0)
+
     """
-    if create_using is None:
-        H = default()
-    elif hasattr(create_using, "_node"):
-        # create_using is a Hypergraph object
-        create_using.clear()
-        H = create_using
-    else:
-        # try create_using as constructor
-        H = create_using()
-    return H
+    # this import needs to happen when the function runs, not when the module is first
+    # imported, to avoid circular imports
+    import xgi
+
+    if default is None:
+        default = xgi.Hypergraph
+    return _empty_network(create_using, default)
+
+
+def empty_simplicial_complex(create_using=None, default=None):
+    """Returns the empty simplicial complex with zero nodes and simplices.
+
+    Parameters
+    ----------
+    create_using : SimplicialComplex Instance, Constructor or None
+        If None, use the `default` constructor.
+        If a constructor, call it to create an empty simplicial complex.
+    default : SimplicialComplex constructor (default None)
+        The constructor to use if create_using is None.
+        If None, then xgi.SimplicialComplex is used.
+
+    Returns
+    -------
+    SimplicialComplex
+        An empty simplicial complex.
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.empty_simplicial_complex()
+    >>> H.num_nodes, H.num_edges
+    (0, 0)
+
+    """
+    # this import needs to happen when the function runs, not when the module is first
+    # imported, to avoid circular imports
+    import xgi
+
+    if default is None:
+        default = xgi.SimplicialComplex
+    return _empty_network(create_using, default)
 
 
 def star_clique(n_star, n_clique, d_max):
@@ -72,7 +126,7 @@ def star_clique(n_star, n_clique, d_max):
 
     Returns
     -------
-    H : xgi.Hypergraph
+    H : Hypergraph
 
     Examples
     --------
@@ -128,13 +182,16 @@ def flag_complex(g, max_order=2, seed=None):
 
     Returns
     -------
-    S : xgi.SimplicialComplex
+    S : SimplicialComplex
 
     Notes
     -----
     Computing all cliques quickly becomes heavy for large networks.
 
     """
+    # This import needs to happen when this function is called, not when it is
+    # defined.  Otherwise, a circular import error would happen.
+    from xgi import SimplicialComplex
 
     nodes = g.nodes()
     edges = list(g.edges())

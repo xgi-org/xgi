@@ -1,4 +1,3 @@
-from xgi.utils import decorators, utilities
-from xgi.utils.utilities import *
-
+from . import decorators, utilities
 from .decorators import *
+from .utilities import *

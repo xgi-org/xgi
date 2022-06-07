@@ -1,10 +1,8 @@
-"""Functional interface to hypergraph methods and assorted utilities.
-"""
+"""Functional interface to hypergraph methods and assorted utilities."""
 
 from collections import Counter
 
-import xgi
-from xgi.exception import XGIError
+from ..exception import XGIError
 
 __all__ = [
     "max_edge_order",
@@ -31,7 +29,7 @@ def max_edge_order(H):
 
     Parameters
     ----------
-    H : xgi.Hypergraph
+    H : Hypergraph
         The hypergraph of interest.
 
     Returns
@@ -52,7 +50,7 @@ def is_possible_order(H, d):
 
     Parameters
     ----------
-    H : xgi.Hypergraph
+    H : Hypergraph
         The hypergraph of interest.
     d : int
         Order for which to check.
@@ -63,7 +61,7 @@ def is_possible_order(H, d):
         Whether `d` is a possible order.
 
     """
-    d_max = xgi.max_edge_order(H)
+    d_max = max_edge_order(H)
     return (d >= 1) and (d <= d_max)
 
 
@@ -85,6 +83,7 @@ def is_uniform(H):
     --------
     This function can be used as a boolean check:
 
+    >>> import xgi
     >>> H = xgi.Hypergraph([(0, 1, 2), (1, 2, 3), (2, 3, 4)])
     >>> xgi.is_uniform(H)
     2
@@ -112,7 +111,7 @@ def egonet(H, n, include_self=False):
 
     Parameters
     ----------
-    H : xgi.Hypergraph
+    H : Hypergraph
         THe hypergraph of interest
     n : node
         Node whose egonet is needed.
@@ -235,7 +234,7 @@ def frozen(*args, **kwargs):
 
     Raises
     ------
-    xgi.XGIError
+    XGIError
         Raises error when user tries to modify the hypergraph
 
     Examples
@@ -366,7 +365,7 @@ def create_empty_copy(H, with_data=True):
     H_copy = H.__class__()
     H_copy.add_nodes_from(H.nodes)
     if with_data:
-        xgi.set_node_attributes(H_copy, dict(H._node_attr))
+        set_node_attributes(H_copy, dict(H._node_attr))
         H_copy._hypergraph.update(H._hypergraph)
     return H_copy
 
@@ -464,7 +463,7 @@ def get_node_attributes(H, name=None):
 
 
 def set_edge_attributes(H, values, name=None):
-    """Set the edge attributes from a value or a dictionary of values
+    """Set the edge attributes from a value or a dictionary of values.
 
     Parameters
     ----------
@@ -576,8 +575,7 @@ def is_empty(H):
 
 
 def maximal_simplices(SC):
-    """
-    Return the IDs associated to the maximal simplices of the input SC.
+    """Return the IDs of the maximal simplices of the input.
 
     Parameters
     ----------
@@ -586,18 +584,17 @@ def maximal_simplices(SC):
     Returns
     -------
     maximal_simplices : list(int)
-        A list of IDs correspondent to the maximal simplices in the provided simplicial complex.
+        A list of IDs correspondent to the maximal simplices in `SC`.
 
-    Notes
-    --------
-    The output is not a xgi's SimplicialComplex since, by construction,
-    that would automatically add back the non-maximal simplices just removed.
     """
+    # This import needs to happen when this function is called, not when it is
+    # defined.  Otherwise, a circular import error would happen.
+    from .simplicialcomplex import SimplicialComplex
 
-    if type(SC) != xgi.classes.simplicialcomplex.SimplicialComplex:
-        raise XGIError("The input must be a xgi.SimplicialComplex")
+    if not isinstance(SC, SimplicialComplex):
+        raise XGIError("The input must be a SimplicialComplex")
 
-    maximal_simplices = []
+    max_simplices = []
 
     for i in SC.edges:
         maximal = True
@@ -607,5 +604,5 @@ def maximal_simplices(SC):
                 maximal = False
                 break
         if maximal:
-            maximal_simplices.append(i)
-    return maximal_simplices
+            max_simplices.append(i)
+    return max_simplices
