@@ -291,6 +291,13 @@ class NodeView(IDView):
     bunch : optional iterable, default None
         The node ids to keep track of.  If None (default), keep track of all node ids.
 
+    Notes
+    -----
+    In addition to the methods listed in this page, other methods defined in the `stats`
+    package are also accessible via the `NodeView` class.  For more details, see the
+    `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
     """
 
     def __init__(self, H, bunch=None):
@@ -331,6 +338,13 @@ class EdgeView(IDView):
         The hypergraph whose edges this view will keep track of.
     bunch : optional iterable, default None
         The edge ids to keep track of.  If None (default), keep track of all edge ids.
+
+    Notes
+    -----
+    In addition to the methods listed in this page, other methods defined in the `stats`
+    package are also accessible via the `EdgeView` class.  For more details, see the
+    `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
     """
 
