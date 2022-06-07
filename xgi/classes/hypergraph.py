@@ -198,7 +198,7 @@ class Hypergraph:
                 f'stat "{attr}" not among available node or edge stats'
             )
 
-        def func(node=None, /, *args, **kwargs):
+        def func(node=None, *args, **kwargs):
             val = stat(*args, **kwargs).asdict()
             return val if node is None else val[node]
 
@@ -479,7 +479,7 @@ class Hypergraph:
         self._edge_attr[uid].update(attr)
 
     def add_edges_from(self, ebunch_to_add, **attr):
-        """Add multiple edges with optional attributes.
+        r"""Add multiple edges with optional attributes.
 
         Parameters
         ----------
