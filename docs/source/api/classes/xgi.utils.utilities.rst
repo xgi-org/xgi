@@ -10,18 +10,9 @@
    .. autosummary::
       :toctree: .
       :nosignatures:
-      
-        XGICounter
-      
-   
+
+
    .. rubric:: Functions
-   
+
    .. autofunction:: get_dual
    .. autofunction:: load_xgi_data
-
-   
-   
-   
-
-
-

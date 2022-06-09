@@ -1,8 +1,8 @@
 """Generate random uniform hypergraphs."""
 import warnings
 
-import xgi
-from xgi.utils import py_random_state
+from ..utils import py_random_state
+from .classic import empty_hypergraph
 
 __all__ = ["uniform_hypergraph_configuration_model"]
 
@@ -54,6 +54,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     >>> m = 3
     >>> k = {1: 1, 2: 2, 3: 3, 4: 3}
     >>> H = xgi.uniform_hypergraph_configuration_model(k, m)
+
     """
     # Making sure we have the right number of stubs
     remainder = sum(k.values()) % m
@@ -70,7 +71,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     for id in k:
         stubs.extend([id] * int(k[id]))
 
-    H = xgi.empty_hypergraph()
+    H = empty_hypergraph()
     H.add_nodes_from(k.keys())
 
     while len(stubs) != 0:

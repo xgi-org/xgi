@@ -7,8 +7,9 @@ from itertools import combinations
 import networkx as nx
 import numpy as np
 
-import xgi
-from xgi.utils import py_random_state
+from ..classes import SimplicialComplex
+from ..utils import py_random_state
+from .classic import empty_hypergraph, empty_simplicial_complex
 
 __all__ = [
     "chung_lu_hypergraph",
@@ -79,7 +80,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
 
     S = sum(k1.values())
 
-    H = xgi.empty_hypergraph()
+    H = empty_hypergraph()
     H.add_nodes_from(node_labels)
 
     for u in node_labels:
@@ -139,7 +140,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
 
     Returns
     -------
-    xgi.Hypergraph
+    Hypergraph
 
     Warns
     -----
@@ -201,7 +202,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
         group = g2[label]
         community2_nodes[group].append(label)
 
-    H = xgi.empty_hypergraph()
+    H = empty_hypergraph()
     H.add_nodes_from(node_labels)
 
     kappa1 = defaultdict(lambda: 0)
@@ -295,7 +296,7 @@ def random_hypergraph(N, ps, seed=None):
 
     hyperedges += [[i] for i in nodes]  # add singleton edges
 
-    H = xgi.empty_hypergraph()
+    H = empty_hypergraph()
     H.add_nodes_from(nodes)
     H.add_edges_from(hyperedges)
 
@@ -352,7 +353,7 @@ def random_simplicial_complex(N, ps, seed=None):
             if seed.random() <= p:
                 simplices.append(simplex)
 
-    S = xgi.SimplicialComplex()
+    S = SimplicialComplex()
     S.add_nodes_from(nodes)
     S.add_simplices_from(simplices)
 
@@ -374,7 +375,7 @@ def random_flag_complex_d2(N, p, seed=None):
 
     Returns
     -------
-    S : xgi.SimplicialComplex
+    SimplicialComplex
 
     Notes
     -----
@@ -395,7 +396,7 @@ def random_flag_complex_d2(N, p, seed=None):
 
     simplices = edges + triad_cliques
 
-    S = xgi.SimplicialComplex()
+    S = SimplicialComplex()
     S.add_nodes_from(nodes)
     S.add_simplices_from(simplices)
 
@@ -420,7 +421,7 @@ def random_flag_complex(N, p, max_order=2, seed=None):
 
     Returns
     -------
-    S : xgi.SimplicialComplex
+    SimplicialComplex
 
     Notes
     -----
@@ -438,7 +439,7 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     # compute all triangles to fill
     max_cliques = list(nx.find_cliques(G))
 
-    S = xgi.SimplicialComplex()
+    S = SimplicialComplex()
     S.add_nodes_from(nodes)
     S.add_simplices_from(max_cliques, max_order=max_order)
 

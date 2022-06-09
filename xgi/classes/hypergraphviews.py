@@ -8,12 +8,12 @@ The resulting views are essentially read-only graphs that
 report data from the original graph object.
 
 Note: Since hypergraphviews look like hypergraphs, one can end up with
-view-of-view-of-view chains. Be careful with chains because
-they become very slow with about 15 nested views. Often it is easiest to use .copy() to avoid chains.
+view-of-view-of-view chains. Be careful with chains because they become very slow with
+about 15 nested views. Often it is easiest to use .copy() to avoid chains.
+
 """
 
-
-import xgi
+from .function import freeze
 
 __all__ = ["subhypergraph"]
 
@@ -66,4 +66,4 @@ def subhypergraph(H, nodes=None, edges=None):
         if uid in edges and set(H.edges.members(uid)).issubset(nodes)
     )
 
-    return xgi.freeze(new)
+    return freeze(new)

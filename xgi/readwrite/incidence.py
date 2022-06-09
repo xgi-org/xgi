@@ -1,7 +1,9 @@
 """Read from and write to incidece matrices."""
+
 import numpy as np
 
-import xgi
+from ..convert import from_incidence_matrix
+from ..linalg import incidence_matrix
 
 __all__ = [
     "read_incidence_matrix",
@@ -45,7 +47,7 @@ def read_incidence_matrix(
     >>> # H = xgi.read_incidence_matrix("test.csv", delimiter=",")
 
     """
-    return xgi.from_incidence_matrix(
+    return from_incidence_matrix(
         np.loadtxt(path, comments=comments, delimiter=delimiter, encoding=encoding),
         create_using=create_using,
     )
@@ -76,5 +78,5 @@ def write_incidence_matrix(H, path, delimiter=" ", encoding="utf-8"):
     >>> # xgi.write_incidence_matrix(H, "test.csv", delimiter=",")
 
     """
-    I = xgi.incidence_matrix(H, sparse=False)
+    I = incidence_matrix(H, sparse=False)
     np.savetxt(path, I, delimiter=delimiter, newline="\n", encoding=encoding)
