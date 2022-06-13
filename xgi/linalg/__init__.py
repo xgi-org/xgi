@@ -1,2 +1,2 @@
-from xgi.linalg import matrix
-from xgi.linalg.matrix import *
+from . import matrix
+from .matrix import *

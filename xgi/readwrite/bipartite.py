@@ -1,6 +1,7 @@
 """Read from and write to bipartite formats."""
-import xgi
-from xgi.exception import XGIError
+
+from ..exception import XGIError
+from ..generators import empty_hypergraph
 
 __all__ = [
     "read_bipartite_edgelist",
@@ -51,9 +52,9 @@ def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
 
     Example
     -------
-        >>> import xgi
-        >>> H = xgi.random_hypergraph(50, [0.01, 0.001])
-        >>> # xgi.write_bipartite_edgelist(H, "test.csv", delimiter=",")
+    >>> import xgi
+    >>> H = xgi.random_hypergraph(50, [0.01, 0.001])
+    >>> # xgi.write_bipartite_edgelist(H, "test.csv", delimiter=",")
 
     """
     with open(path, "wb") as file:
@@ -106,8 +107,8 @@ def read_bipartite_edgelist(
 
     Example
     -------
-        >>> import xgi
-        >>> # H = xgi.read_bipartite_edgelist("test.csv", delimiter=",")
+    >>> import xgi
+    >>> # H = xgi.read_bipartite_edgelist("test.csv", delimiter=",")
 
     """
     with open(path, "rb") as file:
@@ -168,10 +169,11 @@ def parse_bipartite_edgelist(
 
     Returns
     -------
-    A Hypergraph object
-        The loaded hypergraph
+    Hypergraph
+        The loaded hypergraph.
+
     """
-    H = xgi.empty_hypergraph(create_using)
+    H = empty_hypergraph(create_using)
 
     node_index = 1 if dual else 0
     edge_index = 0 if dual else 1

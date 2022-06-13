@@ -6,13 +6,11 @@ and can associate key/value attribute pairs with each undirected simplex and nod
 Multi-simplices are not allowed.
 """
 
-from itertools import combinations
+from itertools import combinations, count
 
-from xgi import convert
-from xgi.classes import Hypergraph
-from xgi.classes.reportviews import EdgeView, NodeView
-from xgi.exception import XGIError
-from xgi.utils import XGICounter
+from ..exception import XGIError
+from .hypergraph import Hypergraph
+from .reportviews import EdgeView, NodeView
 
 __all__ = ["SimplicialComplex"]
 
@@ -71,7 +69,7 @@ class SimplicialComplex(Hypergraph):
     """
 
     def __init__(self, incoming_data=None, **attr):
-        self._edge_uid = XGICounter()
+        self._edge_uid = count()
         self._hypergraph = self._hypergraph_attr_dict_factory()
         self._node = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
@@ -82,7 +80,9 @@ class SimplicialComplex(Hypergraph):
         self._edgeview = EdgeView(self)
 
         if incoming_data is not None:
-            convert.convert_to_simplicial_complex(incoming_data, create_using=self)
+            from ..convert import convert_to_simplicial_complex
+
+            convert_to_simplicial_complex(incoming_data, create_using=self)
         self._hypergraph.update(attr)  # must be after convert
 
     def __str__(self):
@@ -163,7 +163,7 @@ class SimplicialComplex(Hypergraph):
 
             # add simplex and its nodes
             if simplex:
-                uid = self._edge_uid()
+                uid = next(self._edge_uid)
             else:
                 raise XGIError("Cannot add an empty simplex.")
             for node in simplex:
@@ -248,7 +248,7 @@ class SimplicialComplex(Hypergraph):
                 dd = {}
 
             if simplex and not self.has_simplex(simplex):
-                uid = self._edge_uid()
+                uid = next(self._edge_uid)
 
                 for n in simplex:
                     if n not in self._node:

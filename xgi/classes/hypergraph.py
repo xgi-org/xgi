@@ -1,15 +1,14 @@
 """Base class for undirected hypergraphs."""
 from collections.abc import Hashable, Iterable
 from copy import deepcopy
+from itertools import count
 from warnings import warn
 
 import numpy as np
 
-import xgi
-import xgi.convert as convert
-from xgi.classes.reportviews import EdgeView, NodeView
-from xgi.exception import IDNotFound, XGIError
-from xgi.utils import XGICounter
+from ..exception import IDNotFound, XGIError
+from .hypergraphviews import subhypergraph
+from .reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
 
@@ -103,7 +102,7 @@ class Hypergraph:
     _hypergraph_attr_dict_factory = dict
 
     def __init__(self, incoming_data=None, **attr):
-        self._edge_uid = XGICounter()
+        self._edge_uid = count()
         self._hypergraph = self._hypergraph_attr_dict_factory()
         self._node = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
@@ -117,7 +116,11 @@ class Hypergraph:
         """An :class:`~xgi.classes.reportviews.EdgeView` of the hypergraph."""
 
         if incoming_data is not None:
-            convert.convert_to_hypergraph(incoming_data, create_using=self)
+            # This import needs to happen when this function is called, not when it is
+            # defined.  Otherwise, a circular import error would happen.
+            from ..convert import convert_to_hypergraph
+
+            convert_to_hypergraph(incoming_data, create_using=self)
         self._hypergraph.update(attr)  # must be after convert
 
     def __str__(self):
@@ -443,8 +446,9 @@ class Hypergraph:
         Examples
         --------
 
-        Add edges with ir without specifying an edge id.
+        Add edges with or without specifying an edge id.
 
+        >>> import xgi
         >>> H = xgi.Hypergraph()
         >>> H.add_edge([1, 2, 3])
         >>> H.add_edge([3, 4], id='myedge')
@@ -466,7 +470,7 @@ class Hypergraph:
         if not members:
             raise XGIError("Cannot add an empty edge")
 
-        uid = self._edge_uid() if not id else id
+        uid = next(self._edge_uid) if not id else id
         self._edge[uid] = []
         for node in members:
             if node not in self._node:
@@ -624,11 +628,11 @@ class Hypergraph:
         e = first_edge
         while True:
             if format1:
-                members, uid, eattr = e, self._edge_uid(), {}
+                members, uid, eattr = e, next(self._edge_uid), {}
             elif format2:
                 members, uid, eattr = e[0], e[1], {}
             elif format3:
-                members, uid, eattr = e[0], self._edge_uid(), e[1]
+                members, uid, eattr = e[0], next(self._edge_uid), e[1]
             elif format4:
                 members, uid, eattr = e[0], e[1], e[2]
 
@@ -675,14 +679,14 @@ class Hypergraph:
         -----
         Adding the same edge twice creates a multiedge.
 
-        Example
-        -------
+        Examples
+        --------
+        >>> import xgi
         >>> H = xgi.Hypergraph()
         >>> edges = [(0, 1, 0.3), (0, 2, 0.8)]
         >>> H.add_weighted_edges_from(edges)
         >>> H.edges[0]
         {'weight': 0.3}
-
 
         """
         try:
@@ -718,12 +722,12 @@ class Hypergraph:
 
         Examples
         --------
-        Swap the memberships of two nodes.
-
+        >>> import xgi
         >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4]])
         >>> H.double_edge_swap(1, 4, 0, 1)
         >>> H.edges.members()
         [[4, 2, 3], [3, 1]]
+
         """
         # Assign edges to modify
         try:
@@ -775,6 +779,7 @@ class Hypergraph:
 
         Examples
         --------
+        >>> import xgi
         >>> H = xgi.Hypergraph()
         >>> H.add_edge(['apple', 'banana'], 'fruits')
         >>> H.add_node_to_edge('fruits', 'pear')
@@ -933,7 +938,7 @@ class Hypergraph:
             A copy of the hypergraph.
 
         """
-        return xgi.hypergraphviews.subhypergraph(self)
+        return subhypergraph(self)
 
     def dual(self):
         """The dual of the hypergraph.

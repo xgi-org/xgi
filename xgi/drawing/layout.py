@@ -1,7 +1,8 @@
 import networkx as nx
 
-import xgi
-from xgi.utils import np_random_state
+from .. import convert
+from ..classes import SimplicialComplex, max_edge_order
+from ..utils import np_random_state
 
 __all__ = [
     "random_layout",
@@ -20,7 +21,7 @@ def random_layout(H, center=None, dim=2, seed=None):
 
     Parameters
     ----------
-    H : xgi HyperGraph or list of nodes
+    H : HyperGraph or list of nodes
         A position will be assigned to every node in HG.
     center : array-like or None
         Coordinate pair around which to center the layout.
@@ -65,7 +66,7 @@ def pairwise_spring_layout(H):
 
     Parameters
     ----------
-    H : xgi Hypergraph or SimplicialComplex
+    H : Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
 
     Returns
@@ -91,9 +92,9 @@ def pairwise_spring_layout(H):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.pairwise_spring_layout(H)
     """
-    if type(H) == xgi.classes.simplicialcomplex.SimplicialComplex:
-        H = xgi.from_simplicial_complex_to_hypergraph(H)
-    G = xgi.convert_to_graph(H)
+    if isinstance(H, SimplicialComplex):
+        H = convert.from_simplicial_complex_to_hypergraph(H)
+    G = convert.convert_to_graph(H)
     pos = nx.spring_layout(G)
     return pos
 
@@ -130,9 +131,8 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.barycenter_spring_layout(H)
 
-    """
-    if type(H) == xgi.classes.simplicialcomplex.SimplicialComplex:
-        H = xgi.from_simplicial_complex_to_hypergraph(H)
+    if isinstance(H, SimplicialComplex):
+        H = convert.from_simplicial_complex_to_hypergraph(H)
 
     # Creating the projected networkx Graph, I will fill it manually
     G = nx.Graph()
@@ -148,7 +148,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     # Adding phantom nodes and connections therein
     phantom_node_id = max(H.nodes) + 1
     # Looping over the hyperedges of different order (from triples up)
-    for d in range(2, xgi.max_edge_order(H) + 1):
+    for d in range(2, max_edge_order(H) + 1):
         # Hyperedges of order d (d=2: triplets, etc.)
         for he in H.edges.filterby("order", d).members():
             # Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
@@ -182,7 +182,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
 
     Parameters
     ----------
-    H : xgi Hypergraph or SimplicialComplex
+    H : Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
 
     Returns
@@ -203,8 +203,8 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.weighted_barycenter_spring_layout(H)
     """
-    if type(H) == xgi.classes.simplicialcomplex.SimplicialComplex:
-        H = xgi.from_simplicial_complex_to_hypergraph(H)
+    if isinstance(H, SimplicialComplex):
+        H = convert.from_simplicial_complex_to_hypergraph(H)
 
     # Creating the projected networkx Graph, I will fill it manually
     G = nx.Graph()
@@ -220,7 +220,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     # Adding phantom nodes and connections therein
     phantom_node_id = max(H.nodes) + 1
     # Looping over the hyperedges of different order (from triples up)
-    for d in range(2, xgi.max_edge_order(H) + 1):
+    for d in range(2, max_edge_order(H) + 1):
         # Hyperedges of order d (d=2: triplets, etc.)
         for he_id, members in H.edges.filterby("order", d).members(dtype=dict).items():
             # Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
