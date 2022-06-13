@@ -8,7 +8,7 @@ import networkx as nx
 import numpy as np
 
 from ..classes import SimplicialComplex
-from ..utils import py_random_state
+from ..utils import py_random_state, np_random_state
 from .classic import empty_hypergraph, empty_simplicial_complex
 
 __all__ = [

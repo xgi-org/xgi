@@ -8,7 +8,7 @@ import numpy as np
 
 from ..exception import IDNotFound, XGIError
 from .hypergraphviews import subhypergraph
-from .reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
+from .reportviews import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
 

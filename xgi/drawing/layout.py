@@ -131,6 +131,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.barycenter_spring_layout(H)
 
+    """
     if isinstance(H, SimplicialComplex):
         H = convert.from_simplicial_complex_to_hypergraph(H)
 
