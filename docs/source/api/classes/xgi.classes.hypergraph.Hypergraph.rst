@@ -59,16 +59,5 @@
       ~Hypergraph.isolates
       ~Hypergraph.duplicate_edges
       ~Hypergraph.has_edge
-      ~Hypergraph.is_possible_order
-      ~Hypergraph.max_edge_order
       ~Hypergraph.neighbors
-      ~Hypergraph.egonet
       ~Hypergraph.singleton_edges
-
-
-   .. rubric:: Other methods
-
-   .. autosummary::
-      :nosignatures:
-
-      ~Hypergraph.is_uniform

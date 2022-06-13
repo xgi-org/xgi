@@ -31,8 +31,8 @@ stats package
    :toctree: stats
    :nosignatures:
 
-   ~xgi.stats.nodestat
-   ~xgi.stats.edgestat
+   ~xgi.stats.nodestat_func
+   ~xgi.stats.edgestat_func
 
 
 .. rubric:: Other classes (for internal use)

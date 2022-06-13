@@ -14,8 +14,6 @@
    .. autosummary::
 
       ~EdgeStat.name
-      ~EdgeStat.val
-
 
 
    .. rubric:: Methods

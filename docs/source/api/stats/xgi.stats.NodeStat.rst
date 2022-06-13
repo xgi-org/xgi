@@ -14,7 +14,6 @@
    .. autosummary::
 
       ~NodeStat.name
-      ~NodeStat.val
 
 
    .. rubric:: Methods

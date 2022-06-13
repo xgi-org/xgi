@@ -55,7 +55,7 @@ from . import nodestats
 from . import edgestats
 
 
-__all__ = ["nodestat", "edgestat", "EdgeStatDispatcher", "NodeStatDispatcher"]
+__all__ = ["nodestat_func", "edgestat_func", "EdgeStatDispatcher", "NodeStatDispatcher"]
 
 
 class StatDispatcher:
@@ -461,7 +461,7 @@ class MultiEdgeStat(MultiIDStat):
     statsmodule = edgestats
 
 
-def nodestat(func):
+def nodestat_func(func):
     """Decorator that allows arbitrary functions to behave like :class:`NodeStat` objects.
 
     Parameters
@@ -479,7 +479,7 @@ def nodestat(func):
 
     See Also
     --------
-    :class:`edgestat`
+    :func:`edgestat_func`
 
     Notes
     -----
@@ -515,10 +515,10 @@ def nodestat(func):
     Traceback (most recent call last):
     AttributeError: Stat 'my_degree' not defined
 
-    Use the `nodestat` decorator to turn `my_degree` into a valid stat.
+    Use the `nodestat_func` decorator to turn `my_degree` into a valid stat.
 
     >>> original_my_degree = my_degree
-    >>> my_degree = xgi.nodestat(my_degree)
+    >>> my_degree = xgi.nodestat_func(my_degree)
     >>> H.my_degree()
     {1: 10, 2: 10, 3: 10, 4: 20, 5: 10, 6: 10}
     >>> H.nodes.my_degree
@@ -545,7 +545,7 @@ def nodestat(func):
     The previous usage of `nodestat` is made for explanatory purposes.  A more typical
     use of `nodestat` is the following.
 
-    >>> @xgi.nodestat
+    >>> @xgi.nodestat_func
     ... def my_degree(net, bunch):
     ...     return {n: 10 * net.degree(n) for n in bunch}
 
@@ -554,11 +554,11 @@ def nodestat(func):
     return func
 
 
-def edgestat(func):
+def edgestat_func(func):
     """Decorator that allows arbitrary functions to behave like :class:`EdgeStat` objects.
 
     Works identically to :func:`nodestat`.  For extended documentation, see
-    :func:`nodestat`.
+    :func:`nodestat_func`.
 
     Parameters
     ----------
@@ -575,7 +575,7 @@ def edgestat(func):
 
     See Also
     --------
-    :class:`nodestat`
+    :func:`nodestat_func`
 
     """
     setattr(edgestats, func.__name__, func)

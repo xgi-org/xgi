@@ -85,7 +85,7 @@ def test_user_defined(edgelist1):
     with pytest.raises(AttributeError):
         H.edges.user_order
 
-    @xgi.edgestat
+    @xgi.edgestat_func
     def user_order(net, bunch):
         return {n: 10 * net.order(n) for n in bunch}
 

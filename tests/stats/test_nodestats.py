@@ -468,7 +468,7 @@ def test_user_defined(edgelist1):
     with pytest.raises(AttributeError):
         H.nodes.user_degree
 
-    @xgi.nodestat
+    @xgi.nodestat_func
     def user_degree(net, bunch):
         return {n: 10 * net.degree(n) for n in bunch}
 
