@@ -119,7 +119,7 @@ def draw(
         for d in reversed(range(1, d_max + 1)):
             if d == 1:
                 # Drawing the edges
-                for he in H.edges(order=d).members():
+                for he in H.edges.filterby("order", d).members():
                     he = list(he)
                     x_coords = [pos[he[0]][0], pos[he[1]][0]]
                     y_coords = [pos[he[0]][1], pos[he[1]][1]]
@@ -128,7 +128,7 @@ def draw(
 
             else:
                 # Hyperedges of order d (d=1: links, etc.)
-                for he in H.edges(order=d).members():
+                for he in H.edges.filterby("order", d).members():
                     # Filling the polygon
                     coordinates = [[pos[n][0], pos[n][1]] for n in he]
                     # Sorting the points counterclockwise (needed to have the correct filling)
@@ -149,7 +149,7 @@ def draw(
         for d in reversed(range(1, d_max + 1)):
             if d == 1:
                 # Drawing the edges
-                for he in H_.edges(order=d).members():
+                for he in H_.edges.filterby("order", d).members():
                     he = list(he)
                     x_coords = [pos[he[0]][0], pos[he[1]][0]]
                     y_coords = [pos[he[0]][1], pos[he[1]][1]]
@@ -157,7 +157,7 @@ def draw(
                     ax.add_line(line)
             else:
                 # Hyperedges of order d (d=1: links, etc.)
-                for he in H_.edges(order=d).members():
+                for he in H_.edges.filterby("order", d).members():
                     # Filling the polygon
                     coordinates = [[pos[n][0], pos[n][1]] for n in he]
                     # Sorting the points counterclockwise (needed to have the correct filling)

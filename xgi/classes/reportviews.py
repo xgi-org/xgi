@@ -9,13 +9,12 @@ from collections.abc import Mapping, Set
 
 import numpy as np
 
+from xgi.stats import NodeStatDispatcher, EdgeStatDispatcher
 from xgi.exception import IDNotFound, XGIError
 
 __all__ = [
     "NodeView",
     "EdgeView",
-    "DegreeView",
-    "EdgeSizeView",
 ]
 
 
@@ -41,7 +40,7 @@ class IDView(Mapping, Set):
 
     """
 
-    __slots__ = ("_id_dict", "_id_attr", "_ids")
+    __slots__ = ("_dispatcher", "_id_dict", "_id_attr", "_ids")
 
     def __getstate__(self):
         """Function that allows pickling.
@@ -73,7 +72,8 @@ class IDView(Mapping, Set):
         self._id_attr = state["_id_attr"]
         self._ids = state["_ids"]
 
-    def __init__(self, id_dict, id_attr, ids=None):
+    def __init__(self, H, id_dict, id_attr, dispatcher, ids=None):
+        self._dispatcher = dispatcher
         self._id_dict = id_dict
         self._id_attr = id_attr
 
@@ -81,6 +81,9 @@ class IDView(Mapping, Set):
             self._ids = None
         else:
             self._ids = ids
+
+    def __getattr__(self, attr):
+        return getattr(self._dispatcher, attr)
 
     @property
     def ids(self):
@@ -100,7 +103,10 @@ class IDView(Mapping, Set):
 
     def __iter__(self):
         """Returns an iterator over the IDs."""
-        return iter(self._id_dict.keys()) if self._ids is None else iter(self._ids)
+        if self._ids is None:
+            return iter({}) if self._id_dict is None else iter(self._id_dict.keys())
+        else:
+            return iter(self._ids)
 
     def __getitem__(self, id):
         """Get the attributes of the ID.
@@ -141,22 +147,103 @@ class IDView(Mapping, Set):
         """Returns a summary of the class"""
         return f"{self.__class__.__name__}({tuple(self)})"
 
-    def __call__(self, size):
-        """Filter the results by size.
+    def __call__(self, bunch):
+        """Filter to the given bunch.
 
         Parameters
         ----------
-        size : int
-            The size of the ids to keep track of.
+        bunch : Iterable
+            Iterable of IDs
 
         Returns
         -------
         IDView
-            A View that keeps track only of the ids in this view with the given size.
+            A new view that keeps track only of the IDs in the bunch.
 
         """
-        bunch = [id for id in self._id_dict if len(self._id_dict[id]) == size]
         return self.from_view(self, bunch)
+
+    def filterby(self, stat, val, mode="eq"):
+        """Filter the IDs in this view by a statistic.
+
+        Parameters
+        ----------
+        stat : str
+            Name of a `NodeStat`.
+        val : Any
+            Value of the statistic.  Usually a single numeric value.  When mode is
+            'between', must be a tuple of exactly two values.
+        mode : str
+            How to compare each value to `val`.  Can be one of the following.
+
+            * 'eq' (default): Return IDs whose value is exactly equal to `val`.
+            * 'neq': Return IDs whose value is not equal to `val`.
+            * 'lt': Return IDs whose value is less than `val`.
+            * 'gt': Return IDs whose value is greater than `val`.
+            * 'leq': Return IDs whose value is less than or equal to `val`.
+            * 'geq': Return IDs whose value is greater than or equal to `val`.
+            * 'between': In this mode, `val` must be a tuple `(val1, val2)`.  Return IDs
+              whose value `v` satisfies `val1 <= v <= val2`.
+
+        See Also
+        --------
+        For more details, see the `tutorial
+        <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+        >>> H.nodes.filterby('degree', 2, 'eq')
+        NodeView((2, 4, 5))
+        >>> H.nodes.filterby('degree', 2, 'neq')
+        NodeView((1, 3))
+        >>> H.nodes.filterby('degree', 2, 'lt')
+        NodeView((1,))
+        >>> H.nodes.filterby('degree', 2, 'gt')
+        NodeView((3,))
+        >>> H.nodes.filterby('degree', 2, 'leq')
+        NodeView((1, 2, 4, 5))
+        >>> H.nodes.filterby('degree', 2, 'geq')
+        NodeView((2, 3, 4, 5))
+        >>> H.nodes.filterby('degree', (2, 3), 'between')
+        NodeView((2, 3, 4, 5))
+
+        """
+        try:
+            stat = getattr(self._dispatcher, stat)
+        except AttributeError as e:
+            raise AttributeError(f'Statistic with name "{stat}" not found') from e
+        values = stat.asdict()
+        if mode == "eq":
+            bunch = [idx for idx in self if values[idx] == val]
+        elif mode == "neq":
+            bunch = [idx for idx in self if values[idx] != val]
+        elif mode == "lt":
+            bunch = [idx for idx in self if values[idx] < val]
+        elif mode == "gt":
+            bunch = [idx for idx in self if values[idx] > val]
+        elif mode == "leq":
+            bunch = [idx for idx in self if values[idx] <= val]
+        elif mode == "geq":
+            bunch = [idx for idx in self if values[idx] >= val]
+        elif mode == "between":
+            bunch = [node for node in self if val[0] <= values[node] <= val[1]]
+        else:
+            raise ValueError(f"Unrecognized mode {mode}")
+        return type(self).from_view(self, bunch)
+
+    def filterby_attr(self, attr, val, mode="eq"):
+        """Filter the IDs in this view by an attribute.
+
+        See Also
+        --------
+        Works identically to `filterby`.  For more details, see the `tutorial
+        <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+        """
+        bunch = [idx for idx in self if self._id_attr[idx][attr] == val]
+        return type(self).from_view(self, bunch)
 
     @classmethod
     def from_view(cls, view, bunch=None):
@@ -179,151 +266,19 @@ class IDView(Mapping, Set):
 
         """
         newview = cls(None)
+        newview._dispatcher = view._dispatcher.__class__(view._dispatcher.net, newview)
         newview._id_dict = view._id_dict
         newview._id_attr = view._id_attr
-        newview._ids = set(view._id_dict.keys()) if bunch is None else set(bunch)
+        all_ids = set(view._id_dict.keys())
+        if bunch is None:
+            newview._ids = all_ids
+        else:
+            bunch = set(bunch)
+            wrong = bunch - all_ids
+            if wrong:
+                raise IDNotFound(f"Nodes {wrong} not in the hypergraph")
+            newview._ids = bunch
         return newview
-
-
-class IDDegreeView:
-    """Base View class for the size (node degree or edge order) of IDs in a Hypergraph.
-
-    Parameters
-    ----------
-    ids : dict
-        A dictionary with IDs as keys and a list of bipartite relations
-        as values.
-    id_attrs : dict
-        A dictionary with IDs as keys and a dictionary of properties as values.  Used to
-        weight the degree.
-    neighbor_ids : dict
-        A dictionary with neighboring IDs as keys and a list of bipartite neighbors as
-        values. Used when the degree order is specified.
-    nbunch : ID, iterable of IDs, or None meaning all IDs (default=None)
-        The IDs for which to find the degree
-    weight : hashable, optional
-        The name of the attribute to weight the degree, by default None.
-    order : int, default: None
-        Specifies the size of the neighbors for which
-        the degree should be computed.
-    dtype : str, default : dict
-        Specifies the data type when __getitem__ is called. Valid choices are
-        dict, list, or nparray.
-
-    """
-
-    __slots__ = ("_ids", "_id_attrs", "_weight")
-
-    def __init__(
-        self,
-        ids,
-        id_attrs,
-        neighbor_ids,
-        id_bunch=None,
-        weight=None,
-        order=None,
-        dtype="dict",
-    ):
-        self._id_attrs = id_attrs
-        self._neighbor_ids = neighbor_ids
-        self._weight = weight
-        self._order = order
-        if dtype not in {"dict", "list", "nparray"}:
-            raise XGIError("Invalid datatype!")
-        self._dtype = dtype
-
-        if id_bunch is None:
-            self._ids = ids
-        elif isinstance(id_bunch, int):
-            if id_bunch in ids:
-                self._ids = {id_bunch: ids[id_bunch]}
-            else:
-                raise XGIError("ID does not exist in the hypergraph!")
-        else:
-            self._ids = {id: val for id, val in ids.items() if id in id_bunch}
-
-        self._deg = self._get_degrees()
-
-    def __getitem__(self, id_bunch):
-        """Get the degree for an ID.
-
-        Parameters
-        ----------
-        id : hashable
-            Unique ID.
-
-        Returns
-        -------
-        float
-            The degree of an ID, weighted or unweighted.
-
-        """
-        try:
-            return self._deg[id_bunch]
-        except TypeError:
-            degs = {id: deg for id, deg in self if id in id_bunch}
-            if self._dtype == "dict":
-                return degs
-            elif self._dtype == "list":
-                return list(degs.values())
-            elif self._dtype == "nparray":
-                return np.array(list(degs.values()))
-        except KeyError:
-            raise XGIError("Invalid ID specified!")
-
-    def __iter__(self):
-        """Returns an iterator of ID, degree pairs.
-
-        Yields
-        -------
-        iterator of tuples
-            Each entry is an ID, degree (Weighted or unweighted) pair.
-
-        """
-        for id, deg in self._deg.items():
-            yield (id, deg)
-
-    def __len__(self):
-        """Returns the number of IDs/degrees."""
-        return len(self._ids)
-
-    def __str__(self):
-        """Returns a string of IDs."""
-        return str(list(self._ids))
-
-    def __repr__(self):
-        """A string representation of the degrees."""
-        return f"{self.__class__.__name__}({dict(self)})"
-
-    def _get_degrees(self):
-        degrees = dict()
-        if self._order is None:
-            if self._weight is None:
-                for id, nbrs in self._ids.items():
-                    degrees[id] = len(nbrs)
-            else:
-                for id, nbrs in self._ids.items():
-                    degrees[id] = sum(
-                        self._id_attrs[dd].get(self._weight, 1) for dd in nbrs
-                    )
-        else:
-            if self._weight is None:
-                for id, nbrs in self._ids.items():
-                    degrees[id] = len(
-                        [
-                            i
-                            for i in nbrs
-                            if len(self._neighbor_ids[i]) == self._order + 1
-                        ]
-                    )
-            else:
-                for id, nbrs in self._ids.items():
-                    degrees[id] = sum(
-                        self._id_attrs[i].get(self._weight, 1)
-                        for i in nbrs
-                        if len(self._neighbor_ids[i]) == self._order + 1
-                    )
-        return degrees
 
 
 class NodeView(IDView):
@@ -336,17 +291,21 @@ class NodeView(IDView):
     bunch : optional iterable, default None
         The node ids to keep track of.  If None (default), keep track of all node ids.
 
+    Notes
+    -----
+    In addition to the methods listed in this page, other methods defined in the `stats`
+    package are also accessible via the `NodeView` class.  For more details, see the
+    `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
     """
 
-    def __init__(self, hypergraph, bunch=None):
-        if hypergraph is None:
-            super().__init__(None, None, bunch)
+    def __init__(self, H, bunch=None):
+        dispatcher = NodeStatDispatcher(H, self)
+        if H is None:
+            super().__init__(None, None, None, dispatcher, bunch)
         else:
-            super().__init__(hypergraph._node, hypergraph._node_attr, bunch)
-
-    def __call__(self, degree):
-        """Return a new view that keeps track only of the nodes of the given degree."""
-        return super().__call__(size=degree)
+            super().__init__(H, H._node, H._node_attr, dispatcher, bunch)
 
     def memberships(self, n=None):
         """Get the edge ids of which a node is a member.
@@ -380,17 +339,21 @@ class EdgeView(IDView):
     bunch : optional iterable, default None
         The edge ids to keep track of.  If None (default), keep track of all edge ids.
 
+    Notes
+    -----
+    In addition to the methods listed in this page, other methods defined in the `stats`
+    package are also accessible via the `EdgeView` class.  For more details, see the
+    `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
     """
 
-    def __init__(self, hypergraph, bunch=None):
-        if hypergraph is None:
-            super().__init__(None, None, bunch)
+    def __init__(self, H, bunch=None):
+        dispatcher = EdgeStatDispatcher(H, self)
+        if H is None:
+            super().__init__(None, None, None, dispatcher, bunch)
         else:
-            super().__init__(hypergraph._edge, hypergraph._edge_attr, bunch)
-
-    def __call__(self, order):
-        """Filter the results by size."""
-        return super().__call__(size=order + 1)
+            super().__init__(H, H._edge, H._edge_attr, dispatcher, bunch)
 
     def members(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
@@ -441,32 +404,3 @@ class EdgeView(IDView):
                 else:
                     raise XGIError(f"Unrecognized dtype {dtype}")
             raise IDNotFound(f"Item {e} not in this view")
-
-
-class DegreeView(IDDegreeView):
-    """An IDDegreeView that keeps track of node degree."""
-
-    def __init__(self, hypergraph, nbunch=None, weight=None, order=None, dtype="dict"):
-        super().__init__(
-            hypergraph._node,
-            hypergraph._edge_attr,
-            hypergraph._edge,
-            id_bunch=nbunch,
-            weight=weight,
-            order=order,
-            dtype=dtype,
-        )
-
-
-class EdgeSizeView(IDDegreeView):
-    """An IDDegreeView that keeps track of edge size."""
-
-    def __init__(self, hypergraph, ebunch=None, weight=None, dtype="dict"):
-        super().__init__(
-            hypergraph._edge,
-            hypergraph._node_attr,
-            hypergraph._node,
-            id_bunch=ebunch,
-            weight=weight,
-            dtype=dtype,
-        )

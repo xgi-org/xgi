@@ -30,6 +30,7 @@
    :hidden:
 
    Core classes <api/classes.rst>
+   Node and edge statistics <api/stats.rst>
    Algorithms <api/algorithms.rst>
    Generative Models <api/generators.rst>
    Linear Algebra <api/linalg.rst>

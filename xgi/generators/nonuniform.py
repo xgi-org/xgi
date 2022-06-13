@@ -8,7 +8,7 @@ import networkx as nx
 import numpy as np
 
 from ..classes import SimplicialComplex
-from ..utils import py_random_state
+from ..utils import py_random_state, np_random_state
 from .classic import empty_hypergraph, empty_simplicial_complex
 
 __all__ = [
@@ -18,6 +18,7 @@ __all__ = [
     "random_simplicial_complex",
     "random_flag_complex_d2",
     "random_flag_complex",
+    "watts_strogatz_hypergraph",
 ]
 
 
@@ -444,3 +445,19 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     S.add_simplices_from(max_cliques, max_order=max_order)
 
     return S
+
+
+@np_random_state("seed")
+def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
+    H = lattice(n, d, k, l)
+    to_remove = []
+    to_add = []
+    for e in H.edges:
+        if seed.random() < p:
+            to_remove.append(e)
+            node = H.edges.members(e)[0]
+            neighbors = seed.choice(H.nodes, size=d - 1)
+            to_add.append(np.append(neighbors, node))
+    H.remove_edges_from(to_remove)
+    H.add_edges_from(to_add)
+    return H

@@ -173,8 +173,9 @@ def degree_counts(H):
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> xgi.degree_counts(H)
     [0, 3, 1]
+
     """
-    counts = Counter(d for n, d in H.degree())
+    counts = Counter(H.degree().values())
     return [counts.get(i, 0) for i in range(max(counts) + 1)]
 
 
@@ -203,8 +204,9 @@ def degree_histogram(H):
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> xgi.degree_histogram(H)
     ([1, 2], [3, 1])
+
     """
-    counts = Counter(d for n, d in H.degree())
+    counts = Counter(H.degree().values())
     degrees = []
     heights = []
     for d, c in sorted(counts.items(), key=lambda kv: kv[0]):
@@ -247,6 +249,7 @@ def frozen(*args, **kwargs):
     >>> H.add_node(5)
     Traceback (most recent call last):
     xgi.exception.XGIError: Frozen hypergraph can't be modified
+
     """
     raise XGIError("Frozen hypergraph can't be modified")
 
@@ -280,6 +283,7 @@ def freeze(H):
     >>> H.add_node(5)
     Traceback (most recent call last):
     xgi.exception.XGIError: Frozen hypergraph can't be modified
+
     """
     H.add_node = frozen
     H.add_nodes_from = frozen
@@ -323,6 +327,7 @@ def is_frozen(H):
     <xgi.classes.hypergraph.Hypergraph object at 0x...>
     >>> xgi.is_frozen(H)
     True
+
     """
     try:
         return H.frozen
@@ -361,6 +366,7 @@ def create_empty_copy(H, with_data=True):
     NodeView((1, 2, 3, 4))
     >>> H_copy.edges
     EdgeView(())
+
     """
     H_copy = H.__class__()
     H_copy.add_nodes_from(H.nodes)
@@ -412,6 +418,7 @@ def set_node_attributes(H, values, name=None):
 
     Note that if the dictionary contains nodes that are not in `G`, the
     values are silently ignored.
+
     """
     # Set node attributes based on type of `values`
     if name is not None:  # `values` must not be a dict of dict

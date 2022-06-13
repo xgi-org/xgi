@@ -1,3 +1,4 @@
+import xgi
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -37,6 +38,21 @@ def edgelist6():
 @pytest.fixture
 def edgelist7():
     return [[0, 1, 2], [1, 2, 3], [2, 3, 4], [4]]
+
+
+@pytest.fixture
+def edgelist8():
+    return [
+        [0, 1],
+        [0, 1, 2],
+        [0, 2, 3],
+        [0, 1, 2, 3, 4],
+        [2, 4, 5],
+        [1, 3, 5],
+        [0, 3, 4],
+        [1, 6],
+        [0, 6],
+    ]
 
 
 @pytest.fixture
@@ -119,3 +135,28 @@ def attr2():
 @pytest.fixture
 def attr3():
     return {"color": "yellow", "name": "zebra"}
+
+
+@pytest.fixture
+def attr4():
+    return {"color": "red", "name": "orangutan", "age": 20}
+
+
+@pytest.fixture
+def attr5():
+    return {"color": "blue", "name": "fish", "age": 2}
+
+
+@pytest.fixture
+def hyperwithattrs(edgelist4, attr1, attr2, attr3, attr4, attr5):
+    H = xgi.Hypergraph(edgelist4)
+    H.add_nodes_from(
+        [
+            (1, attr1),
+            (2, attr2),
+            (3, attr3),
+            (4, attr4),
+            (5, attr5),
+        ]
+    )
+    return H

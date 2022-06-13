@@ -8,12 +8,19 @@ import numpy as np
 
 from ..exception import IDNotFound, XGIError
 from .hypergraphviews import subhypergraph
-from .reportviews import DegreeView, EdgeSizeView, EdgeView, NodeView
+from .reportviews import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
 
 
 class IDDict(dict):
+    """A dict that holds (node or edge) IDs.
+
+    For internal use only.  Adds input validation functionality to the internal dicts
+    that hold nodes and edges in a network.
+
+    """
+
     def __getitem__(self, item):
         try:
             return super().__getitem__(item)
@@ -70,8 +77,13 @@ class Hypergraph:
     Unique IDs are assigned to each node and edge internally and are used to refer to
     them throughout.
 
-    The attr keyword arguments are added as hypergraph attributes. To add node or ede
+    The `attr` keyword arguments are added as hypergraph attributes. To add node or ede
     attributes see :meth:`add_node` and :meth:`add_edge`.
+
+    In addition to the methods listed in this page, other methods defined in the `stats`
+    package are also accessible via the `Hypergraph` class.  For more details, see the
+    `tutorial
+    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
     Examples
     --------
@@ -180,12 +192,29 @@ class Hypergraph:
         """Write hypergraph attribute."""
         self._hypergraph[attr] = val
 
+    def __getattr__(self, attr):
+        stat = getattr(self.nodes, attr, None)
+        if stat is None:
+            stat = getattr(self.edges, attr, None)
+        if stat is None:
+            raise AttributeError(
+                f'stat "{attr}" not among available node or edge stats'
+            )
+
+        def func(node=None, *args, **kwargs):
+            val = stat(*args, **kwargs).asdict()
+            return val if node is None else val[node]
+
+        return func
+
     @property
     def nodes(self):
+        """A :class:`NodeView` of this network."""
         return self._nodeview
 
     @property
     def edges(self):
+        """An :class:`EdgeView` of this network."""
         return self._edgeview
 
     @property
@@ -461,7 +490,7 @@ class Hypergraph:
         ebunch_to_add : Iterable
 
             An iterable of edges.  This may be a dict of the form `{edge_id:
-            edge_members}`, or it may be an iterable of iterables, wher each element
+            edge_members}`, or it may be an iterable of iterables, where each element
             contains the members of the edge specified as valid node IDs.
             Alternatively, each element could also be a tuple in any of the following
             formats:
@@ -477,7 +506,7 @@ class Hypergraph:
             i.e. you cannot mix different formats.  The iterables containing edge
             members cannot be strings.
 
-        attr : **kwargs, optional
+        attr : \*\*kwargs, optional
             Additional attributes to be assigned to all edges. Attribues specified via
             `ebunch_to_add` take precedence over `attr`.
 
@@ -496,7 +525,7 @@ class Hypergraph:
         >>> import xgi
         >>> H = xgi.Hypergraph()
 
-        When Specify edges by their members only, numeric edge IDs will be assigned
+        When specifying edges by their members only, numeric edge IDs will be assigned
         automatically.
 
         >>> H.add_edges_from([[0, 1], [1, 2], [2, 3, 4]])
@@ -873,89 +902,6 @@ class Hypergraph:
         if edges:
             self.add_edges_from(edges)
 
-    def degree(self, nbunch=None, weight=None, order=None, dtype="dict"):
-        """A DegreeView for the Hypergraph.
-
-        The degree is the number of edges adjacent to the node.
-        The weighted node degree is the sum of the edge weights for
-        edges incident to that node.
-
-        This object provides an iterator for (node, degree) as well as
-        lookup for the degree for a single node.
-
-        Parameters
-        ----------
-        nbunch : single node, iterable, or None, default: None
-            The view will only report edges incident to these nodes. If None
-            is specified, the degree of all nodes is computed.
-        weight : string or None, default: None
-           The name of an edge attribute that holds the numerical value used
-           as a weight.  If None, then each edge has weight 1.
-           The degree is the sum of the edge weights adjacent to the node.
-        order : int or None, default: None
-            The size edges for which to compute the degree. If None is
-            specified, all edges are considered.
-        dtype : str, default: "dict"
-            The datatype to return
-
-
-        Returns
-        -------
-        If a single node is requested
-        float or int
-            Degree of the node
-
-        OR if multiple nodes are requested
-        DegreeView object
-            The degrees of the hypergraph capable of iterating (node, degree) pairs
-
-        """
-        degree = DegreeView(
-            self, nbunch=nbunch, weight=weight, order=order, dtype=dtype
-        )
-
-        # handles the single node case.
-        if nbunch in self:
-            return degree[nbunch]
-        return degree
-
-    def edge_size(self, ebunch=None, weight=None, dtype="dict"):
-        """A EdgeSizeView for the Hypergraph as H.edge_size or H.edge_size().
-
-        The edge degree is the number of nodes in that edge, or the edge size.
-        The weighted edge degree is the sum of the node weights for
-        nodes in that edge.
-
-        This object provides an iterator for (edge, degree) as well as
-        lookup for the degree for a single edge.
-
-        Parameters
-        ----------
-        ebunch : single edge, iterable, or all edges (default= all edges)
-            The view will only report sizes of these edges.
-        weight : string or None, optional (default=None)
-           The name of an node attribute that holds the numerical value used
-           as a weight.  If None, then each node has weight 1.
-           The size is the sum of the node weights adjacent to the edge.
-        dtype : str, default: "dict"
-            The datatype to return
-
-        Returns
-        -------
-        If a single edge is requested
-        int
-            size of the edge.
-
-        OR if multiple edges are requested
-        EdgeSizeView object
-            The sizes of the hypergraph edges capable of iterating (edge, size) pairs
-
-        """
-        edge_sizes = EdgeSizeView(self, ebunch=ebunch, weight=weight, dtype=dtype)
-        if ebunch in self:
-            return edge_sizes[ebunch]
-        return edge_sizes
-
     def clear(self, hypergraph_attr=True):
         """Remove all nodes and edges from the graph.
 
@@ -1025,7 +971,7 @@ class Hypergraph:
             View of the edges with a single member.
 
         """
-        return self.edges(order=0)
+        return self.edges.filterby("order", 0)
 
     def remove_singleton_edges(self):
         """Removes all singletons edges from the hypergraph"""
