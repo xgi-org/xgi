@@ -9,6 +9,9 @@ from itertools import combinations
 
 import networkx as nx
 
+from xgi import SimplicialComplex
+from ..utils import py_random_state
+
 __all__ = [
     "empty_hypergraph",
     "empty_simplicial_complex",
@@ -169,16 +172,22 @@ def star_clique(n_star, n_clique, d_max):
     return H
 
 
-def flag_complex(g, max_order=2, seed=None):
+@py_random_state("seed")
+def flag_complex(G, max_order=2, ps=None, seed=None):
     """Generate a flag (or clique) complex from a
     NetworkX graph by filling all cliques up to dimension max_order.
 
     Parameters
     ----------
-    g : Networkx Graph
+    G : Networkx Graph
 
     max_order : int
         maximal dimension of simplices to add to the output simplicial complex
+    ps: list of float
+        List of probabilities (between 0 and 1) to create a
+        hyperedge from a clique, at each order d. For example,
+        ps[0] is the probability of promoting any 3-node clique (triangle) to 
+        a 3-hyperedge.
 
     Returns
     -------
@@ -191,16 +200,22 @@ def flag_complex(g, max_order=2, seed=None):
     """
     # This import needs to happen when this function is called, not when it is
     # defined.  Otherwise, a circular import error would happen.
-    from xgi import SimplicialComplex
 
-    nodes = g.nodes()
-    edges = list(g.edges())
+    nodes = G.nodes()
 
     # compute all triangles to fill
-    max_cliques = list(nx.find_cliques(g))
+    max_cliques = list(nx.find_cliques(G))
 
     S = SimplicialComplex()
     S.add_nodes_from(nodes)
-    S.add_simplices_from(max_cliques, max_order=max_order)
+    if not ps: # promote all cliques
+        S.add_simplices_from(max_cliques, max_order=max_order)
+    else: # promote cliques with a given probability
+        for i, p in enumerate(ps[max_order - 1]):
+            d = i + 2 # simplex order
+            cliques_d = [x for x in max_cliques if len(x) == d + 1]
+            probas = seed.random.random(size=len(cliques_d))
+            cliques_d_to_add = cliques_d[probas <= p]
+            S.add_simplices_from(cliques_d_to_add, max_order=max_order)
 
     return S
