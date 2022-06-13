@@ -19,7 +19,6 @@ Examples
 """
 
 import xgi
-from itertools import combinations
 
 __all__ = [
     "attrs",
