@@ -43,8 +43,8 @@ def dynamical_assortativity(H):
         raise XGIError("Hypergraph must contain nodes and edges!")
 
     degs = H.degree()
-    k1 = np.mean([degs[n] for n in H.nodes])
-    k2 = np.mean([degs[n] ** 2 for n in H.nodes])
+    k1 = np.mean(list(degs.values()))
+    k2 = np.mean(np.power(list(degs.values()), 2))
     kk1 = np.mean(
         [
             degs[n1] * degs[n2]
@@ -56,14 +56,14 @@ def dynamical_assortativity(H):
     return kk1 * k1**2 / k2**2 - 1
 
 
-def degree_assortativity(H, type="uniform", exact=False, num_samples=1000):
+def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     """Computes the degree assortativity of a hypergraph
 
     Parameters
     ----------
     H : Hypergraph
         The hypergraph of interest
-    type : str, default: "uniform"
+    kind : str, default: "uniform"
         the type of degree assortativity. valid choices are
         "uniform", "top-2", and "top-bottom".
     exact : bool, default: False
@@ -87,23 +87,17 @@ def degree_assortativity(H, type="uniform", exact=False, num_samples=1000):
     degs = H.degree()
     if exact:
         k1k2 = [
-            choose_degrees(e, degs, type)
+            choose_degrees(H.edges.members(e), degs, kind)
             for e in H.edges
             if len(H.edges.members(e)) > 1
         ]
     else:
-        edges = list([e for e in H.edges if len(H.edges.members(e)) > 1])
-        k1k2 = list()
-
-        samples = 0
-        while samples < num_samples:
-            e = random.choice(edges)
-            k1k2.append(choose_degrees(H.edges.members(e), degs, type))
-            samples += 1
+        edges = [e for e in H.edges if len(H.edges.members(e)) > 1]
+        k1k2 = [choose_degrees(H.edges.members(random.choice(edges)), degs, kind) for _ in range(num_samples)]
     return np.corrcoef(np.array(k1k2).T)[0, 1]
 
 
-def choose_degrees(e, k, type="uniform"):
+def choose_degrees(e, k, kind="uniform"):
     """Choose the degrees of two nodes in a hyperedge.
 
     Parameters
@@ -112,8 +106,9 @@ def choose_degrees(e, k, type="uniform"):
         the members in a hyperedge
     k : dict
         the degrees where keys are node IDs and values are degrees
-    type : str, default: "uniform"
-        the type of degree assortativity
+    kind : str, default: "uniform"
+        the type of degree assortativity, options are
+        "uniform", "top-2", and "top-bottom".
 
     Returns
     -------
@@ -133,19 +128,19 @@ def choose_degrees(e, k, type="uniform"):
     DOI: 10.1093/comnet/cnaa018
     """
     if len(e) > 1:
-        if type == "uniform":
+        if kind == "uniform":
             i = np.random.randint(len(e))
             j = i
             while i == j:
                 j = np.random.randint(len(e))
-            return np.array([k[e[i]], k[e[j]]])
+            return (k[e[i]], k[e[j]])
 
-        elif type == "top-2":
+        elif kind == "top-2":
             degs = sorted([k[i] for i in e])[-2:]
             random.shuffle(degs)
             return degs
 
-        elif type == "top-bottom":
+        elif kind == "top-bottom":
             degs = sorted([k[i] for i in e])[:: len(e) - 1]
             random.shuffle(degs)
             return degs
