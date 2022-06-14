@@ -38,16 +38,20 @@ def dynamical_assortativity(H):
     return kk1*k1**2/k2**2 - 1
 
 
-def degree_assortativity(H, type="uniform", exact=True, num_samples=1000):
-    k = dict(H.degree())
+def degree_assortativity(H, type="uniform", exact=False, num_samples=1000):
+    degs = H.degree()
     if exact:
-        k1k2 = np.array([choose_nodes(e, k) for e in H.edges if len(H.edges.members(e)) > 1])
+        k1k2 = [choose_nodes(e, degs, type) for e in H.edges if len(H.edges.members(e)) > 1]
     else:
-        # edges = list(H.edges)
-        # k1k2 = np.array([choose_nodes(e, k) for H.edges[random.randint(H.num_edges)] in range(num_samples) if len(H.edges.members(e)) > 1])
-        raise XGIError("not done yet")
+        edges = list([e for e in H.edges if len(H.edges.members(e)) > 1])
+        k1k2 = list()
 
-    return np.corrcoef(k1k2)[0, 1]
+        samples = 0
+        while samples < num_samples:
+            e = random.choice(edges)
+            k1k2.append(choose_nodes(H.edges.members(e), degs, type))
+            samples += 1
+    return np.corrcoef(np.array(k1k2).T)[0, 1]
 
 
 def choose_nodes(e, k, type="uniform"):
@@ -58,16 +62,15 @@ def choose_nodes(e, k, type="uniform"):
             j = np.random.randint(len(e))
         return (np.array([k[e[i]], k[e[j]]]))
     
-    elif type == "":
+    elif type == "top-2":
         degs = sorted([k[i] for i in e])[-2:]
         random.shuffle(degs)
         return (degs)
     
-    elif type == "":
+    elif type == "top-bottom":
         degs = sorted([k[i] for i in e])[::len(e)-1] 
         random.shuffle(degs)
         return (degs)
     
     else:
         raise XGIError("Invalid choice function!")
-    
