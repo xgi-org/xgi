@@ -93,7 +93,10 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
         ]
     else:
         edges = [e for e in H.edges if len(H.edges.members(e)) > 1]
-        k1k2 = [choose_degrees(H.edges.members(random.choice(edges)), degs, kind) for _ in range(num_samples)]
+        k1k2 = [
+            choose_degrees(H.edges.members(random.choice(edges)), degs, kind)
+            for _ in range(num_samples)
+        ]
     return np.corrcoef(np.array(k1k2).T)[0, 1]
 
 

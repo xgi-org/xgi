@@ -49,7 +49,6 @@ def test_choose_degrees(edgelist1, edgelist6):
     e = H1.edges.members(0)
     assert np.all(np.array(choose_degrees(e, k)) == 1)
 
-
     e = H1.edges.members(3)
     assert set(choose_degrees(e, k, kind="top-2")) == {1, 2}
     assert set(choose_degrees(e, k, kind="top-bottom")) == {1, 2}
