@@ -141,6 +141,7 @@ def choose_degrees(e, k, kind="uniform"):
             return degs
 
         elif kind == "top-bottom":
+            # this selects the largest and smallest degrees in one line
             degs = sorted([k[i] for i in e])[:: len(e) - 1]
             random.shuffle(degs)
             return degs
