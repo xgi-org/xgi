@@ -104,7 +104,7 @@ def convert_to_graph(H):
     """
 
     A = adjacency_matrix(H)  # This is unweighted by design
-    G = nx.from_scipy_sparse_array(A)
+    G = nx.from_scipy_sparse_matrix(A)
     G = nx.relabel_nodes(G, {i: node for i, node in enumerate(H.nodes)})
     return G
 
