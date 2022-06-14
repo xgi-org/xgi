@@ -8,8 +8,8 @@ from . import (
     generators,
     linalg,
     readwrite,
-    utils,
     stats,
+    utils,
 )
 from .algorithms import *
 from .classes import *
@@ -18,7 +18,7 @@ from .drawing import *
 from .generators import *
 from .linalg import *
 from .readwrite import *
-from .utils import *
 from .stats import *
+from .utils import *
 
 __version__ = pkg_resources.require("xgi")[0].version
