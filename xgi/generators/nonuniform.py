@@ -8,8 +8,8 @@ import networkx as nx
 import numpy as np
 
 from ..classes import SimplicialComplex
-from ..utils import py_random_state, np_random_state
-from .classic import empty_hypergraph, empty_simplicial_complex
+from ..utils import np_random_state, py_random_state
+from .classic import empty_hypergraph, lattice
 
 __all__ = [
     "chung_lu_hypergraph",

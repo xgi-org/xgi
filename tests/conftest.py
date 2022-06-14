@@ -1,8 +1,9 @@
-import xgi
 import networkx as nx
 import numpy as np
 import pandas as pd
 import pytest
+
+import xgi
 
 
 @pytest.fixture

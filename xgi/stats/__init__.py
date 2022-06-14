@@ -44,16 +44,15 @@ statistics.  For more details, see the `tutorial
 
 """
 
+from collections import defaultdict
+from typing import Callable
+
 import numpy as np
 import pandas as pd
-from typing import Callable
-from collections import defaultdict
 
 from xgi.exception import IDNotFound
 
-from . import nodestats
-from . import edgestats
-
+from . import edgestats, nodestats
 
 __all__ = ["nodestat_func", "edgestat_func", "EdgeStatDispatcher", "NodeStatDispatcher"]
 

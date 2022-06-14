@@ -7,10 +7,8 @@ edge size of a hypergraph.  Views are automatically updaed when the hypergraph c
 """
 from collections.abc import Mapping, Set
 
-import numpy as np
-
-from xgi.stats import NodeStatDispatcher, EdgeStatDispatcher
 from xgi.exception import IDNotFound, XGIError
+from xgi.stats import EdgeStatDispatcher, NodeStatDispatcher
 
 __all__ = [
     "NodeView",

@@ -191,19 +191,19 @@ latex_documents = [
     (
         master_doc,
         "xgi.tex",
-        u"XGI Documentation",
-        u"Nicholas W. Landry and Leo Torres",
+        "XGI Documentation",
+        "Nicholas W. Landry and Leo Torres",
         "manual",
     ),
 ]
 
-man_pages = [(master_doc, "xgi", u"XGI Documentation", [author], 1)]
+man_pages = [(master_doc, "xgi", "XGI Documentation", [author], 1)]
 
 texinfo_documents = [
     (
         master_doc,
         "XGI",
-        u"XGI Documentation",
+        "XGI Documentation",
         author,
         "XGI",
         "One line description of project.",
