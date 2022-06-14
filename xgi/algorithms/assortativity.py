@@ -10,7 +10,7 @@ __all__ = ["dynamical_assortativity", "degree_assortativity"]
 
 
 def dynamical_assortativity(H):
-    """Gets the dynamical assortativity of a uniform hypergraph.
+    """Computes the dynamical assortativity of a uniform hypergraph.
 
     Parameters
     ----------
@@ -19,16 +19,28 @@ def dynamical_assortativity(H):
 
     Returns
     -------
-    _type_
-        _description_
+    float
+        The dynamical assortativity
 
     Raises
     ------
     XGIError
-        _description_
+        If the hypergraph is not uniform, or if there are no nodes
+        or no edges
+
+    References
+    ----------
+    Nicholas Landry and Juan G. Restrepo,
+    Hypergraph assortativity: A dynamical systems perspective,
+    Chaos 2022.
+    DOI: 10.1063/5.0086905
+
     """
     if not xgi.is_uniform(H):
         raise XGIError("Hypergraph must be uniform!")
+
+    if H.num_nodes == 0 or H.num_edges == 0:
+        raise XGIError("Hypergraph must contain nodes and edges!")
 
     degs = H.degree()
     k1 = np.mean([degs[n] for n in H.nodes])
@@ -45,6 +57,33 @@ def dynamical_assortativity(H):
 
 
 def degree_assortativity(H, type="uniform", exact=False, num_samples=1000):
+    """ Computes the degree assortativity of a hypergraph
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest
+    type : str, default: "uniform"
+        the type of degree assortativity. valid choices are
+        "uniform", "top-2", and "top-bottom".
+    exact : bool, default: False
+        whether to compute over all edges or
+        sample randomly from the set of edges
+    num_samples : int, default: 1000
+        if not exact, specify the number of samples for the computation.
+
+    Returns
+    -------
+    float
+        the degree assortativity
+    
+    References
+    ----------
+    Phil Chodrow,
+    Configuration models of random hypergraphs,
+    Journal of Complex Networks 2020.
+    DOI: 10.1093/comnet/cnaa018
+    """
     degs = H.degree()
     if exact:
         k1k2 = [
@@ -63,6 +102,34 @@ def degree_assortativity(H, type="uniform", exact=False, num_samples=1000):
 
 
 def choose_nodes(e, k, type="uniform"):
+    """ Choose the degrees of two nodes in a hyperedge.
+
+    Parameters
+    ----------
+    e : iterable
+        the members in a hyperedge
+    k : dict
+        the degrees where keys are node IDs and values are degrees
+    type : str, default: "uniform"
+        the type of degree assortativity
+
+    Returns
+    -------
+    tuple
+        two degrees selected from the edge
+
+    Raises
+    ------
+    XGIError
+        if invalid assortativity function chosen
+    
+    References
+    ----------
+    Phil Chodrow,
+    Configuration models of random hypergraphs,
+    Journal of Complex Networks 2020.
+    DOI: 10.1093/comnet/cnaa018
+    """
     if type == "uniform":
         i = np.random.randint(len(e))
         j = i
