@@ -392,24 +392,3 @@ class EdgeView(IDView):
             raise IDNotFound(f'ID "{e}" not in this view')
 
         return self._id_dict[e].copy()
-        # # # except IDNotFound:
-        # #     if e is None:
-        # #         if dtype is dict:
-        # #             return {key: self._id_dict[key] for key in self._ids}
-        # #         elif dtype is list:
-        # #             return [self._id_dict[key] for key in self._ids]
-        # #         else:
-        # #             raise XGIError(f"Unrecognized dtype {dtype}")
-        # #     raise IDNotFound(f"Item {e} not in this view")
-
-        # try:
-        #     return self._id_dict[e].copy()
-        # except IDNotFound:
-        #     if e is None:
-        #         if dtype is dict:
-        #             return {key: self._id_dict[key] for key in self}
-        #         elif dtype is list:
-        #             return [self._id_dict[key] for key in self]
-        #         else:
-        #             raise XGIError(f"Unrecognized dtype {dtype}")
-        #     raise IDNotFound(f"Item {e} not in this view")
