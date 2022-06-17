@@ -41,6 +41,44 @@ class IDDict(dict):
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
 
+from collections.abc import MutableMapping
+
+
+class IDDict2(MutableMapping):
+    """A dictionary that applies an arbitrary key-altering
+       function before accessing the keys"""
+
+    def __init__(self, *args, **kwargs):
+        self.store = dict()
+        self.update(dict(*args, **kwargs))
+
+    def __getitem__(self, item):
+        try:
+            return self.store[self._keytransform(item)]
+        except KeyError as e:
+            raise IDNotFound(f"ID {item} not found") from e
+
+    def __setitem__(self, item, value):
+        try:
+            self.store[self._keytransform(item)] = value
+        except KeyError as e:
+            raise IDNotFound(f"ID {item} not found") from e
+
+    def __delitem__(self, item):
+        try:
+            del self.store[self._keytransform(item)]
+        except KeyError as e:
+            raise IDNotFound(f"ID {item} not found") from e
+
+    def __iter__(self):
+        return iter(self.store)
+    
+    def __len__(self):
+        return len(self.store)
+
+    def _keytransform(self, key):
+        return key
+
 
 class Hypergraph:
     r"""A hypergraph is a collection of subsets of a set of *nodes* or *vertices*.
