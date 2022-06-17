@@ -74,7 +74,11 @@ class IDView(Mapping, Set):
         self._dispatcher = dispatcher
         self._id_dict = id_dict
         self._id_attr = id_attr
-        self._ids = ids
+
+        if ids is None:
+            self._ids = self._id_dict
+        else:
+            self._ids = ids
 
     def __getattr__(self, attr):
         return getattr(self._dispatcher, attr)
@@ -128,10 +132,7 @@ class IDView(Mapping, Set):
 
     def __contains__(self, id):
         """Checks whether the ID is in the hypergraph"""
-        if self._ids is None:
-            return id in self._id_dict
-        else:
-            return id in self._ids
+        return id in self._ids
 
     def __str__(self):
         """Returns a string of the list of IDs."""
