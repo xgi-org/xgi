@@ -23,7 +23,7 @@ class IDDict(dict):
 
     def __getitem__(self, item):
         try:
-            return super().__getitem__(item)
+            return dict.__getitem__(self, item)
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
 
@@ -31,53 +31,15 @@ class IDDict(dict):
         if item is None:
             raise XGIError("None cannot be a node or edge")
         try:
-            return super().__setitem__(item, value)
+            return dict.__setitem__(self, item, value)
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
 
     def __delitem__(self, item):
         try:
-            return super().__delitem__(item)
+            return dict.__delitem__(self, item)
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
-
-from collections.abc import MutableMapping
-
-
-class IDDict2(MutableMapping):
-    """A dictionary that applies an arbitrary key-altering
-       function before accessing the keys"""
-
-    def __init__(self, *args, **kwargs):
-        self.store = dict()
-        self.update(dict(*args, **kwargs))
-
-    def __getitem__(self, item):
-        try:
-            return self.store[self._keytransform(item)]
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
-
-    def __setitem__(self, item, value):
-        try:
-            self.store[self._keytransform(item)] = value
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
-
-    def __delitem__(self, item):
-        try:
-            del self.store[self._keytransform(item)]
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
-
-    def __iter__(self):
-        return iter(self.store)
-    
-    def __len__(self):
-        return len(self.store)
-
-    def _keytransform(self, key):
-        return key
 
 
 class Hypergraph:
@@ -544,7 +506,7 @@ class Hypergraph:
             i.e. you cannot mix different formats.  The iterables containing edge
             members cannot be strings.
 
-        attr : \*\*kwargs, optional
+        attr : **kwargs, optional
             Additional attributes to be assigned to all edges. Attribues specified via
             `ebunch_to_add` take precedence over `attr`.
 
