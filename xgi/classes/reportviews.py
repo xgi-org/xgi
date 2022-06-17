@@ -74,11 +74,7 @@ class IDView(Mapping, Set):
         self._dispatcher = dispatcher
         self._id_dict = id_dict
         self._id_attr = id_attr
-
-        if id_dict is None:
-            self._ids = None
-        else:
-            self._ids = ids
+        self._ids = ids
 
     def __getattr__(self, attr):
         return getattr(self._dispatcher, attr)
