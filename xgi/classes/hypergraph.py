@@ -23,7 +23,7 @@ class IDDict(dict):
 
     def __getitem__(self, item):
         try:
-            return super().__getitem__(item)
+            return dict.__getitem__(self, item)
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
 
@@ -31,13 +31,13 @@ class IDDict(dict):
         if item is None:
             raise XGIError("None cannot be a node or edge")
         try:
-            return super().__setitem__(item, value)
+            return dict.__setitem__(self, item, value)
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
 
     def __delitem__(self, item):
         try:
-            return super().__delitem__(item)
+            return dict.__delitem__(self, item)
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
 

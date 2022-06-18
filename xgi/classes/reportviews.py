@@ -75,8 +75,8 @@ class IDView(Mapping, Set):
         self._id_dict = id_dict
         self._id_attr = id_attr
 
-        if id_dict is None:
-            self._ids = None
+        if ids is None:
+            self._ids = self._id_dict
         else:
             self._ids = ids
 
@@ -132,10 +132,7 @@ class IDView(Mapping, Set):
 
     def __contains__(self, id):
         """Checks whether the ID is in the hypergraph"""
-        if self._ids is None:
-            return id in self._id_dict
-        else:
-            return id in self._ids
+        return id in self._ids
 
     def __str__(self):
         """Returns a string of the list of IDs."""
@@ -391,14 +388,4 @@ class EdgeView(IDView):
         if e not in self:
             raise IDNotFound(f'ID "{e}" not in this view')
 
-        try:
-            return self._id_dict[e].copy()
-        except IDNotFound:
-            if e is None:
-                if dtype is dict:
-                    return {key: self._id_dict[key] for key in self._ids}
-                elif dtype is list:
-                    return [self._id_dict[key] for key in self._ids]
-                else:
-                    raise XGIError(f"Unrecognized dtype {dtype}")
-            raise IDNotFound(f"Item {e} not in this view")
+        return self._id_dict[e].copy()
