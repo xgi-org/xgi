@@ -250,7 +250,9 @@ class IDView(Mapping, Set):
         elif mode == "geq":
             bunch = [idx for idx in self if self._id_attr[idx][attr] >= val]
         elif mode == "between":
-            bunch = [idx for idx in self if val[0] <= self._id_attr[idx][attr] <= val[1]]
+            bunch = [
+                idx for idx in self if val[0] <= self._id_attr[idx][attr] <= val[1]
+            ]
         else:
             raise ValueError(f"Unrecognized mode {mode}")
         return type(self).from_view(self, bunch)
