@@ -237,7 +237,22 @@ class IDView(Mapping, Set):
         <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
         """
-        bunch = [idx for idx in self if self._id_attr[idx][attr] == val]
+        if mode == "eq":
+            bunch = [idx for idx in self if self._id_attr[idx][attr] == val]
+        elif mode == "neq":
+            bunch = [idx for idx in self if self._id_attr[idx][attr] != val]
+        elif mode == "lt":
+            bunch = [idx for idx in self if self._id_attr[idx][attr] < val]
+        elif mode == "gt":
+            bunch = [idx for idx in self if self._id_attr[idx][attr] > val]
+        elif mode == "leq":
+            bunch = [idx for idx in self if self._id_attr[idx][attr] <= val]
+        elif mode == "geq":
+            bunch = [idx for idx in self if self._id_attr[idx][attr] >= val]
+        elif mode == "between":
+            bunch = [idx for idx in self if val[0] <= self._id_attr[idx][attr] <= val[1]]
+        else:
+            raise ValueError(f"Unrecognized mode {mode}")
         return type(self).from_view(self, bunch)
 
     @classmethod
