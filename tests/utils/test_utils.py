@@ -1,6 +1,6 @@
 import pytest
 
-from xgi.utils import get_dual, load_xgi_data
+from xgi.utils import convert_labels_to_integers, get_dual, load_xgi_data
 
 
 @pytest.mark.webtest
@@ -25,3 +25,26 @@ def test_get_dual(dict5):
     assert dual[6] == [2, 3]
     assert dual[7] == [3]
     assert dual[8] == [3]
+
+
+def test_convert_labels_to_integers(hypergraph1):
+    H = convert_labels_to_integers(hypergraph1)
+
+    assert set(H.nodes) == {0, 1, 2}
+    assert set(H.edges) == {0, 1, 2}
+
+    assert H.nodes[0]["label"] == "a"
+    assert H.nodes[1]["label"] == "b"
+    assert H.nodes[2]["label"] == "c"
+
+    assert H.edges[0]["label"] == "e1"
+    assert H.edges[1]["label"] == "e2"
+    assert H.edges[2]["label"] == "e3"
+
+    assert H.edges.members(0) == [0, 1]
+    assert H.edges.members(1) == [0, 1, 2]
+    assert H.edges.members(2) == [2]
+
+    assert H.nodes.memberships(0) == [0, 1]
+    assert H.nodes.memberships(1) == [0, 1]
+    assert H.nodes.memberships(2) == [1, 2]

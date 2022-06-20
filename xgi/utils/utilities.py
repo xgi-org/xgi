@@ -1,12 +1,13 @@
 """General utilities."""
 from collections import defaultdict
+from itertools import count
 
 import requests
 
 from .. import convert
 from ..exception import XGIError
 
-__all__ = ["get_dual", "load_xgi_data"]
+__all__ = ["get_dual", "load_xgi_data", "convert_labels_to_integers"]
 
 
 def get_dual(edge_dict):
@@ -73,3 +74,51 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None):
     r = requests.get(index[dataset]["url"])
 
     return convert.dict_to_hypergraph(r.json(), nodetype=nodetype, edgetype=edgetype)
+
+
+def convert_labels_to_integers(H):
+    """Relabel node and edge IDs to be sequential integers.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest
+
+    Returns
+    -------
+    Hypergraph
+        A new hypergraph with nodes and edges with sequential IDs starting at 0.
+        The old IDs are stored in the "label" attribute for both nodes and edges.
+
+    Notes
+    -----
+    The "relabeling" will occur even if the node/edge IDs are sequential.
+    Because the old IDs are stored in the "label" attribute for both nodes and edges,
+    the old "label" values (if they exist) will be overwritten.
+    """
+    node_id = count()
+    edge_id = count()
+    node_mapping = dict()
+    edge_mapping = dict()
+    temp_H = H.copy()
+    for node in list(temp_H.nodes):
+        id = next(node_id)
+        temp_H._node[id] = temp_H._node.pop(node)
+        temp_H._node_attr[id] = temp_H._node_attr.pop(node)
+        temp_H._node_attr[id].update({"label": node})
+        node_mapping[node] = id
+
+    for edge in list(temp_H.edges):
+        id = next(edge_id)
+        temp_H._edge[id] = temp_H._edge.pop(edge)
+        temp_H._edge_attr[id] = temp_H._edge_attr.pop(edge)
+        temp_H._edge_attr[id].update({"label": edge})
+        edge_mapping[edge] = id
+
+    for node in temp_H.nodes:
+        temp_H._node[node] = [edge_mapping[id] for id in temp_H._node[node]]
+
+    for edge in temp_H.edges:
+        temp_H._edge[edge] = [node_mapping[id] for id in temp_H._edge[edge]]
+
+    return temp_H
