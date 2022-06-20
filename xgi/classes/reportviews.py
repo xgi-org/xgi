@@ -225,10 +225,12 @@ class IDView(Mapping, Set):
         elif mode == "between":
             bunch = [node for node in self if val[0] <= values[node] <= val[1]]
         else:
-            raise ValueError(f"Unrecognized mode {mode}")
+            raise ValueError(
+                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
+            )
         return type(self).from_view(self, bunch)
 
-    def filterby_attr(self, attr, val, mode="eq"):
+    def filterby_attr(self, attr, val, mode="eq", default=None):
         """Filter the IDs in this view by an attribute.
 
         See Also
@@ -236,25 +238,59 @@ class IDView(Mapping, Set):
         Works identically to `filterby`.  For more details, see the `tutorial
         <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
+        Notes
+        -----
+        Beware of using comparison modes ("lt", "gt", "leq", "geq")
+        when the attribute is a string. For example, the string comparison
+        `'10' < '9'` evaluates to `True`.
         """
         if mode == "eq":
-            bunch = [idx for idx in self if self._id_attr[idx][attr] == val]
+            bunch = [
+                idx
+                for idx in self
+                if attr in self._id_attr[idx] and self._id_attr[idx][attr] == val
+            ]
         elif mode == "neq":
-            bunch = [idx for idx in self if self._id_attr[idx][attr] != val]
+            bunch = [
+                idx
+                for idx in self
+                if attr in self._id_attr[idx] and self._id_attr[idx][attr] != val
+            ]
         elif mode == "lt":
-            bunch = [idx for idx in self if self._id_attr[idx][attr] < val]
+            bunch = [
+                idx
+                for idx in self
+                if attr in self._id_attr[idx] and self._id_attr[idx][attr] < val
+            ]
         elif mode == "gt":
-            bunch = [idx for idx in self if self._id_attr[idx][attr] > val]
+            bunch = [
+                idx
+                for idx in self
+                if attr in self._id_attr[idx] and self._id_attr[idx][attr] > val
+            ]
         elif mode == "leq":
-            bunch = [idx for idx in self if self._id_attr[idx][attr] <= val]
+            bunch = [
+                idx
+                for idx in self
+                if attr in self._id_attr[idx] and self._id_attr[idx][attr] <= val
+            ]
         elif mode == "geq":
-            bunch = [idx for idx in self if self._id_attr[idx][attr] >= val]
+            bunch = [
+                idx
+                for idx in self
+                if attr in self._id_attr[idx] and self._id_attr[idx][attr] >= val
+            ]
         elif mode == "between":
             bunch = [
-                idx for idx in self if val[0] <= self._id_attr[idx][attr] <= val[1]
+                idx
+                for idx in self
+                if attr in self._id_attr[idx]
+                and val[0] <= self._id_attr[idx][attr] <= val[1]
             ]
         else:
-            raise ValueError(f"Unrecognized mode {mode}")
+            raise ValueError(
+                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
+            )
         return type(self).from_view(self, bunch)
 
     @classmethod
