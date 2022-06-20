@@ -67,6 +67,46 @@ def test_call_filterby(edgelist1, edgelist8):
     assert filtered.asdict() == {1: 3.5}
 
 
+def test_filterby_attr(hyperwithattrs, attr1, attr2, attr3, attr4, attr5):
+    H = hyperwithattrs
+    attrs = {
+        1: attr1,
+        2: attr2,
+        3: attr3,
+        4: attr4,
+        5: attr5,
+    }
+    filtered = H.nodes.filterby_attr("age", 20, "eq")
+    assert set(filtered) == {4}
+
+    filtered = H.nodes.filterby_attr("age", 2, "neq")
+    assert set(filtered) == {4}
+
+    filtered = H.nodes.filterby_attr("age", 20, "lt")
+    assert set(filtered) == {5}
+
+    filtered = H.nodes.filterby_attr("age", 2, "gt")
+    assert set(filtered) == {4}
+
+    filtered = H.nodes.filterby_attr("age", 20, "leq")
+    assert set(filtered) == {4, 5}
+
+    filtered = H.nodes.filterby_attr("age", 2, "geq")
+    assert set(filtered) == {4, 5}
+
+    filtered = H.nodes.filterby_attr("age", [1, 3], "between")
+    assert set(filtered) == {5}
+
+    filtered = H.nodes.filterby_attr("age", [2, 20], "between")
+    assert set(filtered) == {4, 5}
+
+    filtered = H.nodes.filterby_attr("age", 2, "leq", 1)
+    assert set(filtered) == {1, 2, 3, 5}
+
+    filtered = H.nodes.filterby_attr("age", 2, "leq", 10)
+    assert set(filtered) == {5}
+
+
 def test_single_node(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     assert H.degree()[1] == 1
