@@ -230,8 +230,22 @@ class IDView(Mapping, Set):
             )
         return type(self).from_view(self, bunch)
 
-    def filterby_attr(self, attr, val, mode="eq", default=None):
+    def filterby_attr(self, attr, val, mode="eq", missing=None):
         """Filter the IDs in this view by an attribute.
+
+        Parameters
+        ----------
+        attr : string
+            The name of the attribute
+        val : Any
+            A single value or, in the case of 'between', a list of length 2
+        mode : str, default: "eq"
+            Comparison mode. Valid options are 'eq', 'neq', 'lt', 'gt',
+            'leq', 'geq', or 'between'.
+        missing : Any, default: None
+            The default value if the attribute is missing. If None,
+            ignores those IDs.
+
 
         See Also
         --------
@@ -244,48 +258,38 @@ class IDView(Mapping, Set):
         when the attribute is a string. For example, the string comparison
         `'10' < '9'` evaluates to `True`.
         """
+        attrs = getattr(self._dispatcher, "attrs")
+        values = attrs(attr, missing).asdict()
+
         if mode == "eq":
             bunch = [
-                idx
-                for idx in self
-                if attr in self._id_attr[idx] and self._id_attr[idx][attr] == val
+                idx for idx in self if values[idx] is not None and values[idx] == val
             ]
         elif mode == "neq":
             bunch = [
-                idx
-                for idx in self
-                if attr in self._id_attr[idx] and self._id_attr[idx][attr] != val
+                idx for idx in self if values[idx] is not None and values[idx] != val
             ]
         elif mode == "lt":
             bunch = [
-                idx
-                for idx in self
-                if attr in self._id_attr[idx] and self._id_attr[idx][attr] < val
+                idx for idx in self if values[idx] is not None and values[idx] < val
             ]
         elif mode == "gt":
             bunch = [
-                idx
-                for idx in self
-                if attr in self._id_attr[idx] and self._id_attr[idx][attr] > val
+                idx for idx in self if values[idx] is not None and values[idx] > val
             ]
         elif mode == "leq":
             bunch = [
-                idx
-                for idx in self
-                if attr in self._id_attr[idx] and self._id_attr[idx][attr] <= val
+                idx for idx in self if values[idx] is not None and values[idx] <= val
             ]
         elif mode == "geq":
             bunch = [
-                idx
-                for idx in self
-                if attr in self._id_attr[idx] and self._id_attr[idx][attr] >= val
+                idx for idx in self if values[idx] is not None and values[idx] >= val
             ]
         elif mode == "between":
             bunch = [
                 idx
                 for idx in self
-                if attr in self._id_attr[idx]
-                and val[0] <= self._id_attr[idx][attr] <= val[1]
+                if values[idx] is not None and val[0] <= values[idx] <= val[1]
             ]
         else:
             raise ValueError(

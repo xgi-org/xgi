@@ -100,6 +100,12 @@ def test_filterby_attr(hyperwithattrs, attr1, attr2, attr3, attr4, attr5):
     filtered = H.nodes.filterby_attr("age", [2, 20], "between")
     assert set(filtered) == {4, 5}
 
+    filtered = H.nodes.filterby_attr("age", 2, "leq", 1)
+    assert set(filtered) == {1, 2, 3, 5}
+
+    filtered = H.nodes.filterby_attr("age", 2, "leq", 10)
+    assert set(filtered) == {5}
+
 
 def test_single_node(edgelist1):
     H = xgi.Hypergraph(edgelist1)
