@@ -169,3 +169,11 @@ def hypergraph1():
     H.add_nodes_from(["a", "b", "c"])
     H.add_edges_from({"e1": ["a", "b"], "e2": ["a", "b", "c"], "e3": ["c"]})
     return H
+
+
+@pytest.fixture
+def hypergraph2():
+    H = xgi.Hypergraph()
+    H.add_nodes_from([0, "b", "c"])
+    H.add_edges_from({"e1": [0, "b"], "e2": [0, "c"], "e3": [0, "b", "c"]})
+    return H

@@ -1,5 +1,6 @@
 """General utilities."""
 from collections import defaultdict
+from cProfile import label
 from itertools import count
 
 import requests
@@ -76,13 +77,16 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None):
     return convert.dict_to_hypergraph(r.json(), nodetype=nodetype, edgetype=edgetype)
 
 
-def convert_labels_to_integers(H):
+def convert_labels_to_integers(H, label_attribute="label"):
     """Relabel node and edge IDs to be sequential integers.
 
     Parameters
     ----------
     H : Hypergraph
         The hypergraph of interest
+
+    label_attribute : string, default: "label"
+        The attribute name that stores the old node and edge labels
 
     Returns
     -------
@@ -96,29 +100,23 @@ def convert_labels_to_integers(H):
     Because the old IDs are stored in the "label" attribute for both nodes and edges,
     the old "label" values (if they exist) will be overwritten.
     """
-    node_id = count()
-    edge_id = count()
-    node_mapping = dict()
-    edge_mapping = dict()
+    node_dict = dict(zip(H.nodes, range(H.num_nodes)))
+    edge_dict = dict(zip(H.edges, range(H.num_edges)))
     temp_H = H.copy()
-    for node in list(temp_H.nodes):
-        id = next(node_id)
+    for node, id in node_dict.items():
         temp_H._node[id] = temp_H._node.pop(node)
         temp_H._node_attr[id] = temp_H._node_attr.pop(node)
-        temp_H._node_attr[id].update({"label": node})
-        node_mapping[node] = id
+        temp_H._node_attr[id][label_attribute] = node
 
-    for edge in list(temp_H.edges):
-        id = next(edge_id)
+    for edge, id in edge_dict.items():
         temp_H._edge[id] = temp_H._edge.pop(edge)
         temp_H._edge_attr[id] = temp_H._edge_attr.pop(edge)
-        temp_H._edge_attr[id].update({"label": edge})
-        edge_mapping[edge] = id
+        temp_H._edge_attr[id][label_attribute] = edge
 
     for node in temp_H.nodes:
-        temp_H._node[node] = [edge_mapping[id] for id in temp_H._node[node]]
+        temp_H._node[node] = [edge_dict[id] for id in temp_H._node[node]]
 
     for edge in temp_H.edges:
-        temp_H._edge[edge] = [node_mapping[id] for id in temp_H._edge[edge]]
+        temp_H._edge[edge] = [node_dict[id] for id in temp_H._edge[edge]]
 
     return temp_H
