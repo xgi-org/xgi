@@ -1,11 +1,10 @@
 """General utilities."""
 from collections import defaultdict
-from cProfile import label
-from itertools import count
 
 import requests
 
 from .. import convert
+from ..classes import Hypergraph
 from ..exception import XGIError
 
 __all__ = ["get_dual", "load_xgi_data", "convert_labels_to_integers"]
@@ -102,21 +101,17 @@ def convert_labels_to_integers(H, label_attribute="label"):
     """
     node_dict = dict(zip(H.nodes, range(H.num_nodes)))
     edge_dict = dict(zip(H.edges, range(H.num_edges)))
-    temp_H = H.copy()
+    temp_H = Hypergraph()
+    temp_H._hypergraph = H._hypergraph.copy()
+
     for node, id in node_dict.items():
-        temp_H._node[id] = temp_H._node.pop(node)
-        temp_H._node_attr[id] = temp_H._node_attr.pop(node)
+        temp_H._node[id] = [edge_dict[e] for e in H._node[node]]
+        temp_H._node_attr[id] = H._node_attr[node].copy()
         temp_H._node_attr[id][label_attribute] = node
 
     for edge, id in edge_dict.items():
-        temp_H._edge[id] = temp_H._edge.pop(edge)
-        temp_H._edge_attr[id] = temp_H._edge_attr.pop(edge)
+        temp_H._edge[id] = [node_dict[n] for n in H._edge[edge]]
+        temp_H._edge_attr[id] = H._edge_attr[edge].copy()
         temp_H._edge_attr[id][label_attribute] = edge
-
-    for node in temp_H.nodes:
-        temp_H._node[node] = [edge_dict[id] for id in temp_H._node[node]]
-
-    for edge in temp_H.edges:
-        temp_H._edge[edge] = [node_dict[id] for id in temp_H._edge[edge]]
 
     return temp_H
