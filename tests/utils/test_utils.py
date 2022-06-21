@@ -30,6 +30,7 @@ def test_get_dual(dict5):
 def test_convert_labels_to_integers(hypergraph1, hypergraph2):
     H1 = convert_labels_to_integers(hypergraph1)
     H2 = convert_labels_to_integers(hypergraph2)
+    H3 = convert_labels_to_integers(hypergraph1, "old_ids")
 
     assert set(H1.nodes) == {0, 1, 2}
     assert set(H1.edges) == {0, 1, 2}
@@ -68,3 +69,6 @@ def test_convert_labels_to_integers(hypergraph1, hypergraph2):
     assert H2.nodes.memberships(0) == [0, 1, 2]
     assert H2.nodes.memberships(1) == [0, 2]
     assert H2.nodes.memberships(2) == [1, 2]
+
+    assert H3.nodes[0]["old_ids"] == "a"
+    assert H3.edges[0]["old_ids"] == "e1"
