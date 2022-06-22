@@ -12,7 +12,7 @@ __all__ = ["CEC_centrality", "HEC_centrality", "ZEC_centrality"]
 
 def CEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
 
-    new_H = convert_labels_to_integers(H)
+    new_H = convert_labels_to_integers(H, "old-label")
 
     l = 0
     x = np.random.uniform(size=(H.num_nodes))
@@ -26,17 +26,20 @@ def CEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
         x = new_x.copy()
         l = new_l
     if return_eigval:
-        return new_x, new_l
-    return new_x
+        return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}, new_l
+    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
 
 
 def ZEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
+
+    new_H = convert_labels_to_integers(H, "old-label")
+
     g = lambda v, e: np.prod(v[list(e)])
 
     l = 0
-    x = np.random.uniform(size=(H.num_nodes))
+    x = np.random.uniform(size=(new_H.num_nodes))
     for i in range(max_iter):
-        new_x = apply(H, x, g)
+        new_x = apply(new_H, x, g)
         new_l = norm(new_x) / norm(x)
         new_x = new_x / norm(new_x)
         if abs(l - new_l) <= tol:
@@ -44,11 +47,13 @@ def ZEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
         x = new_x.copy()
         l = new_l
     if return_eigval:
-        return new_x, new_l
-    return new_x
+        return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}, new_l
+    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
 
 
 def HEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
+    new_H = convert_labels_to_integers(H, "old-label")
+
     m = is_uniform(H)
     if not m:
         raise XGIError("This method is not defined for non-uniform hypergraphs.")
@@ -56,9 +61,9 @@ def HEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
     g = lambda v, x: np.prod(v[list(x)])
 
     l = 0
-    x = np.random.uniform(size=(H.num_nodes))
+    x = np.random.uniform(size=(new_H.num_nodes))
     for i in range(max_iter):
-        new_x = apply(H, x, g)
+        new_x = apply(new_H, x, g)
         new_x = f(new_x, m)
         new_l = norm(new_x) / norm(x)
         new_x = new_x / norm(new_x)
@@ -67,8 +72,8 @@ def HEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
         x = new_x.copy()
         l = new_l
     if return_eigval:
-        return new_x, new_l
-    return new_x
+        return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}, new_l
+    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
 
 
 def apply(H, x, g=lambda v, e: np.sum(v[list(e)])):
