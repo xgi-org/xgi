@@ -57,7 +57,7 @@ def HEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
     m = is_uniform(H)
     if not m:
         raise XGIError("This method is not defined for non-uniform hypergraphs.")
-    f = lambda v, m: np.power(v, 1.0 / (m - 1))
+    f = lambda v, m: np.power(v, 1.0 / m)
     g = lambda v, x: np.prod(v[list(x)])
 
     l = 0
