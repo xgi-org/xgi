@@ -77,7 +77,7 @@ def HEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
 
 
 def apply(H, x, g=lambda v, e: np.sum(v[list(e)])):
-    new_x = defaultdict(lambda: 0)
+    new_x = np.zeros(H.num_nodes)
     for edge in H.edges.members():
         # ordered permutations
         for shift in range(len(edge)):
