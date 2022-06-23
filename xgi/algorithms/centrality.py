@@ -1,33 +1,22 @@
-from collections import defaultdict
-
 import numpy as np
 from numpy.linalg import norm
+from scipy.sparse.linalg import eigsh
 
 from ..classes import is_uniform
 from ..exception import XGIError
+from ..linalg import clique_motif_matrix, incidence_matrix
 from ..utils.utilities import convert_labels_to_integers
 
 __all__ = ["CEC_centrality", "HEC_centrality", "ZEC_centrality"]
 
 
-def CEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
+def CEC_centrality(H, return_eigval=False):
+    W, node_dict = clique_motif_matrix(H, index=True)
+    l, v = eigsh(W.asfptype(), k=1, which="LM")
 
-    new_H = convert_labels_to_integers(H, "old-label")
-
-    l = 0
-    x = np.random.uniform(size=(H.num_nodes))
-
-    for iter in range(max_iter):
-        new_x = apply(new_H, x)
-        new_l = norm(new_x) / norm(x)
-        new_x = new_x / norm(new_x)
-        if abs(l - new_l) <= tol:
-            break
-        x = new_x.copy()
-        l = new_l
     if return_eigval:
-        return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}, new_l
-    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
+        return {node_dict[i]: v[i] for i in node_dict}, l
+    return {node_dict[i]: v[i] for i in node_dict}
 
 
 def ZEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
@@ -47,7 +36,9 @@ def ZEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
         x = new_x.copy()
         l = new_l
     if return_eigval:
-        return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}, new_l
+        return {
+            new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)
+        }, new_l
     return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
 
 
@@ -72,7 +63,9 @@ def HEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
         x = new_x.copy()
         l = new_l
     if return_eigval:
-        return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}, new_l
+        return {
+            new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)
+        }, new_l
     return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
 
 

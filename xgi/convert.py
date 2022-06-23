@@ -7,8 +7,12 @@ from networkx.algorithms import bipartite
 from numpy import matrix, ndarray
 from scipy.sparse import coo_matrix, csc_matrix, csr_matrix, lil_matrix
 
-from .classes import (Hypergraph, SimplicialComplex, maximal_simplices,
-                      set_edge_attributes)
+from .classes import (
+    Hypergraph,
+    SimplicialComplex,
+    maximal_simplices,
+    set_edge_attributes,
+)
 from .exception import XGIError
 from .generators import empty_hypergraph, empty_simplicial_complex
 from .linalg import adjacency_matrix, incidence_matrix

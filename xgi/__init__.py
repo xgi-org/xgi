@@ -1,7 +1,16 @@
 import pkg_resources
 
-from . import (algorithms, classes, convert, drawing, generators, linalg,
-               readwrite, stats, utils)
+from . import (
+    algorithms,
+    classes,
+    convert,
+    drawing,
+    generators,
+    linalg,
+    readwrite,
+    stats,
+    utils,
+)
 from .algorithms import *
 from .classes import *
 from .convert import *

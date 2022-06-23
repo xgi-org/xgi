@@ -5,6 +5,7 @@ from ..exception import XGIError
 
 __all__ = ["load_xgi_data"]
 
+
 def load_xgi_data(dataset, nodetype=None, edgetype=None):
     """_summary_
 
