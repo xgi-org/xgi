@@ -5,6 +5,23 @@ import xgi
 from xgi.exception import IDNotFound, XGIError
 
 
+def test_neighbors(edgelist1, edgelist2):
+    el1 = edgelist1
+    el2 = edgelist2
+    H1 = xgi.Hypergraph(el1)
+    H2 = xgi.Hypergraph(el2)
+    assert H1.nodes.neighbors(1) == {2, 3}
+    assert H1.nodes.neighbors(4) == set()
+    assert H1.nodes.neighbors(6) == {5, 7, 8}
+    assert H2.nodes.neighbors(4) == {3, 5, 6}
+    assert H2.nodes.neighbors(1) == {2}
+
+    assert H1.edges.neighbors(0) == set()
+    assert H1.edges.neighbors(1) == set()
+    assert H1.edges.neighbors(2) == {3}
+    assert H1.edges.neighbors(3) == {2}
+
+
 def test_edge_order(edgelist3):
     H = xgi.Hypergraph(edgelist3)
 

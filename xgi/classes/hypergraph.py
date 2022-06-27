@@ -265,33 +265,6 @@ class Hypergraph:
         """
         return len(self._edge)
 
-    def neighbors(self, n):
-        """Find the neighbors of a node.
-        The neighbors of a node are those nodes that appear in at least one edge with
-        said node.
-        Parameters
-        ----------
-        n : node
-            Node to find neighbors of.
-        Returns
-        -------
-        set
-            A set of the neighboring nodes
-        See Also
-        --------
-        egonet
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.neighbors(1)
-        {2}
-        >>> H.neighbors(2)
-        {1, 3, 4}
-        """
-        return {i for e in self._node[n] for i in self._edge[e]}.difference({n})
-
     def add_node(self, node, **attr):
         """Add one node with optional attributes.
 

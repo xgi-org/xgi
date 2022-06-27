@@ -177,7 +177,7 @@ def average_neighbor_degree(net, bunch):
     """
     result = {}
     for n in bunch:
-        neighbors = net.neighbors(n)
+        neighbors = net.nodes.neighbors(n)
         result[n] = sum(len(net._node[nbr]) for nbr in neighbors)
         result[n] = result[n] / len(neighbors) if neighbors else 0
     return result
