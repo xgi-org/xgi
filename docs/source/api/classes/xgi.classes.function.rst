@@ -10,7 +10,7 @@
    .. autofunction:: create_empty_copy
    .. autofunction:: degree_counts
    .. autofunction:: degree_histogram
-   .. autofunction:: egonet
+   .. autofunction:: edge_neighborhood
    .. autofunction:: freeze
    .. autofunction:: frozen
    .. autofunction:: get_edge_attributes
