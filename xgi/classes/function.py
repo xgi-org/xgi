@@ -8,7 +8,7 @@ __all__ = [
     "max_edge_order",
     "is_possible_order",
     "is_uniform",
-    "egonet",
+    "edge_neighborhood",
     "degree_counts",
     "degree_histogram",
     "unique_edge_sizes",
@@ -101,12 +101,12 @@ def is_uniform(H):
     return edge_sizes.pop() - 1  # order of all edges
 
 
-def egonet(H, n, include_self=False):
-    """The egonet of the specified node.
+def edge_neighborhood(H, n, include_self=False):
+    """The edge neighborhood of the specified node.
 
-    The egonet of a node `n` in a hypergraph `H` is another hypergraph whose nodes
-    are the neighbors of `n` and its edges are all the edges in `H` that contain
-    `n`.  Usually, the egonet do not include `n` itself.  This can be controlled
+    The edge neighborhood of a node `n` in a hypergraph `H` is an edgelist of all the edges
+    containing `n` and its edges are all the edges in `H` that contain
+    `n`.  Usually, the edge neighborhood does not include `n` itself.  This can be controlled
     with `include_self`.
 
     Parameters
@@ -114,14 +114,14 @@ def egonet(H, n, include_self=False):
     H : Hypergraph
         THe hypergraph of interest
     n : node
-        Node whose egonet is needed.
+        Node whose edge_neighborhood is needed.
     include_self : bool (default False)
-        Whether the egonet contains `n`.
+        Whether the edge_neighborhood contains `n`.
 
     Returns
     -------
     list
-        An edgelist of the egonet of `n`.
+        An edgelist of the edge_neighborhood of `n`.
 
     See Also
     --------
@@ -131,11 +131,11 @@ def egonet(H, n, include_self=False):
     --------
     >>> import xgi
     >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5, 6]])
-    >>> H.neighbors(3)
+    >>> H.nodes.neighbors(3)
     {1, 2, 4}
-    >>> xgi.egonet(H, 3)
+    >>> xgi.edge_neighborhood(H, 3)
     [[1, 2], [4]]
-    >>> xgi.egonet(H, 3, include_self=True)
+    >>> xgi.edge_neighborhood(H, 3, include_self=True)
     [[1, 2, 3], [3, 4]]
 
     """
