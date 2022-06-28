@@ -38,7 +38,14 @@ class IDView(Mapping, Set):
 
     """
 
-    __slots__ = ("_dispatcher", "_id_dict", "_id_attr", "_bi_id_dict", "_bi_id_attr", "_ids")
+    __slots__ = (
+        "_dispatcher",
+        "_id_dict",
+        "_id_attr",
+        "_bi_id_dict",
+        "_bi_id_attr",
+        "_ids",
+    )
 
     def __getstate__(self):
         """Function that allows pickling.
