@@ -9,11 +9,14 @@ from itertools import combinations
 
 import networkx as nx
 
+from ..exception import XGIError
+
 __all__ = [
     "empty_hypergraph",
     "empty_simplicial_complex",
     "star_clique",
     "flag_complex",
+    "sunflower",
 ]
 
 
@@ -191,7 +194,7 @@ def flag_complex(g, max_order=2, seed=None):
     """
     # This import needs to happen when this function is called, not when it is
     # defined.  Otherwise, a circular import error would happen.
-    from xgi import SimplicialComplex
+    from ..classes import SimplicialComplex
 
     nodes = g.nodes()
     edges = list(g.edges())
@@ -219,9 +222,50 @@ def lattice(n, d, k, l):
     side.
 
     """
+    from ..classes import Hypergraph
+
     edges = [
         [node] + [(start + l + i) % n for i in range(d - 1)]
         for node in range(n)
         for start in range(node + 1, node + k // 2 + 1)
     ]
     return Hypergraph(edges)
+
+def sunflower(l, c, m):
+    """ Create a sunflower hypergraph.
+
+    This creates an m-uniform hypergraph
+    according to the sunflower model.
+
+    Parameters
+    ----------
+    l : int
+        Number of petals
+    c : int
+        Size of the core
+    m : int
+        Size of each edge
+
+    Raises
+    ------
+    XGIError
+        If the edge size is smaller than the core.
+
+    Returns
+    -------
+
+    """
+    from ..classes import Hypergraph
+
+    if m < c:
+        raise XGIError("m cannot be smaller than c.")
+
+    core_nodes = list(range(c))
+
+    H = Hypergraph()
+    start_label = c
+    while start_label + (m - c) <= c + (m - c)*l:
+        H.add_edge(core_nodes + [start_label + i for i in range(m - c)])
+        start_label = start_label + (m - c)
+    
+    return H
