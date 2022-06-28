@@ -1,6 +1,16 @@
 # Changelog
 
-## Current release
+## v0.3.1
+* Refactored the subhypergraph methods
+* Moved functions no related to the core Hypergraph data structure to functions.py
+* Removed unnecessary duplicated functions (`n_bunch_iter`, `get_edge_data`, and `has_node`)
+* Refactored the `members()` method as well as the `NodeView` and `EdgeView` classes for significant speedup.
+* Github Actions now tests the docstrings and tutorial notebooks
+* The `add_edges_from` method now supports different input formats.
+* Fixed various bugs in the generative models module.
+* A method for double edge swaps is now implemented.
+
+Contributors: @leotrs and @nwlandry
 
 ## v0.3
 * Added the ability to convert to and from a NetworkX bipartite graph.
@@ -24,13 +34,7 @@
 * Refactored the `IDDegreeView` class and changed the API. Added the ability to specify `order` and the datatype.
 * Added an abstract class `IDDict` to handle data validation.
 
-Contributors:
-@iaciac
-@leotrs
-@lordgrilo
-@maximelucas
-@nwlandry
-@tlarock
+Contributors: @iaciac, @leotrs, @lordgrilo, @maximelucas, @nwlandry, and @tlarock
 
 ## v0.2
 * `H[attr]` now accesses hypergraph attributes
@@ -51,7 +55,4 @@ Contributors:
 * Added functions for finding and removing isolates
 * Refactored the `has_edge()` method in the Hypergraph class.
 
-Contributors:
-@leotrs
-@maximelucas
-@nwlandry
+Contributors: @leotrs, @maximelucas, and @nwlandry
