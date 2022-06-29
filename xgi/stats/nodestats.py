@@ -264,9 +264,6 @@ def cec_centrality(net, bunch):
     return {node_dict[n]: v[n] for n in node_dict if node_dict[n] in bunch}
 
 
-
-
-
 def node_edge_centrality(H, bunch, max_iter=100, tol=1e-6):
     """Computes node centralities.
 

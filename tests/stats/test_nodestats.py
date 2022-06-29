@@ -540,16 +540,16 @@ def test_cec_centrality():
     H = xgi.sunflower(3, 1, 3)
     c = H.nodes.cec_centrality.asnumpy()
     assert np.all(np.abs(c[1:] - c[1]) < 1e-6)
-    assert abs(c[0]/c[1] - ratio(3, 3)) < 1e-6
+    assert abs(c[0] / c[1] - ratio(3, 3)) < 1e-6
 
     H = xgi.sunflower(5, 1, 7)
     c = H.nodes.cec_centrality.asnumpy()
     assert np.all(np.abs(c[1:] - c[1]) < 1e-6)
-    assert abs(c[0]/c[1] - ratio(5, 7)) < 1e-6
+    assert abs(c[0] / c[1] - ratio(5, 7)) < 1e-6
 
 
 def ratio(r, m, kind="CEC"):
-    """ Generate the ratio between largest and second largest centralities 
+    """Generate the ratio between largest and second largest centralities
     for the sunflower hypergraph with one core node.
 
     Parameters
@@ -570,7 +570,7 @@ def ratio(r, m, kind="CEC"):
     ------
     XGIError
         If edge size is too small for ZEC
-    
+
     References
     ----------
     Three Hypergraph Eigenvector Centralities,
@@ -578,10 +578,10 @@ def ratio(r, m, kind="CEC"):
     https://doi.org/10.1137/18M1203031
     """
     if kind == "CEC":
-        return 2*r*(m - 1)/(np.sqrt(m**2 + 4*(m - 1)*(r - 1)) + m - 2)
+        return 2 * r * (m - 1) / (np.sqrt(m**2 + 4 * (m - 1) * (r - 1)) + m - 2)
     elif kind == "ZEC":
         if m > 4:
             raise XGIError("Choose a larger m value.")
         return r**0.5
     elif kind == "HEC":
-        return r**(1.0/m)
+        return r ** (1.0 / m)
