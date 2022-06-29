@@ -17,10 +17,18 @@ Examples
 {0: 2, 1: 3, 2: 2}
 
 """
+from warnings import warn
+
+import numpy as np
+from numpy.linalg import norm
+
+import xgi
 
 __all__ = [
     "attrs",
     "order",
+    "size",
+    "node_edge_centrality",
 ]
 
 
@@ -92,9 +100,9 @@ def attrs(net, bunch, attr=None, missing=None):
 
     """
     if isinstance(attr, str):
-        return {n: net._edge_attr[n].get(attr, missing) for n in bunch}
+        return {e: net._edge_attr[e].get(attr, missing) for e in bunch}
     elif attr is None:
-        return {n: net._edge_attr[n] for n in bunch}
+        return {e: net._edge_attr[e] for e in bunch}
     else:
         raise ValueError('"attr" must be str or None')
 
@@ -128,11 +136,11 @@ def order(net, bunch, degree=None):
 
     """
     if degree is None:
-        return {n: len(net._edge[n]) - 1 for n in bunch}
+        return {e: len(net._edge[e]) - 1 for e in bunch}
     else:
         return {
-            n: len(n for n in net._edge[n] if len(net._node[n]) == degree) - 1
-            for n in bunch
+            e: len(n for n in net._edge[e] if len(net._node[n]) == degree) - 1
+            for e in bunch
         }
 
 
@@ -165,9 +173,69 @@ def size(net, bunch, degree=None):
 
     """
     if degree is None:
-        return {n: len(net._edge[n]) for n in bunch}
+        return {e: len(net._edge[e]) for e in bunch}
     else:
         return {
-            n: len(n for n in net._edge[n] if len(net._node[n]) == degree)
-            for n in bunch
+            e: len(n for n in net._edge[e] if len(net._node[n]) == degree)
+            for e in bunch
         }
+
+
+def node_edge_centrality(H, bunch, max_iter=100, tol=1e-6):
+    """Computes the edge centralities.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest
+    max_iter : int, default: 100
+        Number of iterations at which the algorithm terminates
+        if convergence is not reached.
+    tol : float > 0, default: 1e-6
+        The total allowable error in the node and edge centralities.
+
+    Returns
+    -------
+    dict, dict
+        The edge centrality where keys are the edge IDs and values are
+        associated centralities.
+
+    Notes
+    -----
+    In the paper from which this was taken, it is more general in that it includes
+    general functions for both nodes and edges, nodes and edges may be weighted,
+    and one can choose different norms for normalization.
+
+    THis method does not output the node centralities even though they are computed.
+
+    References
+    ----------
+    Node and edge nonlinear eigenvector centrality for hypergraphs,
+    Francesco Tudisco & Desmond J. Higham,
+    https://doi.org/10.1038/s42005-021-00704-2
+    """
+    x = np.ones(H.num_nodes) / H.num_nodes
+    y = np.ones(H.num_edges) / H.num_edges
+
+    I, _, edge_dict = xgi.incidence_matrix(H, index=True)
+
+    check = np.inf
+
+    f = lambda x: np.power(x, 2)
+    g = lambda x: np.power(x, 0.5)
+
+    iter = 0
+    while iter < max_iter:
+        u = np.multiply(x, g(I * f(y)))
+        v = np.multiply(y, g(I.T * f(x)))
+        new_x = u / norm(u)
+        new_y = v / norm(v)
+
+        check = norm(new_x - x) + norm(new_y - y)
+        if check < tol:
+            return {edge_dict[e]: new_y[e] for e in edge_dict if edge_dict[e] in bunch}
+        else:
+            x = new_x.copy()
+            y = new_y.copy()
+    warn("Iteration did not converge!")
+    return {edge_dict[e]: new_y[e] for e in edge_dict if edge_dict[e] in bunch}
