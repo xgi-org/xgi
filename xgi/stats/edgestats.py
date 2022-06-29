@@ -182,7 +182,7 @@ def size(net, bunch, degree=None):
 
 
 def node_edge_centrality(H, bunch, max_iter=100, tol=1e-6):
-    """Computes the edge centralities.
+    """Computes edge centralities.
 
     Parameters
     ----------
@@ -206,7 +206,7 @@ def node_edge_centrality(H, bunch, max_iter=100, tol=1e-6):
     general functions for both nodes and edges, nodes and edges may be weighted,
     and one can choose different norms for normalization.
 
-    THis method does not output the node centralities even though they are computed.
+    This method does not output the node centralities even though they are computed.
 
     References
     ----------

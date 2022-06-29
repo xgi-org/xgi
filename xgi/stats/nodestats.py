@@ -18,6 +18,12 @@ Examples
 
 """
 
+from warnings import warn
+
+import numpy as np
+from numpy.linalg import norm
+from scipy.sparse.linalg import eigsh
+
 import xgi
 
 __all__ = [
@@ -25,6 +31,8 @@ __all__ = [
     "degree",
     "average_neighbor_degree",
     "clustering",
+    "cec_centrality",
+    "node_edge_centrality",
 ]
 
 
@@ -227,3 +235,95 @@ def clustering(net, bunch):
             i = node_to_index[n]
             result[n] = mat[i, i] / denom / 2
     return result
+
+
+def cec_centrality(net, bunch):
+    """Compute the CEC centrality of a hypergraph.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The hypergraph of interest.
+    bunch : Iterable
+        Nodes in `net`.
+
+    Returns
+    -------
+    dict
+        Centrality, where keys are node IDs and values are centralities.
+
+    References
+    ----------
+    Three Hypergraph Eigenvector Centralities,
+    Austin R. Benson,
+    https://doi.org/10.1137/18M1203031
+    """
+    W, node_dict = xgi.clique_motif_matrix(net, index=True)
+    _, v = eigsh(W.asfptype(), k=1, which="LM")
+
+    return {node_dict[n]: v[n] for n in node_dict if node_dict[n] in bunch}
+
+
+
+
+
+def node_edge_centrality(H, bunch, max_iter=100, tol=1e-6):
+    """Computes node centralities.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest
+    max_iter : int, default: 100
+        Number of iterations at which the algorithm terminates
+        if convergence is not reached.
+    tol : float > 0, default: 1e-6
+        The total allowable error in the node and edge centralities.
+
+    Returns
+    -------
+    dict, dict
+        The node centrality where keys are node IDs and values are associated
+        centralities and the edge centrality where keys are the edge IDs and
+        values are associated centralities.
+
+    Notes
+    -----
+    In the paper from which this was taken, it includes general functions
+    for both nodes and edges, nodes and edges may be weighted, and one can
+    choose different norms for normalization, all of which are not yet
+    implemented.
+
+    This method does not output the node centralities even though they are computed.
+
+    References
+    ----------
+    Node and edge nonlinear eigenvector centrality for hypergraphs,
+    Francesco Tudisco & Desmond J. Higham,
+    https://doi.org/10.1038/s42005-021-00704-2
+    """
+    x = np.ones(H.num_nodes) / H.num_nodes
+    y = np.ones(H.num_edges) / H.num_edges
+
+    I, node_dict, _ = xgi.incidence_matrix(H, index=True)
+
+    check = np.inf
+
+    f = lambda x: np.power(x, 2)
+    g = lambda x: np.power(x, 0.5)
+
+    iter = 0
+    while iter < max_iter:
+        u = np.multiply(x, g(I * f(y)))
+        v = np.multiply(y, g(I.T * f(x)))
+        new_x = u / norm(u)
+        new_y = v / norm(v)
+
+        check = norm(new_x - x) + norm(new_y - y)
+        if check < tol:
+            return {node_dict[n]: new_x[n] for n in node_dict if node_dict[n] in bunch}
+        else:
+            x = new_x.copy()
+            y = new_y.copy()
+    warn("Iteration did not converge!")
+    return {node_dict[n]: new_x[n] for n in node_dict if node_dict[n] in bunch}
