@@ -10,3 +10,4 @@
    .. autofunction:: attrs
    .. autofunction:: order
    .. autofunction:: size
+   .. autofunction:: node_edge_centrality
