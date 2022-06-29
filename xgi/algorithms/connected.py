@@ -200,7 +200,7 @@ def _plain_bfs(H, source):
         for v in thislevel:
             if v not in seen:
                 seen.add(v)
-                nextlevel.update(H.neighbors(v))
+                nextlevel.update(H.nodes.neighbors(v))
     return seen
 
 

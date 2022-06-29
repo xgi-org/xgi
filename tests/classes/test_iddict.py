@@ -21,7 +21,7 @@ def test_iddict(edgelist1):
 def test_neighbors():
     H = xgi.Hypergraph()
     with pytest.raises(IDNotFound):
-        H.neighbors(0)
+        H.nodes.neighbors(0)
     with pytest.raises(IDNotFound):
         H.remove_node(0)
     with pytest.raises(IDNotFound):

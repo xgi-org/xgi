@@ -59,5 +59,4 @@
       ~Hypergraph.isolates
       ~Hypergraph.duplicate_edges
       ~Hypergraph.has_edge
-      ~Hypergraph.neighbors
       ~Hypergraph.singleton_edges
