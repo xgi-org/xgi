@@ -2,6 +2,7 @@ import pytest
 
 from xgi import load_xgi_data
 
+
 @pytest.mark.webtest
 @pytest.mark.slow
 def test_load_xgi_data():

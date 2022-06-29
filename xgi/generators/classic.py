@@ -231,8 +231,9 @@ def lattice(n, d, k, l):
     ]
     return Hypergraph(edges)
 
+
 def sunflower(l, c, m):
-    """ Create a sunflower hypergraph.
+    """Create a sunflower hypergraph.
 
     This creates an m-uniform hypergraph
     according to the sunflower model.
@@ -264,8 +265,8 @@ def sunflower(l, c, m):
 
     H = Hypergraph()
     start_label = c
-    while start_label + (m - c) <= c + (m - c)*l:
+    while start_label + (m - c) <= c + (m - c) * l:
         H.add_edge(core_nodes + [start_label + i for i in range(m - c)])
         start_label = start_label + (m - c)
-    
+
     return H
