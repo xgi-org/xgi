@@ -18,12 +18,6 @@ Examples
 
 """
 
-from warnings import warn
-
-import numpy as np
-from numpy.linalg import norm
-from scipy.sparse.linalg import eigsh
-
 import xgi
 
 __all__ = [
@@ -32,6 +26,8 @@ __all__ = [
     "average_neighbor_degree",
     "clustering",
     "cec_centrality",
+    "zec_centrality",
+    "hec_centrality",
     "node_edge_centrality",
 ]
 
@@ -237,7 +233,7 @@ def clustering(net, bunch):
     return result
 
 
-def cec_centrality(net, bunch):
+def cec_centrality(net, bunch, tol=1e-6):
     """Compute the CEC centrality of a hypergraph.
 
     Parameters
@@ -246,6 +242,8 @@ def cec_centrality(net, bunch):
         The hypergraph of interest.
     bunch : Iterable
         Nodes in `net`.
+    tol : float > 0, default: 1e-6
+        The desired L2 error in the centrality vector.
 
     Returns
     -------
@@ -258,19 +256,77 @@ def cec_centrality(net, bunch):
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
     """
-    W, node_dict = xgi.clique_motif_matrix(net, index=True)
-    _, v = eigsh(W.asfptype(), k=1, which="LM")
-
-    return {node_dict[n]: v[n] for n in node_dict if node_dict[n] in bunch}
+    c = xgi.CEC_centrality(net, tol)
+    return {n: c[n] for n in c if n in bunch}
 
 
-def node_edge_centrality(H, bunch, max_iter=100, tol=1e-6):
+def zec_centrality(net, bunch, max_iter=10, tol=1e-6):
+    """Compute the ZEC centrality of a hypergraph.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The hypergraph of interest.
+    bunch : Iterable
+        Nodes in `net`.
+    max_iter : int, default: 10
+        The maximum number of iterations before the algorithm terminates.
+    tol : float > 0, default: 1e-6
+        The desired L2 error in the centrality vector.
+
+    Returns
+    -------
+    dict
+        Centrality, where keys are node IDs and values are centralities.
+
+    References
+    ----------
+    Three Hypergraph Eigenvector Centralities,
+    Austin R. Benson,
+    https://doi.org/10.1137/18M1203031
+    """
+    c = xgi.ZEC_centrality(net, max_iter, tol)
+    return {n: c[n] for n in c if n in bunch}
+
+
+def hec_centrality(net, bunch, max_iter=10, tol=1e-6):
+    """Compute the HEC centrality of a hypergraph.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The hypergraph of interest.
+    bunch : Iterable
+        Nodes in `net`.
+    max_iter : int, default: 10
+        The maximum number of iterations before the algorithm terminates.
+    tol : float > 0, default: 1e-6
+        The desired L2 error in the centrality vector.
+
+    Returns
+    -------
+    dict
+        Centrality, where keys are node IDs and values are centralities.
+
+    References
+    ----------
+    Three Hypergraph Eigenvector Centralities,
+    Austin R. Benson,
+    https://doi.org/10.1137/18M1203031
+    """
+    c = xgi.HEC_centrality(net, max_iter, tol)
+    return {n: c[n] for n in c if n in bunch}
+
+
+def node_edge_centrality(net, bunch, max_iter=100, tol=1e-6):
     """Computes node centralities.
 
     Parameters
     ----------
-    H : Hypergraph
+    net : Hypergraph
         The hypergraph of interest
+    bunch : Iterable
+        Edges in `net`
     max_iter : int, default: 100
         Number of iterations at which the algorithm terminates
         if convergence is not reached.
@@ -299,28 +355,5 @@ def node_edge_centrality(H, bunch, max_iter=100, tol=1e-6):
     Francesco Tudisco & Desmond J. Higham,
     https://doi.org/10.1038/s42005-021-00704-2
     """
-    x = np.ones(H.num_nodes) / H.num_nodes
-    y = np.ones(H.num_edges) / H.num_edges
-
-    I, node_dict, _ = xgi.incidence_matrix(H, index=True)
-
-    check = np.inf
-
-    f = lambda x: np.power(x, 2)
-    g = lambda x: np.power(x, 0.5)
-
-    iter = 0
-    while iter < max_iter:
-        u = np.multiply(x, g(I * f(y)))
-        v = np.multiply(y, g(I.T * f(x)))
-        new_x = u / norm(u)
-        new_y = v / norm(v)
-
-        check = norm(new_x - x) + norm(new_y - y)
-        if check < tol:
-            return {node_dict[n]: new_x[n] for n in node_dict if node_dict[n] in bunch}
-        else:
-            x = new_x.copy()
-            y = new_y.copy()
-    warn("Iteration did not converge!")
-    return {node_dict[n]: new_x[n] for n in node_dict if node_dict[n] in bunch}
+    c, _ = xgi.node_edge_centrality(net, max_iter, tol)
+    return {n: c[n] for n in c if n in bunch}

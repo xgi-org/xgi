@@ -17,10 +17,6 @@ Examples
 {0: 2, 1: 3, 2: 2}
 
 """
-from warnings import warn
-
-import numpy as np
-from numpy.linalg import norm
 
 import xgi
 
@@ -181,13 +177,15 @@ def size(net, bunch, degree=None):
         }
 
 
-def node_edge_centrality(H, bunch, max_iter=100, tol=1e-6):
+def node_edge_centrality(net, bunch, max_iter=100, tol=1e-6):
     """Computes edge centralities.
 
     Parameters
     ----------
-    H : Hypergraph
+    net : Hypergraph
         The hypergraph of interest
+    bunch : Iterable
+        Edges in `net`
     max_iter : int, default: 100
         Number of iterations at which the algorithm terminates
         if convergence is not reached.
@@ -214,28 +212,5 @@ def node_edge_centrality(H, bunch, max_iter=100, tol=1e-6):
     Francesco Tudisco & Desmond J. Higham,
     https://doi.org/10.1038/s42005-021-00704-2
     """
-    x = np.ones(H.num_nodes) / H.num_nodes
-    y = np.ones(H.num_edges) / H.num_edges
-
-    I, _, edge_dict = xgi.incidence_matrix(H, index=True)
-
-    check = np.inf
-
-    f = lambda x: np.power(x, 2)
-    g = lambda x: np.power(x, 0.5)
-
-    iter = 0
-    while iter < max_iter:
-        u = np.multiply(x, g(I * f(y)))
-        v = np.multiply(y, g(I.T * f(x)))
-        new_x = u / norm(u)
-        new_y = v / norm(v)
-
-        check = norm(new_x - x) + norm(new_y - y)
-        if check < tol:
-            return {edge_dict[e]: new_y[e] for e in edge_dict if edge_dict[e] in bunch}
-        else:
-            x = new_x.copy()
-            y = new_y.copy()
-    warn("Iteration did not converge!")
-    return {edge_dict[e]: new_y[e] for e in edge_dict if edge_dict[e] in bunch}
+    _, c = xgi.node_edge_centrality(net, max_iter, tol)
+    return {e: c[e] for e in c if e in bunch}

@@ -12,15 +12,15 @@ from ..utils.utilities import convert_labels_to_integers
 __all__ = ["CEC_centrality", "HEC_centrality", "ZEC_centrality", "node_edge_centrality"]
 
 
-def CEC_centrality(H, return_eigval=False):
+def CEC_centrality(H, tol=1e-6):
     """Compute the CEC centrality of a hypergraph.
 
     Parameters
     ----------
     H : Hypergraph
         The hypergraph of interest.
-    return_eigval : bool, default: False
-        Whether to return the associated eigenvalue.
+    tol : float, default: 1e-6
+        The tolerance when computing the eigenvector.
 
     Returns
     -------
@@ -34,31 +34,31 @@ def CEC_centrality(H, return_eigval=False):
     https://doi.org/10.1137/18M1203031
     """
     W, node_dict = clique_motif_matrix(H, index=True)
-    l, v = eigsh(W.asfptype(), k=1, which="LM")
-
-    if return_eigval:
-        return {node_dict[n]: v[n] for n in node_dict}, l
+    _, v = eigsh(W.asfptype(), k=1, which="LM", tol=tol)
     return {node_dict[n]: v[n] for n in node_dict}
 
 
-def ZEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
+def ZEC_centrality(H, max_iter=100, tol=1e-6):
     """Compute the ZEC centrality of a hypergraph.
 
     Parameters
     ----------
     H : Hypergraph
         The hypergraph of interest.
-    max_iter : int, default: 10
+    max_iter : int, default: 100
         The maximum number of iterations before the algorithm terminates.
     tol : float > 0, default: 1e-6
         The desired L2 error in the centrality vector.
-    return_eigval : bool, optional
-        Whether to return the associated eigenvalue, by default False
 
     Returns
     -------
     dict
         Centrality, where keys are node IDs and values are centralities.
+
+    Notes
+    -----
+    As noted in the corresponding reference, the eigenvectors may not be unique,
+    i.e., the algorithm may converge to different values for each run.
 
     References
     ----------
@@ -70,36 +70,29 @@ def ZEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
 
     g = lambda v, e: np.prod(v[list(e)])
 
-    l = 0
     x = np.random.uniform(size=(new_H.num_nodes))
-    for i in range(max_iter):
+    for iter in range(max_iter):
         new_x = apply(new_H, x, g)
-        new_l = norm(new_x) / norm(x)
         new_x = new_x / norm(new_x)
         if norm(x - new_x) <= tol:
             break
         x = new_x.copy()
-        l = new_l
-    if return_eigval:
-        return {
-            new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)
-        }, new_l
+    else:
+        warn("Iteration did not converge!")
     return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
 
 
-def HEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
+def HEC_centrality(H, max_iter=100, tol=1e-6):
     """Compute the HEC centrality of a uniform hypergraph.
 
     Parameters
     ----------
     H : Hypergraph
         The hypergraph of interest.
-    max_iter : int, default: 10
+    max_iter : int, default: 100
         The maximum number of iterations before the algorithm terminates.
     tol : float > 0, default: 1e-6
         The desired L2 error in the centrality vector.
-    return_eigval : bool, optional
-        Whether to return the associated eigenvalue, by default False
 
     Returns
     -------
@@ -125,21 +118,16 @@ def HEC_centrality(H, max_iter=10, tol=1e-6, return_eigval=False):
     f = lambda v, m: np.power(v, 1.0 / m)
     g = lambda v, x: np.prod(v[list(x)])
 
-    l = 0
     x = np.random.uniform(size=(new_H.num_nodes))
-    for i in range(max_iter):
+    for iter in range(max_iter):
         new_x = apply(new_H, x, g)
         new_x = f(new_x, m)
-        new_l = norm(new_x) / norm(x)
         new_x = new_x / norm(new_x)
-        if abs(l - new_l) <= tol:
+        if norm(x - new_x) <= tol:
             break
         x = new_x.copy()
-        l = new_l
-    if return_eigval:
-        return {
-            new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)
-        }, new_l
+    else:
+        warn("Iteration did not converge!")
     return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
 
 
@@ -213,8 +201,7 @@ def node_edge_centrality(H, max_iter=100, tol=1e-6):
     f = lambda x: np.power(x, 2)
     g = lambda x: np.power(x, 0.5)
 
-    iter = 0
-    while iter < max_iter:
+    for iter in range(max_iter):
         u = np.multiply(x, g(I * f(y)))
         v = np.multiply(y, g(I.T * f(x)))
         new_x = u / norm(u)
@@ -222,13 +209,11 @@ def node_edge_centrality(H, max_iter=100, tol=1e-6):
 
         check = norm(new_x - x) + norm(new_y - y)
         if check < tol:
-            return {node_dict[n]: new_x[n] for n in node_dict}, {
-                edge_dict[e]: new_y[e] for e in edge_dict
-            }
-        else:
-            x = new_x.copy()
-            y = new_y.copy()
-    warn("Iteration did not converge!")
+            break
+        x = new_x.copy()
+        y = new_y.copy()
+    else:
+        warn("Iteration did not converge!")
     return {node_dict[n]: new_x[n] for n in node_dict}, {
         edge_dict[e]: new_y[e] for e in edge_dict
     }
