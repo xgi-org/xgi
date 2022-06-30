@@ -1,3 +1,4 @@
+"""Algorithms for computing the centralities of nodes (and edges) in a hypergraph."""
 from warnings import warn
 
 import numpy as np
