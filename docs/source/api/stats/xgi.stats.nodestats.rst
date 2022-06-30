@@ -12,4 +12,6 @@
    .. autofunction:: cec_centrality
    .. autofunction:: clustering
    .. autofunction:: degree
+   .. autofunction:: hec_centrality
    .. autofunction:: node_edge_centrality
+   .. autofunction:: zec_centrality

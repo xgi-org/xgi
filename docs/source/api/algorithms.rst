@@ -6,6 +6,7 @@ algorithms package
 
 .. autosummary::
    :toctree: algorithms
-
-   ~xgi.algorithms.connected
+   
    ~xgi.algorithms.assortativity
+   ~xgi.algorithms.centrality
+   ~xgi.algorithms.connected
