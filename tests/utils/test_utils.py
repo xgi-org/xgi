@@ -1,21 +1,8 @@
-import pytest
-
-from xgi.utils import convert_labels_to_integers, get_dual, load_xgi_data
+from xgi.utils import convert_labels_to_integers, dual_dict
 
 
-@pytest.mark.webtest
-@pytest.mark.slow
-def test_load_xgi_data():
-    H = load_xgi_data("email-enron")
-    assert H.num_nodes == 148
-    assert H.num_edges == 10885
-    assert H["name"] == "email-Enron"
-    assert H.nodes["4"]["name"] == "robert.badeer@enron.com"
-    assert H.edges["0"]["timestamp"] == "2000-01-11T10:29:00"
-
-
-def test_get_dual(dict5):
-    dual = get_dual(dict5)
+def test_dual_dict(dict5):
+    dual = dual_dict(dict5)
     assert dual[0] == [0]
     assert dual[1] == [0]
     assert dual[2] == [0]

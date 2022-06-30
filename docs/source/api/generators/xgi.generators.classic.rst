@@ -10,6 +10,7 @@
    .. autofunction:: empty_hypergraph
    .. autofunction:: flag_complex
    .. autofunction:: star_clique
+   .. autofunction:: sunflower
 
    
    
