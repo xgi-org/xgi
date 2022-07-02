@@ -41,13 +41,13 @@ def test_is_uniform(edgelist1, edgelist6, edgelist7):
     assert xgi.is_uniform(H3) == False
 
 
-def test_egonet(edgelist3):
+def test_edge_neighborhood(edgelist3):
     H = xgi.Hypergraph(edgelist3)
-    assert H.neighbors(3) == {1, 2, 4}
-    assert xgi.egonet(H, 3) == [[1, 2], [4]]
-    assert xgi.egonet(H, 3, include_self=True) == [[1, 2, 3], [3, 4]]
+    assert H.nodes.neighbors(3) == {1, 2, 4}
+    assert xgi.edge_neighborhood(H, 3) == [[1, 2], [4]]
+    assert xgi.edge_neighborhood(H, 3, include_self=True) == [[1, 2, 3], [3, 4]]
     with pytest.raises(IDNotFound):
-        xgi.egonet(H, 7)
+        xgi.edge_neighborhood(H, 7)
 
 
 def test_degree_counts(edgelist1, edgelist2, edgelist3):

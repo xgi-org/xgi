@@ -1,15 +1,12 @@
 """General utilities."""
 from collections import defaultdict
 
-import requests
+from ..classes import Hypergraph
 
-from .. import convert
-from ..exception import XGIError
-
-__all__ = ["get_dual", "load_xgi_data"]
+__all__ = ["dual_dict", "convert_labels_to_integers"]
 
 
-def get_dual(edge_dict):
+def dual_dict(edge_dict):
     """Given a dictionary with IDs as keys
     and lists as values, return the dual.
 
@@ -29,7 +26,7 @@ def get_dual(edge_dict):
     Examples
     --------
     >>> import xgi
-    >>> xgi.get_dual({0 : [1, 2, 3], 1 : [0, 2]})
+    >>> xgi.dual_dict({0 : [1, 2, 3], 1 : [0, 2]})
     {1: [0], 2: [0, 1], 3: [0], 0: [1]}
 
     """
@@ -41,35 +38,42 @@ def get_dual(edge_dict):
     return dict(node_dict)
 
 
-def load_xgi_data(dataset, nodetype=None, edgetype=None):
-    """_summary_
+def convert_labels_to_integers(H, label_attribute="label"):
+    """Relabel node and edge IDs to be sequential integers.
 
     Parameters
     ----------
-    dataset : str
-        Dataset name. Valid options are the top-level tags of the
-        index.json file in the xgi-data repository.
+    H : Hypergraph
+        The hypergraph of interest
 
-    nodetype : type, optional
-        type to cast the node ID to
-    edgetype : type, optional
-        type to cast the edge ID to
+    label_attribute : string, default: "label"
+        The attribute name that stores the old node and edge labels
 
     Returns
     -------
     Hypergraph
-        The loaded hypergraph.
+        A new hypergraph with nodes and edges with sequential IDs starting at 0.
+        The old IDs are stored in the "label" attribute for both nodes and edges.
 
-    Raises
-    ------
-    XGIError
-       The specified dataset does not exist.
+    Notes
+    -----
+    The "relabeling" will occur even if the node/edge IDs are sequential.
+    Because the old IDs are stored in the "label" attribute for both nodes and edges,
+    the old "label" values (if they exist) will be overwritten.
     """
-    index_url = "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/index.json"
-    index = requests.get(index_url).json()
-    if dataset not in index:
-        raise XGIError("Invalid dataset specifier!")
+    node_dict = dict(zip(H.nodes, range(H.num_nodes)))
+    edge_dict = dict(zip(H.edges, range(H.num_edges)))
+    temp_H = Hypergraph()
+    temp_H._hypergraph = H._hypergraph.copy()
 
-    r = requests.get(index[dataset]["url"])
+    for node, id in node_dict.items():
+        temp_H._node[id] = [edge_dict[e] for e in H._node[node]]
+        temp_H._node_attr[id] = H._node_attr[node].copy()
+        temp_H._node_attr[id][label_attribute] = node
 
-    return convert.dict_to_hypergraph(r.json(), nodetype=nodetype, edgetype=edgetype)
+    for edge, id in edge_dict.items():
+        temp_H._edge[id] = [node_dict[n] for n in H._edge[edge]]
+        temp_H._edge_attr[id] = H._edge_attr[edge].copy()
+        temp_H._edge_attr[id][label_attribute] = edge
+
+    return temp_H

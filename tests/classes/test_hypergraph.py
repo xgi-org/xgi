@@ -69,18 +69,6 @@ def test_len(edgelist1, edgelist2):
     assert len(H2) == 6
 
 
-def test_neighbors(edgelist1, edgelist2):
-    el1 = edgelist1
-    el2 = edgelist2
-    H1 = xgi.Hypergraph(el1)
-    H2 = xgi.Hypergraph(el2)
-    assert H1.neighbors(1) == {2, 3}
-    assert H1.neighbors(4) == set()
-    assert H1.neighbors(6) == {5, 7, 8}
-    assert H2.neighbors(4) == {3, 5, 6}
-    assert H2.neighbors(1) == {2}
-
-
 def test_dual(edgelist1, edgelist2, edgelist4):
     el1 = edgelist1
     el2 = edgelist2

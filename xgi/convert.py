@@ -16,7 +16,7 @@ from .classes import (
 from .exception import XGIError
 from .generators import empty_hypergraph, empty_simplicial_complex
 from .linalg import adjacency_matrix, incidence_matrix
-from .utils.utilities import get_dual
+from .utils.utilities import dual_dict
 
 __all__ = [
     "convert_to_hypergraph",
@@ -232,7 +232,7 @@ def from_hyperedge_dict(d, create_using=None):
 
     """
     H = empty_hypergraph(create_using)
-    H.add_nodes_from(get_dual(d))
+    H.add_nodes_from(dual_dict(d))
     H.add_edges_from((members, uid) for uid, members in d.items())
     return H
 

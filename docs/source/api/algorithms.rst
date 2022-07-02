@@ -5,6 +5,8 @@ algorithms package
 .. rubric:: Modules
 
 .. autosummary::
-   :toctree: connected
-
+   :toctree: algorithms
+   
+   ~xgi.algorithms.assortativity
+   ~xgi.algorithms.centrality
    ~xgi.algorithms.connected

@@ -17,5 +17,6 @@ xgi.classes.reportviews.IDView
       :nosignatures:
 
       ~IDView.from_view
+      ~IDView.neighbors
       ~IDView.filterby
       ~IDView.filterby_attr

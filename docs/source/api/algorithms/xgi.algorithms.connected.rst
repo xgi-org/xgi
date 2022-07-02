@@ -13,10 +13,3 @@
    .. autofunction:: largest_connected_hypergraph
    .. autofunction:: node_connected_component
    .. autofunction:: number_connected_components
-
-   
-   
-   
-
-
-

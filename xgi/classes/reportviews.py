@@ -38,7 +38,14 @@ class IDView(Mapping, Set):
 
     """
 
-    __slots__ = ("_dispatcher", "_id_dict", "_id_attr", "_ids")
+    __slots__ = (
+        "_dispatcher",
+        "_id_dict",
+        "_id_attr",
+        "_bi_id_dict",
+        "_bi_id_attr",
+        "_ids",
+    )
 
     def __getstate__(self):
         """Function that allows pickling.
@@ -53,6 +60,8 @@ class IDView(Mapping, Set):
         return {
             "_id_dict": self._id_dict,
             "_id_attr": self._id_attr,
+            "_bi_id_dict": self._bi_id_dict,
+            "_bi_id_attr": self._bi_id_attr,
             "_ids": self._ids,
         }
 
@@ -68,15 +77,19 @@ class IDView(Mapping, Set):
         """
         self._id_dict = state["_id_dict"]
         self._id_attr = state["_id_attr"]
+        self._bi_id_dict = state["_bi_id_dict"]
+        self._bi_id_attr = state["_bi_id_attr"]
         self._ids = state["_ids"]
 
-    def __init__(self, H, id_dict, id_attr, dispatcher, ids=None):
+    def __init__(self, id_dict, id_attr, bi_id_dict, bi_id_attr, dispatcher, ids=None):
         self._dispatcher = dispatcher
         self._id_dict = id_dict
         self._id_attr = id_attr
+        self._bi_id_dict = bi_id_dict
+        self._bi_id_attr = bi_id_attr
 
-        if id_dict is None:
-            self._ids = None
+        if ids is None:
+            self._ids = self._id_dict
         else:
             self._ids = ids
 
@@ -132,10 +145,7 @@ class IDView(Mapping, Set):
 
     def __contains__(self, id):
         """Checks whether the ID is in the hypergraph"""
-        if self._ids is None:
-            return id in self._id_dict
-        else:
-            return id in self._ids
+        return id in self._ids
 
     def __str__(self):
         """Returns a string of the list of IDs."""
@@ -228,20 +238,109 @@ class IDView(Mapping, Set):
         elif mode == "between":
             bunch = [node for node in self if val[0] <= values[node] <= val[1]]
         else:
-            raise ValueError(f"Unrecognized mode {mode}")
+            raise ValueError(
+                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
+            )
         return type(self).from_view(self, bunch)
 
-    def filterby_attr(self, attr, val, mode="eq"):
+    def filterby_attr(self, attr, val, mode="eq", missing=None):
         """Filter the IDs in this view by an attribute.
+
+        Parameters
+        ----------
+        attr : string
+            The name of the attribute
+        val : Any
+            A single value or, in the case of 'between', a list of length 2
+        mode : str, default: "eq"
+            Comparison mode. Valid options are 'eq', 'neq', 'lt', 'gt',
+            'leq', 'geq', or 'between'.
+        missing : Any, default: None
+            The default value if the attribute is missing. If None,
+            ignores those IDs.
+
 
         See Also
         --------
         Works identically to `filterby`.  For more details, see the `tutorial
         <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
+        Notes
+        -----
+        Beware of using comparison modes ("lt", "gt", "leq", "geq")
+        when the attribute is a string. For example, the string comparison
+        `'10' < '9'` evaluates to `True`.
         """
-        bunch = [idx for idx in self if self._id_attr[idx][attr] == val]
+        attrs = getattr(self._dispatcher, "attrs")
+        values = attrs(attr, missing).asdict()
+
+        if mode == "eq":
+            bunch = [
+                idx for idx in self if values[idx] is not None and values[idx] == val
+            ]
+        elif mode == "neq":
+            bunch = [
+                idx for idx in self if values[idx] is not None and values[idx] != val
+            ]
+        elif mode == "lt":
+            bunch = [
+                idx for idx in self if values[idx] is not None and values[idx] < val
+            ]
+        elif mode == "gt":
+            bunch = [
+                idx for idx in self if values[idx] is not None and values[idx] > val
+            ]
+        elif mode == "leq":
+            bunch = [
+                idx for idx in self if values[idx] is not None and values[idx] <= val
+            ]
+        elif mode == "geq":
+            bunch = [
+                idx for idx in self if values[idx] is not None and values[idx] >= val
+            ]
+        elif mode == "between":
+            bunch = [
+                idx
+                for idx in self
+                if values[idx] is not None and val[0] <= values[idx] <= val[1]
+            ]
+        else:
+            raise ValueError(
+                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
+            )
         return type(self).from_view(self, bunch)
+
+    def neighbors(self, id):
+        """Find the neighbors of an ID.
+
+        The neighbors of an ID are those IDs that share at least one bipartite ID.
+
+        Parameters
+        ----------
+        id : hashable
+            ID to find neighbors of.
+        Returns
+        -------
+        set
+            A set of the neighboring IDs
+
+        See Also
+        --------
+        edge_neighborhood
+
+        Examples
+        --------
+        >>> import xgi
+        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
+        >>> H = xgi.Hypergraph(hyperedge_list)
+        >>> H.nodes.neighbors(1)
+        {2}
+        >>> H.nodes.neighbors(2)
+        {1, 3, 4}
+        """
+        return {i for n in self._id_dict[id] for i in self._bi_id_dict[n]}.difference(
+            {id}
+        )
 
     @classmethod
     def from_view(cls, view, bunch=None):
@@ -267,6 +366,8 @@ class IDView(Mapping, Set):
         newview._dispatcher = view._dispatcher.__class__(view._dispatcher.net, newview)
         newview._id_dict = view._id_dict
         newview._id_attr = view._id_attr
+        newview._bi_id_dict = view._bi_id_dict
+        newview._bi_id_attr = view._bi_id_attr
         all_ids = set(view._id_dict.keys())
         if bunch is None:
             newview._ids = all_ids
@@ -301,9 +402,11 @@ class NodeView(IDView):
     def __init__(self, H, bunch=None):
         dispatcher = NodeStatDispatcher(H, self)
         if H is None:
-            super().__init__(None, None, None, dispatcher, bunch)
+            super().__init__(None, None, None, None, dispatcher, bunch)
         else:
-            super().__init__(H, H._node, H._node_attr, dispatcher, bunch)
+            super().__init__(
+                H._node, H._node_attr, H._edge, H._edge_attr, dispatcher, bunch
+            )
 
     def memberships(self, n=None):
         """Get the edge ids of which a node is a member.
@@ -349,9 +452,11 @@ class EdgeView(IDView):
     def __init__(self, H, bunch=None):
         dispatcher = EdgeStatDispatcher(H, self)
         if H is None:
-            super().__init__(None, None, None, dispatcher, bunch)
+            super().__init__(None, None, None, None, dispatcher, bunch)
         else:
-            super().__init__(H, H._edge, H._edge_attr, dispatcher, bunch)
+            super().__init__(
+                H._edge, H._edge_attr, H._node, H._node_attr, dispatcher, bunch
+            )
 
     def members(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
@@ -391,14 +496,4 @@ class EdgeView(IDView):
         if e not in self:
             raise IDNotFound(f'ID "{e}" not in this view')
 
-        try:
-            return self._id_dict[e].copy()
-        except IDNotFound:
-            if e is None:
-                if dtype is dict:
-                    return {key: self._id_dict[key] for key in self._ids}
-                elif dtype is list:
-                    return [self._id_dict[key] for key in self._ids]
-                else:
-                    raise XGIError(f"Unrecognized dtype {dtype}")
-            raise IDNotFound(f"Item {e} not in this view")
+        return self._id_dict[e].copy()

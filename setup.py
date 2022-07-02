@@ -39,7 +39,14 @@ def parse_requirements_file(filename):
 
 extras_require = {
     dep: parse_requirements_file("requirements/" + dep + ".txt")
-    for dep in ["developer", "documentation", "release", "test", "tutorial"]
+    for dep in [
+        "benchmarks",
+        "developer",
+        "documentation",
+        "release",
+        "test",
+        "tutorial",
+    ]
 }
 
 extras_require["all"] = list({item for dep in extras_require.values() for item in dep})

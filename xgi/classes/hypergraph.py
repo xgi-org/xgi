@@ -23,7 +23,7 @@ class IDDict(dict):
 
     def __getitem__(self, item):
         try:
-            return super().__getitem__(item)
+            return dict.__getitem__(self, item)
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
 
@@ -31,13 +31,13 @@ class IDDict(dict):
         if item is None:
             raise XGIError("None cannot be a node or edge")
         try:
-            return super().__setitem__(item, value)
+            return dict.__setitem__(self, item, value)
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
 
     def __delitem__(self, item):
         try:
-            return super().__delitem__(item)
+            return dict.__delitem__(self, item)
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
 
@@ -264,33 +264,6 @@ class Hypergraph:
 
         """
         return len(self._edge)
-
-    def neighbors(self, n):
-        """Find the neighbors of a node.
-        The neighbors of a node are those nodes that appear in at least one edge with
-        said node.
-        Parameters
-        ----------
-        n : node
-            Node to find neighbors of.
-        Returns
-        -------
-        set
-            A set of the neighboring nodes
-        See Also
-        --------
-        egonet
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.neighbors(1)
-        {2}
-        >>> H.neighbors(2)
-        {1, 3, 4}
-        """
-        return {i for e in self._node[n] for i in self._edge[e]}.difference({n})
 
     def add_node(self, node, **attr):
         """Add one node with optional attributes.

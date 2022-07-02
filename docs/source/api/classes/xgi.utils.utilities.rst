@@ -14,5 +14,5 @@
 
    .. rubric:: Functions
 
-   .. autofunction:: get_dual
-   .. autofunction:: load_xgi_data
+   .. autofunction:: convert_labels_to_integers
+   .. autofunction:: dual_dict

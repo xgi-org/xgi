@@ -25,6 +25,10 @@ __all__ = [
     "degree",
     "average_neighbor_degree",
     "clustering",
+    "cec_centrality",
+    "zec_centrality",
+    "hec_centrality",
+    "node_edge_centrality",
 ]
 
 
@@ -177,7 +181,7 @@ def average_neighbor_degree(net, bunch):
     """
     result = {}
     for n in bunch:
-        neighbors = net.neighbors(n)
+        neighbors = net.nodes.neighbors(n)
         result[n] = sum(len(net._node[nbr]) for nbr in neighbors)
         result[n] = result[n] / len(neighbors) if neighbors else 0
     return result
@@ -227,3 +231,129 @@ def clustering(net, bunch):
             i = node_to_index[n]
             result[n] = mat[i, i] / denom / 2
     return result
+
+
+def cec_centrality(net, bunch, tol=1e-6):
+    """Compute the CEC centrality of a hypergraph.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The hypergraph of interest.
+    bunch : Iterable
+        Nodes in `net`.
+    tol : float > 0, default: 1e-6
+        The desired L2 error in the centrality vector.
+
+    Returns
+    -------
+    dict
+        Centrality, where keys are node IDs and values are centralities.
+
+    References
+    ----------
+    Three Hypergraph Eigenvector Centralities,
+    Austin R. Benson,
+    https://doi.org/10.1137/18M1203031
+    """
+    c = xgi.CEC_centrality(net, tol)
+    return {n: c[n] for n in c if n in bunch}
+
+
+def zec_centrality(net, bunch, max_iter=10, tol=1e-6):
+    """Compute the ZEC centrality of a hypergraph.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The hypergraph of interest.
+    bunch : Iterable
+        Nodes in `net`.
+    max_iter : int, default: 10
+        The maximum number of iterations before the algorithm terminates.
+    tol : float > 0, default: 1e-6
+        The desired L2 error in the centrality vector.
+
+    Returns
+    -------
+    dict
+        Centrality, where keys are node IDs and values are centralities.
+
+    References
+    ----------
+    Three Hypergraph Eigenvector Centralities,
+    Austin R. Benson,
+    https://doi.org/10.1137/18M1203031
+    """
+    c = xgi.ZEC_centrality(net, max_iter, tol)
+    return {n: c[n] for n in c if n in bunch}
+
+
+def hec_centrality(net, bunch, max_iter=10, tol=1e-6):
+    """Compute the HEC centrality of a hypergraph.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The hypergraph of interest.
+    bunch : Iterable
+        Nodes in `net`.
+    max_iter : int, default: 10
+        The maximum number of iterations before the algorithm terminates.
+    tol : float > 0, default: 1e-6
+        The desired L2 error in the centrality vector.
+
+    Returns
+    -------
+    dict
+        Centrality, where keys are node IDs and values are centralities.
+
+    References
+    ----------
+    Three Hypergraph Eigenvector Centralities,
+    Austin R. Benson,
+    https://doi.org/10.1137/18M1203031
+    """
+    c = xgi.HEC_centrality(net, max_iter, tol)
+    return {n: c[n] for n in c if n in bunch}
+
+
+def node_edge_centrality(net, bunch, max_iter=100, tol=1e-6):
+    """Computes node centralities.
+
+    Parameters
+    ----------
+    net : Hypergraph
+        The hypergraph of interest
+    bunch : Iterable
+        Edges in `net`
+    max_iter : int, default: 100
+        Number of iterations at which the algorithm terminates
+        if convergence is not reached.
+    tol : float > 0, default: 1e-6
+        The total allowable error in the node and edge centralities.
+
+    Returns
+    -------
+    dict, dict
+        The node centrality where keys are node IDs and values are associated
+        centralities and the edge centrality where keys are the edge IDs and
+        values are associated centralities.
+
+    Notes
+    -----
+    In the paper from which this was taken, it includes general functions
+    for both nodes and edges, nodes and edges may be weighted, and one can
+    choose different norms for normalization, all of which are not yet
+    implemented.
+
+    This method does not output the node centralities even though they are computed.
+
+    References
+    ----------
+    Node and edge nonlinear eigenvector centrality for hypergraphs,
+    Francesco Tudisco & Desmond J. Higham,
+    https://doi.org/10.1038/s42005-021-00704-2
+    """
+    c, _ = xgi.node_edge_centrality(net, max_iter, tol)
+    return {n: c[n] for n in c if n in bunch}
