@@ -1,8 +1,27 @@
 # Changelog
 
+## v0.4
+* Added the `stats` package which implements `NodeStat`, `EdgeStat` and related functionality. This package now handles computation of edge size and degree (PR #120).
+* Removed the `EdgeSizeView` and `DegreeView` classes (PR #120).
+* Changed all imports to be relative in the `xgi` package (PR #121).
+* Added an assortativity module (PR #122).
+* Improved the performance of accessing edge members (PR #124).
+* Added more operations for node and edge attributes besides "eq" (PR #125).
+* Added a function to convert all node and edge labels to integers and store the old labels as properties (PR #127).
+* * Renamed the `egonet` method to `edge_neighborhood (PR #129).
+* Moved the `neighbors` method in the `Hypergraph` class to the `IDView` class so that node and edge neighbors are now supported (PR #129).
+* Added a centrality module and added these methods to `nodestats.py` and `edgestats.py` (PR #130).
+* Moved the `load_xgi_data` method to the `readwrite` module (PR #130).
+* Added a generator for sunflower hypergraphs (PR #130).
+* Added a Jupyter notebook as a quickstart guide (PRs #131, #134).
+* Fixed a bug in the `barycenter_spring_layout` and `weighted_barycenter_spring_layout` methods to handle non-integer node IDs (PR #133).
+* Added an isort configuration file so it no longer sorts the `__init__.py` files (PR #134).
+
+Contributors: @leotrs, @nwlandry, and @iaciac
+
 ## v0.3.1
 * Refactored the subhypergraph methods
-* Moved functions no related to the core Hypergraph data structure to functions.py
+* Moved functions not related to the core Hypergraph data structure to functions.py
 * Removed unnecessary duplicated functions (`n_bunch_iter`, `get_edge_data`, and `has_node`)
 * Refactored the `members()` method as well as the `NodeView` and `EdgeView` classes for significant speedup.
 * Github Actions now tests the docstrings and tutorial notebooks
