@@ -25,7 +25,7 @@ copyright = "Copyright (C) 2021 XGI Developers"
 author = "Nicholas W. Landry, Leo Torres, Iacopo Iacopini, Maxime Lucas, Giovanni Petri, Alice Patania"
 
 # The full version, including alpha/beta/rc tags
-release = "0.3.1"
+release = "0.4"
 
 # -- General configuration ---------------------------------------------------
 
@@ -192,7 +192,7 @@ latex_documents = [
         master_doc,
         "xgi.tex",
         "XGI Documentation",
-        "Nicholas W. Landry and Leo Torres",
+        "Nicholas W. Landry, Leo Torres, Iacopo Iacopini, Maxime Lucas, Giovanni Petri, Alice Patania",
         "manual",
     ),
 ]
