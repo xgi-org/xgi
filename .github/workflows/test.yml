@@ -75,7 +75,9 @@ jobs:
 
     - name: Test XGI
       run: |
-        cd xgi/
+        # run test suite
+        cd tests/
         pytest --color=yes
-        cd ../tests/
+        # run doctests
+        cd ../xgi/
         pytest --color=yes
