@@ -35,8 +35,7 @@ def draw(
     node_lw=1,
     node_size=0.03,
 ):
-    """
-    Draw hypergraph or simplicial complex.
+    """Draw hypergraph or simplicial complex.
 
     Parameters
     ----
@@ -52,17 +51,20 @@ def draw(
 
     ax : matplotlib.pyplot.axes (default=None)
 
-    edge_lc : color (default='black')
-    Color of the edges (dyadic links and borders of the hyperedges).
+    edge_lc : color (dict or str, default='black')
+    Color of the edges (dyadic links and borders of the hyperedges).  If str, use the
+    same color for all edges.  If a dict, must contain (edge_id: color_str) pairs.
 
     edge_lw :  float (default=1.5)
     Line width of edges of order 1 (dyadic links).
 
-    node_fc : color (default='white')
-    Color of the nodes.
+    node_fc : color (dict or str, default='white')
+    Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
+    contain (node_id: color_str) pairs.
 
-    node_ec : color (default='black')
-    Color of node borders.
+    node_ec : color (dict or str, default='black')
+    Color of node borders.  If str, use the same color for all nodes.  If a dict, must
+    contain (node_id: color_str) pairs.
 
     node_lw : float (default=1.0)
     Line width of the node borders.
