@@ -82,6 +82,14 @@ def draw(
     if pos is None:
         pos = barycenter_spring_layout(H)
 
+    # process arguments
+    if isinstance(node_fc, str):
+        node_fc = {n: node_fc for n in H.nodes}
+    if isinstance(node_ec, str):
+        node_ec = {n: node_ec for n in H.nodes}
+    if isinstance(edge_lc, str):
+        edge_lc = {n: edge_lc for n in H.edges}
+
     def CCW_sort(p):
         """
         Sort the input 2D points counterclockwise.
@@ -119,23 +127,25 @@ def draw(
         for d in reversed(range(1, d_max + 1)):
             if d == 1:
                 # Drawing the edges
-                for he in H.edges.filterby("order", d).members():
+                for idx, he in H.edges.filterby("order", d).members(dtype=dict).items():
                     he = list(he)
                     x_coords = [pos[he[0]][0], pos[he[1]][0]]
                     y_coords = [pos[he[0]][1], pos[he[1]][1]]
-                    line = plt.Line2D(x_coords, y_coords, color=edge_lc, lw=edge_lw)
+                    line = plt.Line2D(
+                        x_coords, y_coords, color=edge_lc[idx], lw=edge_lw
+                    )
                     ax.add_line(line)
 
             else:
                 # Hyperedges of order d (d=1: links, etc.)
-                for he in H.edges.filterby("order", d).members():
+                for idx, he in H.edges.filterby("order", d).members(dtype=dict).items():
                     # Filling the polygon
                     coordinates = [[pos[n][0], pos[n][1]] for n in he]
                     # Sorting the points counterclockwise (needed to have the correct filling)
                     sorted_coordinates = CCW_sort(coordinates)
                     obj = plt.Polygon(
                         sorted_coordinates,
-                        edgecolor=edge_lc,
+                        edgecolor=edge_lc[idx],
                         facecolor=colors[d - 1],
                         alpha=0.4,
                         lw=0.5,
@@ -149,22 +159,28 @@ def draw(
         for d in reversed(range(1, d_max + 1)):
             if d == 1:
                 # Drawing the edges
-                for he in H_.edges.filterby("order", d).members():
+                for idx, he in (
+                    H_.edges.filterby("order", d).members(dtype=dict).items()
+                ):
                     he = list(he)
                     x_coords = [pos[he[0]][0], pos[he[1]][0]]
                     y_coords = [pos[he[0]][1], pos[he[1]][1]]
-                    line = plt.Line2D(x_coords, y_coords, color=edge_lc, lw=edge_lw)
+                    line = plt.Line2D(
+                        x_coords, y_coords, color=edge_lc[idx], lw=edge_lw
+                    )
                     ax.add_line(line)
             else:
                 # Hyperedges of order d (d=1: links, etc.)
-                for he in H_.edges.filterby("order", d).members():
+                for idx, he in (
+                    H_.edges.filterby("order", d).members(dtype=dict).items()
+                ):
                     # Filling the polygon
                     coordinates = [[pos[n][0], pos[n][1]] for n in he]
                     # Sorting the points counterclockwise (needed to have the correct filling)
                     sorted_coordinates = CCW_sort(coordinates)
                     obj = plt.Polygon(
                         sorted_coordinates,
-                        edgecolor=edge_lc,
+                        edgecolor=edge_lc[idx],
                         facecolor=colors[d - 1],
                         alpha=0.4,
                         lw=0.5,
@@ -174,7 +190,9 @@ def draw(
                     for i, j in combinations(sorted_coordinates, 2):
                         x_coords = [i[0], j[0]]
                         y_coords = [i[1], j[1]]
-                        line = plt.Line2D(x_coords, y_coords, color=edge_lc, lw=edge_lw)
+                        line = plt.Line2D(
+                            x_coords, y_coords, color=edge_lc[idx], lw=edge_lw
+                        )
                         ax.add_line(line)
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
@@ -187,7 +205,7 @@ def draw(
             radius=node_size,
             lw=node_lw,
             zorder=d_max + 1,
-            ec=node_ec,
-            fc=node_fc,
+            ec=node_ec[i],
+            fc=node_fc[i],
         )
         ax.add_patch(circ)
