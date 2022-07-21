@@ -7,6 +7,7 @@ Draw hypergraphs with matplotlib.
 """
 
 from itertools import combinations
+from collections.abc import Iterable
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -51,20 +52,24 @@ def draw(
 
     ax : matplotlib.pyplot.axes (default=None)
 
-    edge_lc : color (dict or str, default='black')
+    edge_lc : color (str, dict, or iterable, default='black')
     Color of the edges (dyadic links and borders of the hyperedges).  If str, use the
-    same color for all edges.  If a dict, must contain (edge_id: color_str) pairs.
+    same color for all edges.  If a dict, must contain (edge_id: color_str) pairs.  If
+    iterable, assume the colors are specified in the same order as the edges are found
+    in H.edges.
 
     edge_lw :  float (default=1.5)
     Line width of edges of order 1 (dyadic links).
 
-    node_fc : color (dict or str, default='white')
+    node_fc : color (str, dict, or iterable, default='white')
     Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
-    contain (node_id: color_str) pairs.
+    contain (node_id: color_str) pairs.  If other iterable, assume the colors are
+    specified in the same order as the nodes are found in H.nodes.
 
     node_ec : color (dict or str, default='black')
     Color of node borders.  If str, use the same color for all nodes.  If a dict, must
-    contain (node_id: color_str) pairs.
+    contain (node_id: color_str) pairs.  If other iterable, assume the colors are
+    specified in the same order as the nodes are found in H.nodes.
 
     node_lw : float (default=1.0)
     Line width of the node borders.
@@ -84,13 +89,36 @@ def draw(
     if pos is None:
         pos = barycenter_spring_layout(H)
 
-    # process arguments
-    if isinstance(node_fc, str):
-        node_fc = {n: node_fc for n in H.nodes}
-    if isinstance(node_ec, str):
-        node_ec = {n: node_ec for n in H.nodes}
-    if isinstance(edge_lc, str):
-        edge_lc = {n: edge_lc for n in H.edges}
+    # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
+    if not isinstance(node_fc, dict):
+        if isinstance(node_fc, str):
+            node_fc = {n: node_fc for n in H.nodes}
+        elif isinstance(node_fc, Iterable):
+            node_fc = {n: node_fc[idx] for idx, n in enumerate(H.nodes)}
+        else:
+            raise TypeError(
+                f"node_fc must be dict, str, or iterable, received {type(node_fc)}"
+            )
+
+    if not isinstance(node_ec, dict):
+        if isinstance(node_ec, str):
+            node_ec = {n: node_ec for n in H.nodes}
+        elif isinstance(node_ec, Iterable):
+            node_ec = {n: node_ec[idx] for idx, n in enumerate(H.nodes)}
+        else:
+            raise TypeError(
+                f"node_ec must be dict, str, or iterable, received {type(node_ec)}"
+            )
+
+    if not isinstance(edge_lc, dict):
+        if isinstance(edge_lc, str):
+            edge_lc = {n: edge_lc for n in H.edges}
+        elif isinstance(edge_lc, Iterable):
+            edge_lc = {n: edge_lc[idx] for idx, n in enumerate(H.edges)}
+        else:
+            raise TypeError(
+                f"edge_lc must be dict, str, or iterable, received {type(edge_lc)}"
+            )
 
     def CCW_sort(p):
         """
