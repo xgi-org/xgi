@@ -226,7 +226,7 @@ def _arg_to_dict(arg, ids):
         if a string, list, or dict is not passed
     """
     if isinstance(arg, dict):
-        return {id: arg[id] for id in arg if arg in ids}
+        return {id: arg[id] for id in arg if id in ids}
     if type(arg) in [int, float, str]:
         return {id: arg for id in ids}
     elif isinstance(arg, Iterable):
