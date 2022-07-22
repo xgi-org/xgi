@@ -33,8 +33,8 @@ def draw(
     edge_lw=1.5,
     node_fc="white",
     node_ec="black",
-    node_lw=1,
-    node_size=0.03,
+    node_lw=100,
+    node_size=3,
 ):
     """Draw hypergraph or simplicial complex.
 
@@ -129,18 +129,18 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_size, node_lw, zorder):
     node_ec = _arg_to_dict(node_ec, H.nodes)
     node_size = _arg_to_dict(node_size, H.nodes)
 
-    # Drawing the nodes
     for i in list(H.nodes):
         (x, y) = pos[i]
-        circ = plt.Circle(
-            [x, y],
-            radius=node_size[i],
-            lw=node_lw,
+        ax.scatter(
+            x,
+            y,
+            s=node_size[i],
+            c=node_fc[i],
+            edgecolors=node_ec[i],
+            linewidths=node_lw,
             zorder=zorder,
-            ec=node_ec[i],
-            fc=node_fc[i],
         )
-        ax.add_patch(circ)
+        
 
 
 def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, d_max, colors):
