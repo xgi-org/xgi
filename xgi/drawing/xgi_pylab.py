@@ -108,13 +108,14 @@ def draw(
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
-    draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_size, node_lw, d_max)
+    draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, d_max)
 
 
-def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_size, node_lw, zorder):
+def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder):
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
     node_fc = _arg_to_dict(node_fc, H.nodes)
     node_ec = _arg_to_dict(node_ec, H.nodes)
+    node_lw = _arg_to_dict(node_lw, H.nodes)
     node_size = _arg_to_dict(node_size, H.nodes)
 
     for i in H.nodes:
