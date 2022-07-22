@@ -117,7 +117,7 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_size, node_lw, zorder):
     node_ec = _arg_to_dict(node_ec, H.nodes)
     node_size = _arg_to_dict(node_size, H.nodes)
 
-    for i in list(H.nodes):
+    for i in H.nodes:
         (x, y) = pos[i]
         ax.scatter(
             x,
@@ -125,7 +125,7 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_size, node_lw, zorder):
             s=node_size[i] ** 2,
             c=node_fc[i],
             edgecolors=node_ec[i],
-            linewidths=node_lw,
+            linewidths=node_lw[i],
             zorder=zorder,
         )
 
@@ -225,7 +225,7 @@ def _arg_to_dict(arg, ids):
         if a string, list, or dict is not passed
     """
     if isinstance(arg, dict):
-        return arg
+        return {id: arg[id] for id in arg if arg in ids}
     if type(arg) in [int, float, str]:
         return {id: arg for id in ids}
     elif isinstance(arg, Iterable):
