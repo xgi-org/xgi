@@ -6,8 +6,8 @@ Matplotlib
 Draw hypergraphs with matplotlib.
 """
 
-from itertools import combinations
 from collections.abc import Iterable
+from itertools import combinations
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -89,47 +89,6 @@ def draw(
     if pos is None:
         pos = barycenter_spring_layout(H)
 
-    # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
-    if not isinstance(node_fc, dict):
-        if isinstance(node_fc, str):
-            node_fc = {n: node_fc for n in H.nodes}
-        elif isinstance(node_fc, Iterable):
-            node_fc = {n: node_fc[idx] for idx, n in enumerate(H.nodes)}
-        else:
-            raise TypeError(
-                f"node_fc must be dict, str, or iterable, received {type(node_fc)}"
-            )
-
-    if not isinstance(node_ec, dict):
-        if isinstance(node_ec, str):
-            node_ec = {n: node_ec for n in H.nodes}
-        elif isinstance(node_ec, Iterable):
-            node_ec = {n: node_ec[idx] for idx, n in enumerate(H.nodes)}
-        else:
-            raise TypeError(
-                f"node_ec must be dict, str, or iterable, received {type(node_ec)}"
-            )
-
-    if not isinstance(edge_lc, dict):
-        if isinstance(edge_lc, str):
-            edge_lc = {n: edge_lc for n in H.edges}
-        elif isinstance(edge_lc, Iterable):
-            edge_lc = {n: edge_lc[idx] for idx, n in enumerate(H.edges)}
-        else:
-            raise TypeError(
-                f"edge_lc must be dict, str, or iterable, received {type(edge_lc)}"
-            )
-
-    def CCW_sort(p):
-        """
-        Sort the input 2D points counterclockwise.
-        """
-        p = np.array(p)
-        mean = np.mean(p, axis=0)
-        d = p - mean
-        s = np.arctan2(d[:, 0], d[:, 1])
-        return p[np.argsort(s), :]
-
     # Defining colors, one for each dimension
     d_max = max_edge_order(H)
     if cmap is None:
@@ -153,89 +112,144 @@ def draw(
     ax.axis("off")
 
     if isinstance(H, Hypergraph):
-        # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
-        for d in reversed(range(1, d_max + 1)):
-            if d == 1:
-                # Drawing the edges
-                for idx, he in H.edges.filterby("order", d).members(dtype=dict).items():
-                    he = list(he)
-                    x_coords = [pos[he[0]][0], pos[he[1]][0]]
-                    y_coords = [pos[he[0]][1], pos[he[1]][1]]
-                    line = plt.Line2D(
-                        x_coords, y_coords, color=edge_lc[idx], lw=edge_lw
-                    )
-                    ax.add_line(line)
+        draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, d_max, colors)
 
-            else:
-                # Hyperedges of order d (d=1: links, etc.)
-                for idx, he in H.edges.filterby("order", d).members(dtype=dict).items():
-                    # Filling the polygon
-                    coordinates = [[pos[n][0], pos[n][1]] for n in he]
-                    # Sorting the points counterclockwise (needed to have the correct filling)
-                    sorted_coordinates = CCW_sort(coordinates)
-                    obj = plt.Polygon(
-                        sorted_coordinates,
-                        edgecolor=edge_lc[idx],
-                        facecolor=colors[d - 1],
-                        alpha=0.4,
-                        lw=0.5,
-                    )
-                    ax.add_patch(obj)
     elif isinstance(H, SimplicialComplex):
         # I will only plot the maximal simplices, so I convert the SC to H
-        H_ = convert.from_simplicial_complex_to_hypergraph(H)
-
-        # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
-        for d in reversed(range(1, d_max + 1)):
-            if d == 1:
-                # Drawing the edges
-                for idx, he in (
-                    H_.edges.filterby("order", d).members(dtype=dict).items()
-                ):
-                    he = list(he)
-                    x_coords = [pos[he[0]][0], pos[he[1]][0]]
-                    y_coords = [pos[he[0]][1], pos[he[1]][1]]
-                    line = plt.Line2D(
-                        x_coords, y_coords, color=edge_lc[idx], lw=edge_lw
-                    )
-                    ax.add_line(line)
-            else:
-                # Hyperedges of order d (d=1: links, etc.)
-                for idx, he in (
-                    H_.edges.filterby("order", d).members(dtype=dict).items()
-                ):
-                    # Filling the polygon
-                    coordinates = [[pos[n][0], pos[n][1]] for n in he]
-                    # Sorting the points counterclockwise (needed to have the correct filling)
-                    sorted_coordinates = CCW_sort(coordinates)
-                    obj = plt.Polygon(
-                        sorted_coordinates,
-                        edgecolor=edge_lc[idx],
-                        facecolor=colors[d - 1],
-                        alpha=0.4,
-                        lw=0.5,
-                    )
-                    ax.add_patch(obj)
-                    # Drawing the all the edges within
-                    for i, j in combinations(sorted_coordinates, 2):
-                        x_coords = [i[0], j[0]]
-                        y_coords = [i[1], j[1]]
-                        line = plt.Line2D(
-                            x_coords, y_coords, color=edge_lc[idx], lw=edge_lw
-                        )
-                        ax.add_line(line)
+        draw_xgi_complexes(ax, H, pos, edge_lc, edge_lw, d_max, colors)
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
+
+    draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_size, node_lw, d_max + 1)
+
+
+def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_size, node_lw, zorder):
+    # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
+    node_fc = _arg_to_dict(node_fc, H.nodes)
+    node_ec = _arg_to_dict(node_ec, H.nodes)
+    node_size = _arg_to_dict(node_size, H.nodes)
 
     # Drawing the nodes
     for i in list(H.nodes):
         (x, y) = pos[i]
         circ = plt.Circle(
             [x, y],
-            radius=node_size,
+            radius=node_size[i],
             lw=node_lw,
-            zorder=d_max + 1,
+            zorder=zorder,
             ec=node_ec[i],
             fc=node_fc[i],
         )
         ax.add_patch(circ)
+
+
+def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, d_max, colors):
+    edge_lc = _arg_to_dict(edge_lc, H.edges)
+    # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
+    for d in reversed(range(1, d_max + 1)):
+        if d == 1:
+            # Drawing the edges
+            for idx, he in H.edges.filterby("order", d).members(dtype=dict).items():
+                he = list(he)
+                x_coords = [pos[he[0]][0], pos[he[1]][0]]
+                y_coords = [pos[he[0]][1], pos[he[1]][1]]
+                line = plt.Line2D(x_coords, y_coords, color=edge_lc[idx], lw=edge_lw)
+                ax.add_line(line)
+
+        else:
+            # Hyperedges of order d (d=1: links, etc.)
+            for idx, he in H.edges.filterby("order", d).members(dtype=dict).items():
+                # Filling the polygon
+                coordinates = [[pos[n][0], pos[n][1]] for n in he]
+                # Sorting the points counterclockwise (needed to have the correct filling)
+                sorted_coordinates = _CCW_sort(coordinates)
+                obj = plt.Polygon(
+                    sorted_coordinates,
+                    edgecolor=edge_lc[idx],
+                    facecolor=colors[d - 1],
+                    alpha=0.4,
+                    lw=0.5,
+                )
+                ax.add_patch(obj)
+
+
+def draw_xgi_complexes(ax, H, pos, edge_lc, edge_lw, colors, d_max):
+    H_ = convert.from_simplicial_complex_to_hypergraph(H)
+
+    edge_lc = _arg_to_dict(edge_lc, H.edges)
+    # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
+    for d in reversed(range(1, d_max + 1)):
+        if d == 1:
+            # Drawing the edges
+            for idx, he in H_.edges.filterby("order", d).members(dtype=dict).items():
+                he = list(he)
+                x_coords = [pos[he[0]][0], pos[he[1]][0]]
+                y_coords = [pos[he[0]][1], pos[he[1]][1]]
+                line = plt.Line2D(x_coords, y_coords, color=edge_lc[idx], lw=edge_lw)
+                ax.add_line(line)
+        else:
+            # Hyperedges of order d (d=1: links, etc.)
+            for idx, he in H_.edges.filterby("order", d).members(dtype=dict).items():
+                # Filling the polygon
+                coordinates = [[pos[n][0], pos[n][1]] for n in he]
+                # Sorting the points counterclockwise (needed to have the correct filling)
+                sorted_coordinates = _CCW_sort(coordinates)
+                obj = plt.Polygon(
+                    sorted_coordinates,
+                    edgecolor=edge_lc[idx],
+                    facecolor=colors[d - 1],
+                    alpha=0.4,
+                    lw=0.5,
+                )
+                ax.add_patch(obj)
+                # Drawing the all the edges within
+                for i, j in combinations(sorted_coordinates, 2):
+                    x_coords = [i[0], j[0]]
+                    y_coords = [i[1], j[1]]
+                    line = plt.Line2D(
+                        x_coords, y_coords, color=edge_lc[idx], lw=edge_lw
+                    )
+                    ax.add_line(line)
+
+
+def _arg_to_dict(arg, ids):
+    """Map different types of arguments for drawing style to a dict.
+
+    Parameters
+    ----------
+    arg : str, dict, or iterable
+        attributes for drawing parameter
+    ids : NodeView or EdgeView
+        This is the node or edge IDs that attributes get mapped to.
+
+    Returns
+    -------
+    dict
+        an ID: attribute dictionary
+
+    Raises
+    ------
+    TypeError
+        if a string, list, or dict is not passed
+    """
+    if isinstance(arg, dict):
+        return arg
+    if type(arg) in [int, float, str]:
+        return {id: arg for id in ids}
+    elif isinstance(arg, Iterable):
+        return {id: arg[idx] for idx, id in enumerate(ids)}
+    else:
+        raise TypeError(
+            f"argument must be dict, str, or iterable, received {type(arg)}"
+        )
+
+
+def _CCW_sort(p):
+    """
+    Sort the input 2D points counterclockwise.
+    """
+    p = np.array(p)
+    mean = np.mean(p, axis=0)
+    d = p - mean
+    s = np.arctan2(d[:, 0], d[:, 1])
+    return p[np.argsort(s), :]
