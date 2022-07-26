@@ -112,6 +112,27 @@ def draw(
 
 
 def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder):
+    """Draw the nodes of a hypergraph
+
+    Parameters
+    ----------
+    ax : axis handle
+        Plot axes on which to draw the visualization
+    H : Hypergraph or SimplicialComplex
+        Higher-order network to plot
+    pos : dict of lists
+        the x, y position of every node
+    node_fc : str, 4-tuple, or dict of strings or 4-tuples
+        the color of the nodes
+    node_ec : str, 4-tuple, or dict of strings or 4-tuples
+        the outline color of the nodes
+    node_lw : int, float, or dict of ints or floats
+        the line weight of the outline of the nodes
+    node_size : int, float, or dict of ints or floats
+        the node radius
+    zorder : int
+        the layer on which to draw the nodes
+    """
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
     node_fc = _arg_to_dict(node_fc, H.nodes)
     node_ec = _arg_to_dict(node_ec, H.nodes)
@@ -132,6 +153,23 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder):
 
 
 def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max):
+    """ Draw hyperedges.
+
+    Parameters
+    ----------
+    ax : axis handle
+        figure axes to plot onto
+    H : Hypergraph
+        A hypergraph
+    pos : dict of lists
+        x,y position of every node
+    edge_lc : str, 4-tuple, or dict of 4-tuples or strings
+        the color of the pairwise edges
+    edge_lw : int, float, or dict
+        pairwise edge widths
+    edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
+        color of hyperedges
+    """
     edge_lc = _arg_to_dict(edge_lc, H.edges)
     edge_lw = _arg_to_dict(edge_lw, H.edges)
 
@@ -167,12 +205,29 @@ def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max):
             ax.add_patch(obj)
 
 
-def draw_xgi_complexes(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max):
-    # I will only plot the maximal simplices, so I convert the SC to H
-    H_ = convert.from_simplicial_complex_to_hypergraph(H)
+def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc):
+    """ Draw maximal simplices and pairwise faces.
 
-    edge_lc = _arg_to_dict(edge_lc, H.edges)
-    edge_fc = _color_edges(edge_fc, H.edges)
+    Parameters
+    ----------
+    ax : axis handle
+        figure axes to plot onto
+    SC : SimplicialComplex
+        A simpicial comples
+    pos : dict of lists
+        x,y position of every node
+    edge_lc : str, 4-tuple, or dict of 4-tuples or strings
+        the color of the pairwise edges
+    edge_lw : int, float, or dict
+        pairwise edge widths
+    edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
+        color of simplices
+    """
+    # I will only plot the maximal simplices, so I convert the SC to H
+    H_ = convert.from_simplicial_complex_to_hypergraph(SC)
+
+    edge_lc = _arg_to_dict(edge_lc, SC.edges)
+    edge_fc = _color_edges(edge_fc, SC.edges)
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
     for id, he in H_.edges.members(dtype=dict).items():
         d = len(he) - 1
@@ -244,8 +299,8 @@ def _color_edges(colors, H):
     ----------
     colors : str, dict, cmap, or iterable
         attributes for drawing parameter
-    ids : NodeView or EdgeView
-        This is the node or edge IDs that attributes get mapped to.
+    H : Hypergraph
+        Hypergraph to color
 
     Returns
     -------

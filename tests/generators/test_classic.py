@@ -10,8 +10,12 @@ def test_empty_hypergraph():
     assert (H.num_nodes, H.num_edges) == (0, 0)
 
 
-def test_star_clique():
+def test_empty_hypergraph():
+    SC = xgi.empty_simplicial_complex()
+    assert (SC.num_nodes, SC.num_edges) == (0, 0)
 
+
+def test_star_clique():
     with pytest.raises(ValueError):
         H = xgi.star_clique(-1, 7, 3)
     with pytest.raises(ValueError):
