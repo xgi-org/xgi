@@ -8,8 +8,9 @@ hypergraph).
 from itertools import combinations
 
 import networkx as nx
+import numpy as np
 
-from xgi import SimplicialComplex
+from ..classes import SimplicialComplex
 from ..utils import py_random_state
 
 __all__ = [
@@ -202,20 +203,24 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     # defined.  Otherwise, a circular import error would happen.
 
     nodes = G.nodes()
+    edges = G.edges()
 
     # compute all triangles to fill
     max_cliques = list(nx.find_cliques(G))
 
     S = SimplicialComplex()
     S.add_nodes_from(nodes)
+    S.add_simplices_from(edges)
     if not ps: # promote all cliques
         S.add_simplices_from(max_cliques, max_order=max_order)
     else: # promote cliques with a given probability
-        for i, p in enumerate(ps[max_order - 1]):
+        for i, p in enumerate(ps[:max_order - 1]):
             d = i + 2 # simplex order
             cliques_d = [x for x in max_cliques if len(x) == d + 1]
-            probas = seed.random.random(size=len(cliques_d))
-            cliques_d_to_add = cliques_d[probas <= p]
+            cliques_d_to_add = []
+            for el in cliques_d:
+                if seed.random() <= p:
+                    cliques_d_to_add.append(el)
             S.add_simplices_from(cliques_d_to_add, max_order=max_order)
 
     return S
