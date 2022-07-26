@@ -231,7 +231,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     except ValueError:
         # The list of node-labels has no integers, so I start from 0
         phantom_node_id = 0
-    
+
     # Looping over the hyperedges of different order (from triples up)
     for d in range(2, max_edge_order(H) + 1):
         # Hyperedges of order d (d=2: triplets, etc.)
