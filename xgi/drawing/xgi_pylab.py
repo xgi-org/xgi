@@ -388,7 +388,7 @@ def _color_arg_to_dict(arg, ids, cmap):
         else:
             raise XGIError("Invalid colormap!")
         s = arg.asdict()
-        return {id: cmap(f(s[id])) for id in ids}
+        return {id: np.array(cmap(f(s[id]))).reshape(1, -1) for id in ids}
     elif isinstance(arg, Iterable):
         return {id: arg[idx] for idx, id in enumerate(ids)}
     else:
