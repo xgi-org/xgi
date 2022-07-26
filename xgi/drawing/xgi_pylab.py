@@ -14,6 +14,8 @@ import numpy as np
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 
+from xgi.stats import EdgeStat, NodeStat
+
 from .. import convert
 from ..classes import Hypergraph, SimplicialComplex, max_edge_order
 from ..exception import XGIError
@@ -27,7 +29,6 @@ __all__ = [
 def draw(
     H,
     pos=None,
-    cmap=None,
     ax=None,
     edge_lc="black",
     edge_lw=1.5,
@@ -36,6 +37,7 @@ def draw(
     node_ec="black",
     node_lw=1,
     node_size=10,
+    **kwargs,
 ):
     """Draw hypergraph or simplicial complex.
 
@@ -86,6 +88,18 @@ def draw(
     >>> xgi.draw(H, pos=xgi.barycenter_spring_layout(H))
 
     """
+    settings = {
+        "min_node_size": 5,
+        "max_node_size": 10,
+        "min_edge_linewidth": 1,
+        "max_edge_linewidth": 10,
+        "min_node_linewidth": 1,
+        "max_node_linewidth": 5,
+        "node_colormap": cm.Reds,
+        "node_outline_colormap": cm.Greys,
+        "edge_face_colormap": cm.Blues,
+        "edge_outline_colormap": cm.Greys,
+    }
 
     if pos is None:
         pos = barycenter_spring_layout(H)
@@ -101,17 +115,17 @@ def draw(
     d_max = max_edge_order(H)
 
     if isinstance(H, Hypergraph):
-        draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max)
+        draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max, settings)
 
     elif isinstance(H, SimplicialComplex):
-        draw_xgi_complexes(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max)
+        draw_xgi_complexes(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max, settings)
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
-    draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, d_max)
+    draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, d_max, settings)
 
 
-def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder):
+def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder, settings):
     """Draw the nodes of a hypergraph
 
     Parameters
@@ -134,10 +148,10 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder):
         the layer on which to draw the nodes
     """
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
-    node_fc = _arg_to_dict(node_fc, H.nodes)
-    node_ec = _arg_to_dict(node_ec, H.nodes)
-    node_lw = _arg_to_dict(node_lw, H.nodes)
-    node_size = _arg_to_dict(node_size, H.nodes)
+    node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_colormap"])
+    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_outline_colormap"])
+    node_lw = _scalar_arg_to_dict(node_lw, H.nodes, settings["min_node_linewidth"], settings["min_node_linewidth"])
+    node_size = _scalar_arg_to_dict(node_size, H.nodes, settings["min_node_size"], settings["min_node_size"])
 
     for i in H.nodes:
         (x, y) = pos[i]
@@ -152,7 +166,7 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder):
         )
 
 
-def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max):
+def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max, settings):
     """Draw hyperedges.
 
     Parameters
@@ -170,10 +184,10 @@ def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max):
     edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
         color of hyperedges
     """
-    edge_lc = _arg_to_dict(edge_lc, H.edges)
-    edge_lw = _arg_to_dict(edge_lw, H.edges)
+    edge_lc = _color_arg_to_dict(edge_lc, H.edges, settings["edge_outline_colormap"])
+    edge_lw = _scalar_arg_to_dict(edge_lw, H.edges, settings["min_edge_linewidth"], settings["max_edge_linewidth"])
 
-    edge_fc = _color_edges(edge_fc, H)
+    edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_face_colormap"])
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
 
     for id, he in H.edges.members(dtype=dict).items():
@@ -205,7 +219,7 @@ def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max):
             ax.add_patch(obj)
 
 
-def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc):
+def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc, settings):
     """Draw maximal simplices and pairwise faces.
 
     Parameters
@@ -226,8 +240,10 @@ def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc):
     # I will only plot the maximal simplices, so I convert the SC to H
     H_ = convert.from_simplicial_complex_to_hypergraph(SC)
 
-    edge_lc = _arg_to_dict(edge_lc, SC.edges)
-    edge_fc = _color_edges(edge_fc, SC.edges)
+    edge_lc = _color_arg_to_dict(edge_lc, H_.edges, settings["edge_outline_colormap"])
+    edge_lw = _scalar_arg_to_dict(edge_lw, H_.edges, settings["min_edge_linewidth"], settings["max_edge_linewidth"])
+
+    edge_fc = _color_arg_to_dict(edge_fc, H_.edges, settings["edge_face_colormap"])
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
     for id, he in H_.edges.members(dtype=dict).items():
         d = len(he) - 1
@@ -236,7 +252,7 @@ def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc):
             he = list(he)
             x_coords = [pos[he[0]][0], pos[he[1]][0]]
             y_coords = [pos[he[0]][1], pos[he[1]][1]]
-            line = plt.Line2D(x_coords, y_coords, color=edge_lc[id], lw=edge_lw)
+            line = plt.Line2D(x_coords, y_coords, color=edge_lc[id], lw=edge_lw[i])
             ax.add_line(line)
         else:
             # Hyperedges of order d (d=1: links, etc.)
@@ -260,7 +276,7 @@ def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc):
                 ax.add_line(line)
 
 
-def _arg_to_dict(arg, ids):
+def _scalar_arg_to_dict(arg, ids, min_val, max_val):
     """Map different types of arguments for drawing style to a dict.
 
     Parameters
@@ -282,55 +298,42 @@ def _arg_to_dict(arg, ids):
     """
     if isinstance(arg, dict):
         return {id: arg[id] for id in arg if id in ids}
-    if type(arg) in [int, float, str]:
+    if type(arg) in [int, float]:
         return {id: arg for id in ids}
     elif isinstance(arg, Iterable):
         return {id: arg[idx] for idx, id in enumerate(ids)}
+    elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
+        f = lambda val: np.interp(val, [arg.min(), arg.max()], [min_val, max_val])
+        s = arg.asdict()
+        return {id: f(s[id]) for id in ids}
     else:
         raise TypeError(
             f"argument must be dict, str, or iterable, received {type(arg)}"
         )
 
 
-def _color_edges(colors, H):
-    """Map different types of arguments for drawing style to a dict.
-
-    Parameters
-    ----------
-    colors : str, dict, cmap, or iterable
-        attributes for drawing parameter
-    H : Hypergraph
-        Hypergraph to color
-
-    Returns
-    -------
-    dict
-        an ID: attribute dictionary
-
-    Raises
-    ------
-    TypeError
-        if a string, list, or dict is not passed
-    """
-    # Defining colors, one for each dimension
-    d_max = max_edge_order(H)
-    if colors is None:
-        colors = cm.Paired
-
-    if type(colors) == ListedColormap:
-        # The colormap is already discrete
-        c = [colors(i) for i in range(d_max)]
-        order = H.edges.order.asdict()
-        return {e: c[order[e] - 1] for e in H.edges}
-    elif type(colors) == LinearSegmentedColormap:
-        # I need to discretize the given colormap
-        color_range = np.linspace(0.1, 0.9, d_max)
-        c = [colors(i) for i in color_range]
-        order = H.edges.order.asdict()
-        return {e: c[order[e] - 1] for e in H.edges}
+def _color_arg_to_dict(arg, ids, cmap):
+    print(type(arg))
+    if isinstance(arg, dict):
+        return {id: arg[id] for id in arg if id in ids}
+    if type(arg) in [tuple, str]:
+        return {id: arg for id in ids}
+    elif isinstance(arg, Iterable):
+        return {id: arg[idx] for idx, id in enumerate(ids)}
+    elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
+        if isinstance(cmap, ListedColormap):
+            f = lambda val: np.interp(val, [arg.min(), arg.max()], [0, cmap.N])
+        elif isinstance(cmap, LinearSegmentedColormap):
+            f = lambda val: np.interp(val, [arg.min(), arg.max()], [0, 1])
+        else:
+            raise XGIError("Invalid colormap!")
+        s = arg.asdict()
+        print({id: cmap(f(s[id])) for id in ids})
+        return {id: cmap(f(s[id])) for id in ids}
     else:
-        return _arg_to_dict(colors, H.edges)
-
+        raise TypeError(
+            f"argument must be dict, str, or iterable, received {type(arg)}"
+        )
 
 def _CCW_sort(p):
     """
