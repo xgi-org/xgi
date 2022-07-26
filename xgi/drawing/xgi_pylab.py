@@ -92,9 +92,9 @@ def draw(
 
     """
     settings = {
-        "min_node_size": 5,
-        "max_node_size": 10,
-        "min_edge_linewidth": 1,
+        "min_node_size": 10,
+        "max_node_size": 30,
+        "min_edge_linewidth": 2,
         "max_edge_linewidth": 10,
         "min_node_linewidth": 1,
         "max_node_linewidth": 5,
@@ -103,6 +103,11 @@ def draw(
         "edge_face_colormap": cm.Blues,
         "edge_outline_colormap": cm.Greys,
     }
+
+    settings.update(kwargs)
+
+    if edge_fc is None:
+        edge_fc = H.edges.size
 
     if pos is None:
         pos = barycenter_spring_layout(H)
@@ -153,8 +158,8 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder, set
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
     node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_colormap"])
     node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_outline_colormap"])
-    node_lw = _scalar_arg_to_dict(node_lw, H.nodes, settings["min_node_linewidth"], settings["min_node_linewidth"])
-    node_size = _scalar_arg_to_dict(node_size, H.nodes, settings["min_node_size"], settings["min_node_size"])
+    node_lw = _scalar_arg_to_dict(node_lw, H.nodes, settings["min_node_linewidth"], settings["max_node_linewidth"])
+    node_size = _scalar_arg_to_dict(node_size, H.nodes, settings["min_node_size"], settings["max_node_size"])
 
     for i in H.nodes:
         (x, y) = pos[i]
@@ -301,7 +306,7 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
     """
     if isinstance(arg, dict):
         return {id: arg[id] for id in arg if id in ids}
-    if type(arg) in [int, float]:
+    elif type(arg) in [int, float]:
         return {id: arg for id in ids}
     elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
         f = lambda val: np.interp(val, [arg.min(), arg.max()], [min_val, max_val])
@@ -337,17 +342,16 @@ def _color_arg_to_dict(arg, ids, cmap):
     """
     if isinstance(arg, dict):
         return {id: arg[id] for id in arg if id in ids}
-    if type(arg) in [tuple, str]:
+    elif type(arg) in [tuple, str]:
         return {id: arg for id in ids}
     elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
         if isinstance(cmap, ListedColormap):
             f = lambda val: np.interp(val, [arg.min(), arg.max()], [0, cmap.N])
         elif isinstance(cmap, LinearSegmentedColormap):
-            f = lambda val: np.interp(val, [arg.min(), arg.max()], [0, 1])
+            f = lambda val: np.interp(val, [arg.min(), arg.max()], [0.1, 0.9])
         else:
             raise XGIError("Invalid colormap!")
         s = arg.asdict()
-        print({id: cmap(f(s[id])) for id in ids})
         return {id: cmap(f(s[id])) for id in ids}
     elif isinstance(arg, Iterable):
         return {id: arg[idx] for idx, id in enumerate(ids)}
