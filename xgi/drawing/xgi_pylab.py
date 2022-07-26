@@ -300,12 +300,12 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
         return {id: arg[id] for id in arg if id in ids}
     if type(arg) in [int, float]:
         return {id: arg for id in ids}
-    elif isinstance(arg, Iterable):
-        return {id: arg[idx] for idx, id in enumerate(ids)}
     elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
         f = lambda val: np.interp(val, [arg.min(), arg.max()], [min_val, max_val])
         s = arg.asdict()
         return {id: f(s[id]) for id in ids}
+    elif isinstance(arg, Iterable):
+        return {id: arg[idx] for idx, id in enumerate(ids)}
     else:
         raise TypeError(
             f"argument must be dict, str, or iterable, received {type(arg)}"
@@ -318,8 +318,6 @@ def _color_arg_to_dict(arg, ids, cmap):
         return {id: arg[id] for id in arg if id in ids}
     if type(arg) in [tuple, str]:
         return {id: arg for id in ids}
-    elif isinstance(arg, Iterable):
-        return {id: arg[idx] for idx, id in enumerate(ids)}
     elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
         if isinstance(cmap, ListedColormap):
             f = lambda val: np.interp(val, [arg.min(), arg.max()], [0, cmap.N])
@@ -330,6 +328,8 @@ def _color_arg_to_dict(arg, ids, cmap):
         s = arg.asdict()
         print({id: cmap(f(s[id])) for id in ids})
         return {id: cmap(f(s[id])) for id in ids}
+    elif isinstance(arg, Iterable):
+        return {id: arg[idx] for idx, id in enumerate(ids)}
     else:
         raise TypeError(
             f"argument must be dict, str, or iterable, received {type(arg)}"
