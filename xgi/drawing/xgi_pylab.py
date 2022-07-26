@@ -56,32 +56,45 @@ def draw(
     ax : matplotlib.pyplot.axes (default=None)
 
     edge_lc : color (str, dict, or iterable, default='black')
-    Color of the edges (dyadic links and borders of the hyperedges).  If str, use the
-    same color for all edges.  If a dict, must contain (edge_id: color_str) pairs.  If
-    iterable, assume the colors are specified in the same order as the edges are found
-    in H.edges.
+        Color of the edges (dyadic links and borders of the hyperedges).  If str, use the
+        same color for all edges.  If a dict, must contain (edge_id: color_str) pairs.  If
+        iterable, assume the colors are specified in the same order as the edges are found
+        in H.edges.
 
     edge_lw :  float (default=1.5)
-    Line width of edges of order 1 (dyadic links).
+        Line width of edges of order 1 (dyadic links).
 
     edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
-    Color of hyperedges
+        Color of hyperedges
 
     node_fc : color (str, dict, or iterable, default='white')
-    Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
-    contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-    specified in the same order as the nodes are found in H.nodes.
+        Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
+        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
+        specified in the same order as the nodes are found in H.nodes.
 
     node_ec : color (dict or str, default='black')
-    Color of node borders.  If str, use the same color for all nodes.  If a dict, must
-    contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-    specified in the same order as the nodes are found in H.nodes.
+        Color of node borders.  If str, use the same color for all nodes.  If a dict, must
+        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
+        specified in the same order as the nodes are found in H.nodes.
 
     node_lw : float (default=1.0)
-    Line width of the node borders in pixels.
+        Line width of the node borders in pixels.
 
     node_size : float (default=0.03)
-    Radius of the nodes in pixels
+        Radius of the nodes in pixels
+
+    **kwargs : optional args
+        alternate default values. Values that can be overwritten are the following:
+        * min_node_size
+        * max_node_size
+        * min_edge_linewidth
+        * max_edge_linewidth
+        * min_node_linewidth
+        * max_node_linewidth
+        * node_colormap
+        * node_outline_colormap
+        * edge_face_colormap
+        * edge_outline_colormap
 
     Examples
     --------
@@ -154,12 +167,18 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder, set
         The node radius
     zorder : int
         The layer on which to draw the nodes
+    settings : dict
+        Default parameters
     """
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
     node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_colormap"])
     node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_outline_colormap"])
-    node_lw = _scalar_arg_to_dict(node_lw, H.nodes, settings["min_node_linewidth"], settings["max_node_linewidth"])
-    node_size = _scalar_arg_to_dict(node_size, H.nodes, settings["min_node_size"], settings["max_node_size"])
+    node_lw = _scalar_arg_to_dict(
+        node_lw, H.nodes, settings["min_node_linewidth"], settings["max_node_linewidth"]
+    )
+    node_size = _scalar_arg_to_dict(
+        node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
+    )
 
     for i in H.nodes:
         (x, y) = pos[i]
@@ -191,9 +210,13 @@ def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max, settings):
         Pairwise edge widths
     edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
         Color of hyperedges
+    settings : dict
+        Default parameters
     """
     edge_lc = _color_arg_to_dict(edge_lc, H.edges, settings["edge_outline_colormap"])
-    edge_lw = _scalar_arg_to_dict(edge_lw, H.edges, settings["min_edge_linewidth"], settings["max_edge_linewidth"])
+    edge_lw = _scalar_arg_to_dict(
+        edge_lw, H.edges, settings["min_edge_linewidth"], settings["max_edge_linewidth"]
+    )
 
     edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_face_colormap"])
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
@@ -244,12 +267,19 @@ def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc, settings):
         Pairwise edge widths
     edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
         Color of simplices
+    settings : dict
+        Default parameters
     """
     # I will only plot the maximal simplices, so I convert the SC to H
     H_ = convert.from_simplicial_complex_to_hypergraph(SC)
 
     edge_lc = _color_arg_to_dict(edge_lc, H_.edges, settings["edge_outline_colormap"])
-    edge_lw = _scalar_arg_to_dict(edge_lw, H_.edges, settings["min_edge_linewidth"], settings["max_edge_linewidth"])
+    edge_lw = _scalar_arg_to_dict(
+        edge_lw,
+        H_.edges,
+        settings["min_edge_linewidth"],
+        settings["max_edge_linewidth"],
+    )
 
     edge_fc = _color_arg_to_dict(edge_fc, H_.edges, settings["edge_face_colormap"])
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
@@ -289,10 +319,14 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
 
     Parameters
     ----------
-    arg : str, dict, or iterable
+    arg : int, float, dict, iterable, or NodeStat/EdgeStat
         Attributes for drawing parameter
     ids : NodeView or EdgeView
         This is the node or edge IDs that attributes get mapped to.
+    min_val : int or float
+        The minimum value of the drawing parameter
+    max_val : int or float
+        The maximum value of the drawing parameter
 
     Returns
     -------
@@ -302,7 +336,7 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
     Raises
     ------
     TypeError
-        If a string, list, or dict is not passed
+        If a int, float, list, dict, or NodeStat/EdgeStat is not passed
     """
     if isinstance(arg, dict):
         return {id: arg[id] for id in arg if id in ids}
@@ -325,10 +359,12 @@ def _color_arg_to_dict(arg, ids, cmap):
 
     Parameters
     ----------
-    arg : str, dict, or iterable
+    arg : str, dict, iterable, or NodeStat/EdgeStat
         Attributes for drawing parameter
     ids : NodeView or EdgeView
         This is the node or edge IDs that attributes get mapped to.
+    cmap : ListedColormap or LinearSegmentedColormap
+        colormap to use for NodeStat/EdgeStat
 
     Returns
     -------
@@ -338,7 +374,7 @@ def _color_arg_to_dict(arg, ids, cmap):
     Raises
     ------
     TypeError
-        If a string, list, or dict is not passed
+        If a string, tuple, list, or dict is not passed
     """
     if isinstance(arg, dict):
         return {id: arg[id] for id in arg if id in ids}
@@ -359,6 +395,7 @@ def _color_arg_to_dict(arg, ids, cmap):
         raise TypeError(
             f"argument must be dict, str, or iterable, received {type(arg)}"
         )
+
 
 def _CCW_sort(p):
     """
