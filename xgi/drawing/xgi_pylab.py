@@ -153,7 +153,7 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder):
 
 
 def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max):
-    """ Draw hyperedges.
+    """Draw hyperedges.
 
     Parameters
     ----------
@@ -206,7 +206,7 @@ def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max):
 
 
 def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc):
-    """ Draw maximal simplices and pairwise faces.
+    """Draw maximal simplices and pairwise faces.
 
     Parameters
     ----------
