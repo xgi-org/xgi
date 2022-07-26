@@ -64,6 +64,9 @@ def draw(
     edge_lw :  float (default=1.5)
     Line width of edges of order 1 (dyadic links).
 
+    edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
+    Color of hyperedges
+
     node_fc : color (str, dict, or iterable, default='white')
     Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
     contain (node_id: color_str) pairs.  If other iterable, assume the colors are
@@ -135,17 +138,17 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder, set
     H : Hypergraph or SimplicialComplex
         Higher-order network to plot
     pos : dict of lists
-        the x, y position of every node
+        The x, y position of every node
     node_fc : str, 4-tuple, or dict of strings or 4-tuples
-        the color of the nodes
+        The color of the nodes
     node_ec : str, 4-tuple, or dict of strings or 4-tuples
-        the outline color of the nodes
+        The outline color of the nodes
     node_lw : int, float, or dict of ints or floats
-        the line weight of the outline of the nodes
+        The line weight of the outline of the nodes
     node_size : int, float, or dict of ints or floats
-        the node radius
+        The node radius
     zorder : int
-        the layer on which to draw the nodes
+        The layer on which to draw the nodes
     """
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
     node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_colormap"])
@@ -172,17 +175,17 @@ def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max, settings):
     Parameters
     ----------
     ax : axis handle
-        figure axes to plot onto
+        Figure axes to plot onto
     H : Hypergraph
         A hypergraph
     pos : dict of lists
         x,y position of every node
     edge_lc : str, 4-tuple, or dict of 4-tuples or strings
-        the color of the pairwise edges
+        The color of the pairwise edges
     edge_lw : int, float, or dict
-        pairwise edge widths
+        Pairwise edge widths
     edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
-        color of hyperedges
+        Color of hyperedges
     """
     edge_lc = _color_arg_to_dict(edge_lc, H.edges, settings["edge_outline_colormap"])
     edge_lw = _scalar_arg_to_dict(edge_lw, H.edges, settings["min_edge_linewidth"], settings["max_edge_linewidth"])
@@ -225,17 +228,17 @@ def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc, settings):
     Parameters
     ----------
     ax : axis handle
-        figure axes to plot onto
+        Figure axes to plot onto
     SC : SimplicialComplex
-        A simpicial comples
+        A simpicial complex
     pos : dict of lists
         x,y position of every node
     edge_lc : str, 4-tuple, or dict of 4-tuples or strings
-        the color of the pairwise edges
+        The color of the pairwise edges
     edge_lw : int, float, or dict
-        pairwise edge widths
+        Pairwise edge widths
     edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
-        color of simplices
+        Color of simplices
     """
     # I will only plot the maximal simplices, so I convert the SC to H
     H_ = convert.from_simplicial_complex_to_hypergraph(SC)
@@ -277,24 +280,24 @@ def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc, settings):
 
 
 def _scalar_arg_to_dict(arg, ids, min_val, max_val):
-    """Map different types of arguments for drawing style to a dict.
+    """Map different types of arguments for drawing style to a dict with scalar values.
 
     Parameters
     ----------
     arg : str, dict, or iterable
-        attributes for drawing parameter
+        Attributes for drawing parameter
     ids : NodeView or EdgeView
         This is the node or edge IDs that attributes get mapped to.
 
     Returns
     -------
     dict
-        an ID: attribute dictionary
+        An ID: attribute dictionary
 
     Raises
     ------
     TypeError
-        if a string, list, or dict is not passed
+        If a string, list, or dict is not passed
     """
     if isinstance(arg, dict):
         return {id: arg[id] for id in arg if id in ids}
@@ -313,7 +316,25 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
 
 
 def _color_arg_to_dict(arg, ids, cmap):
-    print(type(arg))
+    """Map different types of arguments for drawing style to a dict with color values.
+
+    Parameters
+    ----------
+    arg : str, dict, or iterable
+        Attributes for drawing parameter
+    ids : NodeView or EdgeView
+        This is the node or edge IDs that attributes get mapped to.
+
+    Returns
+    -------
+    dict
+        An ID: attribute dictionary
+
+    Raises
+    ------
+    TypeError
+        If a string, list, or dict is not passed
+    """
     if isinstance(arg, dict):
         return {id: arg[id] for id in arg if id in ids}
     if type(arg) in [tuple, str]:
