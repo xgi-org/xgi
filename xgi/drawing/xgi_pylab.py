@@ -14,7 +14,7 @@ import numpy as np
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 
-from xgi.stats import EdgeStat, NodeStat
+from ..stats import EdgeStat, NodeStat
 
 from .. import convert
 from ..classes import Hypergraph, SimplicialComplex, max_edge_order
@@ -48,10 +48,6 @@ def draw(
     pos : dict (default=None)
         If passed, this dictionary of positions d:(x,y) is used for placing the 0-simplices.
         If None (default), use the `barycenter_spring_layout` to compute the positions.
-
-    cmap : `matplotlib.colors.ListedColormap`, default: `matplotlib.cm.Paired`
-        The qualitative colormap used to distinguish edges of different order.
-        If a continuous `matplotlib.colors.LinearSegmentedColormap` is given, it is discretized first.
 
     ax : matplotlib.pyplot.axes (default=None)
 
@@ -87,14 +83,14 @@ def draw(
         alternate default values. Values that can be overwritten are the following:
         * min_node_size
         * max_node_size
-        * min_edge_linewidth
-        * max_edge_linewidth
-        * min_node_linewidth
-        * max_node_linewidth
-        * node_colormap
-        * node_outline_colormap
-        * edge_face_colormap
-        * edge_outline_colormap
+        * min_edge_lw
+        * max_edge_lw
+        * min_node_lw
+        * max_node_lw
+        * node_fc_colormap
+        * node_lc_colormap
+        * edge_fc_colormap
+        * edge_lc_colormap
 
     Examples
     --------
@@ -107,14 +103,14 @@ def draw(
     settings = {
         "min_node_size": 10,
         "max_node_size": 30,
-        "min_edge_linewidth": 2,
-        "max_edge_linewidth": 10,
-        "min_node_linewidth": 1,
-        "max_node_linewidth": 5,
-        "node_colormap": cm.Reds,
-        "node_outline_colormap": cm.Greys,
-        "edge_face_colormap": cm.Blues,
-        "edge_outline_colormap": cm.Greys,
+        "min_edge_lw": 2,
+        "max_edge_lw": 10,
+        "min_node_lw": 1,
+        "max_node_lw": 5,
+        "node_fc_colormap": cm.Reds,
+        "node_lc_colormap": cm.Greys,
+        "edge_fc_colormap": cm.Blues,
+        "edge_lc_colormap": cm.Greys,
     }
 
     settings.update(kwargs)
@@ -136,17 +132,17 @@ def draw(
     d_max = max_edge_order(H)
 
     if isinstance(H, Hypergraph):
-        draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max, settings)
+        draw_xgi_hyperedges(H, pos, ax, edge_lc, edge_lw, edge_fc, d_max, settings)
 
     elif isinstance(H, SimplicialComplex):
-        draw_xgi_complexes(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max, settings)
+        draw_xgi_simplices(H, pos, ax, edge_lc, edge_lw, edge_fc, d_max, settings)
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
-    draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, d_max, settings)
+    draw_xgi_nodes(H, pos, ax, node_fc, node_ec, node_lw, node_size, d_max, settings)
 
 
-def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder, settings):
+def draw_xgi_nodes(H, pos, ax, node_fc, node_ec, node_lw, node_size, zorder, settings):
     """Draw the nodes of a hypergraph
 
     Parameters
@@ -168,13 +164,19 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder, set
     zorder : int
         The layer on which to draw the nodes
     settings : dict
-        Default parameters
+        Default parameters. Keys that may be useful to override default settings:
+        * node_fc_colormap
+        * node_lc_colormap
+        * min_node_lw
+        * max_node_lw
+        * min_node_size
+        * max_node_size
     """
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
-    node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_colormap"])
-    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_outline_colormap"])
+    node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_colormap"])
+    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_lc_colormap"])
     node_lw = _scalar_arg_to_dict(
-        node_lw, H.nodes, settings["min_node_linewidth"], settings["max_node_linewidth"]
+        node_lw, H.nodes, settings["min_node_lw"], settings["max_node_lw"]
     )
     node_size = _scalar_arg_to_dict(
         node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
@@ -193,7 +195,7 @@ def draw_xgi_nodes(ax, H, pos, node_fc, node_ec, node_lw, node_size, zorder, set
         )
 
 
-def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max, settings):
+def draw_xgi_hyperedges(H, pos, ax, edge_lc, edge_lw, edge_fc, d_max, settings):
     """Draw hyperedges.
 
     Parameters
@@ -211,14 +213,25 @@ def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max, settings):
     edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
         Color of hyperedges
     settings : dict
-        Default parameters
+        Default parameters. Keys that may be useful to override default settings:
+        * edge_lc_colormap
+        * min_edge_lw
+        * max_edge_lw
+        * edge_fc_colormap
+
+    Raises
+    ------
+    XGIError
+        If a SimplicialComplex is passed.
     """
-    edge_lc = _color_arg_to_dict(edge_lc, H.edges, settings["edge_outline_colormap"])
+    if isinstance(H, SimplicialComplex):
+        raise XGIError("Use draw_xgi_simplices instead.")
+    edge_lc = _color_arg_to_dict(edge_lc, H.edges, settings["edge_lc_colormap"])
     edge_lw = _scalar_arg_to_dict(
-        edge_lw, H.edges, settings["min_edge_linewidth"], settings["max_edge_linewidth"]
+        edge_lw, H.edges, settings["min_edge_lw"], settings["max_edge_lw"]
     )
 
-    edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_face_colormap"])
+    edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_colormap"])
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
 
     for id, he in H.edges.members(dtype=dict).items():
@@ -241,7 +254,6 @@ def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max, settings):
             sorted_coordinates = _CCW_sort(coordinates)
             obj = plt.Polygon(
                 sorted_coordinates,
-                edgecolor=edge_lc[id],
                 facecolor=edge_fc[id],
                 alpha=0.4,
                 lw=0.5,
@@ -250,7 +262,7 @@ def draw_xgi_hyperedges(ax, H, pos, edge_lc, edge_lw, edge_fc, d_max, settings):
             ax.add_patch(obj)
 
 
-def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc, settings):
+def draw_xgi_simplices(SC, pos, ax, edge_lc, edge_lw, edge_fc, settings):
     """Draw maximal simplices and pairwise faces.
 
     Parameters
@@ -268,20 +280,31 @@ def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc, settings):
     edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
         Color of simplices
     settings : dict
-        Default parameters
+        Default parameters. Keys that may be useful to override default settings:
+        * edge_lc_colormap
+        * min_edge_lw
+        * max_edge_lw
+        * edge_fc_colormap
+    
+    Raises
+    ------
+    XGIError
+        If a SimplicialComplex is passed.
     """
+    if isinstance(SC, Hypergraph):
+        raise XGIError("Use draw_xgi_hyperedges instead.")
     # I will only plot the maximal simplices, so I convert the SC to H
     H_ = convert.from_simplicial_complex_to_hypergraph(SC)
 
-    edge_lc = _color_arg_to_dict(edge_lc, H_.edges, settings["edge_outline_colormap"])
+    edge_lc = _color_arg_to_dict(edge_lc, H_.edges, settings["edge_lc_colormap"])
     edge_lw = _scalar_arg_to_dict(
         edge_lw,
         H_.edges,
-        settings["min_edge_linewidth"],
-        settings["max_edge_linewidth"],
+        settings["min_edge_lw"],
+        settings["max_edge_lw"],
     )
 
-    edge_fc = _color_arg_to_dict(edge_fc, H_.edges, settings["edge_face_colormap"])
+    edge_fc = _color_arg_to_dict(edge_fc, H_.edges, settings["edge_fc_colormap"])
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
     for id, he in H_.edges.members(dtype=dict).items():
         d = len(he) - 1
@@ -300,7 +323,6 @@ def draw_xgi_complexes(ax, SC, pos, edge_lc, edge_lw, edge_fc, settings):
             sorted_coordinates = _CCW_sort(coordinates)
             obj = plt.Polygon(
                 sorted_coordinates,
-                edgecolor=edge_lc[id],
                 facecolor=edge_fc[id],
                 alpha=0.4,
                 lw=0.5,
