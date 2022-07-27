@@ -14,11 +14,10 @@ import numpy as np
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 
-from ..stats import EdgeStat, NodeStat
-
 from .. import convert
 from ..classes import Hypergraph, SimplicialComplex, max_edge_order
 from ..exception import XGIError
+from ..stats import EdgeStat, NodeStat
 from .layout import barycenter_spring_layout
 
 __all__ = [
@@ -131,11 +130,10 @@ def draw(
 
     d_max = max_edge_order(H)
 
-    if isinstance(H, Hypergraph):
+    if isinstance(H, SimplicialComplex):
+        draw_xgi_simplices(H, pos, ax, edge_lc, edge_lw, edge_fc, settings)
+    elif isinstance(H, Hypergraph):
         draw_xgi_hyperedges(H, pos, ax, edge_lc, edge_lw, edge_fc, d_max, settings)
-
-    elif isinstance(H, SimplicialComplex):
-        draw_xgi_simplices(H, pos, ax, edge_lc, edge_lw, edge_fc, d_max, settings)
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
@@ -224,8 +222,6 @@ def draw_xgi_hyperedges(H, pos, ax, edge_lc, edge_lw, edge_fc, d_max, settings):
     XGIError
         If a SimplicialComplex is passed.
     """
-    if isinstance(H, SimplicialComplex):
-        raise XGIError("Use draw_xgi_simplices instead.")
     edge_lc = _color_arg_to_dict(edge_lc, H.edges, settings["edge_lc_colormap"])
     edge_lw = _scalar_arg_to_dict(
         edge_lw, H.edges, settings["min_edge_lw"], settings["max_edge_lw"]
@@ -285,14 +281,12 @@ def draw_xgi_simplices(SC, pos, ax, edge_lc, edge_lw, edge_fc, settings):
         * min_edge_lw
         * max_edge_lw
         * edge_fc_colormap
-    
+
     Raises
     ------
     XGIError
         If a SimplicialComplex is passed.
     """
-    if isinstance(SC, Hypergraph):
-        raise XGIError("Use draw_xgi_hyperedges instead.")
     # I will only plot the maximal simplices, so I convert the SC to H
     H_ = convert.from_simplicial_complex_to_hypergraph(SC)
 
@@ -313,7 +307,8 @@ def draw_xgi_simplices(SC, pos, ax, edge_lc, edge_lw, edge_fc, settings):
             he = list(he)
             x_coords = [pos[he[0]][0], pos[he[1]][0]]
             y_coords = [pos[he[0]][1], pos[he[1]][1]]
-            line = plt.Line2D(x_coords, y_coords, color=edge_lc[id], lw=edge_lw[i])
+
+            line = plt.Line2D(x_coords, y_coords, color=edge_lc[id], lw=edge_lw[id])
             ax.add_line(line)
         else:
             # Hyperedges of order d (d=1: links, etc.)
