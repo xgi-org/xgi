@@ -121,9 +121,9 @@ def test_remove_singleton_edges(edgelist1, edgelist2):
 
 def test_isolates(edgelist1):
     H = xgi.Hypergraph(edgelist1)
-    assert H.isolates(ignore_singletons=False) == set()
-    assert H.isolates() == {4}
-    H.remove_isolates()
+    assert list(H.nodes.isolates(ignore_singletons=False)) == []
+    assert list(H.nodes.isolates()) == [4]
+    H.remove_nodes_from(H.nodes.isolates())
     assert 4 not in H
 
 

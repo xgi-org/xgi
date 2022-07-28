@@ -953,55 +953,6 @@ class Hypergraph:
         ]
         self.remove_edges_from(singleton_ids)
 
-    def isolates(self, ignore_singletons=True):
-        """Nodes that belong to no edges.
-
-        When ignore_singletons is True (default), a node is considered isolated frmo the
-        rest of the hypergraph when it is included in no edges of size two or more.  In
-        particular, whether the node is part of any singleton edges is irrelevant to
-        determine whether it is isolated.
-
-        When ignore_singletons is False, a node is isolated only when it is a member of
-        exactly zero edges, including singletons.
-
-        Parameters
-        ----------
-        ignore_singletons : bool, default False
-            Whether to consider singleton edges.
-
-        Returns
-        -------
-        set
-            Isolated nodes.
-
-        See Also
-        --------
-        remove_isolates
-
-        """
-        nodes_in_edges = set()
-        for idx in self.edges:
-            edge = self.edges.members(idx)
-            if ignore_singletons and len(edge) == 1:
-                continue
-            nodes_in_edges = nodes_in_edges.union(edge)
-        return set(self.nodes) - nodes_in_edges
-
-    def remove_isolates(self, ignore_singletons=True):
-        """Remove all nodes that belong to no edges.
-
-        Parameters
-        ----------
-        ignore_singletons : bool, default False
-            Whether to consider singleton edges when searching for isolated nodes.
-
-        See Also
-        --------
-        isolates
-
-        """
-        self.remove_nodes_from(self.isolates(ignore_singletons))
-
     def duplicate_edges(self):
         """A list of all duplicate edges.
 
