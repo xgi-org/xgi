@@ -176,8 +176,8 @@ class IDView(Mapping, Set):
 
         Parameters
         ----------
-        stat : str
-            Name of a `NodeStat`.
+        stat : str or :class:`xgi.stats.NodeStat`
+            `NodeStat` object, or name of a `NodeStat`.
         val : Any
             Value of the statistic.  Usually a single numeric value.  When mode is
             'between', must be a tuple of exactly two values.
@@ -200,28 +200,44 @@ class IDView(Mapping, Set):
 
         Examples
         --------
+        By default, return the IDs whose value of the statistic is exactly equal to
+        `val`.
+
         >>> import xgi
         >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
-        >>> H.nodes.filterby('degree', 2, 'eq')
+        >>> n = H.nodes
+        >>> n.filterby('degree', 2)
         NodeView((2, 4, 5))
-        >>> H.nodes.filterby('degree', 2, 'neq')
+
+        Can choose other comparison methods via `mode`.
+
+        >>> n.filterby('degree', 2, 'eq')
+        NodeView((2, 4, 5))
+        >>> n.filterby('degree', 2, 'neq')
         NodeView((1, 3))
-        >>> H.nodes.filterby('degree', 2, 'lt')
+        >>> n.filterby('degree', 2, 'lt')
         NodeView((1,))
-        >>> H.nodes.filterby('degree', 2, 'gt')
+        >>> n.filterby('degree', 2, 'gt')
         NodeView((3,))
-        >>> H.nodes.filterby('degree', 2, 'leq')
+        >>> n.filterby('degree', 2, 'leq')
         NodeView((1, 2, 4, 5))
-        >>> H.nodes.filterby('degree', 2, 'geq')
+        >>> n.filterby('degree', 2, 'geq')
         NodeView((2, 3, 4, 5))
-        >>> H.nodes.filterby('degree', (2, 3), 'between')
+        >>> n.filterby('degree', (2, 3), 'between')
         NodeView((2, 3, 4, 5))
 
+        Can also pass a :class:`NodeStat` object.
+
+        >>> n.filterby(n.degree(order=2), 2)
+        NodeView((3,))
+
         """
-        try:
-            stat = getattr(self._dispatcher, stat)
-        except AttributeError as e:
-            raise AttributeError(f'Statistic with name "{stat}" not found') from e
+        if not isinstance(stat, self._dispatcher.statsclass):
+            try:
+                stat = getattr(self._dispatcher, stat)
+            except AttributeError as e:
+                raise AttributeError(f'Statistic with name "{stat}" not found') from e
+
         values = stat.asdict()
         if mode == "eq":
             bunch = [idx for idx in self if values[idx] == val]
