@@ -449,6 +449,10 @@ class NodeView(IDView):
         -------
         NodeView containing the isolated nodes.
 
+        See Also
+        --------
+        :meth:`EdgeView.singletons`
+
         """
         if ignore_singletons:
             nodes_in_edges = set()
@@ -531,4 +535,15 @@ class EdgeView(IDView):
         return self._id_dict[e].copy()
 
     def singletons(self):
+        """Edges that contain exactly one node.
+
+        Returns
+        -------
+        EdgeView containing the singleton edges.
+
+        See Also
+        --------
+        :meth:`NodeView.isolates`
+
+        """
         return self.filterby("size", 1)
