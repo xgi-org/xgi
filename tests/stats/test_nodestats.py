@@ -27,6 +27,14 @@ def test_filterby(edgelist1, edgelist8):
     assert H.nodes.filterby("average_neighbor_degree", 4.2).degree.asdict() == {4: 3}
 
 
+def test_filterby_with_nodestat(edgelist4, edgelist8):
+    H = xgi.Hypergraph(edgelist4)
+    assert list(H.nodes.filterby(H.nodes.degree(order=2), 2)) == [3]
+
+    H = xgi.Hypergraph(edgelist8)
+    assert list(H.nodes.filterby(H.nodes.degree(order=2), 2)) == [1, 4, 5]
+
+
 def test_filterby_modes(edgelist1, edgelist8):
     H = xgi.Hypergraph(edgelist1)
     assert list(H.nodes.filterby("degree", 2)) == [6]

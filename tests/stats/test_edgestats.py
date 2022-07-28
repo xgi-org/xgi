@@ -29,6 +29,14 @@ def test_call_filterby(edgelist1, edgelist8):
     assert H.edges([5, 6]).filterby("order", 2).size.asdict() == {5: 3, 6: 3}
 
 
+def test_filterby_with_nodestat(edgelist4, edgelist8):
+    H = xgi.Hypergraph(edgelist4)
+    assert list(H.edges.filterby(H.edges.order(degree=2), 2)) == [1]
+
+    H = xgi.Hypergraph(edgelist8)
+    assert list(H.edges.filterby(H.edges.order(degree=4), 1)) == [2, 3]
+
+
 def test_single_node(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     assert H.order()[1] == 0
