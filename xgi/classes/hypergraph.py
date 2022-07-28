@@ -935,23 +935,9 @@ class Hypergraph:
 
         return dual
 
-    def singleton_edges(self):
-        """Edges with a single member.
-
-        Returns
-        -------
-        EdgeView
-            View of the edges with a single member.
-
-        """
-        return self.edges.filterby("order", 0)
-
     def remove_singleton_edges(self):
         """Removes all singletons edges from the hypergraph"""
-        singleton_ids = [
-            id_ for id_, members in self._edge.items() if len(members) == 1
-        ]
-        self.remove_edges_from(singleton_ids)
+        self.remove_edges_from(self.edges.singletons())
 
     def remove_isolates(self, ignore_singletons=True):
         """Remove all nodes that belong to no edges.

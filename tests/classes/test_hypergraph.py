@@ -99,15 +99,6 @@ def test_add_nodes_from(attr1, attr2, attr3):
     assert H.nodes[2]["color"] == attr3["color"]
 
 
-def test_singleton_edges(edgelist1, edgelist2):
-    H1 = xgi.Hypergraph(edgelist1)
-    H2 = xgi.Hypergraph(edgelist2)
-
-    assert len(H1.singleton_edges()) == 1
-    assert 1 in H1.singleton_edges()
-    assert len(H2.singleton_edges()) == 0
-
-
 def test_remove_singleton_edges(edgelist1, edgelist2):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist2)
@@ -115,8 +106,8 @@ def test_remove_singleton_edges(edgelist1, edgelist2):
     H1.remove_singleton_edges()
     H2.remove_singleton_edges()
 
-    assert H1.singleton_edges() == {}
-    assert H2.singleton_edges() == {}
+    assert list(H1.edges.singletons()) == []
+    assert list(H2.edges.singletons()) == []
 
 
 def test_add_node_attr(edgelist1):
