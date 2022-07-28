@@ -381,6 +381,15 @@ def test_copy(edgelist1):
     assert H._hypergraph == copy._hypergraph
 
 
+def test_copy_issue128():
+    # see https://github.com/ComplexGroupInteractions/xgi/issues/128
+    H = xgi.Hypergraph()
+    H["key"] = "value"
+    K = H.copy()
+    K["key"] = "some_other_value"
+    assert H["key"] == "value"
+
+
 def test_double_edge_swap(edgelist1):
     H = xgi.Hypergraph(edgelist1)
 

@@ -950,7 +950,8 @@ class Hypergraph:
 
         # Then, we set the start at one plus the maximum edge ID that is an integer,
         # because count() only yields integer IDs.
-        copy._edge_uid = count(start=max(edges_with_int_id) + 1)
+        start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
+        copy._edge_uid = count(start=start)
 
         return copy
 
