@@ -29,12 +29,12 @@ def draw(
     H,
     pos=None,
     ax=None,
-    link_color="black",
-    link_width=1.5,
-    edge_facecolor=None,
-    node_facecolor="white",
-    node_edgecolor="black",
-    node_edgewidth=1,
+    dyad_color="black",
+    dyad_lw=1.5,
+    edge_fc=None,
+    node_fc="white",
+    node_ec="black",
+    node_lw=1,
     node_size=10,
     **kwargs,
 ):
@@ -50,29 +50,29 @@ def draw(
 
     ax : matplotlib.pyplot.axes (default=None)
 
-    link_color : color (str, dict, or iterable, default='black')
+    dyad_color : color (str, dict, or iterable, default='black')
         Color of the dyadic links.  If str, use the
         same color for all edges.  If a dict, must contain (edge_id: color_str) pairs.  If
         iterable, assume the colors are specified in the same order as the edges are found
         in H.edges.
 
-    link_width :  float (default=1.5)
+    dyad_lw :  float (default=1.5)
         Line width of edges of order 1 (dyadic links).
 
-    edge_facecolor : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
+    edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
         Color of hyperedges
 
-    node_facecolor : color (str, dict, or iterable, default='white')
+    node_fc : color (str, dict, or iterable, default='white')
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the nodes are found in H.nodes.
 
-    node_edgecolor : color (dict or str, default='black')
+    node_ec : color (dict or str, default='black')
         Color of node borders.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the nodes are found in H.nodes.
 
-    node_edgewidth : float (default=1.0)
+    node_lw : float (default=1.0)
         Line width of the node borders in pixels.
 
     node_size : float (default=0.03)
@@ -82,14 +82,14 @@ def draw(
         alternate default values. Values that can be overwritten are the following:
         * min_node_size
         * max_node_size
-        * min_link_width
-        * max_link_width
-        * min_node_edgewidth
-        * max_node_edgewidth
-        * node_facecolor_cmap
+        * min_dyad_lw
+        * max_dyad_lw
+        * min_node_lw
+        * max_node_lw
+        * node_fc_cmap
         * node_lc_cmap
-        * edge_facecolor_cmap
-        * link_color_cmap
+        * edge_fc_cmap
+        * dyad_color_cmap
 
     Examples
     --------
@@ -102,20 +102,20 @@ def draw(
     settings = {
         "min_node_size": 10,
         "max_node_size": 30,
-        "min_link_width": 2,
-        "max_link_width": 10,
-        "min_node_edgewidth": 1,
-        "max_node_edgewidth": 5,
-        "node_facecolor_cmap": cm.Reds,
+        "min_dyad_lw": 2,
+        "max_dyad_lw": 10,
+        "min_node_lw": 1,
+        "max_node_lw": 5,
+        "node_fc_cmap": cm.Reds,
         "node_lc_cmap": cm.Greys,
-        "edge_facecolor_cmap": cm.Blues,
-        "link_color_cmap": cm.Greys,
+        "edge_fc_cmap": cm.Blues,
+        "dyad_color_cmap": cm.Greys,
     }
 
     settings.update(kwargs)
 
-    if edge_facecolor is None:
-        edge_facecolor = H.edges.size
+    if edge_fc is None:
+        edge_fc = H.edges.size
 
     if pos is None:
         pos = barycenter_spring_layout(H)
@@ -131,10 +131,10 @@ def draw(
     d_max = max_edge_order(H)
 
     if isinstance(H, SimplicialComplex):
-        draw_xgi_simplices(H, pos, ax, link_color, link_width, edge_facecolor, settings)
+        draw_xgi_simplices(H, pos, ax, dyad_color, dyad_lw, edge_fc, settings)
     elif isinstance(H, Hypergraph):
         draw_xgi_hyperedges(
-            H, pos, ax, link_color, link_width, edge_facecolor, d_max, settings
+            H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, settings
         )
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
@@ -143,9 +143,9 @@ def draw(
         H,
         pos,
         ax,
-        node_facecolor,
-        node_edgecolor,
-        node_edgewidth,
+        node_fc,
+        node_ec,
+        node_lw,
         node_size,
         d_max,
         settings,
@@ -156,9 +156,9 @@ def draw_xgi_nodes(
     H,
     pos,
     ax,
-    node_facecolor,
-    node_edgecolor,
-    node_edgewidth,
+    node_fc,
+    node_ec,
+    node_lw,
     node_size,
     zorder,
     settings,
@@ -173,11 +173,11 @@ def draw_xgi_nodes(
         Higher-order network to plot
     pos : dict of lists
         The x, y position of every node
-    node_facecolor : str, 4-tuple, or dict of strings or 4-tuples
-        The color of the nodes
-    node_edgecolor : str, 4-tuple, or dict of strings or 4-tuples
+    node_fc : str, 4-tuple, or dict of strings or 4-tuples
+        The face color of the nodes
+    node_ec : str, 4-tuple, or dict of strings or 4-tuples
         The outline color of the nodes
-    node_edgewidth : int, float, or dict of ints or floats
+    node_lw : int, float, or dict of ints or floats
         The line weight of the outline of the nodes
     node_size : int, float, or dict of ints or floats
         The node radius
@@ -185,25 +185,25 @@ def draw_xgi_nodes(
         The layer on which to draw the nodes
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
-        * node_facecolor_cmap
+        * node_fc_cmap
         * node_lc_cmap
-        * min_node_edgewidth
-        * max_node_edgewidth
+        * min_node_lw
+        * max_node_lw
         * min_node_size
         * max_node_size
     """
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
-    node_facecolor = _color_arg_to_dict(
-        node_facecolor, H.nodes, settings["node_facecolor_cmap"]
+    node_fc = _color_arg_to_dict(
+        node_fc, H.nodes, settings["node_fc_cmap"]
     )
-    node_edgecolor = _color_arg_to_dict(
-        node_edgecolor, H.nodes, settings["node_lc_cmap"]
+    node_ec = _color_arg_to_dict(
+        node_ec, H.nodes, settings["node_lc_cmap"]
     )
-    node_edgewidth = _scalar_arg_to_dict(
-        node_edgewidth,
+    node_lw = _scalar_arg_to_dict(
+        node_lw,
         H.nodes,
-        settings["min_node_edgewidth"],
-        settings["max_node_edgewidth"],
+        settings["min_node_lw"],
+        settings["max_node_lw"],
     )
     node_size = _scalar_arg_to_dict(
         node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
@@ -215,15 +215,15 @@ def draw_xgi_nodes(
             x,
             y,
             s=node_size[i] ** 2,
-            c=node_facecolor[i],
-            edgecolors=node_edgecolor[i],
-            linewidths=node_edgewidth[i],
+            c=node_fc[i],
+            edgecolors=node_ec[i],
+            linewidths=node_lw[i],
             zorder=zorder,
         )
 
 
 def draw_xgi_hyperedges(
-    H, pos, ax, link_color, link_width, edge_facecolor, d_max, settings
+    H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, settings
 ):
     """Draw hyperedges.
 
@@ -235,31 +235,31 @@ def draw_xgi_hyperedges(
         A hypergraph
     pos : dict of lists
         x,y position of every node
-    link_color : str, 4-tuple, or dict of 4-tuples or strings
+    dyad_color : str, 4-tuple, or dict of 4-tuples or strings
         The color of the pairwise edges
-    link_width : int, float, or dict
+    dyad_lw : int, float, or dict
         Pairwise edge widths
-    edge_facecolor : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
+    edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
         Color of hyperedges
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
-        * link_color_cmap
-        * min_link_width
-        * max_link_width
-        * edge_facecolor_cmap
+        * dyad_color_cmap
+        * min_dyad_lw
+        * max_dyad_lw
+        * edge_fc_cmap
 
     Raises
     ------
     XGIError
         If a SimplicialComplex is passed.
     """
-    link_color = _color_arg_to_dict(link_color, H.edges, settings["link_color_cmap"])
-    link_width = _scalar_arg_to_dict(
-        link_width, H.edges, settings["min_link_width"], settings["max_link_width"]
+    dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
+    dyad_lw = _scalar_arg_to_dict(
+        dyad_lw, H.edges, settings["min_dyad_lw"], settings["max_dyad_lw"]
     )
 
-    edge_facecolor = _color_arg_to_dict(
-        edge_facecolor, H.edges, settings["edge_facecolor_cmap"]
+    edge_fc = _color_arg_to_dict(
+        edge_fc, H.edges, settings["edge_fc_cmap"]
     )
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
 
@@ -273,8 +273,8 @@ def draw_xgi_hyperedges(
             line = plt.Line2D(
                 x_coords,
                 y_coords,
-                color=link_color[id],
-                lw=link_width[id],
+                color=dyad_color[id],
+                lw=dyad_lw[id],
                 zorder=d_max - 1,
             )
             ax.add_line(line)
@@ -287,15 +287,14 @@ def draw_xgi_hyperedges(
             sorted_coordinates = _CCW_sort(coordinates)
             obj = plt.Polygon(
                 sorted_coordinates,
-                facecolor=edge_facecolor[id],
+                facecolor=edge_fc[id],
                 alpha=0.4,
-                lw=0.5,
                 zorder=d_max - d,
             )
             ax.add_patch(obj)
 
 
-def draw_xgi_simplices(SC, pos, ax, link_color, link_width, edge_facecolor, settings):
+def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, settings):
     """Draw maximal simplices and pairwise faces.
 
     Parameters
@@ -306,18 +305,18 @@ def draw_xgi_simplices(SC, pos, ax, link_color, link_width, edge_facecolor, sett
         A simpicial complex
     pos : dict of lists
         x,y position of every node
-    link_color : str, 4-tuple, or dict of 4-tuples or strings
+    dyad_color : str, 4-tuple, or dict of 4-tuples or strings
         The color of the pairwise edges
-    link_width : int, float, or dict
+    dyad_lw : int, float, or dict
         Pairwise edge widths
-    edge_facecolor : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
+    edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
         Color of simplices
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
-        * link_color_cmap
-        * min_link_width
-        * max_link_width
-        * edge_facecolor_cmap
+        * dyad_color_cmap
+        * min_dyad_lw
+        * max_dyad_lw
+        * edge_fc_cmap
 
     Raises
     ------
@@ -327,16 +326,16 @@ def draw_xgi_simplices(SC, pos, ax, link_color, link_width, edge_facecolor, sett
     # I will only plot the maximal simplices, so I convert the SC to H
     H_ = convert.from_simplicial_complex_to_hypergraph(SC)
 
-    link_color = _color_arg_to_dict(link_color, H_.edges, settings["link_color_cmap"])
-    link_width = _scalar_arg_to_dict(
-        link_width,
+    dyad_color = _color_arg_to_dict(dyad_color, H_.edges, settings["dyad_color_cmap"])
+    dyad_lw = _scalar_arg_to_dict(
+        dyad_lw,
         H_.edges,
-        settings["min_link_width"],
-        settings["max_link_width"],
+        settings["min_dyad_lw"],
+        settings["max_dyad_lw"],
     )
 
-    edge_facecolor = _color_arg_to_dict(
-        edge_facecolor, H_.edges, settings["edge_facecolor_cmap"]
+    edge_fc = _color_arg_to_dict(
+        edge_fc, H_.edges, settings["edge_fc_cmap"]
     )
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
     for id, he in H_.edges.members(dtype=dict).items():
@@ -348,7 +347,7 @@ def draw_xgi_simplices(SC, pos, ax, link_color, link_width, edge_facecolor, sett
             y_coords = [pos[he[0]][1], pos[he[1]][1]]
 
             line = plt.Line2D(
-                x_coords, y_coords, color=link_color[id], lw=link_width[id]
+                x_coords, y_coords, color=dyad_color[id], lw=dyad_lw[id]
             )
             ax.add_line(line)
         else:
@@ -359,9 +358,8 @@ def draw_xgi_simplices(SC, pos, ax, link_color, link_width, edge_facecolor, sett
             sorted_coordinates = _CCW_sort(coordinates)
             obj = plt.Polygon(
                 sorted_coordinates,
-                facecolor=edge_facecolor[id],
+                facecolor=edge_fc[id],
                 alpha=0.4,
-                lw=0.5,
             )
             ax.add_patch(obj)
             # Drawing the all the edges within
@@ -369,7 +367,7 @@ def draw_xgi_simplices(SC, pos, ax, link_color, link_width, edge_facecolor, sett
                 x_coords = [i[0], j[0]]
                 y_coords = [i[1], j[1]]
                 line = plt.Line2D(
-                    x_coords, y_coords, color=link_color[id], lw=link_width[id]
+                    x_coords, y_coords, color=dyad_color[id], lw=dyad_lw[id]
                 )
                 ax.add_line(line)
 
