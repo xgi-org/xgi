@@ -36,7 +36,7 @@ def CEC_centrality(H, tol=1e-6):
     """
     W, node_dict = clique_motif_matrix(H, index=True)
     _, v = eigsh(W.asfptype(), k=1, which="LM", tol=tol)
-    return {node_dict[n]: v[n] for n in node_dict}
+    return {node_dict[n]: v[n].item() for n in node_dict}
 
 
 def ZEC_centrality(H, max_iter=100, tol=1e-6):
