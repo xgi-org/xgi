@@ -114,6 +114,8 @@ def order(net, bunch, degree=None):
         The network.
     bunch : Iterable
         Edges in `net`.
+    degree : int | None
+        If not None (default), count only those member nodes with the specified degree.
 
     Returns
     -------
@@ -129,14 +131,15 @@ def order(net, bunch, degree=None):
     >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
     >>> H.edges.order.asdict()
     {0: 2, 1: 3, 2: 2}
+    >>> H.edges.order(degree=2).asdict()
+    {0: 0, 1: 2, 2: 1}
 
     """
     if degree is None:
         return {e: len(net._edge[e]) - 1 for e in bunch}
     else:
         return {
-            e: len(n for n in net._edge[e] if len(net._node[n]) == degree) - 1
-            for e in bunch
+            e: sum(len(net._node[n]) == degree for n in net._edge[e]) - 1 for e in bunch
         }
 
 
