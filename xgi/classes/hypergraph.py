@@ -953,6 +953,18 @@ class Hypergraph:
         ]
         self.remove_edges_from(singleton_ids)
 
+    def remove_isolates(self, ignore_singletons=True):
+        """Remove all nodes that belong to no edges.
+        Parameters
+        ----------
+        ignore_singletons : bool, default False
+            Whether to consider singleton edges when searching for isolated nodes.
+        See Also
+        --------
+        isolates
+        """
+        self.remove_nodes_from(self.isolates(ignore_singletons))
+
     def duplicate_edges(self):
         """A list of all duplicate edges.
 
