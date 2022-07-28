@@ -452,7 +452,7 @@ class NodeView(IDView):
         """
         if ignore_singletons:
             nodes_in_edges = set()
-            for edge_id, members in self._bi_id_dict.items():
+            for members in self._bi_id_dict.values():
                 if len(members) == 1:
                     continue
                 nodes_in_edges = nodes_in_edges.union(members)
@@ -529,3 +529,6 @@ class EdgeView(IDView):
             raise IDNotFound(f'ID "{e}" not in this view')
 
         return self._id_dict[e].copy()
+
+    def singletons(self):
+        return self.filterby("size", 1)
