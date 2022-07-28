@@ -910,8 +910,49 @@ class Hypergraph:
         H : Hypergraph
             A copy of the hypergraph.
 
+        Notes
+        -----
+
+        There is no guarantee that performing similar operations on a hypergraph and its
+        copy after the copy is made will yield the same results.  For example,
+
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2, 3], [4], [5, 6], [6, 7, 8]])
+        >>> H.add_edge([1, 3, 5], id=10)
+        >>> K = H.copy()
+        >>> H.add_edge([2, 4]); K.add_edge([2, 4]);
+        >>> list(H.edges) == list(K.edges)
+        False
+
+        The difference is the IDs assigned to new edges:
+
+        >>> H.edges
+        EdgeView((0, 1, 2, 3, 10, 4))
+        >>> K.edges
+        EdgeView((0, 1, 2, 3, 10, 11))
+
         """
-        return subhypergraph(self)
+        copy = self.__class__()
+        nn = self.nodes
+        copy.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+        ee = self.edges
+        copy.add_edges_from(
+            (ee.members(e), e, deepcopy(attr)) for e, attr in ee.items()
+        )
+        copy._hypergraph = deepcopy(self._hypergraph)
+
+        # If we don't set the start of copy._edge_uid correctly, it will start at 0,
+        # which will overwrite any existing edges when calling add_edge().  First, we
+        # use the somewhat convoluted float(e).is_integer() instead of using
+        # isinstance(e, int) because there exist integer-like numeric types (such as
+        # np.int32) which fail the isinstance() check.
+        edges_with_int_id = [e for e in self.edges if float(e).is_integer()]
+
+        # Then, we set the start at one plus the maximum edge ID that is an integer,
+        # because count() only yields integer IDs.
+        copy._edge_uid = count(start=max(edges_with_int_id) + 1)
+
+        return copy
 
     def dual(self):
         """The dual of the hypergraph.
