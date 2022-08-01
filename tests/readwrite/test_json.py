@@ -169,51 +169,51 @@ def test_read_json():
 
     # Test missing header
     with pytest.raises(XGIError):
-      _, filename = tempfile.mkstemp()
-      with open(filename, "w") as file:
-          file.write(json_string2)
+        _, filename = tempfile.mkstemp()
+        with open(filename, "w") as file:
+            file.write(json_string2)
 
-      xgi.read_json(filename)
+        xgi.read_json(filename)
 
     # Test missing node-data
     with pytest.raises(XGIError):
-      _, filename = tempfile.mkstemp()
-      with open(filename, "w") as file:
-          file.write(json_string2)
+        _, filename = tempfile.mkstemp()
+        with open(filename, "w") as file:
+            file.write(json_string3)
 
-      xgi.read_json(filename)
-    
+        xgi.read_json(filename)
+
     # Test failed node type conversion
     with pytest.raises(TypeError):
-      _, filename = tempfile.mkstemp()
-      with open(filename, "w") as file:
-        file.write(json_string4)
+        _, filename = tempfile.mkstemp()
+        with open(filename, "w") as file:
+            file.write(json_string4)
 
-      xgi.read_json(filename, nodetype=int)
+        xgi.read_json(filename, nodetype=int)
 
     # Test missing edge dict
     with pytest.raises(XGIError):
-      _, filename = tempfile.mkstemp()
-      with open(filename, "w") as file:
-        file.write(json_string5)
+        _, filename = tempfile.mkstemp()
+        with open(filename, "w") as file:
+            file.write(json_string5)
 
-      xgi.read_json(filename)
-    
+        xgi.read_json(filename)
+
     # Test missing edge-data
     with pytest.raises(XGIError):
-      _, filename = tempfile.mkstemp()
-      with open(filename, "w") as file:
-        file.write(json_string6)
+        _, filename = tempfile.mkstemp()
+        with open(filename, "w") as file:
+            file.write(json_string6)
 
-      xgi.read_json(filename)
-    
+        xgi.read_json(filename)
+
     # Test failed edge type conversion
     with pytest.raises(TypeError):
-      _, filename = tempfile.mkstemp()
-      with open(filename, "w") as file:
-        file.write(json_string1)
+        _, filename = tempfile.mkstemp()
+        with open(filename, "w") as file:
+            file.write(json_string1)
 
-      xgi.read_json(filename, edgetype=int)
+        xgi.read_json(filename, edgetype=int)
 
 
 def test_write_json(edgelist1):

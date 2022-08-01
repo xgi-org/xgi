@@ -80,10 +80,8 @@ def read_json(path, nodetype=None, edgetype=None):
             if nodetype is not None:
                 try:
                     id = nodetype(id)
-                except Exception as e:
-                    raise TypeError(
-                        f"Failed to convert edge IDs to type {nodetype}."
-                    ) from e
+                except ValueError:
+                    raise TypeError(f"Failed to convert edge IDs to type {nodetype}.")
             H.add_node(id, **dd)
     except KeyError:
         raise XGIError("Failed to import node attributes.")
@@ -93,7 +91,7 @@ def read_json(path, nodetype=None, edgetype=None):
             if edgetype is not None:
                 try:
                     id = edgetype(id)
-                except Exception:
+                except ValueError:
                     raise TypeError(
                         f"Failed to convert the edge with ID {id} to type {edgetype}."
                     )
@@ -101,10 +99,8 @@ def read_json(path, nodetype=None, edgetype=None):
             if nodetype is not None:
                 try:
                     edge = [nodetype(n) for n in edge]
-                except Exception as e:
-                    raise TypeError(
-                        f"Failed to convert nodes to type {nodetype}."
-                    ) from e
+                except ValueError:
+                    raise TypeError(f"Failed to convert nodes to type {nodetype}.")
             H.add_edge(edge, id)
     except KeyError:
         raise XGIError("Failed to import edge dictionary.")
