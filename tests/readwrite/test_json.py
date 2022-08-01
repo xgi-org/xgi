@@ -148,8 +148,8 @@ def test_read_json():
     with open(filename, "w") as file:
         file.write(json_string1)
 
-    H1 = xgi.read_hypergraph_json(filename, nodetype=int)
-    H2 = xgi.read_hypergraph_json(filename)
+    H1 = xgi.read_json(filename, nodetype=int)
+    H2 = xgi.read_json(filename)
 
     assert list(H1.nodes) == [1, 2, 3, 4]
     assert list(H1.edges) == ["edge1", "edge2", "edge3"]
@@ -173,7 +173,7 @@ def test_read_json():
       with open(filename, "w") as file:
           file.write(json_string2)
 
-      xgi.read_hypergraph_json(filename)
+      xgi.read_json(filename)
 
     # Test missing node-data
     with pytest.raises(XGIError):
@@ -181,7 +181,7 @@ def test_read_json():
       with open(filename, "w") as file:
           file.write(json_string2)
 
-      xgi.read_hypergraph_json(filename)
+      xgi.read_json(filename)
     
     # Test failed node type conversion
     with pytest.raises(TypeError):
@@ -189,7 +189,7 @@ def test_read_json():
       with open(filename, "w") as file:
         file.write(json_string4)
 
-      xgi.read_hypergraph_json(filename, nodetype=int)
+      xgi.read_json(filename, nodetype=int)
 
     # Test missing edge dict
     with pytest.raises(XGIError):
@@ -197,7 +197,7 @@ def test_read_json():
       with open(filename, "w") as file:
         file.write(json_string5)
 
-      xgi.read_hypergraph_json(filename)
+      xgi.read_json(filename)
     
     # Test missing edge-data
     with pytest.raises(XGIError):
@@ -205,7 +205,7 @@ def test_read_json():
       with open(filename, "w") as file:
         file.write(json_string6)
 
-      xgi.read_hypergraph_json(filename)
+      xgi.read_json(filename)
     
     # Test failed edge type conversion
     with pytest.raises(TypeError):
@@ -213,7 +213,7 @@ def test_read_json():
       with open(filename, "w") as file:
         file.write(json_string1)
 
-      xgi.read_hypergraph_json(filename, edgetype=int)
+      xgi.read_json(filename, edgetype=int)
 
 
 def test_write_json(edgelist1):
@@ -241,7 +241,7 @@ def test_write_json(edgelist1):
 
     xgi.write_hypergraph_json(H1, filename)
 
-    H2 = xgi.read_hypergraph_json(filename, nodetype=int, edgetype=int)
+    H2 = xgi.read_json(filename, nodetype=int, edgetype=int)
 
     assert H1.nodes == H2.nodes
     assert H1.edges == H2.edges

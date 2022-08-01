@@ -5,7 +5,7 @@ from ..classes import set_edge_attributes
 from ..exception import XGIError
 from ..generators import empty_hypergraph
 
-__all__ = ["write_hypergraph_json", "read_hypergraph_json"]
+__all__ = ["write_hypergraph_json", "read_json"]
 
 
 def write_hypergraph_json(H, path):
@@ -42,7 +42,7 @@ def write_hypergraph_json(H, path):
         output_file.write(datastring)
 
 
-def read_hypergraph_json(path, nodetype=None, edgetype=None):
+def read_json(path, nodetype=None, edgetype=None):
     """
     A function to read a file in a standardized JSON format.
 

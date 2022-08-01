@@ -7,7 +7,7 @@ xgi.readwrite.json
    
    .. rubric:: Functions
    
-   .. autofunction:: read_hypergraph_json
+   .. autofunction:: read_json
    .. autofunction:: write_hypergraph_json
 
    
