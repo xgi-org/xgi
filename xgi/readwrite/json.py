@@ -93,11 +93,11 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
             if edgetype is not None:
                 try:
                     id = edgetype(id)
-                except Exception as e:
+                except Exception:
                     raise TypeError(
                         f"Failed to convert the edge with ID {id} to type {edgetype}."
-                    ) from e
-
+                    )
+            # convert the members of the edge to the nodetype if specified.
             if nodetype is not None:
                 try:
                     edge = [nodetype(n) for n in edge]
@@ -106,7 +106,7 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
                         f"Failed to convert nodes to type {nodetype}."
                     ) from e
             H.add_edge(edge, id)
-    except:
+    except KeyError:
         raise XGIError("Failed to import edge dictionary.")
 
     try:
