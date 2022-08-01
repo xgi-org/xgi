@@ -50,6 +50,8 @@ def test_parse_edgelist():
         [1, 4, 7, 8],
         [2, 3],
     ]
+    with pytest.raises(TypeError):
+        xgi.parse_edgelist(["test 2", "2 3 4", "test 4 7 8", "2 3"], nodetype=int)
 
 
 def test_write_edgelist(edgelist1):
