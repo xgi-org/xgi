@@ -5,10 +5,10 @@ from ..classes import set_edge_attributes
 from ..exception import XGIError
 from ..generators import empty_hypergraph
 
-__all__ = ["write_hypergraph_json", "read_json"]
+__all__ = ["write_json", "read_json"]
 
 
-def write_hypergraph_json(H, path):
+def write_json(H, path):
     """
     A function to write a file in a standardized JSON format.
 

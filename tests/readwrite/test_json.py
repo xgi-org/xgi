@@ -239,7 +239,7 @@ def test_write_json(edgelist1):
     }
     xgi.set_edge_attributes(H1, edge_attr_dict)
 
-    xgi.write_hypergraph_json(H1, filename)
+    xgi.write_json(H1, filename)
 
     H2 = xgi.read_json(filename, nodetype=int, edgetype=int)
 
