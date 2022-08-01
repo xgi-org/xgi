@@ -51,7 +51,7 @@ def test_choose_degrees(edgelist1, edgelist6):
     with pytest.raises(XGIError):
         e = H1.edges.members(1)
         choose_degrees(e, k)
-    
+
     # invalid choice function
     with pytest.raises(XGIError):
         e = H1.edges.members(0)
