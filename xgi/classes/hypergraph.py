@@ -24,16 +24,16 @@ class IDDict(dict):
     def __getitem__(self, item):
         try:
             return dict.__getitem__(self, item)
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
+        except KeyError:
+            raise IDNotFound(f"ID {item} not found")
 
     def __setitem__(self, item, value):
         if item is None:
             raise XGIError("None cannot be a node or edge")
         try:
             return dict.__setitem__(self, item, value)
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
+        except TypeError:
+            raise TypeError(f"ID {item} not a valid type")
 
     def __delitem__(self, item):
         try:
