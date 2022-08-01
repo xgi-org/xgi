@@ -37,11 +37,11 @@ def dynamical_assortativity(H):
     DOI: 10.1063/5.0086905
 
     """
-    if not xgi.is_uniform(H):
-        raise XGIError("Hypergraph must be uniform!")
-
     if H.num_nodes == 0 or H.num_edges == 0:
         raise XGIError("Hypergraph must contain nodes and edges!")
+    
+    if not xgi.is_uniform(H):
+        raise XGIError("Hypergraph must be uniform!")
 
     degs = H.degree()
     k1 = np.mean(list(degs.values()))
@@ -89,9 +89,7 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     if exact:
         k1k2 = [
             choose_degrees(H.edges.members(e), degs, kind)
-            for e in H.edges
-            if len(H.edges.members(e)) > 1
-        ]
+            for e in H.edges if len(H.edges.members(e)) > 1]
     else:
         edges = [e for e in H.edges if len(H.edges.members(e)) > 1]
         k1k2 = [
