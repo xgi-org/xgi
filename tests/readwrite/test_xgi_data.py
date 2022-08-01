@@ -1,6 +1,7 @@
 import pytest
 
 from xgi import load_xgi_data
+from xgi.exception import XGIError
 
 
 @pytest.mark.webtest
@@ -12,3 +13,6 @@ def test_load_xgi_data():
     assert H["name"] == "email-Enron"
     assert H.nodes["4"]["name"] == "robert.badeer@enron.com"
     assert H.edges["0"]["timestamp"] == "2000-01-11T10:29:00"
+
+    with pytest.raises(XGIError):
+        load_xgi_data("test")
