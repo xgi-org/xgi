@@ -48,7 +48,7 @@ def incidence_matrix(
     """
     node_ids = H.nodes
     edge_ids = H.edges
-    
+
     if order is not None:
         edge_ids = H.edges.filterby("order", order)
     if not edge_ids or not node_ids:

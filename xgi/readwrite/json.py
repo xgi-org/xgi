@@ -72,38 +72,42 @@ def read_json(path, nodetype=None, edgetype=None):
     H = empty_hypergraph()
     try:
         H._hypergraph.update(data["hypergraph-data"])
-    except KeyError:
-        raise XGIError("Failed to get hypergraph data attributes.")
+    except KeyError as e:
+        raise XGIError("Failed to get hypergraph data attributes.") from e
 
     try:
         for id, dd in data["node-data"].items():
             if nodetype is not None:
                 try:
                     id = nodetype(id)
-                except ValueError:
-                    raise TypeError(f"Failed to convert edge IDs to type {nodetype}.")
+                except ValueError as e:
+                    raise TypeError(
+                        f"Failed to convert edge IDs to type {nodetype}."
+                    ) from e
             H.add_node(id, **dd)
-    except KeyError:
-        raise XGIError("Failed to import node attributes.")
+    except KeyError as e:
+        raise XGIError("Failed to import node attributes.") from e
 
     try:
         for id, edge in data["edge-dict"].items():
             if edgetype is not None:
                 try:
                     id = edgetype(id)
-                except ValueError:
+                except ValueError as e:
                     raise TypeError(
                         f"Failed to convert the edge with ID {id} to type {edgetype}."
-                    )
+                    ) from e
             # convert the members of the edge to the nodetype if specified.
             if nodetype is not None:
                 try:
                     edge = [nodetype(n) for n in edge]
-                except ValueError:
-                    raise TypeError(f"Failed to convert nodes to type {nodetype}.")
+                except ValueError as e:
+                    raise TypeError(
+                        f"Failed to convert nodes to type {nodetype}."
+                    ) from e
             H.add_edge(edge, id)
-    except KeyError:
-        raise XGIError("Failed to import edge dictionary.")
+    except KeyError as e:
+        raise XGIError("Failed to import edge dictionary.") from e
 
     try:
         set_edge_attributes(
@@ -112,7 +116,7 @@ def read_json(path, nodetype=None, edgetype=None):
             if edgetype is None
             else {edgetype(e): dd for e, dd in data["edge-data"].items()},
         )
-    except KeyError:
-        raise XGIError("Failed to import edge attributes.")
+    except KeyError as e:
+        raise XGIError("Failed to import edge attributes.") from e
 
     return H
