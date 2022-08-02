@@ -317,7 +317,7 @@ def test_multiorder_laplacian(edgelist2, edgelist6):
         L1, node_dict1 = xgi.multiorder_laplacian(
             H1, orders=[1, 2], weights=[1, 1], index=True
         )
-    
+
     # different order and weight lengths
     with pytest.raises(ValueError):
         L1, node_dict1 = xgi.multiorder_laplacian(
@@ -436,7 +436,7 @@ def test_empty():
     assert len(data) == 2
     assert data[0].shape == (0, 0)
     assert type(data[1]) == dict
-    
+
     data = xgi.clique_motif_matrix(H, index=True)
     assert len(data) == 2
     assert data[0].shape == (0,)
