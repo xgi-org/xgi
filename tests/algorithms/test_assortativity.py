@@ -26,25 +26,36 @@ def test_dynamical_assortativity(edgelist1, edgelist6):
     assert abs(xgi.dynamical_assortativity(H1) - -0.0526) < 1e-3
 
 
-def test_degree_assortativity(edgelist1, edgelist6):
+def test_degree_assortativity(edgelist1, edgelist5):
     H1 = xgi.Hypergraph(edgelist1)
     assert -1 <= xgi.degree_assortativity(H1, kind="uniform") <= 1
     assert -1 <= xgi.degree_assortativity(H1, kind="top-2") <= 1
     assert -1 <= xgi.degree_assortativity(H1, kind="top-bottom") <= 1
 
-    H2 = xgi.Hypergraph(edgelist6)
+    H2 = xgi.Hypergraph(edgelist5)
     assert -1 <= xgi.degree_assortativity(H2, kind="uniform") <= 1
     assert -1 <= xgi.degree_assortativity(H2, kind="top-2") <= 1
     assert -1 <= xgi.degree_assortativity(H2, kind="top-bottom") <= 1
+
+    # test "exact" keyword
+    assert -1 <= xgi.degree_assortativity(H1, kind="uniform", exact=True) <= 1
+    assert -1 <= xgi.degree_assortativity(H1, kind="top-2", exact=True) <= 1
+    assert -1 <= xgi.degree_assortativity(H1, kind="top-bottom", exact=True) <= 1
 
 
 def test_choose_degrees(edgelist1, edgelist6):
     H1 = xgi.Hypergraph(edgelist1)
     k = H1.degree()
 
+    # test singleton edges
     with pytest.raises(XGIError):
         e = H1.edges.members(1)
         choose_degrees(e, k)
+
+    # invalid choice function
+    with pytest.raises(XGIError):
+        e = H1.edges.members(0)
+        choose_degrees(e, k, "test")
 
     e = H1.edges.members(0)
     assert np.all(np.array(choose_degrees(e, k)) == 1)

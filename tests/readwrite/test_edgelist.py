@@ -51,6 +51,10 @@ def test_parse_edgelist():
         [2, 3],
     ]
 
+    # This will fail because the "test" node ID can't be converted to int
+    with pytest.raises(TypeError):
+        xgi.parse_edgelist(["test 2", "2 3 4", "test 4 7 8", "2 3"], nodetype=int)
+
 
 def test_write_edgelist(edgelist1):
     _, filename = tempfile.mkstemp()

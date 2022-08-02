@@ -572,7 +572,7 @@ def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
 
     See Also
     --------
-    read_hypergraph_json
+    read_json
 
     """
     H = empty_hypergraph()

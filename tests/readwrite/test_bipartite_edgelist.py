@@ -3,6 +3,7 @@ import tempfile
 import pytest
 
 import xgi
+from xgi.exception import XGIError
 
 bipartite_edgelist_spaces_string = """0 0
 # Comment
@@ -56,6 +57,32 @@ def test_read_bipartite_edgelist(file_string, extra_kwargs):
 
 def test_parse_bipartite_edgelist():
     lines = ["0 0", "1 0", "2 0", "3 0", "4 1", "5 2", "6 2", "6 3", "7 3", "8 3"]
+    bad_lines1 = ["0", "1 0", "2 0", "3 0", "4 1", "5 2", "6 2", "6 3", "7 3", "8 3"]
+    bad_lines2 = [
+        "test 0",
+        "1 0",
+        "2 0",
+        "3 0",
+        "4 1",
+        "5 test",
+        "6 test",
+        "6 3",
+        "7 3",
+        "8 3",
+    ]
+    bad_lines3 = [
+        "0 0",
+        "1 0",
+        "2 0",
+        "3 0",
+        "4 1",
+        "5 test",
+        "6 test",
+        "6 3",
+        "7 3",
+        "8 3",
+    ]
+
     H = xgi.parse_bipartite_edgelist(lines, nodetype=int)
     assert list(H.nodes) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
     assert list(H.edges) == ["0", "1", "2", "3"]
@@ -88,6 +115,18 @@ def test_parse_bipartite_edgelist():
         [3],
         [3],
     ]
+
+    # test less than two entries per line
+    with pytest.raises(XGIError):
+        xgi.parse_bipartite_edgelist(bad_lines1)
+
+    # test failed nodetype conversion
+    with pytest.raises(TypeError):
+        xgi.parse_bipartite_edgelist(bad_lines2, nodetype=int)
+
+    # test failed edgetype conversion
+    with pytest.raises(TypeError):
+        xgi.parse_bipartite_edgelist(bad_lines3, edgetype=int)
 
 
 def test_write_bipartite_edgelist(edgelist1):

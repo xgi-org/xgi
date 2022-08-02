@@ -32,8 +32,8 @@ class IDDict(dict):
             raise XGIError("None cannot be a node or edge")
         try:
             return dict.__setitem__(self, item, value)
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
+        except TypeError as e:
+            raise TypeError(f"ID {item} not a valid type") from e
 
     def __delitem__(self, item):
         try:

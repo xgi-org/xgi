@@ -5,10 +5,10 @@ from ..classes import set_edge_attributes
 from ..exception import XGIError
 from ..generators import empty_hypergraph
 
-__all__ = ["write_hypergraph_json", "read_hypergraph_json"]
+__all__ = ["write_json", "read_json"]
 
 
-def write_hypergraph_json(H, path):
+def write_json(H, path):
     """
     A function to write a file in a standardized JSON format.
 
@@ -42,7 +42,7 @@ def write_hypergraph_json(H, path):
         output_file.write(datastring)
 
 
-def read_hypergraph_json(path, nodetype=None, edgetype=None):
+def read_json(path, nodetype=None, edgetype=None):
     """
     A function to read a file in a standardized JSON format.
 
@@ -72,42 +72,42 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
     H = empty_hypergraph()
     try:
         H._hypergraph.update(data["hypergraph-data"])
-    except KeyError:
-        raise XGIError("Failed to get hypergraph data attributes.")
+    except KeyError as e:
+        raise XGIError("Failed to get hypergraph data attributes.") from e
 
     try:
         for id, dd in data["node-data"].items():
             if nodetype is not None:
                 try:
                     id = nodetype(id)
-                except Exception as e:
+                except ValueError as e:
                     raise TypeError(
                         f"Failed to convert edge IDs to type {nodetype}."
                     ) from e
             H.add_node(id, **dd)
-    except KeyError:
-        raise XGIError("Failed to import node attributes.")
+    except KeyError as e:
+        raise XGIError("Failed to import node attributes.") from e
 
     try:
         for id, edge in data["edge-dict"].items():
             if edgetype is not None:
                 try:
                     id = edgetype(id)
-                except Exception as e:
+                except ValueError as e:
                     raise TypeError(
                         f"Failed to convert the edge with ID {id} to type {edgetype}."
                     ) from e
-
+            # convert the members of the edge to the nodetype if specified.
             if nodetype is not None:
                 try:
                     edge = [nodetype(n) for n in edge]
-                except Exception as e:
+                except ValueError as e:
                     raise TypeError(
                         f"Failed to convert nodes to type {nodetype}."
                     ) from e
             H.add_edge(edge, id)
-    except:
-        raise XGIError("Failed to import edge dictionary.")
+    except KeyError as e:
+        raise XGIError("Failed to import edge dictionary.") from e
 
     try:
         set_edge_attributes(
@@ -116,7 +116,7 @@ def read_hypergraph_json(path, nodetype=None, edgetype=None):
             if edgetype is None
             else {edgetype(e): dd for e, dd in data["edge-data"].items()},
         )
-    except KeyError:
-        raise XGIError("Failed to import edge attributes.")
+    except KeyError as e:
+        raise XGIError("Failed to import edge attributes.") from e
 
     return H

@@ -50,7 +50,8 @@ def test_contains(edgelist1):
     for node in unique_nodes:
         assert node in H
 
-    assert 0 not in H
+    # test TypeError handling
+    assert [1, 2, 3] not in H
 
 
 def test_string():

@@ -133,9 +133,7 @@ def draw(
     if isinstance(H, SimplicialComplex):
         draw_xgi_simplices(H, pos, ax, dyad_color, dyad_lw, edge_fc, settings)
     elif isinstance(H, Hypergraph):
-        draw_xgi_hyperedges(
-            H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, settings
-        )
+        draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, settings)
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
@@ -193,12 +191,8 @@ def draw_xgi_nodes(
         * max_node_size
     """
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
-    node_fc = _color_arg_to_dict(
-        node_fc, H.nodes, settings["node_fc_cmap"]
-    )
-    node_ec = _color_arg_to_dict(
-        node_ec, H.nodes, settings["node_lc_cmap"]
-    )
+    node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
+    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_lc_cmap"])
     node_lw = _scalar_arg_to_dict(
         node_lw,
         H.nodes,
@@ -222,9 +216,7 @@ def draw_xgi_nodes(
         )
 
 
-def draw_xgi_hyperedges(
-    H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, settings
-):
+def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, settings):
     """Draw hyperedges.
 
     Parameters
@@ -258,9 +250,7 @@ def draw_xgi_hyperedges(
         dyad_lw, H.edges, settings["min_dyad_lw"], settings["max_dyad_lw"]
     )
 
-    edge_fc = _color_arg_to_dict(
-        edge_fc, H.edges, settings["edge_fc_cmap"]
-    )
+    edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
 
     for id, he in H.edges.members(dtype=dict).items():
@@ -334,9 +324,7 @@ def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, settings):
         settings["max_dyad_lw"],
     )
 
-    edge_fc = _color_arg_to_dict(
-        edge_fc, H_.edges, settings["edge_fc_cmap"]
-    )
+    edge_fc = _color_arg_to_dict(edge_fc, H_.edges, settings["edge_fc_cmap"])
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
     for id, he in H_.edges.members(dtype=dict).items():
         d = len(he) - 1
@@ -346,9 +334,7 @@ def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, settings):
             x_coords = [pos[he[0]][0], pos[he[1]][0]]
             y_coords = [pos[he[0]][1], pos[he[1]][1]]
 
-            line = plt.Line2D(
-                x_coords, y_coords, color=dyad_color[id], lw=dyad_lw[id]
-            )
+            line = plt.Line2D(x_coords, y_coords, color=dyad_color[id], lw=dyad_lw[id])
             ax.add_line(line)
         else:
             # Hyperedges of order d (d=1: links, etc.)
