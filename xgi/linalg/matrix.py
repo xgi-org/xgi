@@ -46,13 +46,14 @@ def incidence_matrix(
         The dictionary mapping indices to edge IDs, if index is True
 
     """
+    node_ids = H.nodes
     edge_ids = H.edges
+    
     if order is not None:
         edge_ids = H.edges.filterby("order", order)
-    if not edge_ids:
+    if not edge_ids or not node_ids:
         return (np.array([]), {}, {}) if index else np.array([])
 
-    node_ids = H.nodes
     num_edges = len(edge_ids)
     num_nodes = len(node_ids)
 
