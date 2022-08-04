@@ -937,7 +937,8 @@ class Hypergraph:
         copy.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
         ee = self.edges
         copy.add_edges_from(
-            (ee.members(e), e, deepcopy(attr)) for e, attr in ee.items()
+            (e, id, deepcopy(self.edges[id]))
+            for id, e in ee.members(dtype=dict).items()
         )
         copy._hypergraph = deepcopy(self._hypergraph)
 
