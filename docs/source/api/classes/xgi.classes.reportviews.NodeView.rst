@@ -21,6 +21,7 @@ xgi.classes.reportviews.NodeView
       :nosignatures:
 
       ~NodeView.memberships
+      ~NodeView.isolates
       ~IDView.neighbors
       ~IDView.filterby
       ~IDView.filterby_attr
