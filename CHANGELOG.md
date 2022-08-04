@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.4.1
+* Added the ability to color nodes and edges in `xgi.draw()` by value, iterable, or NodeStat/EdgeStat ([#139](https://github.com/ComplexGroupInteractions/xgi/pull/139), [#142](https://github.com/ComplexGroupInteractions/xgi/pull/142), and [#143](https://github.com/ComplexGroupInteractions/xgi/pull/143)).
+* Fixed the distortion of the node aspect ratio with different figure sizes in [Issue #137](https://github.com/ComplexGroupInteractions/xgi/issues/137).
+* Moved the `isolates()` and `singletons()` method from the `Hypergraph` class to the `NodeView` and `EdgeView` classes respectively ([#146](https://github.com/ComplexGroupInteractions/xgi/pull/146)).
+* Fixed `Hypergraph.copy()` to not use the `subhypergraph` method ([#145](https://github.com/ComplexGroupInteractions/xgi/pull/145)).
+* `filterby()` now accepts `NodeStat` and `EdgeStat` objects instead of just strings ([#144](https://github.com/ComplexGroupInteractions/xgi/pull/144)).
+* Removed edit-mode install to run the Github Actions test suite ([#136](https://github.com/ComplexGroupInteractions/xgi/pull/136)).
+* Added unit tests ([#147](https://github.com/ComplexGroupInteractions/xgi/pull/147)).
+
+Contributors: @nwlandry, @leotrs, and @maximelucas
+
 ## v0.4
 * Added the `stats` package which implements `NodeStat`, `EdgeStat` and related functionality. This package now handles computation of edge size and degree ([#120](https://github.com/ComplexGroupInteractions/xgi/pull/120)).
 * Removed the `EdgeSizeView` and `DegreeView` classes ([#120](https://github.com/ComplexGroupInteractions/xgi/pull/120)).

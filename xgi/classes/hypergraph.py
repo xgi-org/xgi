@@ -7,7 +7,6 @@ from warnings import warn
 import numpy as np
 
 from ..exception import IDNotFound, XGIError
-from .hypergraphviews import subhypergraph
 from .reportviews import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
