@@ -978,73 +978,6 @@ class Hypergraph:
 
         return dual
 
-    def singleton_edges(self):
-        """Edges with a single member.
-
-        Returns
-        -------
-        EdgeView
-            View of the edges with a single member.
-
-        """
-        return self.edges.filterby("order", 0)
-
-    def remove_singleton_edges(self):
-        """Removes all singletons edges from the hypergraph"""
-        singleton_ids = [
-            id_ for id_, members in self._edge.items() if len(members) == 1
-        ]
-        self.remove_edges_from(singleton_ids)
-
-    def isolates(self, ignore_singletons=True):
-        """Nodes that belong to no edges.
-
-        When ignore_singletons is True (default), a node is considered isolated frmo the
-        rest of the hypergraph when it is included in no edges of size two or more.  In
-        particular, whether the node is part of any singleton edges is irrelevant to
-        determine whether it is isolated.
-
-        When ignore_singletons is False, a node is isolated only when it is a member of
-        exactly zero edges, including singletons.
-
-        Parameters
-        ----------
-        ignore_singletons : bool, default False
-            Whether to consider singleton edges.
-
-        Returns
-        -------
-        set
-            Isolated nodes.
-
-        See Also
-        --------
-        remove_isolates
-
-        """
-        nodes_in_edges = set()
-        for idx in self.edges:
-            edge = self.edges.members(idx)
-            if ignore_singletons and len(edge) == 1:
-                continue
-            nodes_in_edges = nodes_in_edges.union(edge)
-        return set(self.nodes) - nodes_in_edges
-
-    def remove_isolates(self, ignore_singletons=True):
-        """Remove all nodes that belong to no edges.
-
-        Parameters
-        ----------
-        ignore_singletons : bool, default False
-            Whether to consider singleton edges when searching for isolated nodes.
-
-        See Also
-        --------
-        isolates
-
-        """
-        self.remove_nodes_from(self.isolates(ignore_singletons))
-
     def duplicate_edges(self):
         """A list of all duplicate edges.
 
@@ -1052,10 +985,6 @@ class Hypergraph:
         -------
         list
             All edges with a duplicate.
-
-        See also
-        --------
-        remove_duplicates
 
         """
         edges = [tuple(e) for e in self._edge.values()]

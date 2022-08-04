@@ -205,3 +205,19 @@ def test_call(edgelist1):
     assert len(H.nodes([])) == 0
     assert H.nodes(list(H.nodes)) == H.nodes
     assert H.nodes(H.nodes) == H.nodes
+
+
+def test_isolates(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert list(H.nodes.isolates(ignore_singletons=False)) == []
+    assert list(H.nodes.isolates()) == [4]
+    H.remove_nodes_from(H.nodes.isolates())
+    assert 4 not in H
+
+
+def test_singletons(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert list(H.edges.singletons()) == [1]
+    H.remove_edge(1)
+    assert 1 not in H.edges
+    assert list(H.edges.singletons()) == []

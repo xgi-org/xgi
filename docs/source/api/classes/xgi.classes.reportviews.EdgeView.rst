@@ -21,6 +21,7 @@ xgi.classes.reportviews.EdgeView
       :nosignatures:
 
       ~EdgeView.members
+      ~EdgeView.singletons
       ~IDView.neighbors
       ~IDView.filterby
       ~IDView.filterby_attr

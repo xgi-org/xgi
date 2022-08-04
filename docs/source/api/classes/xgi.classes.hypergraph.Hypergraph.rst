@@ -36,8 +36,6 @@
       ~Hypergraph.remove_nodes_from
       ~Hypergraph.remove_edges_from
       ~Hypergraph.remove_node_from_edge
-      ~Hypergraph.remove_isolates
-      ~Hypergraph.remove_singleton_edges
       ~Hypergraph.clear
       ~Hypergraph.clear_edges
 
@@ -56,7 +54,5 @@
    .. autosummary::
       :nosignatures:
 
-      ~Hypergraph.isolates
       ~Hypergraph.duplicate_edges
       ~Hypergraph.has_edge
-      ~Hypergraph.singleton_edges
