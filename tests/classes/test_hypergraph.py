@@ -356,10 +356,12 @@ def test_add_edges_from_wrong_format():
 
 def test_copy(edgelist1):
     H = xgi.Hypergraph(edgelist1)
+    H["key"] = "value"
     copy = H.copy()
     assert list(copy.nodes) == list(H.nodes)
     assert list(copy.edges) == list(H.edges)
     assert list(copy.edges.members()) == list(H.edges.members())
+    assert H._hypergraph == copy._hypergraph
 
     H.add_node(10)
     assert list(copy.nodes) != list(H.nodes)
@@ -367,6 +369,26 @@ def test_copy(edgelist1):
 
     H.add_edge([1, 3, 5])
     assert list(copy.edges) != list(H.edges)
+
+    H["key2"] = "value2"
+    assert H._hypergraph != copy._hypergraph
+
+    copy.add_node(10)
+    copy.add_edge([1, 3, 5])
+    copy["key2"] = "value2"
+    assert list(copy.nodes) == list(H.nodes)
+    assert list(copy.edges) == list(H.edges)
+    assert list(copy.edges.members()) == list(H.edges.members())
+    assert H._hypergraph == copy._hypergraph
+
+
+def test_copy_issue128():
+    # see https://github.com/ComplexGroupInteractions/xgi/issues/128
+    H = xgi.Hypergraph()
+    H["key"] = "value"
+    K = H.copy()
+    K["key"] = "some_other_value"
+    assert H["key"] == "value"
 
 
 def test_double_edge_swap(edgelist1):
