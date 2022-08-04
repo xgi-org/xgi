@@ -103,8 +103,8 @@ def test_remove_singleton_edges(edgelist1, edgelist2):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist2)
 
-    H1.remove_singleton_edges()
-    H2.remove_singleton_edges()
+    H1.remove_edges_from(H1.edges.singletons())
+    H2.remove_edges_from(H2.edges.singletons())
 
     assert list(H1.edges.singletons()) == []
     assert list(H2.edges.singletons()) == []

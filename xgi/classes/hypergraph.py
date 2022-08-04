@@ -935,25 +935,6 @@ class Hypergraph:
 
         return dual
 
-    def remove_singleton_edges(self):
-        """Removes all singletons edges from the hypergraph"""
-        self.remove_edges_from(self.edges.singletons())
-
-    def remove_isolates(self, ignore_singletons=True):
-        """Remove all nodes that belong to no edges.
-
-        Parameters
-        ----------
-        ignore_singletons : bool, default False
-            Whether to consider singleton edges when searching for isolated nodes.
-
-        See Also
-        --------
-        :meth:`xgi.reportviews.NodeView.isolates`
-
-        """
-        self.remove_nodes_from(self.isolates(ignore_singletons))
-
     def duplicate_edges(self):
         """A list of all duplicate edges.
 
