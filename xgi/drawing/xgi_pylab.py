@@ -87,7 +87,7 @@ def draw(
         * min_node_lw
         * max_node_lw
         * node_fc_cmap
-        * node_lc_cmap
+        * node_ec_cmap
         * edge_fc_cmap
         * dyad_color_cmap
 
@@ -107,7 +107,7 @@ def draw(
         "min_node_lw": 1,
         "max_node_lw": 5,
         "node_fc_cmap": cm.Reds,
-        "node_lc_cmap": cm.Greys,
+        "node_ec_cmap": cm.Greys,
         "edge_fc_cmap": cm.Blues,
         "dyad_color_cmap": cm.Greys,
     }
@@ -184,7 +184,7 @@ def draw_xgi_nodes(
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * node_fc_cmap
-        * node_lc_cmap
+        * node_ec_cmap
         * min_node_lw
         * max_node_lw
         * min_node_size
@@ -192,7 +192,7 @@ def draw_xgi_nodes(
     """
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
     node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
-    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_lc_cmap"])
+    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_ec_cmap"])
     node_lw = _scalar_arg_to_dict(
         node_lw,
         H.nodes,
