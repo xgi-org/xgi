@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.2
+* Keyword arguments are now consistent in the `draw()` function ([#148](https://github.com/ComplexGroupInteractions/xgi/pull/148)).
+* Notebooks are now formatted with black and the requirements have been updated to reflect this ([#148](https://github.com/ComplexGroupInteractions/xgi/pull/148)).
+
 ## v0.4.1
 * Added the ability to color nodes and edges in `xgi.draw()` by value, iterable, or NodeStat/EdgeStat ([#139](https://github.com/ComplexGroupInteractions/xgi/pull/139), [#142](https://github.com/ComplexGroupInteractions/xgi/pull/142), and [#143](https://github.com/ComplexGroupInteractions/xgi/pull/143)).
 * Fixed the distortion of the node aspect ratio with different figure sizes in [Issue #137](https://github.com/ComplexGroupInteractions/xgi/issues/137).
