@@ -950,16 +950,3 @@ class Hypergraph:
         dual._hypergraph = deepcopy(self._hypergraph)
 
         return dual
-
-    def duplicate_edges(self):
-        """A list of all duplicate edges.
-
-        Returns
-        -------
-        list
-            All edges with a duplicate.
-
-        """
-        edges = [tuple(e) for e in self._edge.values()]
-        edges_unique, counts = np.unique(edges, return_counts=True)
-        return list(edges_unique[np.where(counts > 1)])
