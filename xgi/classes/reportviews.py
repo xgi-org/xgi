@@ -5,10 +5,12 @@ allow modification.  This module provides View classes for nodes, edges, degree,
 edge size of a hypergraph.  Views are automatically updaed when the hypergraph changes.
 
 """
-from collections.abc import Mapping, Set
 
-from xgi.exception import IDNotFound, XGIError
-from xgi.stats import EdgeStatDispatcher, NodeStatDispatcher
+from collections.abc import Mapping, Set
+from collections import Counter, defaultdict
+
+from ..exception import IDNotFound, XGIError
+from ..stats import EdgeStatDispatcher, NodeStatDispatcher
 
 __all__ = [
     "NodeView",
