@@ -5,10 +5,9 @@ import numpy as np
 from numpy.linalg import norm
 from scipy.sparse.linalg import eigsh
 
-from ..classes import is_uniform
+from ..classes import is_uniform, convert_labels_to_integers
 from ..exception import XGIError
 from ..linalg import clique_motif_matrix, incidence_matrix
-from ..utils.utilities import convert_labels_to_integers
 
 __all__ = ["CEC_centrality", "HEC_centrality", "ZEC_centrality", "node_edge_centrality"]
 
