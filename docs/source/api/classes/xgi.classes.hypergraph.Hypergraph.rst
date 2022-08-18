@@ -33,7 +33,6 @@
       ~Hypergraph.remove_node
       ~Hypergraph.remove_edge
       ~Hypergraph.remove_nodes_from
-      ~Hypergraph.remove_nodes_from
       ~Hypergraph.remove_edges_from
       ~Hypergraph.remove_node_from_edge
       ~Hypergraph.clear
