@@ -233,6 +233,9 @@ def test_lookup(edgelist1):
     assert list(H.edges.lookup([4])) == [1]
     assert list(H.edges.lookup([1, 2])) == []
 
+    H = xgi.Hypergraph([["a", "b", "c"], ["a", "b", "e"], ["c", "d", "e"]])
+    assert set(H.nodes.lookup([0, 1])) == {"a", "b"}
+
 
 def test_bool(edgelist1):
     H = xgi.Hypergraph([])

@@ -452,9 +452,9 @@ class IDView(Mapping, Set):
 
         Can also be used to check for nodes that belong to a particular set of edges:
 
-        >>> H = xgi.Hypergraph([['a', 'b', 'c'], ['a', 'b', 'd'], ['c', 'd', 'e']])
+        >>> H = xgi.Hypergraph([['a', 'b', 'c'], ['a', 'd', 'e'], ['c', 'd', 'e']])
         >>> H.nodes.lookup([0, 1])
-        NodeView(('a', 'b'))
+        NodeView(('a',))
 
         """
         sought = Counter(neighbors)
