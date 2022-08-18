@@ -542,3 +542,21 @@ def test_view_val(edgelist1, edgelist2):
     H = xgi.Hypergraph(edgelist2)
     assert H.nodes.degree._val == {1: 1, 2: 1, 3: 1, 4: 2, 5: 1, 6: 1}
     assert H.nodes([4, 5, 6]).degree._val == {4: 2, 5: 1, 6: 1}
+
+
+def test_moment(edgelist1, edgelist6):
+    H = xgi.Hypergraph(edgelist1)
+    deg = H.nodes.degree
+    assert round(deg.moment2(), 3) == 1.375
+    assert round(deg.moment(2, center=False), 3) == 1.375
+    assert round(deg.moment(2, center=True), 3) == 0.109
+    assert round(deg.moment(3, center=False), 3) == 1.875
+    assert round(deg.moment(3, center=True), 3) == 0.082
+
+    H = xgi.Hypergraph(edgelist6)
+    deg = H.edges.size
+    assert round(deg.moment2(), 3) == 9.0
+    assert round(deg.moment(2, center=False), 3) == 9.0
+    assert round(deg.moment(2, center=True), 3) == 0.0
+    assert round(deg.moment(3, center=False), 3) == 27.0
+    assert round(deg.moment(3, center=True), 3) == 0.0
