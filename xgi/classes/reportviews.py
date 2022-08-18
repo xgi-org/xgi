@@ -393,6 +393,54 @@ class IDView(Mapping, Set):
                         dups.append(edge2)
         return self.__class__.from_view(self, bunch=dups)
 
+    def lookup(self, neighbors):
+        """Find IDs with the specified bipartite neighbors.
+
+        Parameters
+        ----------
+        neighbors : Iterable
+            An iterable of IDs.
+
+        Returns
+        -------
+        IDView
+            A view containing only those IDs whose bipartite neighbors match
+            `neighbors`.
+
+        See Also
+        --------
+        IDView.duplicates
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[0, 1, 2], [3, 4], [3, 4, 2]])
+        >>> H.edges.lookup([3, 4])
+        EdgeView((1,))
+        >>> H.add_edge([3, 4])
+        >>> H.edges.lookup([3, 4])
+        EdgeView((1, 3))
+
+        Can be used as a boolean check for edge existence:
+
+        >>> if H.edges.lookup([3, 4]): print('An edge with members [3, 4] exists')
+        An edge with members [3, 4] exists
+
+        Can also be used to check for nodes that belong to a particular set of edges:
+
+        >>> H = xgi.Hypergraph([['a', 'b', 'c'], ['a', 'b', 'd'], ['c', 'd', 'e']])
+        >>> H.nodes.lookup([0, 1])
+        NodeView(('a', 'b'))
+
+        """
+        sought = Counter(neighbors)
+        found = [
+            idx
+            for idx, neighbors in self._id_dict.items()
+            if Counter(neighbors) == sought
+        ]
+        return self.__class__.from_view(self, bunch=found)
+
     @classmethod
     def from_view(cls, view, bunch=None):
         """Create a view from another view.

@@ -141,16 +141,6 @@ def test_members(edgelist1):
         H.nodes.memberships(slice(1, 4))
 
 
-def test_has_edge(edgelist1):
-    H = xgi.Hypergraph(edgelist1)
-    assert H.has_edge([1, 2, 3])
-    assert H.has_edge({1, 2, 3})
-    assert H.has_edge({4})
-    assert not H.has_edge([4, 5])
-    assert not H.has_edge([3])
-    assert not H.has_edge([1, 2])
-
-
 def test_add_edge():
     for edge in [[1, 2, 3], {1, 2, 3}, iter([1, 2, 3])]:
         H = xgi.Hypergraph()
