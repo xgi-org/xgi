@@ -53,5 +53,4 @@
    .. autosummary::
       :nosignatures:
 
-      ~Hypergraph.duplicate_edges
       ~Hypergraph.has_edge

@@ -23,5 +23,6 @@ xgi.classes.reportviews.EdgeView
       ~EdgeView.members
       ~EdgeView.singletons
       ~IDView.neighbors
+      ~IDView.duplicates
       ~IDView.filterby
       ~IDView.filterby_attr

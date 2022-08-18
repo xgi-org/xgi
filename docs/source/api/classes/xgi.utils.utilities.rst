@@ -14,5 +14,4 @@
 
    .. rubric:: Functions
 
-   .. autofunction:: convert_labels_to_integers
    .. autofunction:: dual_dict

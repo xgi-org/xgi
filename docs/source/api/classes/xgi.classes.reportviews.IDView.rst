@@ -18,5 +18,6 @@ xgi.classes.reportviews.IDView
 
       ~IDView.from_view
       ~IDView.neighbors
+      ~IDView.duplicates
       ~IDView.filterby
       ~IDView.filterby_attr
