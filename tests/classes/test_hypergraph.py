@@ -395,3 +395,13 @@ def test_double_edge_swap(edgelist1):
     # loopy swap
     H.double_edge_swap(4, 6, 0, 2)
     assert H.edges.members() == [[6, 2, 6], [3], [5, 4], [1, 7, 8]]
+
+
+def test_duplicate_edges(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+
+    H.add_edge([1, 3, 2])
+    assert list(H.edges.duplicates()) == [0, 4]
+
+    H.add_edge([1, 2, 3])
+    assert list(H.edges.duplicates()) == [0, 4, 5]

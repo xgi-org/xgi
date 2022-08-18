@@ -358,6 +358,39 @@ class IDView(Mapping, Set):
             {id}
         )
 
+    def duplicates(self):
+        """A view consisting of only those IDs of this view that have a duplicate.
+
+        An ID has a 'duplicate' if there exists another ID with the same bipartite
+        neighbors.
+
+        Returns
+        -------
+        IDView
+            A view containing only those IDs with a duplicate.
+
+        Notes
+        -----
+        The IDs returned are in an arbitrary order, that is duplicates are not
+        guaranteed to be consecutive.
+
+        """
+        dups = []
+        hashes = defaultdict(list)
+        for idx, members in self._id_dict.items():
+            hashes[frozenset(members)].append(idx)
+        for _, edges in hashes.items():
+            if len(edges) == 1:
+                continue
+            for edge1 in edges:
+                for edge2 in edges:
+                    if edge1 == edge2:
+                        continue
+                    if Counter(self._id_dict[edge1]) == Counter(self._id_dict[edge2]):
+                        dups.append(edge1)
+                        dups.append(edge2)
+        return self.__class__.from_view(self, bunch=dups)
+
     @classmethod
     def from_view(cls, view, bunch=None):
         """Create a view from another view.
@@ -375,7 +408,7 @@ class IDView(Mapping, Set):
         Returns
         -------
         IDView
-            A view object that is identical to `view` but keeps track of different IDs.
+            A view that is identical to `view` but keeps track of different IDs.
 
         """
         newview = cls(None)
