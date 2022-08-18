@@ -400,8 +400,14 @@ def test_double_edge_swap(edgelist1):
 def test_duplicate_edges(edgelist1):
     H = xgi.Hypergraph(edgelist1)
 
-    H.add_edge([1, 3, 2])
+    H.add_edge([1, 3, 2])  # same order as existing edge
     assert list(H.edges.duplicates()) == [0, 4]
 
-    H.add_edge([1, 2, 3])
+    H.add_edge([1, 2, 3])  # different order, same members
     assert list(H.edges.duplicates()) == [0, 4, 5]
+
+    H = xgi.Hypergraph([[1, 2, 3, 3], [1, 2, 3]])  # repeated nodes
+    assert list(H.edges.duplicates()) == []
+
+    H = xgi.Hypergraph([[1, 2, 3, 3], [3, 1, 2, 3]])  # repeated nodes
+    assert list(H.edges.duplicates()) == [0, 1]
