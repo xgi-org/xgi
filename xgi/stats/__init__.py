@@ -248,6 +248,13 @@ class IDStat:
         return self.asnumpy().var(axis=0)
 
     def moment2(self):
+        """The second uncentered moment of this stat.
+
+        Notes
+        -----
+        Convenience function, same as `self.moment(2, center=False)`.
+
+        """
         return self.moment(order=2, center=False)
 
     def moment(self, order, center=True):
