@@ -355,13 +355,14 @@ class IDView(Mapping, Set):
         {2}
         >>> H.nodes.neighbors(2)
         {1, 3, 4}
+
         """
         return {i for n in self._id_dict[id] for i in self._bi_id_dict[n]}.difference(
             {id}
         )
 
     def duplicates(self):
-        """A view consisting of only those IDs of this view that have a duplicate.
+        """Find IDs that have a duplicate.
 
         An ID has a 'duplicate' if there exists another ID with the same bipartite
         neighbors.
@@ -375,6 +376,29 @@ class IDView(Mapping, Set):
         -----
         The IDs returned are in an arbitrary order, that is duplicates are not
         guaranteed to be consecutive.
+
+        See Also
+        --------
+        IDView.lookup
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[0, 1, 2], [3, 4, 2], [0, 1, 2]])
+        >>> H.edges.duplicates()
+        EdgeView((0, 2))
+
+        Order does not matter:
+
+        >>> H = xgi.Hypergraph([[0, 1, 2], [0, 1, 2]])
+        >>> H.edges.duplicates()
+        EdgeView((0, 1))
+
+        Repetitions matter:
+
+        >>> H = xgi.Hypergraph([[0, 1, 1], [1, 0, 1]])
+        >>> H.edges.duplicates()
+        EdgeView((0, 1))
 
         """
         dups = []
