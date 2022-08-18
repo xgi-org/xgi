@@ -46,11 +46,3 @@
 
       ~Hypergraph.copy
       ~Hypergraph.dual
-
-
-   .. rubric:: Methods that query nodes and edges
-
-   .. autosummary::
-      :nosignatures:
-
-      ~Hypergraph.has_edge
