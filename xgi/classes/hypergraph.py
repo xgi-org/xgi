@@ -800,13 +800,14 @@ class Hypergraph:
         ebunch: Iterable
             Edges to remove.
 
+        Raises
+        ------
+        xgi.exception.IDNotFound
+            If an id in ebunch is not part of the network.
+
         See Also
         --------
-        remove_edge : remove a single edge
-
-        Notes
-        -----
-        Will fail silently if an edge in ebunch is not in the hypergraph.
+        remove_edge : remove a single edge.
 
         """
         for id in ebunch:

@@ -384,13 +384,15 @@ class SimplicialComplex(Hypergraph):
             Each edge id given in the list or iterable will be removed
             from the Simplicialcomplex.
 
+        Raises
+        ------
+        xgi.exception.IDNotFound
+            If an id in ebunch is not part of the network.
+
         See Also
         --------
-        remove_simplex_id : remove a single simplex by ID
+        remove_simplex_id : remove a single simplex by ID.
 
-        Notes
-        -----
-        Will fail silently if an edge in ebunch is not in the simplicial complex.
         """
         for id in ebunch:
             for node in self.edges.members(id):

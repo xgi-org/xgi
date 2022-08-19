@@ -462,6 +462,7 @@ def get_node_attributes(H, name=None):
     set_node_attributes
     set_edge_attributes
     get_edge_attributes
+
     """
     if name is None:
         return dict(H._node_attr)
@@ -499,6 +500,7 @@ def set_edge_attributes(H, values, name=None):
     -----
     Note that if the dict contains edge IDs that are not in `H`, they are
     silently ignored.
+
     """
     if name is not None:
         # `values` does not contain attribute names
