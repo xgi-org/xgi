@@ -368,32 +368,6 @@ class Hypergraph:
                 continue
             self.remove_node(n)
 
-    def has_edge(self, edge):
-        """Whether an edge is in the hypergraph.
-
-        Parameters
-        ----------
-        edge : Iterable
-            An iterable of hashables that specifies an edge by its member nodes.
-
-        Returns
-        -------
-        bool
-           Whether or not edge is as an edge in the hypergraph.
-
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.has_edge([1, 2])
-        True
-        >>> H.has_edge({1, 3})
-        False
-
-        """
-        return set(edge) in (set(self.edges.members(e)) for e in self.edges)
-
     def add_edge(self, members, id=None, **attr):
         """Add one edge with optional attributes.
 
@@ -977,16 +951,3 @@ class Hypergraph:
         dual._hypergraph = deepcopy(self._hypergraph)
 
         return dual
-
-    def duplicate_edges(self):
-        """A list of all duplicate edges.
-
-        Returns
-        -------
-        list
-            All edges with a duplicate.
-
-        """
-        edges = [tuple(e) for e in self._edge.values()]
-        edges_unique, counts = np.unique(edges, return_counts=True)
-        return list(edges_unique[np.where(counts > 1)])

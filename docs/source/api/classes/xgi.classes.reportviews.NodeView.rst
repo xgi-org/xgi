@@ -23,5 +23,7 @@ xgi.classes.reportviews.NodeView
       ~NodeView.memberships
       ~NodeView.isolates
       ~IDView.neighbors
+      ~IDView.duplicates
+      ~IDView.lookup
       ~IDView.filterby
       ~IDView.filterby_attr

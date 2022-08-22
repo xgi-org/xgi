@@ -5,10 +5,12 @@ allow modification.  This module provides View classes for nodes, edges, degree,
 edge size of a hypergraph.  Views are automatically updaed when the hypergraph changes.
 
 """
-from collections.abc import Mapping, Set
 
-from xgi.exception import IDNotFound, XGIError
-from xgi.stats import EdgeStatDispatcher, NodeStatDispatcher
+from collections.abc import Mapping, Set
+from collections import Counter, defaultdict
+
+from ..exception import IDNotFound, XGIError
+from ..stats import EdgeStatDispatcher, NodeStatDispatcher
 
 __all__ = [
     "NodeView",
@@ -353,10 +355,115 @@ class IDView(Mapping, Set):
         {2}
         >>> H.nodes.neighbors(2)
         {1, 3, 4}
+
         """
         return {i for n in self._id_dict[id] for i in self._bi_id_dict[n]}.difference(
             {id}
         )
+
+    def duplicates(self):
+        """Find IDs that have a duplicate.
+
+        An ID has a 'duplicate' if there exists another ID with the same bipartite
+        neighbors.
+
+        Returns
+        -------
+        IDView
+            A view containing only those IDs with a duplicate.
+
+        Notes
+        -----
+        The IDs returned are in an arbitrary order, that is duplicates are not
+        guaranteed to be consecutive.
+
+        See Also
+        --------
+        IDView.lookup
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[0, 1, 2], [3, 4, 2], [0, 1, 2]])
+        >>> H.edges.duplicates()
+        EdgeView((0, 2))
+
+        Order does not matter:
+
+        >>> H = xgi.Hypergraph([[0, 1, 2], [0, 1, 2]])
+        >>> H.edges.duplicates()
+        EdgeView((0, 1))
+
+        Repetitions matter:
+
+        >>> H = xgi.Hypergraph([[0, 1, 1], [1, 0, 1]])
+        >>> H.edges.duplicates()
+        EdgeView((0, 1))
+
+        """
+        dups = []
+        hashes = defaultdict(list)
+        for idx, members in self._id_dict.items():
+            hashes[frozenset(members)].append(idx)
+        for _, edges in hashes.items():
+            if len(edges) == 1:
+                continue
+            for edge1 in edges:
+                for edge2 in edges:
+                    if edge1 == edge2:
+                        continue
+                    if Counter(self._id_dict[edge1]) == Counter(self._id_dict[edge2]):
+                        dups.append(edge1)
+                        dups.append(edge2)
+        return self.__class__.from_view(self, bunch=dups)
+
+    def lookup(self, neighbors):
+        """Find IDs with the specified bipartite neighbors.
+
+        Parameters
+        ----------
+        neighbors : Iterable
+            An iterable of IDs.
+
+        Returns
+        -------
+        IDView
+            A view containing only those IDs whose bipartite neighbors match
+            `neighbors`.
+
+        See Also
+        --------
+        IDView.duplicates
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[0, 1, 2], [3, 4], [3, 4, 2]])
+        >>> H.edges.lookup([3, 4])
+        EdgeView((1,))
+        >>> H.add_edge([3, 4])
+        >>> H.edges.lookup([3, 4])
+        EdgeView((1, 3))
+
+        Can be used as a boolean check for edge existence:
+
+        >>> if H.edges.lookup([3, 4]): print('An edge with members [3, 4] exists')
+        An edge with members [3, 4] exists
+
+        Can also be used to check for nodes that belong to a particular set of edges:
+
+        >>> H = xgi.Hypergraph([['a', 'b', 'c'], ['a', 'd', 'e'], ['c', 'd', 'e']])
+        >>> H.nodes.lookup([0, 1])
+        NodeView(('a',))
+
+        """
+        sought = Counter(neighbors)
+        found = [
+            idx
+            for idx, neighbors in self._id_dict.items()
+            if Counter(neighbors) == sought
+        ]
+        return self.__class__.from_view(self, bunch=found)
 
     @classmethod
     def from_view(cls, view, bunch=None):
@@ -375,7 +482,7 @@ class IDView(Mapping, Set):
         Returns
         -------
         IDView
-            A view object that is identical to `view` but keeps track of different IDs.
+            A view that is identical to `view` but keeps track of different IDs.
 
         """
         newview = cls(None)

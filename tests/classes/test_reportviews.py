@@ -221,3 +221,24 @@ def test_singletons(edgelist1):
     H.remove_edge(1)
     assert 1 not in H.edges
     assert list(H.edges.singletons()) == []
+
+
+def test_lookup(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert list(H.edges.lookup([1, 2, 3])) == [0]
+    assert list(H.edges.lookup({1, 2, 3})) == [0]
+    assert list(H.edges.lookup({4})) == [1]
+    assert list(H.edges.lookup([4, 5])) == []
+    assert list(H.edges.lookup([3])) == []
+    assert list(H.edges.lookup([4])) == [1]
+    assert list(H.edges.lookup([1, 2])) == []
+
+    H = xgi.Hypergraph([["a", "b", "c"], ["a", "b", "e"], ["c", "d", "e"]])
+    assert set(H.nodes.lookup([0, 1])) == {"a", "b"}
+
+
+def test_bool(edgelist1):
+    H = xgi.Hypergraph([])
+    assert bool(H.edges) is False
+    H = xgi.Hypergraph(edgelist1)
+    assert bool(H.edges) is True

@@ -141,16 +141,6 @@ def test_members(edgelist1):
         H.nodes.memberships(slice(1, 4))
 
 
-def test_has_edge(edgelist1):
-    H = xgi.Hypergraph(edgelist1)
-    assert H.has_edge([1, 2, 3])
-    assert H.has_edge({1, 2, 3})
-    assert H.has_edge({4})
-    assert not H.has_edge([4, 5])
-    assert not H.has_edge([3])
-    assert not H.has_edge([1, 2])
-
-
 def test_add_edge():
     for edge in [[1, 2, 3], {1, 2, 3}, iter([1, 2, 3])]:
         H = xgi.Hypergraph()
@@ -395,3 +385,36 @@ def test_double_edge_swap(edgelist1):
     # loopy swap
     H.double_edge_swap(4, 6, 0, 2)
     assert H.edges.members() == [[6, 2, 6], [3], [5, 4], [1, 7, 8]]
+
+
+def test_duplicate_edges(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert list(H.edges.duplicates()) == []
+
+    H.add_edge([1, 3, 2])  # same order as existing edge
+    assert list(H.edges.duplicates()) == [0, 4]
+
+    H.add_edge([1, 2, 3])  # different order, same members
+    assert list(H.edges.duplicates()) == [0, 4, 5]
+
+    H = xgi.Hypergraph([[1, 2, 3, 3], [1, 2, 3]])  # repeated nodes
+    assert list(H.edges.duplicates()) == []
+
+    H = xgi.Hypergraph([[1, 2, 3, 3], [3, 1, 2, 3]])  # repeated nodes
+    assert list(H.edges.duplicates()) == [0, 1]
+
+
+def test_duplicate_nodes(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert list(H.nodes.duplicates()) == [1, 2, 3, 7, 8]
+
+    H.add_edges_from([[1, 4], [2, 6, 7], [6, 8]])
+    assert list(H.nodes.duplicates()) == []
+
+    # this loop makes 1 and 2 belong to the same edges
+    for edgeid, members in H.edges.members(dtype=dict).items():
+        if 1 in members and 2 not in members:
+            H.add_node_to_edge(edgeid, 2)
+        if 1 not in members and 2 in members:
+            H.add_node_to_edge(edgeid, 1)
+    assert list(H.nodes.duplicates()) == [1, 2]
