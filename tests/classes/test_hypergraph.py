@@ -201,7 +201,7 @@ def test_add_edges_from_iterable_of_members():
     H1 = xgi.Hypergraph(edges)
     with pytest.raises(XGIError):
         xgi.Hypergraph(H1.edges)
-    
+
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert list(H.edges.members()) == edges

@@ -86,7 +86,7 @@ def convert_to_hypergraph(data, create_using=None):
         data, (ndarray, matrix, csr_matrix, csc_matrix, coo_matrix, lil_matrix)
     ):
         from_incidence_matrix(data, create_using)
-    
+
     else:
         raise XGIError("Not able to convert to hypergraph!")
 
@@ -166,6 +166,7 @@ def convert_to_simplicial_complex(data, create_using=None):
         )
     else:
         raise XGIError("Not able to convert to simplicial complex!")
+
 
 def from_hyperedge_list(d, create_using=None, max_order=None):
     """Generate a hypergraph from a list of lists.
