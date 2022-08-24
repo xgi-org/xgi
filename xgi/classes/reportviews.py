@@ -6,8 +6,8 @@ edge size of a hypergraph.  Views are automatically updaed when the hypergraph c
 
 """
 
-from collections.abc import Mapping, Set
 from collections import Counter, defaultdict
+from collections.abc import Mapping, Set
 
 from ..exception import IDNotFound, XGIError
 from ..stats import EdgeStatDispatcher, NodeStatDispatcher
