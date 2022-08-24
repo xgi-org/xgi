@@ -17,6 +17,9 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     assert list(S_list.edges) == list(S_df.edges)
     assert list(S_list.edges.members(0)) == list(S_df.edges.members(0))
 
+    with pytest.raises(XGIError):
+        xgi.SimplicialComplex(1)
+
 
 def test_add_simplex():
     S = xgi.SimplicialComplex()

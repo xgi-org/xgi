@@ -83,7 +83,9 @@ def dataframe5():
         [7, 3],
         [8, 3],
     ]
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data)
+    df.columns = ["col1", "col2"]
+    return df
 
 
 @pytest.fixture
