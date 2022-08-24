@@ -1,6 +1,6 @@
 """General utilities."""
 
-from collections import defaultdict, Counter
+from collections import defaultdict
 
 __all__ = ["dual_dict"]
 
