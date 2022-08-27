@@ -811,18 +811,19 @@ class Hypergraph:
         removed.
 
         """
-        self._edge[edge].remove(node)
-        self._node[node].remove(edge)
-        if len(self._edge[edge]) == 0:
-            del self._edge[edge]
-            del self._edge_attr[edge]
-
         try:
             self._node[node].remove(edge)
         except KeyError as e:
             raise XGIError(f"Node {node} not in the hypergraph") from e
         except ValueError as e:
             raise XGIError(f"Node {node} not in edge {edge}") from e
+
+        try:
+            self._edge[edge].remove(node)
+        except KeyError as e:
+            raise XGIError(f"Edge {edge} not in the hypergraph") from e
+        except ValueError as e:
+            raise XGIError(f"Edge {edge} does not contain node {node}") from e
 
         if not self._edge[edge]:
             del self._edge[edge]
