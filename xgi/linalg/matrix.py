@@ -212,7 +212,7 @@ def degree_matrix(H, order=None, index=False):
 
 
 def laplacian(H, order=1, rescale_per_node=False, index=False):
-    """Laplacian matrix of order d, see [1]_.
+    """Laplacian matrix of order d, see [1].
 
     Parameters
     ----------
@@ -261,7 +261,7 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
 
 
 def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False):
-    """Multiorder Laplacian matrix, see [1]_.
+    """Multiorder Laplacian matrix, see [1].
 
     Parameters
     ----------
@@ -270,7 +270,7 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
     orders : list of int
         Orders of interactions to consider.
     weights: list of float
-        Weights associated to each order, i.e coupling strengths gamma_i in [1]_.
+        Weights associated to each order, i.e coupling strengths gamma_i in [1].
     rescale_per_node: bool, (default=False)
         Whether to rescale each Laplacian of order d by d (per node).
     index: bool, default: False

@@ -1,10 +1,4 @@
-"""
-**********
-Matplotlib
-**********
-
-Draw hypergraphs with matplotlib.
-"""
+"""Draw hypergraphs and simplicial complexes with matplotlib."""
 
 from collections.abc import Iterable
 from itertools import combinations
