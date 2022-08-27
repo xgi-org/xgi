@@ -1,5 +1,5 @@
 xgi.drawing.xgi_pylab
-==================
+=====================
 
 .. currentmodule:: xgi.drawing.xgi_pylab
 
