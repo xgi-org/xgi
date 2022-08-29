@@ -418,3 +418,12 @@ def test_duplicate_nodes(edgelist1):
         if 1 not in members and 2 in members:
             H.add_node_to_edge(edgeid, 1)
     assert list(H.nodes.duplicates()) == [1, 2]
+
+
+def test_remove_node(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert 1 in H
+    H.remove_node(1)
+    assert 1 not in H
+    with pytest.raises(IDNotFound):
+        H.remove_node(10)
