@@ -202,6 +202,25 @@ def test_attrs(hyperwithattrs, attr1, attr2, attr3, attr4, attr5):
     assert filtered.asdict() == {3: attr3}
 
 
+def test_attrs_categorical(hyperwithattrs):
+    H = hyperwithattrs
+    assert H.nodes.attrs("color").mode() == "blue"
+    assert H.nodes.attrs("color").mode("all") == ["blue", "red"]
+
+    with pytest.raises(StatKindError):
+        H.nodes.attrs("color").mean()
+    with pytest.raises(StatKindError):
+        H.nodes.attrs("name").min()
+    with pytest.raises(StatKindError):
+        H.nodes.attrs("name").max()
+    with pytest.raises(StatKindError):
+        H.nodes.attrs("name").std()
+    with pytest.raises(StatKindError):
+        H.nodes.attrs("name").var()
+    with pytest.raises(StatKindError):
+        H.nodes.attrs("name").median()
+
+
 def test_stats_are_views(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     ns = H.nodes.degree

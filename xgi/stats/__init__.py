@@ -84,6 +84,8 @@ class StatDispatcher:
             func = getattr(self.module, name)
         except AttributeError as e:
             raise AttributeError(f"Stat '{name}' not defined") from e
+        if not hasattr(func, "kind"):
+            func.kind = statkinds.NUMERICAL
         stat = self.statsclass(self.net, self.view, func)
         self.__dict__[name] = stat
         return stat
@@ -227,28 +229,62 @@ class IDStat:
         """
         return pd.Series(self._val, name=self.name)
 
+    def mode(self, all=False):
+        """The mode of this stat.
+
+        The mode is the value of a stat that appears the most number of times.  There
+        may be many modes.
+
+        Parameters
+        ----------
+        all : bool (default False)
+            Whether to return a single mode or many.
+
+        Returns
+        -------
+        mode : Any | list
+            If `all` is False, return a single mode.  If `all` is True, return a list.
+            In this latter case, the list may contain only one element, if there is a
+            single mode, or many elements if there are many modes.
+
+        """
+        md = self.aspandas().mode()
+        return md.tolist() if all else md[0]
+
     def max(self):
         """The maximum value of this stat."""
+        if self.func.kind == statkinds.CATEGORICAL:
+            raise StatKindError("Cannot compute max on categorical stat {self.name}")
         return self.asnumpy().max(axis=0)
 
     def min(self):
         """The minimum value of this stat."""
+        if self.func.kind == statkinds.CATEGORICAL:
+            raise StatKindError("Cannot compute min on categorical stat {self.name}")
         return self.asnumpy().min(axis=0)
 
     def mean(self):
         """The arithmetic mean of this stat."""
+        if self.func.kind == statkinds.CATEGORICAL:
+            raise StatKindError("Cannot compute mean on categorical stat {self.name}")
         return self.asnumpy().mean(axis=0)
 
     def median(self):
         """The median of this stat."""
+        if self.func.kind == statkinds.CATEGORICAL:
+            raise StatKindError("Cannot compute median on categorical stat {self.name}")
         return np.median(self.asnumpy(), axis=0)
 
     def std(self):
         """The standard deviation of this stat."""
+        if self.func.kind == statkinds.CATEGORICAL:
+            raise StatKindError("Cannot compute std on categorical stat {self.name}")
         return self.asnumpy().std(axis=0)
 
     def var(self):
         """The variance of this stat."""
+        if self.func.kind == statkinds.CATEGORICAL:
+            raise StatKindError("Cannot compute var on categorical stat {self.name}")
         return self.asnumpy().var(axis=0)
 
     def dist(self):
@@ -465,7 +501,7 @@ class MultiEdgeStat(MultiIDStat):
     statsmodule = edgestats
 
 
-def nodestat_func(func):
+def nodestat_func(func, categorical=False):
     """Decorator that allows arbitrary functions to behave like :class:`NodeStat` objects.
 
     Parameters
@@ -554,11 +590,12 @@ def nodestat_func(func):
     ...     return {n: 10 * net.degree(n) for n in bunch}
 
     """
+    func.kind = statkinds.CATEGORICAL if categorical else statkinds.NUMERICAL
     setattr(nodestats, func.__name__, func)
     return func
 
 
-def edgestat_func(func):
+def edgestat_func(func, categorical=False):
     """Decorator that allows arbitrary functions to behave like :class:`EdgeStat` objects.
 
     Works identically to :func:`nodestat`.  For extended documentation, see
@@ -582,5 +619,6 @@ def edgestat_func(func):
     :func:`nodestat_func`
 
     """
+    func.kind = statkinds.CATEGORICAL if categorical else statkinds.NUMERICAL
     setattr(edgestats, func.__name__, func)
     return func
