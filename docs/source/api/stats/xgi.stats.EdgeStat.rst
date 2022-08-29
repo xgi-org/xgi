@@ -32,4 +32,3 @@
       ~EdgeStat.std
       ~EdgeStat.var
       ~EdgeStat.moment
-      ~EdgeStat.moment2

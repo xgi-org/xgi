@@ -32,4 +32,3 @@
       ~NodeStat.std
       ~NodeStat.var
       ~NodeStat.moment
-      ~NodeStat.moment2
