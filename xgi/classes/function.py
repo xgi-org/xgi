@@ -3,7 +3,7 @@
 from collections import Counter
 from warnings import warn
 
-from ..exception import XGIError
+from ..exception import IDNotFound, XGIError
 from .hypergraph import Hypergraph
 
 __all__ = [
@@ -429,7 +429,7 @@ def set_node_attributes(H, values, name=None):
             for n, v in values.items():
                 try:
                     H._node_attr[n][name] = v
-                except KeyError:
+                except IDNotFound:
                     warn(f"Node {n} does not exist!")
         else:  # `values` is a constant
             for n in H:
@@ -439,7 +439,7 @@ def set_node_attributes(H, values, name=None):
             for n, d in values.items():
                 try:
                     H._node_attr[n].update(d)
-                except KeyError:
+                except IDNotFound:
                     warn(f"Node {n} does not exist!")
         except (TypeError, ValueError, AttributeError):
             raise XGIError("Must pass a dictionary of dictionaries")
@@ -511,7 +511,7 @@ def set_edge_attributes(H, values, name=None):
             for e, value in values.items():
                 try:
                     H._edge_attr[id][name] = value
-                except KeyError:
+                except IDNotFound:
                     warn(f"Edge {e} does not exist!")
         except AttributeError:
             # treat `values` as a constant
@@ -522,7 +522,7 @@ def set_edge_attributes(H, values, name=None):
             for e, d in values.items():
                 try:
                     H._edge_attr[e].update(d)
-                except KeyError:
+                except IDNotFound:
                     warn(f"Edge {e} does not exist!")
         except AttributeError:
             raise XGIError(
