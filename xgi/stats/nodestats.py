@@ -19,6 +19,7 @@ Examples
 """
 
 import xgi
+from . import statkinds
 
 __all__ = [
     "attrs",
@@ -110,6 +111,9 @@ def attrs(net, bunch, attr=None, missing=None):
         return {n: net._node_attr[n] for n in bunch}
     else:
         raise ValueError('"attr" must be str or None')
+
+
+attrs.kind = statkinds.CATEGORICAL
 
 
 def degree(net, bunch, order=None, weight=None):

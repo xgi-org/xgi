@@ -8,3 +8,7 @@ class XGIError(XGIException):
 
 class IDNotFound(KeyError):
     """Raised when a node or edge is not in the hypergraph."""
+
+
+class StatKindError(TypeError):
+    """Raised when the kind of a IDStat creates a conflict."""
