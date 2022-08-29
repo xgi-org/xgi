@@ -247,18 +247,17 @@ class IDStat:
         """The variance of this stat."""
         return self.asnumpy().var(axis=0)
 
-    def moment2(self):
-        """The second uncentered moment of this stat.
+    def moment(self, order=2, center=False):
+        """The statistical moments of this stat.
 
-        Notes
-        -----
-        Convenience function, same as `self.moment(2, center=False)`.
+        Parameters
+        ----------
+        order : int (default 2)
+            The order of the moment.
+        center : bool (default False)
+            Whether to compute the centered (False) or uncentered/raw (True) moment.
 
         """
-        return self.moment(order=2, center=False)
-
-    def moment(self, order, center=True):
-        """The statistical moments of this stat."""
         arr = self.asnumpy()
         return spmoment(arr, moment=order) if center else np.mean(arr ** order)
 
