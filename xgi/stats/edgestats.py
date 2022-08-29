@@ -20,6 +20,8 @@ Examples
 
 import xgi
 
+from . import statkinds
+
 __all__ = [
     "attrs",
     "order",
@@ -101,6 +103,9 @@ def attrs(net, bunch, attr=None, missing=None):
         return {e: net._edge_attr[e] for e in bunch}
     else:
         raise ValueError('"attr" must be str or None')
+
+
+attrs.kind = statkinds.CATEGORICAL
 
 
 def order(net, bunch, degree=None):
