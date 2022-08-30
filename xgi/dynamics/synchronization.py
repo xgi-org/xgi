@@ -48,7 +48,7 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, timesteps=10000, dt=0.002):
     >>> H.add_nodes_from(range(n))
     >>> k2 = 2
     >>> k3 = 3
-    >>> R = compute_kuramoto_order_parameter(H, k2, k3, w, timesteps, dt)
+    >>> R = compute_kuramoto_order_parameter(H, k2, k3, w)
     """
 
     H_int = xgi.convert_labels_to_integers(H, "label")

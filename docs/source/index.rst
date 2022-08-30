@@ -35,6 +35,7 @@
    Generative Models <api/generators.rst>
    Linear Algebra <api/linalg.rst>
    Read/Write <api/readwrite.rst>
+   Dynamics <api/dynamics.rst>
    Drawing <api/drawing.rst>
    Converting to and from other data formats <api/convert.rst>
    Utilities <api/utils.rst>
