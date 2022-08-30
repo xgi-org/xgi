@@ -4,8 +4,6 @@ from copy import deepcopy
 from itertools import count
 from warnings import warn
 
-import numpy as np
-
 from ..exception import IDNotFound, XGIError
 from .reportviews import EdgeView, NodeView
 

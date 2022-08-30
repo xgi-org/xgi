@@ -1,8 +1,9 @@
 """Functional interface to hypergraph methods and assorted utilities."""
 
 from collections import Counter
+from warnings import warn
 
-from ..exception import XGIError
+from ..exception import IDNotFound, XGIError
 from .hypergraph import Hypergraph
 
 __all__ = [
@@ -424,13 +425,13 @@ def set_node_attributes(H, values, name=None):
     """
     # Set node attributes based on type of `values`
     if name is not None:  # `values` must not be a dict of dict
-        try:  # `values` is a dict
+        if isinstance(values, dict):  # `values` is a dict
             for n, v in values.items():
                 try:
                     H._node_attr[n][name] = v
-                except KeyError:
-                    pass
-        except AttributeError:  # `values` is a constant
+                except IDNotFound:
+                    warn(f"Node {n} does not exist!")
+        else:  # `values` is a constant
             for n in H:
                 H._node_attr[n][name] = values
     else:  # `values` must be dict of dict
@@ -438,8 +439,8 @@ def set_node_attributes(H, values, name=None):
             for n, d in values.items():
                 try:
                     H._node_attr[n].update(d)
-                except KeyError:
-                    pass
+                except IDNotFound:
+                    warn(f"Node {n} does not exist!")
         except (TypeError, ValueError, AttributeError):
             raise XGIError("Must pass a dictionary of dictionaries")
 
@@ -507,22 +508,22 @@ def set_edge_attributes(H, values, name=None):
     if name is not None:
         # `values` does not contain attribute names
         try:
-            for id, value in values.items():
+            for e, value in values.items():
                 try:
                     H._edge_attr[id][name] = value
-                except KeyError:
-                    pass
+                except IDNotFound:
+                    warn(f"Edge {e} does not exist!")
         except AttributeError:
             # treat `values` as a constant
-            for id in H.edges:
-                H._edge_attr[id][name] = values
+            for e in H.edges:
+                H._edge_attr[e][name] = values
     else:
         try:
-            for id, d in values.items():
+            for e, d in values.items():
                 try:
-                    H._edge_attr[id].update(d)
-                except KeyError:
-                    pass
+                    H._edge_attr[e].update(d)
+                except IDNotFound:
+                    warn(f"Edge {e} does not exist!")
         except AttributeError:
             raise XGIError(
                 "name property has not been set and a dict-of-dicts has not been provided."

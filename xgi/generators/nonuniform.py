@@ -9,7 +9,7 @@ import numpy as np
 
 from ..classes import SimplicialComplex
 from ..utils import np_random_state, py_random_state
-from .classic import empty_hypergraph, lattice
+from .classic import empty_hypergraph, ring_lattice
 
 __all__ = [
     "chung_lu_hypergraph",
@@ -449,7 +449,7 @@ def random_flag_complex(N, p, max_order=2, seed=None):
 
 @np_random_state("seed")
 def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
-    H = lattice(n, d, k, l)
+    H = ring_lattice(n, d, k, l)
     to_remove = []
     to_add = []
     for e in H.edges:

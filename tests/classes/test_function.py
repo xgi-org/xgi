@@ -200,6 +200,12 @@ def test_set_node_attributes(edgelist1):
     with pytest.raises(XGIError):
         xgi.set_node_attributes(H4, 2)
 
+    with pytest.warns(Warning):
+        xgi.set_node_attributes(H4, {"test": "blue"}, "color")
+
+    with pytest.warns(Warning):
+        xgi.set_node_attributes(H4, {"test": {"blue": "color"}})
+
 
 def test_get_node_attributes(edgelist1):
     H1 = xgi.Hypergraph(edgelist1)
@@ -239,18 +245,24 @@ def test_set_edge_attributes(edgelist1):
         assert H1.edges[e]["weight"] == attr_dict1[e]["weight"]
 
     H2 = xgi.Hypergraph(edgelist1)
-    xgi.set_node_attributes(H2, "blue", name="color")
+    xgi.set_edge_attributes(H2, "blue", name="color")
 
-    for n in H2.nodes:
-        assert H2.nodes[n]["color"] == "blue"
+    for e in H2.edges:
+        assert H2.edges[e]["color"] == "blue"
 
     H3 = xgi.Hypergraph(edgelist1)
 
-    with pytest.raises(XGIError):
+    with pytest.warns(Warning), pytest.raises(XGIError):
         xgi.set_node_attributes(H3, attr_dict2)
 
     with pytest.raises(XGIError):
         xgi.set_edge_attributes(H3, 2)
+
+    with pytest.warns(Warning):
+        xgi.set_edge_attributes(H3, {"test": 2}, "weight")
+
+    with pytest.warns(Warning):
+        xgi.set_edge_attributes(H3, {"test": {2: "weight"}})
 
 
 def test_get_edge_attributes(edgelist1):
@@ -327,3 +339,31 @@ def test_convert_labels_to_integers(hypergraph1, hypergraph2):
 
     assert H3.nodes[0]["old_ids"] == "a"
     assert H3.edges[0]["old_ids"] == "e1"
+
+
+def test_maximal_simplices(edgelist5, edgelist8):
+    S1 = xgi.SimplicialComplex(edgelist5)
+    S2 = xgi.SimplicialComplex(edgelist8)
+
+    m1 = xgi.maximal_simplices(S1)
+    m2 = xgi.maximal_simplices(S2)
+
+    simp1 = S1.edges(m1).members()
+    simp2 = S2.edges(m2).members()
+
+    assert len(m1) == 4
+    assert {0, 1, 2, 3} in simp1
+    assert {4} in simp1
+    assert {5, 6} in simp1
+    assert {6, 7, 8} in simp1
+
+    assert len(m2) == 5
+    assert {0, 1, 2, 3, 4} in simp2
+    assert {2, 4, 5} in simp2
+    assert {1, 3, 5} in simp2
+    assert {1, 6} in simp2
+    assert {0, 6} in simp2
+
+    H = xgi.Hypergraph(edgelist5)
+    with pytest.raises(XGIError):
+        xgi.maximal_simplices(H)

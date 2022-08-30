@@ -5,7 +5,7 @@ import numpy as np
 from numpy.linalg import norm
 from scipy.sparse.linalg import eigsh
 
-from ..classes import is_uniform, convert_labels_to_integers
+from ..classes import convert_labels_to_integers, is_uniform
 from ..exception import XGIError
 from ..linalg import clique_motif_matrix, incidence_matrix
 

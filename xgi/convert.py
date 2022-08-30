@@ -62,7 +62,7 @@ def convert_to_hypergraph(data, create_using=None):
 
     """
     if data is None:
-        empty_hypergraph(create_using)
+        return empty_hypergraph(create_using)
 
     elif isinstance(data, Hypergraph):
         H = empty_hypergraph(create_using)
@@ -86,6 +86,9 @@ def convert_to_hypergraph(data, create_using=None):
         data, (ndarray, matrix, csr_matrix, csc_matrix, coo_matrix, lil_matrix)
     ):
         from_incidence_matrix(data, create_using)
+
+    else:
+        raise XGIError("Not able to convert to a hypergraph because the input data was not a supported type!")
 
 
 def convert_to_graph(H):
@@ -135,7 +138,7 @@ def convert_to_simplicial_complex(data, create_using=None):
     """
 
     if data is None:
-        empty_hypergraph(create_using)
+        return empty_hypergraph(create_using)
 
     elif isinstance(data, SimplicialComplex):
         H = empty_simplicial_complex(create_using)
@@ -161,6 +164,8 @@ def convert_to_simplicial_complex(data, create_using=None):
         raise XGIError(
             "Not implemented: construction of a SimplicialComplex from incidence matrix"
         )
+    else:
+        raise XGIError("Not able to convert to a simplicial complex because the input data was not of a supported type!")
 
 
 def from_hyperedge_list(d, create_using=None, max_order=None):
@@ -207,7 +212,7 @@ def to_hyperedge_list(H):
     --------
     from_hyperedge_list
     """
-    return list(H.edges.values())
+    return H.edges.members()
 
 
 def from_hyperedge_dict(d, create_using=None):
@@ -293,12 +298,12 @@ def from_bipartite_pandas_dataframe(
     # try to get by labels first
     try:
         d = df[[node_column, edge_column]]
-    except Exception:
+    except KeyError:
         # try to index the labels
         try:
             columns = list(df.columns)
             d = df[[columns[node_column], columns[edge_column]]]
-        except KeyError:
+        except (KeyError, TypeError):
             raise XGIError("Invalid columns specified")
 
     if isinstance(H, SimplicialComplex):

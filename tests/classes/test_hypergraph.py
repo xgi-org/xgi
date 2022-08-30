@@ -33,6 +33,9 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
         == list(H_hg.edges.members(0))
     )
 
+    with pytest.raises(XGIError):
+        xgi.Hypergraph(1)
+
 
 def test_hypergraph_attrs():
     H = xgi.Hypergraph()
@@ -196,7 +199,10 @@ def test_add_edges_from_iterable_of_members():
     assert list(H.edges.members()) == edges
 
     H1 = xgi.Hypergraph(edges)
-    H = xgi.Hypergraph(H1.edges)
+    with pytest.raises(XGIError):
+        xgi.Hypergraph(H1.edges)
+
+    H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert list(H.edges.members()) == edges
 
