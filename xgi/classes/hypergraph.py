@@ -282,7 +282,7 @@ class Hypergraph:
 
         """
         if node not in self._node:
-            self._node[node] = []
+            self._node[node] = set()
             self._node_attr[node] = self._node_attr_dict_factory()
         self._node_attr[node].update(attr)
 
@@ -316,7 +316,7 @@ class Hypergraph:
                 newdict = attr.copy()
                 newdict.update(ndict)
             if newnode:
-                self._node[n] = []
+                self._node[n] = set()
                 self._node_attr[n] = self._node_attr_dict_factory()
             self._node_attr[n].update(newdict)
 
@@ -415,13 +415,13 @@ class Hypergraph:
             raise XGIError("Cannot add an empty edge")
 
         uid = next(self._edge_uid) if not id else id
-        self._edge[uid] = []
+        self._edge[uid] = set()
         for node in members:
             if node not in self._node:
-                self._node[node] = []
+                self._node[node] = set()
                 self._node_attr[node] = self._node_attr_dict_factory()
-            self._node[node].append(uid)
-            self._edge[uid].append(node)
+            self._node[node].add(uid)
+            self._edge[uid].add(node)
 
         self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
@@ -532,9 +532,9 @@ class Hypergraph:
                     raise XGIError("Invalid ebunch format") from e
                 for n in members:
                     if n not in self._node:
-                        self._node[n] = []
+                        self._node[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].append(uid)
+                    self._node[n].add(uid)
                 self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             return
 
@@ -587,9 +587,9 @@ class Hypergraph:
 
             for n in members:
                 if n not in self._node:
-                    self._node[n] = []
+                    self._node[n] = set()
                     self._node_attr[n] = self._node_attr_dict_factory()
-                self._node[n].append(uid)
+                self._node[n].add(uid)
 
             self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             self._edge_attr[uid].update(attr)
@@ -733,13 +733,13 @@ class Hypergraph:
 
         """
         if edge not in self._edge:
-            self._edge[edge] = []
+            self._edge[edge] = set()
             self._edge_attr[edge] = {}
         if node not in self._node:
-            self._node[node] = []
+            self._node[node] = set()
             self._node_attr[node] = {}
-        self._edge[edge].append(node)
-        self._node[node].append(edge)
+        self._edge[edge].add(node)
+        self._node[node].add(edge)
 
     def remove_edge(self, id):
         """Remove one edge.
