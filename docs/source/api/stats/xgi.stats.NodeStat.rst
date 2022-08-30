@@ -31,3 +31,4 @@
       ~NodeStat.min
       ~NodeStat.std
       ~NodeStat.var
+      ~NodeStat.moment

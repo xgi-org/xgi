@@ -49,6 +49,7 @@ from typing import Callable
 
 import numpy as np
 import pandas as pd
+from scipy.stats import moment as spmoment
 
 from xgi.exception import IDNotFound
 
@@ -245,6 +246,20 @@ class IDStat:
     def var(self):
         """The variance of this stat."""
         return self.asnumpy().var(axis=0)
+
+    def moment(self, order=2, center=False):
+        """The statistical moments of this stat.
+
+        Parameters
+        ----------
+        order : int (default 2)
+            The order of the moment.
+        center : bool (default False)
+            Whether to compute the centered (False) or uncentered/raw (True) moment.
+
+        """
+        arr = self.asnumpy()
+        return spmoment(arr, moment=order) if center else np.mean(arr ** order)
 
     def dist(self):
         return np.histogram(self.asnumpy(), density=True)
