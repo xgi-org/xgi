@@ -380,7 +380,8 @@ class IDView(Mapping, Set):
         Notes
         -----
         The IDs returned are in an arbitrary order, that is duplicates are not
-        guaranteed to be consecutive.
+        guaranteed to be consecutive. For IDs with the same bipartite neighbors,
+        only the first ID added is not a duplicate.
 
         See Also
         --------
