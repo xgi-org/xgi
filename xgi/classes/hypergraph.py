@@ -963,3 +963,11 @@ class Hypergraph:
         dual._hypergraph = deepcopy(self._hypergraph)
 
         return dual
+
+    def cleanup(self, remove_isolates=True, remove_singletons=True, remove_multiedges=True):
+        if remove_multiedges:
+            self.remove_edges_from(self.edges.duplicates())
+        if remove_singletons:
+            self.remove_edges_from(self.edges.singletons())
+        if remove_isolates:
+            self.remove_nodes_from(self.nodes.isolates())
