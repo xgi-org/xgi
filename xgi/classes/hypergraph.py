@@ -994,4 +994,16 @@ class Hypergraph:
             from .function import convert_labels_to_integers
 
             temp = convert_labels_to_integers(self).copy()
-            self = temp.copy()
+
+            nn = temp.nodes
+            ee = temp.edges
+
+            self.remove_nodes_from(list(self._node))
+            self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+            
+            self.remove_edges_from(list(self._edge))
+            self.add_edges_from(
+            (e, id, deepcopy(temp.edges[id]))
+            for id, e in ee.members(dtype=dict).items()
+        )
+            self._hypergraph = deepcopy(temp._hypergraph)
