@@ -320,13 +320,21 @@ class Hypergraph:
                 self._node_attr[n] = self._node_attr_dict_factory()
             self._node_attr[n].update(newdict)
 
-    def remove_node(self, n):
-        """Remove a single node and all adjacent hyperedges.
+    def remove_node(self, n, strong=False):
+        """Remove a single node.
+
+        The removal may be weak (default) or strong.  In weak removal, the node is
+        removed from each of its containing edges.  If it is contained in any singleton
+        edges, then these are also removed.  In strong removal, all edges containing the
+        node are removed, regardless of size.
 
         Parameters
         ----------
         n : node
-           A node in the hypergraph
+            A node in the hypergraph
+
+        strong : bool (default False)
+            Whether to execute weak or strong removal.
 
         Raises
         ------
@@ -341,11 +349,17 @@ class Hypergraph:
         edge_neighbors = self._node[n]
         del self._node[n]
         del self._node_attr[n]
-        for edge in edge_neighbors:
-            self._edge[edge].remove(n)
-            if not self._edge[edge]:
+
+        if strong:
+            for edge in edge_neighbors:
                 del self._edge[edge]
                 del self._edge_attr[edge]
+        else:  # weak removal
+            for edge in edge_neighbors:
+                self._edge[edge].remove(n)
+                if not self._edge[edge]:
+                    del self._edge[edge]
+                    del self._edge_attr[edge]
 
     def remove_nodes_from(self, nodes):
         """Remove multiple nodes.
