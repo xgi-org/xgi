@@ -474,14 +474,14 @@ class Hypergraph:
 
         >>> H.add_edges_from([[0, 1], [1, 2], [2, 3, 4]])
         >>> H.edges.members(dtype=dict)
-        {0: [0, 1], 1: [1, 2], 2: [2, 3, 4]}
+        {0: {0, 1}, 1: {1, 2}, 2: {2, 3, 4}}
 
         Custom edge ids can be specified using a dict.
 
         >>> H = xgi.Hypergraph()
         >>> H.add_edges_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
         >>> H.edges.members(dtype=dict)
-        {'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]}
+        {'one': {0, 1}, 'two': {1, 2}, 'three': {2, 3, 4}}
 
         You can use the dict format to easily add edges from another hypergraph.
 
@@ -495,7 +495,7 @@ class Hypergraph:
         >>> H = xgi.Hypergraph()
         >>> H.add_edges_from([([0, 1], 'one'), ([1, 2], 'two'), ([2, 3, 4], 'three')])
         >>> H.edges.members(dtype=dict)
-        {'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]}
+        {'one': {0, 1}, 'two': {1, 2}, 'three': {2, 3, 4}}
 
         Attributes for each edge may be specified using a 2-tuple for each edge.
         Numeric IDs will be assigned automatically.
@@ -640,7 +640,7 @@ class Hypergraph:
         except KeyError:
             XGIError("Empty or invalid edges specified.")
 
-    def double_edge_swap(self, n_id1, n_id2, e_id1, e_id2, is_loopy=True):
+    def double_edge_swap(self, n_id1, n_id2, e_id1, e_id2):
         """Swap the edge memberships of two selected nodes, given two edges.
 
         Parameters
@@ -653,8 +653,6 @@ class Hypergraph:
             The ID of the first edge.
         e_id2 : hashable
             The ID of the second edge.
-        is_loopy : bool, default True
-            Whether edges can be loopy.
 
         Raises
         ------
@@ -670,31 +668,32 @@ class Hypergraph:
         >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4]])
         >>> H.double_edge_swap(1, 4, 0, 1)
         >>> H.edges.members()
-        [[4, 2, 3], [3, 1]]
+        [{2, 3, 4}, {1, 3}]
 
         """
         # Assign edges to modify
         try:
+
             temp_memberships1 = list(self._node[n_id1])
-            temp_memberships1[self._node[n_id1].index(e_id1)] = e_id2
+            temp_memberships1[temp_memberships1.index(e_id1)] = e_id2
 
             temp_memberships2 = list(self._node[n_id2])
-            temp_memberships2[self._node[n_id2].index(e_id2)] = e_id1
+            temp_memberships2[temp_memberships2.index(e_id2)] = e_id1
 
             temp_members1 = list(self._edge[e_id1])
-            temp_members1[self._edge[e_id1].index(n_id1)] = n_id2
+            temp_members1[temp_members1.index(n_id1)] = n_id2
 
             temp_members2 = list(self._edge[e_id2])
-            temp_members2[self._edge[e_id2].index(n_id2)] = n_id1
+            temp_members2[temp_members2.index(n_id2)] = n_id1
 
-        except ValueError:
+        except ValueError as e:
             raise XGIError(
                 "One of the nodes specified doesn't belong to the specified edge."
-            )
+            ) from e
 
-        if (len(set(temp_members1)) < len(set(self._edge[e_id1]))
-            or len(set(temp_members2)) < len(set(self._edge[e_id2]))
-        ):
+        if len(set(temp_members1)) < len(set(self._edge[e_id1])) or len(
+            set(temp_members2)
+        ) < len(set(self._edge[e_id2])):
             raise XGIError("This will create a loopy hyperedge.")
 
         self._node[n_id1] = set(temp_memberships1)
@@ -727,7 +726,8 @@ class Hypergraph:
         >>> H.add_edge(['apple', 'banana'], 'fruits')
         >>> H.add_node_to_edge('fruits', 'pear')
         >>> H.add_node_to_edge('veggies', 'lettuce')
-        >>> H.edges.members(dtype=dict)
+        >>> d = H.edges.members(dtype=dict)
+        >>> {id: sorted(list(e)) for id, e in d.items()}
         {'fruits': ['apple', 'banana', 'pear'], 'veggies': ['lettuce']}
 
         """

@@ -6,7 +6,7 @@ edge size of a hypergraph.  Views are automatically updaed when the hypergraph c
 
 """
 
-from collections import Counter, defaultdict
+from collections import defaultdict
 from collections.abc import Mapping, Set
 
 from ..exception import IDNotFound, XGIError
@@ -386,19 +386,19 @@ class IDView(Mapping, Set):
         >>> import xgi
         >>> H = xgi.Hypergraph([[0, 1, 2], [3, 4, 2], [0, 1, 2]])
         >>> H.edges.duplicates()
-        EdgeView((0, 2))
+        EdgeView((2,))
 
         Order does not matter:
 
-        >>> H = xgi.Hypergraph([[0, 1, 2], [0, 1, 2]])
+        >>> H = xgi.Hypergraph([[2, 1, 0], [0, 1, 2], [1, 2, 0]])
         >>> H.edges.duplicates()
-        EdgeView((0, 1))
+        EdgeView((1, 2))
 
         Repetitions matter:
 
-        >>> H = xgi.Hypergraph([[0, 1, 1], [1, 0, 1]])
+        >>> H = xgi.Hypergraph([[0, 1], [1, 0]])
         >>> H.edges.duplicates()
-        EdgeView((0, 1))
+        EdgeView((1,))
 
         """
         dups = []
@@ -408,13 +408,8 @@ class IDView(Mapping, Set):
         for _, edges in hashes.items():
             if len(edges) == 1:
                 continue
-            for edge1 in edges:
-                for edge2 in edges:
-                    if edge1 == edge2:
-                        continue
-                    if Counter(self._id_dict[edge1]) == Counter(self._id_dict[edge2]):
-                        dups.append(edge1)
-                        dups.append(edge2)
+            else:
+                dups.extend(edges[1:])
         return self.__class__.from_view(self, bunch=dups)
 
     def lookup(self, neighbors):

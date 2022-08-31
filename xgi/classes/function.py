@@ -1,8 +1,8 @@
 """Functional interface to hypergraph methods and assorted utilities."""
 
 from collections import Counter
-from warnings import warn
 from copy import deepcopy
+from warnings import warn
 
 from ..exception import IDNotFound, XGIError
 from .hypergraph import Hypergraph
@@ -138,9 +138,9 @@ def edge_neighborhood(H, n, include_self=False):
     >>> H.nodes.neighbors(3)
     {1, 2, 4}
     >>> xgi.edge_neighborhood(H, 3)
-    [[1, 2], [4]]
+    [{1, 2}, {4}]
     >>> xgi.edge_neighborhood(H, 3, include_self=True)
-    [[1, 2, 3], [3, 4]]
+    [{1, 2, 3}, {3, 4}]
 
     """
     if include_self:
@@ -647,11 +647,10 @@ def convert_labels_to_integers(H, label_attribute="label"):
     temp_H = Hypergraph()
     temp_H._hypergraph = deepcopy(H._hypergraph)
 
-    temp_H.add_nodes_from(
-        (id, deepcopy(H.nodes[n]))
-        for n, id in node_dict.items()
+    temp_H.add_nodes_from((id, deepcopy(H.nodes[n])) for n, id in node_dict.items())
+    set_node_attributes(
+        temp_H, {n: {label_attribute: id} for id, n in node_dict.items()}
     )
-    set_node_attributes(temp_H, {n: {label_attribute: id} for id, n in node_dict.items()})
 
     temp_H.add_edges_from(
         (
@@ -661,6 +660,8 @@ def convert_labels_to_integers(H, label_attribute="label"):
         )
         for id, e in H.edges.members(dtype=dict).items()
     )
-    set_edge_attributes(temp_H, {e: {label_attribute: id} for id, e in edge_dict.items()})
-    
+    set_edge_attributes(
+        temp_H, {e: {label_attribute: id} for id, e in edge_dict.items()}
+    )
+
     return temp_H

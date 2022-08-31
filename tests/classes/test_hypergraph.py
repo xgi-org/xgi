@@ -374,13 +374,13 @@ def test_double_edge_swap(edgelist1):
     H = xgi.Hypergraph(edgelist1)
 
     with pytest.raises(XGIError):
-        H.double_edge_swap(5, 6, 2, 3, is_loopy=False)
+        H.double_edge_swap(5, 6, 2, 3)
 
     H.double_edge_swap(1, 6, 0, 3)
-    assert H.edges.members() == [[6, 2, 3], [4], [5, 6], [1, 7, 8]]
+    assert H.edges.members() == [{2, 3, 6}, {4}, {5, 6}, {1, 7, 8}]
 
     H.double_edge_swap(3, 4, 0, 1)
-    assert H.edges.members() == [[6, 2, 4], [3], [5, 6], [1, 7, 8]]
+    assert H.edges.members() == [{2, 4, 6}, {3}, {5, 6}, {1, 7, 8}]
 
     with pytest.raises(IDNotFound):
         H.double_edge_swap(10, 3, 0, 1)
@@ -388,31 +388,27 @@ def test_double_edge_swap(edgelist1):
     with pytest.raises(XGIError):
         H.double_edge_swap(8, 3, 0, 1)
 
-    # loopy swap
-    H.double_edge_swap(4, 6, 0, 2)
-    assert H.edges.members() == [[6, 2, 6], [3], [5, 4], [1, 7, 8]]
-
 
 def test_duplicate_edges(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     assert list(H.edges.duplicates()) == []
 
     H.add_edge([1, 3, 2])  # same order as existing edge
-    assert list(H.edges.duplicates()) == [0, 4]
+    assert set(H.edges.duplicates()) == {4}
 
     H.add_edge([1, 2, 3])  # different order, same members
-    assert list(H.edges.duplicates()) == [0, 4, 5]
+    assert set(H.edges.duplicates()) == {4, 5}
 
     H = xgi.Hypergraph([[1, 2, 3, 3], [1, 2, 3]])  # repeated nodes
-    assert list(H.edges.duplicates()) == []
+    assert set(H.edges.duplicates()) == {1}
 
     H = xgi.Hypergraph([[1, 2, 3, 3], [3, 1, 2, 3]])  # repeated nodes
-    assert list(H.edges.duplicates()) == [0, 1]
+    assert set(H.edges.duplicates()) == {1}
 
 
 def test_duplicate_nodes(edgelist1):
     H = xgi.Hypergraph(edgelist1)
-    assert list(H.nodes.duplicates()) == [1, 2, 3, 7, 8]
+    assert set(H.nodes.duplicates()) == {2, 3, 8}
 
     H.add_edges_from([[1, 4], [2, 6, 7], [6, 8]])
     assert list(H.nodes.duplicates()) == []
@@ -423,4 +419,4 @@ def test_duplicate_nodes(edgelist1):
             H.add_node_to_edge(edgeid, 2)
         if 1 not in members and 2 in members:
             H.add_node_to_edge(edgeid, 1)
-    assert list(H.nodes.duplicates()) == [1, 2]
+    assert list(H.nodes.duplicates()) == [2]
