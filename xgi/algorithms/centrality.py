@@ -150,6 +150,7 @@ def apply(H, x, g=lambda v, e: np.sum(v[list(e)])):
     """
     new_x = np.zeros(H.num_nodes)
     for edge in H.edges.members():
+        edge = list(edge)
         # ordered permutations
         for shift in range(len(edge)):
             new_x[edge[shift]] += g(x, edge[shift + 1 :] + edge[:shift])

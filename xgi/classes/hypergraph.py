@@ -410,7 +410,7 @@ class Hypergraph:
         {'color': 'red', 'place': 'peru'}
 
         """
-        members = list(members)
+        members = set(members)
         if not members:
             raise XGIError("Cannot add an empty edge")
 
@@ -527,7 +527,7 @@ class Hypergraph:
         if isinstance(ebunch_to_add, dict):
             for uid, members in ebunch_to_add.items():
                 try:
-                    self._edge[uid] = list(members)
+                    self._edge[uid] = set(members)
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
                 for n in members:
@@ -581,7 +581,7 @@ class Hypergraph:
                 members, uid, eattr = e[0], e[1], e[2]
 
             try:
-                self._edge[uid] = list(members)
+                self._edge[uid] = set(members)
             except TypeError as e:
                 raise XGIError("Invalid ebunch format") from e
 
@@ -692,17 +692,16 @@ class Hypergraph:
                 "One of the nodes specified doesn't belong to the specified edge."
             )
 
-        if not is_loopy and (
-            len(set(temp_members1)) < len(set(self._edge[e_id1]))
+        if (len(set(temp_members1)) < len(set(self._edge[e_id1]))
             or len(set(temp_members2)) < len(set(self._edge[e_id2]))
         ):
             raise XGIError("This will create a loopy hyperedge.")
 
-        self._node[n_id1] = temp_memberships1
-        self._node[n_id2] = temp_memberships2
+        self._node[n_id1] = set(temp_memberships1)
+        self._node[n_id2] = set(temp_memberships2)
 
-        self._edge[e_id1] = temp_members1
-        self._edge[e_id2] = temp_members2
+        self._edge[e_id1] = set(temp_members1)
+        self._edge[e_id2] = set(temp_members2)
 
     def add_node_to_edge(self, edge, node):
         """Add one node to an existing edge.

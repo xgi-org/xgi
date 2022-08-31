@@ -259,7 +259,7 @@ class IDStat:
 
         """
         arr = self.asnumpy()
-        return spmoment(arr, moment=order) if center else np.mean(arr ** order)
+        return spmoment(arr, moment=order) if center else np.mean(arr**order)
 
     def dist(self):
         return np.histogram(self.asnumpy(), density=True)

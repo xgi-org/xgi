@@ -457,12 +457,8 @@ class IDView(Mapping, Set):
         NodeView(('a',))
 
         """
-        sought = Counter(neighbors)
-        found = [
-            idx
-            for idx, neighbors in self._id_dict.items()
-            if Counter(neighbors) == sought
-        ]
+        sought = set(neighbors)
+        found = [idx for idx, neighbors in self._id_dict.items() if neighbors == sought]
         return self.__class__.from_view(self, bunch=found)
 
     @classmethod

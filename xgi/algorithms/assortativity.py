@@ -135,6 +135,7 @@ def choose_degrees(e, k, kind="uniform"):
     Journal of Complex Networks 2020.
     DOI: 10.1093/comnet/cnaa018
     """
+    e = list(e)
     if len(e) > 1:
         if kind == "uniform":
             i = np.random.randint(len(e))

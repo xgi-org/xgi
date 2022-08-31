@@ -254,9 +254,9 @@ class SimplicialComplex(Hypergraph):
                     if n not in self._node:
                         if n is None:
                             raise ValueError("None cannot be a node")
-                        self._node[n] = list()
+                        self._node[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].append(uid)
+                    self._node[n].add(uid)
 
                 try:
                     self._edge[uid] = frozenset(simplex)
