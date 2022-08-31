@@ -411,7 +411,7 @@ def test_duplicate_nodes(edgelist1):
     assert set(H.nodes.duplicates()) == {2, 3, 8}
 
     H.add_edges_from([[1, 4], [2, 6, 7], [6, 8]])
-    assert list(H.nodes.duplicates()) == []
+    assert set(H.nodes.duplicates()) == set()
 
     # this loop makes 1 and 2 belong to the same edges
     for edgeid, members in H.edges.members(dtype=dict).items():
@@ -419,7 +419,7 @@ def test_duplicate_nodes(edgelist1):
             H.add_node_to_edge(edgeid, 2)
         if 1 not in members and 2 in members:
             H.add_node_to_edge(edgeid, 1)
-    assert list(H.nodes.duplicates()) == [2]
+    assert set(H.nodes.duplicates()) == {2}
 
 
 def test_remove_node_weak(edgelist1):

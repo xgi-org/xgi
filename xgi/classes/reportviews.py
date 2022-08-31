@@ -396,9 +396,9 @@ class IDView(Mapping, Set):
 
         Order does not matter:
 
-        >>> H = xgi.Hypergraph([[2, 1, 0], [0, 1, 2], [1, 2, 0]])
+        >>> H = xgi.Hypergraph([[2, 1, 0], [0, 1, 2]])
         >>> H.edges.duplicates()
-        EdgeView((1, 2))
+        EdgeView((1,))
 
         Repetitions matter:
 

@@ -964,10 +964,34 @@ class Hypergraph:
 
         return dual
 
-    def cleanup(self, remove_isolates=True, remove_singletons=True, remove_multiedges=True):
+    def cleanup(
+        self,
+        remove_isolates=True,
+        remove_singletons=True,
+        remove_multiedges=True,
+        reindex=True,
+    ):
+        """Removes potentially undesirable artifacts from the hypergraph.
+
+        Parameters
+        ----------
+        remove_isolates : bool, optional
+            Whether to remove isolated nodes, by default True
+        remove_singletons : bool, optional
+            Whether to remove singleton edges, by default True
+        remove_multiedges : bool, optional
+            Whether to remove duplicate edges, by default True
+        reindex : bool, optional
+            Whether to convert all node and edge labels to sequential integers, by default True
+        """
         if remove_multiedges:
             self.remove_edges_from(self.edges.duplicates())
         if remove_singletons:
             self.remove_edges_from(self.edges.singletons())
         if remove_isolates:
             self.remove_nodes_from(self.nodes.isolates())
+        if reindex:
+            from .function import convert_labels_to_integers
+
+            temp = convert_labels_to_integers(self).copy()
+            self = temp.copy()
