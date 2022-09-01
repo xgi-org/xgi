@@ -372,6 +372,11 @@ class IDView(Mapping, Set):
         IDView
             A view containing only those IDs with a duplicate.
 
+        Raises
+        ------
+        TypeError
+            When IDs are of different types. For example, ("a", 1).
+
         Notes
         -----
         The IDs returned are in an arbitrary order, that is duplicates are not
