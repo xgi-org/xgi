@@ -88,9 +88,7 @@ def convert_to_hypergraph(data, create_using=None):
         from_incidence_matrix(data, create_using)
 
     else:
-        raise XGIError(
-            "Not able to convert to a hypergraph because the input data was not a supported type!"
-        )
+        raise XGIError("Input data has unsupported type.")
 
 
 def convert_to_graph(H):
@@ -167,9 +165,7 @@ def convert_to_simplicial_complex(data, create_using=None):
             "Not implemented: construction of a SimplicialComplex from incidence matrix"
         )
     else:
-        raise XGIError(
-            "Not able to convert to a simplicial complex because the input data was not of a supported type!"
-        )
+        raise XGIError("Input data has unsupported type.")
 
 
 def from_hyperedge_list(d, create_using=None, max_order=None):

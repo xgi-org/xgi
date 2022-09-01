@@ -933,7 +933,7 @@ class Hypergraph:
         # use the somewhat convoluted float(e).is_integer() instead of using
         # isinstance(e, int) because there exist integer-like numeric types (such as
         # np.int32) which fail the isinstance() check.
-        edges_with_int_id = [e for e in self.edges if float(e).is_integer()]
+        edges_with_int_id = [int(e) for e in self.edges if float(e).is_integer()]
 
         # Then, we set the start at one plus the maximum edge ID that is an integer,
         # because count() only yields integer IDs.
@@ -966,44 +966,62 @@ class Hypergraph:
 
     def cleanup(
         self,
-        remove_isolates=True,
-        remove_singletons=True,
-        remove_multiedges=True,
-        reindex=True,
+        isolates=False,
+        singletons=False,
+        multiedges=False,
+        relabel=True,
+        in_place=True,
     ):
         """Removes potentially undesirable artifacts from the hypergraph.
 
         Parameters
         ----------
-        remove_isolates : bool, optional
-            Whether to remove isolated nodes, by default True
-        remove_singletons : bool, optional
-            Whether to remove singleton edges, by default True
-        remove_multiedges : bool, optional
-            Whether to remove duplicate edges, by default True
-        reindex : bool, optional
+        isolates : bool, optional
+            Whether isolated nodes are allowed, by default False
+        singletons : bool, optional
+            Whether singleton edges are allowed, by default False
+        multiedges : bool, optional
+            Whether multiedges are allowed, by default False
+        relabel : bool, optional
             Whether to convert all node and edge labels to sequential integers, by default True
+        in_place : bool, optional
+            Whether to modify the current hypergraph or output a new one, by default True
         """
-        if remove_multiedges:
-            self.remove_edges_from(self.edges.duplicates())
-        if remove_singletons:
-            self.remove_edges_from(self.edges.singletons())
-        if remove_isolates:
-            self.remove_nodes_from(self.nodes.isolates())
-        if reindex:
-            from .function import convert_labels_to_integers
+        if in_place:
+            if not multiedges:
+                self.remove_edges_from(self.edges.duplicates())
+            if not singletons:
+                self.remove_edges_from(self.edges.singletons())
+            if not isolates:
+                self.remove_nodes_from(self.nodes.isolates())
+            if relabel:
+                from .function import convert_labels_to_integers
 
-            temp = convert_labels_to_integers(self).copy()
+                temp = convert_labels_to_integers(self).copy()
 
-            nn = temp.nodes
-            ee = temp.edges
+                nn = temp.nodes
+                ee = temp.edges
 
-            self.remove_nodes_from(list(self._node))
-            self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-            
-            self.remove_edges_from(list(self._edge))
-            self.add_edges_from(
-            (e, id, deepcopy(temp.edges[id]))
-            for id, e in ee.members(dtype=dict).items()
-        )
-            self._hypergraph = deepcopy(temp._hypergraph)
+                self.remove_nodes_from(list(self._node))
+                self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+
+                self.remove_edges_from(list(self._edge))
+                self.add_edges_from(
+                    (e, id, deepcopy(temp.edges[id]))
+                    for id, e in ee.members(dtype=dict).items()
+                )
+                self._hypergraph = deepcopy(temp._hypergraph)
+        else:
+            H = self.copy()
+            if not multiedges:
+                H.remove_edges_from(H.edges.duplicates())
+            if not singletons:
+                H.remove_edges_from(H.edges.singletons())
+            if not isolates:
+                H.remove_nodes_from(H.nodes.isolates())
+            if relabel:
+                from .function import convert_labels_to_integers
+
+                H = convert_labels_to_integers(H)
+
+            return H
