@@ -12,18 +12,18 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     H_hg = xgi.Hypergraph(H_list)
 
     assert (
-        list(H_list.nodes)
-        == list(H_dict.nodes)
-        == list(H_mat.nodes)
-        == list(H_df.nodes)
-        == list(H_hg.nodes)
+        set(H_list.nodes)
+        == set(H_dict.nodes)
+        == set(H_mat.nodes)
+        == set(H_df.nodes)
+        == set(H_hg.nodes)
     )
     assert (
-        list(H_list.edges)
-        == list(H_dict.edges)
-        == list(H_mat.edges)
-        == list(H_df.edges)
-        == list(H_hg.edges)
+        set(H_list.edges)
+        == set(H_dict.edges)
+        == set(H_mat.edges)
+        == set(H_df.edges)
+        == set(H_hg.edges)
     )
     assert (
         H_list.edges.members(0)
@@ -193,10 +193,10 @@ def test_add_node_to_edge():
 
 
 def test_add_edges_from_iterable_of_members():
-    edges = [[0, 1], [1, 2], [2, 3, 4]]
+    edges = [{0, 1}, {1, 2}, {2, 3, 4}]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
-    assert list(H.edges.members()) == [set(e) for e in edges]
+    assert H.edges.members() == edges
 
     H1 = xgi.Hypergraph(edges)
     with pytest.raises(XGIError):
@@ -204,75 +204,75 @@ def test_add_edges_from_iterable_of_members():
 
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
-    assert list(H.edges.members()) == [set(e) for e in edges]
+    assert H.edges.members() == edges
 
     edges = {frozenset([0, 1]), frozenset([1, 2]), frozenset([2, 3, 4])}
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
-    assert list(H.edges.members()) == [set(e) for e in edges]
+    assert H.edges.members() == [set(e) for e in edges]
 
-    edges = [[0, 1], frozenset([1, 2]), (2, 3, 4)]
+    edges = [[0, 1], {1, 2}, (2, 3, 4)]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
-    assert list(H.edges.members()) == [set(e) for e in edges]
+    assert H.edges.members() == [set(e) for e in edges]
 
-    edges = [["foo", "bar"], ["bar", "baz"], ["foo", "bar", "baz"]]
+    edges = [{"foo", "bar"}, {"bar", "baz"}, {"foo", "bar", "baz"}]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
-    assert list(H.nodes) == ["foo", "bar", "baz"]
-    assert list(H.edges.members()) == [set(e) for e in edges]
+    assert set(H.nodes) == {"foo", "bar", "baz"}
+    assert H.edges.members() == edges
 
-    edges = [["a", "b"], ["b", "c"], ["c", "d", "e"]]
+    edges = [{"a", "b"}, {"b", "c"}, {"c", "d", "e"}]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
-    assert list(H.nodes) == ["a", "b", "c", "d", "e"]
-    assert list(H.edges.members()) == [set(e) for e in edges]
+    assert set(H.nodes) == {"a", "b", "c", "d", "e"}
+    assert H.edges.members() == edges
 
 
 def test_add_edges_from_format1():
-    edges = [([0, 1], 0), ([1, 2], 1), ([2, 3, 4], 2)]
+    edges = [({0, 1}, 0), ({1, 2}, 1), ({2, 3, 4}, 2)]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
-    assert H.edges.members(dtype=dict) == {e[1]: set(e[0]) for e in edges}
+    assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
 
-    edges = [([0, 1], "a"), ([1, 2], "b"), ([2, 3, 4], "foo")]
+    edges = [({0, 1}, "a"), ({1, 2}, "b"), ({2, 3, 4}, "foo")]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
-    assert H.edges.members(dtype=dict) == {e[1]: set(e[0]) for e in edges}
+    assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
 
-    edges = [([0, 1], "a"), ([1, 2], "b"), ([2, 3, 4], 100)]
+    edges = [({0, 1}, "a"), ({1, 2}, "b"), ({2, 3, 4}, 100)]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
-    assert H.edges.members(dtype=dict) == {e[1]: set(e[0]) for e in edges}
+    assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
 
 
 def test_add_edges_from_format2():
     edges = [
-        ([0, 1], {"color": "red"}),
-        ([1, 2], {"age": 30}),
-        ([2, 3, 4], {"color": "blue", "age": 40}),
+        ({0, 1}, {"color": "red"}),
+        ({1, 2}, {"age": 30}),
+        ({2, 3, 4}, {"color": "blue", "age": 40}),
     ]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == list(range(len(edges)))
-    assert H.edges.members() == [set(e[0]) for e in edges]
+    assert H.edges.members() == [e[0] for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][1]
 
 
 def test_add_edges_from_format3():
     edges = [
-        ([0, 1], "one", {"color": "red"}),
-        ([1, 2], "two", {"age": 30}),
-        ([2, 3, 4], "three", {"color": "blue", "age": 40}),
+        ({0, 1}, "one", {"color": "red"}),
+        ({1, 2}, "two", {"age": 30}),
+        ({2, 3, 4}, "three", {"color": "blue", "age": 40}),
     ]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
-    assert H.edges.members() == [set(e[0]) for e in edges]
+    assert H.edges.members() == [e[0] for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][2]
 

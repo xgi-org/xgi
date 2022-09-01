@@ -22,11 +22,11 @@ def test_convert_to_graph(edgelist2, edgelist5):
 
     G1 = xgi.convert_to_graph(H1)
     assert set(G1.nodes) == {1, 2, 3, 4, 5, 6}
-    assert list(G1.edges) == [(1, 2), (3, 4), (4, 5), (4, 6), (5, 6)]
+    assert set(G1.edges) == {(1, 2), (3, 4), (4, 5), (4, 6), (5, 6)}
 
     G2 = xgi.convert_to_graph(H2)
     assert set(G2.nodes) == {0, 1, 2, 3, 4, 5, 6, 7, 8}
-    assert list(G2.edges) == [
+    assert set(G2.edges) == {
         (0, 1),
         (0, 2),
         (0, 3),
@@ -37,7 +37,7 @@ def test_convert_to_graph(edgelist2, edgelist5):
         (6, 7),
         (6, 8),
         (7, 8),
-    ]
+    }
 
 
 def test_to_hyperedge_list(edgelist1):

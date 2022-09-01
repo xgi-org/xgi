@@ -240,7 +240,7 @@ class SimplicialComplex(Hypergraph):
             ebunch_to_add = new_ebunch_to_add
 
         for simplex in ebunch_to_add:
-
+            simplex = list(simplex)
             if isinstance(simplex[-1], dict):
                 dd = simplex[-1]
                 simplex = simplex[:-1]

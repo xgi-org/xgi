@@ -532,7 +532,7 @@ class NodeView(IDView):
 
         Returns
         -------
-        list
+        set
             Edge memberships.
 
         Raises
@@ -624,6 +624,8 @@ class EdgeView(IDView):
             Edge members.
         dict (if dtype is dict)
             Edge members.
+        set (if e is not None)
+            Members of edge e.
 
         Raises
         ------
