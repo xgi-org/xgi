@@ -26,17 +26,17 @@ def test_convert_to_graph(edgelist2, edgelist5):
 
     G2 = xgi.convert_to_graph(H2)
     assert set(G2.nodes) == {0, 1, 2, 3, 4, 5, 6, 7, 8}
-    assert set(G2.edges) == {
-        (0, 1),
-        (0, 2),
-        (0, 3),
-        (1, 2),
-        (1, 3),
-        (2, 3),
-        (5, 6),
-        (6, 7),
-        (6, 8),
-        (7, 8),
+    assert {frozenset(e) for e in G2.edges} == {
+        frozenset({0, 1}),
+        frozenset({0, 2}),
+        frozenset({0, 3}),
+        frozenset({1, 2}),
+        frozenset({1, 3}),
+        frozenset({2, 3}),
+        frozenset({5, 6}),
+        frozenset({6, 7}),
+        frozenset({6, 8}),
+        frozenset({7, 8}),
     }
 
 

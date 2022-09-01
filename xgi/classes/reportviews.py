@@ -409,7 +409,7 @@ class IDView(Mapping, Set):
             if len(edges) == 1:
                 continue
             else:
-                dups.extend(edges[1:])
+                dups.extend(sorted(edges)[1:])
         return self.__class__.from_view(self, bunch=dups)
 
     def lookup(self, neighbors):
