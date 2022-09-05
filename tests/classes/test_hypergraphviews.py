@@ -42,30 +42,30 @@ def test_subhypergraph(edgelist1):
     assert xgi.is_frozen(new_H)
     assert not xgi.is_frozen(H)
 
-    assert list(H.nodes) == list(new_H.nodes)
-    assert list(H.edges) == list(new_H.edges)
+    assert set(H.nodes) == set(new_H.nodes)
+    assert set(H.edges) == set(new_H.edges)
 
     new_H = xgi.classes.hypergraphviews.subhypergraph(H, nodes=[1, 2, 3, 4, 5])
-    assert list(new_H.nodes) == [1, 2, 3, 4, 5]
-    assert list(new_H.edges) == [0, 1]
+    assert set(new_H.nodes) == {1, 2, 3, 4, 5}
+    assert set(new_H.edges) == {0, 1}
 
     new_H = xgi.classes.hypergraphviews.subhypergraph(H, edges=[1, 2])
-    assert list(new_H.nodes) == [1, 2, 3, 4, 5, 6, 7, 8]
-    assert list(new_H.edges) == [1, 2]
-    assert list(new_H.nodes.isolates(ignore_singletons=False)) == [1, 2, 3, 7, 8]
+    assert set(new_H.nodes) == {1, 2, 3, 4, 5, 6, 7, 8}
+    assert set(new_H.edges) == {1, 2}
+    assert set(new_H.nodes.isolates(ignore_singletons=False)) == {1, 2, 3, 7, 8}
 
     new_H = xgi.classes.hypergraphviews.subhypergraph(
         H, nodes=[1, 2, 3, 4, 5], edges=[1, 2]
     )
-    assert list(new_H.nodes) == [1, 2, 3, 4, 5]
-    assert list(new_H.edges) == [1]
-    assert list(new_H.nodes.isolates(ignore_singletons=False)) == [1, 2, 3, 5]
+    assert set(new_H.nodes) == {1, 2, 3, 4, 5}
+    assert set(new_H.edges) == {1}
+    assert set(new_H.nodes.isolates(ignore_singletons=False)) == {1, 2, 3, 5}
 
     new_H = xgi.classes.hypergraphviews.subhypergraph(H, nodes=[4], edges=[0, 1, 2])
-    assert list(new_H.nodes) == [4]
-    assert list(new_H.edges) == [1]
+    assert set(new_H.nodes) == {4}
+    assert set(new_H.edges) == {1}
 
     new_H = xgi.classes.hypergraphviews.subhypergraph(H, nodes=[3, 4, 5, 6], edges=[2])
-    assert list(new_H.nodes) == [3, 4, 5, 6]
-    assert list(new_H.edges) == [2]
-    assert list(new_H.nodes.isolates(ignore_singletons=False)) == [3, 4]
+    assert set(new_H.nodes) == {3, 4, 5, 6}
+    assert set(new_H.edges) == {2}
+    assert set(new_H.nodes.isolates(ignore_singletons=False)) == {3, 4}

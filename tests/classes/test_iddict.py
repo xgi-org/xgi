@@ -20,7 +20,7 @@ def test_iddict(edgelist1):
     assert H.edges[0] == dict()
 
     with pytest.raises(XGIError):
-        H._edge[None] = [1, 2, 3]
+        H._edge[None] = {1, 2, 3}
 
     with pytest.raises(IDNotFound):
         del H._node["test"]

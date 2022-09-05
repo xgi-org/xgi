@@ -46,8 +46,8 @@ def convert_to_hypergraph(data, create_using=None):
     data : object to be converted
         Current known types are:
          * a Hypergraph object
-         * list-of-lists
-         * dict-of-lists
+         * list-of-iterables
+         * dict-of-iterables
          * Pandas DataFrame (bipartite edgelist)
          * numpy matrix
          * numpy ndarray
@@ -88,7 +88,9 @@ def convert_to_hypergraph(data, create_using=None):
         from_incidence_matrix(data, create_using)
 
     else:
-        raise XGIError("Not able to convert to a hypergraph because the input data was not a supported type!")
+        raise XGIError(
+            "Not able to convert to a hypergraph because the input data was not a supported type!"
+        )
 
 
 def convert_to_graph(H):
@@ -122,8 +124,8 @@ def convert_to_simplicial_complex(data, create_using=None):
     data : object to be converted
         Current known types are:
          * a Hypergraph object
-         * list-of-lists
-         * dict-of-lists
+         * list-of-iterables
+         * dict-of-iterables
          * Pandas DataFrame (bipartite edgelist)
          * numpy matrix
          * numpy ndarray
@@ -165,7 +167,9 @@ def convert_to_simplicial_complex(data, create_using=None):
             "Not implemented: construction of a SimplicialComplex from incidence matrix"
         )
     else:
-        raise XGIError("Not able to convert to a simplicial complex because the input data was not of a supported type!")
+        raise XGIError(
+            "Not able to convert to a simplicial complex because the input data was not of a supported type!"
+        )
 
 
 def from_hyperedge_list(d, create_using=None, max_order=None):
@@ -173,7 +177,7 @@ def from_hyperedge_list(d, create_using=None, max_order=None):
 
     Parameters
     ----------
-    d : list of lists
+    d : list of iterables
         A hyperedge list
     create_using : Hypergraph constructor, optional
         The hypergraph to add the edges to, by default None
@@ -205,7 +209,7 @@ def to_hyperedge_list(H):
 
     Returns
     -------
-    list of lists
+    list of sets
         The hyperedge list
 
     See Also
@@ -254,7 +258,7 @@ def to_hyperedge_dict(H):
     -------
     dict
         A dictionary where the keys are edge IDs and the values
-        are lists of nodes specifying the edges.
+        are sets of nodes specifying the edges.
 
     See Also
     --------
