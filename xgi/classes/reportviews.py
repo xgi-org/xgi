@@ -380,7 +380,8 @@ class IDView(Mapping, Set):
         Notes
         -----
         The IDs returned are in an arbitrary order, that is duplicates are not
-        guaranteed to be consecutive.
+        guaranteed to be consecutive. For IDs with the same bipartite neighbors,
+        only the first ID added is not a duplicate.
 
         See Also
         --------
@@ -395,9 +396,9 @@ class IDView(Mapping, Set):
 
         Order does not matter:
 
-        >>> H = xgi.Hypergraph([[2, 1, 0], [0, 1, 2], [1, 2, 0]])
+        >>> H = xgi.Hypergraph([[2, 1, 0], [0, 1, 2]])
         >>> H.edges.duplicates()
-        EdgeView((1, 2))
+        EdgeView((1,))
 
         Repetitions matter:
 
