@@ -44,17 +44,17 @@ def test_filterby_modes(edgelist1, edgelist8):
     assert list(H.nodes.filterby("degree", 2, "gt")) == []
     assert list(H.nodes.filterby("degree", 0, "leq")) == []
     assert list(H.nodes.filterby("degree", 1, "lt")) == []
-    assert list(H.nodes.filterby("degree", (1, 3), "between")) == list(H.nodes)
+    assert set(H.nodes.filterby("degree", (1, 3), "between")) == set(H.nodes)
 
     H = xgi.Hypergraph(edgelist8)
-    assert list(H.nodes.filterby("degree", 2)) == [5, 6]
-    assert list(H.nodes.filterby("degree", 2, "eq")) == [5, 6]
-    assert list(H.nodes.filterby("degree", 2, "neq")) == [0, 1, 2, 3, 4]
-    assert list(H.nodes.filterby("degree", 5, "geq")) == [0, 1]
-    assert list(H.nodes.filterby("degree", 5, "gt")) == [0]
-    assert list(H.nodes.filterby("degree", 2, "leq")) == [5, 6]
-    assert list(H.nodes.filterby("degree", 2, "lt")) == []
-    assert list(H.nodes.filterby("degree", (2, 3), "between")) == [4, 5, 6]
+    assert set(H.nodes.filterby("degree", 2)) == {5, 6}
+    assert set(H.nodes.filterby("degree", 2, "eq")) == {5, 6}
+    assert set(H.nodes.filterby("degree", 2, "neq")) == {0, 1, 2, 3, 4}
+    assert set(H.nodes.filterby("degree", 5, "geq")) == {0, 1}
+    assert set(H.nodes.filterby("degree", 5, "gt")) == {0}
+    assert set(H.nodes.filterby("degree", 2, "leq")) == {5, 6}
+    assert set(H.nodes.filterby("degree", 2, "lt")) == set()
+    assert set(H.nodes.filterby("degree", (2, 3), "between")) == {4, 5, 6}
 
 
 def test_call_filterby(edgelist1, edgelist8):
@@ -67,7 +67,7 @@ def test_call_filterby(edgelist1, edgelist8):
     assert filtered.asdict() == {6: 1.0}
 
     H = xgi.Hypergraph(edgelist8)
-    assert list(H.nodes([1, 2, 3]).filterby("degree", 4)) == [2, 3]
+    assert set(H.nodes([1, 2, 3]).filterby("degree", 4)) == {2, 3}
 
     filtered = H.nodes([1, 2, 3]).filterby("average_neighbor_degree", 4.0).degree
     assert filtered.asdict() == {2: 4, 3: 4}

@@ -170,9 +170,9 @@ class SimplicialComplex(Hypergraph):
                 if node not in self._node:
                     if node is None:
                         raise ValueError("None cannot be a node")
-                    self._node[node] = list()
+                    self._node[node] = set()
                     self._node_attr[node] = self._node_attr_dict_factory()
-                self._node[node].append(uid)
+                self._node[node].add(uid)
 
             try:
                 self._edge[uid] = frozenset(simplex)
@@ -240,7 +240,7 @@ class SimplicialComplex(Hypergraph):
             ebunch_to_add = new_ebunch_to_add
 
         for simplex in ebunch_to_add:
-
+            simplex = list(simplex)
             if isinstance(simplex[-1], dict):
                 dd = simplex[-1]
                 simplex = simplex[:-1]
@@ -254,9 +254,9 @@ class SimplicialComplex(Hypergraph):
                     if n not in self._node:
                         if n is None:
                             raise ValueError("None cannot be a node")
-                        self._node[n] = list()
+                        self._node[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].append(uid)
+                    self._node[n].add(uid)
 
                 try:
                     self._edge[uid] = frozenset(simplex)

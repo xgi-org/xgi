@@ -1,6 +1,7 @@
 """Functional interface to hypergraph methods and assorted utilities."""
 
 from collections import Counter
+from copy import deepcopy
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError
@@ -137,17 +138,15 @@ def edge_neighborhood(H, n, include_self=False):
     >>> H.nodes.neighbors(3)
     {1, 2, 4}
     >>> xgi.edge_neighborhood(H, 3)
-    [[1, 2], [4]]
+    [{1, 2}, {4}]
     >>> xgi.edge_neighborhood(H, 3, include_self=True)
-    [[1, 2, 3], [3, 4]]
+    [{1, 2, 3}, {3, 4}]
 
     """
     if include_self:
         return [H.edges.members(e) for e in H.nodes.memberships(n)]
     else:
-        return [
-            [x for x in H.edges.members(e) if x != n] for e in H.nodes.memberships(n)
-        ]
+        return [H.edges.members(e) - {n} for e in H.nodes.memberships(n)]
 
 
 def degree_counts(H):
@@ -646,16 +645,23 @@ def convert_labels_to_integers(H, label_attribute="label"):
     node_dict = dict(zip(H.nodes, range(H.num_nodes)))
     edge_dict = dict(zip(H.edges, range(H.num_edges)))
     temp_H = Hypergraph()
-    temp_H._hypergraph = H._hypergraph.copy()
+    temp_H._hypergraph = deepcopy(H._hypergraph)
 
-    for node, id in node_dict.items():
-        temp_H._node[id] = [edge_dict[e] for e in H._node[node]]
-        temp_H._node_attr[id] = H._node_attr[node].copy()
-        temp_H._node_attr[id][label_attribute] = node
+    temp_H.add_nodes_from((id, deepcopy(H.nodes[n])) for n, id in node_dict.items())
+    set_node_attributes(
+        temp_H, {n: {label_attribute: id} for id, n in node_dict.items()}
+    )
 
-    for edge, id in edge_dict.items():
-        temp_H._edge[id] = [node_dict[n] for n in H._edge[edge]]
-        temp_H._edge_attr[id] = H._edge_attr[edge].copy()
-        temp_H._edge_attr[id][label_attribute] = edge
+    temp_H.add_edges_from(
+        (
+            {node_dict[n] for n in e},
+            edge_dict[id],
+            deepcopy(H.edges[id]),
+        )
+        for id, e in H.edges.members(dtype=dict).items()
+    )
+    set_edge_attributes(
+        temp_H, {e: {label_attribute: id} for id, e in edge_dict.items()}
+    )
 
     return temp_H
