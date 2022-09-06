@@ -7,6 +7,7 @@
 
    .. rubric:: Functions
 
+   .. autofunction:: convert_labels_to_integers
    .. autofunction:: create_empty_copy
    .. autofunction:: degree_counts
    .. autofunction:: degree_histogram

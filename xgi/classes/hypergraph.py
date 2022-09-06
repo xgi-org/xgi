@@ -1002,10 +1002,8 @@ class Hypergraph:
                 nn = temp.nodes
                 ee = temp.edges
 
-                self.remove_nodes_from(list(self._node))
+                self.clear()
                 self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-
-                self.remove_edges_from(list(self._edge))
                 self.add_edges_from(
                     (e, id, deepcopy(temp.edges[id]))
                     for id, e in ee.members(dtype=dict).items()
