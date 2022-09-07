@@ -412,9 +412,7 @@ class IDView(Mapping, Set):
         for idx, members in self._id_dict.items():
             hashes[frozenset(members)].append(idx)
         for _, edges in hashes.items():
-            if len(edges) == 1:
-                continue
-            else:
+            if len(edges) > 1:
                 dups.extend(sorted(edges)[1:])
         return self.__class__.from_view(self, bunch=dups)
 
