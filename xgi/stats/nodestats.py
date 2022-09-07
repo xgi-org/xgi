@@ -18,6 +18,8 @@ Examples
 
 """
 
+import numpy as np
+
 import xgi
 
 __all__ = [
@@ -318,7 +320,16 @@ def hec_centrality(net, bunch, max_iter=10, tol=1e-6):
     return {n: c[n] for n in c if n in bunch}
 
 
-def node_edge_centrality(net, bunch, max_iter=100, tol=1e-6):
+def node_edge_centrality(
+    net,
+    bunch,
+    f=lambda x: np.power(x, 2),
+    g=lambda x: np.power(x, 0.5),
+    phi=lambda x: np.power(x, 2),
+    psi=lambda x: np.power(x, 0.5),
+    max_iter=100,
+    tol=1e-6,
+):
     """Computes node centralities.
 
     Parameters
@@ -327,6 +338,18 @@ def node_edge_centrality(net, bunch, max_iter=100, tol=1e-6):
         The hypergraph of interest
     bunch : Iterable
         Edges in `net`
+    f : lambda function, default: x^2
+        The function f as described in Tudisco and Higham.
+        Must accept a numpy array.
+    g : lambda function, default: x^0.5
+        The function g as described in Tudisco and Higham.
+        Must accept a numpy array.
+    phi : lambda function, default: x^2
+        The function phi as described in Tudisco and Higham.
+        Must accept a numpy array.
+    psi : lambda function, default: x^0.5
+        The function psi as described in Tudisco and Higham.
+        Must accept a numpy array.
     max_iter : int, default: 100
         Number of iterations at which the algorithm terminates
         if convergence is not reached.
@@ -355,5 +378,5 @@ def node_edge_centrality(net, bunch, max_iter=100, tol=1e-6):
     Francesco Tudisco & Desmond J. Higham,
     https://doi.org/10.1038/s42005-021-00704-2
     """
-    c, _ = xgi.node_edge_centrality(net, max_iter, tol)
+    c, _ = xgi.node_edge_centrality(net, f, g, phi, psi, max_iter, tol)
     return {n: c[n] for n in c if n in bunch}
