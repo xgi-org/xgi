@@ -157,13 +157,33 @@ def apply(H, x, g=lambda v, e: np.sum(v[list(e)])):
     return new_x
 
 
-def node_edge_centrality(H, max_iter=100, tol=1e-6):
+def node_edge_centrality(
+    H,
+    f=lambda x: np.power(x, 2),
+    g=lambda x: np.power(x, 0.5),
+    phi=lambda x: np.power(x, 2),
+    psi=lambda x: np.power(x, 0.5),
+    max_iter=100,
+    tol=1e-6,
+):
     """Computes the node and edge centralities
 
     Parameters
     ----------
     H : Hypergraph
         The hypergraph of interest
+    f : lambda function, default: x^2
+        The function f as described in Tudisco and Higham.
+        Must accept a numpy array.
+    g : lambda function, default: x^0.5
+        The function g as described in Tudisco and Higham.
+        Must accept a numpy array.
+    phi : lambda function, default: x^2
+        The function phi as described in Tudisco and Higham.
+        Must accept a numpy array.
+    psi : lambda function, default: x^0.5
+        The function psi as described in Tudisco and Higham.
+        Must accept a numpy array.
     max_iter : int, default: 100
         Number of iterations at which the algorithm terminates
         if convergence is not reached.
@@ -199,12 +219,9 @@ def node_edge_centrality(H, max_iter=100, tol=1e-6):
 
     check = np.inf
 
-    f = lambda x: np.power(x, 2)
-    g = lambda x: np.power(x, 0.5)
-
     for iter in range(max_iter):
         u = np.multiply(x, g(I * f(y)))
-        v = np.multiply(y, g(I.T * f(x)))
+        v = np.multiply(y, psi(I.T * phi(x)))
         new_x = u / norm(u)
         new_y = v / norm(v)
 
