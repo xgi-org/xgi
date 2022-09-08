@@ -6,6 +6,7 @@ from . import (
     algorithms,
     convert,
     drawing,
+    dynamics,
     generators,
     linalg,
     readwrite,
@@ -16,6 +17,7 @@ from .classes import *
 from .algorithms import *
 from .convert import *
 from .drawing import *
+from .dynamics import *
 from .generators import *
 from .linalg import *
 from .readwrite import *
