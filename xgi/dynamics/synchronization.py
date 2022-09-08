@@ -4,13 +4,10 @@ import xgi
 
 __all__ = ["compute_kuramoto_order_parameter"]
 
-
-def compute_kuramoto_order_parameter(H, k2, k3, w, timesteps=10000, dt=0.002):
+def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.002):
     """This function calculates the order parameter for the Kuramoto model on hypergraphs.
-
     This solves the Kuramoto model ODE on hypergraphs with edges of sizes 2 and 3
     using the Euler Method. It returns an order parameter which is a measure of synchrony.
-
     Parameters
     ----------
     H : Hypergraph object
@@ -21,22 +18,21 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, timesteps=10000, dt=0.002):
         The coupling strength for triangles
     w : numpy array of real values
         The natural frequency of the nodes.
+    theta : numpy array of real values
+        The initial phase distribution of nodes.
     timesteps : int greater than 1, default: 10000
         The number of timesteps for Euler Method.
     dt : float greater than 0, default: 0.002
         The size of timesteps for Euler Method.
-
     Returns
     -------
     r_time : numpy array of floats
         timeseries for Kuramoto model order parameter
-
     References
     ----------
     "Synchronization of phase oscillators on complex hypergraphs"
     by Sabina Adhikari, Juan G. Restrepo and Per Sebastian Skardal
     https://doi.org/10.48550/arXiv.2208.00909
-
     Examples
     --------
     >>> import numpy as np
@@ -45,10 +41,7 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, timesteps=10000, dt=0.002):
     >>> H = xgi.random_hypergraph(n, [0.05, 0.001], seed=None)
     >>> w = 2*np.ones(n)
     >>> theta = np.linspace(0, 2*np.pi, n)
-    >>> H.add_nodes_from(range(n))
-    >>> k2 = 2
-    >>> k3 = 3
-    >>> R = compute_kuramoto_order_parameter(H, k2, k3, w)
+    >>> R = compute_kuramoto_order_parameter(H, k2 = 2, k3 = 3, w = w, theta = theta)
     """
 
     H_int = xgi.convert_labels_to_integers(H, "label")
@@ -57,7 +50,6 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, timesteps=10000, dt=0.002):
     triangles = H_int.edges.filterby("size", 3).members()
     n = H_int.num_nodes
 
-    theta = np.linspace(0, 2 * np.pi, n)
     r_time = np.zeros(timesteps)
 
     for t in range(timesteps):
