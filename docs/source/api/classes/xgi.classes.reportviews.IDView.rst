@@ -8,9 +8,6 @@ xgi.classes.reportviews.IDView
    :members:
 
 
-
-
-
    .. rubric:: Methods
 
    .. autosummary::

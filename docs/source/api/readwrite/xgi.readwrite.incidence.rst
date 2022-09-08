@@ -9,10 +9,3 @@ xgi.readwrite.incidence
    
    .. autofunction:: read_incidence_matrix
    .. autofunction:: write_incidence_matrix
-
-   
-   
-   
-
-
-

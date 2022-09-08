@@ -8,7 +8,6 @@
    :members:
    :inherited-members:
 
-
    .. rubric:: Attributes
 
    .. autosummary::
