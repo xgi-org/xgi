@@ -46,4 +46,3 @@
 
       ~Hypergraph.copy
       ~Hypergraph.dual
-      ~Hypergraph.cleanup
