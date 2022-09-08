@@ -44,8 +44,8 @@ def test_is_uniform(edgelist1, edgelist6, edgelist7):
 def test_edge_neighborhood(edgelist3):
     H = xgi.Hypergraph(edgelist3)
     assert H.nodes.neighbors(3) == {1, 2, 4}
-    assert xgi.edge_neighborhood(H, 3) == [[1, 2], [4]]
-    assert xgi.edge_neighborhood(H, 3, include_self=True) == [[1, 2, 3], [3, 4]]
+    assert xgi.edge_neighborhood(H, 3) == [{1, 2}, {4}]
+    assert xgi.edge_neighborhood(H, 3, include_self=True) == [{1, 2, 3}, {3, 4}]
     with pytest.raises(IDNotFound):
         xgi.edge_neighborhood(H, 7)
 
@@ -310,13 +310,13 @@ def test_convert_labels_to_integers(hypergraph1, hypergraph2):
     assert H1.edges[1]["label"] == "e2"
     assert H1.edges[2]["label"] == "e3"
 
-    assert H1.edges.members(0) == [0, 1]
-    assert H1.edges.members(1) == [0, 1, 2]
-    assert H1.edges.members(2) == [2]
+    assert H1.edges.members(0) == {0, 1}
+    assert H1.edges.members(1) == {0, 1, 2}
+    assert H1.edges.members(2) == {2}
 
-    assert H1.nodes.memberships(0) == [0, 1]
-    assert H1.nodes.memberships(1) == [0, 1]
-    assert H1.nodes.memberships(2) == [1, 2]
+    assert H1.nodes.memberships(0) == {0, 1}
+    assert H1.nodes.memberships(1) == {0, 1}
+    assert H1.nodes.memberships(2) == {1, 2}
 
     assert set(H2.nodes) == {0, 1, 2}
     assert set(H2.edges) == {0, 1, 2}
@@ -329,13 +329,13 @@ def test_convert_labels_to_integers(hypergraph1, hypergraph2):
     assert H2.edges[1]["label"] == "e2"
     assert H2.edges[2]["label"] == "e3"
 
-    assert H2.edges.members(0) == [2, 0]
-    assert H2.edges.members(1) == [2, 1]
-    assert H2.edges.members(2) == [2, 0, 1]
+    assert H2.edges.members(0) == {0, 2}
+    assert H2.edges.members(1) == {1, 2}
+    assert H2.edges.members(2) == {0, 1, 2}
 
-    assert H2.nodes.memberships(0) == [0, 2]
-    assert H2.nodes.memberships(1) == [1, 2]
-    assert H2.nodes.memberships(2) == [0, 1, 2]
+    assert H2.nodes.memberships(0) == {0, 2}
+    assert H2.nodes.memberships(1) == {1, 2}
+    assert H2.nodes.memberships(2) == {0, 1, 2}
 
     assert H3.nodes[0]["old_ids"] == "a"
     assert H3.edges[0]["old_ids"] == "e1"

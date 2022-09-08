@@ -43,9 +43,9 @@ def dynamical_assortativity(H):
     if not xgi.is_uniform(H):
         raise XGIError("Hypergraph must be uniform!")
 
-    degs = H.degree()
-    k1 = np.mean(list(degs.values()))
-    k2 = np.mean(np.power(list(degs.values()), 2))
+    degs = H.nodes.degree.asnumpy()
+    k1 = np.mean(degs)
+    k2 = np.mean(np.power(degs, 2))
     kk1 = np.mean(
         [
             degs[n1] * degs[n2]
@@ -135,6 +135,7 @@ def choose_degrees(e, k, kind="uniform"):
     Journal of Complex Networks 2020.
     DOI: 10.1093/comnet/cnaa018
     """
+    e = list(e)
     if len(e) > 1:
         if kind == "uniform":
             i = np.random.randint(len(e))

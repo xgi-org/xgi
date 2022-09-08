@@ -56,8 +56,8 @@ def connected_components(H):
 
     Returns
     -------
-    iterable of lists
-        A list where each entry is an component of the hypergraph.
+    iterable of sets
+        An iterator where each entry is a component of the hypergraph.
 
     See Also
     --------

@@ -48,10 +48,10 @@ def test_read_bipartite_edgelist(file_string, extra_kwargs):
         file.write(file_string)
 
     H = xgi.read_bipartite_edgelist(filename, nodetype=int, **extra_kwargs)
-    int_edgelist = [[0, 1, 2, 3], [4], [5, 6], [6, 7, 8]]
+    int_edgelist = [{0, 1, 2, 3}, {4}, {5, 6}, {6, 7, 8}]
     assert [H.edges.members(id) for id in H.edges] == int_edgelist
     H = xgi.read_bipartite_edgelist(filename, nodetype=str, **extra_kwargs)
-    str_edgelist = [["0", "1", "2", "3"], ["4"], ["5", "6"], ["6", "7", "8"]]
+    str_edgelist = [{"0", "1", "2", "3"}, {"4"}, {"5", "6"}, {"6", "7", "8"}]
     assert [H.edges.members(id) for id in H.edges] == str_edgelist
 
 
@@ -94,10 +94,10 @@ def test_parse_bipartite_edgelist():
     assert list(H.nodes) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
     assert list(H.edges) == [0, 1, 2, 3]
     assert [H.edges.members(id) for id in H.edges] == [
-        [0, 1, 2, 3],
-        [4],
-        [5, 6],
-        [6, 7, 8],
+        {0, 1, 2, 3},
+        {4},
+        {5, 6},
+        {6, 7, 8},
     ]
 
     H = xgi.parse_bipartite_edgelist(lines, nodetype=int, edgetype=int, dual=True)
@@ -105,15 +105,15 @@ def test_parse_bipartite_edgelist():
     assert list(H.edges) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
     print([H.edges.members(id) for id in H.edges])
     assert [H.edges.members(id) for id in H.edges] == [
-        [0],
-        [0],
-        [0],
-        [0],
-        [1],
-        [2],
-        [2, 3],
-        [3],
-        [3],
+        {0},
+        {0},
+        {0},
+        {0},
+        {1},
+        {2},
+        {2, 3},
+        {3},
+        {3},
     ]
 
     # test less than two entries per line

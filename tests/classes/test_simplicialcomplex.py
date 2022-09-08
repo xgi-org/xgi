@@ -13,9 +13,9 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     with pytest.raises(XGIError):
         S_mat = xgi.SimplicialComplex(incidence5)
 
-    assert list(S_list.nodes) == list(S_df.nodes)
-    assert list(S_list.edges) == list(S_df.edges)
-    assert list(S_list.edges.members(0)) == list(S_df.edges.members(0))
+    assert set(S_list.nodes) == set(S_df.nodes)
+    assert set(S_list.edges) == set(S_df.edges)
+    assert set(S_list.edges.members(0)) == set(S_df.edges.members(0))
 
     with pytest.raises(XGIError):
         xgi.SimplicialComplex(1)
