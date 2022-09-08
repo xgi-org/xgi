@@ -9,10 +9,3 @@ xgi.readwrite.json
    
    .. autofunction:: read_json
    .. autofunction:: write_json
-
-   
-   
-   
-
-
-

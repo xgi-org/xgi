@@ -611,7 +611,7 @@ def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
 
             if nodetype is not None:
                 try:
-                    edge = [nodetype(n) for n in edge]
+                    edge = {nodetype(n) for n in edge}
                 except Exception as e:
                     raise TypeError(
                         f"Failed to convert nodes to type {nodetype}."

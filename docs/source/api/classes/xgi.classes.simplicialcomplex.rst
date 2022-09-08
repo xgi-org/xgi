@@ -12,12 +12,3 @@
       :nosignatures:
       
         SimplicialComplex
-      
-   
-
-   
-   
-   
-
-
-

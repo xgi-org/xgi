@@ -37,7 +37,7 @@
       ~Hypergraph.remove_node_from_edge
       ~Hypergraph.clear
       ~Hypergraph.clear_edges
-
+      ~Hypergraph.cleanup
 
    .. rubric:: Methods that return other hypergraphs
 

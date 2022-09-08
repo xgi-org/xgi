@@ -14,10 +14,3 @@
    .. autofunction:: intersection_profile
    .. autofunction:: laplacian
    .. autofunction:: multiorder_laplacian
-
-   
-   
-   
-
-
-

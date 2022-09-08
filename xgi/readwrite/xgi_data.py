@@ -33,7 +33,9 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None):
     index_url = "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/index.json"
     index = requests.get(index_url).json()
     if dataset not in index:
-        raise XGIError("Invalid dataset specifier!")
+        print("Valid dataset names:")
+        print(*index, sep = "\n")
+        raise XGIError("Must choose a valid dataset name!")
 
     r = requests.get(index[dataset]["url"])
 

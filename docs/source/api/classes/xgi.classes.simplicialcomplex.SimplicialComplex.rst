@@ -18,7 +18,6 @@
       ~SimplicialComplex.num_nodes
 
 
-
    .. rubric:: Methods
 
    .. autosummary::

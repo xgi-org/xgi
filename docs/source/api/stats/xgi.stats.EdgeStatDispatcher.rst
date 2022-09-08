@@ -8,9 +8,6 @@
    :members:
 
 
-
-
-
    .. rubric:: Methods
 
    .. autosummary::
