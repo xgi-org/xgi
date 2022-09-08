@@ -4,6 +4,7 @@ import xgi
 
 __all__ = ["compute_kuramoto_order_parameter"]
 
+
 def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.002):
     """This function calculates the order parameter for the Kuramoto model on hypergraphs.
     This solves the Kuramoto model ODE on hypergraphs with edges of sizes 2 and 3

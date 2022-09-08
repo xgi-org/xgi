@@ -166,7 +166,7 @@ def convert_to_simplicial_complex(data, create_using=None):
         )
     else:
         raise XGIError("Input data has unsupported type.")
-        
+
 
 def from_hyperedge_list(d, create_using=None, max_order=None):
     """Generate a hypergraph from a list of lists.
