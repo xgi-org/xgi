@@ -1,31 +1,58 @@
 from .common import Benchmark
 
-import os
 import xgi
 import pandas as pd
 
+
 class CoreHypergraph(Benchmark):
     def setup(self):
-        self.enron_hypergraph = xgi.load_xgi_data("email-enron")
-        self.enron_edgelist = xgi.to_hyperedge_list(self.enron_hypergraph)
+        fname = "../../data/disGene.txt"
+        self.hypergraph = xgi.read_bipartite_edgelist(fname, delimiter=" ")
+        self.disgene_edgelist = xgi.to_hyperedge_list(self.hypergraph)
+        self.disgene_edgedict = xgi.to_hyperedge_dict(self.hypergraph)
+        self.disgene_df = pd.read_csv(fname, delimiter=" ", header=None)
 
-    def time_construction(self):
-        xgi.Hypergraph(self.enron_edgelist)
+    def time_edgelist_construction(self):
+        xgi.Hypergraph(self.disgene_edgelist)
     
+    def time_edgedict_construction(self):
+        xgi.Hypergraph(self.disgene_edgedict)
+    
+    def time_df_construction(self):
+        xgi.Hypergraph(self.disgene_df)
+
     def time_node_memberships(self):
-        [self.enron_hypergraph.nodes.memberships(n) for n in self.enron_hypergraph.nodes]
-    
+        [
+            self.hypergraph.nodes.memberships(n)
+            for n in self.hypergraph.nodes
+        ]
+
     def time_edge_members(self):
-        [self.enron_hypergraph.edges.members(e) for e in self.enron_hypergraph.edges]
-    
+        [self.hypergraph.edges.members(e) for e in self.hypergraph.edges]
+
     def time_node_attributes(self):
-        [self.enron_hypergraph.nodes[n] for n in self.enron_hypergraph.nodes]
+        [self.hypergraph.nodes[n] for n in self.hypergraph.nodes]
 
     def time_edge_attributes(self):
-        [self.enron_hypergraph.edges[e] for e in self.enron_hypergraph.edges]
-    
+        [self.hypergraph.edges[e] for e in self.hypergraph.edges]
+
     def time_degree(self):
-        self.enron_hypergraph.degree()
-    
+        self.hypergraph.degree()
+
+    def time_nodestats_degree(self):
+        self.hypergraph.nodes.degree.asnumpy()
+
     def time_edge_size(self):
-        self.enron_hypergraph.edge_size()
+        self.hypergraph.edges.size.asnumpy()
+
+    def time_isolates(self):
+        self.hypergraph.nodes.isolates()
+    
+    def time_singletons(self):
+        self.hypergraph.edges.singletons()
+    
+    def time_copy(self):
+        self.hypergraph.copy()
+    
+    def time_dual(self):
+        self.hypergraph.dual()

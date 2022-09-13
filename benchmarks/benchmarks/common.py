@@ -9,5 +9,6 @@ random.seed(1)
 # but will seed it nevertheless
 numpy.random.seed(1)
 
+
 class Benchmark:
     pass
