@@ -34,7 +34,7 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None):
     index = requests.get(index_url).json()
     if dataset not in index:
         print("Valid dataset names:")
-        print(*index, sep = "\n")
+        print(*index, sep="\n")
         raise XGIError("Must choose a valid dataset name!")
 
     r = requests.get(index[dataset]["url"])

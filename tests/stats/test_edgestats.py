@@ -51,6 +51,7 @@ def test_aggregates(edgelist1, edgelist2, edgelist8):
     H = xgi.Hypergraph(edgelist1)
     assert H.edges.order.max() == 2
     assert H.edges.order.min() == 0
+    assert H.edges.order.sum() == 5
     assert round(H.edges.order.mean(), 3) == 1.25
     assert round(H.edges.order.std(), 3) == 0.829
     assert round(H.edges.order.var(), 3) == 0.688
@@ -58,6 +59,7 @@ def test_aggregates(edgelist1, edgelist2, edgelist8):
     H = xgi.Hypergraph(edgelist2)
     assert H.edges.order.max() == 2
     assert H.edges.order.min() == 1
+    assert H.edges.order.sum() == 4
     assert round(H.edges.order.mean(), 3) == 1.333
     assert round(H.edges.order.std(), 3) == 0.471
     assert round(H.edges.order.var(), 3) == 0.222
@@ -65,6 +67,7 @@ def test_aggregates(edgelist1, edgelist2, edgelist8):
     H = xgi.Hypergraph(edgelist8)
     assert H.edges.order.max() == 4
     assert H.edges.order.min() == 1
+    assert H.edges.order.sum() == 17
     assert round(H.edges.order.mean(), 3) == 1.889
     assert round(H.edges.order.std(), 3) == 0.875
     assert round(H.edges.order.var(), 3) == 0.765
