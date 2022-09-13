@@ -231,6 +231,10 @@ class IDStat:
         """The minimum value of this stat."""
         return self.asnumpy().min(axis=0)
 
+    def sum(self):
+        """The sum of this stat."""
+        return self.asnumpy().sum(axis=0)
+
     def mean(self):
         """The arithmetic mean of this stat."""
         return self.asnumpy().mean(axis=0)
