@@ -529,6 +529,9 @@ class NodeView(IDView):
     def memberships(self, n=None):
         """Get the edge ids of which a node is a member.
 
+        Gets all the node memberships for all nodes in the view if n
+        not specified.
+
         Parameters
         ----------
         n : hashable
@@ -536,7 +539,7 @@ class NodeView(IDView):
 
         Returns
         -------
-        set
+        dict of sets if n is None, otherwise a set
             Edge memberships.
 
         Raises
@@ -545,7 +548,7 @@ class NodeView(IDView):
             If `n` is not hashable or if it is not in the hypergraph.
 
         """
-        return self._id_dict.copy() if n is None else self._id_dict[n].copy()
+        return {key: self._id_dict[key] for key in self} if n is None else self._id_dict[n].copy()
 
     def isolates(self, ignore_singletons=True):
         """Nodes that belong to no edges.
