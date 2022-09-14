@@ -1,1 +1,2 @@
 hypernetx>=1.0
+asv>=0.5
