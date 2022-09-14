@@ -548,7 +548,11 @@ class NodeView(IDView):
             If `n` is not hashable or if it is not in the hypergraph.
 
         """
-        return {key: self._id_dict[key] for key in self} if n is None else self._id_dict[n].copy()
+        return (
+            {key: self._id_dict[key] for key in self}
+            if n is None
+            else self._id_dict[n].copy()
+        )
 
     def isolates(self, ignore_singletons=True):
         """Nodes that belong to no edges.

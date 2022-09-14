@@ -14,18 +14,15 @@ class CoreHypergraph(Benchmark):
 
     def time_edgelist_construction(self):
         xgi.Hypergraph(self.disgene_edgelist)
-    
+
     def time_edgedict_construction(self):
         xgi.Hypergraph(self.disgene_edgedict)
-    
+
     def time_df_construction(self):
         xgi.Hypergraph(self.disgene_df)
 
     def time_node_memberships(self):
-        [
-            self.hypergraph.nodes.memberships(n)
-            for n in self.hypergraph.nodes
-        ]
+        [self.hypergraph.nodes.memberships(n) for n in self.hypergraph.nodes]
 
     def time_edge_members(self):
         [self.hypergraph.edges.members(e) for e in self.hypergraph.edges]
@@ -47,12 +44,12 @@ class CoreHypergraph(Benchmark):
 
     def time_isolates(self):
         self.hypergraph.nodes.isolates()
-    
+
     def time_singletons(self):
         self.hypergraph.edges.singletons()
-    
+
     def time_copy(self):
         self.hypergraph.copy()
-    
+
     def time_dual(self):
         self.hypergraph.dual()
