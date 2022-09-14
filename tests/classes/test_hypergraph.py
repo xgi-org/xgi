@@ -131,13 +131,14 @@ def test_hypergraph_attr(edgelist1):
     assert H["color"] == "red"
 
 
-def test_members(edgelist1):
+def test_memberships(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     assert H.nodes.memberships(1) == {0}
     assert H.nodes.memberships(2) == {0}
     assert H.nodes.memberships(3) == {0}
     assert H.nodes.memberships(4) == {1}
     assert H.nodes.memberships(6) == {2, 3}
+    assert H.nodes([1, 2, 6]).memberships() == {1: {0}, 2: {0}, 6: {2, 3}}
     with pytest.raises(IDNotFound):
         H.nodes.memberships(0)
     with pytest.raises(TypeError):
