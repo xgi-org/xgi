@@ -3,7 +3,7 @@ import sys
 import setuptools
 from setuptools import setup
 
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 
 if sys.version_info < (3, 7):
     sys.exit("XGI requires Python 3.7 or later.")

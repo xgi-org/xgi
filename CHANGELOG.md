@@ -1,8 +1,27 @@
 # Changelog
 
+## v0.4.3
+* `Hypergraph.has_edge` is now `IDView.lookup`, `Hypergraph.duplicate_edges` is now `IDView.duplicates`, and `utilities.convert_labels_to_integer` is now `function.convert_labels_to_integer` ([#150](https://github.com/ComplexGroupInteractions/xgi/pull/150)).
+* Added some unit tests for the convert module, the function module, and the classic generators module. Fixed for minor bugs encountered while writing tests and added documentation to Read The Docs for the drawing module. ([#153](https://github.com/ComplexGroupInteractions/xgi/pull/153))
+* Fixed a bug in `remove_node_from_edge()` ([#154](https://github.com/ComplexGroupInteractions/xgi/pull/154)).
+* Implemented computation of moments for NodeStat and EdgeStat ([#155](https://github.com/ComplexGroupInteractions/xgi/pull/155)).
+* Implemented weak and strong node removal as per issue [#167](https://github.com/ComplexGroupInteractions/xgi/issues/76) ([#156](https://github.com/ComplexGroupInteractions/xgi/pull/156)).
+* Added a dynamics module and created a Kuramoto model synchronization function ([#159](https://github.com/ComplexGroupInteractions/xgi/pull/159)).
+* Added a cleanup method that removes artifacts specified by the user: multi-edges, singletons, isolates. It also can convert all labels to consecutive integers ([#161](https://github.com/ComplexGroupInteractions/xgi/pull/161)).
+* Modified the `duplicates()` method to not include the first instance of the node/edge in the list of duplicates ([#161](https://github.com/ComplexGroupInteractions/xgi/pull/161)).
+* Converted all instances of edges to sets from lists in response to issue [#158](https://github.com/ComplexGroupInteractions/xgi/issues/158) ([#162](https://github.com/ComplexGroupInteractions/xgi/pull/162)).
+* Added lambda function default arguments for $f$, $g$, $\varphi$, $\psi$ as defined by Tudisco and Higham. Default behavior is identical as before. Fixes [#132](https://github.com/ComplexGroupInteractions/xgi/issues/132) ([#165](https://github.com/ComplexGroupInteractions/xgi/pull/165)).
+* Added `sum()` as a stats method ([#168](https://github.com/ComplexGroupInteractions/xgi/pull/168)).
+* Added a benchmarking suite for the core hypergraph data structure using airspeed velocity ([#170](https://github.com/ComplexGroupInteractions/xgi/pull/170)).
+* Fixed issue [#171](https://github.com/ComplexGroupInteractions/xgi/issues/171) ([#172](https://github.com/ComplexGroupInteractions/xgi/pull/172))
+
+Contributors: @nwlandry, @leotrs, and @saad1282
+
 ## v0.4.2
 * Keyword arguments are now consistent in the `draw()` function ([#148](https://github.com/ComplexGroupInteractions/xgi/pull/148)).
 * Notebooks are now formatted with black and the requirements have been updated to reflect this ([#148](https://github.com/ComplexGroupInteractions/xgi/pull/148)).
+
+Contributors: @nwlandry
 
 ## v0.4.1
 * Added the ability to color nodes and edges in `xgi.draw()` by value, iterable, or NodeStat/EdgeStat ([#139](https://github.com/ComplexGroupInteractions/xgi/pull/139), [#142](https://github.com/ComplexGroupInteractions/xgi/pull/142), and [#143](https://github.com/ComplexGroupInteractions/xgi/pull/143)).

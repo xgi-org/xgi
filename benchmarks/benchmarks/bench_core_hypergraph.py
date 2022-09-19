@@ -1,7 +1,8 @@
-from .common import Benchmark
+import pandas as pd
 
 import xgi
-import pandas as pd
+
+from .common import Benchmark
 
 
 class CoreHypergraph(Benchmark):
