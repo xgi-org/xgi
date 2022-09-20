@@ -382,8 +382,8 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
         return {id: arg for id in ids}
     elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
         f = lambda val: np.interp(val, [arg.min(), arg.max()], [min_val, max_val])
-        s = arg.asdict()
-        return {id: f(s[id]) for id in ids}
+        s = f(arg.asnumpy())
+        return dict(zip(ids, s))
     elif isinstance(arg, Iterable):
         return {id: arg[idx] for idx, id in enumerate(ids)}
     else:
@@ -425,8 +425,8 @@ def _color_arg_to_dict(arg, ids, cmap):
             f = lambda val: np.interp(val, [arg.min(), arg.max()], [0.1, 0.9])
         else:
             raise XGIError("Invalid colormap!")
-        s = arg.asdict()
-        return {id: np.array(cmap(f(s[id]))).reshape(1, -1) for id in ids}
+        s = f(arg.asnumpy())
+        return {id: np.array(cmap(s[i])).reshape(1, -1) for i, id in enumerate(ids)}
     elif isinstance(arg, Iterable):
         return {id: arg[idx] for idx, id in enumerate(ids)}
     else:
