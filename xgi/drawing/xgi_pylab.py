@@ -381,9 +381,8 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
     elif type(arg) in [int, float]:
         return {id: arg for id in ids}
     elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
-        f = lambda val: np.interp(val, [arg.min(), arg.max()], [min_val, max_val])
-        s = f(arg.asnumpy())
-        return dict(zip(ids, s))
+        vals =  np.interp(arg.asnumpy(), [arg.min(), arg.max()], [min_val, max_val])
+        return dict(zip(ids, vals))
     elif isinstance(arg, Iterable):
         return {id: arg[idx] for idx, id in enumerate(ids)}
     else:
@@ -420,13 +419,13 @@ def _color_arg_to_dict(arg, ids, cmap):
         return {id: arg for id in ids}
     elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
         if isinstance(cmap, ListedColormap):
-            f = lambda val: np.interp(val, [arg.min(), arg.max()], [0, cmap.N])
+            vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [0, cmap.N])
         elif isinstance(cmap, LinearSegmentedColormap):
-            f = lambda val: np.interp(val, [arg.min(), arg.max()], [0.1, 0.9])
+            vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [0.1, 0.9])
         else:
             raise XGIError("Invalid colormap!")
-        s = f(arg.asnumpy())
-        return {id: np.array(cmap(s[i])).reshape(1, -1) for i, id in enumerate(ids)}
+
+        return {id: np.array(cmap(vals[i])).reshape(1, -1) for i, id in enumerate(ids)}
     elif isinstance(arg, Iterable):
         return {id: arg[idx] for idx, id in enumerate(ids)}
     else:
