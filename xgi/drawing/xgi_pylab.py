@@ -381,7 +381,7 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
     elif type(arg) in [int, float]:
         return {id: arg for id in ids}
     elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
-        vals =  np.interp(arg.asnumpy(), [arg.min(), arg.max()], [min_val, max_val])
+        vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [min_val, max_val])
         return dict(zip(ids, vals))
     elif isinstance(arg, Iterable):
         return {id: arg[idx] for idx, id in enumerate(ids)}
