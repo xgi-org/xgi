@@ -8,6 +8,7 @@ from ..exception import IDNotFound, XGIError
 from .hypergraph import Hypergraph
 
 __all__ = [
+    "num_edges_order",
     "max_edge_order",
     "is_possible_order",
     "is_uniform",
@@ -27,6 +28,23 @@ __all__ = [
     "convert_labels_to_integers",
 ]
 
+def num_edges_order(H, d=None):
+    """The number of edges of order d.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest.
+
+    d : int | None, optional
+        The order of edges to count. If None (default), counts
+        for all orders. 
+    """
+
+    if d is not None: 
+        return len(H.edges.filterby("order", d))
+    else: 
+        return H.num_edges
 
 def max_edge_order(H):
     """The maximum order of edges in the hypergraph.
