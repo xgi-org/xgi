@@ -59,6 +59,8 @@ def test_degree_counts(edgelist1, edgelist2, edgelist3):
     assert xgi.degree_counts(H2) == [0, 5, 1]
     assert xgi.degree_counts(H3) == [0, 4, 2]
 
+    assert xgi.degree_counts(HH, order=2) == [2,6]
+
 
 def test_degree_histogram(edgelist1, edgelist2, edgelist3):
     H1 = xgi.Hypergraph(edgelist1)

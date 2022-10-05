@@ -149,13 +149,16 @@ def edge_neighborhood(H, n, include_self=False):
         return [H.edges.members(e) - {n} for e in H.nodes.memberships(n)]
 
 
-def degree_counts(H):
+def degree_counts(H, order=None):
     """Returns a list of the frequency of each degree value.
 
     Parameters
     ----------
     H : Hypergraph object
         The hypergraph of interest
+    order: int, optional
+        Order of edges to take into account. If None (default), 
+        consider all edges.
 
     Returns
     -------
@@ -177,7 +180,7 @@ def degree_counts(H):
     [0, 3, 1]
 
     """
-    counts = Counter(H.degree().values())
+    counts = Counter(H.degree(order=order).values())
     return [counts.get(i, 0) for i in range(max(counts) + 1)]
 
 
