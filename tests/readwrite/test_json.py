@@ -215,9 +215,6 @@ def test_read_json():
 
         xgi.read_json(filename, edgetype=int)
 
-    with pytest.raises(XGIError):
-        xgi.read_json("data/disGene.txt")
-
 
 def test_write_json(edgelist1):
     _, filename = tempfile.mkstemp()
