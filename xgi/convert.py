@@ -552,7 +552,7 @@ def to_bipartite_graph(H):
     )
 
 
-def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
+def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None, max_order=None):
     """
     A function to read a file in a standardized JSON format.
 
@@ -561,9 +561,11 @@ def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
     hypergraph_dict: dict
         A dictionary in the hypergraph JSON format
     nodetype: type, optional
-        type that the node IDs will be cast to
+        Type that the node IDs will be cast to
     edgetype: type, optional
-        type that the edge IDs will be cast to
+        Type that the edge IDs will be cast to
+    max_order: int, optional
+        Maximum order of edges to add to the hypergraph
 
     Returns
     -------
@@ -601,6 +603,10 @@ def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
 
     try:
         for id, edge in hypergraph_dict["edge-dict"].items():
+
+            if max_order and len(edge) > max_order + 1:
+                continue 
+
             if edgetype is not None:
                 try:
                     id = edgetype(id)
@@ -621,11 +627,17 @@ def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
         raise XGIError("Failed to import edge dictionary.") from e
 
     try:
+
+        data_dict = {key: val for key, val in hypergraph_dict["edge-data"].items() if key in H.edges}
+
+        if edgetype is None: 
+            edge_data = data_dict
+        else: 
+            edge_data = {edgetype(e): dd for e, dd in data_dict.items()}
+
         set_edge_attributes(
             H,
-            hypergraph_dict["edge-data"]
-            if edgetype is None
-            else {edgetype(e): dd for e, dd in hypergraph_dict["edge-data"].items()},
+            edge_data,
         )
     except KeyError as e:
         raise XGIError("Failed to import edge attributes.") from e
