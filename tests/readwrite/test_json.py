@@ -248,4 +248,5 @@ def test_write_json(edgelist1):
     assert {frozenset(H1.edges.members(id)) for id in H1.edges} == {frozenset(H2.edges.members(id)) for id in H2.edges}
     assert H2.nodes[2] == {"name": "Ilya"}
     # assert H2.edges[1] == {"weight": 2}
+    assert H2.edges.attrs("weight").asdict() == edge_attr_dict
     assert H2["name"] == "test"
