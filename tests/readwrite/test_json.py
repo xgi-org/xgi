@@ -244,7 +244,6 @@ def test_write_json(edgelist1):
     H2 = xgi.read_json(filename, nodetype=int, edgetype=int)
 
     assert H1.nodes == H2.nodes
-    assert H1.edges == H2.edges
     assert [H1.edges.members(id) for id in H1.edges] == [
         H2.edges.members(id) for id in H2.edges
     ]
