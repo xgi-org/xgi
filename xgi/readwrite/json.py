@@ -66,9 +66,6 @@ def read_json(path, nodetype=None, edgetype=None):
 
     """
     with open(path) as file:
-        try:
-            data = json.loads(file.read())
-        except json.JSONDecodeError as e:
-            raise XGIError("Invalid file format!") from e
+        data = json.loads(file.read())
 
     return dict_to_hypergraph(data, nodetype=nodetype, edgetype=edgetype)
