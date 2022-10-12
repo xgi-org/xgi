@@ -27,8 +27,15 @@ def write_json(H, path):
     data["hypergraph-data"].update(H._hypergraph)
 
     # get node data
-    data["node-data"] = {str(id): H.nodes[id] for id in H.nodes}
-    data["edge-data"] = {str(id): H.edges[id] for id in H.edges}
+    try:
+        data["node-data"] = {str(id): H.nodes[id] for id in H.nodes}
+    except:
+        raise XGIError("Node attributes not saved!")
+
+    try:
+        data["edge-data"] = {str(id): H.edges[id] for id in H.edges}
+    except:
+        raise XGIError("Edge attributes not saved!")
 
     # hyperedge dict
     data["edge-dict"] = {
