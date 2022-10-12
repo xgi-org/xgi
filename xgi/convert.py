@@ -617,6 +617,7 @@ def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
                         f"Failed to convert nodes to type {nodetype}."
                     ) from e
             H.add_edge(edge, id)
+
     except KeyError as e:
         raise XGIError("Failed to import edge dictionary.") from e
 
