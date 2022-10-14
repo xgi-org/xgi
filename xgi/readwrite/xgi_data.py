@@ -41,4 +41,6 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None, max_order=None):
 
     r = requests.get(index[dataset]["url"])
 
-    return convert.dict_to_hypergraph(r.json(), nodetype=nodetype, edgetype=edgetype, max_order=max_order)
+    return convert.dict_to_hypergraph(
+        r.json(), nodetype=nodetype, edgetype=edgetype, max_order=max_order
+    )
