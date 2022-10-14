@@ -6,7 +6,7 @@ from ..exception import XGIError
 __all__ = ["load_xgi_data"]
 
 
-def load_xgi_data(dataset, nodetype=None, edgetype=None):
+def load_xgi_data(dataset, nodetype=None, edgetype=None, max_order=None):
     """_summary_
 
     Parameters
@@ -16,9 +16,11 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None):
         index.json file in the xgi-data repository.
 
     nodetype : type, optional
-        type to cast the node ID to
+        Type to cast the node ID to
     edgetype : type, optional
-        type to cast the edge ID to
+        Type to cast the edge ID to
+    max_order: int, optional
+        Maximum order of edges to add to the hypergraph
 
     Returns
     -------
@@ -39,4 +41,4 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None):
 
     r = requests.get(index[dataset]["url"])
 
-    return convert.dict_to_hypergraph(r.json(), nodetype=nodetype, edgetype=edgetype)
+    return convert.dict_to_hypergraph(r.json(), nodetype=nodetype, edgetype=edgetype, max_order=max_order)

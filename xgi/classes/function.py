@@ -8,6 +8,7 @@ from ..exception import IDNotFound, XGIError
 from .hypergraph import Hypergraph
 
 __all__ = [
+    "num_edges_order",
     "max_edge_order",
     "is_possible_order",
     "is_uniform",
@@ -27,6 +28,23 @@ __all__ = [
     "convert_labels_to_integers",
 ]
 
+def num_edges_order(H, d=None):
+    """The number of edges of order d.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest.
+
+    d : int | None, optional
+        The order of edges to count. If None (default), counts
+        for all orders. 
+    """
+
+    if d is not None: 
+        return len(H.edges.filterby("order", d))
+    else: 
+        return H.num_edges
 
 def max_edge_order(H):
     """The maximum order of edges in the hypergraph.
@@ -149,13 +167,16 @@ def edge_neighborhood(H, n, include_self=False):
         return [H.edges.members(e) - {n} for e in H.nodes.memberships(n)]
 
 
-def degree_counts(H):
+def degree_counts(H, order=None):
     """Returns a list of the frequency of each degree value.
 
     Parameters
     ----------
     H : Hypergraph object
         The hypergraph of interest
+    order: int, optional
+        Order of edges to take into account. If None (default), 
+        consider all edges.
 
     Returns
     -------
@@ -177,7 +198,7 @@ def degree_counts(H):
     [0, 3, 1]
 
     """
-    counts = Counter(H.degree().values())
+    counts = Counter(H.degree(order=order).values())
     return [counts.get(i, 0) for i in range(max(counts) + 1)]
 
 

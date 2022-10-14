@@ -561,9 +561,11 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None):
     data: dict
         A dictionary in the hypergraph JSON format
     nodetype: type, optional
-        type that the node IDs will be cast to
+        Type that the node IDs will be cast to
     edgetype: type, optional
-        type that the edge IDs will be cast to
+        Type that the edge IDs will be cast to
+    max_order: int, optional
+        Maximum order of edges to add to the hypergraph
 
     Returns
     -------
@@ -601,6 +603,8 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None):
 
     try:
         for id, edge in data["edge-dict"].items():
+            if max_order and len(edge) > max_order + 1:
+                continue 
             if edgetype is not None:
                 try:
                     id = edgetype(id)

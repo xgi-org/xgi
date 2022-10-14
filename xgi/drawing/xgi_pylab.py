@@ -30,6 +30,7 @@ def draw(
     node_ec="black",
     node_lw=1,
     node_size=10,
+    max_order=None,
     **kwargs,
 ):
     """Draw hypergraph or simplicial complex.
@@ -71,6 +72,9 @@ def draw(
 
     node_size : float (default=0.03)
         Radius of the nodes in pixels
+
+    max_order : int, optional
+        Maximum of hyperedges to plot. Default is None (plot all orders).
 
     **kwargs : optional args
         alternate default values. Values that can be overwritten are the following:
@@ -122,12 +126,13 @@ def draw(
     ax.get_yaxis().set_ticks([])
     ax.axis("off")
 
-    d_max = max_edge_order(H)
+    if not max_order:
+        max_order = max_edge_order(H)
 
     if isinstance(H, SimplicialComplex):
-        draw_xgi_simplices(H, pos, ax, dyad_color, dyad_lw, edge_fc, settings)
+        draw_xgi_simplices(H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings)
     elif isinstance(H, Hypergraph):
-        draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, settings)
+        draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings)
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
@@ -139,7 +144,7 @@ def draw(
         node_ec,
         node_lw,
         node_size,
-        d_max,
+        max_order,
         settings,
     )
 
@@ -210,7 +215,7 @@ def draw_xgi_nodes(
         )
 
 
-def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, settings):
+def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings):
     """Draw hyperedges.
 
     Parameters
@@ -227,6 +232,8 @@ def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, setting
         Pairwise edge widths
     edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
         Color of hyperedges
+    max_order : int, optional
+        Maximum of hyperedges to plot. Default is None (plot all orders).    
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * dyad_color_cmap
@@ -249,6 +256,9 @@ def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, setting
 
     for id, he in H.edges.members(dtype=dict).items():
         d = len(he) - 1
+        if d > max_order:
+            continue 
+
         if d == 1:
             # Drawing the edges
             he = list(he)
@@ -259,7 +269,7 @@ def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, setting
                 y_coords,
                 color=dyad_color[id],
                 lw=dyad_lw[id],
-                zorder=d_max - 1,
+                zorder=max_order - 1,
             )
             ax.add_line(line)
 
@@ -273,12 +283,12 @@ def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, d_max, setting
                 sorted_coordinates,
                 facecolor=edge_fc[id],
                 alpha=0.4,
-                zorder=d_max - d,
+                zorder=max_order - d,
             )
             ax.add_patch(obj)
 
 
-def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, settings):
+def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings):
     """Draw maximal simplices and pairwise faces.
 
     Parameters
@@ -295,6 +305,8 @@ def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, settings):
         Pairwise edge widths
     edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
         Color of simplices
+    max_order : int, optional
+        Maximum of hyperedges to plot. Default is None (plot all orders).
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * dyad_color_cmap
@@ -322,6 +334,8 @@ def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, settings):
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
     for id, he in H_.edges.members(dtype=dict).items():
         d = len(he) - 1
+        if d > max_order:
+            continue 
         if d == 1:
             # Drawing the edges
             he = list(he)
