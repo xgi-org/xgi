@@ -4,6 +4,16 @@ import xgi
 from xgi.exception import IDNotFound, XGIError
 
 
+def test_num_edges_order(edgelist2):
+
+    H = xgi.Hypergraph(edgelist2)
+
+    assert xgi.num_edges_order(H, 0) == 0
+    assert xgi.num_edges_order(H, 1) == 2
+    assert xgi.num_edges_order(H, 2) == 1
+    assert xgi.num_edges_order(H) == 3
+
+
 def test_max_edge_order(edgelist1, edgelist4, edgelist5):
     H0 = xgi.empty_hypergraph()
     H1 = xgi.empty_hypergraph()
@@ -58,6 +68,8 @@ def test_degree_counts(edgelist1, edgelist2, edgelist3):
     assert xgi.degree_counts(H1) == [0, 7, 1]
     assert xgi.degree_counts(H2) == [0, 5, 1]
     assert xgi.degree_counts(H3) == [0, 4, 2]
+
+    assert xgi.degree_counts(H1, order=2) == [2,6]
 
 
 def test_degree_histogram(edgelist1, edgelist2, edgelist3):
