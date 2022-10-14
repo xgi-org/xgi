@@ -552,13 +552,13 @@ def to_bipartite_graph(H):
     )
 
 
-def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
+def dict_to_hypergraph(data, nodetype=None, edgetype=None):
     """
     A function to read a file in a standardized JSON format.
 
     Parameters
     ----------
-    hypergraph_dict: dict
+    data: dict
         A dictionary in the hypergraph JSON format
     nodetype: type, optional
         type that the node IDs will be cast to
@@ -582,12 +582,12 @@ def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
     """
     H = empty_hypergraph()
     try:
-        H._hypergraph.update(hypergraph_dict["hypergraph-data"])
+        H._hypergraph.update(data["hypergraph-data"])
     except KeyError:
         raise XGIError("Failed to get hypergraph data attributes.")
 
     try:
-        for id, dd in hypergraph_dict["node-data"].items():
+        for id, dd in data["node-data"].items():
             if nodetype is not None:
                 try:
                     id = nodetype(id)
@@ -600,7 +600,7 @@ def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
         raise XGIError("Failed to import node attributes.")
 
     try:
-        for id, edge in hypergraph_dict["edge-dict"].items():
+        for id, edge in data["edge-dict"].items():
             if edgetype is not None:
                 try:
                     id = edgetype(id)
@@ -622,11 +622,14 @@ def dict_to_hypergraph(hypergraph_dict, nodetype=None, edgetype=None):
         raise XGIError("Failed to import edge dictionary.") from e
 
     try:
+        if edgetype is None: 
+            edge_data = {key: val for key, val in data["edge-data"].items() if key in H.edges}
+        else: 
+            edge_data = {edgetype(e): dd for e, dd in data["edge-data"].items() if edgetype(e) in H.edges}
+
         set_edge_attributes(
             H,
-            hypergraph_dict["edge-data"]
-            if edgetype is None
-            else {edgetype(e): dd for e, dd in hypergraph_dict["edge-data"].items()},
+            edge_data,
         )
     except KeyError as e:
         raise XGIError("Failed to import edge attributes.") from e
