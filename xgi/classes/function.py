@@ -28,6 +28,7 @@ __all__ = [
     "convert_labels_to_integers",
 ]
 
+
 def num_edges_order(H, d=None):
     """The number of edges of order d.
 
@@ -38,13 +39,14 @@ def num_edges_order(H, d=None):
 
     d : int | None, optional
         The order of edges to count. If None (default), counts
-        for all orders. 
+        for all orders.
     """
 
-    if d is not None: 
+    if d is not None:
         return len(H.edges.filterby("order", d))
-    else: 
+    else:
         return H.num_edges
+
 
 def max_edge_order(H):
     """The maximum order of edges in the hypergraph.
@@ -175,7 +177,7 @@ def degree_counts(H, order=None):
     H : Hypergraph object
         The hypergraph of interest
     order: int, optional
-        Order of edges to take into account. If None (default), 
+        Order of edges to take into account. If None (default),
         consider all edges.
 
     Returns
