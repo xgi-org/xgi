@@ -1,3 +1,5 @@
+"""Simulation of the Kuramoto model."""
+
 import numpy as np
 
 import xgi
@@ -9,6 +11,7 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.
     """This function calculates the order parameter for the Kuramoto model on hypergraphs.
     This solves the Kuramoto model ODE on hypergraphs with edges of sizes 2 and 3
     using the Euler Method. It returns an order parameter which is a measure of synchrony.
+
     Parameters
     ----------
     H : Hypergraph object
@@ -25,15 +28,18 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.
         The number of timesteps for Euler Method.
     dt : float greater than 0, default: 0.002
         The size of timesteps for Euler Method.
+
     Returns
     -------
     r_time : numpy array of floats
         timeseries for Kuramoto model order parameter
+
     References
     ----------
     "Synchronization of phase oscillators on complex hypergraphs"
     by Sabina Adhikari, Juan G. Restrepo and Per Sebastian Skardal
     https://doi.org/10.48550/arXiv.2208.00909
+
     Examples
     --------
     >>> import numpy as np

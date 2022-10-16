@@ -130,9 +130,13 @@ def draw(
         max_order = max_edge_order(H)
 
     if isinstance(H, SimplicialComplex):
-        draw_xgi_simplices(H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings)
+        draw_xgi_simplices(
+            H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings
+        )
     elif isinstance(H, Hypergraph):
-        draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings)
+        draw_xgi_hyperedges(
+            H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings
+        )
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
@@ -233,7 +237,7 @@ def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, set
     edge_fc : str, 4-tuple, ListedColormap, LinearSegmentedColormap, or dict of 4-tuples or strings
         Color of hyperedges
     max_order : int, optional
-        Maximum of hyperedges to plot. Default is None (plot all orders).    
+        Maximum of hyperedges to plot. Default is None (plot all orders).
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * dyad_color_cmap
@@ -257,7 +261,7 @@ def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, set
     for id, he in H.edges.members(dtype=dict).items():
         d = len(he) - 1
         if d > max_order:
-            continue 
+            continue
 
         if d == 1:
             # Drawing the edges
@@ -335,7 +339,7 @@ def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, set
     for id, he in H_.edges.members(dtype=dict).items():
         d = len(he) - 1
         if d > max_order:
-            continue 
+            continue
         if d == 1:
             # Drawing the edges
             he = list(he)
