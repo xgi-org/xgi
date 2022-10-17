@@ -438,3 +438,18 @@ def test_remove_node_strong(edgelist1):
     H.remove_node(1, strong=True)
     assert 1 not in H
     assert 0 not in H.edges
+
+
+def test_clear_edges(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    H.clear_edges()
+    assert len(H.edges) == 0
+
+
+def test_issue_198(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    H.clear_edges()
+    assert len(H.edges) == 0
+
+    # this used to fail
+    H.add_edge({1, 2, 3})

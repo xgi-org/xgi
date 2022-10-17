@@ -882,7 +882,7 @@ class Hypergraph:
     def clear_edges(self):
         """Remove all edges from the graph without altering any nodes."""
         for node in self.nodes:
-            self._node[node] = {}
+            self._node[node] = set()
         self._edge.clear()
         self._edge_attr.clear()
 
