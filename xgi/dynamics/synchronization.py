@@ -44,13 +44,13 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.
     --------
     >>> import numpy as np
     >>> import xgi
-    >>> n = 100
+    >>> n = 50
     >>> H = xgi.random_hypergraph(n, [0.05, 0.001], seed=None)
     >>> w = 2*np.ones(n)
     >>> theta = np.linspace(0, 2*np.pi, n)
     >>> R = compute_kuramoto_order_parameter(H, k2 = 2, k3 = 3, w = w, theta = theta)
-    """
 
+    """
     H_int = xgi.convert_labels_to_integers(H, "label")
 
     links = H_int.edges.filterby("size", 2).members()
