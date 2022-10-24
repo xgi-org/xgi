@@ -222,10 +222,7 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
         for i, p in enumerate(ps[:max_order - 1]):
             d = i + 2 # simplex order
             cliques_d = [x for x in max_cliques if len(x) == d + 1]
-            cliques_d_to_add = []
-            for el in cliques_d:
-                if seed.random() <= p:
-                    cliques_d_to_add.append(el)
+            cliques_d_to_add = [el for el in cliques_d if if seed.random() <= p]
             S.add_simplices_from(cliques_d_to_add, max_order=max_order)
 
     return S
