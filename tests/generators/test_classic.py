@@ -32,12 +32,21 @@ def test_flag_complex():
 
     S = xgi.flag_complex(G)
 
-    simplices = [
-        frozenset({0, 1, 2}),
+    simplices_2 = [
         frozenset({0, 1}),
         frozenset({0, 2}),
         frozenset({1, 2}),
         frozenset({0, 3}),
     ]
 
-    assert S.edges.members() == simplices
+    simplices_3 = [frozenset({0, 1, 2})] + simplices_2
+
+    assert S.edges.members() == simplices_3
+
+    S1 = xgi.flag_complex(G, ps=[1], seed=42)
+    S2 = xgi.flag_complex(G, ps=[0.5], seed=42)
+    S3 = xgi.flag_complex(G, ps=[0], seed=42)
+
+    assert S1.edges.members() == simplices_3
+    assert S.edges.members() == simplices_2
+    assert S3.edges.members() == simplices_2
