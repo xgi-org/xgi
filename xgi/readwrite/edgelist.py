@@ -150,7 +150,7 @@ def parse_edgelist(
         if nodetype is not None:
             try:
                 edge = [nodetype(node) for node in edge]
-            except Exception as e:
+            except ValueError as e:
                 raise TypeError(f"Failed to convert nodes to type {nodetype}.") from e
 
         H.add_edge(edge)

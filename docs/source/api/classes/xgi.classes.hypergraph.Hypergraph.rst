@@ -33,14 +33,11 @@
       ~Hypergraph.remove_node
       ~Hypergraph.remove_edge
       ~Hypergraph.remove_nodes_from
-      ~Hypergraph.remove_nodes_from
       ~Hypergraph.remove_edges_from
       ~Hypergraph.remove_node_from_edge
-      ~Hypergraph.remove_isolates
-      ~Hypergraph.remove_singleton_edges
       ~Hypergraph.clear
       ~Hypergraph.clear_edges
-
+      ~Hypergraph.cleanup
 
    .. rubric:: Methods that return other hypergraphs
 
@@ -49,30 +46,3 @@
 
       ~Hypergraph.copy
       ~Hypergraph.dual
-
-
-   .. rubric:: Methods that query nodes and edges
-
-   .. autosummary::
-      :nosignatures:
-
-      ~Hypergraph.degree
-      ~Hypergraph.edge_size
-      ~Hypergraph.isolates
-      ~Hypergraph.duplicate_edges
-      ~Hypergraph.has_edge
-      ~Hypergraph.has_node
-      ~Hypergraph.is_possible_order
-      ~Hypergraph.max_edge_order
-      ~Hypergraph.neighbors
-      ~Hypergraph.egonet
-      ~Hypergraph.singleton_edges
-
-
-   .. rubric:: Other methods
-
-   .. autosummary::
-      :nosignatures:
-
-      ~Hypergraph.is_uniform
-      ~Hypergraph.nbunch_iter

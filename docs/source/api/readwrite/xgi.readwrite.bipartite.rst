@@ -11,10 +11,3 @@ xgi.readwrite.bipartite
    .. autofunction:: parse_bipartite_edgelist
    .. autofunction:: read_bipartite_edgelist
    .. autofunction:: write_bipartite_edgelist
-
-   
-   
-   
-
-
-

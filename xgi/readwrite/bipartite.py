@@ -194,7 +194,7 @@ def parse_bipartite_edgelist(
         if nodetype is not None:
             try:
                 node = nodetype(s[node_index])
-            except Exception as e:
+            except ValueError as e:
                 raise TypeError(
                     f"Failed to convert the node with ID {s[node_index]} to type {nodetype}."
                 ) from e
@@ -205,7 +205,7 @@ def parse_bipartite_edgelist(
         if edgetype is not None:
             try:
                 edge = edgetype(s[edge_index])
-            except Exception as e:
+            except ValueError as e:
                 raise TypeError(
                     f"Failed to convert the edge with ID {s[edge_index]} to type {edgetype}."
                 ) from e

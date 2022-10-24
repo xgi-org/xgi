@@ -33,23 +33,27 @@ def test_read_edgelist(file_string, extra_kwargs):
         file.write(file_string)
 
     H = xgi.read_edgelist(filename, nodetype=int, **extra_kwargs)
-    int_edgelist = [[1, 2], [2, 3, 4], [1, 4, 7, 8], [2, 3]]
+    int_edgelist = [{1, 2}, {2, 3, 4}, {1, 4, 7, 8}, {2, 3}]
     assert [H.edges.members(id) for id in H.edges] == int_edgelist
     H = xgi.read_edgelist(filename, nodetype=str, **extra_kwargs)
-    str_edgelist = [["1", "2"], ["2", "3", "4"], ["1", "4", "7", "8"], ["2", "3"]]
+    str_edgelist = [{"1", "2"}, {"2", "3", "4"}, {"1", "4", "7", "8"}, {"2", "3"}]
     assert [H.edges.members(id) for id in H.edges] == str_edgelist
 
 
 def test_parse_edgelist():
     H = xgi.parse_edgelist(["1 2", "2 3 4", "1 4 7 8", "2 3"], nodetype=int)
-    assert list(H.nodes) == [1, 2, 3, 4, 7, 8]
-    assert list(H.edges) == [0, 1, 2, 3]
+    assert set(H.nodes) == {1, 2, 3, 4, 7, 8}
+    assert set(H.edges) == {0, 1, 2, 3}
     assert [H.edges.members(id) for id in H.edges] == [
-        [1, 2],
-        [2, 3, 4],
-        [1, 4, 7, 8],
-        [2, 3],
+        {1, 2},
+        {2, 3, 4},
+        {1, 4, 7, 8},
+        {2, 3},
     ]
+
+    # This will fail because the "test" node ID can't be converted to int
+    with pytest.raises(TypeError):
+        xgi.parse_edgelist(["test 2", "2 3 4", "test 4 7 8", "2 3"], nodetype=int)
 
 
 def test_write_edgelist(edgelist1):

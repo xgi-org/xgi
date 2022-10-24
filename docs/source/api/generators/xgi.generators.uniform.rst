@@ -8,10 +8,3 @@ xgi.generators.uniform
    .. rubric:: Functions
    
    .. autofunction:: uniform_hypergraph_configuration_model
-
-   
-   
-   
-
-
-

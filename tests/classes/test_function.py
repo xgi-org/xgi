@@ -4,6 +4,16 @@ import xgi
 from xgi.exception import IDNotFound, XGIError
 
 
+def test_num_edges_order(edgelist2):
+
+    H = xgi.Hypergraph(edgelist2)
+
+    assert xgi.num_edges_order(H, 0) == 0
+    assert xgi.num_edges_order(H, 1) == 2
+    assert xgi.num_edges_order(H, 2) == 1
+    assert xgi.num_edges_order(H) == 3
+
+
 def test_max_edge_order(edgelist1, edgelist4, edgelist5):
     H0 = xgi.empty_hypergraph()
     H1 = xgi.empty_hypergraph()
@@ -41,13 +51,13 @@ def test_is_uniform(edgelist1, edgelist6, edgelist7):
     assert xgi.is_uniform(H3) == False
 
 
-def test_egonet(edgelist3):
+def test_edge_neighborhood(edgelist3):
     H = xgi.Hypergraph(edgelist3)
-    assert H.neighbors(3) == {1, 2, 4}
-    assert xgi.egonet(H, 3) == [[1, 2], [4]]
-    assert xgi.egonet(H, 3, include_self=True) == [[1, 2, 3], [3, 4]]
+    assert H.nodes.neighbors(3) == {1, 2, 4}
+    assert xgi.edge_neighborhood(H, 3) == [{1, 2}, {4}]
+    assert xgi.edge_neighborhood(H, 3, include_self=True) == [{1, 2, 3}, {3, 4}]
     with pytest.raises(IDNotFound):
-        xgi.egonet(H, 7)
+        xgi.edge_neighborhood(H, 7)
 
 
 def test_degree_counts(edgelist1, edgelist2, edgelist3):
@@ -58,6 +68,8 @@ def test_degree_counts(edgelist1, edgelist2, edgelist3):
     assert xgi.degree_counts(H1) == [0, 7, 1]
     assert xgi.degree_counts(H2) == [0, 5, 1]
     assert xgi.degree_counts(H3) == [0, 4, 2]
+
+    assert xgi.degree_counts(H1, order=2) == [2, 6]
 
 
 def test_degree_histogram(edgelist1, edgelist2, edgelist3):
@@ -200,6 +212,12 @@ def test_set_node_attributes(edgelist1):
     with pytest.raises(XGIError):
         xgi.set_node_attributes(H4, 2)
 
+    with pytest.warns(Warning):
+        xgi.set_node_attributes(H4, {"test": "blue"}, "color")
+
+    with pytest.warns(Warning):
+        xgi.set_node_attributes(H4, {"test": {"blue": "color"}})
+
 
 def test_get_node_attributes(edgelist1):
     H1 = xgi.Hypergraph(edgelist1)
@@ -239,18 +257,24 @@ def test_set_edge_attributes(edgelist1):
         assert H1.edges[e]["weight"] == attr_dict1[e]["weight"]
 
     H2 = xgi.Hypergraph(edgelist1)
-    xgi.set_node_attributes(H2, "blue", name="color")
+    xgi.set_edge_attributes(H2, "blue", name="color")
 
-    for n in H2.nodes:
-        assert H2.nodes[n]["color"] == "blue"
+    for e in H2.edges:
+        assert H2.edges[e]["color"] == "blue"
 
     H3 = xgi.Hypergraph(edgelist1)
 
-    with pytest.raises(XGIError):
+    with pytest.warns(Warning), pytest.raises(XGIError):
         xgi.set_node_attributes(H3, attr_dict2)
 
     with pytest.raises(XGIError):
         xgi.set_edge_attributes(H3, 2)
+
+    with pytest.warns(Warning):
+        xgi.set_edge_attributes(H3, {"test": 2}, "weight")
+
+    with pytest.warns(Warning):
+        xgi.set_edge_attributes(H3, {"test": {2: "weight"}})
 
 
 def test_get_edge_attributes(edgelist1):
@@ -280,3 +304,78 @@ def test_is_empty():
     assert xgi.is_empty(H1)
     assert xgi.is_empty(H2)
     assert not xgi.is_empty(H3)
+
+
+def test_convert_labels_to_integers(hypergraph1, hypergraph2):
+    H1 = xgi.convert_labels_to_integers(hypergraph1)
+    H2 = xgi.convert_labels_to_integers(hypergraph2)
+    H3 = xgi.convert_labels_to_integers(hypergraph1, "old_ids")
+
+    assert set(H1.nodes) == {0, 1, 2}
+    assert set(H1.edges) == {0, 1, 2}
+
+    assert H1.nodes[0]["label"] == "a"
+    assert H1.nodes[1]["label"] == "b"
+    assert H1.nodes[2]["label"] == "c"
+
+    assert H1.edges[0]["label"] == "e1"
+    assert H1.edges[1]["label"] == "e2"
+    assert H1.edges[2]["label"] == "e3"
+
+    assert H1.edges.members(0) == {0, 1}
+    assert H1.edges.members(1) == {0, 1, 2}
+    assert H1.edges.members(2) == {2}
+
+    assert H1.nodes.memberships(0) == {0, 1}
+    assert H1.nodes.memberships(1) == {0, 1}
+    assert H1.nodes.memberships(2) == {1, 2}
+
+    assert set(H2.nodes) == {0, 1, 2}
+    assert set(H2.edges) == {0, 1, 2}
+
+    assert H2.nodes[0]["label"] == "b"
+    assert H2.nodes[1]["label"] == "c"
+    assert H2.nodes[2]["label"] == 0
+
+    assert H2.edges[0]["label"] == "e1"
+    assert H2.edges[1]["label"] == "e2"
+    assert H2.edges[2]["label"] == "e3"
+
+    assert H2.edges.members(0) == {0, 2}
+    assert H2.edges.members(1) == {1, 2}
+    assert H2.edges.members(2) == {0, 1, 2}
+
+    assert H2.nodes.memberships(0) == {0, 2}
+    assert H2.nodes.memberships(1) == {1, 2}
+    assert H2.nodes.memberships(2) == {0, 1, 2}
+
+    assert H3.nodes[0]["old_ids"] == "a"
+    assert H3.edges[0]["old_ids"] == "e1"
+
+
+def test_maximal_simplices(edgelist5, edgelist8):
+    S1 = xgi.SimplicialComplex(edgelist5)
+    S2 = xgi.SimplicialComplex(edgelist8)
+
+    m1 = xgi.maximal_simplices(S1)
+    m2 = xgi.maximal_simplices(S2)
+
+    simp1 = S1.edges(m1).members()
+    simp2 = S2.edges(m2).members()
+
+    assert len(m1) == 4
+    assert {0, 1, 2, 3} in simp1
+    assert {4} in simp1
+    assert {5, 6} in simp1
+    assert {6, 7, 8} in simp1
+
+    assert len(m2) == 5
+    assert {0, 1, 2, 3, 4} in simp2
+    assert {2, 4, 5} in simp2
+    assert {1, 3, 5} in simp2
+    assert {1, 6} in simp2
+    assert {0, 6} in simp2
+
+    H = xgi.Hypergraph(edgelist5)
+    with pytest.raises(XGIError):
+        xgi.maximal_simplices(H)

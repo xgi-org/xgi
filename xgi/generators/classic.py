@@ -6,6 +6,7 @@ hypergraph).
 """
 
 from itertools import combinations
+from warnings import warn
 
 import networkx as nx
 import numpy as np
@@ -13,11 +14,15 @@ import numpy as np
 from ..classes import SimplicialComplex
 from ..utils import py_random_state
 
+from ..exception import XGIError
+
 __all__ = [
     "empty_hypergraph",
     "empty_simplicial_complex",
     "star_clique",
     "flag_complex",
+    "sunflower",
+    "ring_lattice",
 ]
 
 
@@ -224,3 +229,96 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
             S.add_simplices_from(cliques_d_to_add, max_order=max_order)
 
     return S
+
+
+def ring_lattice(n, d, k, l):
+    """A ring lattice hypergraph.
+
+    A d-uniform hypergraph on n nodes where each node is part of k edges and the
+    overlap between consecutive edges is d-l.
+
+    Parameters
+    ----------
+    n : int
+        Number of nodes
+    d : int
+        Edge size
+    k : int
+        Number of edges of which a node is a part. Should be a multiple of 2.
+    l : int
+        Overlap between edges
+
+    Returns
+    -------
+    Hypergraph
+        The generated hypergraph
+
+    Raises
+    ------
+    XGIError
+        If k is negative.
+
+    Notes
+    -----
+    ring_lattice(n, 2, k, 0) is a ring lattice graph where each node has k//2 edges on either
+    side.
+    """
+    from ..classes import Hypergraph
+
+    if k < 0:
+        raise XGIError("Invalid k value!")
+
+    if k < 2:
+        warn("This creates a completely disconnected hypergraph!")
+
+    if k % 2 != 0:
+        warn("k is not divisible by 2")
+
+    edges = [
+        [node] + [(start + l + i) % n for i in range(d - 1)]
+        for node in range(n)
+        for start in range(node + 1, node + k // 2 + 1)
+    ]
+    H = Hypergraph(edges)
+    H.add_nodes_from(range(n))
+    return H
+
+
+def sunflower(l, c, m):
+    """Create a sunflower hypergraph.
+
+    This creates an m-uniform hypergraph
+    according to the sunflower model.
+
+    Parameters
+    ----------
+    l : int
+        Number of petals
+    c : int
+        Size of the core
+    m : int
+        Size of each edge
+
+    Raises
+    ------
+    XGIError
+        If the edge size is smaller than the core.
+
+    Returns
+    -------
+
+    """
+    from ..classes import Hypergraph
+
+    if m < c:
+        raise XGIError("m cannot be smaller than c.")
+
+    core_nodes = list(range(c))
+
+    H = Hypergraph()
+    start_label = c
+    while start_label + (m - c) <= c + (m - c) * l:
+        H.add_edge(core_nodes + [start_label + i for i in range(m - c)])
+        start_label = start_label + (m - c)
+
+    return H

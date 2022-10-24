@@ -3,45 +3,62 @@ import numpy as np
 import pandas as pd
 import pytest
 
+import xgi
+
 
 @pytest.fixture
 def edgelist1():
-    return [[1, 2, 3], [4], [5, 6], [6, 7, 8]]
+    return [{1, 2, 3}, {4}, {5, 6}, {6, 7, 8}]
 
 
 @pytest.fixture
 def edgelist2():
-    return [[1, 2], [3, 4], [4, 5, 6]]
+    return [{1, 2}, {3, 4}, {4, 5, 6}]
 
 
 @pytest.fixture
 def edgelist3():
-    return [[1, 2, 3], [3, 4], [4, 5, 6]]
+    return [{1, 2, 3}, {3, 4}, {4, 5, 6}]
 
 
 @pytest.fixture
 def edgelist4():
-    return [[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]]
+    return [{1, 2, 3}, {2, 3, 4, 5}, {3, 4, 5}]
 
 
 @pytest.fixture
 def edgelist5():
-    return [[0, 1, 2, 3], [4], [5, 6], [6, 7, 8]]
+    return [{0, 1, 2, 3}, {4}, {5, 6}, {6, 7, 8}]
 
 
 @pytest.fixture
 def edgelist6():
-    return [[0, 1, 2], [1, 2, 3], [2, 3, 4]]
+    return [{0, 1, 2}, {1, 2, 3}, {2, 3, 4}]
 
 
 @pytest.fixture
 def edgelist7():
-    return [[0, 1, 2], [1, 2, 3], [2, 3, 4], [4]]
+    return [{0, 1, 2}, {1, 2, 3}, {2, 3, 4}, {4}]
+
+
+@pytest.fixture
+def edgelist8():
+    return [
+        {0, 1},
+        {0, 1, 2},
+        {0, 2, 3},
+        {0, 1, 2, 3, 4},
+        {2, 4, 5},
+        {1, 3, 5},
+        {0, 3, 4},
+        {1, 6},
+        {0, 6},
+    ]
 
 
 @pytest.fixture
 def dict5():
-    return {0: [0, 1, 2, 3], 1: [4], 2: [5, 6], 3: [6, 7, 8]}
+    return {0: {0, 1, 2, 3}, 1: {4}, 2: {5, 6}, 3: {6, 7, 8}}
 
 
 @pytest.fixture
@@ -66,7 +83,9 @@ def dataframe5():
         [7, 3],
         [8, 3],
     ]
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data)
+    df.columns = ["col1", "col2"]
+    return df
 
 
 @pytest.fixture
@@ -119,3 +138,44 @@ def attr2():
 @pytest.fixture
 def attr3():
     return {"color": "yellow", "name": "zebra"}
+
+
+@pytest.fixture
+def attr4():
+    return {"color": "red", "name": "orangutan", "age": 20}
+
+
+@pytest.fixture
+def attr5():
+    return {"color": "blue", "name": "fish", "age": 2}
+
+
+@pytest.fixture
+def hyperwithattrs(edgelist4, attr1, attr2, attr3, attr4, attr5):
+    H = xgi.Hypergraph(edgelist4)
+    H.add_nodes_from(
+        [
+            (1, attr1),
+            (2, attr2),
+            (3, attr3),
+            (4, attr4),
+            (5, attr5),
+        ]
+    )
+    return H
+
+
+@pytest.fixture
+def hypergraph1():
+    H = xgi.Hypergraph()
+    H.add_nodes_from(["a", "b", "c"])
+    H.add_edges_from({"e1": ["a", "b"], "e2": ["a", "b", "c"], "e3": ["c"]})
+    return H
+
+
+@pytest.fixture
+def hypergraph2():
+    H = xgi.Hypergraph()
+    H.add_nodes_from(["b", "c", 0])
+    H.add_edges_from({"e1": [0, "b"], "e2": [0, "c"], "e3": [0, "b", "c"]})
+    return H

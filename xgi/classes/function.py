@@ -1,14 +1,18 @@
 """Functional interface to hypergraph methods and assorted utilities."""
 
 from collections import Counter
+from copy import deepcopy
+from warnings import warn
 
-from ..exception import XGIError
+from ..exception import IDNotFound, XGIError
+from .hypergraph import Hypergraph
 
 __all__ = [
+    "num_edges_order",
     "max_edge_order",
     "is_possible_order",
     "is_uniform",
-    "egonet",
+    "edge_neighborhood",
     "degree_counts",
     "degree_histogram",
     "unique_edge_sizes",
@@ -21,7 +25,27 @@ __all__ = [
     "get_edge_attributes",
     "is_empty",
     "maximal_simplices",
+    "convert_labels_to_integers",
 ]
+
+
+def num_edges_order(H, d=None):
+    """The number of edges of order d.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest.
+
+    d : int | None, optional
+        The order of edges to count. If None (default), counts
+        for all orders.
+    """
+
+    if d is not None:
+        return len(H.edges.filterby("order", d))
+    else:
+        return H.num_edges
 
 
 def max_edge_order(H):
@@ -101,12 +125,12 @@ def is_uniform(H):
     return edge_sizes.pop() - 1  # order of all edges
 
 
-def egonet(H, n, include_self=False):
-    """The egonet of the specified node.
+def edge_neighborhood(H, n, include_self=False):
+    """The edge neighborhood of the specified node.
 
-    The egonet of a node `n` in a hypergraph `H` is another hypergraph whose nodes
-    are the neighbors of `n` and its edges are all the edges in `H` that contain
-    `n`.  Usually, the egonet do not include `n` itself.  This can be controlled
+    The edge neighborhood of a node `n` in a hypergraph `H` is an edgelist of all the edges
+    containing `n` and its edges are all the edges in `H` that contain
+    `n`.  Usually, the edge neighborhood does not include `n` itself.  This can be controlled
     with `include_self`.
 
     Parameters
@@ -114,14 +138,14 @@ def egonet(H, n, include_self=False):
     H : Hypergraph
         THe hypergraph of interest
     n : node
-        Node whose egonet is needed.
+        Node whose edge_neighborhood is needed.
     include_self : bool (default False)
-        Whether the egonet contains `n`.
+        Whether the edge_neighborhood contains `n`.
 
     Returns
     -------
     list
-        An edgelist of the egonet of `n`.
+        An edgelist of the edge_neighborhood of `n`.
 
     See Also
     --------
@@ -131,29 +155,30 @@ def egonet(H, n, include_self=False):
     --------
     >>> import xgi
     >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5, 6]])
-    >>> H.neighbors(3)
+    >>> H.nodes.neighbors(3)
     {1, 2, 4}
-    >>> xgi.egonet(H, 3)
-    [[1, 2], [4]]
-    >>> xgi.egonet(H, 3, include_self=True)
-    [[1, 2, 3], [3, 4]]
+    >>> xgi.edge_neighborhood(H, 3)
+    [{1, 2}, {4}]
+    >>> xgi.edge_neighborhood(H, 3, include_self=True)
+    [{1, 2, 3}, {3, 4}]
 
     """
     if include_self:
         return [H.edges.members(e) for e in H.nodes.memberships(n)]
     else:
-        return [
-            [x for x in H.edges.members(e) if x != n] for e in H.nodes.memberships(n)
-        ]
+        return [H.edges.members(e) - {n} for e in H.nodes.memberships(n)]
 
 
-def degree_counts(H):
+def degree_counts(H, order=None):
     """Returns a list of the frequency of each degree value.
 
     Parameters
     ----------
     H : Hypergraph object
         The hypergraph of interest
+    order: int, optional
+        Order of edges to take into account. If None (default),
+        consider all edges.
 
     Returns
     -------
@@ -173,8 +198,9 @@ def degree_counts(H):
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> xgi.degree_counts(H)
     [0, 3, 1]
+
     """
-    counts = Counter(d for n, d in H.degree())
+    counts = Counter(H.degree(order=order).values())
     return [counts.get(i, 0) for i in range(max(counts) + 1)]
 
 
@@ -203,8 +229,9 @@ def degree_histogram(H):
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> xgi.degree_histogram(H)
     ([1, 2], [3, 1])
+
     """
-    counts = Counter(d for n, d in H.degree())
+    counts = Counter(H.degree().values())
     degrees = []
     heights = []
     for d, c in sorted(counts.items(), key=lambda kv: kv[0]):
@@ -247,6 +274,7 @@ def frozen(*args, **kwargs):
     >>> H.add_node(5)
     Traceback (most recent call last):
     xgi.exception.XGIError: Frozen hypergraph can't be modified
+
     """
     raise XGIError("Frozen hypergraph can't be modified")
 
@@ -280,6 +308,7 @@ def freeze(H):
     >>> H.add_node(5)
     Traceback (most recent call last):
     xgi.exception.XGIError: Frozen hypergraph can't be modified
+
     """
     H.add_node = frozen
     H.add_nodes_from = frozen
@@ -323,6 +352,7 @@ def is_frozen(H):
     <xgi.classes.hypergraph.Hypergraph object at 0x...>
     >>> xgi.is_frozen(H)
     True
+
     """
     try:
         return H.frozen
@@ -361,6 +391,7 @@ def create_empty_copy(H, with_data=True):
     NodeView((1, 2, 3, 4))
     >>> H_copy.edges
     EdgeView(())
+
     """
     H_copy = H.__class__()
     H_copy.add_nodes_from(H.nodes)
@@ -412,16 +443,17 @@ def set_node_attributes(H, values, name=None):
 
     Note that if the dictionary contains nodes that are not in `G`, the
     values are silently ignored.
+
     """
     # Set node attributes based on type of `values`
     if name is not None:  # `values` must not be a dict of dict
-        try:  # `values` is a dict
+        if isinstance(values, dict):  # `values` is a dict
             for n, v in values.items():
                 try:
                     H._node_attr[n][name] = v
-                except KeyError:
-                    pass
-        except AttributeError:  # `values` is a constant
+                except IDNotFound:
+                    warn(f"Node {n} does not exist!")
+        else:  # `values` is a constant
             for n in H:
                 H._node_attr[n][name] = values
     else:  # `values` must be dict of dict
@@ -429,8 +461,8 @@ def set_node_attributes(H, values, name=None):
             for n, d in values.items():
                 try:
                     H._node_attr[n].update(d)
-                except KeyError:
-                    pass
+                except IDNotFound:
+                    warn(f"Node {n} does not exist!")
         except (TypeError, ValueError, AttributeError):
             raise XGIError("Must pass a dictionary of dictionaries")
 
@@ -455,6 +487,7 @@ def get_node_attributes(H, name=None):
     set_node_attributes
     set_edge_attributes
     get_edge_attributes
+
     """
     if name is None:
         return dict(H._node_attr)
@@ -492,26 +525,27 @@ def set_edge_attributes(H, values, name=None):
     -----
     Note that if the dict contains edge IDs that are not in `H`, they are
     silently ignored.
+
     """
     if name is not None:
         # `values` does not contain attribute names
         try:
-            for id, value in values.items():
+            for e, value in values.items():
                 try:
                     H._edge_attr[id][name] = value
-                except KeyError:
-                    pass
+                except IDNotFound:
+                    warn(f"Edge {e} does not exist!")
         except AttributeError:
             # treat `values` as a constant
-            for id in H.edges:
-                H._edge_attr[id][name] = values
+            for e in H.edges:
+                H._edge_attr[e][name] = values
     else:
         try:
-            for id, d in values.items():
+            for e, d in values.items():
                 try:
-                    H._edge_attr[id].update(d)
-                except KeyError:
-                    pass
+                    H._edge_attr[e].update(d)
+                except IDNotFound:
+                    warn(f"Edge {e} does not exist!")
         except AttributeError:
             raise XGIError(
                 "name property has not been set and a dict-of-dicts has not been provided."
@@ -606,3 +640,51 @@ def maximal_simplices(SC):
         if maximal:
             max_simplices.append(i)
     return max_simplices
+
+
+def convert_labels_to_integers(H, label_attribute="label"):
+    """Relabel node and edge IDs to be sequential integers.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest
+
+    label_attribute : string, default: "label"
+        The attribute name that stores the old node and edge labels
+
+    Returns
+    -------
+    Hypergraph
+        A new hypergraph with nodes and edges with sequential IDs starting at 0.
+        The old IDs are stored in the "label" attribute for both nodes and edges.
+
+    Notes
+    -----
+    The "relabeling" will occur even if the node/edge IDs are sequential.
+    Because the old IDs are stored in the "label" attribute for both nodes and edges,
+    the old "label" values (if they exist) will be overwritten.
+    """
+    node_dict = dict(zip(H.nodes, range(H.num_nodes)))
+    edge_dict = dict(zip(H.edges, range(H.num_edges)))
+    temp_H = Hypergraph()
+    temp_H._hypergraph = deepcopy(H._hypergraph)
+
+    temp_H.add_nodes_from((id, deepcopy(H.nodes[n])) for n, id in node_dict.items())
+    set_node_attributes(
+        temp_H, {n: {label_attribute: id} for id, n in node_dict.items()}
+    )
+
+    temp_H.add_edges_from(
+        (
+            {node_dict[n] for n in e},
+            edge_dict[id],
+            deepcopy(H.edges[id]),
+        )
+        for id, e in H.edges.members(dtype=dict).items()
+    )
+    set_edge_attributes(
+        temp_H, {e: {label_attribute: id} for id, e in edge_dict.items()}
+    )
+
+    return temp_H

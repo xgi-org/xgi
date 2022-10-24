@@ -13,10 +13,3 @@ xgi.generators.nonuniform
    .. autofunction:: random_flag_complex_d2
    .. autofunction:: random_hypergraph
    .. autofunction:: random_simplicial_complex
-
-   
-   
-   
-
-
-

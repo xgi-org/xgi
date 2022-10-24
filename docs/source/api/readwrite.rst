@@ -11,3 +11,4 @@ readwrite package
    ~xgi.readwrite.edgelist
    ~xgi.readwrite.incidence
    ~xgi.readwrite.json
+   ~xgi.readwrite.xgi_data

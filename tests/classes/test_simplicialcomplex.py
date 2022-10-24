@@ -13,9 +13,12 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     with pytest.raises(XGIError):
         S_mat = xgi.SimplicialComplex(incidence5)
 
-    assert list(S_list.nodes) == list(S_df.nodes)
-    assert list(S_list.edges) == list(S_df.edges)
-    assert list(S_list.edges.members(0)) == list(S_df.edges.members(0))
+    assert set(S_list.nodes) == set(S_df.nodes)
+    assert set(S_list.edges) == set(S_df.edges)
+    assert set(S_list.edges.members(0)) == set(S_df.edges.members(0))
+
+    with pytest.raises(XGIError):
+        xgi.SimplicialComplex(1)
 
 
 def test_add_simplex():
@@ -54,8 +57,10 @@ def test_add_simplices_from(edgelist5):
     assert xgi.max_edge_order(S1) == 3
     assert xgi.max_edge_order(S2) == 2
 
-    assert set(S1.edges(order=1).members()) == set(S2.edges(order=1).members())
-    assert set(S1.edges(order=2).members()) == set(S2.edges(order=2).members())
+    s1o1, s1o2 = S1.edges.filterby("order", 1), S1.edges.filterby("order", 2)
+    s2o1, s2o2 = S2.edges.filterby("order", 1), S2.edges.filterby("order", 2)
+    assert set(s1o1.members()) == set(s2o1.members())
+    assert set(s1o2.members()) == set(s2o2.members())
 
 
 def test_remove_simplex_id(edgelist6):

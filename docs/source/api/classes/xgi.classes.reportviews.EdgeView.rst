@@ -7,13 +7,23 @@ xgi.classes.reportviews.EdgeView
    :show-inheritance:
    :members:
 
-   
-   
 
-   
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~NodeView.ids
+
+
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
-      
+
       ~EdgeView.members
+      ~EdgeView.singletons
+      ~IDView.neighbors
+      ~IDView.duplicates
+      ~IDView.lookup
+      ~IDView.filterby
+      ~IDView.filterby_attr

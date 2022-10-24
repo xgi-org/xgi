@@ -317,6 +317,12 @@ def test_multiorder_laplacian(edgelist2, edgelist6):
         L1, node_dict1 = xgi.multiorder_laplacian(
             H1, orders=[1, 2], weights=[1, 1], index=True
         )
+
+    # different order and weight lengths
+    with pytest.raises(ValueError):
+        L1, node_dict1 = xgi.multiorder_laplacian(
+            H2, orders=[1, 2], weights=[1, 1, 1], index=True
+        )
     node_dict1 = {k: v for v, k in node_dict1.items()}
     assert L1.shape == (5, 5)
     assert np.all((L1.T == L1))
@@ -342,6 +348,9 @@ def test_multiorder_laplacian(edgelist2, edgelist6):
     assert L2[node_dict2[2], node_dict2[6]] == 0
     assert L2[node_dict2[3], node_dict2[5]] == 0
     assert L2[node_dict2[3], node_dict2[6]] == 0
+
+    L2 = xgi.multiorder_laplacian(H2, orders=[1, 2], weights=[1, 1])
+    assert np.shape(L2) == (6, 6)
 
 
 def test_intersection_profile(edgelist2):
@@ -369,6 +378,10 @@ def test_intersection_profile(edgelist2):
     edge_dict2 = {k: v for v, k in edge_dict2.items()}
 
     assert P2[edge_dict2[2], edge_dict2[2]] == 3
+
+    P2 = xgi.intersection_profile(H1, order=2)
+    assert np.shape(P2) == (1, 1)
+    assert P2[0, 0] == 3
 
 
 def test_clique_motif_matrix(edgelist4):
@@ -407,3 +420,24 @@ def test_empty():
     assert xgi.adjacency_matrix(H).shape == (0, 0)
     assert xgi.laplacian(H).shape == (0, 0)
     assert xgi.clique_motif_matrix(H).shape == (0,)
+
+    # with indices
+    data = xgi.incidence_matrix(H, index=True)
+    assert len(data) == 3
+    assert data[0].shape == (0,)
+    assert type(data[1]) == dict and type(data[2]) == dict
+
+    data = xgi.adjacency_matrix(H, index=True)
+    assert len(data) == 2
+    assert data[0].shape == (0, 0)
+    assert type(data[1]) == dict
+
+    data = xgi.laplacian(H, index=True)
+    assert len(data) == 2
+    assert data[0].shape == (0, 0)
+    assert type(data[1]) == dict
+
+    data = xgi.clique_motif_matrix(H, index=True)
+    assert len(data) == 2
+    assert data[0].shape == (0,)
+    assert type(data[1]) == dict

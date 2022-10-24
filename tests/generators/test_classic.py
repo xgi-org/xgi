@@ -2,6 +2,7 @@ import networkx as nx
 import pytest
 
 import xgi
+from xgi.exception import XGIError
 
 
 def test_empty_hypergraph():
@@ -9,8 +10,12 @@ def test_empty_hypergraph():
     assert (H.num_nodes, H.num_edges) == (0, 0)
 
 
-def test_star_clique():
+def test_empty_hypergraph():
+    SC = xgi.empty_simplicial_complex()
+    assert (SC.num_nodes, SC.num_edges) == (0, 0)
 
+
+def test_star_clique():
     with pytest.raises(ValueError):
         H = xgi.star_clique(-1, 7, 3)
     with pytest.raises(ValueError):
@@ -50,3 +55,53 @@ def test_flag_complex():
     assert S1.edges.members() == simplices_3
     assert S2.edges.members() == simplices_2
     assert S3.edges.members() == simplices_2
+
+
+def test_ring_lattice():
+    H = xgi.ring_lattice(5, 2, 2, 0)
+    assert H.num_nodes == 5
+    assert H.num_edges == 5
+    assert xgi.unique_edge_sizes(H) == [2]
+
+    H = xgi.ring_lattice(5, 3, 4, 1)
+    edges = H.edges.members()
+    for i in range(H.num_edges - 1):
+        assert len(set(edges[i]).intersection(set(edges[i + 1]))) == 2  # d-l
+    assert xgi.unique_edge_sizes(H) == [3]
+
+    # k < 2 test
+    with pytest.warns(Warning):
+        H = xgi.ring_lattice(5, 2, 1, 0)
+    assert H.num_nodes == 5
+    assert H.num_edges == 0
+
+    # k % 2 != 0 test
+    with pytest.warns(Warning):
+        xgi.ring_lattice(5, 2, 3, 0)
+
+    # k < 0 test
+    with pytest.raises(XGIError):
+        xgi.ring_lattice(5, 2, -1, 0)
+
+
+def test_sunflower():
+    with pytest.raises(XGIError):
+        H = xgi.sunflower(3, 4, 2)
+
+    H = xgi.sunflower(3, 1, 5)
+
+    assert H.nodes.memberships(0) == {0, 1, 2}
+    assert set(H.nodes) == set(range(13))
+    assert H.num_edges == 3
+    for n in range(1, H.num_nodes):
+        assert len(H.nodes.memberships(n)) == 1
+
+    H = xgi.sunflower(4, 3, 6)
+    for i in range(3):
+        H.nodes.memberships(i) == {0, 1, 2, 3}
+
+    assert H.num_nodes == 15
+
+    for i in range(3, 15):
+        assert len(H.nodes.memberships(i)) == 1
+

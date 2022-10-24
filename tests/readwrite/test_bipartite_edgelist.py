@@ -3,6 +3,7 @@ import tempfile
 import pytest
 
 import xgi
+from xgi.exception import XGIError
 
 bipartite_edgelist_spaces_string = """0 0
 # Comment
@@ -47,15 +48,41 @@ def test_read_bipartite_edgelist(file_string, extra_kwargs):
         file.write(file_string)
 
     H = xgi.read_bipartite_edgelist(filename, nodetype=int, **extra_kwargs)
-    int_edgelist = [[0, 1, 2, 3], [4], [5, 6], [6, 7, 8]]
+    int_edgelist = [{0, 1, 2, 3}, {4}, {5, 6}, {6, 7, 8}]
     assert [H.edges.members(id) for id in H.edges] == int_edgelist
     H = xgi.read_bipartite_edgelist(filename, nodetype=str, **extra_kwargs)
-    str_edgelist = [["0", "1", "2", "3"], ["4"], ["5", "6"], ["6", "7", "8"]]
+    str_edgelist = [{"0", "1", "2", "3"}, {"4"}, {"5", "6"}, {"6", "7", "8"}]
     assert [H.edges.members(id) for id in H.edges] == str_edgelist
 
 
 def test_parse_bipartite_edgelist():
     lines = ["0 0", "1 0", "2 0", "3 0", "4 1", "5 2", "6 2", "6 3", "7 3", "8 3"]
+    bad_lines1 = ["0", "1 0", "2 0", "3 0", "4 1", "5 2", "6 2", "6 3", "7 3", "8 3"]
+    bad_lines2 = [
+        "test 0",
+        "1 0",
+        "2 0",
+        "3 0",
+        "4 1",
+        "5 test",
+        "6 test",
+        "6 3",
+        "7 3",
+        "8 3",
+    ]
+    bad_lines3 = [
+        "0 0",
+        "1 0",
+        "2 0",
+        "3 0",
+        "4 1",
+        "5 test",
+        "6 test",
+        "6 3",
+        "7 3",
+        "8 3",
+    ]
+
     H = xgi.parse_bipartite_edgelist(lines, nodetype=int)
     assert list(H.nodes) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
     assert list(H.edges) == ["0", "1", "2", "3"]
@@ -67,10 +94,10 @@ def test_parse_bipartite_edgelist():
     assert list(H.nodes) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
     assert list(H.edges) == [0, 1, 2, 3]
     assert [H.edges.members(id) for id in H.edges] == [
-        [0, 1, 2, 3],
-        [4],
-        [5, 6],
-        [6, 7, 8],
+        {0, 1, 2, 3},
+        {4},
+        {5, 6},
+        {6, 7, 8},
     ]
 
     H = xgi.parse_bipartite_edgelist(lines, nodetype=int, edgetype=int, dual=True)
@@ -78,16 +105,28 @@ def test_parse_bipartite_edgelist():
     assert list(H.edges) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
     print([H.edges.members(id) for id in H.edges])
     assert [H.edges.members(id) for id in H.edges] == [
-        [0],
-        [0],
-        [0],
-        [0],
-        [1],
-        [2],
-        [2, 3],
-        [3],
-        [3],
+        {0},
+        {0},
+        {0},
+        {0},
+        {1},
+        {2},
+        {2, 3},
+        {3},
+        {3},
     ]
+
+    # test less than two entries per line
+    with pytest.raises(XGIError):
+        xgi.parse_bipartite_edgelist(bad_lines1)
+
+    # test failed nodetype conversion
+    with pytest.raises(TypeError):
+        xgi.parse_bipartite_edgelist(bad_lines2, nodetype=int)
+
+    # test failed edgetype conversion
+    with pytest.raises(TypeError):
+        xgi.parse_bipartite_edgelist(bad_lines3, edgetype=int)
 
 
 def test_write_bipartite_edgelist(edgelist1):

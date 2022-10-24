@@ -52,9 +52,10 @@ class SimplicialComplex(Hypergraph):
     Unique IDs are assigned to each node and simplex internally and are used to refer to
     them throughout.
 
-    The attr keyword arguments are added as simplicial complex attributes. To add node or simplex
-    attributes see :meth:`add_node` and :meth:`add_simplex`. Methods such as :meth:`add_simplex`
-    replace Hypergraph methods such as :meth:`add_edge` which here raise an error.
+    The `attr` keyword arguments are added as simplicial complex attributes. To add node
+    or simplex attributes see :meth:`add_node` and :meth:`add_simplex`. Methods such as
+    :meth:`add_simplex` replace :class:`Hypergraph` methods such as :meth:`add_edge`
+    which here raise an error.
 
     Examples
     --------
@@ -169,9 +170,9 @@ class SimplicialComplex(Hypergraph):
                 if node not in self._node:
                     if node is None:
                         raise ValueError("None cannot be a node")
-                    self._node[node] = list()
+                    self._node[node] = set()
                     self._node_attr[node] = self._node_attr_dict_factory()
-                self._node[node].append(uid)
+                self._node[node].add(uid)
 
             try:
                 self._edge[uid] = frozenset(simplex)
@@ -239,7 +240,7 @@ class SimplicialComplex(Hypergraph):
             ebunch_to_add = new_ebunch_to_add
 
         for simplex in ebunch_to_add:
-
+            simplex = list(simplex)
             if isinstance(simplex[-1], dict):
                 dd = simplex[-1]
                 simplex = simplex[:-1]
@@ -253,9 +254,9 @@ class SimplicialComplex(Hypergraph):
                     if n not in self._node:
                         if n is None:
                             raise ValueError("None cannot be a node")
-                        self._node[n] = list()
+                        self._node[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].append(uid)
+                    self._node[n].add(uid)
 
                 try:
                     self._edge[uid] = frozenset(simplex)
@@ -383,13 +384,15 @@ class SimplicialComplex(Hypergraph):
             Each edge id given in the list or iterable will be removed
             from the Simplicialcomplex.
 
+        Raises
+        ------
+        xgi.exception.IDNotFound
+            If an id in ebunch is not part of the network.
+
         See Also
         --------
-        remove_simplex_id : remove a single simplex by ID
+        remove_simplex_id : remove a single simplex by ID.
 
-        Notes
-        -----
-        Will fail silently if an edge in ebunch is not in the simplicial complex.
         """
         for id in ebunch:
             for node in self.edges.members(id):

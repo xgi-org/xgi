@@ -56,8 +56,8 @@ def connected_components(H):
 
     Returns
     -------
-    iterable of lists
-        A list where each entry is an component of the hypergraph.
+    iterable of sets
+        An iterator where each entry is a component of the hypergraph.
 
     See Also
     --------
@@ -200,7 +200,7 @@ def _plain_bfs(H, source):
         for v in thislevel:
             if v not in seen:
                 seen.add(v)
-                nextlevel.update(H.neighbors(v))
+                nextlevel.update(H.nodes.neighbors(v))
     return seen
 
 

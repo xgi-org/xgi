@@ -3,7 +3,7 @@ import sys
 import setuptools
 from setuptools import setup
 
-__version__ = "0.3.1"
+__version__ = "0.4.3"
 
 if sys.version_info < (3, 7):
     sys.exit("XGI requires Python 3.7 or later.")
@@ -12,9 +12,9 @@ name = "xgi"
 
 version = __version__
 
-authors = "Nicholas Landry and Leo Torres"
+authors = "Nicholas Landry, Leo Torres, Maxime Lucas, Iacopo Iacopini, Giovanni Petri, and Alice Patania"
 
-author_email = "nicholas.landry@colorado.edu"
+author_email = "nicholas.landry@uvm.edu"
 
 project_urls = {
     "Documentation": "https://xgi.readthedocs.io/en/latest/",
@@ -39,7 +39,14 @@ def parse_requirements_file(filename):
 
 extras_require = {
     dep: parse_requirements_file("requirements/" + dep + ".txt")
-    for dep in ["developer", "documentation", "release", "test", "tutorial"]
+    for dep in [
+        "benchmarks",
+        "developer",
+        "documentation",
+        "release",
+        "test",
+        "tutorial",
+    ]
 }
 
 extras_require["all"] = list({item for dep in extras_require.values() for item in dep})

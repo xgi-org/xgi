@@ -11,10 +11,3 @@ xgi.readwrite.edgelist
    .. autofunction:: parse_edgelist
    .. autofunction:: read_edgelist
    .. autofunction:: write_edgelist
-
-   
-   
-   
-
-
-

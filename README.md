@@ -88,6 +88,8 @@ The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergr
 ## Other resources
 This library may not meet your needs and if this is this case, consider checking out these other resources:
 * [HyperNetX](https://pnnl.github.io/HyperNetX): A package in Python for representing, analyzing, and visualizing hypergraphs.
+* [Reticula](https://docs.reticula.network/): A package with a Python wrapper of C++ functions for representing, analyzing, and visualizing temporal and static graphs and hypergraphs.
 * [SimpleHypergraphs.jl](https://pszufe.github.io/SimpleHypergraphs.jl/v0.1/): A package in Julia for representing, analyzing, and generating hypergraphs.
+* [HyperGraphs.jl](https://github.com/lpmdiaz/HyperGraphs.jl): A package in Julia for representing, analyzing, and generating hypergraphs which may be oriented and weighted.
 * [hyperG](https://cran.r-project.org/package=HyperG): A package in R for storing and analyzing hypergraphs
 * [NetworkX](https://networkx.org/): A package in Python for representing, analyzing, and visualizing networks.

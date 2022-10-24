@@ -37,7 +37,8 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
 
     Notes
     -----
-    Creates multi-edges and self-loops.
+    This algorithm normally creates multi-edges and loopy hyperedges.
+    We remove the loopy hyperedges.
 
     References
     ----------
@@ -76,10 +77,11 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
 
     while len(stubs) != 0:
         u = seed.sample(range(len(stubs)), m)
-        edge = []
+        edge = set()
         for index in u:
-            edge.append(stubs[index])
-        H.add_edge(edge)
+            edge.add(stubs[index])
+        if len(edge) == m:
+            H.add_edge(edge)
 
         for index in sorted(u, reverse=True):
             del stubs[index]
