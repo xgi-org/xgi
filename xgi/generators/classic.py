@@ -5,6 +5,7 @@ hypergraph).
 
 """
 
+from collections import defaultdict
 from itertools import combinations
 from warnings import warn
 
@@ -210,7 +211,7 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     nodes = G.nodes()
     edges = G.edges()
 
-    # compute all triangles to fill
+    # compute all cliques to fill
     max_cliques = list(nx.find_cliques(G))
 
     S = SimplicialComplex()
@@ -219,10 +220,12 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     if not ps: # promote all cliques
         S.add_simplices_from(max_cliques, max_order=max_order)
     else: # promote cliques with a given probability
+        cliques_d = defaultdict(list)
+        for x in max_cliques:
+            cliques_d[len(x)].append(x)
         for i, p in enumerate(ps[:max_order - 1]):
             d = i + 2 # simplex order
-            cliques_d = [x for x in max_cliques if len(x) == d + 1]
-            cliques_d_to_add = [el for el in cliques_d if if seed.random() <= p]
+            cliques_d_to_add = [el for el in cliques_d[d+1] if if seed.random() <= p]
             S.add_simplices_from(cliques_d_to_add, max_order=max_order)
 
     return S
