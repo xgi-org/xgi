@@ -193,7 +193,7 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     ps: list of float
         List of probabilities (between 0 and 1) to create a
         hyperedge from a clique, at each order d. For example,
-        ps[0] is the probability of promoting any 3-node clique (triangle) to 
+        ps[0] is the probability of promoting any 3-node clique (triangle) to
         a 3-hyperedge.
 
     Returns
@@ -217,18 +217,18 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     S = SimplicialComplex()
     S.add_nodes_from(nodes)
     S.add_simplices_from(edges)
-    if not ps: # promote all cliques
+    if not ps:  # promote all cliques
         S.add_simplices_from(max_cliques, max_order=max_order)
         return S
-        
+
     # promote cliques with a given probability
     cliques_d = defaultdict(list)
     for x in max_cliques:
         cliques_d[len(x)].append(x)
-            
-    for i, p in enumerate(ps[:max_order - 1]):
-        d = i + 2 # simplex order
-        cliques_d_to_add = [el for el in cliques_d[d+1] if seed.random() <= p]
+
+    for i, p in enumerate(ps[: max_order - 1]):
+        d = i + 2  # simplex order
+        cliques_d_to_add = [el for el in cliques_d[d + 1] if seed.random() <= p]
         S.add_simplices_from(cliques_d_to_add, max_order=max_order)
 
     return S

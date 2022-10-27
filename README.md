@@ -68,7 +68,7 @@ Released under the 3-Clause BSD license (see [`LICENSE.md`](LICENSE.md))
 
 Copyright (C) 2021 XGI Developers
 
-Nicholas Landry <nicholas.landry@colorado.edu>
+Nicholas Landry <nicholas.landry@uvm.edu>
 
 Leo Torres <leo@leotrs.com>
 
@@ -79,6 +79,10 @@ Maxime Lucas <maxime.lucas@isi.it>
 Giovanni Petri <giovanni.petri@isi.it>
 
 Alice Patania <apatania@uvm.edu>
+
+Alice Schwarze <alice.c.schwarze@dartmouth.edu>
+
+Martina Contisciani <martina.contisciani@tue.mpg.de>
 
 The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](LICENSE.md)
 

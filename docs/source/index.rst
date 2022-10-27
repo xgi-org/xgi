@@ -125,11 +125,13 @@ The core XGI team members:
 * Iacopo Iacopini
 * Giovanni Petri
 * Alice Patania
+* Alice Schwarze
+* Martina Contisciani
 
 Other contributors:
 
 * Tim LaRock
-
+* Sabina Adhikari
 
 License
 =======

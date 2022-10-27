@@ -19,6 +19,12 @@ authors:
   -
     family-names: Patania
     given-names: Alice
+  -
+    family-names: Schwarze
+    given-names: Alice
+-
+    family-names: Contisciani
+    given-names: Martina
 
 cff-version: "1.1.0"
 license: "BSD-3"

@@ -104,4 +104,3 @@ def test_sunflower():
 
     for i in range(3, 15):
         assert len(H.nodes.memberships(i)) == 1
-
