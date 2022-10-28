@@ -191,16 +191,22 @@ class Hypergraph:
 
     def __getattr__(self, attr):
         stat = getattr(self.nodes, attr, None)
+        word = "nodes"
         if stat is None:
             stat = getattr(self.edges, attr, None)
+            word = "edges"
         if stat is None:
+            word = None
             raise AttributeError(
-                f'stat "{attr}" not among available node or edge stats'
+                f"{attr} is not a method of Hypergraph or a recognized NodeStat or EdgeStat"
             )
 
         def func(node=None, *args, **kwargs):
             val = stat(*args, **kwargs).asdict()
             return val if node is None else val[node]
+
+        func.__doc__ = f"""Equivalent to H.{word}.{attr}.asdict(). For accepted *args and
+        **kwargs, see documentation of H.{word}.{attr}."""
 
         return func
 
