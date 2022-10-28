@@ -74,7 +74,7 @@ class Hypergraph:
     Unique IDs are assigned to each node and edge internally and are used to refer to
     them throughout.
 
-    The `attr` keyword arguments are added as hypergraph attributes. To add node or ede
+    The `attr` keyword arguments are added as hypergraph attributes. To add node or edge
     attributes see :meth:`add_node` and :meth:`add_edge`.
 
     In addition to the methods listed in this page, other methods defined in the `stats`
