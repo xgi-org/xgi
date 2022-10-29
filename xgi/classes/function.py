@@ -1,6 +1,6 @@
 """Functional interface to hypergraph methods and assorted utilities."""
 
-from math import comb
+from scipy.special import comb
 from collections import Counter
 from copy import deepcopy
 from warnings import warn
@@ -752,7 +752,7 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
         if max_order >= n:
             raise ValueError("max_order must be smaller than the number of nodes")
         numer = len(order_filter(max_order, "leq"))
-        denom = sum(comb(n, _ord + 1) for _ord in range(max_order + 1))
+        denom = sum(comb(n, _ord + 1, exact=True) for _ord in range(max_order + 1))
         if ignore_singletons:
             numer -= len(order_filter(0, mode="eq"))
             denom -= n
@@ -763,7 +763,7 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
         if ignore_singletons and order == 0:
             return 0.0
         numer = len(order_filter(order, mode="eq"))
-        denom = comb(n, order + 1)
+        denom = comb(n, order + 1, exact=True)
 
     try:
         return numer / denom
