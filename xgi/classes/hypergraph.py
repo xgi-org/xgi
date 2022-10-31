@@ -204,6 +204,55 @@ class Hypergraph:
 
         return func
 
+    def __lshift__(self, H2):
+        """Adds the edges of a hypergraph to the current hypergraph
+        and updates the attributes.
+
+        The node/edge attributes of the new hypergraph take precedence.
+
+        Relabels all the edge IDs to preserve all the edges but
+        keeps the node labels the same.
+
+        Parameters
+        ----------
+        H2 : Hypergraph
+            The hypergraph to update with.
+
+        Returns
+        -------
+        Hypergraph
+            The updated hypergraph
+
+        Notes
+        -----
+        Addition is not quite commutative; the attributes of nodes and edges
+        may be overwritten depending on whether they are first or second
+        to be added. In addition, the edge IDs are assigned based on the order
+        in which the edges are added, but does not functionally change the
+        structure of the hypergraph.
+
+        Examples
+        --------
+
+        >>> import xgi
+        >>> H1 = xgi.Hypergraph([[1, 2], [2, 3]])
+        >>> H2 = xgi.Hypergraph([[1, 3, 4]])
+        >>> H = H1 << H2
+        >>> H.edges.members()
+        [{1, 2}, {2, 3}, {1, 3, 4}]
+        """
+        tempH = Hypergraph()
+        tempH.add_edges_from(zip(self._edge.values(), self._edge_attr.values()))
+        tempH.add_nodes_from(zip(self._node.keys(), self._node_attr.values()))
+
+        tempH.add_edges_from(zip(H2._edge.values(), H2._edge_attr.values()))
+        tempH.add_nodes_from(zip(H2._node.keys(), H2._node_attr.values()))
+
+        tempH._hypergraph = deepcopy(self._hypergraph)
+        tempH._hypergraph.update(deepcopy(H2._hypergraph))
+
+        return tempH
+
     @property
     def nodes(self):
         """A :class:`NodeView` of this network."""

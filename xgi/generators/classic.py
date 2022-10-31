@@ -13,9 +13,8 @@ import networkx as nx
 import numpy as np
 
 from ..classes import SimplicialComplex
-from ..utils import py_random_state
-
 from ..exception import XGIError
+from ..utils import py_random_state
 
 __all__ = [
     "empty_hypergraph",
