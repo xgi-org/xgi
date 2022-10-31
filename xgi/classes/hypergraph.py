@@ -204,8 +204,11 @@ class Hypergraph:
 
         return func
 
-    def __add__(self, H2):
-        """Adds two hypergraphs together
+    def __lshift__(self, H2):
+        """Adds the edges of a hypergraph to the current hypergraph
+        and updates the attributes.
+
+        The node/edge attributes of the new hypergraph take precedence.
 
         Relabels all the edge IDs to preserve all the edges but
         keeps the node labels the same.
@@ -213,12 +216,12 @@ class Hypergraph:
         Parameters
         ----------
         H2 : Hypergraph
-            The hypergraph to be added
+            The hypergraph to update with.
 
         Returns
         -------
         Hypergraph
-            The added hypergraph
+            The updated hypergraph
 
         Notes
         -----
@@ -227,6 +230,16 @@ class Hypergraph:
         to be added. In addition, the edge IDs are assigned based on the order
         in which the edges are added, but does not functionally change the
         structure of the hypergraph.
+
+        Examples
+        --------
+
+        >>> import xgi
+        >>> H1 = xgi.Hypergraph([[1, 2], [2, 3]])
+        >>> H2 = xgi.Hypergraph([[1, 3, 4]])
+        >>> H = H1 << H2
+        >>> H.edges.members()
+        [{1, 2}, {2, 3}, {1, 3, 4}]
         """
         tempH = Hypergraph()
         tempH.add_edges_from(zip(self._edge.values(), self._edge_attr.values()))

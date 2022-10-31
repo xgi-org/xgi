@@ -57,16 +57,16 @@ def test_contains(edgelist1):
     assert [1, 2, 3] not in H
 
 
-def test_add(edgelist1, edgelist2, hyperwithattrs):
+def test_lshift(edgelist1, edgelist2, hyperwithattrs):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist2)
     H3 = hyperwithattrs
-    H = H1 + H2
+    H = H1 << H2
     assert set(H.nodes) == {1, 2, 3, 4, 5, 6, 7, 8}
     assert H.num_edges == 7
     assert H.edges.members(0) == {1, 2, 3}
 
-    H = H1 + H2 + H3
+    H = H1 << H2 << H3
     assert set(H.nodes) == {1, 2, 3, 4, 5, 6, 7, 8}
     assert H.num_edges == 10
     assert H.nodes[1] == {"color": "red", "name": "horse"}
