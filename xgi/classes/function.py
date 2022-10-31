@@ -701,11 +701,11 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
     Let `H` have :math:`n` nodes and :math:`m` hyperedges. Then,
 
     * `density(H) =` :math:`\frac{m}{2^n - 1}`,
-    * `density(H, count_singletons=True) =` :math:`\frac{m}{2^n - 1 - n}`.
+    * `density(H, ignore_singletons=True) =` :math:`\frac{m}{2^n - 1 - n}`.
 
-    Here, :math:`2^n` is the total possible number of hyperedges on `H`, to which we
-    subtract :math:`1` because the empty hyperedge is not considered, or :math:`n` when
-    not considering singletons.
+    Here, :math:`2^n` is the total possible number of hyperedges on `H`, from which we
+    subtract :math:`1` because the empty hyperedge is not considered.  We subtract an
+    additional :math:`n` when singletons are not considered.
 
     Now assume `H` has :math:`a` edges with order :math:`1` and :math:`b` edges with
     order :math:`2`.  Then,
@@ -735,7 +735,9 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
 
     """
     n = H.num_nodes
-    if n < 1 or H.num_edges < 1:
+    if n < 1:
+        raise XGIError("Density not defined for empty hypergraph")
+    if H.num_edges < 1:
         return 0.0
 
     def order_filter(val, mode):
@@ -748,7 +750,7 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
             numer -= len(order_filter(0, mode="eq"))
             denom -= n
 
-    if order is None and max_order is not None:
+    elif order is None and max_order is not None:
         if max_order >= n:
             raise ValueError("max_order must be smaller than the number of nodes")
         numer = len(order_filter(max_order, "leq"))
@@ -757,7 +759,7 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
             numer -= len(order_filter(0, mode="eq"))
             denom -= n
 
-    if order is not None:  # ignore max_order
+    elif order is not None:  # ignore max_order
         if order >= n:
             raise ValueError("order must be smaller than the number of nodes")
         if ignore_singletons and order == 0:

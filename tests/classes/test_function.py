@@ -381,13 +381,32 @@ def test_maximal_simplices(edgelist5, edgelist8):
         xgi.maximal_simplices(H)
 
 
-def test_density_empty():
+def test_density_no_nodes():
+    H = xgi.Hypergraph()
+    with pytest.raises(XGIError):
+        xgi.density(H)
+    with pytest.raises(XGIError):
+        xgi.density(H, order=3)
+    with pytest.raises(XGIError):
+        xgi.density(H, max_order=7)
+    with pytest.raises(XGIError):
+        xgi.density(H, ignore_singletons=True)
+    with pytest.raises(XGIError):
+        xgi.density(H, order=2, ignore_singletons=True)
+    with pytest.raises(XGIError):
+        xgi.density(H, max_order=2, ignore_singletons=True)
+
+
+def test_density_no_edges():
     tol = 1e-10
     H = xgi.Hypergraph()
+    H.add_node(0)
     assert xgi.density(H) < tol
     assert xgi.density(H, order=3) < tol
     assert xgi.density(H, max_order=7) < tol
     assert xgi.density(H, ignore_singletons=True) < tol
+    assert xgi.density(H, order=2, ignore_singletons=True) < tol
+    assert xgi.density(H, max_order=2, ignore_singletons=True) < tol
 
 
 def test_density_one_node():
@@ -417,14 +436,6 @@ def test_density_two_nodes():
     H = xgi.Hypergraph()  # two nodes, one singleton edge
     H.add_nodes_from([0, 1])
     H.add_edge([0])
-    assert abs(xgi.density(H) - 1 / 3) < tol
-    assert abs(xgi.density(H, order=0) - 1 / 2) < tol
-    assert xgi.density(H, order=1) < tol
-    assert xgi.density(H, ignore_singletons=True) < tol
-
-    H = xgi.Hypergraph()  # two nodes, the other singleton edge
-    H.add_nodes_from([0, 1])
-    H.add_edge([1])
     assert abs(xgi.density(H) - 1 / 3) < tol
     assert abs(xgi.density(H, order=0) - 1 / 2) < tol
     assert xgi.density(H, order=1) < tol
