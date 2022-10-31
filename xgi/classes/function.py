@@ -28,6 +28,7 @@ __all__ = [
     "maximal_simplices",
     "convert_labels_to_integers",
     "density",
+    "incidence_density",
 ]
 
 
@@ -729,6 +730,10 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
         Whether to consider singleton edges.  Ignored if `order` is not None and
         different from :math:`0`.
 
+    See Also
+    --------
+    :func:`incidence_density`
+
     Notes
     -----
     If both `order` and `max_order` are not None, `max_order` is ignored.
@@ -768,6 +773,73 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
         denom = comb(n, order + 1, exact=True)
 
     try:
-        return numer / denom
+        return float(numer) / denom
+    except ZeroDivisionError:
+        return 0.0
+
+
+def incidence_density(H, order=None, max_order=None, ignore_singletons=False):
+    r"""Density of the incidence matrix.
+
+    The incidence matrix of a hypergraph contains one row per node nad one column per
+    edge.  An entry is non-zero when the corresponding node is a member of the
+    corresponding edge.  The density of this matrix is the number of non-zero entries
+    divided by the total number of entries.
+
+    Parameters
+    ---------
+    order : int or None (default)
+        If not None, only count edges of the specified order.
+
+    max_order : int or None (default)
+        If not None, only count edges of order up to this value, inclusive.
+
+    ignore_singletons : bool (default False)
+        Whether to consider singleton edges.  Ignored if `order` is not None and
+        different from :math:`0`.
+
+    See Also
+    --------
+    :func:`density`
+
+    Notes
+    -----
+    If both `order` and `max_order` are not None, `max_order` is ignored.
+
+    The parameters `order`, `max_order` and `ignore_singletons` have a similar effect on
+    the denominator as they have in :func:`density`.
+
+    """
+    n = H.num_nodes
+    if n < 1:
+        raise XGIError("Density not defined for empty hypergraph")
+    if H.num_edges < 1:
+        return 0.0
+
+    edges_to_count = H.edges
+    if order is None and max_order is None:
+        if ignore_singletons:
+            edges_to_count = edges_to_count.filterby("order", 0, "gt")
+
+    elif order is None and max_order is not None:
+        if max_order >= n:
+            raise ValueError("max_order must be smaller than the number of nodes")
+        edges_to_count = edges_to_count.filterby("order", max_order, "leq")
+        if ignore_singletons:
+            edges_to_count = edges_to_count.filterby("order", 0, "gt")
+
+    elif order is not None:  # ignore max_order
+        if order >= n:
+            raise ValueError("order must be smaller than the number of nodes")
+        if ignore_singletons and order == 0:
+            return 0.0
+        edges_to_count = edges_to_count.filterby("order", order, "eq")
+
+    denom = n * len(edges_to_count)
+    numer = edges_to_count.size.asnumpy().sum()  # size, not order
+    try:
+        # cast both to float because sometimes 0 / 0.0 may issue a warning instead of
+        # raising ZeroDivisionError
+        return float(numer) / float(denom)
     except ZeroDivisionError:
         return 0.0
