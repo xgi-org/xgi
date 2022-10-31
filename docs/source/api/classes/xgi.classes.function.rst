@@ -17,6 +17,7 @@
    .. autofunction:: frozen
    .. autofunction:: get_edge_attributes
    .. autofunction:: get_node_attributes
+   .. autofunction:: incidence_density
    .. autofunction:: is_empty
    .. autofunction:: is_frozen
    .. autofunction:: is_possible_order
