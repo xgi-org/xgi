@@ -11,6 +11,7 @@
    .. autofunction:: create_empty_copy
    .. autofunction:: degree_counts
    .. autofunction:: degree_histogram
+   .. autofunction:: density
    .. autofunction:: edge_neighborhood
    .. autofunction:: freeze
    .. autofunction:: frozen
