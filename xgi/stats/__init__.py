@@ -55,74 +55,7 @@ from xgi.exception import IDNotFound
 
 from . import edgestats, nodestats
 
-__all__ = ["nodestat_func", "edgestat_func", "EdgeStatDispatcher", "NodeStatDispatcher"]
-
-
-class StatDispatcher:
-    """For internal use; create :class:`NodeStat` or :class:`EdgeStat` objects.
-
-    See Also
-    --------
-    NodeStatDispatcher
-    EdgeStatDispatcher
-
-    """
-
-    def __init__(self, module, statsclass, multistatsclass):
-        self.module = module
-        self.statsclass = statsclass
-        self.multistatsclass = multistatsclass
-
-    def dispatch(self, net, view, name):
-        try:
-            func = getattr(self.module, name)
-        except AttributeError as e:
-            raise AttributeError(f"Stat '{name}' not defined") from e
-        return self.statsclass(net, view, func)
-
-    def dispatch_many_stats(self, net, view, stats):
-        """Create a :class:`MultiStat` object.
-
-        See Also
-        --------
-        MultiNodeStat
-        MultiEdgeStat
-
-        Examples
-        -------
-        See the `tutorial
-        <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
-
-        """
-        return self.multistatsclass(net, view, stats)
-
-
-class EdgeStatDispatcher(StatDispatcher):
-    """For internal use; a :class:`StatDispatcher` for edge stats.
-
-    Examples
-    -------
-    See the `tutorial
-    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
-
-    """
-
-    def __init__(self):
-        super().__init__(edgestats, EdgeStat, MultiEdgeStat)
-
-
-class NodeStatDispatcher(StatDispatcher):
-    """For internal use; a :class:`StatDispatcher` for node stats.
-
-    Examples
-    -------
-    See the `tutorial
-    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
-
-    """
-
-    def __init__(self):
-        super().__init__(nodestats, NodeStat, MultiNodeStat)
+__all__ = ["nodestat_func", "edgestat_func", "dispatch_stat", "dispatch_many_stats"]
 
 
 class IDStat:
@@ -473,6 +406,32 @@ class MultiEdgeStat(MultiIDStat):
 
     statsclass = EdgeStat
     statsmodule = edgestats
+
+
+_dispatch_data = {
+    "node": {
+        "module": nodestats,
+        "statclass": NodeStat,
+        "multistatclass": MultiNodeStat,
+    },
+    "edge": {
+        "module": edgestats,
+        "statclass": EdgeStat,
+        "multistatclass": MultiEdgeStat,
+    },
+}
+
+
+def dispatch_stat(kind, net, view, name):
+    try:
+        func = getattr(_dispatch_data[kind]["module"], name)
+    except AttributeError as e:
+        raise AttributeError(f"Stat '{name}' not defined") from e
+    return _dispatch_data[kind]["statclass"](net, view, func)
+
+
+def dispatch_many_stats(kind, net, view, stats):
+    return _dispatch_data[kind]["multistatclass"](net, view, stats)
 
 
 def nodestat_func(func):

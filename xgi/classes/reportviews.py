@@ -10,7 +10,7 @@ from collections import defaultdict
 from collections.abc import Mapping, Set
 
 from ..exception import IDNotFound, XGIError
-from ..stats import EdgeStatDispatcher, NodeStatDispatcher
+from ..stats import IDStat, dispatch_stat, dispatch_many_stats
 
 __all__ = [
     "NodeView",
@@ -40,11 +40,10 @@ class IDView(Mapping, Set):
 
     """
 
-    dispatcherclass = None
+    _id_kind = None
 
     __slots__ = (
         "_net",
-        "_dispatcher",
         "_id_dict",
         "_id_attr",
         "_bi_id_dict",
@@ -88,7 +87,6 @@ class IDView(Mapping, Set):
 
     def __init__(self, network, id_dict, id_attr, bi_id_dict, bi_id_attr, ids=None):
         self._net = network
-        self._dispatcher = self.dispatcherclass()
         self._id_dict = id_dict
         self._id_attr = id_attr
         self._bi_id_dict = bi_id_dict
@@ -100,12 +98,12 @@ class IDView(Mapping, Set):
             self._ids = ids
 
     def __getattr__(self, attr):
-        stat = self._dispatcher.dispatch(self._net, self, attr)
+        stat = dispatch_stat(self._id_kind, self._net, self, attr)
         self.__dict__[attr] = stat
         return stat
 
     def multi(self, names):
-        return self._dispatcher.dispatch_many_stats(self._net, self, names)
+        return dispatch_many_stats(self._id_kind, self._net, self, names)
 
     @property
     def ids(self):
@@ -243,7 +241,7 @@ class IDView(Mapping, Set):
         NodeView((3,))
 
         """
-        if not isinstance(stat, self._dispatcher.statsclass):
+        if not isinstance(stat, IDStat):
             try:
                 stat = getattr(self, stat)
             except AttributeError as e:
@@ -298,7 +296,7 @@ class IDView(Mapping, Set):
         when the attribute is a string. For example, the string comparison
         `'10' < '9'` evaluates to `True`.
         """
-        attrs = self._dispatcher.dispatch(self._net, self, "attrs")
+        attrs = dispatch_stat(self._id_kind, self._net, self, "attrs")
         values = attrs(attr, missing).asdict()
 
         if mode == "eq":
@@ -491,7 +489,6 @@ class IDView(Mapping, Set):
         """
         newview = cls(None)
         newview._net = view._net
-        newview._dispatcher = view._dispatcher.__class__()
         newview._id_dict = view._id_dict
         newview._id_attr = view._id_attr
         newview._bi_id_dict = view._bi_id_dict
@@ -527,7 +524,7 @@ class NodeView(IDView):
 
     """
 
-    dispatcherclass = NodeStatDispatcher
+    _id_kind = "node"
 
     def __init__(self, H, bunch=None):
         if H is None:
@@ -619,7 +616,7 @@ class EdgeView(IDView):
 
     """
 
-    dispatcherclass = EdgeStatDispatcher
+    _id_kind = "edge"
 
     def __init__(self, H, bunch=None):
         if H is None:
