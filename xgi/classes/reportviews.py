@@ -40,7 +40,10 @@ class IDView(Mapping, Set):
 
     """
 
+    dispatcherclass = None
+
     __slots__ = (
+        "_net",
         "_dispatcher",
         "_id_dict",
         "_id_attr",
@@ -83,11 +86,9 @@ class IDView(Mapping, Set):
         self._bi_id_attr = state["_bi_id_attr"]
         self._ids = state["_ids"]
 
-    def __init__(
-        self, network, id_dict, id_attr, bi_id_dict, bi_id_attr, dispatcher, ids=None
-    ):
+    def __init__(self, network, id_dict, id_attr, bi_id_dict, bi_id_attr, ids=None):
         self._net = network
-        self._dispatcher = dispatcher
+        self._dispatcher = self.dispatcherclass()
         self._id_dict = id_dict
         self._id_attr = id_attr
         self._bi_id_dict = bi_id_dict
@@ -526,14 +527,13 @@ class NodeView(IDView):
 
     """
 
+    dispatcherclass = NodeStatDispatcher
+
     def __init__(self, H, bunch=None):
-        dispatcher = NodeStatDispatcher()
         if H is None:
-            super().__init__(None, None, None, None, None, dispatcher, bunch)
+            super().__init__(None, None, None, None, None, bunch)
         else:
-            super().__init__(
-                H, H._node, H._node_attr, H._edge, H._edge_attr, dispatcher, bunch
-            )
+            super().__init__(H, H._node, H._node_attr, H._edge, H._edge_attr, bunch)
 
     def memberships(self, n=None):
         """Get the edge ids of which a node is a member.
@@ -619,14 +619,13 @@ class EdgeView(IDView):
 
     """
 
+    dispatcherclass = EdgeStatDispatcher
+
     def __init__(self, H, bunch=None):
-        dispatcher = EdgeStatDispatcher()
         if H is None:
-            super().__init__(None, None, None, None, None, dispatcher, bunch)
+            super().__init__(None, None, None, None, None, bunch)
         else:
-            super().__init__(
-                H, H._edge, H._edge_attr, H._node, H._node_attr, dispatcher, bunch
-            )
+            super().__init__(H, H._edge, H._edge_attr, H._node, H._node_attr, bunch)
 
     def members(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
