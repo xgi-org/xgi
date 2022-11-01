@@ -96,7 +96,9 @@ class IDView(Mapping, Set):
             self._ids = ids
 
     def __getattr__(self, attr):
-        return getattr(self._dispatcher, attr)
+        stat = getattr(self._dispatcher, attr)
+        self.__dict__[attr] = stat
+        return stat
 
     @property
     def ids(self):

@@ -80,9 +80,7 @@ class StatDispatcher:
             func = getattr(self.module, name)
         except AttributeError as e:
             raise AttributeError(f"Stat '{name}' not defined") from e
-        stat = self.statsclass(self.net, self.view, func)
-        self.__dict__[name] = stat
-        return stat
+        return self.statsclass(self.net, self.view, func)
 
     def multi(self, stats):
         """Create a :class:`MultiStat` object.
@@ -263,7 +261,7 @@ class IDStat:
 
         """
         arr = self.asnumpy()
-        return spmoment(arr, moment=order) if center else np.mean(arr**order)
+        return spmoment(arr, moment=order) if center else np.mean(arr ** order)
 
     def dist(self):
         return np.histogram(self.asnumpy(), density=True)
