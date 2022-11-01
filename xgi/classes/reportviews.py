@@ -497,6 +497,15 @@ class IDView(Mapping, Set):
             newview._ids = bunch
         return newview
 
+    def _from_iterable(self, it):
+        """Construct an instance of the class from any iterable input.
+
+        This overrides collections.abc.Set._from_iterable, which is in turn used to
+        implement set operations such as &, |, ^, -.
+
+        """
+        return self.from_view(self, it)
+
 
 class NodeView(IDView):
     """An IDView that keeps track of node ids.
