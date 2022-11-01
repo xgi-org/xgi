@@ -68,21 +68,19 @@ class StatDispatcher:
 
     """
 
-    def __init__(self, network, view, module, statsclass, multistatsclass):
-        self.net = network
-        self.view = view
+    def __init__(self, module, statsclass, multistatsclass):
         self.module = module
         self.statsclass = statsclass
         self.multistatsclass = multistatsclass
 
-    def __getattr__(self, name):
+    def dispatch(self, net, view, name):
         try:
             func = getattr(self.module, name)
         except AttributeError as e:
             raise AttributeError(f"Stat '{name}' not defined") from e
-        return self.statsclass(self.net, self.view, func)
+        return self.statsclass(net, view, func)
 
-    def multi(self, stats):
+    def dispatch_many_stats(self, net, view, stats):
         """Create a :class:`MultiStat` object.
 
         See Also
@@ -96,7 +94,7 @@ class StatDispatcher:
         <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
         """
-        return self.multistatsclass(self.net, self.view, stats)
+        return self.multistatsclass(net, view, stats)
 
 
 class EdgeStatDispatcher(StatDispatcher):
@@ -109,8 +107,8 @@ class EdgeStatDispatcher(StatDispatcher):
 
     """
 
-    def __init__(self, network, view):
-        super().__init__(network, view, edgestats, EdgeStat, MultiEdgeStat)
+    def __init__(self):
+        super().__init__(edgestats, EdgeStat, MultiEdgeStat)
 
 
 class NodeStatDispatcher(StatDispatcher):
@@ -123,8 +121,8 @@ class NodeStatDispatcher(StatDispatcher):
 
     """
 
-    def __init__(self, network, view):
-        super().__init__(network, view, nodestats, NodeStat, MultiNodeStat)
+    def __init__(self):
+        super().__init__(nodestats, NodeStat, MultiNodeStat)
 
 
 class IDStat:
