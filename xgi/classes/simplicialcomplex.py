@@ -186,6 +186,23 @@ class SimplicialComplex(Hypergraph):
             faces = self._subfaces(simplex)
             self.add_simplices_from(faces)
 
+    def _faces(self, simplex):
+        """Returns list of subfaces of simplex"""
+        size = len(simplex)
+        faces = []
+        for face in combinations(simplex, size - 1):
+            faces.append(face)
+        return faces
+
+    def _subfaces(self, simplex):
+        """Returns list of subfaces of simplex"""
+        size = len(simplex)
+        faces = []
+        for n in range(size, 2, -1):
+            for face in combinations(simplex, n - 1):
+                faces.append(face)
+        return faces
+
     def _subfaces(self, simplex):
         """Returns list of subfaces of simplex"""
         size = len(simplex)

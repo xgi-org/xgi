@@ -3,6 +3,7 @@ from warnings import warn
 
 import numpy as np
 from scipy.sparse import csr_matrix, diags
+from sympy.combinatorics.permutations import Permutation
 
 __all__ = [
     "incidence_matrix",
@@ -12,6 +13,9 @@ __all__ = [
     "laplacian",
     "multiorder_laplacian",
     "clique_motif_matrix",
+    "skeleton",
+    "boundary_matrix",
+    "hodge_laplacian"
 ]
 
 
@@ -361,3 +365,87 @@ def clique_motif_matrix(H, index=False):
         return W, rowdict
     else:
         return W
+
+def skeleton(scomplex, order): 
+   
+    if order == 0: 
+        simplex_list = [list(simplex) for simplex in scomplex.edges.members()]
+        skel = np.unique(np.concatenate(simplex_list))
+        skel = [[node] for node in skel]
+    else:
+        skel = [list(simplex) for simplex in scomplex.edges.members() if len(simplex)==order+1]
+    return skel
+
+def boundary_matrix(scomplex, order = 1, orientations = None):
+    """
+    A function to generate the boundary matrix of an oriented simplicial complex
+
+    Parameters
+    ----------
+    scomplex: oriented simplicial complex
+        The simplicial complex of interest
+    order: int, default: 1
+        Specifies the order of the boundary 
+        matrix to compute
+    orientations: [binary list, binary list]
+        Specifies the orientations of the 
+        (order-1)-simplices and (order)-simplices
+    Returns
+    -------
+    B
+    """ 
+    skeleton_d = skeleton(scomplex,order-1)
+    skeleton_u = skeleton(scomplex,order)
+    nd = len(skeleton_d)
+    nu = len(skeleton_u)
+    if orientations == None:
+        orientations = [[0]*nd, [0]*nu]
+
+    B = np.zeros((nd,nu))
+    if not (nu == 0 or nd == 0): 
+        l = len(skeleton_d[0])
+        if l== 1: 
+            vertices = list(np.squeeze(skeleton_d))
+            for j in range(nu):
+                head_idx = vertices.index(skeleton_u[j][1])
+                tail_idx = vertices.index(skeleton_u[j][0])
+                B[head_idx,j] = (-1)**orientations[1][j]
+                B[tail_idx,j] = -(-1)**orientations[1][j]
+        else: 
+            for j in range(nu):
+                simplex_subfaces = scomplex._faces(skeleton_u[j])
+                subfaces_orientation = [0]+[1]*(l-1)+[0]
+                for i in range(nd):
+                    for k in range(l+1):
+                        subface = simplex_subfaces[k]
+                        if not (np.sort(subface) - np.sort(skeleton_d[i])).any():
+                            B[i,j]=(-1)**(subfaces_orientation[k]+orientations[0][i])
+    return B
+
+
+def hodge_laplacian(scomplex,order):
+    
+    """
+    A function to compute the Hodge Laplacian of a
+    given order of an oriented simplicial complex  
+
+    Parameters
+    ----------
+    scomplex: oriented simplicial complex
+        The simplicial complex of interest
+    order: int, default: 1
+        Specifies the order of the Hodge 
+        Laplacian matrix to compute
+    Returns
+    -------
+    L
+    """
+
+    Bk = boundary_matrix(scomplex,order)
+    Dkm1 = np.transpose(Bk)
+    
+    Bkp1 = boundary_matrix(scomplex,order+1)
+    Dk = np.transpose(Bkp1)
+
+    L = Dkm1@Bk + Bkp1@Dk
+    return L
