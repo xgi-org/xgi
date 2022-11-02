@@ -242,3 +242,23 @@ def test_bool(edgelist1):
     assert bool(H.edges) is False
     H = xgi.Hypergraph(edgelist1)
     assert bool(H.edges) is True
+
+
+def test_set_operations(hyperwithattrs):
+    H = hyperwithattrs
+
+    nodes1 = H.nodes.filterby_attr("color", "blue")
+    nodes2 = H.nodes.filterby("degree", 2, "geq")
+    assert set(nodes2 - nodes1) == {3, 4}
+    assert set(nodes1 - nodes2) == set()
+    assert set(nodes1 & nodes2) == {2, 5}
+    assert set(nodes1 | nodes2) == {2, 3, 4, 5}
+    assert set(nodes1 ^ nodes2) == {3, 4}
+
+    edges1 = H.edges
+    edges2 = H.edges.filterby("size", 3, "leq")
+    assert set(edges2 - edges1) == set()
+    assert set(edges1 - edges2) == {1}
+    assert set(edges1 & edges2) == {0, 2}
+    assert set(edges1 | edges2) == {0, 1, 2}
+    assert set(edges1 ^ edges2) == {1}
