@@ -55,78 +55,7 @@ from xgi.exception import IDNotFound
 
 from . import edgestats, nodestats
 
-__all__ = ["nodestat_func", "edgestat_func", "EdgeStatDispatcher", "NodeStatDispatcher"]
-
-
-class StatDispatcher:
-    """For internal use; create :class:`NodeStat` or :class:`EdgeStat` objects.
-
-    See Also
-    --------
-    NodeStatDispatcher
-    EdgeStatDispatcher
-
-    """
-
-    def __init__(self, network, view, module, statsclass, multistatsclass):
-        self.net = network
-        self.view = view
-        self.module = module
-        self.statsclass = statsclass
-        self.multistatsclass = multistatsclass
-
-    def __getattr__(self, name):
-        try:
-            func = getattr(self.module, name)
-        except AttributeError as e:
-            raise AttributeError(f"Stat '{name}' not defined") from e
-        stat = self.statsclass(self.net, self.view, func)
-        self.__dict__[name] = stat
-        return stat
-
-    def multi(self, stats):
-        """Create a :class:`MultiStat` object.
-
-        See Also
-        --------
-        MultiNodeStat
-        MultiEdgeStat
-
-        Examples
-        -------
-        See the `tutorial
-        <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
-
-        """
-        return self.multistatsclass(self.net, self.view, stats)
-
-
-class EdgeStatDispatcher(StatDispatcher):
-    """For internal use; a :class:`StatDispatcher` for edge stats.
-
-    Examples
-    -------
-    See the `tutorial
-    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
-
-    """
-
-    def __init__(self, network, view):
-        super().__init__(network, view, edgestats, EdgeStat, MultiEdgeStat)
-
-
-class NodeStatDispatcher(StatDispatcher):
-    """For internal use; a :class:`StatDispatcher` for node stats.
-
-    Examples
-    -------
-    See the `tutorial
-    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
-
-    """
-
-    def __init__(self, network, view):
-        super().__init__(network, view, nodestats, NodeStat, MultiNodeStat)
+__all__ = ["nodestat_func", "edgestat_func", "dispatch_stat", "dispatch_many_stats"]
 
 
 class IDStat:
@@ -263,7 +192,7 @@ class IDStat:
 
         """
         arr = self.asnumpy()
-        return spmoment(arr, moment=order) if center else np.mean(arr**order)
+        return spmoment(arr, moment=order) if center else np.mean(arr ** order)
 
     def dist(self):
         return np.histogram(self.asnumpy(), density=True)
@@ -477,6 +406,32 @@ class MultiEdgeStat(MultiIDStat):
 
     statsclass = EdgeStat
     statsmodule = edgestats
+
+
+_dispatch_data = {
+    "node": {
+        "module": nodestats,
+        "statclass": NodeStat,
+        "multistatclass": MultiNodeStat,
+    },
+    "edge": {
+        "module": edgestats,
+        "statclass": EdgeStat,
+        "multistatclass": MultiEdgeStat,
+    },
+}
+
+
+def dispatch_stat(kind, net, view, name):
+    try:
+        func = getattr(_dispatch_data[kind]["module"], name)
+    except AttributeError as e:
+        raise AttributeError(f"Stat '{name}' not defined") from e
+    return _dispatch_data[kind]["statclass"](net, view, func)
+
+
+def dispatch_many_stats(kind, net, view, stats):
+    return _dispatch_data[kind]["multistatclass"](net, view, stats)
 
 
 def nodestat_func(func):
