@@ -939,6 +939,34 @@ class Hypergraph:
     def merge_duplicate_edges(
         self, rename="first", merge_rule="first", multiplicity=True
     ):
+        """Merges edges which have the same members.
+
+        Parameters
+        ----------
+        rename : str, optional
+            Either "first", "tuple", or "new", by default "first"
+            If "first", the new edge ID is the first of the sorted
+            duplicate edge IDs. If "tuple", the new edge ID is a 
+            tuple of the sorted duplicate edge IDs. If "new", the
+            _edge_uid counter is selected and incremented.
+        merge_rule : str, optional
+            Either "first" or "union", by default "first"
+            If "first", takes the attributes of the first duplicate.
+            If "union", takes the set of attributes of all the duplicates.
+        multiplicity : bool, optional
+            Whether to return the multiplicity of the hyperedge,
+            by default True
+
+        Raises
+        ------
+        XGIError
+            If invalid rename or merge_rule specified.
+        
+        Warns
+        -----
+        If the user chooses merge_rule="union". Tells the
+        user that they can no longer draw based on this stat.
+        """
         dups = []
         hashes = defaultdict(list)
         for idx, members in self._edge.items():
@@ -1107,7 +1135,7 @@ class Hypergraph:
             if not multiedges:
                 H.remove_edges_from(H.edges.duplicates())
             if not singletons:
-                H.remove_edges_from(H.edges.singletons())
+                H.merge_duplicate_edges()
             if not isolates:
                 H.remove_nodes_from(H.nodes.isolates())
             if relabel:
