@@ -1082,7 +1082,7 @@ class Hypergraph:
         """
         if in_place:
             if not multiedges:
-                self.remove_edges_from(self.edges.duplicates())
+                self.merge_duplicate_edges()
             if not singletons:
                 self.remove_edges_from(self.edges.singletons())
             if not isolates:
