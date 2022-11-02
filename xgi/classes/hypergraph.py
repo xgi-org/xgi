@@ -3,6 +3,7 @@ from collections.abc import Hashable, Iterable
 from copy import deepcopy
 from itertools import count
 from warnings import warn
+from collections import defaultdict
 
 from ..exception import IDNotFound, XGIError
 from .reportviews import EdgeView, NodeView
@@ -934,6 +935,49 @@ class Hypergraph:
             self._node[node] = set()
         self._edge.clear()
         self._edge_attr.clear()
+
+    def merge_duplicate_edges(
+        self, rename="first", merge_rule="first", multiplicity=True
+    ):
+        dups = []
+        hashes = defaultdict(list)
+        for idx, members in self._edge.items():
+            hashes[frozenset(members)].append(idx)
+
+        new_edges = list()
+        for members, dup_ids in hashes.items():
+            if len(dup_ids) > 1:
+                dups.extend(dup_ids)
+
+                if rename == "first":
+                    new_id = sorted(dup_ids)[0]
+                elif rename == "tuple":
+                    new_id = tuple(sorted(dup_ids))
+                elif rename == "new":
+                    new_id = next(self._edge_uid)
+                else:
+                    raise XGIError("Invalid ID renaming scheme!")
+
+                if merge_rule == "first":
+                    id = sorted(dup_ids)[0]
+                    new_attrs = deepcopy(self._edge_attr[id])
+                elif merge_rule == "union":
+                    attrs = {field for id in dup_ids for field in self._edge_attr[id]}
+                    new_attrs = {
+                        attr: {self._edge_attr[id][attr] for id in dup_ids}
+                        for attr in attrs
+                    }
+                else:
+                    raise XGIError("Invalid merge rule!")
+                
+                if multiplicity == True:
+                    new_attrs["multiplicity"] = len(dup_ids)
+                new_edges.append((members, new_id, new_attrs))
+        self.remove_edges_from(dups)
+        self.add_edges_from(new_edges)
+
+        if merge_rule == "union":
+            warn("You will not be able to color/draw by merged attributes with xgi.draw()!")
 
     def copy(self):
         """A deep copy of the hypergraph.
