@@ -429,7 +429,7 @@ def boundary_matrix(S, order = 1, orientations = None, index = False):
             for u_simplex_id in skeleton_u_ids:
                 u_simplex = S.edges.members(u_simplex_id)
                 matrix_id = skeleton_u_dict[u_simplex_id]
-                u_simplex_subfaces = S._faces(u_simplex)
+                u_simplex_subfaces = S._subfaces(u_simplex,all=False)
                 subfaces_orientation = [orientations[u_simplex_id] - i for i in [0]+[(1+(-1)**order)//2]*(order-1)+[0]] 
                 for count, subf in enumerate(u_simplex_subfaces):
                     index_subface = S.edges.members().index(frozenset(subf))
