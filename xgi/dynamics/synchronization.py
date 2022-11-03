@@ -94,20 +94,19 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.
     return r_time
 
 
-def simulate_simplicial_kuramoto(scomplex, orientations = None, order=1,omega = [],sigma=1,theta0=[],T=10,n_steps=10000):
+def simulate_simplicial_kuramoto(S, orientations = None, order=1,omega = [],sigma=1,theta0=[],T=10,n_steps=10000,index=False):
     """
     This function simulates the simplicial Kuramoto model's dynamics on an oriented simplicial complex 
     using explicit Euler numerical integration scheme.
 
     Parameters
     ----------
-    scomplex : oriented simplicial complex
+    S : oriented simplicial complex
         The simplicial complex on which you 
         run the simplicial Kuramoto model
-    orientations :  [binary list, binary list, binary list]
+    orientations :  binary list
         Specifies the orientations of the 
-        (order-1)-simplices, (order)-simplices and
-        (order+1)-simplices involved in the dynamics
+        simplices in the complex
     order : integer
         The order of the oscillating simplices
     omega : numpy array of real values
@@ -126,17 +125,23 @@ def simulate_simplicial_kuramoto(scomplex, orientations = None, order=1,omega = 
     -------
     theta : numpy array of floats
         Timeseries of the simplicial oscillators' phases
-    theta_minus: numpy array of floats
+    theta_minus : numpy array of floats
         Timeseries of the projection of the phases onto 
         lower order simplices
-    theta_plus:
+    theta_plus : numpy array of floats
         Timeseries of the projection of the phases onto 
         higher order simplices
 
     """
-    Bk = xgi.matrix.boundary_matrix(scomplex, order, orientations[0:2])
+    if index:
+        Bk, km1_dict, k_dict = xgi.matrix.boundary_matrix(S, order, orientations,True)
+    else:
+        Bk = xgi.matrix.boundary_matrix(S, order, orientations,False)
     Dkm1 = np.transpose(Bk)
-    Bkp1 = xgi.matrix.boundary_matrix(scomplex, order+1, orientations[1:3])
+    if index:
+        Bkp1, __, kp1_dict = xgi.matrix.boundary_matrix(S, order+1, orientations,True)
+    else:
+        Bkp1 = xgi.matrix.boundary_matrix(S, order+1, orientations,False)
     Dk = np.transpose(Bkp1)
 
     # Compute the number of oscillating simplices
@@ -149,8 +154,32 @@ def simulate_simplicial_kuramoto(scomplex, orientations = None, order=1,omega = 
         theta[:,[t]] = theta[:,[t-1]] + dt*(omega - sigma*Dkm1@np.sin(Bk@theta[:,[t-1]]) - sigma*Bkp1@np.sin(Dk@theta[:,[t-1]]))
     theta_minus = Bk@theta
     theta_plus = Dk@theta
-    return theta, theta_minus, theta_plus
+    if index:
+        return theta, theta_minus, theta_plus, km1_dict, k_dict, kp1_dict
+    else:
+        return theta, theta_minus, theta_plus
 
 def compute_simplicial_order_parameter(theta_minus,theta_plus):
+    """
+    This function computes the simplicial order parameter of a
+    simplicial Kuramoto dynamics simulation.
+
+    Parameters
+    ----------
+    theta_minus: numpy array of floats
+        Timeseries of the projection of the phases onto 
+        lower order simplices
+    theta_plus:
+        Timeseries of the projection of the phases onto 
+        higher order simplices
+
+    Returns
+    -------
+    R : numpy array of floats
+        Timeseries of the simplicial order parameter
+
+    """
+
     C = np.size(theta_minus,0)+np.size(theta_plus,0)
-    return (np.sum(np.cos(theta_minus),0)+np.sum(np.cos(theta_plus),0))/C
+    R = (np.sum(np.cos(theta_minus),0)+np.sum(np.cos(theta_plus),0))/C
+    return R
