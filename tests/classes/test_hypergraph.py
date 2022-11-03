@@ -462,6 +462,37 @@ def test_clear_edges(edgelist1):
     assert len(H.edges) == 0
 
 
+def test_merge_duplicate_edges(hyperwithdupsandattrs):
+    H = hyperwithdupsandattrs.copy()
+    H.merge_duplicate_edges()
+    assert H.num_edges == 2
+    assert set(H.edges) == {0, 3}
+    assert H.edges[0] == {"color": "blue", "multiplicity": 3}
+    assert H.edges[3] == {"color": "purple", "multiplicity": 2}
+
+    H = hyperwithdupsandattrs.copy()
+    H.merge_duplicate_edges(rename="tuple")
+    assert set(H.edges) == {(0, 1, 2), (3, 4)}
+    assert H.edges.members((0, 1, 2)) == {1, 2}
+    assert H.edges.members((3, 4)) == {3, 4, 5}
+
+    H = hyperwithdupsandattrs.copy()
+    H.merge_duplicate_edges(rename="new")
+    assert set(H.edges) == {5, 6}
+    assert H.edges.members(5) == {1, 2}
+    assert H.edges.members(6) == {3, 4, 5}
+
+    H = hyperwithdupsandattrs.copy()
+    H.merge_duplicate_edges(merge_rule="union")
+    assert H.edges[0] == {"color": {"blue", "red", "yellow"}, "weight": {2, None}, "multiplicity": 3}
+    assert H.edges[3] == {"color": {"purple", None}, "name": {"test", None}, "multiplicity": 2}
+
+    H = hyperwithdupsandattrs.copy()
+    H.merge_duplicate_edges(multiplicity=False)
+    assert H.edges[0] == {"color": "blue"}
+    assert H.edges[3] == {"color": "purple"}
+
+
 def test_issue_198(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     H.clear_edges()

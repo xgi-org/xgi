@@ -992,7 +992,7 @@ class Hypergraph:
                 elif merge_rule == "union":
                     attrs = {field for id in dup_ids for field in self._edge_attr[id]}
                     new_attrs = {
-                        attr: {self._edge_attr[id][attr] for id in dup_ids}
+                        attr: {self._edge_attr[id].get(attr) for id in dup_ids}
                         for attr in attrs
                     }
                 else:
