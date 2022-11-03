@@ -11,11 +11,13 @@
    .. autofunction:: create_empty_copy
    .. autofunction:: degree_counts
    .. autofunction:: degree_histogram
+   .. autofunction:: density
    .. autofunction:: edge_neighborhood
    .. autofunction:: freeze
    .. autofunction:: frozen
    .. autofunction:: get_edge_attributes
    .. autofunction:: get_node_attributes
+   .. autofunction:: incidence_density
    .. autofunction:: is_empty
    .. autofunction:: is_frozen
    .. autofunction:: is_possible_order

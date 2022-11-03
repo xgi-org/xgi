@@ -1,5 +1,6 @@
 """Functional interface to hypergraph methods and assorted utilities."""
 
+from scipy.special import comb
 from collections import Counter
 from copy import deepcopy
 from warnings import warn
@@ -26,6 +27,8 @@ __all__ = [
     "is_empty",
     "maximal_simplices",
     "convert_labels_to_integers",
+    "density",
+    "incidence_density",
 ]
 
 
@@ -688,3 +691,155 @@ def convert_labels_to_integers(H, label_attribute="label"):
     )
 
     return temp_H
+
+
+def density(H, order=None, max_order=None, ignore_singletons=False):
+    r"""Hypergraph density.
+
+    The density of a hypergraph is the number of existing edges divided by the number of
+    possible edges.
+
+    Let `H` have :math:`n` nodes and :math:`m` hyperedges. Then,
+
+    * `density(H) =` :math:`\frac{m}{2^n - 1}`,
+    * `density(H, ignore_singletons=True) =` :math:`\frac{m}{2^n - 1 - n}`.
+
+    Here, :math:`2^n` is the total possible number of hyperedges on `H`, from which we
+    subtract :math:`1` because the empty hyperedge is not considered.  We subtract an
+    additional :math:`n` when singletons are not considered.
+
+    Now assume `H` has :math:`a` edges with order :math:`1` and :math:`b` edges with
+    order :math:`2`.  Then,
+
+    * `density(H, order=1) =` :math:`\frac{a}{{n \choose 2}}`,
+    * `density(H, order=2) =` :math:`\frac{b}{{n \choose 3}}`,
+    * `density(H, max_order=1) =` :math:`\frac{a}{{n \choose 1} + {n \choose 2}}`,
+    * `density(H, max_order=1, ignore_singletons=True) =` :math:`\frac{a}{{n \choose 2}}`,
+    * `density(H, max_order=2) =` :math:`\frac{m}{{n \choose 1} + {n \choose 2} + {n \choose 3}}`,
+    * `density(H, max_order=2, ignore_singletons=True) =` :math:`\frac{m}{{n \choose 2} + {n \choose 3}}`,
+
+    Parameters
+    ---------
+    order : int or None (default)
+        If not None, only count edges of the specified order.
+
+    max_order : int or None (default)
+        If not None, only count edges of order up to this value, inclusive.
+
+    ignore_singletons : bool (default False)
+        Whether to consider singleton edges.  Ignored if `order` is not None and
+        different from :math:`0`.
+
+    See Also
+    --------
+    :func:`incidence_density`
+
+    Notes
+    -----
+    If both `order` and `max_order` are not None, `max_order` is ignored.
+
+    """
+    n = H.num_nodes
+    if n < 1:
+        raise XGIError("Density not defined for empty hypergraph")
+    if H.num_edges < 1:
+        return 0.0
+
+    def order_filter(val, mode):
+        return H.edges.filterby("order", val, mode=mode)
+
+    if order is None and max_order is None:
+        numer = H.num_edges
+        denom = 2 ** n - 1
+        if ignore_singletons:
+            numer -= len(order_filter(0, mode="eq"))
+            denom -= n
+
+    elif order is None and max_order is not None:
+        if max_order >= n:
+            raise ValueError("max_order must be smaller than the number of nodes")
+        numer = len(order_filter(max_order, "leq"))
+        denom = sum(comb(n, _ord + 1, exact=True) for _ord in range(max_order + 1))
+        if ignore_singletons:
+            numer -= len(order_filter(0, mode="eq"))
+            denom -= n
+
+    elif order is not None:  # ignore max_order
+        if order >= n:
+            raise ValueError("order must be smaller than the number of nodes")
+        if ignore_singletons and order == 0:
+            return 0.0
+        numer = len(order_filter(order, mode="eq"))
+        denom = comb(n, order + 1, exact=True)
+
+    try:
+        return float(numer) / denom
+    except ZeroDivisionError:
+        return 0.0
+
+
+def incidence_density(H, order=None, max_order=None, ignore_singletons=False):
+    r"""Density of the incidence matrix.
+
+    The incidence matrix of a hypergraph contains one row per node nad one column per
+    edge.  An entry is non-zero when the corresponding node is a member of the
+    corresponding edge.  The density of this matrix is the number of non-zero entries
+    divided by the total number of entries.
+
+    Parameters
+    ---------
+    order : int or None (default)
+        If not None, only count edges of the specified order.
+
+    max_order : int or None (default)
+        If not None, only count edges of order up to this value, inclusive.
+
+    ignore_singletons : bool (default False)
+        Whether to consider singleton edges.  Ignored if `order` is not None and
+        different from :math:`0`.
+
+    See Also
+    --------
+    :func:`density`
+
+    Notes
+    -----
+    If both `order` and `max_order` are not None, `max_order` is ignored.
+
+    The parameters `order`, `max_order` and `ignore_singletons` have a similar effect on
+    the denominator as they have in :func:`density`.
+
+    """
+    n = H.num_nodes
+    if n < 1:
+        raise XGIError("Density not defined for empty hypergraph")
+    if H.num_edges < 1:
+        return 0.0
+
+    edges_to_count = H.edges
+    if order is None and max_order is None:
+        if ignore_singletons:
+            edges_to_count = edges_to_count.filterby("order", 0, "gt")
+
+    elif order is None and max_order is not None:
+        if max_order >= n:
+            raise ValueError("max_order must be smaller than the number of nodes")
+        edges_to_count = edges_to_count.filterby("order", max_order, "leq")
+        if ignore_singletons:
+            edges_to_count = edges_to_count.filterby("order", 0, "gt")
+
+    elif order is not None:  # ignore max_order
+        if order >= n:
+            raise ValueError("order must be smaller than the number of nodes")
+        if ignore_singletons and order == 0:
+            return 0.0
+        edges_to_count = edges_to_count.filterby("order", order, "eq")
+
+    denom = n * len(edges_to_count)
+    numer = edges_to_count.size.asnumpy().sum()  # size, not order
+    try:
+        # cast both to float because sometimes 0 / 0.0 may issue a warning instead of
+        # raising ZeroDivisionError
+        return float(numer) / float(denom)
+    except ZeroDivisionError:
+        return 0.0
