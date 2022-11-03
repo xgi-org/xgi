@@ -35,4 +35,3 @@ def dual_dict(edge_dict):
             node_dict[node].append(edge_id)
 
     return dict(node_dict)
-

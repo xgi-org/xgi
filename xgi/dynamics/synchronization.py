@@ -4,7 +4,11 @@ import numpy as np
 
 import xgi
 
-__all__ = ["compute_kuramoto_order_parameter","simulate_simplicial_kuramoto","compute_simplicial_order_parameter"]
+__all__ = [
+    "compute_kuramoto_order_parameter",
+    "simulate_simplicial_kuramoto",
+    "compute_simplicial_order_parameter",
+]
 
 
 def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.002):
@@ -94,18 +98,28 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.
     return r_time
 
 
-def simulate_simplicial_kuramoto(S, orientations = None, order=1,omega = [],sigma=1,theta0=[],T=10,n_steps=10000,index=False):
+def simulate_simplicial_kuramoto(
+    S,
+    orientations=None,
+    order=1,
+    omega=[],
+    sigma=1,
+    theta0=[],
+    T=10,
+    n_steps=10000,
+    index=False,
+):
     """
-    This function simulates the simplicial Kuramoto model's dynamics on an oriented simplicial complex 
+    This function simulates the simplicial Kuramoto model's dynamics on an oriented simplicial complex
     using explicit Euler numerical integration scheme.
 
     Parameters
     ----------
     S : oriented simplicial complex
-        The simplicial complex on which you 
+        The simplicial complex on which you
         run the simplicial Kuramoto model
     orientations :  binary list
-        Specifies the orientations of the 
+        Specifies the orientations of the
         simplices in the complex
     order : integer
         The order of the oscillating simplices
@@ -126,40 +140,47 @@ def simulate_simplicial_kuramoto(S, orientations = None, order=1,omega = [],sigm
     theta : numpy array of floats
         Timeseries of the simplicial oscillators' phases
     theta_minus : numpy array of floats
-        Timeseries of the projection of the phases onto 
+        Timeseries of the projection of the phases onto
         lower order simplices
     theta_plus : numpy array of floats
-        Timeseries of the projection of the phases onto 
+        Timeseries of the projection of the phases onto
         higher order simplices
 
     """
     if index:
-        Bk, km1_dict, k_dict = xgi.matrix.boundary_matrix(S, order, orientations,True)
+        Bk, km1_dict, k_dict = xgi.matrix.boundary_matrix(S, order, orientations, True)
     else:
-        Bk = xgi.matrix.boundary_matrix(S, order, orientations,False)
+        Bk = xgi.matrix.boundary_matrix(S, order, orientations, False)
     Dkm1 = np.transpose(Bk)
     if index:
-        Bkp1, __, kp1_dict = xgi.matrix.boundary_matrix(S, order+1, orientations,True)
+        Bkp1, __, kp1_dict = xgi.matrix.boundary_matrix(
+            S, order + 1, orientations, True
+        )
     else:
-        Bkp1 = xgi.matrix.boundary_matrix(S, order+1, orientations,False)
+        Bkp1 = xgi.matrix.boundary_matrix(S, order + 1, orientations, False)
     Dk = np.transpose(Bkp1)
 
     # Compute the number of oscillating simplices
     nk = np.shape(Bk)[1]
 
-    dt = T/n_steps
-    theta = np.zeros((nk,n_steps))
-    theta[:,[0]] = theta0
-    for t in range(1,n_steps):
-        theta[:,[t]] = theta[:,[t-1]] + dt*(omega - sigma*Dkm1@np.sin(Bk@theta[:,[t-1]]) - sigma*Bkp1@np.sin(Dk@theta[:,[t-1]]))
-    theta_minus = Bk@theta
-    theta_plus = Dk@theta
+    dt = T / n_steps
+    theta = np.zeros((nk, n_steps))
+    theta[:, [0]] = theta0
+    for t in range(1, n_steps):
+        theta[:, [t]] = theta[:, [t - 1]] + dt * (
+            omega
+            - sigma * Dkm1 @ np.sin(Bk @ theta[:, [t - 1]])
+            - sigma * Bkp1 @ np.sin(Dk @ theta[:, [t - 1]])
+        )
+    theta_minus = Bk @ theta
+    theta_plus = Dk @ theta
     if index:
         return theta, theta_minus, theta_plus, km1_dict, k_dict, kp1_dict
     else:
         return theta, theta_minus, theta_plus
 
-def compute_simplicial_order_parameter(theta_minus,theta_plus):
+
+def compute_simplicial_order_parameter(theta_minus, theta_plus):
     """
     This function computes the simplicial order parameter of a
     simplicial Kuramoto dynamics simulation.
@@ -167,10 +188,10 @@ def compute_simplicial_order_parameter(theta_minus,theta_plus):
     Parameters
     ----------
     theta_minus: numpy array of floats
-        Timeseries of the projection of the phases onto 
+        Timeseries of the projection of the phases onto
         lower order simplices
     theta_plus:
-        Timeseries of the projection of the phases onto 
+        Timeseries of the projection of the phases onto
         higher order simplices
 
     Returns
@@ -180,6 +201,6 @@ def compute_simplicial_order_parameter(theta_minus,theta_plus):
 
     """
 
-    C = np.size(theta_minus,0)+np.size(theta_plus,0)
-    R = (np.sum(np.cos(theta_minus),0)+np.sum(np.cos(theta_plus),0))/C
+    C = np.size(theta_minus, 0) + np.size(theta_plus, 0)
+    R = (np.sum(np.cos(theta_minus), 0) + np.sum(np.cos(theta_plus), 0)) / C
     return R
