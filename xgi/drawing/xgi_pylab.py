@@ -206,7 +206,7 @@ def draw_xgi_nodes(
         node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
     )
 
-    x, y, s, c, ec, lw, = zip(*[(pos[i][0], pos[i][1], node_size[i], node_fc[i], node_ec[i], node_lw[i]) for i in H.nodes])
+    x, y, s, c, ec, lw, = zip(*[(pos[i][0], pos[i][1], node_size[i]**2, node_fc[i], node_ec[i], node_lw[i]) for i in H.nodes])
     ax.scatter(x=x, y=y, s=s, c=c, edgecolors=ec, linewidths=lw, zorder=zorder)
 
 
