@@ -206,15 +206,8 @@ def draw_xgi_nodes(
         node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
     )
 
-    ax.scatter(
-        x=[pos[i][0] for i in H.nodes],
-        y=[pos[i][1] for i in H.nodes],
-        s=[node_size[i] ** 2 for i in H.nodes],
-        c=[node_fc[i] for i in H.nodes],
-        edgecolors=[node_ec[i] for i in H.nodes], 
-        linewidths=[node_lw[i] for i in H.nodes],
-        zorder=zorder,
-    )
+    x, y, s, c, ec, lw, = zip(*[(pos[i][0], pos[i][1], node_size[i], node_fc[i], node_ec[i], node_lw[i]) for i in H.nodes])
+    ax.scatter(x=x, y=y, s=s, c=c, edgecolors=ec, linewidths=lw, zorder=zorder)
 
 
 def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings):
