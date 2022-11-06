@@ -3,6 +3,8 @@
 import numpy as np
 
 import xgi
+from ..exception import XGIError
+
 
 __all__ = [
     "compute_kuramoto_order_parameter",
@@ -115,20 +117,21 @@ def simulate_simplicial_kuramoto(
 
     Parameters
     ----------
-    S : oriented simplicial complex
+    S : simplicial complex object
         The simplicial complex on which you
         run the simplicial Kuramoto model
-    orientations :  binary list
-        Specifies the orientations of the
-        simplices in the complex
+    orientations : dict, Default : None
+        Dictionary mapping non-singleton simplices IDs to their boolean orientation
     order : integer
         The order of the oscillating simplices
-    omega : numpy array of real values
-        The simplicial oscillators' natural frequencies
+    omega : numpy.ndarray
+        The simplicial oscillators' natural frequencies, has dimension
+        (n_simplices of given order, 1)
     sigma : positive real value
         The coupling strength
-    theta0 : numpy array of real values
-        The initial phase distribution.
+    theta0 : numpy.ndarray
+        The initial phase distribution, has dimension
+        (n_simplices of given order, 1)
     T : positive real value
         The final simulation time.
     n_steps : integer greater than 1
@@ -137,45 +140,64 @@ def simulate_simplicial_kuramoto(
 
     Returns
     -------
-    theta : numpy array of floats
-        Timeseries of the simplicial oscillators' phases
+    theta : numpy.ndarray
+        Timeseries of the simplicial oscillators' phases, has dimension
+        (n_simplices of given order, n_steps)
     theta_minus : numpy array of floats
-        Timeseries of the projection of the phases onto
-        lower order simplices
+        Timeseries of the projection of the phases onto lower order simplices,
+        has dimension (n_simplices of given order - 1, n_steps)
     theta_plus : numpy array of floats
-        Timeseries of the projection of the phases onto
-        higher order simplices
-
+        Timeseries of the projection of the phases onto higher order simplices,
+        has dimension (n_simplices of given order + 1, n_steps)
+    om1_dict : dict
+        The dictionary mapping indices to (order-1)-simplices IDs, if index is True
+    o_dict : dict
+        The dictionary mapping indices to (order)-simplices IDs, if index is True
+    op1_dict : dict
+        The dictionary mapping indices to (order+1)-simplices IDs, if index is True
     """
+
+    # Notation:
+    # B_o - boundary matrix acting on (order)-simplices
+    # D_o - adjoint boundary matrix acting on (order)-simplices
+    # om1 = order - 1
+    # op1 = order + 1
+
+    if not isinstance(S, xgi.SimplicialComplex):
+        raise XGIError(
+            "The simplicial Kuramoto model can be simulated only on a SimplicialComplex object"
+        )
+
     if index:
-        Bk, km1_dict, k_dict = xgi.matrix.boundary_matrix(S, order, orientations, True)
+        B_o, om1_dict, o_dict = xgi.matrix.boundary_matrix(S, order, orientations, True)
     else:
-        Bk = xgi.matrix.boundary_matrix(S, order, orientations, False)
-    Dkm1 = np.transpose(Bk)
+        B_o = xgi.matrix.boundary_matrix(S, order, orientations, False)
+    D_om1 = np.transpose(B_o)
+
     if index:
-        Bkp1, __, kp1_dict = xgi.matrix.boundary_matrix(
+        B_op1, __, op1_dict = xgi.matrix.boundary_matrix(
             S, order + 1, orientations, True
         )
     else:
-        Bkp1 = xgi.matrix.boundary_matrix(S, order + 1, orientations, False)
-    Dk = np.transpose(Bkp1)
+        B_op1 = xgi.matrix.boundary_matrix(S, order + 1, orientations, False)
+    D_o = np.transpose(B_op1)
 
     # Compute the number of oscillating simplices
-    nk = np.shape(Bk)[1]
+    n_o = np.shape(B_o)[1]
 
     dt = T / n_steps
-    theta = np.zeros((nk, n_steps))
+    theta = np.zeros((n_o, n_steps))
     theta[:, [0]] = theta0
     for t in range(1, n_steps):
         theta[:, [t]] = theta[:, [t - 1]] + dt * (
             omega
-            - sigma * Dkm1 @ np.sin(Bk @ theta[:, [t - 1]])
-            - sigma * Bkp1 @ np.sin(Dk @ theta[:, [t - 1]])
+            - sigma * D_om1 @ np.sin(B_o @ theta[:, [t - 1]])
+            - sigma * B_op1 @ np.sin(D_o @ theta[:, [t - 1]])
         )
-    theta_minus = Bk @ theta
-    theta_plus = Dk @ theta
+    theta_minus = B_o @ theta
+    theta_plus = D_o @ theta
     if index:
-        return theta, theta_minus, theta_plus, km1_dict, k_dict, kp1_dict
+        return theta, theta_minus, theta_plus, om1_dict, o_dict, op1_dict
     else:
         return theta, theta_minus, theta_plus
 
@@ -187,17 +209,21 @@ def compute_simplicial_order_parameter(theta_minus, theta_plus):
 
     Parameters
     ----------
-    theta_minus: numpy array of floats
+    theta_minus: numpy.ndarray
         Timeseries of the projection of the phases onto
-        lower order simplices
-    theta_plus:
+        lower order simplices, has dimension
+        (n_simplices of given order - 1, n_steps)
+
+    theta_plus: numpy.ndarray
         Timeseries of the projection of the phases onto
-        higher order simplices
+        higher order simplices, has dimension
+        (n_simplices of given order + 1, n_steps)
 
     Returns
     -------
-    R : numpy array of floats
-        Timeseries of the simplicial order parameter
+    R : numpy.ndarray
+        Timeseries of the simplicial order parameter,
+        has dimension (1, n_steps)
 
     """
 

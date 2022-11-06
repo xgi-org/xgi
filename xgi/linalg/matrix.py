@@ -367,7 +367,7 @@ def clique_motif_matrix(H, index=False):
 
 def boundary_matrix(S, order=1, orientations=None, index=False):
     """
-    A function to generate the boundary matrix of an oriented simplicial complex.
+    A function to generate the boundary matrices of an oriented simplicial complex.
     The rows correspond to the (order-1)-simplices and the columns to the (order)-simplices.
 
     Parameters
@@ -377,71 +377,80 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
     order: int, default: 1
         Specifies the order of the boundary
         matrix to compute
-    orientations: boolean list, default: None
-        Specifies the orientations of the simplices
+    orientations: dict, default: None
+        Dictionary mapping non-singleton simplices
+        IDs to their boolean orientation
     index: bool, default: False
         Specifies whether to output dictionaries
         mapping the simplices IDs to indices
 
     Returns
     -------
-    if index is True:
-        return B, rowdict, coldict
-    else:
-        return B
+    B: numpy.ndarray
+        The boundary matrix of the chosen order, has dimension
+        (n_simplices of given order - 1, n_simplices of given order)
+    rowdict: dict
+        The dictionary mapping indices to
+        (order-1)-simplices IDs, if index is True
+    coldict: dict
+        The dictionary mapping indices to
+        (order)-simplices IDs, if index is True
 
     """
-    # Extract the simplicial skeletons involved
+
+    # Extract the simplices involved
     if order == 1:
-        skeleton_d_ids = S.nodes
+        simplices_d_ids = S.nodes
     else:
-        skeleton_d_ids = S.edges.filterby("order", order - 1)
+        simplices_d_ids = S.edges.filterby("order", order - 1)
 
     if order == 0:
-        skeleton_u_ids = S.nodes
+        simplices_u_ids = S.nodes
     else:
-        skeleton_u_ids = S.edges.filterby("order", order)
+        simplices_u_ids = S.edges.filterby("order", order)
 
-    nd = len(skeleton_d_ids)
-    nu = len(skeleton_u_ids)
+    nd = len(simplices_d_ids)
+    nu = len(simplices_u_ids)
 
-    skeleton_d_dict = dict(zip(skeleton_d_ids, range(nd)))
-    skeleton_u_dict = dict(zip(skeleton_u_ids, range(nu)))
+    simplices_d_dict = dict(zip(simplices_d_ids, range(nd)))
+    simplices_u_dict = dict(zip(simplices_u_ids, range(nu)))
 
     if index:
-        rowdict = {v: k for k, v in skeleton_d_dict.items()}
-        coldict = {v: k for k, v in skeleton_u_dict.items()}
+        rowdict = {v: k for k, v in simplices_d_dict.items()}
+        coldict = {v: k for k, v in simplices_u_dict.items()}
 
     if orientations == None:
-        orientations = [0] * len(S.edges)
+        orientations = {
+            idd: 0 for idd in list(S.edges.filterby("order", 1, mode="geq"))
+        }
 
     B = np.zeros((nd, nu))
     if not (nu == 0 or nd == 0):
         if order == 1:
-            for u_simplex_id in skeleton_u_ids:
+            for u_simplex_id in simplices_u_ids:
                 u_simplex = S.edges.members(u_simplex_id)
-                matrix_id = skeleton_u_dict[u_simplex_id]
+                matrix_id = simplices_u_dict[u_simplex_id]
                 head_idx = list(u_simplex)[1]
                 tail_idx = list(u_simplex)[0]
-                B[skeleton_d_dict[head_idx], matrix_id] = (-1) ** orientations[
+                B[simplices_d_dict[head_idx], matrix_id] = (-1) ** orientations[
                     u_simplex_id
                 ]
-                B[skeleton_d_dict[tail_idx], matrix_id] = -(
+                B[simplices_d_dict[tail_idx], matrix_id] = -(
                     (-1) ** orientations[u_simplex_id]
                 )
         else:
-            for u_simplex_id in skeleton_u_ids:
+            for u_simplex_id in simplices_u_ids:
                 u_simplex = S.edges.members(u_simplex_id)
-                matrix_id = skeleton_u_dict[u_simplex_id]
+                matrix_id = simplices_u_dict[u_simplex_id]
                 u_simplex_subfaces = S._subfaces(u_simplex, all=False)
                 subfaces_orientation = [
-                    orientations[u_simplex_id] - i
-                    for i in [0] + [(1 + (-1) ** order) // 2] * (order - 1) + [0]
+                    (orientations[u_simplex_id] + i + order) % 2
+                    for i in range(len(u_simplex_subfaces))
                 ]
                 for count, subf in enumerate(u_simplex_subfaces):
-                    index_subface = S.edges.members().index(frozenset(subf))
-                    B[skeleton_d_dict[index_subface], matrix_id] = (-1) ** (
-                        subfaces_orientation[count] + orientations[index_subface]
+                    subface_ID = list(S.edges)[S.edges.members().index(frozenset(subf))]
+                    B[simplices_d_dict[subface_ID], matrix_id] = (-1) ** (
+                        subfaces_orientation[count] + orientations[subface_ID]
                     )
     if index:
         return B, rowdict, coldict
@@ -452,8 +461,8 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
 def hodge_laplacian(S, order=1, orientations=None, index=False):
 
     """
-    A function to compute the Hodge Laplacian of a
-    given order of an oriented simplicial complex
+    A function to compute the Hodge Laplacians of an oriented
+    simplicial complex.
 
     Parameters
     ----------
@@ -461,32 +470,36 @@ def hodge_laplacian(S, order=1, orientations=None, index=False):
         The simplicial complex of interest
     order: int, default: 1
         Specifies the order of the Hodge
-        Laplacian matrix
-    orientations: boolean list, default: None
-        Specifies the orientations of the simplices
+        Laplacian matrix to be computed
+    orientations: dict, default: None
+        Dictionary mapping non-singleton simplices
+        IDs to their boolean orientation
     index: bool, default: False
         Specifies whether to output dictionaries
         mapping the simplices IDs to indices
 
     Returns
     -------
-    if index is True:
-        return L, matdict
-    else:
-        return L
+    L_o: numpy.ndarray
+        The Hodge Laplacian matrix of the chosen order, has dimension
+        (n_simplices of given order, n_simplices of given order)
+    matdict: dict
+        The dictionary mapping indices to
+        (order)-simplices IDs, if index is True
+
     """
     if index:
-        Bk, __, matdict = boundary_matrix(S, order, orientations, True)
+        B_o, __, matdict = boundary_matrix(S, order, orientations, True)
     else:
-        Bk = boundary_matrix(S, order, orientations, False)
-    Dkm1 = np.transpose(Bk)
+        B_o = boundary_matrix(S, order, orientations, False)
+    D_om1 = np.transpose(B_o)
 
-    Bkp1 = boundary_matrix(S, order + 1, orientations, False)
-    Dk = np.transpose(Bkp1)
+    B_op1 = boundary_matrix(S, order + 1, orientations, False)
+    D_o = np.transpose(B_op1)
 
-    L = Dkm1 @ Bk + Bkp1 @ Dk
+    L_o = D_om1 @ B_o + B_op1 @ D_o
 
     if index:
-        return L, matdict
+        return L_o, matdict
     else:
-        return L
+        return L_o
