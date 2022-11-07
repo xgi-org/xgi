@@ -248,7 +248,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     return H
 
 
-@py_random_state("seed")
+@np_random_state(0)
 def random_hypergraph(N, ps, seed=None):
     """Generates a random hypergraph
 
@@ -282,6 +282,7 @@ def random_hypergraph(N, ps, seed=None):
     >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
 
     """
+    np.random.seed(seed)
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
@@ -309,7 +310,7 @@ def random_hypergraph(N, ps, seed=None):
     return H
 
 
-@py_random_state("seed")
+@np_random_state(0)
 def random_simplicial_complex(N, ps, seed=None):
     """Generates a random hypergraph
 
@@ -345,6 +346,7 @@ def random_simplicial_complex(N, ps, seed=None):
     >>> H = xgi.random_simplicial_complex(20, [0.1, 0.01])
 
     """
+    np.random.seed(seed)
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
