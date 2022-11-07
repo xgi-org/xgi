@@ -155,6 +155,13 @@ def simulate_simplicial_kuramoto(
         The dictionary mapping indices to (order)-simplices IDs, if index is True
     op1_dict : dict
         The dictionary mapping indices to (order+1)-simplices IDs, if index is True
+
+    References
+    ----------
+    "Explosive Higher-Order Kuramoto Dynamics on Simplicial Complexes"
+    by Ana P. Millán, Joaquín J. Torres, and Ginestra Bianconi
+    https://doi.org/10.1103/PhysRevLett.124.218301
+
     """
 
     # Notation:
@@ -224,6 +231,13 @@ def compute_simplicial_order_parameter(theta_minus, theta_plus):
     R : numpy.ndarray
         Timeseries of the simplicial order parameter,
         has dimension (1, n_steps)
+
+    References
+    ----------
+    "Connecting Hodge and Sakaguchi-Kuramoto through a mathematical
+    framework for coupled oscillators on simplicial complexes"
+    by Alexis Arnaudon, Robert L. Peach, Giovanni Petri, and Paul Expert
+    https://doi.org/10.1038/s42005-022-00963-7
 
     """
 

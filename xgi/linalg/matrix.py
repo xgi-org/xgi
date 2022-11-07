@@ -396,6 +396,12 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
         The dictionary mapping indices to
         (order)-simplices IDs, if index is True
 
+    References
+    ----------
+    "Discrete Calculus"
+    by Leo J. Grady and Jonathan R. Polimeni
+    https://doi.org/10.1007/978-1-84996-290-2
+
     """
 
     # Extract the simplices involved
