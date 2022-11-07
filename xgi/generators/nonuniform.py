@@ -282,7 +282,7 @@ def random_hypergraph(N, ps, seed=None):
     >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
 
     """
-    np.random.seed(seed)
+    rng = np.random.default_rng(seed=seed)
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
@@ -295,7 +295,7 @@ def random_hypergraph(N, ps, seed=None):
 
         potential_edges = combinations(nodes, d + 1)
         n_comb = comb(N, d+1, exact=True)
-        mask = np.random.random(size=n_comb) <= p # True if edge to keep
+        mask = rng.random(size=n_comb) <= p # True if edge to keep
         
         edges_to_add = [e for e, val in zip(potential_edges, mask) if val]
 
@@ -346,7 +346,7 @@ def random_simplicial_complex(N, ps, seed=None):
     >>> H = xgi.random_simplicial_complex(20, [0.1, 0.01])
 
     """
-    np.random.seed(seed)
+    rng = np.random.default_rng(seed=seed)
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
@@ -359,7 +359,7 @@ def random_simplicial_complex(N, ps, seed=None):
 
         potential_simplices = combinations(nodes, d + 1)
         n_comb = comb(N, d+1, exact=True)
-        mask = np.random.random(size=n_comb) <= p # True if simplex to keep
+        mask = rng.random(size=n_comb) <= p # True if simplex to keep
         
         simplices_to_add = [e for e, val in zip(potential_simplices, mask) if val]
 
