@@ -483,7 +483,7 @@ def nodestat_func(func):
 
     >>> H.my_degree()
     Traceback (most recent call last):
-    AttributeError: stat "my_degree" not among available node or edge stats
+    AttributeError: my_degree is not a method of Hypergraph or a recognized NodeStat or EdgeStat
     >>> H.nodes.my_degree
     Traceback (most recent call last):
     AttributeError: Stat 'my_degree' not defined

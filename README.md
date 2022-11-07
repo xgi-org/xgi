@@ -74,9 +74,9 @@ Leo Torres <leo@leotrs.com>
 
 Iacopo Iacopini <iacopiniiacopo@gmail.com>
 
-Maxime Lucas <maxime.lucas@isi.it>
+Maxime Lucas <maxime.lucas@centai.eu>
 
-Giovanni Petri <giovanni.petri@isi.it>
+Giovanni Petri <giovanni.petri@centai.eu>
 
 Alice Patania <apatania@uvm.edu>
 
