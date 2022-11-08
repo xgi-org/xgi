@@ -866,6 +866,28 @@ def subfaces(edges, order=None):
     faces: list of sets
         List of hyperedges that are subfaces of input hyperedges
 
+    Notes
+    -----
+    Hyperedges in the returned list are not unique, they may appear more than once
+    if they are subfaces or more than one edge from the input edges.
+
+    Raises
+    ------
+    XGIError
+        Raises error when order is larger than the max order of input edges
+
+    Examples
+    --------
+    >>> import xgi
+    >>> edges = [{1,2,3,4}, {3,4,5}]
+    >>> xgi.subfaces(edges) # doctest: +NORMALIZE_WHITESPACE
+    [(1,), (2,), (3,), (4,), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4), (1, 2, 3),
+     (1, 2, 4), (1, 3, 4), (2, 3, 4), (3,), (4,), (5,), (3, 4), (3, 5), (4, 5)]
+    >>> xgi.subfaces(edges, order=-1)
+    [(1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4), (3, 4), (3, 5), (4, 5)]
+    >>> xgi.subfaces(edges, order=2)
+    [(1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4), (3, 4, 5)]
+
     """
 
     max_order = len(max(edges, key=len)) - 1
