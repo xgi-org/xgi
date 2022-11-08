@@ -19,13 +19,20 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 
 
 # -- Project information -----------------------------------------------------
-
 project = "XGI"
 copyright = "Copyright (C) 2021 XGI Developers"
-author = "Nicholas W. Landry, Leo Torres, Iacopo Iacopini, Maxime Lucas, Giovanni Petri, Alice Patania"
-
+authors = """
+Nicholas W. Landry,
+Leo Torres,
+Iacopo Iacopini,
+Maxime Lucas,
+Giovanni Petri,
+Alice Patania,
+Alice Schwarze, and
+Martina Contisiciani
+"""
 # The full version, including alpha/beta/rc tags
-release = "0.4.3"
+release = "0.5.0"
 
 # -- General configuration ---------------------------------------------------
 
@@ -187,24 +194,25 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
+
 latex_documents = [
     (
         master_doc,
         "xgi.tex",
         "XGI Documentation",
-        "Nicholas W. Landry, Leo Torres, Iacopo Iacopini, Maxime Lucas, Giovanni Petri, Alice Patania",
+        authors,
         "manual",
     ),
 ]
 
-man_pages = [(master_doc, "xgi", "XGI Documentation", [author], 1)]
+man_pages = [(master_doc, "xgi", "XGI Documentation", [authors], 1)]
 
 texinfo_documents = [
     (
         master_doc,
         "XGI",
         "XGI Documentation",
-        author,
+        authors,
         "XGI",
         "One line description of project.",
         "Miscellaneous",
@@ -212,8 +220,8 @@ texinfo_documents = [
 ]
 
 epub_title = project
-epub_author = author
-epub_publisher = author
+epub_author = authors
+epub_publisher = authors
 epub_copyright = copyright
 
 

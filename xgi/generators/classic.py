@@ -10,7 +10,6 @@ from itertools import combinations
 from warnings import warn
 
 import networkx as nx
-import numpy as np
 
 from ..classes.function import subfaces
 from ..exception import XGIError

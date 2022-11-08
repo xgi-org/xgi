@@ -3,7 +3,7 @@ import sys
 import setuptools
 from setuptools import setup
 
-__version__ = "0.4.3"
+__version__ = "0.5.0"
 
 if sys.version_info < (3, 7):
     sys.exit("XGI requires Python 3.7 or later.")
@@ -12,7 +12,16 @@ name = "xgi"
 
 version = __version__
 
-authors = "Nicholas Landry, Leo Torres, Maxime Lucas, Iacopo Iacopini, Giovanni Petri, Alice Patania, Alice Schwarze, and Martina Contisciani"
+authors = """
+Nicholas Landry,
+Leo Torres,
+Maxime Lucas,
+Iacopo Iacopini,
+Giovanni Petri,
+Alice Patania,
+Alice Schwarze, and
+Martina Contisciani
+"""
 
 author_email = "nicholas.landry@uvm.edu"
 
