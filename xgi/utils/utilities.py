@@ -64,15 +64,8 @@ def powerset(iterable, include_empty=False, include_full=False):
 
     """
 
-    if include_empty:
-        start = 0
-    else:
-        start = 1
-
-    if include_full:
-        end = 1
-    else:
-        end = 0
+    start = 0 if include_empty else 1
+    end = 1 if include_full else 0
 
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(start, len(s) + end))
