@@ -134,21 +134,27 @@ class SimplicialComplex(Hypergraph):
             "Cannot remove_edges_from to SimplicialComplex, use remove_simplices_from instead"
         )
 
-    def add_simplex(self, simplex, **attr):
+    def add_simplex(self, members, id=None, **attr):
         """Add a simplex to the simplicial complex, and all its subfaces that do
-        not exist yet. The universal ID is automatically assigned to the simplex(s).
+        not exist yet. 
 
         Simplex attributes can be specified with keywords or by directly
         accessing the simplex's attribute dictionary. The attributes do not propagate
-        to the subfaces. See examples below.
+        to the subfaces. 
 
         Parameters
         ----------
-        simplex : an iterable of hashables
-            A list of node ids
-        attr : keyword arguments, optional
-            Simplex data (or labels or objects) can be assigned using
-            keyword arguments.
+        members : Iterable
+            An iterable of the ids of the nodes contained in the new simplex.
+        id : hashable, default None
+            Id of the new simplex. If None, a unique numeric ID will be created.
+        **attr : dict, optional
+            Attributes of the new simplex.
+
+        Raises
+        -----
+        XGIError
+            If `members` is empty.
 
         See Also
         --------
@@ -156,17 +162,47 @@ class SimplicialComplex(Hypergraph):
 
         Notes
         -----
-        Currently cannot add empty edges.
+        Currently cannot add empty simplices.
+
+        Examples
+        --------
+
+        Add simplices with or without specifying an edge id.
+
+        >>> import xgi
+        >>> S = xgi.SimplicialComplex()
+        >>> S.add_simplex([1, 2, 3])
+        >>> S.edges.members() # doctest: +NORMALIZE_WHITESPACE
+        [frozenset({1, 2, 3}), frozenset({1, 2}), 
+            frozenset({1, 3}), frozenset({2, 3})]
+        >>> S.add_simplex([3, 4], id='myedge')
+        >>> S.edges
+        EdgeView((0, 1, 2, 3, 'myedge'))
+
+        Access attributes using square brackets.  By default no attributes are created.
+
+        >>> S.edges[0]
+        {}
+        >>> S.add_simplex([1, 4], color='red', place='peru')
+        >>> S.edges
+        EdgeView((0, 1, 2, 3, 'myedge', 4))
+        >>> S.edges[4]
+        {'color': 'red', 'place': 'peru'}
         """
 
-        if not self.has_simplex(simplex):
+        try:
+            members = frozenset(members)
+        except TypeError:
+                raise XGIError("The simplex cannot be cast to a frozenset.")
 
-            # add simplex and its nodes
-            if simplex:
-                uid = next(self._edge_uid)
-            else:
-                raise XGIError("Cannot add an empty simplex.")
-            for node in simplex:
+        if not members:
+            raise XGIError("Cannot add an empty edge")
+
+        if not self.has_simplex(members):
+
+            uid = next(self._edge_uid) if not id else id
+            self._edge[uid] = set()
+            for node in members:
                 if node not in self._node:
                     if node is None:
                         raise ValueError("None cannot be a node")
@@ -174,16 +210,12 @@ class SimplicialComplex(Hypergraph):
                     self._node_attr[node] = self._node_attr_dict_factory()
                 self._node[node].add(uid)
 
-            try:
-                self._edge[uid] = frozenset(simplex)
-                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
-            except TypeError:
-                raise XGIError("The simplex cannot be cast to a frozenset.")
-
+            self._edge[uid] = members
+            self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             self._edge_attr[uid].update(attr)
 
             # add all subfaces
-            faces = self._subfaces(simplex)
+            faces = self._subfaces(members)
             self.add_simplices_from(faces)
 
     def _subfaces(self, simplex):
