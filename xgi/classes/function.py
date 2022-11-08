@@ -864,17 +864,17 @@ def subfaces(edges, order=None):
     Returns
     -------
     faces: list of sets
-        List of hyperedges that are subfaces of input hyperedges
-
-    Notes
-    -----
-    Hyperedges in the returned list are not unique, they may appear more than once
-    if they are subfaces or more than one edge from the input edges.
+        List of hyperedges that are subfaces of input hyperedges.
 
     Raises
     ------
     XGIError
         Raises error when order is larger than the max order of input edges
+
+    Notes
+    -----
+    Hyperedges in the returned list are not unique, they may appear more than once
+    if they are subfaces or more than one edge from the input edges.
 
     Examples
     --------
