@@ -12,16 +12,7 @@ name = "xgi"
 
 version = __version__
 
-authors = """
-Nicholas Landry,
-Leo Torres,
-Maxime Lucas,
-Iacopo Iacopini,
-Giovanni Petri,
-Alice Patania,
-Alice Schwarze, and
-Martina Contisciani
-"""
+authors = "Nicholas Landry, Leo Torres, Maxime Lucas, Iacopo Iacopini, Giovanni Petri, Alice Patania, Alice Schwarze, and Martina Contisciani"
 
 author_email = "nicholas.landry@uvm.edu"
 

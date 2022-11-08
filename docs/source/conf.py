@@ -21,16 +21,7 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 # -- Project information -----------------------------------------------------
 project = "XGI"
 copyright = "Copyright (C) 2021 XGI Developers"
-authors = """
-Nicholas W. Landry\n
-Leo Torres\n
-Iacopo Iacopini\n
-Maxime Lucas\n
-Giovanni Petri\n
-Alice Patania\n
-Alice Schwarze\n
-Martina Contisiciani
-"""
+authors = "Nicholas W. Landry, Leo Torres, Iacopo Iacopini, Maxime Lucas, Giovanni Petri, Alice Patania, Alice Schwarze, and Martina Contisiciani"
 # The full version, including alpha/beta/rc tags
 release = "0.5.0"
 
@@ -212,7 +203,7 @@ texinfo_documents = [
         master_doc,
         "XGI",
         "XGI Documentation",
-        authors,
+        "",
         "XGI",
         "One line description of project.",
         "Miscellaneous",
@@ -220,7 +211,7 @@ texinfo_documents = [
 ]
 
 epub_title = project
-epub_author = authors
+epub_author = ""
 epub_publisher = authors
 epub_copyright = copyright
 
