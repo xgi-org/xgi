@@ -191,7 +191,7 @@ latex_documents = [
         master_doc,
         "xgi.tex",
         "XGI Documentation",
-        authors,
+        "",
         "manual",
     ),
 ]
