@@ -937,7 +937,7 @@ class Hypergraph:
         self._edge_attr.clear()
 
     def merge_duplicate_edges(
-        self, rename="first", merge_rule="first", multiplicity=True
+        self, rename="first", merge_rule="first", multiplicity=None
     ):
         """Merges edges which have the same members.
 
@@ -947,15 +947,15 @@ class Hypergraph:
             Either "first", "tuple", or "new", by default "first"
             If "first", the new edge ID is the first of the sorted
             duplicate edge IDs. If "tuple", the new edge ID is a 
-            tuple of the sorted duplicate edge IDs. If "new", the
-            _edge_uid counter is selected and incremented.
+            tuple of the sorted duplicate edge IDs. If "new", a
+            new ID will be selected automatically.
         merge_rule : str, optional
             Either "first" or "union", by default "first"
             If "first", takes the attributes of the first duplicate.
             If "union", takes the set of attributes of all the duplicates.
-        multiplicity : bool, optional
-            Whether to return the multiplicity of the hyperedge,
-            by default True
+        multiplicity : str, optional
+            The attribute in which to store the multiplicity of the hyperedge,
+            by default None
 
         Raises
         ------
@@ -987,7 +987,7 @@ class Hypergraph:
                     raise XGIError("Invalid ID renaming scheme!")
 
                 if merge_rule == "first":
-                    id = sorted(dup_ids)[0]
+                    id = min(dup_ids)
                     new_attrs = deepcopy(self._edge_attr[id])
                 elif merge_rule == "union":
                     attrs = {field for id in dup_ids for field in self._edge_attr[id]}

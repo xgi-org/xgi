@@ -469,6 +469,7 @@ def test_merge_duplicate_edges(hyperwithdupsandattrs):
     assert set(H.edges) == {0, 3}
     assert H.edges[0] == {"color": "blue", "multiplicity": 3}
     assert H.edges[3] == {"color": "purple", "multiplicity": 2}
+    assert H.edges.attrs("multiplicity").asdict() == {0: 3, 3: 2}
 
     H = hyperwithdupsandattrs.copy()
     H.merge_duplicate_edges(rename="tuple")
