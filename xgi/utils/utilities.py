@@ -1,6 +1,8 @@
 """General utilities."""
 
 from collections import defaultdict
+from itertools import chain, combinations
+
 
 __all__ = ["dual_dict", "powerset"]
 
@@ -55,7 +57,7 @@ def powerset(iterable, include_empty=False, include_full=False):
 
     Examples
     --------
-    >>> list(powerset([1,2,3,4]))
+    >>> list(powerset([1,2,3,4])) # doctest: +NORMALIZE_WHITESPACE
     [(1,), (2,), (3,), (4,), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4),
      (1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4)]
 

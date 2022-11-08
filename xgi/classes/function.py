@@ -31,6 +31,7 @@ __all__ = [
     "convert_labels_to_integers",
     "density",
     "incidence_density",
+    "subfaces",
 ]
 
 
@@ -868,15 +869,19 @@ def subfaces(edges, order=None):
     
     max_order = len(max(edges, key=len)) - 1
     if order and order > max_order:
-        raise XGIError(f"order must be less or equal to the maximum order of among the edges {max_order}.")
+        raise XGIError(f"order must be less or equal to the maximum order among the edges: {max_order}.")
 
     faces = []
     for edge in edges: 
         size = len(edge)
 
+        if size<=1: # down from a node is an empty tuple
+            continue
+
         if order is None: # add all subfaces down to nodes
             faces_to_add = list(powerset(edge))
         elif order==-1: # add subfaces of order below
+            
             faces_to_add = list(combinations(edge, size - 1))
         elif order>=0: # add subfaces of order d
             faces_to_add = list(combinations(edge, order+1))
