@@ -1,11 +1,13 @@
 """Functional interface to hypergraph methods and assorted utilities."""
 
-from scipy.special import comb
 from collections import Counter
 from copy import deepcopy
+from itertools import combinations
+from scipy.special import comb
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError
+from ..utils.utilities import powerset
 from .hypergraph import Hypergraph
 
 __all__ = [
@@ -843,3 +845,41 @@ def incidence_density(H, order=None, max_order=None, ignore_singletons=False):
         return float(numer) / float(denom)
     except ZeroDivisionError:
         return 0.0
+
+
+def subfaces(edges, order=None):
+    """Returns the subfaces of a list of hyperedges
+
+    Parameters
+    ---------
+    edges: list of edges, default: None
+        Edges to consider, as tuples of nodes
+    order: {None, -1, int}, default: None
+        If None, compute subfaces recursively down to nodes.
+        If -1, compute subfaces the order below (e.g. edges for a triangle).
+        If d > 0, compute the subfaces of order d.
+    
+    Returns
+    -------
+    faces: list of sets
+        List of hyperedges that are subfaces of input hyperedges
+
+    """
+    
+    max_order = len(max(edges, key=len)) - 1
+    if order and order > max_order:
+        raise XGIError(f"order must be less or equal to the maximum order of among the edges {max_order}.")
+
+    faces = []
+    for edge in edges: 
+        size = len(edge)
+
+        if order is None: # add all subfaces down to nodes
+            faces_to_add = list(powerset(edge))
+        elif order==-1: # add subfaces of order below
+            faces_to_add = list(combinations(edge, size - 1))
+        elif order>=0: # add subfaces of order d
+            faces_to_add = list(combinations(edge, order+1))
+
+        faces += faces_to_add
+    return faces
