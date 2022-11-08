@@ -22,13 +22,13 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 project = "XGI"
 copyright = "Copyright (C) 2021 XGI Developers"
 authors = """
-Nicholas W. Landry,
-Leo Torres,
-Iacopo Iacopini,
-Maxime Lucas,
-Giovanni Petri,
-Alice Patania,
-Alice Schwarze, and
+Nicholas W. Landry\n
+Leo Torres\n
+Iacopo Iacopini\n
+Maxime Lucas\n
+Giovanni Petri\n
+Alice Patania\n
+Alice Schwarze\n
 Martina Contisiciani
 """
 # The full version, including alpha/beta/rc tags
