@@ -27,4 +27,5 @@
    .. autofunction:: num_edges_order
    .. autofunction:: set_edge_attributes
    .. autofunction:: set_node_attributes
+   .. autofunction:: subfaces
    .. autofunction:: unique_edge_sizes

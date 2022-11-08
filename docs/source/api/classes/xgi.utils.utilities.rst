@@ -15,3 +15,4 @@
    .. rubric:: Functions
 
    .. autofunction:: dual_dict
+   .. autofunction:: powerset
