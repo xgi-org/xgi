@@ -3,7 +3,6 @@
 from collections import defaultdict
 from itertools import chain, combinations
 
-
 __all__ = ["dual_dict", "powerset"]
 
 
@@ -38,9 +37,10 @@ def dual_dict(edge_dict):
 
     return dict(node_dict)
 
+
 def powerset(iterable, include_empty=False, include_full=False):
     """Returns all possible subsets of the elements in iterable, with options
-    to include the empty set and the set containing all elements. 
+    to include the empty set and the set containing all elements.
 
     Parameters
     ----------
@@ -74,4 +74,4 @@ def powerset(iterable, include_empty=False, include_full=False):
         end = 0
 
     s = list(iterable)
-    return chain.from_iterable(combinations(s, r) for r in range(start, len(s)+end))
+    return chain.from_iterable(combinations(s, r) for r in range(start, len(s) + end))

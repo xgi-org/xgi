@@ -3,8 +3,9 @@
 from collections import Counter
 from copy import deepcopy
 from itertools import combinations
-from scipy.special import comb
 from warnings import warn
+
+from scipy.special import comb
 
 from ..exception import IDNotFound, XGIError
 from ..utils.utilities import powerset
@@ -753,7 +754,7 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
 
     if order is None and max_order is None:
         numer = H.num_edges
-        denom = 2 ** n - 1
+        denom = 2**n - 1
         if ignore_singletons:
             numer -= len(order_filter(0, mode="eq"))
             denom -= n
@@ -859,32 +860,34 @@ def subfaces(edges, order=None):
         If None, compute subfaces recursively down to nodes.
         If -1, compute subfaces the order below (e.g. edges for a triangle).
         If d > 0, compute the subfaces of order d.
-    
+
     Returns
     -------
     faces: list of sets
         List of hyperedges that are subfaces of input hyperedges
 
     """
-    
+
     max_order = len(max(edges, key=len)) - 1
     if order and order > max_order:
-        raise XGIError(f"order must be less or equal to the maximum order among the edges: {max_order}.")
+        raise XGIError(
+            f"order must be less or equal to the maximum order among the edges: {max_order}."
+        )
 
     faces = []
-    for edge in edges: 
+    for edge in edges:
         size = len(edge)
 
-        if size<=1: # down from a node is an empty tuple
+        if size <= 1:  # down from a node is an empty tuple
             continue
 
-        if order is None: # add all subfaces down to nodes
+        if order is None:  # add all subfaces down to nodes
             faces_to_add = list(powerset(edge))
-        elif order==-1: # add subfaces of order below
-            
+        elif order == -1:  # add subfaces of order below
+
             faces_to_add = list(combinations(edge, size - 1))
-        elif order>=0: # add subfaces of order d
-            faces_to_add = list(combinations(edge, order+1))
+        elif order >= 0:  # add subfaces of order d
+            faces_to_add = list(combinations(edge, order + 1))
 
         faces += faces_to_add
     return faces

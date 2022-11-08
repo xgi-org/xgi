@@ -221,9 +221,9 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
         S.add_simplices_from(max_cliques, max_order=max_order)
         return S
 
-    if max_order: # compute subfaces of order max_order (allowed max cliques)
+    if max_order:  # compute subfaces of order max_order (allowed max cliques)
         max_cliques_to_add = subfaces(max_cliques, order=max_order)
-    else: 
+    else:
         max_cliques_to_add = max_cliques
 
     # store max cliques per order

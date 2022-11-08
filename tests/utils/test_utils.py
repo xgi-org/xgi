@@ -13,6 +13,7 @@ def test_dual_dict(dict5):
     assert dual[7] == [3]
     assert dual[8] == [3]
 
+
 def test_powerset():
 
     edge = [1, 2, 3, 4]
@@ -21,8 +22,22 @@ def test_powerset():
     PS1 = xgi.powerset(edge, include_empty=True)
     PS2 = xgi.powerset(edge, include_empty=True, include_full=True)
 
-    out = [(1,), (2,), (3,), (4,), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4),
-     (3, 4), (1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4)]
+    out = [
+        (1,),
+        (2,),
+        (3,),
+        (4,),
+        (1, 2),
+        (1, 3),
+        (1, 4),
+        (2, 3),
+        (2, 4),
+        (3, 4),
+        (1, 2, 3),
+        (1, 2, 4),
+        (1, 3, 4),
+        (2, 3, 4),
+    ]
 
     assert list(PS) == out
     assert list(PS1) == [()] + out
