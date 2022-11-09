@@ -6,6 +6,7 @@ and can associate key/value attribute pairs with each undirected simplex and nod
 Multi-simplices are not allowed.
 """
 
+from collections.abc import Hashable, Iterable
 from itertools import combinations, count
 
 from ..exception import XGIError
@@ -167,7 +168,7 @@ class SimplicialComplex(Hypergraph):
         Examples
         --------
 
-        Add simplices with or without specifying an edge id.
+        Add simplices with or without specifying an simplex id.
 
         >>> import xgi
         >>> S = xgi.SimplicialComplex()
@@ -238,70 +239,225 @@ class SimplicialComplex(Hypergraph):
         return [id_ for id_, s in self._edge.items() if simplex < s]
 
     def add_simplices_from(self, ebunch_to_add, max_order=None, **attr):
-        """Add all the simplices in `ebunch_to_add`.
+        """Add multiple edges with optional attributes.
 
         Parameters
         ----------
-        ebunch_to_add : iterable of simplices
-            Each simplex given in the iterable will be added to the
-            graph. Each simplex must be given as as an iterable of nodes
-            or an iterable with the last entry as a dictionary.
-        attr : keyword arguments, optional
-            Simplex data (or labels or objects) can be assigned using
-            keyword arguments.
+        ebunch_to_add : Iterable
+
+            An iterable of simplices.  This may be a dict of the form `{simplex_id:
+            simplex_members}`, or it may be an iterable of iterables, where each element
+            contains the members of the simplex specified as valid node IDs.
+            Alternatively, each element could also be a tuple in any of the following
+            formats:
+
+            * Format 1: 2-tuple (members, simplex_id), or
+            * Format 2: 2-tuple (members, attr), or
+            * Format 3: 3-tuple (members, simplex_id, attr),
+
+            where `members` is an iterable of node IDs, `simplex_id` is a hashable to use
+            as simplex ID, and `attr` is a dict of attributes. The first and second formats
+            are unambiguous because `attr` dicts are not hashable, while `id`s must be.
+            In Formats 1-3, each element of `ebunch_to_add` must have the same length,
+            i.e. you cannot mix different formats.  The iterables containing simplex
+            members cannot be strings.
+
+        attr : \*\*kwargs, optional
+            Additional attributes to be assigned to all simplices. Attribues specified via
+            `ebunch_to_add` take precedence over `attr`.
 
         See Also
         --------
-        add_edge : add a single simplex
+        add_simplex : add a single simplex
         add_weighted_simplices_from : convenient way to add weighted simplices
 
         Notes
         -----
         Adding the same simplex twice will add it only once. Currently
         cannot add empty simplices; the method skips over them.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> S = xgi.SimplicialComplex()
+
+        When specifying simplices by their members only, numeric simplex IDs will be assigned
+        automatically.
+
+        >>> S.add_simplices_from([[0, 1], [1, 2], [2, 3, 4]])
+        >>> S.edges.members(dtype=dict)
+        {0: frozenset({0, 1}), 1: frozenset({1, 2}), 2: frozenset({2, 3, 4}), 3: frozenset({2, 3}), 4: frozenset({2, 4}), 5: frozenset({3, 4})}
+
+        Custom simplex ids can be specified using a dict.
+
+        >>> S = xgi.SimplicialComplex()
+        >>> S.add_simplices_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
+        >>> S.edges.members(dtype=dict)
+        {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}), 0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
+
+        You can use the dict format to easily add simplices from another simplicial complex.
+
+        >>> S2 = xgi.SimplicialComplex()
+        >>> S2.add_simplices_from(S.edges.members(dtype=dict))
+        >>> S.edges == S2.edges
+        True
+
+        Alternatively, simplex ids can be specified using an iterable of 2-tuples.
+
+        >>> S = xgi.SimplicialComplex()
+        >>> S.add_simplices_from([([0, 1], 'one'), ([1, 2], 'two'), ([2, 3, 4], 'three')])
+        >>> S.edges.members(dtype=dict)
+        {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}), 0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
+
+        Attributes for each simplex may be specified using a 2-tuple for each simplex.
+        Numeric IDs will be assigned automatically.
+
+        >>> S = xgi.SimplicialComplex()
+        >>> simplices = [
+        ...     ([0, 1], {'color': 'red'}),
+        ...     ([1, 2], {'age': 30}),
+        ...     ([2, 3, 4], {'color': 'blue', 'age': 40}),
+        ... ]
+        >>> S.add_simplices_from(simplices)
+        >>> {e: S.edges[e] for e in S.edges}
+        {0: {'color': 'red'}, 1: {'age': 30}, 2: {'color': 'blue', 'age': 40}, 3: {}, 4: {}, 5: {}}
+
+        Attributes and custom IDs may be specified using a 3-tuple for each simplex.
+
+        >>> S = xgi.SimplicialComplex()
+        >>> simplices = [
+        ...     ([0, 1], 'one', {'color': 'red'}),
+        ...     ([1, 2], 'two', {'age': 30}),
+        ...     ([2, 3, 4], 'three', {'color': 'blue', 'age': 40}),
+        ... ]
+        >>> S.add_simplices_from(simplices)
+        >>> {e: S.edges[e] for e in S.edges}
+        {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40}, 0: {}, 1: {}, 2: {}}
+
         """
 
-        if max_order != None:
-            new_ebunch_to_add = []
-            for edge in ebunch_to_add:
-                if len(edge) > max_order + 1:
-                    combos = combinations(edge, max_order + 1)
-                    new_ebunch_to_add.extend(list(combos))
-                else:
-                    new_ebunch_to_add.append(edge)
-            ebunch_to_add = new_ebunch_to_add
+        # format 5 is the easiest one
+        if isinstance(ebunch_to_add, dict):
+            for uid, members in ebunch_to_add.items():
 
-        for simplex in ebunch_to_add:
-            simplex = list(simplex)
-            if isinstance(simplex[-1], dict):
-                dd = simplex[-1]
-                simplex = simplex[:-1]
-            else:
-                dd = {}
+                # check that it does not exist yet (based on members, not ID)
+                if not members or self.has_simplex(members):
+                    continue
 
-            if simplex and not self.has_simplex(simplex):
-                uid = next(self._edge_uid)
-
-                for n in simplex:
+                if max_order != None:
+                    if len(members) > max_order + 1:
+                        combos = combinations(members, max_order + 1)
+                        self.add_simplices_from(list(combos), max_order=None)
+                        
+                        continue
+                try:
+                    self._edge[uid] = frozenset(members)
+                except TypeError as e:
+                    raise XGIError("Invalid ebunch format") from e
+                for n in members:
                     if n not in self._node:
-                        if n is None:
-                            raise ValueError("None cannot be a node")
                         self._node[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node[n].add(uid)
-
-                try:
-                    self._edge[uid] = frozenset(simplex)
-                    self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
-                except TypeError:
-                    raise XGIError("The simplex cannot be cast to a frozenset.")
-
-                self._edge_attr[uid].update(attr)
-                self._edge_attr[uid].update(dd)
+                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
 
                 # add subfaces
-                faces = self._subfaces(simplex)
+                faces = self._subfaces(members)
                 self.add_simplices_from(faces)
+
+            return
+
+        # in formats 1-4 we only know that ebunch_to_add is an iterable, so we iterate
+        # over it and use the firs element to determine which format we are working with
+        new_edges = iter(ebunch_to_add)
+        try:
+            first_edge = next(new_edges)
+        except StopIteration:
+            return
+        try:
+            first_elem = list(first_edge)[0]
+        except TypeError:
+            first_elem = None
+
+        format1, format2, format3, format4 = False, False, False, False
+        if isinstance(first_elem, Iterable):
+            if all(isinstance(e, str) for e in first_edge):
+                format1 = True
+            elif len(first_edge) == 2 and issubclass(type(first_edge[1]), Hashable):
+                format2 = True
+            elif len(first_edge) == 2:
+                format3 = True
+            elif len(first_edge) == 3:
+                format4 = True
+        else:
+            format1 = True
+
+        if (format1 and isinstance(first_edge, str)) or (
+            not format1 and isinstance(first_elem, str)
+        ):
+            raise XGIError("Members cannot be specified as a string")
+
+        # now we may iterate over the rest
+        e = first_edge
+        while True:
+            if format1:
+                members, uid, eattr = e, None, {} # uid now set below
+            elif format2:
+                members, uid, eattr = e[0], e[1], {}
+            elif format3:
+                members, uid, eattr = e[0], None, e[1] # uid now set below
+            elif format4:
+                members, uid, eattr = e[0], e[1], e[2]
+
+            # check that it does not exist yet (based on members, not ID)
+            if not members or self.has_simplex(members):
+                try:
+                    e = next(new_edges)
+                except StopIteration:
+                    break
+
+                continue
+
+            # needs to go after the check for existence, otherwise 
+            # we're skipping ID numbers when edges already exist
+            if format1 or format3: 
+                uid = next(self._edge_uid)
+
+            if max_order != None:
+                if len(members) > max_order + 1:
+                    combos = combinations(members, max_order + 1)
+                    self.add_simplices_from(list(combos), max_order=None)
+
+                    try:
+                        e = next(new_edges)
+                    except StopIteration:
+                        break
+
+                    continue
+
+            try:
+                self._edge[uid] = frozenset(members)
+            except TypeError as e:
+                raise XGIError("Invalid ebunch format") from e
+
+            for n in members:
+                if n not in self._node:
+                    self._node[n] = set()
+                    self._node_attr[n] = self._node_attr_dict_factory()
+                self._node[n].add(uid)
+
+            self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+            self._edge_attr[uid].update(attr)
+            self._edge_attr[uid].update(eattr)
+
+            # add subfaces
+            faces = self._subfaces(members)
+            self.add_simplices_from(faces)
+
+            try:
+                e = next(new_edges)
+            except StopIteration:
+                break
 
     def close(self):
         """Adds all missing subfaces to the complex.
