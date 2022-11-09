@@ -63,18 +63,21 @@ def test_add_simplices_from(edgelist5):
     assert set(s1o2.members()) == set(s2o2.members())
 
     S3 = xgi.SimplicialComplex()
-    simplex = ((1,2,3), {"color": "red"})
+    simplex = ((1, 2, 3), {"color": "red"})
     S3.add_simplices_from([simplex], max_order=2)
 
-    assert S3.edges.members(dtype=dict) == {0: frozenset({1, 2, 3}),
-                                            1: frozenset({1, 2}),
-                                            2: frozenset({1, 3}),
-                                            3: frozenset({2, 3})}
+    assert S3.edges.members(dtype=dict) == {
+        0: frozenset({1, 2, 3}),
+        1: frozenset({1, 2}),
+        2: frozenset({1, 3}),
+        3: frozenset({2, 3}),
+    }
 
-    assert S3.edges[0] == {'color': 'red'} 
+    assert S3.edges[0] == {"color": "red"}
     assert S3.edges[1] == {}
     assert S3.edges[2] == {}
-    assert S3.edges[3] == {}                       
+    assert S3.edges[3] == {}
+
 
 def test_remove_simplex_id(edgelist6):
     S = xgi.SimplicialComplex()

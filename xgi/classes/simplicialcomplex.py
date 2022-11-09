@@ -137,11 +137,11 @@ class SimplicialComplex(Hypergraph):
 
     def add_simplex(self, members, id=None, **attr):
         """Add a simplex to the simplicial complex, and all its subfaces that do
-        not exist yet. 
+        not exist yet.
 
         Simplex attributes can be specified with keywords or by directly
         accessing the simplex's attribute dictionary. The attributes do not propagate
-        to the subfaces. 
+        to the subfaces.
 
         Parameters
         ----------
@@ -174,7 +174,7 @@ class SimplicialComplex(Hypergraph):
         >>> S = xgi.SimplicialComplex()
         >>> S.add_simplex([1, 2, 3])
         >>> S.edges.members() # doctest: +NORMALIZE_WHITESPACE
-        [frozenset({1, 2, 3}), frozenset({1, 2}), 
+        [frozenset({1, 2, 3}), frozenset({1, 2}),
             frozenset({1, 3}), frozenset({2, 3})]
         >>> S.add_simplex([3, 4], id='myedge')
         >>> S.edges
@@ -194,7 +194,7 @@ class SimplicialComplex(Hypergraph):
         try:
             members = frozenset(members)
         except TypeError:
-                raise XGIError("The simplex cannot be cast to a frozenset.")
+            raise XGIError("The simplex cannot be cast to a frozenset.")
 
         if not members:
             raise XGIError("Cannot add an empty edge")
@@ -245,7 +245,7 @@ class SimplicialComplex(Hypergraph):
         ----------
         ebunch_to_add : Iterable
 
-            An iterable of simplices.  This may be an iterable of iterables (Format 1), 
+            An iterable of simplices.  This may be an iterable of iterables (Format 1),
             where each element contains the members of the simplex specified as valid node IDs.
             Alternatively, each element could also be a tuple in any of the following
             formats:
@@ -255,8 +255,8 @@ class SimplicialComplex(Hypergraph):
             * Format 4: 3-tuple (members, simplex_id, attr),
 
             where `members` is an iterable of node IDs, `simplex_id` is a hashable to use
-            as simplex ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add` 
-            may be a dict of the form `{simplex_id: simplex_members}` (Format 5). 
+            as simplex ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add`
+            may be a dict of the form `{simplex_id: simplex_members}` (Format 5).
 
             Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while `id`s must be.
             In Formats 2-4, each element of `ebunch_to_add` must have the same length,
@@ -349,7 +349,7 @@ class SimplicialComplex(Hypergraph):
                     if len(members) > max_order + 1:
                         combos = combinations(members, max_order + 1)
                         self.add_simplices_from(list(combos), max_order=None)
-                        
+
                         continue
                 try:
                     self._edge[uid] = frozenset(members)
@@ -402,11 +402,11 @@ class SimplicialComplex(Hypergraph):
         e = first_edge
         while True:
             if format1:
-                members, uid, eattr = e, None, {} # uid now set below
+                members, uid, eattr = e, None, {}  # uid now set below
             elif format2:
                 members, uid, eattr = e[0], e[1], {}
             elif format3:
-                members, uid, eattr = e[0], None, e[1] # uid now set below
+                members, uid, eattr = e[0], None, e[1]  # uid now set below
             elif format4:
                 members, uid, eattr = e[0], e[1], e[2]
 
@@ -419,9 +419,9 @@ class SimplicialComplex(Hypergraph):
 
                 continue
 
-            # needs to go after the check for existence, otherwise 
+            # needs to go after the check for existence, otherwise
             # we're skipping ID numbers when edges already exist
-            if format1 or format3: 
+            if format1 or format3:
                 uid = next(self._edge_uid)
 
             if max_order != None:

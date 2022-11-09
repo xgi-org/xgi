@@ -502,7 +502,7 @@ class Hypergraph:
         ----------
         ebunch_to_add : Iterable
 
-            An iterable of edges.  This may be an iterable of iterables (Format 1), 
+            An iterable of edges.  This may be an iterable of iterables (Format 1),
             where each element contains the members of the edge specified as valid node IDs.
             Alternatively, each element could also be a tuple in any of the following
             formats:
@@ -512,8 +512,8 @@ class Hypergraph:
             * Format 4: 3-tuple (members, edge_id, attr),
 
             where `members` is an iterable of node IDs, `edge_id` is a hashable to use
-            as edge ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add` 
-            may be a dict of the form `{edge_id: edge_members}` (Format 5). 
+            as edge ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add`
+            may be a dict of the form `{edge_id: edge_members}` (Format 5).
 
             Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while `id`s must be.
             In Formats 2-4, each element of `ebunch_to_add` must have the same length,
