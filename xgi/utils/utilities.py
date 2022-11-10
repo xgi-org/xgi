@@ -38,7 +38,7 @@ def dual_dict(edge_dict):
     return dict(node_dict)
 
 
-def powerset(iterable, include_empty=False, include_full=False):
+def powerset(iterable, include_empty=False, include_full=False, include_singletons=True):
     """Returns all possible subsets of the elements in iterable, with options
     to include the empty set and the set containing all elements.
 
@@ -48,12 +48,19 @@ def powerset(iterable, include_empty=False, include_full=False):
         List of elements
     include_empty: bool, default: False
         Whether to include the empty set
+    include_singletons: bool, default: True
+        Whether to include singletons
     include_full: bool, default: False
         Whether to include the set containing all elements of iterable
 
     Returns
     -------
     itertools.chain
+
+    Notes
+    -----
+    include_empty overrides include_singletons if True: singletons will always
+    be included if the empty set is. 
 
     Examples
     --------
@@ -64,7 +71,8 @@ def powerset(iterable, include_empty=False, include_full=False):
 
     """
 
-    start = 0 if include_empty else 1
+    start = 1 if include_singletons else 2
+    start = 0 if include_empty else start # overrides include_singletons if True
     end = 1 if include_full else 0
 
     s = list(iterable)
