@@ -187,7 +187,23 @@ class SimplicialComplex(Hypergraph):
             self.add_simplices_from(faces)
 
     def _subfaces(self, simplex, all=True):
-        """Returns list of subfaces of simplex"""
+        """Returns list of subfaces of simplex.
+
+        Parameters
+        ----------
+        simplex: an iterable of hashables
+            A list of node ids
+        all: bool, default: True
+            Whether to return all of the subfaces or just
+            those of the order below
+
+        Returns
+        -------
+        faces: list of iterables
+            The list containing the subfaces of the
+            given simplex
+
+        """
         size = len(simplex)
         faces = []
         if all:

@@ -117,43 +117,45 @@ def simulate_simplicial_kuramoto(
 
     Parameters
     ----------
-    S : simplicial complex object
+    S: simplicial complex object
         The simplicial complex on which you
         run the simplicial Kuramoto model
-    orientations : dict, Default : None
+    orientations: dict, Default : None
         Dictionary mapping non-singleton simplices IDs to their boolean orientation
-    order : integer
+    order: integer
         The order of the oscillating simplices
-    omega : numpy.ndarray
+    omega: numpy.ndarray
         The simplicial oscillators' natural frequencies, has dimension
         (n_simplices of given order, 1)
-    sigma : positive real value
+    sigma: positive real value
         The coupling strength
-    theta0 : numpy.ndarray
+    theta0: numpy.ndarray
         The initial phase distribution, has dimension
         (n_simplices of given order, 1)
-    T : positive real value
+    T: positive real value
         The final simulation time.
-    n_steps : integer greater than 1
+    n_steps: integer greater than 1
         The number of integration timesteps for
         the explicit Euler method.
+    index: bool, default: False
+        Specifies whether to output dictionaries mapping the node and edge IDs to indices
 
     Returns
     -------
-    theta : numpy.ndarray
+    theta: numpy.ndarray
         Timeseries of the simplicial oscillators' phases, has dimension
         (n_simplices of given order, n_steps)
-    theta_minus : numpy array of floats
+    theta_minus: numpy array of floats
         Timeseries of the projection of the phases onto lower order simplices,
         has dimension (n_simplices of given order - 1, n_steps)
-    theta_plus : numpy array of floats
+    theta_plus: numpy array of floats
         Timeseries of the projection of the phases onto higher order simplices,
         has dimension (n_simplices of given order + 1, n_steps)
-    om1_dict : dict
+    om1_dict: dict
         The dictionary mapping indices to (order-1)-simplices IDs, if index is True
-    o_dict : dict
+    o_dict: dict
         The dictionary mapping indices to (order)-simplices IDs, if index is True
-    op1_dict : dict
+    op1_dict: dict
         The dictionary mapping indices to (order+1)-simplices IDs, if index is True
 
     References

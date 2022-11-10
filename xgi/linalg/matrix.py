@@ -276,7 +276,7 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
     rescale_per_node: bool, (default=False)
         Whether to rescale each Laplacian of order d by d (per node).
     index: bool, default: False
-        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+        Specifies whether to output dictionaries mapping the node and edge IDs to indices
 
     Returns
     -------
@@ -414,7 +414,6 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
         simplices_u_ids = S.nodes
     else:
         simplices_u_ids = S.edges.filterby("order", order)
-
     nd = len(simplices_d_ids)
     nu = len(simplices_u_ids)
 
@@ -425,19 +424,20 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
         rowdict = {v: k for k, v in simplices_d_dict.items()}
         coldict = {v: k for k, v in simplices_u_dict.items()}
 
-    if orientations == None:
-        orientations = {
-            idd: 0 for idd in list(S.edges.filterby("order", 1, mode="geq"))
-        }
+    if orientations is None:
+        orientations = {idd: 0 for idd in S.edges.filterby("order", 1, mode="geq")}
 
     B = np.zeros((nd, nu))
     if not (nu == 0 or nd == 0):
         if order == 1:
             for u_simplex_id in simplices_u_ids:
-                u_simplex = S.edges.members(u_simplex_id)
+                u_simplex = list(S.edges.members(u_simplex_id))
+                u_simplex.sort(
+                    key=lambda e: (isinstance(e, str), e)
+                )  # Sort for reference orientation
                 matrix_id = simplices_u_dict[u_simplex_id]
-                head_idx = list(u_simplex)[1]
-                tail_idx = list(u_simplex)[0]
+                head_idx = u_simplex[1]
+                tail_idx = u_simplex[0]
                 B[simplices_d_dict[head_idx], matrix_id] = (-1) ** orientations[
                     u_simplex_id
                 ]
@@ -446,12 +446,15 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
                 )
         else:
             for u_simplex_id in simplices_u_ids:
-                u_simplex = S.edges.members(u_simplex_id)
+                u_simplex = list(S.edges.members(u_simplex_id))
+                u_simplex.sort(
+                    key=lambda e: (isinstance(e, str), e)
+                )  # Sort for reference orientation
                 matrix_id = simplices_u_dict[u_simplex_id]
                 u_simplex_subfaces = S._subfaces(u_simplex, all=False)
                 subfaces_orientation = [
-                    (orientations[u_simplex_id] + i + order) % 2
-                    for i in range(len(u_simplex_subfaces))
+                    (orientations[u_simplex_id] + order - i) % 2
+                    for i in range(order + 1)
                 ]
                 for count, subf in enumerate(u_simplex_subfaces):
                     subface_ID = list(S.edges)[S.edges.members().index(frozenset(subf))]
