@@ -458,14 +458,14 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
                 #   thus giving a list [sorted numbers, sorted strings]
                 matrix_id = simplices_u_dict[u_simplex_id]
                 u_simplex_subfaces = S._subfaces(u_simplex, all=False)
-                subfaces_orientation = [
+                subfaces_induced_orientation = [
                     (orientations[u_simplex_id] + order - i) % 2
                     for i in range(order + 1)
                 ]
                 for count, subf in enumerate(u_simplex_subfaces):
                     subface_ID = list(S.edges)[S.edges.members().index(frozenset(subf))]
                     B[simplices_d_dict[subface_ID], matrix_id] = (-1) ** (
-                        subfaces_orientation[count] + orientations[subface_ID]
+                        subfaces_induced_orientation[count] + orientations[subface_ID]
                     )
     if index:
         return B, rowdict, coldict
