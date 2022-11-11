@@ -612,4 +612,4 @@ class SimplicialComplex(Hypergraph):
         False
 
         """
-        return frozenset(simplex) in (s for s in self._edge.values())
+        return frozenset(simplex) in self._edge.values()
