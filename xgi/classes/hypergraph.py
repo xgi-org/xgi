@@ -1,9 +1,9 @@
 """Base class for undirected hypergraphs."""
+from collections import defaultdict
 from collections.abc import Hashable, Iterable
 from copy import deepcopy
 from itertools import count
 from warnings import warn
-from collections import defaultdict
 
 from ..exception import IDNotFound, XGIError
 from .reportviews import EdgeView, NodeView
@@ -946,7 +946,7 @@ class Hypergraph:
         rename : str, optional
             Either "first", "tuple", or "new", by default "first"
             If "first", the new edge ID is the first of the sorted
-            duplicate edge IDs. If "tuple", the new edge ID is a 
+            duplicate edge IDs. If "tuple", the new edge ID is a
             tuple of the sorted duplicate edge IDs. If "new", a
             new ID will be selected automatically.
         merge_rule : str, optional
@@ -961,7 +961,7 @@ class Hypergraph:
         ------
         XGIError
             If invalid rename or merge_rule specified.
-        
+
         Warns
         -----
         If the user chooses merge_rule="union". Tells the
@@ -995,17 +995,29 @@ class Hypergraph:
                         attr: {self._edge_attr[id].get(attr) for id in dup_ids}
                         for attr in attrs
                     }
+                elif merge_rule == "intersection":
+                    attrs = {field for id in dup_ids for field in self._edge_attr[id]}
+                    set_attrs = {
+                        attr: {self._edge_attr[id].get(attr) for id in dup_ids}
+                        for attr in attrs
+                    }
+                    new_attrs = {
+                        attr: (None if len(val) != 1 else next(iter(val)))
+                        for attr, val in set_attrs.items()
+                    }
                 else:
                     raise XGIError("Invalid merge rule!")
-                
-                if multiplicity == True:
-                    new_attrs["multiplicity"] = len(dup_ids)
+
+                if multiplicity is not None:
+                    new_attrs[multiplicity] = len(dup_ids)
                 new_edges.append((members, new_id, new_attrs))
         self.remove_edges_from(dups)
         self.add_edges_from(new_edges)
 
         if merge_rule == "union":
-            warn("You will not be able to color/draw by merged attributes with xgi.draw()!")
+            warn(
+                "You will not be able to color/draw by merged attributes with xgi.draw()!"
+            )
 
     def copy(self):
         """A deep copy of the hypergraph.
