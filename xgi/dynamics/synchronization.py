@@ -3,8 +3,8 @@
 import numpy as np
 
 import xgi
-from ..exception import XGIError
 
+from ..exception import XGIError
 
 __all__ = [
     "compute_kuramoto_order_parameter",
