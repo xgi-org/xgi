@@ -56,6 +56,11 @@ def test_flag_complex():
     assert S2.edges.members() == simplices_2
     assert S3.edges.members() == simplices_2
 
+    G1 = nx.complete_graph(4)
+    S4 = xgi.flag_complex(G1)
+    S5 = xgi.flag_complex(G1, ps=[1])
+    assert S4.edges.members() == S5.edges.members()
+
 
 def test_ring_lattice():
     H = xgi.ring_lattice(5, 2, 2, 0)
