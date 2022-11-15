@@ -483,19 +483,20 @@ def test_merge_duplicate_edges(hyperwithdupsandattrs):
     assert H.edges.members(6) == {3, 4, 5}
 
     H = hyperwithdupsandattrs.copy()
-    H.merge_duplicate_edges(merge_rule="union", multiplicity="weight")
+    H.merge_duplicate_edges(merge_rule="union", multiplicity="mult")
     assert H.edges[0] == {
         "color": {"blue", "red", "yellow"},
         "weight": {2, None},
-        "weight": 3,
+        "mult": 3,
     }
-    assert H.edges[3] == {"color": {"purple"}, "name": {"test", None}, "weight": 2}
+    assert H.edges[3] == {"color": {"purple"}, "name": {"test", None}, "mult": 2}
 
     H = hyperwithdupsandattrs.copy()
     H.merge_duplicate_edges(merge_rule="intersection", multiplicity="multiplicity")
     assert H.edges[0] == {"color": None, "weight": None, "multiplicity": 3}
     assert H.edges[3] == {"color": "purple", "name": None, "multiplicity": 2}
     assert H.edges.attrs("multiplicity").asdict() == {0: 3, 3: 2}
+
 
 def test_issue_198(edgelist1):
     H = xgi.Hypergraph(edgelist1)

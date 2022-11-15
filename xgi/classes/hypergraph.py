@@ -966,6 +966,86 @@ class Hypergraph:
         -----
         If the user chooses merge_rule="union". Tells the
         user that they can no longer draw based on this stat.
+
+        Examples
+        --------
+
+        >>> import xgi
+        >>> edges = [{1, 2}, {1, 2}, {1, 2}, {3, 4, 5}, {3, 4, 5}]
+        >>> edge_attrs = dict()
+        >>> edge_attrs[0] = {"color": "blue"}
+        >>> edge_attrs[1] = {"color": "red", "weight": 2}
+        >>> edge_attrs[2] = {"color": "yellow"}
+        >>> edge_attrs[3] = {"color": "purple"}
+        >>> edge_attrs[4] = {"color": "purple", "name": "test"}
+        >>> H = xgi.Hypergraph(edges)
+        >>> xgi.set_edge_attributes(H, edge_attrs)
+        >>> H.edges
+        EdgeView((0, 1, 2, 3, 4))
+
+        There are several ways to rename the duplicate edges after merging:
+
+        1. The merged edge ID is the first duplicate edge ID.
+
+        >>> H1 = H.copy()
+        >>> H1.merge_duplicate_edges()
+        >>> H1.edges
+        EdgeView((0, 3))
+
+        2. The merged edge ID is a tuple of all the duplicate edge IDs.
+
+        >>> H2 = H.copy()
+        >>> H2.merge_duplicate_edges(rename="tuple")
+        >>> H2.edges
+        EdgeView(((0, 1, 2), (3, 4)))
+
+        3. The merged edge ID is assigned a new edge ID.
+
+        >>> H3 = H.copy()
+        >>> H3.merge_duplicate_edges(rename="new")
+        >>> H3.edges
+        EdgeView((5, 6))
+
+        We can also specify how we would like to combine the attributes
+        of the merged edges:
+
+        1. The attributes are the attributes of the first merged edge.
+
+        >>> H4 = H.copy()
+        >>> H4.merge_duplicate_edges()
+        >>> H4.edges[0]
+        {'color': 'blue'}
+
+        2. The attributes are the union of every attribute that each merged
+        edge has. If a duplicate edge doesn't have that attribute, it is set
+        to None.
+
+        >>> H5 = H.copy()
+        >>> H5.merge_duplicate_edges(merge_rule="union")
+        >>> H5.edges[0] == {'color': {'blue', 'red', 'yellow'}, 'weight':{2, None}}
+        True
+
+        3. We can also set the attributes to the intersection, i.e.,
+        if a particular attribute is the same across the duplicate
+        edges, we use this attribute, otherwise, we set it to None.
+
+        >>> H6 = H.copy()
+        >>> H6.merge_duplicate_edges(merge_rule="intersection")
+        >>> H6.edges[0] == {'color': None, 'weight': None}
+        True
+        >>> H6.edges[3] == {'color': 'purple', 'name': None}
+        True
+
+        We can also choose to store the multiplicity of the edge
+        as an attribute. The user simply provides the string of
+        the attribute which stores it. Note that this will not prevent
+        other attributes from being over written (e.g., weight), so
+        be careful that the attribute is not already in use.
+
+        >>> H7 = H.copy()
+        >>> H7.merge_duplicate_edges(multiplicity="mult")
+        >>> H7.edges[0]['mult'] == 3
+        True
         """
         dups = []
         hashes = defaultdict(list)
