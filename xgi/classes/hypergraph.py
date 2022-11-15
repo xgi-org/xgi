@@ -606,6 +606,19 @@ class Hypergraph:
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node[n].add(uid)
                 self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+
+            # If we don't set the start of self._edge_uid correctly, it will start at 0,
+            # which will overwrite any existing edges when calling add_edge().  First, we
+            # use the somewhat convoluted float(e).is_integer() instead of using
+            # isinstance(e, int) because there exist integer-like numeric types (such as
+            # np.int32) which fail the isinstance() check.
+            edges_with_int_id = [int(e) for e in self.edges if (not isinstance(e, str)) and float(e).is_integer()]
+
+            # Then, we set the start at one plus the maximum edge ID that is an integer,
+            # because count() only yields integer IDs.
+            start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
+            self._edge_uid = count(start=start)
+
             return
 
         # in formats 1-4 we only know that ebunch_to_add is an iterable, so we iterate
@@ -668,6 +681,20 @@ class Hypergraph:
             try:
                 e = next(new_edges)
             except StopIteration:
+
+                if format2 or format4:
+                    # If we don't set the start of self._edge_uid correctly, it will start at 0,
+                    # which will overwrite any existing edges when calling add_edge().  First, we
+                    # use the somewhat convoluted float(e).is_integer() instead of using
+                    # isinstance(e, int) because there exist integer-like numeric types (such as
+                    # np.int32) which fail the isinstance() check.
+                    edges_with_int_id = [int(e) for e in self.edges if (not isinstance(e, str)) and float(e).is_integer()]
+
+                    # Then, we set the start at one plus the maximum edge ID that is an integer,
+                    # because count() only yields integer IDs.
+                    start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
+                    self._edge_uid = count(start=start)
+
                 break
 
     def add_weighted_edges_from(self, ebunch, weight="weight", **attr):
