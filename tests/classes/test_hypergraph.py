@@ -1,5 +1,6 @@
-import pytest
 from itertools import count
+
+import pytest
 
 import xgi
 from xgi.exception import IDNotFound, XGIError
@@ -265,9 +266,9 @@ def test_add_edges_from_format1():
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
     assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
-    
+
     # check counter
-    H.add_edge([1,9,2])
+    H.add_edge([1, 9, 2])
     assert H.edges.members(101) == {1, 9, 2}
 
 
@@ -284,7 +285,7 @@ def test_add_edges_from_format2():
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][1]
     # check counter
-    H.add_edge([1,9,2])
+    H.add_edge([1, 9, 2])
     assert H.edges.members(3) == {1, 9, 2}
 
 
@@ -301,7 +302,7 @@ def test_add_edges_from_format3():
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][2]
     # check counter
-    H.add_edge([1,9,2])
+    H.add_edge([1, 9, 2])
     assert H.edges.members(0) == {1, 9, 2}
 
 
@@ -312,7 +313,7 @@ def test_add_edges_from_dict():
     assert list(H.edges) == ["one", "two", 2]
     assert H.edges.members() == [set(edges[e]) for e in edges]
     # check counter
-    H.add_edge([1,9,2])
+    H.add_edge([1, 9, 2])
     assert H.edges.members(3) == {1, 9, 2}
 
 
@@ -392,12 +393,13 @@ def test_copy(edgelist1):
     assert H._hypergraph == copy._hypergraph
 
     H1 = xgi.Hypergraph()
-    H1.add_edge((1,2), id="x")
-    copy2 = H1.copy() # does not throw error because of str id
+    H1.add_edge((1, 2), id="x")
+    copy2 = H1.copy()  # does not throw error because of str id
     assert list(copy2.nodes) == list(H1.nodes)
     assert list(copy2.edges) == list(H1.edges)
     assert list(copy2.edges.members()) == list(H1.edges.members())
     assert H1._hypergraph == copy2._hypergraph
+
 
 def test_copy_issue128():
     # see https://github.com/ComplexGroupInteractions/xgi/issues/128

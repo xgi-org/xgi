@@ -612,7 +612,11 @@ class Hypergraph:
             # use the somewhat convoluted float(e).is_integer() instead of using
             # isinstance(e, int) because there exist integer-like numeric types (such as
             # np.int32) which fail the isinstance() check.
-            edges_with_int_id = [int(e) for e in self.edges if (not isinstance(e, str)) and float(e).is_integer()]
+            edges_with_int_id = [
+                int(e)
+                for e in self.edges
+                if (not isinstance(e, str)) and float(e).is_integer()
+            ]
 
             # Then, we set the start at one plus the maximum edge ID that is an integer,
             # because count() only yields integer IDs.
@@ -688,7 +692,11 @@ class Hypergraph:
                     # use the somewhat convoluted float(e).is_integer() instead of using
                     # isinstance(e, int) because there exist integer-like numeric types (such as
                     # np.int32) which fail the isinstance() check.
-                    edges_with_int_id = [int(e) for e in self.edges if (not isinstance(e, str)) and float(e).is_integer()]
+                    edges_with_int_id = [
+                        int(e)
+                        for e in self.edges
+                        if (not isinstance(e, str)) and float(e).is_integer()
+                    ]
 
                     # Then, we set the start at one plus the maximum edge ID that is an integer,
                     # because count() only yields integer IDs.
@@ -1016,7 +1024,11 @@ class Hypergraph:
         # use the somewhat convoluted float(e).is_integer() instead of using
         # isinstance(e, int) because there exist integer-like numeric types (such as
         # np.int32) which fail the isinstance() check.
-        edges_with_int_id = [int(e) for e in self.edges if (not isinstance(e, str)) and float(e).is_integer()]
+        edges_with_int_id = [
+            int(e)
+            for e in self.edges
+            if (not isinstance(e, str)) and float(e).is_integer()
+        ]
 
         # Then, we set the start at one plus the maximum edge ID that is an integer,
         # because count() only yields integer IDs.
