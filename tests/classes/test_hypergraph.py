@@ -391,6 +391,13 @@ def test_copy(edgelist1):
     assert list(copy.edges.members()) == list(H.edges.members())
     assert H._hypergraph == copy._hypergraph
 
+    H1 = xgi.Hypergraph()
+    H1.add_edge((1,2), id="x")
+    copy2 = H1.copy() # does not throw error because of str id
+    assert list(copy2.nodes) == list(H1.nodes)
+    assert list(copy2.edges) == list(H1.edges)
+    assert list(copy2.edges.members()) == list(H1.edges.members())
+    assert H1._hypergraph == copy2._hypergraph
 
 def test_copy_issue128():
     # see https://github.com/ComplexGroupInteractions/xgi/issues/128
