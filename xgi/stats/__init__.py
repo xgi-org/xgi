@@ -480,14 +480,6 @@ def nodestat_func(func):
     NodeStat('degree')
 
     However, `my_degree` is not recognized as a node statistic.
-
-    >>> H.my_degree()
-    Traceback (most recent call last):
-    AttributeError: stat "my_degree" not among available node or edge stats
-    >>> H.nodes.my_degree
-    Traceback (most recent call last):
-    AttributeError: Stat 'my_degree' not defined
-
     Use the `nodestat_func` decorator to turn `my_degree` into a valid stat.
 
     >>> original_my_degree = my_degree
