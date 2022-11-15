@@ -1,4 +1,5 @@
 import pytest
+from itertools import count
 
 import xgi
 from xgi.exception import IDNotFound, XGIError
@@ -264,6 +265,10 @@ def test_add_edges_from_format1():
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
     assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
+    
+    # check counter
+    H.add_edge([1,9,2])
+    assert H.edges.members(101) == {1, 9, 2}
 
 
 def test_add_edges_from_format2():
@@ -278,6 +283,9 @@ def test_add_edges_from_format2():
     assert H.edges.members() == [e[0] for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][1]
+    # check counter
+    H.add_edge([1,9,2])
+    assert H.edges.members(3) == {1, 9, 2}
 
 
 def test_add_edges_from_format3():
@@ -292,14 +300,20 @@ def test_add_edges_from_format3():
     assert H.edges.members() == [e[0] for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][2]
+    # check counter
+    H.add_edge([1,9,2])
+    assert H.edges.members(0) == {1, 9, 2}
 
 
 def test_add_edges_from_dict():
-    edges = {"one": [0, 1], "two": [1, 2], "three": [2, 3, 4]}
+    edges = {"one": [0, 1], "two": [1, 2], 2: [2, 3, 4]}
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
-    assert list(H.edges) == ["one", "two", "three"]
+    assert list(H.edges) == ["one", "two", 2]
     assert H.edges.members() == [set(edges[e]) for e in edges]
+    # check counter
+    H.add_edge([1,9,2])
+    assert H.edges.members(3) == {1, 9, 2}
 
 
 def test_add_edges_from_attr_precedence():
