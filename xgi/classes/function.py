@@ -258,7 +258,7 @@ def unique_edge_sizes(H):
     Returns
     -------
     list()
-        The unique edge sizes
+        The unique edge sizes in ascending order by size.
     """
     return sorted({len(H.edges.members(edge)) for edge in H.edges})
 
