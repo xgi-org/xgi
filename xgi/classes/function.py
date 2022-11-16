@@ -260,7 +260,7 @@ def unique_edge_sizes(H):
     list()
         The unique edge sizes
     """
-    return list({len(H.edges.members(edge)) for edge in H.edges})
+    return sorted({len(H.edges.members(edge)) for edge in H.edges})
 
 
 def frozen(*args, **kwargs):
