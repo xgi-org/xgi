@@ -481,8 +481,8 @@ def nodestat_func(func):
 
     However, `my_degree` is not recognized as a node statistic.
 
-    >>> H.my_degree()
-    Traceback (most recent call last): # doctest: +ELLIPSIS
+    >>> H.my_degree() # doctest: +ELLIPSIS
+    Traceback (most recent call last):
     AttributeError:...
 
     >>> H.nodes.my_degree # doctest: +ELLIPSIS
