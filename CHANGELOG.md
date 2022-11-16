@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.5.0
+
+* Fixed [#214](https://github.com/ComplexGroupInteractions/xgi/issues/214), added a `powerset()` function, added a `subfaces()` function, and added examples of these functions ([#209](https://github.com/ComplexGroupInteractions/xgi/pull/209)).
+* Refactored the NodeStats and EdgeStats classes to be more efficient ([#209](https://github.com/ComplexGroupInteractions/xgi/pull/209)).
+* Implemented set operations for NodeView and EdgeView ([#208](https://github.com/ComplexGroupInteractions/xgi/pull/208)).
+* Addressed [#180](https://github.com/ComplexGroupInteractions/xgi/issues/180) with  `density()` and `incidence_density()` functions ([#204](https://github.com/ComplexGroupInteractions/xgi/pull/204) and [#207](https://github.com/ComplexGroupInteractions/xgi/pull/207)).
+* Added the `<<` operator to "add" two hypergraphs together ([#203](https://github.com/ComplexGroupInteractions/xgi/pull/203)).
+* Improved the documentation ([#202](https://github.com/ComplexGroupInteractions/xgi/pull/202)).
+* Added Python 3.11 to the test suite ([#201](https://github.com/ComplexGroupInteractions/xgi/pull/201)).
+* Added an option to fill only some cliques with probabilities `ps` to `xgi.flag_complex()` ([#200](https://github.com/ComplexGroupInteractions/xgi/pull/200)).
+* Fixed Issue [#198](https://github.com/ComplexGroupInteractions/xgi/issues/198) ([#199](https://github.com/ComplexGroupInteractions/xgi/pull/199)).
+* Refactored `load_xgi_data()` to call `dict_to_hypergraph()` and fixed a bug in `dict_to_hypergraph()` ([#193](https://github.com/ComplexGroupInteractions/xgi/pull/193)).
+* Added `num_edges_order()` to get the number of edges of a given order and added an `order` parameter to the `degree_counts()` function ([#192](https://github.com/ComplexGroupInteractions/xgi/pull/192)).
+* Fixed [#182](https://github.com/ComplexGroupInteractions/xgi/issues/182) and [#186](https://github.com/ComplexGroupInteractions/xgi/issues/186) by adding a `max_order` argument to `draw()` and `load_xgi_data()` ([#173](https://github.com/ComplexGroupInteractions/xgi/pull/173)) . 
+* Made `draw()` faster by refactoring `_color_arg_to_dict()` and `_scalar_arg_to_dict()` ([#173](https://github.com/ComplexGroupInteractions/xgi/pull/173)).
+
+Contributors: @leotrs, @maximelucas, and @nwlandry
+
 ## v0.4.3
 * `Hypergraph.has_edge` is now `IDView.lookup`, `Hypergraph.duplicate_edges` is now `IDView.duplicates`, and `utilities.convert_labels_to_integer` is now `function.convert_labels_to_integer` ([#150](https://github.com/ComplexGroupInteractions/xgi/pull/150)).
 * Added some unit tests for the convert module, the function module, and the classic generators module. Fixed for minor bugs encountered while writing tests and added documentation to Read The Docs for the drawing module. ([#153](https://github.com/ComplexGroupInteractions/xgi/pull/153))
