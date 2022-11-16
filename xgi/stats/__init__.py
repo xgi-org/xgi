@@ -480,8 +480,17 @@ def nodestat_func(func):
     NodeStat('degree')
 
     However, `my_degree` is not recognized as a node statistic.
-    Use the `nodestat_func` decorator to turn `my_degree` into a valid stat.
 
+    >>> H.my_degree() # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    AttributeError:...
+
+    >>> H.nodes.my_degree # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    AttributeError:...
+
+    Use the `nodestat_func` decorator to turn `my_degree` into a valid stat.
+    
     >>> original_my_degree = my_degree
     >>> my_degree = xgi.nodestat_func(my_degree)
     >>> H.my_degree()

@@ -1,4 +1,5 @@
 """Base class for undirected hypergraphs."""
+from collections import defaultdict
 from collections.abc import Hashable, Iterable
 from copy import deepcopy
 from itertools import count
@@ -942,6 +943,169 @@ class Hypergraph:
         self._edge.clear()
         self._edge_attr.clear()
 
+    def merge_duplicate_edges(
+        self, rename="first", merge_rule="first", multiplicity=None
+    ):
+        """Merges edges which have the same members.
+
+        Parameters
+        ----------
+        rename : str, optional
+            Either "first", "tuple", or "new", by default "first"
+            If "first", the new edge ID is the first of the sorted
+            duplicate edge IDs. If "tuple", the new edge ID is a
+            tuple of the sorted duplicate edge IDs. If "new", a
+            new ID will be selected automatically.
+        merge_rule : str, optional
+            Either "first" or "union", by default "first"
+            If "first", takes the attributes of the first duplicate.
+            If "union", takes the set of attributes of all the duplicates.
+        multiplicity : str, optional
+            The attribute in which to store the multiplicity of the hyperedge,
+            by default None
+
+        Raises
+        ------
+        XGIError
+            If invalid rename or merge_rule specified.
+
+        Warns
+        -----
+        If the user chooses merge_rule="union". Tells the
+        user that they can no longer draw based on this stat.
+
+        Examples
+        --------
+
+        >>> import xgi
+        >>> edges = [{1, 2}, {1, 2}, {1, 2}, {3, 4, 5}, {3, 4, 5}]
+        >>> edge_attrs = dict()
+        >>> edge_attrs[0] = {"color": "blue"}
+        >>> edge_attrs[1] = {"color": "red", "weight": 2}
+        >>> edge_attrs[2] = {"color": "yellow"}
+        >>> edge_attrs[3] = {"color": "purple"}
+        >>> edge_attrs[4] = {"color": "purple", "name": "test"}
+        >>> H = xgi.Hypergraph(edges)
+        >>> xgi.set_edge_attributes(H, edge_attrs)
+        >>> H.edges
+        EdgeView((0, 1, 2, 3, 4))
+
+        There are several ways to rename the duplicate edges after merging:
+
+        1. The merged edge ID is the first duplicate edge ID.
+
+        >>> H1 = H.copy()
+        >>> H1.merge_duplicate_edges()
+        >>> H1.edges
+        EdgeView((0, 3))
+
+        2. The merged edge ID is a tuple of all the duplicate edge IDs.
+
+        >>> H2 = H.copy()
+        >>> H2.merge_duplicate_edges(rename="tuple")
+        >>> H2.edges
+        EdgeView(((0, 1, 2), (3, 4)))
+
+        3. The merged edge ID is assigned a new edge ID.
+
+        >>> H3 = H.copy()
+        >>> H3.merge_duplicate_edges(rename="new")
+        >>> H3.edges
+        EdgeView((5, 6))
+
+        We can also specify how we would like to combine the attributes
+        of the merged edges:
+
+        1. The attributes are the attributes of the first merged edge.
+
+        >>> H4 = H.copy()
+        >>> H4.merge_duplicate_edges()
+        >>> H4.edges[0]
+        {'color': 'blue'}
+
+        2. The attributes are the union of every attribute that each merged
+        edge has. If a duplicate edge doesn't have that attribute, it is set
+        to None.
+
+        >>> H5 = H.copy()
+        >>> H5.merge_duplicate_edges(merge_rule="union")
+        >>> H5.edges[0] == {'color': {'blue', 'red', 'yellow'}, 'weight':{2, None}}
+        True
+
+        3. We can also set the attributes to the intersection, i.e.,
+        if a particular attribute is the same across the duplicate
+        edges, we use this attribute, otherwise, we set it to None.
+
+        >>> H6 = H.copy()
+        >>> H6.merge_duplicate_edges(merge_rule="intersection")
+        >>> H6.edges[0] == {'color': None, 'weight': None}
+        True
+        >>> H6.edges[3] == {'color': 'purple', 'name': None}
+        True
+
+        We can also choose to store the multiplicity of the edge
+        as an attribute. The user simply provides the string of
+        the attribute which stores it. Note that this will not prevent
+        other attributes from being over written (e.g., weight), so
+        be careful that the attribute is not already in use.
+
+        >>> H7 = H.copy()
+        >>> H7.merge_duplicate_edges(multiplicity="mult")
+        >>> H7.edges[0]['mult'] == 3
+        True
+        """
+        dups = []
+        hashes = defaultdict(list)
+        for idx, members in self._edge.items():
+            hashes[frozenset(members)].append(idx)
+
+        new_edges = list()
+        for members, dup_ids in hashes.items():
+            if len(dup_ids) > 1:
+                dups.extend(dup_ids)
+
+                if rename == "first":
+                    new_id = sorted(dup_ids)[0]
+                elif rename == "tuple":
+                    new_id = tuple(sorted(dup_ids))
+                elif rename == "new":
+                    new_id = next(self._edge_uid)
+                else:
+                    raise XGIError("Invalid ID renaming scheme!")
+
+                if merge_rule == "first":
+                    id = min(dup_ids)
+                    new_attrs = deepcopy(self._edge_attr[id])
+                elif merge_rule == "union":
+                    attrs = {field for id in dup_ids for field in self._edge_attr[id]}
+                    new_attrs = {
+                        attr: {self._edge_attr[id].get(attr) for id in dup_ids}
+                        for attr in attrs
+                    }
+                elif merge_rule == "intersection":
+                    attrs = {field for id in dup_ids for field in self._edge_attr[id]}
+                    set_attrs = {
+                        attr: {self._edge_attr[id].get(attr) for id in dup_ids}
+                        for attr in attrs
+                    }
+                    new_attrs = {
+                        attr: (None if len(val) != 1 else next(iter(val)))
+                        for attr, val in set_attrs.items()
+                    }
+                else:
+                    raise XGIError("Invalid merge rule!")
+
+                if multiplicity is not None:
+                    new_attrs[multiplicity] = len(dup_ids)
+                new_edges.append((members, new_id, new_attrs))
+        self.remove_edges_from(dups)
+        self.add_edges_from(new_edges)
+
+        if merge_rule == "union":
+            warn(
+                "You will not be able to color/draw by merged attributes with xgi.draw()!"
+            )
+
     def copy(self):
         """A deep copy of the hypergraph.
 
@@ -1045,7 +1209,7 @@ class Hypergraph:
         """
         if in_place:
             if not multiedges:
-                self.remove_edges_from(self.edges.duplicates())
+                self.merge_duplicate_edges()
             if not singletons:
                 self.remove_edges_from(self.edges.singletons())
             if not isolates:
@@ -1070,7 +1234,7 @@ class Hypergraph:
             if not multiedges:
                 H.remove_edges_from(H.edges.duplicates())
             if not singletons:
-                H.remove_edges_from(H.edges.singletons())
+                H.merge_duplicate_edges()
             if not isolates:
                 H.remove_nodes_from(H.nodes.isolates())
             if relabel:

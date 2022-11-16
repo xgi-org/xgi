@@ -151,6 +151,29 @@ def attr5():
 
 
 @pytest.fixture
+def hyperwithdupsandattrs(attr1, attr2, attr3, attr4, attr5):
+    edges = [
+        ({1, 2}, {"color": "blue"}),
+        ({1, 2}, {"color": "red", "weight": 2}),
+        ({1, 2}, {"color": "yellow"}),
+        ({3, 4, 5}, {"color": "purple"}),
+        ({3, 4, 5}, {"color": "purple", "name": "test"}),
+    ]
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    H.add_nodes_from(
+        [
+            (1, attr1),
+            (2, attr2),
+            (3, attr3),
+            (4, attr4),
+            (5, attr5),
+        ]
+    )
+    return H
+
+
+@pytest.fixture
 def hyperwithattrs(edgelist4, attr1, attr2, attr3, attr4, attr5):
     H = xgi.Hypergraph(edgelist4)
     H.add_nodes_from(
