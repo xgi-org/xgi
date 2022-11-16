@@ -10,9 +10,8 @@ from itertools import combinations
 from warnings import warn
 
 import networkx as nx
-import numpy as np
 
-from ..classes import SimplicialComplex
+from ..classes.function import subfaces
 from ..exception import XGIError
 from ..utils import py_random_state
 
@@ -206,11 +205,12 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     """
     # This import needs to happen when this function is called, not when it is
     # defined.  Otherwise, a circular import error would happen.
+    from ..classes import SimplicialComplex
 
     nodes = G.nodes()
     edges = G.edges()
 
-    # compute all cliques to fill
+    # compute all maximal cliques to fill
     max_cliques = list(nx.find_cliques(G))
 
     S = SimplicialComplex()
@@ -220,11 +220,17 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
         S.add_simplices_from(max_cliques, max_order=max_order)
         return S
 
-    # promote cliques with a given probability
+    if max_order:  # compute subfaces of order max_order (allowed max cliques)
+        max_cliques_to_add = subfaces(max_cliques, order=max_order)
+    else:
+        max_cliques_to_add = max_cliques
+
+    # store max cliques per order
     cliques_d = defaultdict(list)
-    for x in max_cliques:
+    for x in max_cliques_to_add:
         cliques_d[len(x)].append(x)
 
+    # promote cliques with a given probability
     for i, p in enumerate(ps[: max_order - 1]):
         d = i + 2  # simplex order
         cliques_d_to_add = [el for el in cliques_d[d + 1] if seed.random() <= p]

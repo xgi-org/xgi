@@ -406,6 +406,62 @@ def test_clique_motif_matrix(edgelist4):
     assert W1[node_dict1[5], node_dict1[1]] == 0
 
 
+def test_boundary_matrix(edgelist4):
+    S1 = xgi.SimplicialComplex(edgelist4)
+    orientations = {idd: 0 for idd in list(S1.edges.filterby("order", 1, mode="geq"))}
+    B0, _, nodedict1 = xgi.boundary_matrix(
+        S1, order=0, orientations=orientations, index=True
+    )
+    B1, nodedict2, edgedict1 = xgi.boundary_matrix(
+        S1, order=1, orientations=orientations, index=True
+    )
+    B2, edgedict2, facedict1 = xgi.boundary_matrix(
+        S1, order=2, orientations=orientations, index=True
+    )
+    B3, facedict2, tetdict1 = xgi.boundary_matrix(
+        S1, order=3, orientations=orientations, index=True
+    )
+    B4, tetdict2, _ = xgi.boundary_matrix(
+        S1, order=4, orientations=orientations, index=True
+    )
+
+    n0 = len(S1.nodes)
+    n1 = len(S1.edges.filterby("order", 1))
+    n2 = len(S1.edges.filterby("order", 2))
+    n3 = len(S1.edges.filterby("order", 3))
+
+    assert np.shape(B0) == (0, n0)
+    assert np.shape(B1) == (n0, n1)
+    assert np.shape(B2) == (n1, n2)
+    assert np.shape(B3) == (n2, n3)
+    assert np.shape(B4) == (n3, 0)
+
+    assert nodedict1 == nodedict2
+    assert edgedict1 == edgedict2
+    assert facedict1 == facedict2
+    assert tetdict1 == tetdict2
+
+    assert np.linalg.norm(B1[0:2, 0] - [-1, 1]) == 0
+    assert np.linalg.norm(B2[0:3, 0] - [1, -1, 1]) == 0
+    assert np.linalg.norm(B3[0:5, 0] - [0, -1, 1, -1, 1]) == 0
+    assert np.linalg.norm(np.sum(B1, 0) - [0, 0, 0, 0, 0, 0, 0, 0]) == 0
+    assert np.linalg.norm(B1 @ B2) == 0
+    assert np.linalg.norm(B2 @ B3) == 0
+
+    # Change the orientation of a face and an edge
+    orientations[0] = 1
+    orientations[1] = 1
+
+    B1 = xgi.boundary_matrix(S1, order=1, orientations=orientations, index=False)
+    B2 = xgi.boundary_matrix(S1, order=2, orientations=orientations, index=False)
+    B3 = xgi.boundary_matrix(S1, order=3, orientations=orientations, index=False)
+    assert np.linalg.norm(B1[0:2, 0] - [1, -1]) == 0
+    assert np.linalg.norm(B2[0:3, 0] - [1, 1, -1]) == 0
+    assert np.linalg.norm(B3[0:5, 0] - [0, -1, 1, -1, 1]) == 0
+    assert np.linalg.norm(B1 @ B2) == 0
+    assert np.linalg.norm(B2 @ B3) == 0
+
+
 def test_empty_order(edgelist6):
     H = xgi.Hypergraph(edgelist6)
     I, _, _ = xgi.incidence_matrix(H, order=1, index=True)

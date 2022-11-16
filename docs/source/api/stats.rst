@@ -33,14 +33,3 @@ stats package
 
    ~xgi.stats.nodestat_func
    ~xgi.stats.edgestat_func
-
-
-.. rubric:: Other classes (for internal use)
-
-.. autosummary::
-   :toctree: stats
-   :nosignatures:
-
-   ~xgi.stats.StatDispatcher
-   ~xgi.stats.EdgeStatDispatcher
-   ~xgi.stats.NodeStatDispatcher

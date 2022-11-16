@@ -75,7 +75,7 @@ class Hypergraph:
     Unique IDs are assigned to each node and edge internally and are used to refer to
     them throughout.
 
-    The `attr` keyword arguments are added as hypergraph attributes. To add node or ede
+    The `attr` keyword arguments are added as hypergraph attributes. To add node or edge
     attributes see :meth:`add_node` and :meth:`add_edge`.
 
     In addition to the methods listed in this page, other methods defined in the `stats`
@@ -192,16 +192,22 @@ class Hypergraph:
 
     def __getattr__(self, attr):
         stat = getattr(self.nodes, attr, None)
+        word = "nodes"
         if stat is None:
             stat = getattr(self.edges, attr, None)
+            word = "edges"
         if stat is None:
+            word = None
             raise AttributeError(
-                f'stat "{attr}" not among available node or edge stats'
+                f"{attr} is not a method of Hypergraph or a recognized NodeStat or EdgeStat"
             )
 
         def func(node=None, *args, **kwargs):
             val = stat(*args, **kwargs).asdict()
             return val if node is None else val[node]
+
+        func.__doc__ = f"""Equivalent to H.{word}.{attr}.asdict(). For accepted *args and
+        **kwargs, see documentation of H.{word}.{attr}."""
 
         return func
 
@@ -497,20 +503,21 @@ class Hypergraph:
         ----------
         ebunch_to_add : Iterable
 
-            An iterable of edges.  This may be a dict of the form `{edge_id:
-            edge_members}`, or it may be an iterable of iterables, where each element
-            contains the members of the edge specified as valid node IDs.
+            An iterable of edges.  This may be an iterable of iterables (Format 1),
+            where each element contains the members of the edge specified as valid node IDs.
             Alternatively, each element could also be a tuple in any of the following
             formats:
 
-            * Format 1: 2-tuple (members, edge_id), or
-            * Format 2: 2-tuple (members, attr), or
-            * Format 3: 3-tuple (members, edge_id, attr),
+            * Format 2: 2-tuple (members, edge_id), or
+            * Format 3: 2-tuple (members, attr), or
+            * Format 4: 3-tuple (members, edge_id, attr),
 
             where `members` is an iterable of node IDs, `edge_id` is a hashable to use
-            as edge ID, and `attr` is a dict of attributes. The first and second formats
-            are unambiguous because `attr` dicts are not hashable, while `id`s must be.
-            In Formats 1-3, each element of `ebunch_to_add` must have the same length,
+            as edge ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add`
+            may be a dict of the form `{edge_id: edge_members}` (Format 5).
+
+            Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while `id`s must be.
+            In Formats 2-4, each element of `ebunch_to_add` must have the same length,
             i.e. you cannot mix different formats.  The iterables containing edge
             members cannot be strings.
 

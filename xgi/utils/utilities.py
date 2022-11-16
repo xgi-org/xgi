@@ -1,8 +1,9 @@
 """General utilities."""
 
 from collections import defaultdict
+from itertools import chain, combinations
 
-__all__ = ["dual_dict"]
+__all__ = ["dual_dict", "powerset"]
 
 
 def dual_dict(edge_dict):
@@ -35,3 +36,46 @@ def dual_dict(edge_dict):
             node_dict[node].append(edge_id)
 
     return dict(node_dict)
+
+
+def powerset(
+    iterable, include_empty=False, include_full=False, include_singletons=True
+):
+    """Returns all possible subsets of the elements in iterable, with options
+    to include the empty set and the set containing all elements.
+
+    Parameters
+    ----------
+    iterable : list-like
+        List of elements
+    include_empty: bool, default: False
+        Whether to include the empty set
+    include_singletons: bool, default: True
+        Whether to include singletons
+    include_full: bool, default: False
+        Whether to include the set containing all elements of iterable
+
+    Returns
+    -------
+    itertools.chain
+
+    Notes
+    -----
+    include_empty overrides include_singletons if True: singletons will always
+    be included if the empty set is.
+
+    Examples
+    --------
+    >>> import xgi
+    >>> list(xgi.powerset([1,2,3,4])) # doctest: +NORMALIZE_WHITESPACE
+    [(1,), (2,), (3,), (4,), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4),
+     (1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4)]
+
+    """
+
+    start = 1 if include_singletons else 2
+    start = 0 if include_empty else start  # overrides include_singletons if True
+    end = 1 if include_full else 0
+
+    s = list(iterable)
+    return chain.from_iterable(combinations(s, r) for r in range(start, len(s) + end))
