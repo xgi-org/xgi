@@ -18,8 +18,8 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
         and the values are node degrees.
     m : int
         specifies the hyperedge size
-    seed : integer, random_state, or None (default)
-            Indicator of random number generation state.
+    seed : integer or None (default)
+        The seed for the random number generator
 
     Returns
     -------

@@ -33,8 +33,8 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     k2 : dictionary
         Dictionary where the keys are edge ids
         and the values are edge sizes.
-    seed : integer, random_state, or None (default)
-            Indicator of random number generation state.
+    seed : integer or None (default)
+            The seed for the random number generator.
 
     Returns
     -------
@@ -137,8 +137,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
         The number of rows must match the number of node communities
         and the number of columns must match the number of edge
         communities.
-    seed : int, random_state, or None (default)
-        Indicator of random number generation state.
+    seed : int or None (default)
+        Seed for the random number generator.
 
     Returns
     -------
@@ -265,8 +265,8 @@ def random_hypergraph(N, ps, seed=None):
         hyperedge at each order d between any d+1 nodes. For example,
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
         of any triangles (3 nodes).
-    seed : integer, random_state, or None (default)
-            Indicator of random number generation state.
+    seed : integer or None (default)
+            Seed for the random number generator.
 
     Returns
     -------
@@ -324,6 +324,8 @@ def random_simplicial_complex(N, ps, seed=None):
         hyperedge at each order d between any d+1 nodes. For example,
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
         of any triangles (3 nodes).
+    seed : int or None (default)
+        The seed for the random number generator
 
     Returns
     -------
@@ -377,6 +379,8 @@ def random_flag_complex_d2(N, p, seed=None):
     p : float
         Probabilities (between 0 and 1) to create an edge
         between any 2 nodes
+    seed : int or None (default)
+        The seed for the random number generator
 
     Returns
     -------
@@ -421,9 +425,10 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     p : float
         Probabilities (between 0 and 1) to create an edge
         between any 2 nodes
-
     max_order : int
         maximal dimension of simplices to add to the output simplicial complex
+    seed : int or None (default)
+        The seed for the random number generator
 
     Returns
     -------

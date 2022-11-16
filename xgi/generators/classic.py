@@ -192,6 +192,8 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
         hyperedge from a clique, at each order d. For example,
         ps[0] is the probability of promoting any 3-node clique (triangle) to
         a 3-hyperedge.
+    seed: int or None (default)
+        The seed for the random number generator
 
     Returns
     -------
