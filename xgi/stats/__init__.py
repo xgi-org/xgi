@@ -490,7 +490,7 @@ def nodestat_func(func):
     AttributeError:...
 
     Use the `nodestat_func` decorator to turn `my_degree` into a valid stat.
-    
+
     >>> original_my_degree = my_degree
     >>> my_degree = xgi.nodestat_func(my_degree)
     >>> H.my_degree()

@@ -5,6 +5,7 @@ hypergraph).
 
 """
 
+import random
 from collections import defaultdict
 from itertools import combinations
 from warnings import warn
@@ -13,7 +14,6 @@ import networkx as nx
 
 from ..classes.function import subfaces
 from ..exception import XGIError
-from ..utils import py_random_state
 
 __all__ = [
     "empty_hypergraph",
@@ -177,7 +177,6 @@ def star_clique(n_star, n_clique, d_max):
     return H
 
 
-@py_random_state("seed")
 def flag_complex(G, max_order=2, ps=None, seed=None):
     """Generate a flag (or clique) complex from a
     NetworkX graph by filling all cliques up to dimension max_order.
@@ -207,6 +206,9 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     # defined.  Otherwise, a circular import error would happen.
     from ..classes import SimplicialComplex
 
+    if seed is not None:
+        random.seed(seed)
+
     nodes = G.nodes()
     edges = G.edges()
 
@@ -233,7 +235,7 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     # promote cliques with a given probability
     for i, p in enumerate(ps[: max_order - 1]):
         d = i + 2  # simplex order
-        cliques_d_to_add = [el for el in cliques_d[d + 1] if seed.random() <= p]
+        cliques_d_to_add = [el for el in cliques_d[d + 1] if random.random() <= p]
         S.add_simplices_from(cliques_d_to_add, max_order=max_order)
 
     return S
