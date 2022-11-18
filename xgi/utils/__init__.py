@@ -1,3 +1,2 @@
-from . import decorators, utilities
-from .decorators import *
+from . import utilities
 from .utilities import *

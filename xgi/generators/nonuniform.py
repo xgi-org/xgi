@@ -1,5 +1,6 @@
 """Generate random (non-uniform) hypergraphs."""
 import math
+import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
@@ -9,7 +10,6 @@ import numpy as np
 from scipy.special import comb
 
 from ..classes import SimplicialComplex
-from ..utils import np_random_state, py_random_state
 from .classic import empty_hypergraph, ring_lattice
 
 __all__ = [
@@ -23,7 +23,6 @@ __all__ = [
 ]
 
 
-@py_random_state("seed")
 def chung_lu_hypergraph(k1, k2, seed=None):
     """A function to generate a Chung-Lu hypergraph
 
@@ -35,8 +34,8 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     k2 : dictionary
         Dictionary where the keys are edge ids
         and the values are edge sizes.
-    seed : integer, random_state, or None (default)
-            Indicator of random number generation state.
+    seed : integer or None (default)
+            The seed for the random number generator.
 
     Returns
     -------
@@ -69,6 +68,9 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     >>> H = xgi.chung_lu_hypergraph(k1, k2)
 
     """
+    if seed is not None:
+        random.seed(seed)
+
     # sort dictionary by degree in decreasing order
     node_labels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
     edge_labels = [m for m, _ in sorted(k2.items(), key=lambda d: d[1], reverse=True)]
@@ -92,7 +94,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
 
         while j < m:
             if p != 1:
-                r = seed.random()
+                r = random.random()
                 try:
                     j = j + math.floor(math.log(r) / math.log(1 - p))
                 except ZeroDivisionError:
@@ -101,7 +103,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
             if j < m:
                 v = edge_labels[j]
                 q = min((k1[u] * k2[v]) / S, 1)
-                r = seed.random()
+                r = random.random()
                 if r < q / p:
                     # no duplicates
                     H.add_node_to_edge(v, u)
@@ -111,7 +113,6 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     return H
 
 
-@py_random_state("seed")
 def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     """A function to generate a DCSBM hypergraph.
 
@@ -137,8 +138,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
         The number of rows must match the number of node communities
         and the number of columns must match the number of edge
         communities.
-    seed : int, random_state, or None (default)
-        Indicator of random number generation state.
+    seed : int or None (default)
+        Seed for the random number generator.
 
     Returns
     -------
@@ -176,6 +177,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     >>> # H = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega)
 
     """
+    if seed is not None:
+        random.seed(seed)
 
     # sort dictionary by degree in decreasing order
     node_labels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
@@ -231,7 +234,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                 p = min(k1[u] * k2[v] * group_constant, 1)
                 while j < len(community2_nodes[group2]):
                     if p != 1:
-                        r = seed.random()
+                        r = random.random()
                         try:
                             j = j + math.floor(math.log(r) / math.log(1 - p))
                         except ZeroDivisionError:
@@ -239,7 +242,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                     if j < len(community2_nodes[group2]):
                         v = community2_nodes[group2][j]
                         q = min((k1[u] * k2[v]) * group_constant, 1)
-                        r = seed.random()
+                        r = random.random()
                         if r < q / p:
                             # no duplicates
                             H.add_node_to_edge(v, u)
@@ -248,7 +251,6 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     return H
 
 
-@np_random_state(0)
 def random_hypergraph(N, ps, seed=None):
     """Generates a random hypergraph
 
@@ -264,8 +266,8 @@ def random_hypergraph(N, ps, seed=None):
         hyperedge at each order d between any d+1 nodes. For example,
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
         of any triangles (3 nodes).
-    seed : integer, random_state, or None (default)
-            Indicator of random number generation state.
+    seed : integer or None (default)
+            Seed for the random number generator.
 
     Returns
     -------
@@ -282,7 +284,8 @@ def random_hypergraph(N, ps, seed=None):
     >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
 
     """
-    rng = np.random.default_rng(seed=seed)
+    if seed is not None:
+        random.seed(seed)
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
@@ -310,7 +313,6 @@ def random_hypergraph(N, ps, seed=None):
     return H
 
 
-@np_random_state(0)
 def random_simplicial_complex(N, ps, seed=None):
     """Generates a random hypergraph
 
@@ -327,6 +329,8 @@ def random_simplicial_complex(N, ps, seed=None):
         hyperedge at each order d between any d+1 nodes. For example,
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
         of any triangles (3 nodes).
+    seed : int or None (default)
+        The seed for the random number generator
 
     Returns
     -------
@@ -346,7 +350,9 @@ def random_simplicial_complex(N, ps, seed=None):
     >>> H = xgi.random_simplicial_complex(20, [0.1, 0.01])
 
     """
-    rng = np.random.default_rng(seed=seed)
+
+    if seed is not None:
+        random.seed(seed)
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
@@ -372,7 +378,6 @@ def random_simplicial_complex(N, ps, seed=None):
     return S
 
 
-@py_random_state("seed")
 def random_flag_complex_d2(N, p, seed=None):
     """Generate a maximal simplicial complex (up to order 2) from a
     :math:`G_{N,p}` Erdős-Rényi random graph by filling all empty triangles with 2-simplices.
@@ -384,6 +389,8 @@ def random_flag_complex_d2(N, p, seed=None):
     p : float
         Probabilities (between 0 and 1) to create an edge
         between any 2 nodes
+    seed : int or None (default)
+        The seed for the random number generator
 
     Returns
     -------
@@ -393,6 +400,8 @@ def random_flag_complex_d2(N, p, seed=None):
     -----
     Computing all cliques quickly becomes heavy for large networks.
     """
+    if seed is not None:
+        random.seed(seed)
 
     if (p < 0) or (p > 1):
         raise ValueError("p must be between 0 and 1 included.")
@@ -415,7 +424,6 @@ def random_flag_complex_d2(N, p, seed=None):
     return S
 
 
-@py_random_state(3)
 def random_flag_complex(N, p, max_order=2, seed=None):
     """Generate a flag (or clique) complex from a
     :math:`G_{N,p}` Erdős-Rényi random graph by filling all cliques up to dimension max_order.
@@ -427,9 +435,10 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     p : float
         Probabilities (between 0 and 1) to create an edge
         between any 2 nodes
-
     max_order : int
         maximal dimension of simplices to add to the output simplicial complex
+    seed : int or None (default)
+        The seed for the random number generator
 
     Returns
     -------
@@ -458,16 +467,17 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     return S
 
 
-@np_random_state("seed")
 def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
+    if seed is not None:
+        np.random.seed(seed)
     H = ring_lattice(n, d, k, l)
     to_remove = []
     to_add = []
     for e in H.edges:
-        if seed.random() < p:
+        if np.random.random() < p:
             to_remove.append(e)
-            node = H.edges.members(e)[0]
-            neighbors = seed.choice(H.nodes, size=d - 1)
+            node = min(H.edges.members(e))
+            neighbors = np.random.choice(H.nodes, size=d - 1)
             to_add.append(np.append(neighbors, node))
     H.remove_edges_from(to_remove)
     H.add_edges_from(to_add)

@@ -1,13 +1,12 @@
 """Generate random uniform hypergraphs."""
+import random
 import warnings
 
-from ..utils import py_random_state
 from .classic import empty_hypergraph
 
 __all__ = ["uniform_hypergraph_configuration_model"]
 
 
-@py_random_state(2)
 def uniform_hypergraph_configuration_model(k, m, seed=None):
     """
     A function to generate an m-uniform configuration model
@@ -19,8 +18,8 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
         and the values are node degrees.
     m : int
         specifies the hyperedge size
-    seed : integer, random_state, or None (default)
-            Indicator of random number generation state.
+    seed : integer or None (default)
+        The seed for the random number generator
 
     Returns
     -------
@@ -57,13 +56,16 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     >>> H = xgi.uniform_hypergraph_configuration_model(k, m)
 
     """
+    if seed is not None:
+        random.seed(seed)
+
     # Making sure we have the right number of stubs
     remainder = sum(k.values()) % m
     if remainder != 0:
         warnings.warn(
             "This degree sequence is not realizable. Increasing the degree of random nodes so that it is."
         )
-        random_ids = seed.sample(list(k.keys()), int(round(m - remainder)))
+        random_ids = random.sample(list(k.keys()), int(round(m - remainder)))
         for id in random_ids:
             k[id] = k[id] + 1
 
@@ -76,7 +78,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     H.add_nodes_from(k.keys())
 
     while len(stubs) != 0:
-        u = seed.sample(range(len(stubs)), m)
+        u = random.sample(range(len(stubs)), m)
         edge = set()
         for index in u:
             edge.add(stubs[index])

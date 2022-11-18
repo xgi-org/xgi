@@ -48,6 +48,21 @@ The Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/Comp
 library provides data structures and algorithms for modeling and analyzing complex systems
 with group (higher-order) interactions.
 
+Many datasets can be represented as graphs, where pairs of entities (or nodes) are
+related via links (or edges).  Examples are road networks, energy grids, social
+networks, neural networks, etc.  However, in many other datasets, more than two entities
+can be related at a time.  For example, many scientists (entities) can collaborate on a
+scientific article together (links), and multiple email accounts (entities) can all
+participate on the same email thread (links).  In this latter case, graphs no longer
+present a viable alternative to represent such datasets.  It is for this kind of
+datasets, where the interactions are given among groups of more than two entities (also
+called higher-order interactions), that XGI was designed for.
+
+XGI is implemented in pure Python and is designed to seamlessly interoperate with the
+rest of the Python scientific stack (numpy, scipy, pandas, matplotlib, etc).  XGI is
+designed and developed by network scientists with the needs of network scientists in
+mind.
+
 - Repository: https://github.com/ComplexGroupInteractions/xgi
 - PyPI: https://pypi.org/project/xgi/
 - Documentation: https://xgi.readthedocs.io/
@@ -74,7 +89,7 @@ If that command does not work, you may try the following instead
 
    pip install -e .\[all\]
 
-XGI was developed and tested for Python 3.7-3.10 on Mac OS, Windows, and Ubuntu.
+XGI was developed and tested for Python 3.7-3.11 on Mac OS, Windows, and Ubuntu.
 
 
 Academic References
@@ -91,6 +106,10 @@ Academic References
 
 * `What are higher-order networks? <https://arxiv.org/abs/2104.11329>`_, Christian Bick,
   Elizabeth Gross, Heather A. Harrington, Michael T. Schaub.
+
+* `From networks to optimal higher-order models of complex systems
+  <https://www.nature.com/articles/s41567-019-0459-y>`_, Renaud Lambiotte, Martin
+  Rosvall, and Ingo Scholtes.
 
 
 Contributing

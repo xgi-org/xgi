@@ -10,7 +10,7 @@ from collections import defaultdict
 from collections.abc import Mapping, Set
 
 from ..exception import IDNotFound, XGIError
-from ..stats import IDStat, dispatch_stat, dispatch_many_stats
+from ..stats import IDStat, dispatch_many_stats, dispatch_stat
 
 __all__ = [
     "NodeView",

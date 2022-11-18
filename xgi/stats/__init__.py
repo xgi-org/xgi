@@ -192,7 +192,7 @@ class IDStat:
 
         """
         arr = self.asnumpy()
-        return spmoment(arr, moment=order) if center else np.mean(arr ** order)
+        return spmoment(arr, moment=order) if center else np.mean(arr**order)
 
     def dist(self):
         return np.histogram(self.asnumpy(), density=True)
@@ -481,12 +481,13 @@ def nodestat_func(func):
 
     However, `my_degree` is not recognized as a node statistic.
 
-    >>> H.my_degree()
+    >>> H.my_degree() # doctest: +ELLIPSIS
     Traceback (most recent call last):
-    AttributeError: stat "my_degree" not among available node or edge stats
-    >>> H.nodes.my_degree
+    AttributeError:...
+
+    >>> H.nodes.my_degree # doctest: +ELLIPSIS
     Traceback (most recent call last):
-    AttributeError: Stat 'my_degree' not defined
+    AttributeError:...
 
     Use the `nodestat_func` decorator to turn `my_degree` into a valid stat.
 
