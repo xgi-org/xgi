@@ -298,7 +298,7 @@ def random_hypergraph(N, ps, seed=None):
 
         potential_edges = combinations(nodes, d + 1)
         n_comb = comb(N, d+1, exact=True)
-        mask = rng.random(size=n_comb) <= p # True if edge to keep
+        mask = np.random.random(size=n_comb) <= p # True if edge to keep
         
         edges_to_add = [e for e, val in zip(potential_edges, mask) if val]
 
@@ -365,7 +365,7 @@ def random_simplicial_complex(N, ps, seed=None):
 
         potential_simplices = combinations(nodes, d + 1)
         n_comb = comb(N, d+1, exact=True)
-        mask = rng.random(size=n_comb) <= p # True if simplex to keep
+        mask = np.random.random(size=n_comb) <= p # True if simplex to keep
         
         simplices_to_add = [e for e, val in zip(potential_simplices, mask) if val]
 
