@@ -1,3 +1,5 @@
+from functools import cache
+
 import requests
 
 from .. import convert
@@ -6,7 +8,14 @@ from ..exception import XGIError
 __all__ = ["load_xgi_data"]
 
 
-def load_xgi_data(dataset, nodetype=None, edgetype=None, max_order=None):
+def load_xgi_data(dataset, nodetype=None, edgetype=None, max_order=None, cache=True):
+    if cache:
+        return _load_xgi_data_cached(dataset, nodetype, edgetype, max_order)
+    else:
+        return _load_xgi_data_new(dataset, nodetype, edgetype, max_order)
+
+
+def _load_xgi_data_new(dataset, nodetype=None, edgetype=None, max_order=None):
     """_summary_
 
     Parameters
@@ -44,3 +53,7 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None, max_order=None):
     return convert.dict_to_hypergraph(
         r.json(), nodetype=nodetype, edgetype=edgetype, max_order=max_order
     )
+
+@cache
+def _load_xgi_data_cached(dataset, nodetype=None, edgetype=None, max_order=None):
+    return _load_xgi_data_new(dataset, nodetype, edgetype, max_order)
