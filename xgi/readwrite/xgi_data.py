@@ -1,4 +1,4 @@
-from functools import cache
+from functools import lru_cache
 
 import requests
 
@@ -85,7 +85,8 @@ def _load_xgi_data_new(dataset, nodetype=None, edgetype=None, max_order=None):
         r.json(), nodetype=nodetype, edgetype=edgetype, max_order=max_order
     )
 
-@cache
+
+@lru_cache
 def _load_xgi_data_cached(dataset, nodetype=None, edgetype=None, max_order=None):
     """Same as _load_xgi_data_new but with a decorator to cache the output."""
     return _load_xgi_data_new(dataset, nodetype, edgetype, max_order)
