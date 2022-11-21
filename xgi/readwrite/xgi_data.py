@@ -86,7 +86,7 @@ def _load_xgi_data_new(dataset, nodetype=None, edgetype=None, max_order=None):
     )
 
 
-@lru_cache
+@lru_cache(maxsize=None)
 def _load_xgi_data_cached(dataset, nodetype=None, edgetype=None, max_order=None):
     """Same as _load_xgi_data_new but with a decorator to cache the output."""
     return _load_xgi_data_new(dataset, nodetype, edgetype, max_order)
