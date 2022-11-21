@@ -99,6 +99,44 @@ class Hypergraph:
     _hyperedge_attr_dict_factory = IDDict
     _hypergraph_attr_dict_factory = dict
 
+    def __getstate__(self):
+        """Function that allows pickling.
+
+        Returns
+        -------
+        dict
+            The keys label the hyeprgraph dict and the values
+            are dictionarys from the Hypergraph class.
+
+        """
+        return {
+            "_edge_uid": self._edge_uid,
+            "_hypergraph": self._hypergraph,
+            "_node": self._node,
+            "_node_attr": self._node_attr,
+            "_edge": self._edge,
+            "_edge_attr": self._edge_attr,
+        }
+
+    def __setstate__(self, state):
+        """Function that allows unpickling of a hypergraph.
+
+        Parameters
+        ----------
+        state
+            The keys access the dictionary names the values are the
+            dictionarys themselves from the Hypergraph class.
+
+        """
+        self._edge_uid = state["_edge_uid"]
+        self._hypergraph = state["_hypergraph"]
+        self._node = state["_node"]
+        self._node_attr = state["_node_attr"]
+        self._edge = state["_edge"]
+        self._edge_attr = state["_edge_attr"]
+        self._nodeview = NodeView(self)
+        self._edgeview = EdgeView(self)
+
     def __init__(self, incoming_data=None, **attr):
         self._edge_uid = count()
         self._hypergraph = self._hypergraph_attr_dict_factory()
