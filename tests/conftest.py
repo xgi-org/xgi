@@ -57,6 +57,16 @@ def edgelist8():
 
 
 @pytest.fixture
+def edgelist9():
+    return [{1, 2, 3}, {2, 3, 4}, {3, 4, 5}]
+
+
+@pytest.fixture
+def edgelist10():
+    return [{1}, {2}, {3}]
+
+
+@pytest.fixture
 def dict5():
     return {0: {0, 1, 2, 3}, 1: {4}, 2: {5, 6}, 3: {6, 7, 8}}
 
