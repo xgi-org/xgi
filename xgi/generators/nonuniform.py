@@ -285,7 +285,7 @@ def random_hypergraph(N, ps, seed=None):
 
     """
     if seed is not None:
-        random.seed(seed)
+        np.random.seed(seed)
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
@@ -352,7 +352,7 @@ def random_simplicial_complex(N, ps, seed=None):
     """
 
     if seed is not None:
-        random.seed(seed)
+        np.random.seed(seed)
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
