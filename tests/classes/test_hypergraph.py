@@ -1,3 +1,6 @@
+import pickle
+import tempfile
+
 import pytest
 
 import xgi
@@ -505,3 +508,19 @@ def test_issue_198(edgelist1):
 
     # this used to fail
     H.add_edge({1, 2, 3})
+
+
+def test_pickle(edgelist1):
+    _, filename = tempfile.mkstemp()
+    H1 = xgi.Hypergraph(edgelist1)
+
+    with open(filename, "wb") as file:
+        pickle.dump(H1, file)
+    with open(filename, "rb") as file:
+        H2 = pickle.load(file)
+
+    assert H1.nodes == H2.nodes
+    assert H1.edges == H2.edges
+    assert [H1.edges.members(id) for id in H1.edges] == [
+        H2.edges.members(id) for id in H2.edges
+    ]
