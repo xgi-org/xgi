@@ -108,6 +108,10 @@ class Hypergraph:
             The keys label the hyeprgraph dict and the values
             are dictionarys from the Hypergraph class.
 
+        Notes
+        -----
+        This allows the python multiprocessing module to be used.
+
         """
         return {
             "_edge_uid": self._edge_uid,
@@ -127,6 +131,9 @@ class Hypergraph:
             The keys access the dictionary names the values are the
             dictionarys themselves from the Hypergraph class.
 
+        Notes
+        -----
+        This allows the python multiprocessing module to be used.
         """
         self._edge_uid = state["_edge_uid"]
         self._hypergraph = state["_hypergraph"]
