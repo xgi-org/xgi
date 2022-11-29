@@ -32,7 +32,8 @@ def draw(
     node_lw=1,
     node_size=15,
     max_order=None,
-    with_labels=True,
+    with_node_labels=False,
+    with_hyperedge_labels=False,
     **kwargs,
 ):
     """Draw hypergraph or simplicial complex.
@@ -82,8 +83,10 @@ def draw(
         linear interpolation defined between min_node_size and max_node_size.
     max_order : int (default=None)
         Maximum of hyperedges to plot. If None (default), plots all orders.
-    with_labels : bool (default=True)
+    with_node_labels : bool (default=True)
         Set to True to draw labels on the nodes.
+    with_hyperedge_labels : bool (default=True)
+        Set to True to draw labels on the hyperedges.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
         * min_node_size
@@ -143,18 +146,47 @@ def draw(
         )
     elif isinstance(H, Hypergraph):
         draw_xgi_hyperedges(
-            H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings
+            H,
+            pos,
+            ax,
+            dyad_color,
+            dyad_lw,
+            edge_fc,
+            max_order,
+            settings,
+            with_hyperedge_labels,
+            **kwargs,
         )
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
     draw_xgi_nodes(
-        H, pos, ax, node_fc, node_ec, node_lw, node_size, max_order, settings, with_labels, **kwargs,
+        H,
+        pos,
+        ax,
+        node_fc,
+        node_ec,
+        node_lw,
+        node_size,
+        max_order,
+        settings,
+        with_node_labels,
+        **kwargs,
     )
 
 
 def draw_xgi_nodes(
-    H, pos, ax, node_fc, node_ec, node_lw, node_size, zorder, settings, with_labels=True, **kwargs
+    H,
+    pos,
+    ax,
+    node_fc,
+    node_ec,
+    node_lw,
+    node_size,
+    zorder,
+    settings,
+    with_node_labels=True,
+    **kwargs,
 ):
     """Draw the nodes of a hypergraph
 
@@ -187,7 +219,7 @@ def draw_xgi_nodes(
         linear interpolation defined between min_node_size and max_node_size.
     zorder : int
         The layer on which to draw the nodes.
-    with_labels : bool (default=True)
+    with_node_labels : bool (default=True)
         Set to True to draw labels on the nodes.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
@@ -197,6 +229,8 @@ def draw_xgi_nodes(
         * max_node_lw
         * node_fc_cmap
         * node_ec_cmap
+    kwargs : optional keywords
+        See `draw_node_labels` for a description of optional keywords.
     """
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
     node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
@@ -223,13 +257,24 @@ def draw_xgi_nodes(
     )
     ax.scatter(x=x, y=y, s=s, c=c, edgecolors=ec, linewidths=lw, zorder=zorder)
 
-    if with_labels:
+    if with_node_labels:
         valid_label_kwds = signature(draw_node_labels).parameters.keys()
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
-        draw_node_labels(H, pos, ax=ax, **label_kwds)
+        draw_node_labels(H, pos, ax_nodes=ax, **label_kwds)
 
 
-def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings):
+def draw_xgi_hyperedges(
+    H,
+    pos,
+    ax,
+    dyad_color,
+    dyad_lw,
+    edge_fc,
+    max_order,
+    settings,
+    with_hyperedge_labels=True,
+    **kwargs,
+):
     """Draw hyperedges.
 
     Parameters
@@ -255,12 +300,16 @@ def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, set
         use the colormap specified with edge_fc_cmap.
     max_order : int
         Maximum of hyperedges to plot.
+    with_hyperedge_labels : bool (default=True)
+        Set to True to draw labels on the hyperedges.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * min_dyad_lw
         * max_dyad_lw
         * dyad_color_cmap
         * edge_fc_cmap
+    kwargs : optional keywords
+        See `draw_hyperedge_labels` for a description of optional keywords.
 
     Raises
     ------
@@ -305,6 +354,11 @@ def draw_xgi_hyperedges(H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, set
                 zorder=max_order - d,
             )
             ax.add_patch(obj)
+
+    if with_hyperedge_labels:
+        valid_label_kwds = signature(draw_hyperedge_labels).parameters.keys()
+        label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
+        draw_hyperedge_labels(H, pos, ax_edges=ax, **label_kwds)
 
 
 def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings):
@@ -482,17 +536,17 @@ def _CCW_sort(p):
 def draw_node_labels(
     H,
     pos,
-    labels=None,
-    font_size=11,
-    font_color="black",
-    font_family="sans-serif",
-    font_weight="normal",
-    alpha=None,
-    bbox=None,
-    horizontalalignment="center",
-    verticalalignment="center",
-    ax=None,
-    clip_on=True,
+    labels_nodes=None,
+    font_size_nodes=10,
+    font_color_nodes="black",
+    font_family_nodes="sans-serif",
+    font_weight_nodes="normal",
+    alpha_nodes=None,
+    bbox_nodes=None,
+    horizontalalignment_nodes="center",
+    verticalalignment_nodes="center",
+    ax_nodes=None,
+    clip_on_nodes=True,
 ):
     """Draw node labels on the hypergraph or simplicial complex.
 
@@ -502,66 +556,187 @@ def draw_node_labels(
     pos : dict (default=None)
         If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
         If None (default), use the `barycenter_spring_layout` to compute the positions.
-    labels : dict (default=None)
-        Node labels in a dictionary that must contain (node_ide: label) pairs.
+    labels_nodes : dict (default=None)
+        Node labels in a dictionary that must contain (node_id: label) pairs.
         If None (default), use the node ids.
-    font_size : int (default=12)
+    font_size_nodes : int (default=10)
         Font size for text labels.
-    font_color : str (default='black')
+    font_color_nodes : str (default='black')
         Font color string.
-    font_family : str (default='sans-serif')
+    font_family_nodes : str (default='sans-serif')
         Font family.
-    font_weight : str (default='normal')
+    font_weight_nodes : str (default='normal')
         Font weight.
-    alpha : float (default=None)
+    alpha_nodes : float (default=None)
         The text transparency.
-    bbox : Matplotlib bbox (default is Matplotlib's ax.text default)
+    bbox_nodes : Matplotlib bbox (default is Matplotlib's ax.text default)
         Specify text box properties (e.g. shape, color etc.) for node labels.
-    horizontalalignment : str (default='center')
+    horizontalalignment_nodes : str (default='center')
         Horizontal alignment {'center', 'right', 'left'}.
-    verticalalignment : str (default='center')
+    verticalalignment_nodes : str (default='center')
         Vertical alignment {'center', 'top', 'bottom', 'baseline', 'center_baseline'}.
-    ax : matplotlib.pyplot.axes (default=None)
+    ax_nodes : matplotlib.pyplot.axes (default=None)
         Draw the graph in the specified Matplotlib axes.
-    clip_on : bool (default=True)
+    clip_on_nodes : bool (default=True)
         Turn on clipping of node labels at axis boundaries.
 
     Returns
     -------
     dict
-        `dict` of labels keyed on the nodes
+        `dict` of labels keyed by node id.
     """
-
-    if ax is None:
+    if ax_nodes is None:
         ax = plt.gca()
+    else:
+        ax = ax_nodes
 
-    if labels is None:
-        labels = {id: id for id in H.nodes}
+    if labels_nodes is None:
+        labels_nodes = {id: id for id in H.nodes}
+    # TODO: should I add some type checks? Or even allow for other type?
 
     # Plot the labels in the last layer
     zorder = max_edge_order(H) + 1
 
     text_items = {}
-    for n, label in labels.items():
-        (x, y) = pos[n]
+    for id, label in labels_nodes.items():
+        (x, y) = pos[id]
         if not isinstance(label, str):
             label = str(label)
         t = ax.text(
             x,
             y,
             label,
-            size=font_size,
-            color=font_color,
-            family=font_family,
-            weight=font_weight,
-            alpha=alpha,
-            horizontalalignment=horizontalalignment,
-            verticalalignment=verticalalignment,
+            size=font_size_nodes,
+            color=font_color_nodes,
+            family=font_family_nodes,
+            weight=font_weight_nodes,
+            alpha=alpha_nodes,
+            horizontalalignment=horizontalalignment_nodes,
+            verticalalignment=verticalalignment_nodes,
             transform=ax.transData,
-            bbox=bbox,
-            clip_on=clip_on,
+            bbox=bbox_nodes,
+            clip_on=clip_on_nodes,
             zorder=zorder,
         )
-        text_items[n] = t
+        text_items[id] = t
+
+    return text_items
+
+
+def draw_hyperedge_labels(
+    H,
+    pos,
+    labels_edges=None,
+    font_size_edges=10,
+    font_color_edges="black",
+    font_family_edges="sans-serif",
+    font_weight_edges="normal",
+    alpha_edges=None,
+    bbox_edges=None,
+    horizontalalignment_edges="center",
+    verticalalignment_edges="center",
+    ax_edges=None,
+    rotate_edges=True,
+    clip_on_edges=True,
+):
+    """Draw hyperedge labels on the hypegraph or simplicial complex.
+
+    Parameters
+    ----------
+    H : Hypergraph or SimplicialComplex.
+    pos : dict (default=None)
+        If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
+        If None (default), use the `barycenter_spring_layout` to compute the positions.
+    labels_edges : dict (default=None)
+        Hyperedge labels in a dictionary that must contain (edge_id: label) pairs.
+        If None (default), use the hyperedge ids.
+    font_size_edges : int (default=10)
+        Font size for text labels.
+    font_color_edges : str (default='black')
+        Font color string.
+    font_family_edges : str (default='sans-serif')
+        Font family.
+    font_weight_edges : str (default='normal')
+        Font weight.
+    alpha_edges : float (default=None)
+        The text transparency.
+    bbox_edges : Matplotlib bbox (default={boxstyle='round', ec=(1.0, 1.0, 1.0), fc=(1.0, 1.0, 1.0)})
+        Specify text box properties (e.g. shape, color etc.) for edge labels.
+    horizontalalignment_edges : str (default='center')
+        Horizontal alignment {'center', 'right', 'left'}.
+    verticalalignment_edges: str (default='center')
+        Vertical alignment {'center', 'top', 'bottom', 'baseline', 'center_baseline'}.
+    ax_edges : matplotlib.pyplot.axes (default=None)
+        Draw the graph in the specified Matplotlib axes.
+    rotate_edges : bool (default=True)
+        Rotate edge labels for dyadic links to lie parallel to edges.
+    clip_on_edges: bool (default=True)
+        Turn on clipping of hyperedge labels at axis boundaries.
+
+    Returns
+    -------
+    dict
+        `dict` of labels keyed by hyperedge id.
+    """
+    if ax_edges is None:
+        ax = plt.gca()
+    else:
+        ax = ax_edges
+
+    if labels_edges is None:
+        labels_edges = {id: id for id in H.edges}
+
+    text_items = {}
+    for id, label in labels_edges.items():
+        he = H.edges.members(id)
+        coordinates = [[pos[n][0], pos[n][1]] for n in he]
+        x, y = np.mean(coordinates, axis=0)
+
+        if len(he) == 2:
+            if rotate_edges:
+                x_diff, y_diff = np.subtract(coordinates[1], coordinates[0])
+                # in degrees
+                angle = np.arctan2(y_diff, x_diff) / (2.0 * np.pi) * 360
+                # make label orientation "right-side-up"
+                if angle > 90:
+                    angle -= 180
+                if angle < -90:
+                    angle += 180
+                # transform data coordinate angle to screen coordinate angle
+                xy = np.array((x, y))
+                trans_angle = ax.transData.transform_angles(
+                    np.array((angle,)), xy.reshape((1, 2))
+                )[0]
+            else:
+                trans_angle = 0.0
+        else:
+            trans_angle = 0.0
+
+        # use default box of white with white border
+        if bbox_edges is None:
+            bbox = dict(boxstyle="round", ec=(1.0, 1.0, 1.0), fc=(1.0, 1.0, 1.0))
+        else:
+            bbox = bbox_edges
+
+        if not isinstance(label, str):
+            label = str(label)  # this makes "1" and 1 labeled the same
+
+        t = ax.text(
+            x,
+            y,
+            label,
+            size=font_size_edges,
+            color=font_color_edges,
+            family=font_family_edges,
+            weight=font_weight_edges,
+            alpha=alpha_edges,
+            horizontalalignment=horizontalalignment_edges,
+            verticalalignment=verticalalignment_edges,
+            rotation=trans_angle,
+            transform=ax.transData,
+            bbox=bbox,
+            clip_on=clip_on_edges,
+        )
+        text_items[id] = t
 
     return text_items
