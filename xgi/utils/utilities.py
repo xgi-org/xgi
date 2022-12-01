@@ -100,7 +100,11 @@ def update_uid_counter(H):
     """
 
     edges_with_int_id = [
-        int(e) for e in H.edges if (not isinstance(e, str)) and float(e).is_integer()
+        int(e)
+        for e in H.edges
+        if (not isinstance(e, str))
+        and not isinstance(e, tuple)
+        and float(e).is_integer()
     ]
 
     # Then, we set the start at one plus the maximum edge ID that is an integer,
