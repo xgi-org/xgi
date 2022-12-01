@@ -3,7 +3,6 @@
 from collections import defaultdict
 from itertools import chain, combinations, count
 
-
 __all__ = ["dual_dict", "powerset", "update_uid_counter"]
 
 
@@ -81,10 +80,11 @@ def powerset(
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(start, len(s) + end))
 
+
 def update_uid_counter(H):
     """
-    Helper function to make sure the uid counter is set correctly after 
-    adding edges with different methods. 
+    Helper function to make sure the uid counter is set correctly after
+    adding edges with different methods.
 
     If we don't set the start of self._edge_uid correctly, it will start at 0,
     which will overwrite any existing edges when calling add_edge().  First, we
@@ -100,9 +100,7 @@ def update_uid_counter(H):
     """
 
     edges_with_int_id = [
-        int(e)
-        for e in H.edges
-        if (not isinstance(e, str)) and float(e).is_integer()
+        int(e) for e in H.edges if (not isinstance(e, str)) and float(e).is_integer()
     ]
 
     # Then, we set the start at one plus the maximum edge ID that is an integer,

@@ -5,8 +5,8 @@ from itertools import count
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError
-from .reportviews import EdgeView, NodeView
 from ..utils.utilities import update_uid_counter
+from .reportviews import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
 
@@ -484,12 +484,12 @@ class Hypergraph:
         if not members:
             raise XGIError("Cannot add an empty edge")
 
-        if id in self._edge.keys(): # check that uid is not present yet
+        if id in self._edge.keys():  # check that uid is not present yet
             warn(f"uid {id} already exists, cannot add edge {members}")
-            return 
+            return
 
         uid = next(self._edge_uid) if not id else id
-        
+
         self._edge[uid] = set()
         for node in members:
             if node not in self._node:
@@ -501,7 +501,7 @@ class Hypergraph:
         self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
 
-        if id: # set self._edge_uid correctly
+        if id:  # set self._edge_uid correctly
             update_uid_counter(self)
 
     def add_edges_from(self, ebunch_to_add, **attr):
@@ -605,7 +605,7 @@ class Hypergraph:
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
             for uid, members in ebunch_to_add.items():
-                if uid in self._edge.keys(): # check that uid is not present yet
+                if uid in self._edge.keys():  # check that uid is not present yet
                     warn(f"uid {uid} already exists, cannot add edge ")
                     continue
                 try:
@@ -665,9 +665,9 @@ class Hypergraph:
             elif format4:
                 members, uid, eattr = e[0], e[1], e[2]
 
-            if uid in self._edge.keys(): # check that uid is not present yet
+            if uid in self._edge.keys():  # check that uid is not present yet
                 warn(f"uid {uid} already exists, cannot add edge.")
-            else: 
+            else:
 
                 try:
                     self._edge[uid] = set(members)

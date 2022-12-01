@@ -11,9 +11,9 @@ from itertools import combinations, count
 from warnings import warn
 
 from ..exception import XGIError
+from ..utils.utilities import update_uid_counter
 from .hypergraph import Hypergraph
 from .reportviews import EdgeView, NodeView
-from ..utils.utilities import update_uid_counter
 
 __all__ = ["SimplicialComplex"]
 
@@ -203,9 +203,9 @@ class SimplicialComplex(Hypergraph):
 
         if not self.has_simplex(members):
 
-            if id in self._edge.keys(): # check that uid is not present yet
+            if id in self._edge.keys():  # check that uid is not present yet
                 warn(f"uid {id} already exists, cannot add simplex {members}")
-                return 
+                return
 
             uid = next(self._edge_uid) if not id else id
             self._edge[uid] = set()
@@ -221,7 +221,7 @@ class SimplicialComplex(Hypergraph):
             self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             self._edge_attr[uid].update(attr)
 
-            if id: # set self._edge_uid correctly
+            if id:  # set self._edge_uid correctly
                 update_uid_counter(self)
 
             # add all subfaces
@@ -369,12 +369,12 @@ class SimplicialComplex(Hypergraph):
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
             for uid, members in ebunch_to_add.items():
-                
+
                 # check that it does not exist yet (based on members, not ID)
                 if not members or self.has_simplex(members):
                     continue
 
-                if uid in self._edge.keys(): # check that uid is not present yet
+                if uid in self._edge.keys():  # check that uid is not present yet
                     warn(f"uid {uid} already exists, cannot add simplex {members}.")
                     continue
 
@@ -470,10 +470,10 @@ class SimplicialComplex(Hypergraph):
                         break
 
                     continue
-            
-            if uid in self._edge.keys(): # check that uid is not present yet
+
+            if uid in self._edge.keys():  # check that uid is not present yet
                 warn(f"uid {uid} already exists, cannot add edge.")
-            else: 
+            else:
 
                 try:
                     self._edge[uid] = frozenset(members)
