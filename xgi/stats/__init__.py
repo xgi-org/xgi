@@ -117,6 +117,9 @@ class IDStat:
     def __iter__(self):
         return iter(self._val.items())
 
+    def items(self):
+        return iter(self._val.items())
+
     @property
     def _val(self):
         return self.func(self.net, self.view.ids, *self.args, **self.kwargs)
@@ -192,7 +195,7 @@ class IDStat:
 
         """
         arr = self.asnumpy()
-        return spmoment(arr, moment=order) if center else np.mean(arr ** order)
+        return spmoment(arr, moment=order) if center else np.mean(arr**order)
 
     def dist(self):
         return np.histogram(self.asnumpy(), density=True)
