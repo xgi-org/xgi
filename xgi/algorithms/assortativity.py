@@ -4,8 +4,8 @@ from itertools import combinations
 
 import numpy as np
 
-import xgi
-from xgi.exception import XGIError
+from ..classes import is_uniform, unique_edge_sizes
+from ..exception import XGIError
 
 __all__ = ["dynamical_assortativity", "degree_assortativity"]
 
@@ -40,12 +40,16 @@ def dynamical_assortativity(H):
     if H.num_nodes == 0 or H.num_edges == 0:
         raise XGIError("Hypergraph must contain nodes and edges!")
 
-    if not xgi.is_uniform(H):
+    if not is_uniform(H):
         raise XGIError("Hypergraph must be uniform!")
 
-    degs = H.nodes.degree.asnumpy()
-    k1 = np.mean(degs)
-    k2 = np.mean(np.power(degs, 2))
+    if 1 in unique_edge_sizes(H):
+        raise XGIError("No singleton edges!")
+
+    d = H.nodes.degree
+    degs = d.asdict()
+    k1 = d.mean()
+    k2 = d.moment(2)
     kk1 = np.mean(
         [
             degs[n1] * degs[n2]

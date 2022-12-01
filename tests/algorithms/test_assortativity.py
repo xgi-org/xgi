@@ -6,7 +6,7 @@ from xgi.algorithms.assortativity import choose_degrees
 from xgi.exception import XGIError
 
 
-def test_dynamical_assortativity(edgelist1, edgelist6):
+def test_dynamical_assortativity(edgelist1, edgelist6, edgelist9, edgelist10):
 
     H = xgi.Hypergraph()
     with pytest.raises(XGIError):
@@ -17,13 +17,21 @@ def test_dynamical_assortativity(edgelist1, edgelist6):
     with pytest.raises(XGIError):
         xgi.dynamical_assortativity(H)
 
+    # must be uniform
     with pytest.raises(XGIError):
-        H1 = xgi.Hypergraph(edgelist1)
-        xgi.dynamical_assortativity(H1)
+        H = xgi.Hypergraph(edgelist1)
+        xgi.dynamical_assortativity(H)
 
-    H1 = xgi.Hypergraph(edgelist6)
+    # no singleton edges
+    with pytest.raises(XGIError):
+        H = xgi.Hypergraph(edgelist10)
+        xgi.dynamical_assortativity(H)
 
-    assert abs(xgi.dynamical_assortativity(H1) - -0.0526) < 1e-3
+    H = xgi.Hypergraph(edgelist6)
+    assert abs(xgi.dynamical_assortativity(H) - -0.0526) < 1e-3
+
+    H = xgi.Hypergraph(edgelist9)
+    assert abs(xgi.dynamical_assortativity(H) - -0.0526) < 1e-3
 
 
 def test_degree_assortativity(edgelist1, edgelist5):

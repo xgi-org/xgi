@@ -22,3 +22,11 @@ def test_random_seed():
 
     assert H1._edge != H2._edge
     assert H2._edge == H3._edge
+
+    S1 = xgi.random_simplicial_complex(10, [0.1, 0.001], seed=1)
+    S2 = xgi.random_simplicial_complex(10, [0.1, 0.001], seed=2)
+    S3 = xgi.random_simplicial_complex(10, [0.1, 0.001], seed=2)
+
+    assert S1._edge != S2._edge
+    assert S2._edge == S3._edge
+
