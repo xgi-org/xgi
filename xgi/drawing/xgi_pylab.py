@@ -592,10 +592,11 @@ def draw_node_labels(
 
     if labels_nodes is None:
         labels_nodes = {id: id for id in H.nodes}
-    # TODO: should I add some type checks? Or even allow for other type?
 
     # Plot the labels in the last layer
     zorder = max_edge_order(H) + 1
+
+    # TODO: try: except: print good error message
 
     text_items = {}
     for id, label in labels_nodes.items():
