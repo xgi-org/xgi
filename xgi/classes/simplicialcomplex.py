@@ -8,10 +8,12 @@ Multi-simplices are not allowed.
 
 from collections.abc import Hashable, Iterable
 from itertools import combinations, count
+from warnings import warn
 
 from ..exception import XGIError
 from .hypergraph import Hypergraph
 from .reportviews import EdgeView, NodeView
+from ..utils.utilities import update_uid_counter
 
 __all__ = ["SimplicialComplex"]
 
@@ -201,6 +203,10 @@ class SimplicialComplex(Hypergraph):
 
         if not self.has_simplex(members):
 
+            if id in self._edge.keys(): # check that uid is not present yet
+                warn(f"uid {id} already exists, cannot add simplex {members}")
+                return 
+
             uid = next(self._edge_uid) if not id else id
             self._edge[uid] = set()
             for node in members:
@@ -214,6 +220,9 @@ class SimplicialComplex(Hypergraph):
             self._edge[uid] = members
             self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             self._edge_attr[uid].update(attr)
+
+            if id: # set self._edge_uid correctly
+                update_uid_counter(self)
 
             # add all subfaces
             faces = self._subfaces(members)
@@ -360,9 +369,13 @@ class SimplicialComplex(Hypergraph):
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
             for uid, members in ebunch_to_add.items():
-
+                
                 # check that it does not exist yet (based on members, not ID)
                 if not members or self.has_simplex(members):
+                    continue
+
+                if uid in self._edge.keys(): # check that uid is not present yet
+                    warn(f"uid {uid} already exists, cannot add simplex {members}.")
                     continue
 
                 if max_order != None:
@@ -386,21 +399,7 @@ class SimplicialComplex(Hypergraph):
                 faces = self._subfaces(members)
                 self.add_simplices_from(faces)
 
-            # If we don't set the start of self._edge_uid correctly, it will start at 0,
-            # which will overwrite any existing edges when calling add_edge().  First, we
-            # use the somewhat convoluted float(e).is_integer() instead of using
-            # isinstance(e, int) because there exist integer-like numeric types (such as
-            # np.int32) which fail the isinstance() check.
-            edges_with_int_id = [
-                int(e)
-                for e in self.edges
-                if (not isinstance(e, str)) and float(e).is_integer()
-            ]
-
-            # Then, we set the start at one plus the maximum edge ID that is an integer,
-            # because count() only yields integer IDs.
-            start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
-            self._edge_uid = count(start=start)
+            update_uid_counter(self)
 
             return
 
@@ -471,46 +470,36 @@ class SimplicialComplex(Hypergraph):
                         break
 
                     continue
+            
+            if uid in self._edge.keys(): # check that uid is not present yet
+                warn(f"uid {uid} already exists, cannot add edge.")
+            else: 
 
-            try:
-                self._edge[uid] = frozenset(members)
-            except TypeError as e:
-                raise XGIError("Invalid ebunch format") from e
+                try:
+                    self._edge[uid] = frozenset(members)
+                except TypeError as e:
+                    raise XGIError("Invalid ebunch format") from e
 
-            for n in members:
-                if n not in self._node:
-                    self._node[n] = set()
-                    self._node_attr[n] = self._node_attr_dict_factory()
-                self._node[n].add(uid)
+                for n in members:
+                    if n not in self._node:
+                        self._node[n] = set()
+                        self._node_attr[n] = self._node_attr_dict_factory()
+                    self._node[n].add(uid)
 
-            self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
-            self._edge_attr[uid].update(attr)
-            self._edge_attr[uid].update(eattr)
+                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[uid].update(attr)
+                self._edge_attr[uid].update(eattr)
 
-            # add subfaces
-            faces = self._subfaces(members)
-            self.add_simplices_from(faces)
+                # add subfaces
+                faces = self._subfaces(members)
+                self.add_simplices_from(faces)
 
             try:
                 e = next(new_edges)
             except StopIteration:
 
                 if format2 or format4:
-                    # If we don't set the start of self._edge_uid correctly, it will start at 0,
-                    # which will overwrite any existing edges when calling add_edge().  First, we
-                    # use the somewhat convoluted float(e).is_integer() instead of using
-                    # isinstance(e, int) because there exist integer-like numeric types (such as
-                    # np.int32) which fail the isinstance() check.
-                    edges_with_int_id = [
-                        int(e)
-                        for e in self.edges
-                        if (not isinstance(e, str)) and float(e).is_integer()
-                    ]
-
-                    # Then, we set the start at one plus the maximum edge ID that is an integer,
-                    # because count() only yields integer IDs.
-                    start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
-                    self._edge_uid = count(start=start)
+                    update_uid_counter(self)
 
                 break
 
