@@ -1,6 +1,5 @@
 import pickle
 import tempfile
-from itertools import count
 
 import pytest
 
