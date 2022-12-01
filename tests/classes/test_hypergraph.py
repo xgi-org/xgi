@@ -178,6 +178,18 @@ def test_add_edge():
         with pytest.raises(XGIError):
             H.add_edge(edge)
 
+    # check that uid works correctly
+    H1 = xgi.Hypergraph()
+    H1.add_edge([1, 2], id=1)
+    H1.add_edge([3, 4])
+    H1.add_edge([5, 6])
+    assert H1._edge == {1: {1, 2}, 2: {3, 4}, 3: {5, 6}}
+
+    H2 = xgi.Hypergraph()
+    H2.add_edge([1, 2])
+    H2.add_edge([3, 4])
+    H2.add_edge([5, 6], id=1)
+    assert H2._edge == {0: {1, 2}, 1: {3, 4}}
 
 def test_add_edge_with_id():
     H = xgi.Hypergraph()
