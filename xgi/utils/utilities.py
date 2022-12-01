@@ -1,9 +1,10 @@
 """General utilities."""
 
 from collections import defaultdict
-from itertools import chain, combinations
+from itertools import chain, combinations, count
 
-__all__ = ["dual_dict", "powerset"]
+
+__all__ = ["dual_dict", "powerset", "update_uid_counter"]
 
 
 def dual_dict(edge_dict):
@@ -79,3 +80,32 @@ def powerset(
 
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(start, len(s) + end))
+
+def update_uid_counter(H):
+    """
+    Helper function to make sure the uid counter is set correctly after 
+    adding edges with different methods. 
+
+    If we don't set the start of self._edge_uid correctly, it will start at 0,
+    which will overwrite any existing edges when calling add_edge().  First, we
+    use the somewhat convoluted float(e).is_integer() instead of using
+    isinstance(e, int) because there exist integer-like numeric types (such as
+    np.int32) which fail the isinstance() check.
+
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        Hypergraph of which to update the uid counter
+
+    """
+
+    edges_with_int_id = [
+        int(e)
+        for e in H.edges
+        if (not isinstance(e, str)) and float(e).is_integer()
+    ]
+
+    # Then, we set the start at one plus the maximum edge ID that is an integer,
+    # because count() only yields integer IDs.
+    start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
+    H._edge_uid = count(start=start)

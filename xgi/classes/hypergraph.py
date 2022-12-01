@@ -6,6 +6,7 @@ from warnings import warn
 
 from ..exception import IDNotFound, XGIError
 from .reportviews import EdgeView, NodeView
+from ..utils.utilities import update_uid_counter
 
 __all__ = ["Hypergraph"]
 
@@ -501,21 +502,7 @@ class Hypergraph:
         self._edge_attr[uid].update(attr)
 
         if id: # set self._edge_uid correctly
-            # If we don't set the start of self._edge_uid correctly, it will start at 0,
-            # which will overwrite any existing edges when calling add_edge().  First, we
-            # use the somewhat convoluted float(e).is_integer() instead of using
-            # isinstance(e, int) because there exist integer-like numeric types (such as
-            # np.int32) which fail the isinstance() check.
-            edges_with_int_id = [
-                int(e)
-                for e in self.edges
-                if (not isinstance(e, str)) and float(e).is_integer()
-            ]
-
-            # Then, we set the start at one plus the maximum edge ID that is an integer,
-            # because count() only yields integer IDs.
-            start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
-            self._edge_uid = count(start=start)
+            update_uid_counter(self)
 
     def add_edges_from(self, ebunch_to_add, **attr):
         """Add multiple edges with optional attributes.
@@ -716,21 +703,7 @@ class Hypergraph:
             except StopIteration:
 
                 if format2 or format4:
-                    # If we don't set the start of self._edge_uid correctly, it will start at 0,
-                    # which will overwrite any existing edges when calling add_edge().  First, we
-                    # use the somewhat convoluted float(e).is_integer() instead of using
-                    # isinstance(e, int) because there exist integer-like numeric types (such as
-                    # np.int32) which fail the isinstance() check.
-                    edges_with_int_id = [
-                        int(e)
-                        for e in self.edges
-                        if (not isinstance(e, str)) and float(e).is_integer()
-                    ]
-
-                    # Then, we set the start at one plus the maximum edge ID that is an integer,
-                    # because count() only yields integer IDs.
-                    start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
-                    self._edge_uid = count(start=start)
+                    update_uid_counter(self)
 
                 break
 
@@ -1048,21 +1021,7 @@ class Hypergraph:
         )
         copy._hypergraph = deepcopy(self._hypergraph)
 
-        # If we don't set the start of copy._edge_uid correctly, it will start at 0,
-        # which will overwrite any existing edges when calling add_edge().  First, we
-        # use the somewhat convoluted float(e).is_integer() instead of using
-        # isinstance(e, int) because there exist integer-like numeric types (such as
-        # np.int32) which fail the isinstance() check.
-        edges_with_int_id = [
-            int(e)
-            for e in self.edges
-            if (not isinstance(e, str)) and float(e).is_integer()
-        ]
-
-        # Then, we set the start at one plus the maximum edge ID that is an integer,
-        # because count() only yields integer IDs.
-        start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
-        copy._edge_uid = count(start=start)
+        update_uid_counter(copy)
 
         return copy
 
