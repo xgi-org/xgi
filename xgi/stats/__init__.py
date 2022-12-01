@@ -481,12 +481,13 @@ def nodestat_func(func):
 
     However, `my_degree` is not recognized as a node statistic.
 
-    >>> H.my_degree()
+    >>> H.my_degree() # doctest: +ELLIPSIS
     Traceback (most recent call last):
-    AttributeError: my_degree is not a method of Hypergraph or a recognized NodeStat or EdgeStat
-    >>> H.nodes.my_degree
+    AttributeError:...
+
+    >>> H.nodes.my_degree # doctest: +ELLIPSIS
     Traceback (most recent call last):
-    AttributeError: Stat 'my_degree' not defined
+    AttributeError:...
 
     Use the `nodestat_func` decorator to turn `my_degree` into a valid stat.
 

@@ -57,6 +57,16 @@ def edgelist8():
 
 
 @pytest.fixture
+def edgelist9():
+    return [{1, 2, 3}, {2, 3, 4}, {3, 4, 5}]
+
+
+@pytest.fixture
+def edgelist10():
+    return [{1}, {2}, {3}]
+
+
+@pytest.fixture
 def dict5():
     return {0: {0, 1, 2, 3}, 1: {4}, 2: {5, 6}, 3: {6, 7, 8}}
 
@@ -148,6 +158,29 @@ def attr4():
 @pytest.fixture
 def attr5():
     return {"color": "blue", "name": "fish", "age": 2}
+
+
+@pytest.fixture
+def hyperwithdupsandattrs(attr1, attr2, attr3, attr4, attr5):
+    edges = [
+        ({1, 2}, {"color": "blue"}),
+        ({1, 2}, {"color": "red", "weight": 2}),
+        ({1, 2}, {"color": "yellow"}),
+        ({3, 4, 5}, {"color": "purple"}),
+        ({3, 4, 5}, {"color": "purple", "name": "test"}),
+    ]
+    H = xgi.Hypergraph()
+    H.add_edges_from(edges)
+    H.add_nodes_from(
+        [
+            (1, attr1),
+            (2, attr2),
+            (3, attr3),
+            (4, attr4),
+            (5, attr5),
+        ]
+    )
+    return H
 
 
 @pytest.fixture

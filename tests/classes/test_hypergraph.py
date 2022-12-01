@@ -1,3 +1,5 @@
+import pickle
+import tempfile
 from itertools import count
 
 import pytest
@@ -508,6 +510,42 @@ def test_clear_edges(edgelist1):
     assert len(H.edges) == 0
 
 
+def test_merge_duplicate_edges(hyperwithdupsandattrs):
+    H = hyperwithdupsandattrs.copy()
+    H.merge_duplicate_edges()
+    assert H.num_edges == 2
+    assert set(H.edges) == {0, 3}
+    assert H.edges[0] == {"color": "blue"}
+    assert H.edges[3] == {"color": "purple"}
+
+    H = hyperwithdupsandattrs.copy()
+    H.merge_duplicate_edges(rename="tuple")
+    assert set(H.edges) == {(0, 1, 2), (3, 4)}
+    assert H.edges.members((0, 1, 2)) == {1, 2}
+    assert H.edges.members((3, 4)) == {3, 4, 5}
+
+    H = hyperwithdupsandattrs.copy()
+    H.merge_duplicate_edges(rename="new")
+    assert set(H.edges) == {5, 6}
+    assert H.edges.members(5) == {1, 2}
+    assert H.edges.members(6) == {3, 4, 5}
+
+    H = hyperwithdupsandattrs.copy()
+    H.merge_duplicate_edges(merge_rule="union", multiplicity="mult")
+    assert H.edges[0] == {
+        "color": {"blue", "red", "yellow"},
+        "weight": {2, None},
+        "mult": 3,
+    }
+    assert H.edges[3] == {"color": {"purple"}, "name": {"test", None}, "mult": 2}
+
+    H = hyperwithdupsandattrs.copy()
+    H.merge_duplicate_edges(merge_rule="intersection", multiplicity="multiplicity")
+    assert H.edges[0] == {"color": None, "weight": None, "multiplicity": 3}
+    assert H.edges[3] == {"color": "purple", "name": None, "multiplicity": 2}
+    assert H.edges.attrs("multiplicity").asdict() == {0: 3, 3: 2}
+
+
 def test_issue_198(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     H.clear_edges()
@@ -515,3 +553,19 @@ def test_issue_198(edgelist1):
 
     # this used to fail
     H.add_edge({1, 2, 3})
+
+
+def test_pickle(edgelist1):
+    _, filename = tempfile.mkstemp()
+    H1 = xgi.Hypergraph(edgelist1)
+
+    with open(filename, "wb") as file:
+        pickle.dump(H1, file)
+    with open(filename, "rb") as file:
+        H2 = pickle.load(file)
+
+    assert H1.nodes == H2.nodes
+    assert H1.edges == H2.edges
+    assert [H1.edges.members(id) for id in H1.edges] == [
+        H2.edges.members(id) for id in H2.edges
+    ]
