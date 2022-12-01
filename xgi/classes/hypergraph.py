@@ -989,27 +989,6 @@ class Hypergraph:
         H : Hypergraph
             A copy of the hypergraph.
 
-        Notes
-        -----
-
-        There is no guarantee that performing similar operations on a hypergraph and its
-        copy after the copy is made will yield the same results.  For example,
-
-        >>> import xgi
-        >>> H = xgi.Hypergraph([[1, 2, 3], [4], [5, 6], [6, 7, 8]])
-        >>> H.add_edge([1, 3, 5], id=10)
-        >>> K = H.copy()
-        >>> H.add_edge([2, 4]); K.add_edge([2, 4]);
-        >>> list(H.edges) == list(K.edges)
-        True
-
-        The difference is the IDs assigned to new edges:
-
-        >>> H.edges
-        EdgeView((0, 1, 2, 3, 10, 11))
-        >>> K.edges
-        EdgeView((0, 1, 2, 3, 10, 11))
-
         """
         copy = self.__class__()
         nn = self.nodes
