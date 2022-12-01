@@ -260,7 +260,7 @@ def test_add_edges_from_iterable_of_members():
     assert H.edges.members() == edges
 
 
-def test_add_edges_from_format1():
+def test_add_edges_from_format2():
     edges = [({0, 1}, 0), ({1, 2}, 1), ({2, 3, 4}, 2)]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
@@ -283,8 +283,12 @@ def test_add_edges_from_format1():
     H.add_edge([1, 9, 2])
     assert H.edges.members(101) == {1, 9, 2}
 
+    H1 = xgi.Hypergraph([{1,2}, {2,3,4}])
+    H1.add_edges_from([({1, 3}, 0)])
+    assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
 
-def test_add_edges_from_format2():
+
+def test_add_edges_from_format3():
     edges = [
         ({0, 1}, {"color": "red"}),
         ({1, 2}, {"age": 30}),
@@ -301,7 +305,7 @@ def test_add_edges_from_format2():
     assert H.edges.members(3) == {1, 9, 2}
 
 
-def test_add_edges_from_format3():
+def test_add_edges_from_format4():
     edges = [
         ({0, 1}, "one", {"color": "red"}),
         ({1, 2}, "two", {"age": 30}),
@@ -317,6 +321,10 @@ def test_add_edges_from_format3():
     H.add_edge([1, 9, 2])
     assert H.edges.members(0) == {1, 9, 2}
 
+    H1 = xgi.Hypergraph([{1,2}, {2,3,4}])
+    H1.add_edges_from([({0, 1}, 0, {"color": "red"})])
+    assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
+
 
 def test_add_edges_from_dict():
     edges = {"one": [0, 1], "two": [1, 2], 2: [2, 3, 4]}
@@ -328,6 +336,9 @@ def test_add_edges_from_dict():
     H.add_edge([1, 9, 2])
     assert H.edges.members(3) == {1, 9, 2}
 
+    H1 = xgi.Hypergraph([{1,2}, {2,3,4}])
+    H1.add_edges_from({0: {1, 3}})
+    assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
 
 def test_add_edges_from_attr_precedence():
     H = xgi.Hypergraph()
