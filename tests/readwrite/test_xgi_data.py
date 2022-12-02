@@ -4,6 +4,7 @@ from xgi import load_xgi_data
 from xgi.exception import XGIError
 import time
 
+
 @pytest.mark.webtest
 @pytest.mark.slow
 def test_load_xgi_data():
@@ -28,5 +29,3 @@ def test_load_xgi_data():
 
     with pytest.raises(XGIError):
         load_xgi_data("test")
-    
-
