@@ -149,7 +149,16 @@ def draw(
 
     if isinstance(H, SimplicialComplex):
         draw_xgi_simplices(
-            H, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings
+            H,
+            pos,
+            ax,
+            dyad_color,
+            dyad_lw,
+            edge_fc,
+            max_order,
+            settings,
+            hyperedge_labels,
+            **kwargs,
         )
     elif isinstance(H, Hypergraph):
         draw_xgi_hyperedges(
@@ -396,7 +405,18 @@ def draw_xgi_hyperedges(
         draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
 
 
-def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings):
+def draw_xgi_simplices(
+    SC,
+    pos,
+    ax,
+    dyad_color,
+    dyad_lw,
+    edge_fc,
+    max_order,
+    settings,
+    hyperedge_labels,
+    **kwargs,
+):
     """Draw maximal simplices and pairwise faces.
 
     Parameters
@@ -422,12 +442,17 @@ def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, set
         use the colormap specified with edge_fc_cmap.
     max_order : int
         Maximum of hyperedges to plot.
+    hyperedge_labels : bool, or dict
+        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * min_dyad_lw
         * max_dyad_lw
         * dyad_color_cmap
         * edge_fc_cmap
+    kwargs : optional keywords
+        See `draw_hyperedge_labels` for a description of optional keywords.
+
 
     Raises
     ------
@@ -481,6 +506,17 @@ def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, set
                     x_coords, y_coords, color=dyad_color[id], lw=dyad_lw[id]
                 )
                 ax.add_line(line)
+
+    if hyperedge_labels:
+        # Get all valid keywords by inspecting the signatures of draw_node_labels
+        valid_label_kwds = signature(draw_hyperedge_labels).parameters.keys()
+        # Remove the arguments of this function (draw_networkx)
+        valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "hyperedge_labels"}
+        if any([k not in valid_label_kwds for k in kwargs]):
+            invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
+            raise ValueError(f"Received invalid argument(s): {invalid_args}")
+        label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
+        draw_hyperedge_labels(H_, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
 
 
 def _scalar_arg_to_dict(arg, ids, min_val, max_val):
