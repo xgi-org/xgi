@@ -32,8 +32,8 @@ def draw(
     node_lw=1,
     node_size=15,
     max_order=None,
-    with_node_labels=False,
-    with_hyperedge_labels=False,
+    node_labels=False,
+    hyperedge_labels=False,
     **kwargs,
 ):
     """Draw hypergraph or simplicial complex.
@@ -83,10 +83,10 @@ def draw(
         linear interpolation defined between min_node_size and max_node_size.
     max_order : int (default=None)
         Maximum of hyperedges to plot. If None (default), plots all orders.
-    with_node_labels : bool (default=True)
-        Set to True to draw labels on the nodes.
-    with_hyperedge_labels : bool (default=True)
-        Set to True to draw labels on the hyperedges.
+    node_labels : bool, or dict (default=False)
+        If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
+    hyperedge_labels : bool, or dict (default=False)
+        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
         * min_node_size
@@ -107,6 +107,13 @@ def draw(
     >>> H.add_edges_from([[1,2,3],[3,4],[4,5,6,7],[7,8,9,10,11]])
     >>> xgi.draw(H, pos=xgi.barycenter_spring_layout(H))
 
+    See Also
+    --------
+    draw_xgi_nodes
+    draw_xgi_hyperedges
+    draw_xgi_simplices
+    draw_node_labels
+    draw_hyperedge_labels
     """
     settings = {
         "min_node_size": 10.0,
@@ -154,7 +161,7 @@ def draw(
             edge_fc,
             max_order,
             settings,
-            with_hyperedge_labels,
+            hyperedge_labels,
             **kwargs,
         )
     else:
@@ -170,7 +177,7 @@ def draw(
         node_size,
         max_order,
         settings,
-        with_node_labels,
+        node_labels,
         **kwargs,
     )
 
@@ -185,7 +192,7 @@ def draw_xgi_nodes(
     node_size,
     zorder,
     settings,
-    with_node_labels=True,
+    node_labels,
     **kwargs,
 ):
     """Draw the nodes of a hypergraph
@@ -219,8 +226,8 @@ def draw_xgi_nodes(
         linear interpolation defined between min_node_size and max_node_size.
     zorder : int
         The layer on which to draw the nodes.
-    with_node_labels : bool (default=True)
-        Set to True to draw labels on the nodes.
+    node_labels : bool, or dict
+        If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * min_node_size
@@ -231,6 +238,14 @@ def draw_xgi_nodes(
         * node_ec_cmap
     kwargs : optional keywords
         See `draw_node_labels` for a description of optional keywords.
+
+    See Also
+    --------
+    draw
+    draw_xgi_hyperedges
+    draw_xgi_simplices
+    draw_node_labels
+    draw_hyperedge_labels
     """
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
     node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
@@ -257,10 +272,16 @@ def draw_xgi_nodes(
     )
     ax.scatter(x=x, y=y, s=s, c=c, edgecolors=ec, linewidths=lw, zorder=zorder)
 
-    if with_node_labels:
+    if node_labels:
+        # Get all valid keywords by inspecting the signatures of draw_node_labels
         valid_label_kwds = signature(draw_node_labels).parameters.keys()
+        # Remove the arguments of this function (draw_networkx)
+        valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "node_labels"}
+        if any([k not in valid_label_kwds for k in kwargs]):
+            invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
+            raise ValueError(f"Received invalid argument(s): {invalid_args}")
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
-        draw_node_labels(H, pos, ax_nodes=ax, **label_kwds)
+        draw_node_labels(H, pos, node_labels, ax_nodes=ax, **label_kwds)
 
 
 def draw_xgi_hyperedges(
@@ -272,7 +293,7 @@ def draw_xgi_hyperedges(
     edge_fc,
     max_order,
     settings,
-    with_hyperedge_labels=True,
+    hyperedge_labels,
     **kwargs,
 ):
     """Draw hyperedges.
@@ -300,8 +321,8 @@ def draw_xgi_hyperedges(
         use the colormap specified with edge_fc_cmap.
     max_order : int
         Maximum of hyperedges to plot.
-    with_hyperedge_labels : bool (default=True)
-        Set to True to draw labels on the hyperedges.
+    hyperedge_labels : bool, or dict
+        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * min_dyad_lw
@@ -315,6 +336,14 @@ def draw_xgi_hyperedges(
     ------
     XGIError
         If a SimplicialComplex is passed.
+
+    See Also
+    --------
+    draw
+    draw_xgi_nodes
+    draw_xgi_simplices
+    draw_node_labels
+    draw_hyperedge_labels
     """
     dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
     dyad_lw = _scalar_arg_to_dict(
@@ -355,10 +384,16 @@ def draw_xgi_hyperedges(
             )
             ax.add_patch(obj)
 
-    if with_hyperedge_labels:
+    if hyperedge_labels:
+        # Get all valid keywords by inspecting the signatures of draw_node_labels
         valid_label_kwds = signature(draw_hyperedge_labels).parameters.keys()
+        # Remove the arguments of this function (draw_networkx)
+        valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "hyperedge_labels"}
+        if any([k not in valid_label_kwds for k in kwargs]):
+            invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
+            raise ValueError(f"Received invalid argument(s): {invalid_args}")
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
-        draw_hyperedge_labels(H, pos, ax_edges=ax, **label_kwds)
+        draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
 
 
 def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, settings):
@@ -397,7 +432,15 @@ def draw_xgi_simplices(SC, pos, ax, dyad_color, dyad_lw, edge_fc, max_order, set
     Raises
     ------
     XGIError
-        If a SimplicialComplex is passed.
+        If a Hypergraph is passed.
+
+    See Also
+    --------
+    draw
+    draw_xgi_nodes
+    draw_xgi_hyperedges
+    draw_node_labels
+    draw_hyperedge_labels
     """
     # Plot only the maximal simplices, thus let's convert the SC to H
     H_ = convert.from_simplicial_complex_to_hypergraph(SC)
@@ -536,7 +579,7 @@ def _CCW_sort(p):
 def draw_node_labels(
     H,
     pos,
-    labels_nodes=None,
+    node_labels=False,
     font_size_nodes=10,
     font_color_nodes="black",
     font_family_nodes="sans-serif",
@@ -553,12 +596,10 @@ def draw_node_labels(
     Parameters
     ----------
     H : Hypergraph or SimplicialComplex.
-    pos : dict (default=None)
-        If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
-        If None (default), use the `barycenter_spring_layout` to compute the positions.
-    labels_nodes : dict (default=None)
-        Node labels in a dictionary that must contain (node_id: label) pairs.
-        If None (default), use the node ids.
+    pos : dict
+        Dictionary of positions node_id:(x,y).
+    node_labels : bool, or dict (default=False)
+        If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
     font_size_nodes : int (default=10)
         Font size for text labels.
     font_color_nodes : str (default='black')
@@ -584,25 +625,33 @@ def draw_node_labels(
     -------
     dict
         `dict` of labels keyed by node id.
+
+    See Also
+    --------
+    draw
+    draw_xgi_nodes
+    draw_xgi_hyperedges
+    draw_xgi_simplices
+    draw_hyperedge_labels
     """
     if ax_nodes is None:
         ax = plt.gca()
     else:
         ax = ax_nodes
 
-    if labels_nodes is None:
-        labels_nodes = {id: id for id in H.nodes}
+    if node_labels is True:
+        node_labels = {id: id for id in H.nodes}
 
     # Plot the labels in the last layer
     zorder = max_edge_order(H) + 1
 
-    # TODO: try: except: print good error message
-
     text_items = {}
-    for id, label in labels_nodes.items():
+    for id, label in node_labels.items():
         (x, y) = pos[id]
+
         if not isinstance(label, str):
             label = str(label)
+
         t = ax.text(
             x,
             y,
@@ -627,7 +676,7 @@ def draw_node_labels(
 def draw_hyperedge_labels(
     H,
     pos,
-    labels_edges=None,
+    hyperedge_labels=False,
     font_size_edges=10,
     font_color_edges="black",
     font_family_edges="sans-serif",
@@ -637,20 +686,18 @@ def draw_hyperedge_labels(
     horizontalalignment_edges="center",
     verticalalignment_edges="center",
     ax_edges=None,
-    rotate_edges=True,
+    rotate_edges=False,
     clip_on_edges=True,
 ):
     """Draw hyperedge labels on the hypegraph or simplicial complex.
 
     Parameters
     ----------
-    H : Hypergraph or SimplicialComplex.
-    pos : dict (default=None)
-        If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
-        If None (default), use the `barycenter_spring_layout` to compute the positions.
-    labels_edges : dict (default=None)
-        Hyperedge labels in a dictionary that must contain (edge_id: label) pairs.
-        If None (default), use the hyperedge ids.
+    H : Hypergraph.
+    pos : dict
+        Dictionary of positions node_id:(x,y).
+    hyperedge_labels : bool, or dict (default=False)
+        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
     font_size_edges : int (default=10)
         Font size for text labels.
     font_color_edges : str (default='black')
@@ -669,7 +716,7 @@ def draw_hyperedge_labels(
         Vertical alignment {'center', 'top', 'bottom', 'baseline', 'center_baseline'}.
     ax_edges : matplotlib.pyplot.axes (default=None)
         Draw the graph in the specified Matplotlib axes.
-    rotate_edges : bool (default=True)
+    rotate_edges : bool (default=False)
         Rotate edge labels for dyadic links to lie parallel to edges.
     clip_on_edges: bool (default=True)
         Turn on clipping of hyperedge labels at axis boundaries.
@@ -678,32 +725,40 @@ def draw_hyperedge_labels(
     -------
     dict
         `dict` of labels keyed by hyperedge id.
+
+    See Also
+    --------
+    draw
+    draw_xgi_nodes
+    draw_xgi_hyperedges
+    draw_xgi_simplices
+    draw_node_labels
     """
     if ax_edges is None:
         ax = plt.gca()
     else:
         ax = ax_edges
 
-    if labels_edges is None:
-        labels_edges = {id: id for id in H.edges}
+    if hyperedge_labels is True:
+        hyperedge_labels = {id: id for id in H.edges}
 
     text_items = {}
-    for id, label in labels_edges.items():
+    for id, label in hyperedge_labels.items():
         he = H.edges.members(id)
         coordinates = [[pos[n][0], pos[n][1]] for n in he]
         x, y = np.mean(coordinates, axis=0)
 
         if len(he) == 2:
+            # Rotate edge labels for dyadic links to lie parallel to edges
             if rotate_edges:
                 x_diff, y_diff = np.subtract(coordinates[1], coordinates[0])
-                # in degrees
                 angle = np.arctan2(y_diff, x_diff) / (2.0 * np.pi) * 360
-                # make label orientation "right-side-up"
+                # Make label orientation "right-side-up"
                 if angle > 90:
                     angle -= 180
                 if angle < -90:
                     angle += 180
-                # transform data coordinate angle to screen coordinate angle
+                # Transform data coordinate angle to screen coordinate angle
                 xy = np.array((x, y))
                 trans_angle = ax.transData.transform_angles(
                     np.array((angle,)), xy.reshape((1, 2))
@@ -713,14 +768,14 @@ def draw_hyperedge_labels(
         else:
             trans_angle = 0.0
 
-        # use default box of white with white border
+        # Use default box of white with white border
         if bbox_edges is None:
             bbox = dict(boxstyle="round", ec=(1.0, 1.0, 1.0), fc=(1.0, 1.0, 1.0))
         else:
             bbox = bbox_edges
 
         if not isinstance(label, str):
-            label = str(label)  # this makes "1" and 1 labeled the same
+            label = str(label)
 
         t = ax.text(
             x,
