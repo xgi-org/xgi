@@ -6,6 +6,7 @@ from itertools import count
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError
+from ..utils.utilities import update_uid_counter
 from .reportviews import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
@@ -529,7 +530,12 @@ class Hypergraph:
         if not members:
             raise XGIError("Cannot add an empty edge")
 
+        if id in self._edge.keys():  # check that uid is not present yet
+            warn(f"uid {id} already exists, cannot add edge {members}")
+            return
+
         uid = next(self._edge_uid) if not id else id
+
         self._edge[uid] = set()
         for node in members:
             if node not in self._node:
@@ -540,6 +546,9 @@ class Hypergraph:
 
         self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
+
+        if id:  # set self._edge_uid correctly
+            update_uid_counter(self)
 
     def add_edges_from(self, ebunch_to_add, **attr):
         """Add multiple edges with optional attributes.
@@ -642,6 +651,9 @@ class Hypergraph:
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
             for uid, members in ebunch_to_add.items():
+                if uid in self._edge.keys():  # check that uid is not present yet
+                    warn(f"uid {uid} already exists, cannot add edge ")
+                    continue
                 try:
                     self._edge[uid] = set(members)
                 except TypeError as e:
@@ -652,6 +664,9 @@ class Hypergraph:
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node[n].add(uid)
                 self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+
+            update_uid_counter(self)
+
             return
 
         # in formats 1-4 we only know that ebunch_to_add is an iterable, so we iterate
@@ -696,24 +711,32 @@ class Hypergraph:
             elif format4:
                 members, uid, eattr = e[0], e[1], e[2]
 
-            try:
-                self._edge[uid] = set(members)
-            except TypeError as e:
-                raise XGIError("Invalid ebunch format") from e
+            if uid in self._edge.keys():  # check that uid is not present yet
+                warn(f"uid {uid} already exists, cannot add edge.")
+            else:
 
-            for n in members:
-                if n not in self._node:
-                    self._node[n] = set()
-                    self._node_attr[n] = self._node_attr_dict_factory()
-                self._node[n].add(uid)
+                try:
+                    self._edge[uid] = set(members)
+                except TypeError as e:
+                    raise XGIError("Invalid ebunch format") from e
 
-            self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
-            self._edge_attr[uid].update(attr)
-            self._edge_attr[uid].update(eattr)
+                for n in members:
+                    if n not in self._node:
+                        self._node[n] = set()
+                        self._node_attr[n] = self._node_attr_dict_factory()
+                    self._node[n].add(uid)
+
+                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[uid].update(attr)
+                self._edge_attr[uid].update(eattr)
 
             try:
                 e = next(new_edges)
             except StopIteration:
+
+                if format2 or format4:
+                    update_uid_counter(self)
+
                 break
 
     def add_weighted_edges_from(self, ebunch, weight="weight", **attr):
@@ -1161,27 +1184,6 @@ class Hypergraph:
         H : Hypergraph
             A copy of the hypergraph.
 
-        Notes
-        -----
-
-        There is no guarantee that performing similar operations on a hypergraph and its
-        copy after the copy is made will yield the same results.  For example,
-
-        >>> import xgi
-        >>> H = xgi.Hypergraph([[1, 2, 3], [4], [5, 6], [6, 7, 8]])
-        >>> H.add_edge([1, 3, 5], id=10)
-        >>> K = H.copy()
-        >>> H.add_edge([2, 4]); K.add_edge([2, 4]);
-        >>> list(H.edges) == list(K.edges)
-        False
-
-        The difference is the IDs assigned to new edges:
-
-        >>> H.edges
-        EdgeView((0, 1, 2, 3, 10, 4))
-        >>> K.edges
-        EdgeView((0, 1, 2, 3, 10, 11))
-
         """
         copy = self.__class__()
         nn = self.nodes
@@ -1193,17 +1195,7 @@ class Hypergraph:
         )
         copy._hypergraph = deepcopy(self._hypergraph)
 
-        # If we don't set the start of copy._edge_uid correctly, it will start at 0,
-        # which will overwrite any existing edges when calling add_edge().  First, we
-        # use the somewhat convoluted float(e).is_integer() instead of using
-        # isinstance(e, int) because there exist integer-like numeric types (such as
-        # np.int32) which fail the isinstance() check.
-        edges_with_int_id = [int(e) for e in self.edges if float(e).is_integer()]
-
-        # Then, we set the start at one plus the maximum edge ID that is an integer,
-        # because count() only yields integer IDs.
-        start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
-        copy._edge_uid = count(start=start)
+        update_uid_counter(copy)
 
         return copy
 

@@ -179,6 +179,19 @@ def test_add_edge():
         with pytest.raises(XGIError):
             H.add_edge(edge)
 
+    # check that uid works correctly
+    H1 = xgi.Hypergraph()
+    H1.add_edge([1, 2], id=1)
+    H1.add_edge([3, 4])
+    H1.add_edge([5, 6])
+    assert H1._edge == {1: {1, 2}, 2: {3, 4}, 3: {5, 6}}
+
+    H2 = xgi.Hypergraph()
+    H2.add_edge([1, 2])
+    H2.add_edge([3, 4])
+    H2.add_edge([5, 6], id=1)
+    assert H2._edge == {0: {1, 2}, 1: {3, 4}}
+
 
 def test_add_edge_with_id():
     H = xgi.Hypergraph()
@@ -249,7 +262,7 @@ def test_add_edges_from_iterable_of_members():
     assert H.edges.members() == edges
 
 
-def test_add_edges_from_format1():
+def test_add_edges_from_format2():
     edges = [({0, 1}, 0), ({1, 2}, 1), ({2, 3, 4}, 2)]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
@@ -268,8 +281,16 @@ def test_add_edges_from_format1():
     assert list(H.edges) == [e[1] for e in edges]
     assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
 
+    # check counter
+    H.add_edge([1, 9, 2])
+    assert H.edges.members(101) == {1, 9, 2}
 
-def test_add_edges_from_format2():
+    H1 = xgi.Hypergraph([{1, 2}, {2, 3, 4}])
+    H1.add_edges_from([({1, 3}, 0)])
+    assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
+
+
+def test_add_edges_from_format3():
     edges = [
         ({0, 1}, {"color": "red"}),
         ({1, 2}, {"age": 30}),
@@ -281,9 +302,12 @@ def test_add_edges_from_format2():
     assert H.edges.members() == [e[0] for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][1]
+    # check counter
+    H.add_edge([1, 9, 2])
+    assert H.edges.members(3) == {1, 9, 2}
 
 
-def test_add_edges_from_format3():
+def test_add_edges_from_format4():
     edges = [
         ({0, 1}, "one", {"color": "red"}),
         ({1, 2}, "two", {"age": 30}),
@@ -295,14 +319,28 @@ def test_add_edges_from_format3():
     assert H.edges.members() == [e[0] for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][2]
+    # check counter
+    H.add_edge([1, 9, 2])
+    assert H.edges.members(0) == {1, 9, 2}
+
+    H1 = xgi.Hypergraph([{1, 2}, {2, 3, 4}])
+    H1.add_edges_from([({0, 1}, 0, {"color": "red"})])
+    assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
 
 
 def test_add_edges_from_dict():
-    edges = {"one": [0, 1], "two": [1, 2], "three": [2, 3, 4]}
+    edges = {"one": [0, 1], "two": [1, 2], 2: [2, 3, 4]}
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
-    assert list(H.edges) == ["one", "two", "three"]
+    assert list(H.edges) == ["one", "two", 2]
     assert H.edges.members() == [set(edges[e]) for e in edges]
+    # check counter
+    H.add_edge([1, 9, 2])
+    assert H.edges.members(3) == {1, 9, 2}
+
+    H1 = xgi.Hypergraph([{1, 2}, {2, 3, 4}])
+    H1.add_edges_from({0: {1, 3}})
+    assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
 
 
 def test_add_edges_from_attr_precedence():
@@ -379,6 +417,14 @@ def test_copy(edgelist1):
     assert list(copy.edges) == list(H.edges)
     assert list(copy.edges.members()) == list(H.edges.members())
     assert H._hypergraph == copy._hypergraph
+
+    H1 = xgi.Hypergraph()
+    H1.add_edge((1, 2), id="x")
+    copy2 = H1.copy()  # does not throw error because of str id
+    assert list(copy2.nodes) == list(H1.nodes)
+    assert list(copy2.edges) == list(H1.edges)
+    assert list(copy2.edges.members()) == list(H1.edges.members())
+    assert H1._hypergraph == copy2._hypergraph
 
 
 def test_copy_issue128():

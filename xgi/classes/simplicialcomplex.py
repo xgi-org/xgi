@@ -8,8 +8,10 @@ Multi-simplices are not allowed.
 
 from collections.abc import Hashable, Iterable
 from itertools import combinations, count
+from warnings import warn
 
 from ..exception import XGIError
+from ..utils.utilities import update_uid_counter
 from .hypergraph import Hypergraph
 from .reportviews import EdgeView, NodeView
 
@@ -201,6 +203,10 @@ class SimplicialComplex(Hypergraph):
 
         if not self.has_simplex(members):
 
+            if id in self._edge.keys():  # check that uid is not present yet
+                warn(f"uid {id} already exists, cannot add simplex {members}")
+                return
+
             uid = next(self._edge_uid) if not id else id
             self._edge[uid] = set()
             for node in members:
@@ -214,6 +220,9 @@ class SimplicialComplex(Hypergraph):
             self._edge[uid] = members
             self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
             self._edge_attr[uid].update(attr)
+
+            if id:  # set self._edge_uid correctly
+                update_uid_counter(self)
 
             # add all subfaces
             faces = self._subfaces(members)
@@ -365,6 +374,10 @@ class SimplicialComplex(Hypergraph):
                 if not members or self.has_simplex(members):
                     continue
 
+                if uid in self._edge.keys():  # check that uid is not present yet
+                    warn(f"uid {uid} already exists, cannot add simplex {members}.")
+                    continue
+
                 if max_order != None:
                     if len(members) > max_order + 1:
                         combos = combinations(members, max_order + 1)
@@ -385,6 +398,8 @@ class SimplicialComplex(Hypergraph):
                 # add subfaces
                 faces = self._subfaces(members)
                 self.add_simplices_from(faces)
+
+            update_uid_counter(self)
 
             return
 
@@ -456,28 +471,36 @@ class SimplicialComplex(Hypergraph):
 
                     continue
 
-            try:
-                self._edge[uid] = frozenset(members)
-            except TypeError as e:
-                raise XGIError("Invalid ebunch format") from e
+            if uid in self._edge.keys():  # check that uid is not present yet
+                warn(f"uid {uid} already exists, cannot add edge.")
+            else:
 
-            for n in members:
-                if n not in self._node:
-                    self._node[n] = set()
-                    self._node_attr[n] = self._node_attr_dict_factory()
-                self._node[n].add(uid)
+                try:
+                    self._edge[uid] = frozenset(members)
+                except TypeError as e:
+                    raise XGIError("Invalid ebunch format") from e
 
-            self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
-            self._edge_attr[uid].update(attr)
-            self._edge_attr[uid].update(eattr)
+                for n in members:
+                    if n not in self._node:
+                        self._node[n] = set()
+                        self._node_attr[n] = self._node_attr_dict_factory()
+                    self._node[n].add(uid)
 
-            # add subfaces
-            faces = self._subfaces(members)
-            self.add_simplices_from(faces)
+                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[uid].update(attr)
+                self._edge_attr[uid].update(eattr)
+
+                # add subfaces
+                faces = self._subfaces(members)
+                self.add_simplices_from(faces)
 
             try:
                 e = next(new_edges)
             except StopIteration:
+
+                if format2 or format4:
+                    update_uid_counter(self)
+
                 break
 
     def close(self):
