@@ -29,4 +29,3 @@ def test_random_seed():
 
     assert S1._edge != S2._edge
     assert S2._edge == S3._edge
-
