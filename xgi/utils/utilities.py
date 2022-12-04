@@ -81,7 +81,7 @@ def powerset(
     return chain.from_iterable(combinations(s, r) for r in range(start, len(s) + end))
 
 
-def update_uid_counter(H):
+def update_uid_counter(H, id):
     """
     Helper function to make sure the uid counter is set correctly after
     adding edges with different methods.
@@ -98,16 +98,16 @@ def update_uid_counter(H):
         Hypergraph of which to update the uid counter
 
     """
-
-    edges_with_int_id = [
-        int(e)
-        for e in H.edges
-        if (not isinstance(e, str))
-        and not isinstance(e, tuple)
-        and float(e).is_integer()
-    ]
-
+    old_id = next(H._edge_uid)
+    if (
+        not isinstance(id, str)
+        and not isinstance(id, tuple)
+        and float(id).is_integer()
+        and old_id < id
+    ):
+        start = int(id) + 1
+    else:
+        start = old_id
+    H._edge_uid = count(start=start)
     # Then, we set the start at one plus the maximum edge ID that is an integer,
     # because count() only yields integer IDs.
-    start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
-    H._edge_uid = count(start=start)
