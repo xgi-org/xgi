@@ -3,7 +3,6 @@ import pytest
 from numpy.linalg import norm
 
 import xgi
-from xgi.exception import XGIError
 
 
 @pytest.mark.slow

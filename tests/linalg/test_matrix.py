@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-import scipy as sp
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import norm as spnorm
 
