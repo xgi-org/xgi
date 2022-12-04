@@ -444,6 +444,9 @@ def draw_xgi_simplices(
         Maximum of hyperedges to plot.
     hyperedge_labels : bool, or dict
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
+        Note, we plot only the maximal simplices so if you pass a dict be careful to match its keys
+        with the new edge ids in the converted SimplicialComplex. These may differ from the
+        edge ids in the given SC.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * min_dyad_lw
