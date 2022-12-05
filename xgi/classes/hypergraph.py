@@ -665,7 +665,7 @@ class Hypergraph:
                     self._node[n].add(id)
                 self._edge_attr[id] = self._hyperedge_attr_dict_factory()
 
-            update_uid_counter(self, id)
+                update_uid_counter(self, id)
 
             return
 
@@ -736,7 +736,6 @@ class Hypergraph:
 
                 if format2 or format4:
                     update_uid_counter(self, id)
-
                 break
 
     def add_weighted_edges_from(self, ebunch, weight="weight", **attr):
