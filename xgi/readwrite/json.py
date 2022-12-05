@@ -42,7 +42,7 @@ def write_json(H, path):
         str(id): [str(n) for n in H.edges.members(id)] for id in H.edges
     }
 
-    datastring = json.dumps(data)
+    datastring = json.dumps(data, indent=2)
 
     with open(path, "w") as output_file:
         output_file.write(datastring)
