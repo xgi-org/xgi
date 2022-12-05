@@ -399,7 +399,7 @@ class SimplicialComplex(Hypergraph):
                 faces = self._subfaces(members)
                 self.add_simplices_from(faces)
 
-            update_uid_counter(self, id)
+                update_uid_counter(self, id)
 
             return
 
