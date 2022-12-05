@@ -1,7 +1,7 @@
 """Base class for undirected hypergraphs."""
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
-from copy import deepcopy
+from copy import copy, deepcopy
 from itertools import count
 from warnings import warn
 
@@ -548,7 +548,7 @@ class Hypergraph:
         self._edge_attr[uid].update(attr)
 
         if id:  # set self._edge_uid correctly
-            update_uid_counter(self)
+            update_uid_counter(self, id)
 
     def add_edges_from(self, ebunch_to_add, **attr):
         """Add multiple edges with optional attributes.
@@ -650,22 +650,22 @@ class Hypergraph:
         """
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
-            for uid, members in ebunch_to_add.items():
-                if uid in self._edge.keys():  # check that uid is not present yet
-                    warn(f"uid {uid} already exists, cannot add edge ")
+            for id, members in ebunch_to_add.items():
+                if id in self._edge.keys():  # check that uid is not present yet
+                    warn(f"uid {id} already exists, cannot add edge ")
                     continue
                 try:
-                    self._edge[uid] = set(members)
+                    self._edge[id] = set(members)
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
                 for n in members:
                     if n not in self._node:
                         self._node[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].add(uid)
-                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+                    self._node[n].add(id)
+                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
 
-            update_uid_counter(self)
+                update_uid_counter(self, id)
 
             return
 
@@ -703,20 +703,20 @@ class Hypergraph:
         e = first_edge
         while True:
             if format1:
-                members, uid, eattr = e, next(self._edge_uid), {}
+                members, id, eattr = e, next(self._edge_uid), {}
             elif format2:
-                members, uid, eattr = e[0], e[1], {}
+                members, id, eattr = e[0], e[1], {}
             elif format3:
-                members, uid, eattr = e[0], next(self._edge_uid), e[1]
+                members, id, eattr = e[0], next(self._edge_uid), e[1]
             elif format4:
-                members, uid, eattr = e[0], e[1], e[2]
+                members, id, eattr = e[0], e[1], e[2]
 
-            if uid in self._edge.keys():  # check that uid is not present yet
-                warn(f"uid {uid} already exists, cannot add edge.")
+            if id in self._edge.keys():  # check that uid is not present yet
+                warn(f"uid {id} already exists, cannot add edge.")
             else:
 
                 try:
-                    self._edge[uid] = set(members)
+                    self._edge[id] = set(members)
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
 
@@ -724,19 +724,18 @@ class Hypergraph:
                     if n not in self._node:
                         self._node[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].add(uid)
+                    self._node[n].add(id)
 
-                self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
-                self._edge_attr[uid].update(attr)
-                self._edge_attr[uid].update(eattr)
+                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[id].update(attr)
+                self._edge_attr[id].update(eattr)
 
             try:
                 e = next(new_edges)
             except StopIteration:
 
                 if format2 or format4:
-                    update_uid_counter(self)
-
+                    update_uid_counter(self, id)
                 break
 
     def add_weighted_edges_from(self, ebunch, weight="weight", **attr):
@@ -1185,19 +1184,19 @@ class Hypergraph:
             A copy of the hypergraph.
 
         """
-        copy = self.__class__()
+        cp = self.__class__()
         nn = self.nodes
-        copy.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
         ee = self.edges
-        copy.add_edges_from(
+        cp.add_edges_from(
             (e, id, deepcopy(self.edges[id]))
             for id, e in ee.members(dtype=dict).items()
         )
-        copy._hypergraph = deepcopy(self._hypergraph)
+        cp._hypergraph = deepcopy(self._hypergraph)
 
-        update_uid_counter(copy)
+        cp._edge_uid = copy(self._edge_uid)
 
-        return copy
+        return cp
 
     def dual(self):
         """The dual of the hypergraph.

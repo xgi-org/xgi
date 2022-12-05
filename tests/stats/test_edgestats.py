@@ -1,8 +1,6 @@
-import pandas as pd
 import pytest
 
 import xgi
-from xgi.exception import IDNotFound
 
 
 def test_filterby_wrong_stat():

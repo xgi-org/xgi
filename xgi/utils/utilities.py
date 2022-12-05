@@ -81,10 +81,10 @@ def powerset(
     return chain.from_iterable(combinations(s, r) for r in range(start, len(s) + end))
 
 
-def update_uid_counter(H):
+def update_uid_counter(H, new_id):
     """
     Helper function to make sure the uid counter is set correctly after
-    adding edges with different methods.
+    adding an edge with a user-provided ID.
 
     If we don't set the start of self._edge_uid correctly, it will start at 0,
     which will overwrite any existing edges when calling add_edge().  First, we
@@ -96,18 +96,22 @@ def update_uid_counter(H):
     ----------
     H : xgi.Hypergraph
         Hypergraph of which to update the uid counter
+    id : any hashable type
+        User-provided ID.
 
     """
-
-    edges_with_int_id = [
-        int(e)
-        for e in H.edges
-        if (not isinstance(e, str))
-        and not isinstance(e, tuple)
-        and float(e).is_integer()
-    ]
-
-    # Then, we set the start at one plus the maximum edge ID that is an integer,
-    # because count() only yields integer IDs.
-    start = max(edges_with_int_id) + 1 if edges_with_int_id else 0
+    uid = next(H._edge_uid)
+    if (
+        not isinstance(new_id, str)
+        and not isinstance(new_id, tuple)
+        and float(new_id).is_integer()
+        and uid < new_id
+    ):
+        # tuple comes from merging edges and doesn't have as as_integer() method.
+        start = int(new_id) + 1
+        # we set the start at one plus the maximum edge ID that is an integer,
+        # because count() only yields integer IDs.
+    else:
+        start = uid
     H._edge_uid = count(start=start)
+

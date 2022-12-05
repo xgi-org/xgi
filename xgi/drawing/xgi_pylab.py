@@ -1,8 +1,8 @@
 """Draw hypergraphs and simplicial complexes with matplotlib."""
 
 from collections.abc import Iterable
-from itertools import combinations
 from inspect import signature
+from itertools import combinations
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -260,7 +260,10 @@ def draw_xgi_nodes(
     node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
     node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_ec_cmap"])
     node_lw = _scalar_arg_to_dict(
-        node_lw, H.nodes, settings["min_node_lw"], settings["max_node_lw"],
+        node_lw,
+        H.nodes,
+        settings["min_node_lw"],
+        settings["max_node_lw"],
     )
     node_size = _scalar_arg_to_dict(
         node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
@@ -475,7 +478,10 @@ def draw_xgi_simplices(
 
     dyad_color = _color_arg_to_dict(dyad_color, H_.edges, settings["dyad_color_cmap"])
     dyad_lw = _scalar_arg_to_dict(
-        dyad_lw, H_.edges, settings["min_dyad_lw"], settings["max_dyad_lw"],
+        dyad_lw,
+        H_.edges,
+        settings["min_dyad_lw"],
+        settings["max_dyad_lw"],
     )
 
     edge_fc = _color_arg_to_dict(edge_fc, H_.edges, settings["edge_fc_cmap"])
