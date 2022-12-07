@@ -392,11 +392,11 @@ class SimplicialComplex(Hypergraph):
                     self._node[n].add(id)
                 self._edge_attr[id] = self._hyperedge_attr_dict_factory()
 
+                update_uid_counter(self, id)
+
                 # add subfaces
                 faces = self._subfaces(members)
                 self.add_simplices_from(faces)
-
-                update_uid_counter(self, id)
 
             return
 
@@ -487,6 +487,9 @@ class SimplicialComplex(Hypergraph):
                 self._edge_attr[id].update(attr)
                 self._edge_attr[id].update(eattr)
 
+                if format2 or format4:
+                    update_uid_counter(self, id)
+
                 # add subfaces
                 faces = self._subfaces(members)
                 self.add_simplices_from(faces)
@@ -494,9 +497,6 @@ class SimplicialComplex(Hypergraph):
             try:
                 e = next(new_edges)
             except StopIteration:
-
-                if format2 or format4:
-                    update_uid_counter(self, id)
 
                 break
 
