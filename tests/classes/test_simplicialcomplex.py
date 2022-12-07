@@ -7,18 +7,25 @@ from xgi.exception import XGIError
 def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     S_list = xgi.SimplicialComplex(edgelist5)
     S_df = xgi.SimplicialComplex(dataframe5)
+    S_sc = xgi.SimplicialComplex(S_list)
 
     with pytest.raises(XGIError):
         S_dict = xgi.SimplicialComplex(dict5)
     with pytest.raises(XGIError):
         S_mat = xgi.SimplicialComplex(incidence5)
 
-    assert set(S_list.nodes) == set(S_df.nodes)
-    assert set(S_list.edges) == set(S_df.edges)
-    assert set(S_list.edges.members(0)) == set(S_df.edges.members(0))
+    assert set(S_list.nodes) == set(S_df.nodes) == set(S_sc.nodes)
+    assert set(S_list.edges) == set(S_df.edges) == set(S_sc.edges)
+    assert set(S_list.edges.members(0)) == set(S_df.edges.members(0)) == set(S_sc.edges.members(0))
 
     with pytest.raises(XGIError):
         xgi.SimplicialComplex(1)
+
+def test_string():
+    S1 = xgi.SimplicialComplex()
+    assert str(S1) == "Unnamed SimplicialComplex with 0 nodes and 0 simplices"
+    S2 = xgi.SimplicialComplex(name="test")
+    assert str(S2) == "SimplicialComplex named 'test' with 0 nodes and 0 simplices"
 
 
 def test_add_simplex():
