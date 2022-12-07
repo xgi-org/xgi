@@ -109,33 +109,30 @@ class SimplicialComplex(Hypergraph):
         except XGIError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} simplices"
 
-    def add_edge(self, edge, **attr):
-        """Cannot `add_edge` to SimplicialComplex, use `add_simplex` instead"""
-        raise XGIError("Cannot add_edge to SimplicialComplex, use add_simplex instead")
+    def add_edge(self, edge, id=None, **attr):
+        """add_edge is deprecated in SimplicialComplex. Use add_simplex instead"""
+        warn("add_edge is deprecated in SimplicialComplex. Use add_simplex instead")
+        return self.add_simplex(edge, id=None, **attr)
 
-    def add_edges_from(self, edges, **attr):
-        """Cannot `add_edges_from` to SimplicialComplex, use `add_simplices_from` instead"""
-        raise XGIError(
-            "Cannot add_edges_from to SimplicialComplex, use add_simplices_from instead"
-        )
+    def add_edges_from(self, ebunch_to_add, max_order=None, **attr):
+        """add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead"""
+        warn("add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead")
+        return self.add_simplices_from(ebunch_to_add, max_order=None, **attr)
 
-    def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
-        """Cannot `add_weighted_edges_from` to SimplicialComplex, use add_weighted_simplices_from instead"""
-        raise XGIError(
-            "Cannot add_weighted_edges_from to SimplicialComplex, use add_weighted_simplices_from instead"
-        )
+    def add_weighted_edges_from(self, ebunch_to_add, max_order=None, weight="weight", **attr):
+        """add_weighted_edges_from is deprecated in SimplicialComplex. Use add_weighted_simplices_from instead"""
+        warn("add_weighted_edges_from is deprecated in SimplicialComplex. Use add_weighted_simplices_from instead")
+        return self.add_weighted_simplices_from(ebunch_to_add, max_order=None, weight="weight", **attr)
 
     def remove_edge(self, id):
-        """Cannot `remove_edge` to SimplicialComplex, use `remove_simplex` instead"""
-        raise XGIError(
-            "Cannot remove_edge to SimplicialComplex, use remove_simplex instead"
-        )
+        """remove_edge is deprecated in SimplicialComplex. Use remove_simplex_id instead"""
+        warn("remove_edge is deprecated in SimplicialComplex. Use remove_simplex_id instead")
+        return self.remove_simplex_id(id, **attr)
 
     def remove_edges_from(self, ebunch):
-        """Cannot `remove_edges_from` to SimplicialComplex, use `remove_simplices_from` instead"""
-        raise XGIError(
-            "Cannot remove_edges_from to SimplicialComplex, use remove_simplices_from instead"
-        )
+        """remove_edges_from is deprecated in SimplicialComplex. Use remove_simplex_ids_from instead"""
+        warn("remove_edges_from is deprecated in SimplicialComplex. Use remove_simplex_ids_from instead")
+        return self.remove_simplex_ids_from(ebunch)
 
     def add_simplex(self, members, id=None, **attr):
         """Add a simplex to the simplicial complex, and all its subfaces that do
