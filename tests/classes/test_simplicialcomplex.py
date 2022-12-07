@@ -59,6 +59,150 @@ def test_add_edge():
     with pytest.warns(UserWarning):
         S.add_simplex([1, 2, 3])
         warn("add_edge is deprecated in SimplicialComplex. Use add_simplex instead", UserWarning)
+    S1 = xgi.SimplicialComplex()
+    S1.add_simplex([1, 2, 3])
+    assert S._edge == S1._edge
+
+def test_add_simplices_from_iterable_of_members():
+    edges = [{0, 1}, {1, 2}, {1, 2, 4}]
+    simplices1 = [frozenset({0, 1}),
+                 frozenset({1, 2}),
+                 frozenset({1, 2, 4}),
+                 frozenset({1, 4}),
+                 frozenset({2, 4})]
+    S = xgi.SimplicialComplex()
+    S.add_simplices_from(edges)
+    assert S.edges.members() == simplices1
+
+    S1 = xgi.SimplicialComplex(edges)
+    with pytest.raises(XGIError):
+        xgi.SimplicialComplex(S1.edges)
+
+    edges = {frozenset([0, 1]), frozenset([1, 2]), frozenset([1, 2, 4])}
+    simplices2 = [frozenset({0, 1}),
+                 frozenset({1, 2, 4}),
+                 frozenset({1, 2}),
+                 frozenset({1, 4}),
+                 frozenset({2, 4})]
+    S = xgi.SimplicialComplex()
+    S.add_simplices_from(edges)
+    assert S.edges.members() == simplices2
+
+    edges = [[0, 1], {1, 2}, (1, 2, 4)]
+    S = xgi.SimplicialComplex()
+    S.add_simplices_from(edges)
+    assert S.edges.members() == simplices1
+
+    edges = [{"foo", "bar"}, {"bar", "baz"}, {"foo", "bar", "baz"}]
+    simplices3 = [frozenset({'bar', 'foo'}),
+                 frozenset({'bar', 'baz'}),
+                 frozenset({'bar', 'baz', 'foo'}),
+                 frozenset({'baz', 'foo'})]
+    S = xgi.SimplicialComplex()
+    S.add_simplices_from(edges)
+    assert set(S.nodes) == {"foo", "bar", "baz"}
+    assert S.edges.members() == simplices3
+
+    edges = [{"a", "b"}, {"b", "c"}, {"c", "d", "e"}]
+    simplices4 = [frozenset({'a', 'b'}),
+                 frozenset({'b', 'c'}),
+                 frozenset({'c', 'd', 'e'}),
+                 frozenset({'c', 'e'}),
+                 frozenset({'c', 'd'}),
+                 frozenset({'d', 'e'})]
+
+    S = xgi.SimplicialComplex()
+    S.add_simplices_from(edges)
+    assert set(S.nodes) == {"a", "b", "c", "d", "e"}
+    assert set(S.edges.members()) == set(simplices4)
+
+def test_add_simplices_from_format2():
+    edges = [({0, 1}, 0), ({1, 2}, 1), ({1, 2, 4}, 2)]
+    simplices1 = [frozenset({0, 1}),
+                 frozenset({1, 2}),
+                 frozenset({1, 2, 4}),
+                 frozenset({1, 4}),
+                 frozenset({2, 4})]
+    H = xgi.SimplicialComplex()
+    H.add_simplices_from(edges)
+    assert list(H.edges) == list(range(6))
+    assert H.edges.members(dtype=dict) == simplices1
+
+    edges = [({0, 1}, "a"), ({1, 2}, "b"), ({1, 2, 4}, "foo")]
+    H = xgi.SimplicialComplex()
+    H.add_simplices_from(edges)
+    assert list(H.edges) == list(range(6))
+    assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
+
+    edges = [({0, 1}, "a"), ({1, 2}, "b"), ({2, 3, 4}, 100)]
+    H = xgi.SimplicialComplex()
+    H.add_simplices_from(edges)
+    assert list(H.edges) == [e[1] for e in edges]
+    assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in simplices1}
+
+    # check counter
+    H.add_edge([1, 9, 2])
+    assert H.edges.members(101) == {1, 9, 2}
+
+    H1 = xgi.SimplicialComplex([{1, 2}, {2, 3, 4}])
+    with pytest.warns(UserWarning, match="uid 0 already exists, cannot add edge {1, 3}."):
+        H1.add_edges_from([({1, 3}, 0)])
+    assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
+
+
+def test_add_simplices_from_format3():
+    edges = [
+        ({0, 1}, {"color": "red"}),
+        ({1, 2}, {"age": 30}),
+        ({1, 2, 4}, {"color": "blue", "age": 40}),
+    ]
+    simplices1 = [frozenset({0, 1}),
+                 frozenset({1, 2}),
+                 frozenset({1, 2, 4}),
+                 frozenset({1, 4}),
+                 frozenset({2, 4})]
+    H = xgi.SimplicialComplex()
+    H.add_simplices_from(edges)
+    assert list(H.edges) == list(range(5))
+    assert H.edges.members() == simplices1
+    assert H.edges[0] == edges[0][1]
+    assert H.edges[1] == edges[1][1]
+    assert H.edges[2] == edges[2][1]
+    assert H.edges[3] == dict()
+    assert H.edges[4] == dict()
+    # check counter
+    H.add_simplex([1, 9, 2])
+    assert H.edges.members(5) == {1, 9, 2}
+
+def test_add_simplices_from_format4():
+    edges = [
+        ({0, 1}, "one", {"color": "red"}),
+        ({1, 2}, "two", {"age": 30}),
+        ({1, 2, 4}, "three", {"color": "blue", "age": 40}),
+    ]
+    simplices1 = [frozenset({0, 1}),
+                 frozenset({1, 2}),
+                 frozenset({1, 2, 4}),
+                 frozenset({1, 4}),
+                 frozenset({2, 4})]
+
+    H = xgi.SimplicialComplex()
+    H.add_simplices_from(edges)
+    assert list(H.edges) == ['one', 'two', 'three', 0, 1]
+    assert H.edges.members() == simplices1
+    assert H.edges["one"] == edges[0][2]
+    assert H.edges["two"] == edges[1][2]
+    assert H.edges["three"] == edges[2][2]
+    assert H.edges[0] == dict()
+    assert H.edges[1] == dict()
+    # check counter
+    H.add_simplex([1, 9, 2])
+    assert H.edges.members(2) == {1, 9, 2}
+
+    H1 = xgi.SimplicialComplex([{1, 2}, {2, 3, 4}])
+    with pytest.warns(UserWarning, match="uid 0 already exists, cannot add simplex {0, 1}."):
+        H1.add_simplices_from([({0, 1}, 0, {"color": "red"})])
+    assert next(H1._edge_uid) == 5
 
 
 def test_add_simplices_from(edgelist5):
