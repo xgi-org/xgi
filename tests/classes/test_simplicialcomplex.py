@@ -50,7 +50,8 @@ def test_add_simplex():
     S2 = xgi.SimplicialComplex()
     S2.add_simplex([1, 2])
     S2.add_simplex([3, 4])
-    S2.add_simplex([5, 6], id=1)
+    with pytest.warns(UserWarning, match="uid 1 already exists, cannot add simplex"):
+        S2.add_simplex([5, 6], id=1)
     assert S2._edge == {0: frozenset({1, 2}), 1: frozenset({3, 4})}
 
 
@@ -240,15 +241,18 @@ def test_add_simplices_from(edgelist5):
 
     # check counter
     S4 = xgi.SimplicialComplex([{1, 2}, {2, 3}])
-    S4.add_simplices_from([({1, 3}, 0)])
+    with pytest.warns(UserWarning, match="uid 0 already exists, cannot add simplex"):
+        S4.add_simplices_from([({1, 3}, 0)])
     assert S4._edge == {0: frozenset({1, 2}), 1: frozenset({2, 3})}
 
     S5 = xgi.SimplicialComplex([{1, 2}, {2, 3}])
-    S5.add_simplices_from([({0, 1}, 0, {"color": "red"})])
+    with pytest.warns(UserWarning, match="uid 0 already exists, cannot add simplex"):
+        S5.add_simplices_from([({0, 1}, 0, {"color": "red"})])
     assert S5._edge == {0: frozenset({1, 2}), 1: frozenset({2, 3})}
 
     S6 = xgi.SimplicialComplex([{1, 2}, {2, 3}])
-    S6.add_simplices_from({0: {1, 3}})
+    with pytest.warns(UserWarning, match="uid 0 already exists, cannot add simplex"):
+        S6.add_simplices_from({0: {1, 3}})
     assert S6._edge == {0: frozenset({1, 2}), 1: frozenset({2, 3})}
 
     S7 = xgi.SimplicialComplex()

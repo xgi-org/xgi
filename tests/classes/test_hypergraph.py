@@ -534,7 +534,8 @@ def test_merge_duplicate_edges(hyperwithdupsandattrs):
     assert H.edges.members(6) == {3, 4, 5}
 
     H = hyperwithdupsandattrs.copy()
-    H.merge_duplicate_edges(merge_rule="union", multiplicity="mult")
+    with pytest.warns(UserWarning, match="You will not be able to color/draw by merged attributes with xgi.draw()"):
+        H.merge_duplicate_edges(merge_rule="union", multiplicity="mult")
     assert H.edges[0] == {
         "color": {"blue", "red", "yellow"},
         "weight": {2, None},
