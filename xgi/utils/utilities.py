@@ -105,7 +105,7 @@ def update_uid_counter(H, new_id):
         not isinstance(new_id, str)
         and not isinstance(new_id, tuple)
         and float(new_id).is_integer()
-        and uid < new_id
+        and uid < new_id + 1
     ):
         # tuple comes from merging edges and doesn't have as as_integer() method.
         start = int(new_id) + 1

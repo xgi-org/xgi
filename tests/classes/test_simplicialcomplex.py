@@ -107,6 +107,10 @@ def test_add_simplices_from(edgelist5):
     S6.add_simplices_from({0: {1, 3}})
     assert S6._edge == {0: frozenset({1, 2}), 1: frozenset({2, 3})}
 
+    S7 = xgi.SimplicialComplex()
+    S7.add_simplices_from([({0, 1, 2}, 0, {})])
+    assert S7._edge == {0: frozenset({0, 1, 2}), 1: frozenset({0, 1}), 2: frozenset({0, 2}), 3: frozenset({1, 2})}
+
 
 def test_remove_simplex_id(edgelist6):
     S = xgi.SimplicialComplex()
