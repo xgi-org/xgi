@@ -206,6 +206,27 @@ def test_add_simplices_from_format4():
     assert next(H1._edge_uid) == 5
 
 
+def test_add_edges_from_dict():
+    edges = {"one": [0, 1], "two": [1, 2], 2: [1, 2, 4]}
+    simplices1 = [frozenset({0, 1}),
+                 frozenset({1, 2}),
+                 frozenset({1, 2, 4}),
+                 frozenset({1, 4}),
+                 frozenset({2, 4})]
+    H = xgi.SimplicialComplex()
+    H.add_simplices_from(edges)
+    assert list(H.edges) == ['one', 'two', 2, 3, 4]
+    assert H.edges.members() == simplices1
+    # check counter
+    H.add_edge([1, 9, 2])
+    assert H.edges.members(5) == {1, 9, 2}
+
+    H1 = xgi.SimplicialComplex([{1, 2}, {2, 3, 4}])
+    with pytest.warns(UserWarning, match="uid 0 already exists, cannot add simplex {1, 3}"):
+        H1.add_simplices_from({0: {1, 3}})
+    assert next(H1._edge_uid) == 5
+
+
 def test_add_simplices_from(edgelist5):
     S1 = xgi.SimplicialComplex()
     S1.add_simplices_from(edgelist5, max_order=None)
@@ -259,6 +280,100 @@ def test_add_simplices_from(edgelist5):
     S7.add_simplices_from([({0, 1, 2}, 0, {})])
     assert S7._edge == {0: frozenset({0, 1, 2}), 1: frozenset({0, 1}), 2: frozenset({0, 2}), 3: frozenset({1, 2})}
 
+
+def test_add_simplices_from_wrong_format():
+    edges = [0, 1, 2]
+    with pytest.raises(XGIError):
+        xgi.SimplicialComplex().add_simplices_from(edges)
+
+    edges = [
+        ("foo", {"color": "red"}),
+        ("bar", {"age": 30}),
+        ("baz", {"color": "blue", "age": 40}),
+    ]
+
+    with pytest.raises(XGIError):
+        xgi.SimplicialComplex().add_simplices_from(edges)
+
+    edges = [
+        ("foo", "one", {"color": "red"}),
+        ("bar", "two", {"age": 30}),
+        ("baz", "three", {"color": "blue", "age": 40}),
+    ]
+    with pytest.raises(XGIError):
+        xgi.SimplicialComplex().add_simplices_from(edges)
+
+    edges = ["a", "b", "c"]
+    with pytest.raises(XGIError):
+        xgi.SimplicialComplex().add_simplices_from(edges)
+
+    edges = ["foo", "bar", "baz"]
+    with pytest.raises(XGIError):
+        xgi.SimplicialComplex().add_simplices_from(edges)
+
+    edges = ["foo", [1, 2], [2, 3, 4]]
+    with pytest.raises(XGIError):
+        xgi.SimplicialComplex().add_simplices_from(edges)
+
+
+def test_copy(edgelist1):
+    H = xgi.SimplicialComplex(edgelist1)
+    H["key"] = "value"
+    copy = H.copy()
+    assert list(copy.nodes) == list(H.nodes)
+    assert list(copy.edges) == list(H.edges)
+    assert list(copy.edges.members()) == list(H.edges.members())
+    assert H._hypergraph == copy._hypergraph
+
+    H.add_node(10)
+    assert list(copy.nodes) != list(H.nodes)
+    assert list(copy.edges) == list(H.edges)
+
+    H.add_simplex([1, 3, 5])
+    assert list(copy.edges) != list(H.edges)
+
+    H["key2"] = "value2"
+    assert H._hypergraph != copy._hypergraph
+
+    copy.add_node(10)
+    copy.add_simplex([1, 3, 5])
+    copy["key2"] = "value2"
+    assert list(copy.nodes) == list(H.nodes)
+    assert list(copy.edges) == list(H.edges)
+    assert list(copy.edges.members()) == list(H.edges.members())
+    assert H._hypergraph == copy._hypergraph
+
+    H1 = xgi.SimplicialComplex()
+    H1.add_simplex((1, 2), id="x")
+    copy2 = H1.copy()  # does not throw error because of str id
+    assert list(copy2.nodes) == list(H1.nodes)
+    assert list(copy2.edges) == list(H1.edges)
+    assert list(copy2.edges.members()) == list(H1.edges.members())
+    assert H1._hypergraph == copy2._hypergraph
+
+
+def test_duplicate_edges(edgelist1):
+    H = xgi.SimplicialComplex(edgelist1)
+    assert set(H.edges.duplicates()) == set()
+
+    H.add_simplex([1, 3, 2])  # same order as existing edge
+    assert set(H.edges.duplicates()) == set()
+
+    H.add_simplex([1, 2, 3])  # different order, same members
+    assert set(H.edges.duplicates()) == set()
+
+    H = xgi.SimplicialComplex([[1, 2, 3, 3], [1, 2, 3]])  # repeated nodes
+    assert set(H.edges.duplicates()) == set()
+
+    H = xgi.SimplicialComplex([[1, 2, 3, 3], [3, 1, 2, 3]])  # repeated nodes
+    assert set(H.edges.duplicates()) == set()
+
+def test_duplicate_nodes(edgelist1):
+    H = xgi.SimplicialComplex(edgelist1)
+    assert set(H.nodes.duplicates()) == set()
+
+    H.add_simplices_from([[1, 4], [2, 6, 7], [6, 8]])
+    assert set(H.nodes.duplicates()) == set()
 
 def test_remove_simplex_id(edgelist6):
     S = xgi.SimplicialComplex()

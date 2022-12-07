@@ -134,6 +134,10 @@ class SimplicialComplex(Hypergraph):
         warn("remove_edges_from is deprecated in SimplicialComplex. Use remove_simplex_ids_from instead")
         return self.remove_simplex_ids_from(ebunch)
 
+    def add_node_to_edge(self, edge, node):
+        """add_node_to_edge is not implemented in SimplicialComplex."""
+        raise XGIError("add_node_to_edge is not implemented in SimplicialComplex.")
+
     def add_simplex(self, members, id=None, **attr):
         """Add a simplex to the simplicial complex, and all its subfaces that do
         not exist yet.
@@ -442,10 +446,18 @@ class SimplicialComplex(Hypergraph):
             elif format4:
                 members, id, eattr = e[0], e[1], e[2]
 
+            # check if members is iterable before checking it exists
+            # to raise meaningful error if not iterable
+            try: 
+                _ = iter(members)
+            except TypeError as e:
+                raise XGIError("Invalid ebunch format") from e
+
             # check that it does not exist yet (based on members, not ID)
             if not members or self.has_simplex(members):
                 try:
                     e = next(new_edges)
+
                 except StopIteration:
                     break
 
@@ -627,6 +639,7 @@ class SimplicialComplex(Hypergraph):
                 self._node[node].remove(id)
             del self._edge[id]
             del self._edge_attr[id]
+            
 
     def has_simplex(self, simplex):
         """Whether a simplex appears in the simplicial complex.
