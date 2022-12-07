@@ -1,4 +1,5 @@
 import pytest
+from warnings import warn
 
 import xgi
 from xgi.exception import XGIError
@@ -55,8 +56,9 @@ def test_add_simplex():
 
 def test_add_edge():
     S = xgi.SimplicialComplex()
-    with pytest.raises(XGIError):
-        S.add_edge([1, 2, 3])
+    with pytest.warns(UserWarning):
+        S.add_simplex([1, 2, 3])
+        warn("add_edge is deprecated in SimplicialComplex. Use add_simplex instead", UserWarning)
 
 
 def test_add_simplices_from(edgelist5):

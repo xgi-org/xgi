@@ -469,7 +469,7 @@ class SimplicialComplex(Hypergraph):
                     continue
 
             if id in self._edge.keys():  # check that uid is not present yet
-                warn(f"uid {id} already exists, cannot add edge.")
+                warn(f"uid {id} already exists, cannot add simplex {members}.")
             else:
 
                 try:
