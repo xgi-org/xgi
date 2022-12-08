@@ -429,14 +429,13 @@ def test_remove_simplex_id(edgelist6):
     S.add_simplices_from(edgelist6)
 
     # remove simplex and others it belongs to
-    S.remove_simplex_id(6)  # simplex {2, 3}
-    edge_dict = {
-        0: frozenset({0, 1, 2}),
-        1: frozenset({0, 1}),
-        2: frozenset({0, 2}),
-        3: frozenset({1, 2}),
-        5: frozenset({1, 3}),
-        8: frozenset({2, 4}),
-        9: frozenset({3, 4}),
-    }
+    S.remove_simplex_id(7)  # simplex {2, 3}
+    edge_dict = {0: frozenset({0, 1, 2}),
+                 3: frozenset({0, 1}),
+                 4: frozenset({2, 4}),
+                 5: frozenset({1, 2}),
+                 6: frozenset({3, 4}),
+                 8: frozenset({0, 2}),
+                 9: frozenset({1, 3})
+                 }
     assert S._edge == edge_dict
