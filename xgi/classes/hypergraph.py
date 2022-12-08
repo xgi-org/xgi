@@ -652,7 +652,7 @@ class Hypergraph:
         if isinstance(ebunch_to_add, dict):
             for id, members in ebunch_to_add.items():
                 if id in self._edge.keys():  # check that uid is not present yet
-                    warn(f"uid {id} already exists, cannot add edge ")
+                    warn(f"uid {id} already exists, cannot add edge {members}.")
                     continue
                 try:
                     self._edge[id] = set(members)
@@ -712,7 +712,7 @@ class Hypergraph:
                 members, id, eattr = e[0], e[1], e[2]
 
             if id in self._edge.keys():  # check that uid is not present yet
-                warn(f"uid {id} already exists, cannot add edge.")
+                warn(f"uid {id} already exists, cannot add edge {members}.")
             else:
 
                 try:

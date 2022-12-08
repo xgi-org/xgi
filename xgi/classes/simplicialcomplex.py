@@ -109,33 +109,46 @@ class SimplicialComplex(Hypergraph):
         except XGIError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} simplices"
 
-    def add_edge(self, edge, **attr):
-        """Cannot `add_edge` to SimplicialComplex, use `add_simplex` instead"""
-        raise XGIError("Cannot add_edge to SimplicialComplex, use add_simplex instead")
+    def add_edge(self, edge, id=None, **attr):
+        """add_edge is deprecated in SimplicialComplex. Use add_simplex instead"""
+        warn("add_edge is deprecated in SimplicialComplex. Use add_simplex instead")
+        return self.add_simplex(edge, id=None, **attr)
 
-    def add_edges_from(self, edges, **attr):
-        """Cannot `add_edges_from` to SimplicialComplex, use `add_simplices_from` instead"""
-        raise XGIError(
-            "Cannot add_edges_from to SimplicialComplex, use add_simplices_from instead"
+    def add_edges_from(self, ebunch_to_add, max_order=None, **attr):
+        """add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead"""
+        warn(
+            "add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead"
         )
+        return self.add_simplices_from(ebunch_to_add, max_order=None, **attr)
 
-    def add_weighted_edges_from(self, ebunch_to_add, weight="weight", **attr):
-        """Cannot `add_weighted_edges_from` to SimplicialComplex, use add_weighted_simplices_from instead"""
-        raise XGIError(
-            "Cannot add_weighted_edges_from to SimplicialComplex, use add_weighted_simplices_from instead"
+    def add_weighted_edges_from(
+        self, ebunch_to_add, max_order=None, weight="weight", **attr
+    ):
+        """add_weighted_edges_from is deprecated in SimplicialComplex. Use add_weighted_simplices_from instead"""
+        warn(
+            "add_weighted_edges_from is deprecated in SimplicialComplex. Use add_weighted_simplices_from instead"
+        )
+        return self.add_weighted_simplices_from(
+            ebunch_to_add, max_order=None, weight="weight", **attr
         )
 
     def remove_edge(self, id):
-        """Cannot `remove_edge` to SimplicialComplex, use `remove_simplex` instead"""
-        raise XGIError(
-            "Cannot remove_edge to SimplicialComplex, use remove_simplex instead"
+        """remove_edge is deprecated in SimplicialComplex. Use remove_simplex_id instead"""
+        warn(
+            "remove_edge is deprecated in SimplicialComplex. Use remove_simplex_id instead"
         )
+        return self.remove_simplex_id(id, **attr)
 
     def remove_edges_from(self, ebunch):
-        """Cannot `remove_edges_from` to SimplicialComplex, use `remove_simplices_from` instead"""
-        raise XGIError(
-            "Cannot remove_edges_from to SimplicialComplex, use remove_simplices_from instead"
+        """remove_edges_from is deprecated in SimplicialComplex. Use remove_simplex_ids_from instead"""
+        warn(
+            "remove_edges_from is deprecated in SimplicialComplex. Use remove_simplex_ids_from instead"
         )
+        return self.remove_simplex_ids_from(ebunch)
+
+    def add_node_to_edge(self, edge, node):
+        """add_node_to_edge is not implemented in SimplicialComplex."""
+        raise XGIError("add_node_to_edge is not implemented in SimplicialComplex.")
 
     def add_simplex(self, members, id=None, **attr):
         """Add a simplex to the simplicial complex, and all its subfaces that do
@@ -395,11 +408,11 @@ class SimplicialComplex(Hypergraph):
                     self._node[n].add(id)
                 self._edge_attr[id] = self._hyperedge_attr_dict_factory()
 
+                update_uid_counter(self, id)
+
                 # add subfaces
                 faces = self._subfaces(members)
                 self.add_simplices_from(faces)
-
-                update_uid_counter(self, id)
 
             return
 
@@ -445,10 +458,18 @@ class SimplicialComplex(Hypergraph):
             elif format4:
                 members, id, eattr = e[0], e[1], e[2]
 
+            # check if members is iterable before checking it exists
+            # to raise meaningful error if not iterable
+            try:
+                _ = iter(members)
+            except TypeError as e:
+                raise XGIError("Invalid ebunch format") from e
+
             # check that it does not exist yet (based on members, not ID)
             if not members or self.has_simplex(members):
                 try:
                     e = next(new_edges)
+
                 except StopIteration:
                     break
 
@@ -458,7 +479,6 @@ class SimplicialComplex(Hypergraph):
             # we're skipping ID numbers when edges already exist
             if format1 or format3:
                 id = next(self._edge_uid)
-
             if max_order != None:
                 if len(members) > max_order + 1:
                     combos = combinations(members, max_order + 1)
@@ -472,7 +492,7 @@ class SimplicialComplex(Hypergraph):
                     continue
 
             if id in self._edge.keys():  # check that uid is not present yet
-                warn(f"uid {id} already exists, cannot add edge.")
+                warn(f"uid {id} already exists, cannot add simplex {members}.")
             else:
 
                 try:
@@ -490,6 +510,9 @@ class SimplicialComplex(Hypergraph):
                 self._edge_attr[id].update(attr)
                 self._edge_attr[id].update(eattr)
 
+                if format2 or format4:
+                    update_uid_counter(self, id)
+
                 # add subfaces
                 faces = self._subfaces(members)
                 self.add_simplices_from(faces)
@@ -497,9 +520,6 @@ class SimplicialComplex(Hypergraph):
             try:
                 e = next(new_edges)
             except StopIteration:
-
-                if format2 or format4:
-                    update_uid_counter(self, id)
 
                 break
 
