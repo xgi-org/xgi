@@ -40,9 +40,9 @@ def test_add_simplex():
 
     edge_dict = {
         0: frozenset({1, 2, 3}),
-        1: frozenset({1, 2}),
-        2: frozenset({1, 3}),
-        3: frozenset({2, 3}),
+        1: frozenset({2, 3}),
+        2: frozenset({1, 2}),
+        3: frozenset({1, 3}),
     }
 
     assert S.num_nodes == 3
