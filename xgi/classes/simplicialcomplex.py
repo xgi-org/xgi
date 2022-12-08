@@ -281,6 +281,103 @@ class SimplicialComplex(Hypergraph):
         return [id_ for id_, s in self._edge.items() if simplex < s]
 
     def add_simplices_from(self, ebunch_to_add, max_order=None, **attr):
+        """Add multiple edges with optional attributes.
+
+        Parameters
+        ----------
+        ebunch_to_add : Iterable
+
+            An iterable of simplices.  This may be an iterable of iterables (Format 1),
+            where each element contains the members of the simplex specified as valid node IDs.
+            Alternatively, each element could also be a tuple in any of the following
+            formats:
+
+            * Format 2: 2-tuple (members, simplex_id), or
+            * Format 3: 2-tuple (members, attr), or
+            * Format 4: 3-tuple (members, simplex_id, attr),
+
+            where `members` is an iterable of node IDs, `simplex_id` is a hashable to use
+            as simplex ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add`
+            may be a dict of the form `{simplex_id: simplex_members}` (Format 5).
+
+            Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while `id`s must be.
+            In Formats 2-4, each element of `ebunch_to_add` must have the same length,
+            i.e. you cannot mix different formats.  The iterables containing simplex
+            members cannot be strings.
+
+        attr : \*\*kwargs, optional
+            Additional attributes to be assigned to all simplices. Attribues specified via
+            `ebunch_to_add` take precedence over `attr`.
+
+        See Also
+        --------
+        add_simplex : add a single simplex
+        add_weighted_simplices_from : convenient way to add weighted simplices
+
+        Notes
+        -----
+        Adding the same simplex twice will add it only once. Currently
+        cannot add empty simplices; the method skips over them.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> S = xgi.SimplicialComplex()
+
+        When specifying simplices by their members only, numeric simplex IDs will be assigned
+        automatically.
+
+        >>> S.add_simplices_from([[0, 1], [1, 2], [2, 3, 4]])
+        >>> S.edges.members(dtype=dict)
+        {0: frozenset({0, 1}), 1: frozenset({1, 2}), 2: frozenset({2, 3, 4}), 3: frozenset({2, 3}), 4: frozenset({2, 4}), 5: frozenset({3, 4})}
+
+        Custom simplex ids can be specified using a dict.
+
+        >>> S = xgi.SimplicialComplex()
+        >>> S.add_simplices_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
+        >>> S.edges.members(dtype=dict)
+        {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}), 0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
+
+        You can use the dict format to easily add simplices from another simplicial complex.
+
+        >>> S2 = xgi.SimplicialComplex()
+        >>> S2.add_simplices_from(S.edges.members(dtype=dict))
+        >>> S.edges == S2.edges
+        True
+
+        Alternatively, simplex ids can be specified using an iterable of 2-tuples.
+
+        >>> S = xgi.SimplicialComplex()
+        >>> S.add_simplices_from([([0, 1], 'one'), ([1, 2], 'two'), ([2, 3, 4], 'three')])
+        >>> S.edges.members(dtype=dict)
+        {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}), 0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
+
+        Attributes for each simplex may be specified using a 2-tuple for each simplex.
+        Numeric IDs will be assigned automatically.
+
+        >>> S = xgi.SimplicialComplex()
+        >>> simplices = [
+        ...     ([0, 1], {'color': 'red'}),
+        ...     ([1, 2], {'age': 30}),
+        ...     ([2, 3, 4], {'color': 'blue', 'age': 40}),
+        ... ]
+        >>> S.add_simplices_from(simplices)
+        >>> {e: S.edges[e] for e in S.edges}
+        {0: {'color': 'red'}, 1: {'age': 30}, 2: {'color': 'blue', 'age': 40}, 3: {}, 4: {}, 5: {}}
+
+        Attributes and custom IDs may be specified using a 3-tuple for each simplex.
+
+        >>> S = xgi.SimplicialComplex()
+        >>> simplices = [
+        ...     ([0, 1], 'one', {'color': 'red'}),
+        ...     ([1, 2], 'two', {'age': 30}),
+        ...     ([2, 3, 4], 'three', {'color': 'blue', 'age': 40}),
+        ... ]
+        >>> S.add_simplices_from(simplices)
+        >>> {e: S.edges[e] for e in S.edges}
+        {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40}, 0: {}, 1: {}, 2: {}}
+
+        """
 
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
