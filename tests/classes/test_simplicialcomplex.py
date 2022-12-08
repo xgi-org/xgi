@@ -439,3 +439,20 @@ def test_remove_simplex_id(edgelist6):
                  9: frozenset({1, 3})
                  }
     assert S._edge == edge_dict
+
+
+def test_remove_simplex_ids_from(edgelist6):
+    S = xgi.SimplicialComplex()
+    S.add_simplices_from(edgelist6)
+
+    # remove simplex and others it belongs to
+    S.remove_simplex_ids_from([0, 7])  # simplex {2, 3}
+    edge_dict = {
+                 3: frozenset({0, 1}),
+                 4: frozenset({2, 4}),
+                 5: frozenset({1, 2}),
+                 6: frozenset({3, 4}),
+                 8: frozenset({0, 2}),
+                 9: frozenset({1, 3})
+                 }
+    assert S._edge == edge_dict

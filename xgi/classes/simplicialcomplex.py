@@ -362,7 +362,7 @@ class SimplicialComplex(Hypergraph):
 
         >>> S2 = xgi.SimplicialComplex()
         >>> S2.add_simplices_from(S.edges.members(dtype=dict))
-        >>> S.edges == S2.edges
+        >>> list(S.edges) == list(S2.edges)
         True
 
         Alternatively, simplex ids can be specified using an iterable of 2-tuples.
@@ -658,6 +658,22 @@ class SimplicialComplex(Hypergraph):
         except KeyError:
             XGIError("Empty or invalid simplices specified.")
 
+    def _remove_simplex_id(self, id):
+        """Helper function to remove a simplex with a given id
+
+        Parameters
+        ----------
+        id : Hashable
+            edge ID to remove
+
+        """
+
+        for node in self.edges.members(id):
+            self._node[node].remove(id)
+        del self._edge[id]
+        del self._edge_attr[id]
+
+
     def remove_simplex_id(self, id):
         """Remove a simplex with a given id.
 
@@ -682,13 +698,11 @@ class SimplicialComplex(Hypergraph):
 
             # remove all simplices that contain simplex
             supfaces_ids = self._supfaces_id(self._edge[id])
-            self.remove_simplex_ids_from(supfaces_ids)
+            for sup_id in supfaces_ids:
+                self._remove_simplex_id(sup_id)
 
             # remove simplex
-            for node in self.edges.members(id):
-                self._node[node].remove(id)
-            del self._edge[id]
-            del self._edge_attr[id]
+            self._remove_simplex_id(id)
 
         except KeyError as e:
             raise XGIError(f"Simplex {id} is not in the Simplicialcomplex") from e
@@ -713,10 +727,7 @@ class SimplicialComplex(Hypergraph):
 
         """
         for id in ebunch:
-            for node in self.edges.members(id):
-                self._node[node].remove(id)
-            del self._edge[id]
-            del self._edge_attr[id]
+            self.remove_simplex_id(id)
 
     def has_simplex(self, simplex):
         """Whether a simplex appears in the simplicial complex.
