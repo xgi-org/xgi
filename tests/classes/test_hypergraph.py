@@ -190,9 +190,11 @@ def test_add_edge():
     H2 = xgi.Hypergraph()
     H2.add_edge([1, 2])
     H2.add_edge([3, 4])
-    with pytest.warns(UserWarning, match="uid 0 already exists, cannot add edge {5, 6}"):
+    with pytest.warns(
+        UserWarning, match="uid 0 already exists, cannot add edge {5, 6}"
+    ):
         H2.add_edge([5, 6], id=0)
-  
+
     assert H2._edge == {0: {1, 2}, 1: {3, 4}}
 
 
@@ -285,7 +287,9 @@ def test_add_edges_from_format2():
     assert H.edges.members(101) == {1, 9, 2}
 
     H1 = xgi.Hypergraph([{1, 2}, {2, 3, 4}])
-    with pytest.warns(UserWarning, match="uid 0 already exists, cannot add edge {1, 3}."):
+    with pytest.warns(
+        UserWarning, match="uid 0 already exists, cannot add edge {1, 3}."
+    ):
         H1.add_edges_from([({1, 3}, 0)])
     assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
 
@@ -324,7 +328,9 @@ def test_add_edges_from_format4():
     assert H.edges.members(0) == {1, 9, 2}
 
     H1 = xgi.Hypergraph([{1, 2}, {2, 3, 4}])
-    with pytest.warns(UserWarning, match="uid 0 already exists, cannot add edge {0, 1}."):
+    with pytest.warns(
+        UserWarning, match="uid 0 already exists, cannot add edge {0, 1}."
+    ):
         H1.add_edges_from([({0, 1}, 0, {"color": "red"})])
     assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
 
@@ -340,7 +346,9 @@ def test_add_edges_from_dict():
     assert H.edges.members(3) == {1, 9, 2}
 
     H1 = xgi.Hypergraph([{1, 2}, {2, 3, 4}])
-    with pytest.warns(UserWarning, match="uid 0 already exists, cannot add edge {1, 3}."):
+    with pytest.warns(
+        UserWarning, match="uid 0 already exists, cannot add edge {1, 3}."
+    ):
         H1.add_edges_from({0: {1, 3}})
     assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
 
@@ -534,7 +542,10 @@ def test_merge_duplicate_edges(hyperwithdupsandattrs):
     assert H.edges.members(6) == {3, 4, 5}
 
     H = hyperwithdupsandattrs.copy()
-    with pytest.warns(UserWarning, match="You will not be able to color/draw by merged attributes with xgi.draw()"):
+    with pytest.warns(
+        UserWarning,
+        match="You will not be able to color/draw by merged attributes with xgi.draw()",
+    ):
         H.merge_duplicate_edges(merge_rule="union", multiplicity="mult")
     assert H.edges[0] == {
         "color": {"blue", "red", "yellow"},

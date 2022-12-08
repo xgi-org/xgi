@@ -114,4 +114,3 @@ def update_uid_counter(H, new_id):
     else:
         start = uid
     H._edge_uid = count(start=start)
-

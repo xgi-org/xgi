@@ -116,22 +116,34 @@ class SimplicialComplex(Hypergraph):
 
     def add_edges_from(self, ebunch_to_add, max_order=None, **attr):
         """add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead"""
-        warn("add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead")
+        warn(
+            "add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead"
+        )
         return self.add_simplices_from(ebunch_to_add, max_order=None, **attr)
 
-    def add_weighted_edges_from(self, ebunch_to_add, max_order=None, weight="weight", **attr):
+    def add_weighted_edges_from(
+        self, ebunch_to_add, max_order=None, weight="weight", **attr
+    ):
         """add_weighted_edges_from is deprecated in SimplicialComplex. Use add_weighted_simplices_from instead"""
-        warn("add_weighted_edges_from is deprecated in SimplicialComplex. Use add_weighted_simplices_from instead")
-        return self.add_weighted_simplices_from(ebunch_to_add, max_order=None, weight="weight", **attr)
+        warn(
+            "add_weighted_edges_from is deprecated in SimplicialComplex. Use add_weighted_simplices_from instead"
+        )
+        return self.add_weighted_simplices_from(
+            ebunch_to_add, max_order=None, weight="weight", **attr
+        )
 
     def remove_edge(self, id):
         """remove_edge is deprecated in SimplicialComplex. Use remove_simplex_id instead"""
-        warn("remove_edge is deprecated in SimplicialComplex. Use remove_simplex_id instead")
+        warn(
+            "remove_edge is deprecated in SimplicialComplex. Use remove_simplex_id instead"
+        )
         return self.remove_simplex_id(id, **attr)
 
     def remove_edges_from(self, ebunch):
         """remove_edges_from is deprecated in SimplicialComplex. Use remove_simplex_ids_from instead"""
-        warn("remove_edges_from is deprecated in SimplicialComplex. Use remove_simplex_ids_from instead")
+        warn(
+            "remove_edges_from is deprecated in SimplicialComplex. Use remove_simplex_ids_from instead"
+        )
         return self.remove_simplex_ids_from(ebunch)
 
     def add_node_to_edge(self, edge, node):
@@ -448,7 +460,7 @@ class SimplicialComplex(Hypergraph):
 
             # check if members is iterable before checking it exists
             # to raise meaningful error if not iterable
-            try: 
+            try:
                 _ = iter(members)
             except TypeError as e:
                 raise XGIError("Invalid ebunch format") from e
@@ -639,7 +651,6 @@ class SimplicialComplex(Hypergraph):
                 self._node[node].remove(id)
             del self._edge[id]
             del self._edge_attr[id]
-            
 
     def has_simplex(self, simplex):
         """Whether a simplex appears in the simplicial complex.

@@ -144,7 +144,9 @@ def convert_to_simplicial_complex(data, create_using=None):
         H = empty_simplicial_complex(create_using)
         H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
         ee = data.edges
-        H.add_simplices_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
+        H.add_simplices_from(
+            (ee.members(e), e, deepcopy(attr)) for e, attr in ee.items()
+        )
         H._hypergraph = deepcopy(data._hypergraph)
 
     elif isinstance(data, list):
