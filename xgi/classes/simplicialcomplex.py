@@ -11,7 +11,7 @@ from itertools import combinations, count
 from warnings import warn
 
 from ..exception import XGIError
-from ..utils.utilities import update_uid_counter
+from ..utils.utilities import update_uid_counter, powerset
 from .hypergraph import Hypergraph
 from .reportviews import EdgeView, NodeView
 
@@ -280,7 +280,7 @@ class SimplicialComplex(Hypergraph):
 
         return [id_ for id_, s in self._edge.items() if simplex < s]
 
-    def add_simplices_from(self, ebunch_to_add, max_order=None, **attr):
+    def add_simplices_from_old(self, ebunch_to_add, max_order=None, **attr):
         """Add multiple edges with optional attributes.
 
         Parameters
@@ -522,6 +522,206 @@ class SimplicialComplex(Hypergraph):
             except StopIteration:
 
                 break
+
+    def add_simplices_from(self, ebunch_to_add, max_order=None, **attr):
+
+        # format 5 is the easiest one
+        if isinstance(ebunch_to_add, dict):
+
+            faces = [] # container to store subfaces
+            for id, members in ebunch_to_add.items():
+
+                # check that it does not exist yet (based on members, not ID)
+                if not members or self.has_simplex(members):
+                    continue
+
+                if id in self._edge.keys():  # check that uid is not present yet
+                    warn(f"uid {id} already exists, cannot add simplex {members}.")
+                    continue
+
+                if max_order != None:
+                    if len(members) > max_order + 1:
+                        combos = powerset(members, include_singletons=False)
+                        faces += list(combos)
+
+                        continue
+
+                if id in self._edge.keys():  # check that uid is not present yet
+                    warn(f"uid {id} already exists, cannot add simplex {members}.")
+                    continue
+                else: 
+                    try:
+                        self._edge[id] = frozenset(members)
+                    except TypeError as e:
+                        raise XGIError("Invalid ebunch format") from e
+                    for n in members:
+                        if n not in self._node:
+                            self._node[n] = set()
+                            self._node_attr[n] = self._node_attr_dict_factory()
+                        self._node[n].add(id)
+                    self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+
+                    update_uid_counter(self, id)
+
+                    # store subfaces
+                    faces += self._subfaces(members)
+                
+            # add subfaces
+            faces = set(faces) # get unique subfaces
+            for members in faces: 
+                 # check that it does not exist yet (based on members, not ID)
+                if not members or self.has_simplex(members):
+                    continue
+
+                try:
+                    uid = next(self._edge_uid)
+                    self._edge[uid] = frozenset(members)
+
+                    update_uid_counter(self, id)
+
+                except TypeError as e:
+                    raise XGIError("Invalid ebunch format") from e
+
+            return
+
+        # in formats 1-4 we only know that ebunch_to_add is an iterable, so we iterate
+        # over it and use the firs element to determine which format we are working with
+        new_edges = iter(ebunch_to_add)
+        try:
+            first_edge = next(new_edges)
+        except StopIteration:
+            return
+        try:
+            first_elem = list(first_edge)[0]
+        except TypeError:
+            first_elem = None
+
+        format1, format2, format3, format4 = False, False, False, False
+        if isinstance(first_elem, Iterable):
+            if all(isinstance(e, str) for e in first_edge):
+                format1 = True
+            elif len(first_edge) == 2 and issubclass(type(first_edge[1]), Hashable):
+                format2 = True
+            elif len(first_edge) == 2:
+                format3 = True
+            elif len(first_edge) == 3:
+                format4 = True
+        else:
+            format1 = True
+
+        if (format1 and isinstance(first_edge, str)) or (
+            not format1 and isinstance(first_elem, str)
+        ):
+            raise XGIError("Members cannot be specified as a string")
+
+        faces = []
+
+        # now we may iterate over the rest
+        e = first_edge
+        while True:
+            if format1:
+                members, id, eattr = e, None, {}  # uid now set below
+            elif format2:
+                members, id, eattr = e[0], e[1], {}
+            elif format3:
+                members, id, eattr = e[0], None, e[1]  # uid now set below
+            elif format4:
+                members, id, eattr = e[0], e[1], e[2]
+
+            # check if members is iterable before checking it exists
+            # to raise meaningful error if not iterable
+            try:
+                _ = iter(members)
+            except TypeError as e:
+                raise XGIError("Invalid ebunch format") from e
+
+            # check that it does not exist yet (based on members, not ID)
+            if not members or self.has_simplex(members):
+                try:
+                    e = next(new_edges)
+                except StopIteration:
+                    break
+
+                continue
+
+            # needs to go after the check for existence, otherwise
+            # we're skipping ID numbers when edges already exist
+            if format1 or format3:
+                id = next(self._edge_uid)
+
+            if max_order != None:
+                if len(members) > max_order + 1:
+                    combos = powerset(members, include_singletons=False)
+                    faces += list(combos) # store faces
+
+                    try:
+                        e = next(new_edges)
+                    except StopIteration:
+                        break
+
+                    continue
+
+            if id in self._edge.keys():  # check that uid is not present yet
+                warn(f"uid {id} already exists, cannot add simplex {members}.")
+                continue
+
+            else: 
+                try:
+                    self._edge[id] = frozenset(members)
+                except TypeError as e:
+                    raise XGIError("Invalid ebunch format") from e
+
+                for n in members:
+                    if n not in self._node:
+                        self._node[n] = set()
+                        self._node_attr[n] = self._node_attr_dict_factory()
+                    self._node[n].add(id)
+
+                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[id].update(attr)
+                self._edge_attr[id].update(eattr)
+
+                update_uid_counter(self, id)
+
+                # store subfaces
+                faces += self._subfaces(members)
+
+                try:
+                    e = next(new_edges)
+                except StopIteration:
+                    break
+
+
+        # add subfaces
+        faces = set(faces) # get unique faces
+        for members in faces: 
+
+            # check if members is iterable before checking it exists
+            # to raise meaningful error if not iterable
+            try:
+                _ = iter(members)
+            except TypeError as e:
+                raise XGIError("Invalid ebunch format") from e
+
+             # check that it does not exist yet (based on members, not ID)
+            if not members or self.has_simplex(members):
+                continue
+
+            try:
+                id = next(self._edge_uid)
+                self._edge[id] = frozenset(members)
+            except TypeError as e:
+                raise XGIError("Invalid ebunch format") from e
+
+            for n in members:
+                if n not in self._node:
+                    self._node[n] = set()
+                    self._node_attr[n] = self._node_attr_dict_factory()
+                self._node[n].add(id)
+
+            self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+
+            update_uid_counter(self, id)
 
     def close(self):
         """Adds all missing subfaces to the complex.
