@@ -17,6 +17,11 @@ from .layout import barycenter_spring_layout
 
 __all__ = [
     "draw",
+    "draw_xgi_nodes",
+    "draw_xgi_hyperedges",
+    "draw_xgi_simplices",
+    "draw_node_labels",
+    "draw_hyperedge_labels",
 ]
 
 
