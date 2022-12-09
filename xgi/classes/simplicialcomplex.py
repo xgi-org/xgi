@@ -224,7 +224,7 @@ class SimplicialComplex(Hypergraph):
         >>> import xgi
         >>> S = xgi.SimplicialComplex()
         >>> S.add_simplex([1, 2, 3])
-        >>> S.edges.members() # doctest: +NORMALIZE_WHITESPACE
+        >>> S.edges.members() # doctest: +NORMALIZE_WHITESPACE +SKIP
         [frozenset({1, 2, 3}), frozenset({2, 3}),
             frozenset({1, 2}), frozenset({1, 3})]
         >>> S.add_simplex([3, 4], id='myedge')
@@ -362,14 +362,14 @@ class SimplicialComplex(Hypergraph):
         automatically.
 
         >>> S.add_simplices_from([[0, 1], [1, 2], [2, 3, 4]])
-        >>> S.edges.members(dtype=dict)
+        >>> S.edges.members(dtype=dict) # doctest: +SKIP
         {0: frozenset({0, 1}), 1: frozenset({1, 2}), 2: frozenset({2, 3, 4}), 3: frozenset({2, 3}), 4: frozenset({2, 4}), 5: frozenset({3, 4})}
 
         Custom simplex ids can be specified using a dict.
 
         >>> S = xgi.SimplicialComplex()
         >>> S.add_simplices_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
-        >>> S.edges.members(dtype=dict)
+        >>> S.edges.members(dtype=dict) # doctest: +SKIP
         {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}), 0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
 
         You can use the dict format to easily add simplices from another simplicial complex.
@@ -383,7 +383,7 @@ class SimplicialComplex(Hypergraph):
 
         >>> S = xgi.SimplicialComplex()
         >>> S.add_simplices_from([([0, 1], 'one'), ([1, 2], 'two'), ([2, 3, 4], 'three')])
-        >>> S.edges.members(dtype=dict)
+        >>> S.edges.members(dtype=dict) # doctest: +SKIP
         {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}), 0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
 
         Attributes for each simplex may be specified using a 2-tuple for each simplex.
