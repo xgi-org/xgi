@@ -1,6 +1,5 @@
 import pickle
 import tempfile
-from warnings import warn
 
 import pytest
 
