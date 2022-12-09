@@ -11,7 +11,7 @@ from itertools import combinations, count
 from warnings import warn
 
 from ..exception import XGIError
-from ..utils.utilities import update_uid_counter, powerset
+from ..utils.utilities import powerset, update_uid_counter
 from .hypergraph import Hypergraph
 from .reportviews import EdgeView, NodeView
 

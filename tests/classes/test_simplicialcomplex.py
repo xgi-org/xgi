@@ -1,5 +1,6 @@
-import pytest
 from warnings import warn
+
+import pytest
 
 import xgi
 from xgi.exception import XGIError
