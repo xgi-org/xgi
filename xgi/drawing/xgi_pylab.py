@@ -362,6 +362,10 @@ def draw_xgi_hyperedges(
     draw_node_labels
     draw_hyperedge_labels
     """
+
+    if not max_order:
+        max_order = max_edge_order(H)
+        
     dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
     dyad_lw = _scalar_arg_to_dict(
         dyad_lw, H.edges, settings["min_dyad_lw"], settings["max_dyad_lw"]
@@ -485,6 +489,9 @@ def draw_xgi_simplices(
 
     # Plot only the maximal simplices, thus let's convert the SC to H
     H_ = convert.from_simplicial_complex_to_hypergraph(SC)
+
+    if not max_order:
+        max_order = max_edge_order(H_)
 
     dyad_color = _color_arg_to_dict(dyad_color, H_.edges, settings["dyad_color_cmap"])
     dyad_lw = _scalar_arg_to_dict(
