@@ -1,5 +1,26 @@
 # Changelog
 
+## v0.5.1
+
+* `draw()` now correctly plots simplicial complexes with the `max_order` keyword [#248](https://github.com/ComplexGroupInteractions/xgi/pull/248) (@maximelucas).
+* Changed the `add_simplex` method to be non recursive [#247](https://github.com/ComplexGroupInteractions/xgi/pull/247) (@maximelucas).
+* Added tests for the SimplicialComplex class [#245](https://github.com/ComplexGroupInteractions/xgi/pull/245) (@maximelucas).
+* Made all draw functions available from xgi [#246](https://github.com/ComplexGroupInteractions/xgi/pull/246) (@maximelucas).
+* Added an indent to make hypergraph json files more readable [#242](https://github.com/ComplexGroupInteractions/xgi/pull/242) (@maximelucas).
+* Improved the efficiency of the uid update function [#239](https://github.com/ComplexGroupInteractions/xgi/pull/239) (@nwlandry).
+* Added the ability to display the node and hyperedge labels in `draw()` [#234](https://github.com/ComplexGroupInteractions/xgi/pull/234) (@mcontisc).
+* Fixed the uid counter initialisation [#225](https://github.com/ComplexGroupInteractions/xgi/pull/225) (@maximelucas).
+* Added the ability to pickle hypergraphs [#229](https://github.com/ComplexGroupInteractions/xgi/pull/229) (@nwlandry).
+* Made `random_hypergraph()` and `random_simplicialcomplex()` faster [#213](https://github.com/ComplexGroupInteractions/xgi/pull/213) (@maximelucas).
+* Fixed a bug in `dynamical_assortativity()` [#230](https://github.com/ComplexGroupInteractions/xgi/pull/230) (@nwlandry).
+* Removed all random decorators [#227](https://github.com/ComplexGroupInteractions/xgi/pull/227) (@nwlandry).
+* Modified `unique_edge_sizes()` so that the list of sizes is now sorted [#226](https://github.com/ComplexGroupInteractions/xgi/pull/226) (@nwlandry).
+* Added the `merge_duplicate_edges()` function to merge multi-edges [#210](https://github.com/ComplexGroupInteractions/xgi/pull/210) (@nwlandry).
+* Partial speed-up of `draw` function [#211](https://github.com/ComplexGroupInteractions/xgi/pull/211) (@iaciac).
+* Added a simplicial synchronization function [#212](https://github.com/ComplexGroupInteractions/xgi/pull/212) (@Marconurisso).
+* Sped up the `add_simplices_from()` method [#223](https://github.com/ComplexGroupInteractions/xgi/pull/223) (@maximelucas).
+* Updated the `add_simplices_from()` method to match `add_hyperedges_from()` [#220](https://github.com/ComplexGroupInteractions/xgi/pull/220) (@maximelucas).
+
 ## v0.5.0
 
 * Fixed [#214](https://github.com/ComplexGroupInteractions/xgi/issues/214), added a `powerset()` function, added a `subfaces()` function, and added examples of these functions ([#209](https://github.com/ComplexGroupInteractions/xgi/pull/209)).
@@ -19,6 +40,7 @@
 Contributors: @leotrs, @maximelucas, and @nwlandry
 
 ## v0.4.3
+
 * `Hypergraph.has_edge` is now `IDView.lookup`, `Hypergraph.duplicate_edges` is now `IDView.duplicates`, and `utilities.convert_labels_to_integer` is now `function.convert_labels_to_integer` ([#150](https://github.com/ComplexGroupInteractions/xgi/pull/150)).
 * Added some unit tests for the convert module, the function module, and the classic generators module. Fixed for minor bugs encountered while writing tests and added documentation to Read The Docs for the drawing module. ([#153](https://github.com/ComplexGroupInteractions/xgi/pull/153))
 * Fixed a bug in `remove_node_from_edge()` ([#154](https://github.com/ComplexGroupInteractions/xgi/pull/154)).
