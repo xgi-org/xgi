@@ -20,9 +20,13 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 
 ## New Version process
 1. Make sure that the Github Actions workflow runs without any errors.
-2. Increase the version number in [setup.py](setup.py), [conf.py](docs/source/conf.py), and [CITATION.cff](CITATION.cff) to the new version agreed upon by the core developers. The versioning scheme we use is [SemVer](http://semver.org/).
-3. Change the "Current Version" heading to the version number and put a new blank "Current Version" heading above this.
-4. Upload to PyPI.
+2. Using the `github-changelog` package (a dependency in the [release](requirements/release.txt) requirements file), run `changelog -m ComplexGroupInteractions xgi [last release tag] to get the merged pull requests with their links. Paste this into the changelog file under a new heading and edit to make more legible. Associate a GitHub username with each pull request.
+3. Increase the version number in [setup.py](setup.py), [conf.py](docs/source/conf.py), and [CITATION.cff](CITATION.cff) to the new version agreed upon by the core developers. The versioning scheme we use is [SemVer](http://semver.org/).
+4. Commit these changes.
+5. Create a new release on GitHub by selecting "Releases", then clicking "Draft a new release". Click "Choose a tag" and type "v" followed by the version number and then click "Create new tag". The release title will be this same string. Paste the contents of the CHANGELOG into the "Describe this release" field. Click "Publish release".
+6. Run `python setup.py sdist` from the main folder. This will create a zipped file to upload to PyPI and save it to the "dist" folder.
+6. Using `twine` (a dependency in the [release](requirements/release.txt) requirements file), run `twine upload dist/xgi-[version number].tar.gz`. Enter your username and password.
+4. The new version is now on PyPI.
 
 ## Attribution
 
