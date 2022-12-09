@@ -488,7 +488,6 @@ class SimplicialComplex(Hypergraph):
             raise XGIError("Members cannot be specified as a string")
 
         faces = []
-
         # now we may iterate over the rest
         e = first_edge
         while True:
@@ -536,33 +535,38 @@ class SimplicialComplex(Hypergraph):
 
             if id in self._edge.keys():  # check that uid is not present yet
                 warn(f"uid {id} already exists, cannot add simplex {members}.")
-                continue
-
-            else:
-                try:
-                    self._edge[id] = frozenset(members)
-                except TypeError as e:
-                    raise XGIError("Invalid ebunch format") from e
-
-                for n in members:
-                    if n not in self._node:
-                        self._node[n] = set()
-                        self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].add(id)
-
-                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
-                self._edge_attr[id].update(attr)
-                self._edge_attr[id].update(eattr)
-
-                update_uid_counter(self, id)
-
-                # store subfaces
-                faces += self._subfaces(members)
 
                 try:
                     e = next(new_edges)
                 except StopIteration:
                     break
+
+                continue
+
+            try:
+                self._edge[id] = frozenset(members)
+            except TypeError as e:
+                raise XGIError("Invalid ebunch format") from e
+
+            for n in members:
+                if n not in self._node:
+                    self._node[n] = set()
+                    self._node_attr[n] = self._node_attr_dict_factory()
+                self._node[n].add(id)
+
+            self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+            self._edge_attr[id].update(attr)
+            self._edge_attr[id].update(eattr)
+
+            update_uid_counter(self, id)
+
+            # store subfaces
+            faces += self._subfaces(members)
+
+            try:
+                e = next(new_edges)
+            except StopIteration:
+                break
 
         # add subfaces
         faces = set(faces)  # get unique faces
