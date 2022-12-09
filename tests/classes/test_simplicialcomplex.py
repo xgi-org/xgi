@@ -38,18 +38,19 @@ def test_add_simplex():
     S = xgi.SimplicialComplex()
     S.add_simplex([1, 2, 3])
 
-    edge_dict = {
-        0: frozenset({1, 2, 3}),
-        1: frozenset({2, 3}),
-        2: frozenset({1, 2}),
-        3: frozenset({1, 3}),
-    }
+    edges = [
+        frozenset({1, 2, 3}),
+        frozenset({2, 3}),
+        frozenset({1, 2}),
+        frozenset({1, 3}),
+    ]
 
     assert S.num_nodes == 3
-    assert S._edge == edge_dict
+    assert list(S.edges) == list(range(4))
+    assert set(S.edges.members()) == set(edges)
 
     S.add_simplex([2, 1])
-    assert S._edge == edge_dict
+    assert set(S.edges.members()) == set(edges)
 
     # check uid
     S2 = xgi.SimplicialComplex()
@@ -157,18 +158,18 @@ def test_add_simplices_from_format2():
     assert H._edge == simplices
 
     edges = [({0, 1}, "a"), ({1, 2}, "b"), ({2, 3, 4}, 100)]
-    simplices = {
-        "a": frozenset({0, 1}),
-        "b": frozenset({1, 2}),
-        100: frozenset({2, 3, 4}),
-        101: frozenset({2, 3}),
-        102: frozenset({2, 4}),
-        103: frozenset({3, 4}),
-    }
+    simplices = [
+        frozenset({0, 1}),
+        frozenset({1, 2}),
+        frozenset({2, 3, 4}),
+        frozenset({2, 3}),
+        frozenset({2, 4}),
+        frozenset({3, 4}),
+    ]
     H = xgi.SimplicialComplex()
     H.add_simplices_from(edges)
     assert list(H.edges) == ["a", "b", 100, 101, 102, 103]
-    assert H._edge == simplices
+    assert set(H.edges.members()) == set(simplices)
 
     # check counter
     H.add_simplex([1, 9, 2])
@@ -297,12 +298,14 @@ def test_add_simplices_from(edgelist5):
     simplex = ((1, 2, 3), {"color": "red"})
     S3.add_simplices_from([simplex], max_order=2)
 
-    assert S3.edges.members(dtype=dict) == {
-        0: frozenset({1, 2, 3}),
-        1: frozenset({2, 3}),
-        2: frozenset({1, 2}),
-        3: frozenset({1, 3}),
-    }
+    simplices = [
+        frozenset({1, 2, 3}),
+        frozenset({2, 3}),
+        frozenset({1, 2}),
+        frozenset({1, 3}),
+    ]
+
+    assert set(S3.edges.members()) == set(simplices)
 
     assert S3.edges[0] == {"color": "red"}
     assert S3.edges[1] == {}
