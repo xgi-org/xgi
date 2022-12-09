@@ -154,6 +154,38 @@ class SimplicialComplex(Hypergraph):
         """remove_node is not implemented in SimplicialComplex."""
         raise XGIError("remove_node is not implemented in SimplicialComplex.")
 
+    def _add_simplex(self, members, id=None, **attr):
+        """Helper function to add a simplex to a simplicial complex, without any
+        check. Does not automatically update self._edge_uid"""
+
+        self._edge[id] = set()
+        for node in members:
+            if node not in self._node:
+                if node is None:
+                    raise ValueError("None cannot be a node")
+                self._node[node] = set()
+                self._node_attr[node] = self._node_attr_dict_factory()
+            self._node[node].add(id)
+
+        self._edge[id] = members
+        self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+        self._edge_attr[id].update(attr)
+
+    def _add_face(self, members):
+        """Helper function to add a face to a simplicial complex, without any
+        check, and without attributes. Automatically updates self._edge_uid"""
+
+        id = next(self._edge_uid)
+        self._edge[id] = frozenset(members)
+
+        for n in members:
+            if n not in self._node:
+                self._node[n] = set()
+                self._node_attr[n] = self._node_attr_dict_factory()
+            self._node[n].add(id)
+
+        self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+
     def add_simplex(self, members, id=None, **attr):
         """Add a simplex to the simplicial complex, and all its subfaces that do
         not exist yet.
@@ -226,21 +258,11 @@ class SimplicialComplex(Hypergraph):
             return
 
         id = next(self._edge_uid) if not id else id
-        self._edge[id] = set()
-        for node in members:
-            if node not in self._node:
-                if node is None:
-                    raise ValueError("None cannot be a node")
-                self._node[node] = set()
-                self._node_attr[node] = self._node_attr_dict_factory()
-            self._node[node].add(id)
 
-        self._edge[id] = members
-        self._edge_attr[id] = self._hyperedge_attr_dict_factory()
-        self._edge_attr[id].update(attr)
+        self._add_simplex(members, id, **attr)
 
-        if id:  # set self._edge_uid correctly
-            update_uid_counter(self, id)
+        # set self._edge_uid correctly
+        update_uid_counter(self, id)
 
         # add all subfaces
         faces = self._subfaces(members)
@@ -251,19 +273,7 @@ class SimplicialComplex(Hypergraph):
             if not members_sub or self.has_simplex(members_sub):
                 continue
 
-            try:
-                id = next(self._edge_uid)
-                self._edge[id] = frozenset(members_sub)
-            except TypeError as e:
-                raise XGIError("Invalid ebunch format") from e
-
-            for n in members_sub:
-                if n not in self._node:
-                    self._node[n] = set()
-                    self._node_attr[n] = self._node_attr_dict_factory()
-                self._node[n].add(id)
-
-            self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+            self._add_face(members_sub)
 
     def _subfaces(self, simplex, all=True):
         """Returns list of subfaces of simplex.
@@ -424,25 +434,17 @@ class SimplicialComplex(Hypergraph):
 
                         continue
 
-                if id in self._edge.keys():  # check that uid is not present yet
-                    warn(f"uid {id} already exists, cannot add simplex {members}.")
-                    continue
-                else:
-                    try:
-                        self._edge[id] = frozenset(members)
-                    except TypeError as e:
-                        raise XGIError("Invalid ebunch format") from e
-                    for n in members:
-                        if n not in self._node:
-                            self._node[n] = set()
-                            self._node_attr[n] = self._node_attr_dict_factory()
-                        self._node[n].add(id)
-                    self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                try:
+                    _ = frozenset(members)
+                except TypeError as e:
+                    raise XGIError("Invalid ebunch format") from e
 
-                    update_uid_counter(self, id)
+                self._add_simplex(frozenset(members), id)
 
-                    # store subfaces
-                    faces += self._subfaces(members)
+                update_uid_counter(self, id)
+
+                # store subfaces
+                faces += self._subfaces(members)
 
             # add subfaces
             faces = set(faces)  # get unique subfaces
@@ -451,14 +453,7 @@ class SimplicialComplex(Hypergraph):
                 if not members or self.has_simplex(members):
                     continue
 
-                try:
-                    uid = next(self._edge_uid)
-                    self._edge[uid] = frozenset(members)
-
-                    update_uid_counter(self, id)
-
-                except TypeError as e:
-                    raise XGIError("Invalid ebunch format") from e
+                self._add_face(members)
 
             return
 
@@ -577,21 +572,7 @@ class SimplicialComplex(Hypergraph):
             if not members or self.has_simplex(members):
                 continue
 
-            try:
-                id = next(self._edge_uid)
-                self._edge[id] = frozenset(members)
-            except TypeError as e:
-                raise XGIError("Invalid ebunch format") from e
-
-            for n in members:
-                if n not in self._node:
-                    self._node[n] = set()
-                    self._node_attr[n] = self._node_attr_dict_factory()
-                self._node[n].add(id)
-
-            self._edge_attr[id] = self._hyperedge_attr_dict_factory()
-
-            update_uid_counter(self, id)
+            self._add_face(members)
 
     def close(self):
         """Adds all missing subfaces to the complex.
