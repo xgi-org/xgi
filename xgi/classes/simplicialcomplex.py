@@ -225,19 +225,19 @@ class SimplicialComplex(Hypergraph):
             warn(f"uid {id} already exists, cannot add simplex {members}")
             return
 
-        uid = next(self._edge_uid) if not id else id
-        self._edge[uid] = set()
+        id = next(self._edge_uid) if not id else id
+        self._edge[id] = set()
         for node in members:
             if node not in self._node:
                 if node is None:
                     raise ValueError("None cannot be a node")
                 self._node[node] = set()
                 self._node_attr[node] = self._node_attr_dict_factory()
-            self._node[node].add(uid)
+            self._node[node].add(id)
 
-        self._edge[uid] = members
-        self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
-        self._edge_attr[uid].update(attr)
+        self._edge[id] = members
+        self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+        self._edge_attr[id].update(attr)
 
         if id:  # set self._edge_uid correctly
             update_uid_counter(self, id)
@@ -245,19 +245,19 @@ class SimplicialComplex(Hypergraph):
         # add all subfaces
         faces = self._subfaces(members)
         faces = set(faces)  # get unique faces
-        for members in faces:
+        for members_sub in faces:
 
             # check that it does not exist yet (based on members, not ID)
-            if not members or self.has_simplex(members):
+            if not members_sub or self.has_simplex(members_sub):
                 continue
 
             try:
                 id = next(self._edge_uid)
-                self._edge[id] = frozenset(members)
+                self._edge[id] = frozenset(members_sub)
             except TypeError as e:
                 raise XGIError("Invalid ebunch format") from e
 
-            for n in members:
+            for n in members_sub:
                 if n not in self._node:
                     self._node[n] = set()
                     self._node_attr[n] = self._node_attr_dict_factory()
