@@ -180,13 +180,14 @@ def test_add_simplices_from_format2():
     #    UserWarning, match="uid 0 already exists, cannot add edge {1, 3}."
     # ):
     #    H1.add_simplices_from([({1, 3}, 0)])
-    assert H1._edge == {
-        0: frozenset({1, 2}),
-        1: frozenset({2, 3, 4}),
-        2: frozenset({2, 3}),
-        3: frozenset({2, 4}),
-        4: frozenset({3, 4}),
-    }
+    simplices = [
+        frozenset({1, 2}),
+        frozenset({2, 3, 4}),
+        frozenset({2, 3}),
+        frozenset({2, 4}),
+        frozenset({3, 4}),
+    ]
+    assert set(H1.edges.members()) == set(simplices)
 
 
 def test_add_simplices_from_format3():
@@ -439,17 +440,18 @@ def test_remove_simplex_id(edgelist6):
     S.add_simplices_from(edgelist6)
 
     # remove simplex and others it belongs to
-    S.remove_simplex_id(7)  # simplex {2, 3}
-    edge_dict = {
-        0: frozenset({0, 1, 2}),
-        3: frozenset({0, 1}),
-        4: frozenset({2, 4}),
-        5: frozenset({1, 2}),
-        6: frozenset({3, 4}),
-        8: frozenset({0, 2}),
-        9: frozenset({1, 3}),
-    }
-    assert S._edge == edge_dict
+    id = list(S._edge.values()).index(frozenset({2, 3}))
+    S.remove_simplex_id(id)  # simplex {2, 3}
+    edges = [
+        frozenset({0, 1, 2}),
+        frozenset({0, 1}),
+        frozenset({2, 4}),
+        frozenset({1, 2}),
+        frozenset({3, 4}),
+        frozenset({0, 2}),
+        frozenset({1, 3}),
+    ]
+    assert set(S.edges.members()) == set(edges)
 
 
 def test_remove_simplex_ids_from(edgelist6):
@@ -457,13 +459,15 @@ def test_remove_simplex_ids_from(edgelist6):
     S.add_simplices_from(edgelist6)
 
     # remove simplex and others it belongs to
-    S.remove_simplex_ids_from([0, 7])  # simplex {2, 3}
-    edge_dict = {
-        3: frozenset({0, 1}),
-        4: frozenset({2, 4}),
-        5: frozenset({1, 2}),
-        6: frozenset({3, 4}),
-        8: frozenset({0, 2}),
-        9: frozenset({1, 3}),
-    }
-    assert S._edge == edge_dict
+    id1 = list(S._edge.values()).index(frozenset({2, 3}))
+    id2 = list(S._edge.values()).index(frozenset({0, 1, 2}))
+    S.remove_simplex_ids_from([id1, id2])
+    edge_dict = [
+        frozenset({0, 1}),
+        frozenset({2, 4}),
+        frozenset({1, 2}),
+        frozenset({3, 4}),
+        frozenset({0, 2}),
+        frozenset({1, 3}),
+    ]
+    assert set(S.edges.members()) == set(edges)
