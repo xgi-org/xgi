@@ -462,7 +462,7 @@ def test_remove_simplex_ids_from(edgelist6):
     id1 = list(S._edge.values()).index(frozenset({2, 3}))
     id2 = list(S._edge.values()).index(frozenset({0, 1, 2}))
     S.remove_simplex_ids_from([id1, id2])
-    edge_dict = [
+    edges = [
         frozenset({0, 1}),
         frozenset({2, 4}),
         frozenset({1, 2}),
