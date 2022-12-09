@@ -440,23 +440,115 @@ def test_boundary_matrix(edgelist4):
     assert facedict1 == facedict2
     assert tetdict1 == tetdict2
 
-    assert np.linalg.norm(B1[0:2, 0] - [-1, 1]) == 0
-    assert np.linalg.norm(B2[0:3, 0] - [1, -1, 1]) == 0
-    assert np.linalg.norm(B3[0:5, 0] - [0, -1, 1, -1, 1]) == 0
-    assert np.linalg.norm(np.sum(B1, 0) - [0, 0, 0, 0, 0, 0, 0, 0]) == 0
+    nodedict1 = {k: v for v, k in nodedict1.items()}
+    edgedict1 = {k: v for v, k in edgedict1.items()}
+    facedict1 = {k: v for v, k in facedict1.items()}
+    tetdict1 = {k: v for v, k in tetdict1.items()}
+
+    iddict = S1.edges.ids
+    iddict = {simplex: v for v, simplex in iddict.items()}
+
+    i123 = facedict1[iddict[frozenset([1, 2, 3])]]
+    i2345 = tetdict1[iddict[frozenset([2, 3, 4, 5])]]
+    i345 = facedict1[iddict[frozenset([3, 4, 5])]]
+    i245 = facedict1[iddict[frozenset([2, 4, 5])]]
+    i12 = edgedict1[iddict[frozenset([1, 2])]]
+    i24 = edgedict1[iddict[frozenset([2, 4])]]
+    i34 = edgedict1[iddict[frozenset([3, 4])]]
+    i235 = facedict1[iddict[frozenset([2, 3, 5])]]
+    i23 = edgedict1[iddict[frozenset([2, 3])]]
+    i45 = edgedict1[iddict[frozenset([4, 5])]]
+    i234 = facedict1[iddict[frozenset([2, 3, 4])]]
+    i25 = edgedict1[iddict[frozenset([2, 5])]]
+    i13 = edgedict1[iddict[frozenset([1, 3])]]
+    i35 = edgedict1[iddict[frozenset([3, 5])]]
+
+    assert B1[nodedict1[1], i12] == -1
+    assert B1[nodedict1[2], i12] == 1
+    assert B1[nodedict1[2], i24] == -1
+    assert B1[nodedict1[4], i24] == 1
+    assert B1[nodedict1[3], i34] == -1
+    assert B1[nodedict1[4], i34] == 1
+    assert B1[nodedict1[2], i23] == -1
+    assert B1[nodedict1[3], i23] == 1
+    assert B1[nodedict1[4], i45] == -1
+    assert B1[nodedict1[5], i45] == 1
+    assert B1[nodedict1[2], i25] == -1
+    assert B1[nodedict1[5], i25] == 1
+    assert B1[nodedict1[1], i13] == -1
+    assert B1[nodedict1[3], i13] == 1
+    assert B1[nodedict1[3], i35] == -1
+    assert B1[nodedict1[5], i35] == 1
+
+    assert B2[i12, i123] == 1
+    assert B2[i23, i123] == 1
+    assert B2[i13, i123] == -1
+    assert B2[i34, i345] == 1
+    assert B2[i45, i345] == 1
+    assert B2[i35, i345] == -1
+    assert B2[i24, i245] == 1
+    assert B2[i45, i245] == 1
+    assert B2[i25, i245] == -1
+    assert B2[i23, i235] == 1
+    assert B2[i35, i235] == 1
+    assert B2[i25, i235] == -1
+    assert B2[i23, i234] == 1
+    assert B2[i34, i234] == 1
+    assert B2[i24, i234] == -1
+
+    assert B3[i345, i2345] == 1
+    assert B3[i245, i2345] == -1
+    assert B3[i235, i2345] == 1
+    assert B3[i234, i2345] == -1
+
     assert np.linalg.norm(B1 @ B2) == 0
     assert np.linalg.norm(B2 @ B3) == 0
 
-    # Change the orientation of a face and an edge
-    orientations[0] = 1
-    orientations[1] = 1
+    # Change the orientation of a face
+    orientations[iddict[frozenset([3, 4, 5])]] = 1
 
     B1 = xgi.boundary_matrix(S1, order=1, orientations=orientations, index=False)
     B2 = xgi.boundary_matrix(S1, order=2, orientations=orientations, index=False)
     B3 = xgi.boundary_matrix(S1, order=3, orientations=orientations, index=False)
-    assert np.linalg.norm(B1[0:2, 0] - [1, -1]) == 0
-    assert np.linalg.norm(B2[0:3, 0] - [1, 1, -1]) == 0
-    assert np.linalg.norm(B3[0:5, 0] - [0, -1, 1, -1, 1]) == 0
+
+    assert B1[nodedict1[1], i12] == -1
+    assert B1[nodedict1[2], i12] == 1
+    assert B1[nodedict1[2], i24] == -1
+    assert B1[nodedict1[4], i24] == 1
+    assert B1[nodedict1[3], i34] == -1
+    assert B1[nodedict1[4], i34] == 1
+    assert B1[nodedict1[2], i23] == -1
+    assert B1[nodedict1[3], i23] == 1
+    assert B1[nodedict1[4], i45] == -1
+    assert B1[nodedict1[5], i45] == 1
+    assert B1[nodedict1[2], i25] == -1
+    assert B1[nodedict1[5], i25] == 1
+    assert B1[nodedict1[1], i13] == -1
+    assert B1[nodedict1[3], i13] == 1
+    assert B1[nodedict1[3], i35] == -1
+    assert B1[nodedict1[5], i35] == 1
+
+    assert B2[i12, i123] == 1
+    assert B2[i23, i123] == 1
+    assert B2[i13, i123] == -1
+    assert B2[i34, i345] == -1
+    assert B2[i45, i345] == -1
+    assert B2[i35, i345] == 1
+    assert B2[i24, i245] == 1
+    assert B2[i45, i245] == 1
+    assert B2[i25, i245] == -1
+    assert B2[i23, i235] == 1
+    assert B2[i35, i235] == 1
+    assert B2[i25, i235] == -1
+    assert B2[i23, i234] == 1
+    assert B2[i34, i234] == 1
+    assert B2[i24, i234] == -1
+
+    assert B3[i345, i2345] == -1
+    assert B3[i245, i2345] == -1
+    assert B3[i235, i2345] == 1
+    assert B3[i234, i2345] == -1
+
     assert np.linalg.norm(B1 @ B2) == 0
     assert np.linalg.norm(B2 @ B3) == 0
 
