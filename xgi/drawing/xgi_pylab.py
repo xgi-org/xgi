@@ -478,8 +478,12 @@ def draw_xgi_simplices(
     draw_node_labels
     draw_hyperedge_labels
     """
+
+    max_edges = SC.edges.filterby("order", max_order, "leq").members()
+    S_max = SimplicialComplex(max_edges)  # SC without simplices larger than max_order
+
     # Plot only the maximal simplices, thus let's convert the SC to H
-    H_ = convert.from_simplicial_complex_to_hypergraph(SC)
+    H_ = convert.from_simplicial_complex_to_hypergraph(S_max)
 
     dyad_color = _color_arg_to_dict(dyad_color, H_.edges, settings["dyad_color_cmap"])
     dyad_lw = _scalar_arg_to_dict(
@@ -494,15 +498,20 @@ def draw_xgi_simplices(
     # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
     for id, he in H_.edges.members(dtype=dict).items():
         d = len(he) - 1
-        if d > max_order:
-            continue
+
         if d == 1:
             # Drawing the edges
             he = list(he)
             x_coords = [pos[he[0]][0], pos[he[1]][0]]
             y_coords = [pos[he[0]][1], pos[he[1]][1]]
 
-            line = plt.Line2D(x_coords, y_coords, color=dyad_color[id], lw=dyad_lw[id])
+            line = plt.Line2D(
+                x_coords,
+                y_coords,
+                color=dyad_color[id],
+                lw=dyad_lw[id],
+                zorder=max_order - 1,
+            )
             ax.add_line(line)
         else:
             # Hyperedges of order d (d=2: triangles, etc.)
