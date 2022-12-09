@@ -59,7 +59,9 @@ def test_flag_complex():
     G1 = nx.complete_graph(4)
     S4 = xgi.flag_complex(G1)
     S5 = xgi.flag_complex(G1, ps=[1])
-    assert S4.edges.members() == S5.edges.members()
+    assert S4.num_nodes == S5.num_nodes
+    assert S4.num_edges == S5.num_edges
+    assert set(S4.edges.members()) == set(S5.edges.members())
 
 
 def test_ring_lattice():

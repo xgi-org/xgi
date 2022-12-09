@@ -11,7 +11,7 @@ from itertools import combinations, count
 from warnings import warn
 
 from ..exception import XGIError
-from ..utils.utilities import update_uid_counter
+from ..utils.utilities import powerset, update_uid_counter
 from .hypergraph import Hypergraph
 from .reportviews import EdgeView, NodeView
 
@@ -150,6 +150,42 @@ class SimplicialComplex(Hypergraph):
         """add_node_to_edge is not implemented in SimplicialComplex."""
         raise XGIError("add_node_to_edge is not implemented in SimplicialComplex.")
 
+    def remove_node(self, n, strong=False):
+        """remove_node is not implemented in SimplicialComplex."""
+        raise XGIError("remove_node is not implemented in SimplicialComplex.")
+
+    def _add_simplex(self, members, id=None, **attr):
+        """Helper function to add a simplex to a simplicial complex, without any
+        check. Does not automatically update self._edge_uid"""
+
+        self._edge[id] = set()
+        for node in members:
+            if node not in self._node:
+                if node is None:
+                    raise ValueError("None cannot be a node")
+                self._node[node] = set()
+                self._node_attr[node] = self._node_attr_dict_factory()
+            self._node[node].add(id)
+
+        self._edge[id] = members
+        self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+        self._edge_attr[id].update(attr)
+
+    def _add_face(self, members):
+        """Helper function to add a face to a simplicial complex, without any
+        check, and without attributes. Automatically updates self._edge_uid"""
+
+        id = next(self._edge_uid)
+        self._edge[id] = frozenset(members)
+
+        for n in members:
+            if n not in self._node:
+                self._node[n] = set()
+                self._node_attr[n] = self._node_attr_dict_factory()
+            self._node[n].add(id)
+
+        self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+
     def add_simplex(self, members, id=None, **attr):
         """Add a simplex to the simplicial complex, and all its subfaces that do
         not exist yet.
@@ -188,9 +224,9 @@ class SimplicialComplex(Hypergraph):
         >>> import xgi
         >>> S = xgi.SimplicialComplex()
         >>> S.add_simplex([1, 2, 3])
-        >>> S.edges.members() # doctest: +NORMALIZE_WHITESPACE
-        [frozenset({1, 2, 3}), frozenset({1, 2}),
-            frozenset({1, 3}), frozenset({2, 3})]
+        >>> S.edges.members() # doctest: +NORMALIZE_WHITESPACE +SKIP
+        [frozenset({1, 2, 3}), frozenset({2, 3}),
+            frozenset({1, 2}), frozenset({1, 3})]
         >>> S.add_simplex([3, 4], id='myedge')
         >>> S.edges
         EdgeView((0, 1, 2, 3, 'myedge'))
@@ -214,32 +250,30 @@ class SimplicialComplex(Hypergraph):
         if not members:
             raise XGIError("Cannot add an empty edge")
 
-        if not self.has_simplex(members):
+        if self.has_simplex(members):
+            return
 
-            if id in self._edge.keys():  # check that uid is not present yet
-                warn(f"uid {id} already exists, cannot add simplex {members}")
-                return
+        if id in self._edge.keys():  # check that uid is not present yet
+            warn(f"uid {id} already exists, cannot add simplex {members}")
+            return
 
-            uid = next(self._edge_uid) if not id else id
-            self._edge[uid] = set()
-            for node in members:
-                if node not in self._node:
-                    if node is None:
-                        raise ValueError("None cannot be a node")
-                    self._node[node] = set()
-                    self._node_attr[node] = self._node_attr_dict_factory()
-                self._node[node].add(uid)
+        id = next(self._edge_uid) if not id else id
 
-            self._edge[uid] = members
-            self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
-            self._edge_attr[uid].update(attr)
+        self._add_simplex(members, id, **attr)
 
-            if id:  # set self._edge_uid correctly
-                update_uid_counter(self, id)
+        # set self._edge_uid correctly
+        update_uid_counter(self, id)
 
-            # add all subfaces
-            faces = self._subfaces(members)
-            self.add_simplices_from(faces)
+        # add all subfaces
+        faces = self._subfaces(members)
+        faces = set(faces)  # get unique faces
+        for members_sub in faces:
+
+            # check that it does not exist yet (based on members, not ID)
+            if not members_sub or self.has_simplex(members_sub):
+                continue
+
+            self._add_face(members_sub)
 
     def _subfaces(self, simplex, all=True):
         """Returns list of subfaces of simplex.
@@ -328,28 +362,28 @@ class SimplicialComplex(Hypergraph):
         automatically.
 
         >>> S.add_simplices_from([[0, 1], [1, 2], [2, 3, 4]])
-        >>> S.edges.members(dtype=dict)
+        >>> S.edges.members(dtype=dict) # doctest: +SKIP
         {0: frozenset({0, 1}), 1: frozenset({1, 2}), 2: frozenset({2, 3, 4}), 3: frozenset({2, 3}), 4: frozenset({2, 4}), 5: frozenset({3, 4})}
 
         Custom simplex ids can be specified using a dict.
 
         >>> S = xgi.SimplicialComplex()
         >>> S.add_simplices_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
-        >>> S.edges.members(dtype=dict)
+        >>> S.edges.members(dtype=dict) # doctest: +SKIP
         {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}), 0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
 
         You can use the dict format to easily add simplices from another simplicial complex.
 
         >>> S2 = xgi.SimplicialComplex()
         >>> S2.add_simplices_from(S.edges.members(dtype=dict))
-        >>> S.edges == S2.edges
+        >>> list(S.edges) == list(S2.edges)
         True
 
         Alternatively, simplex ids can be specified using an iterable of 2-tuples.
 
         >>> S = xgi.SimplicialComplex()
         >>> S.add_simplices_from([([0, 1], 'one'), ([1, 2], 'two'), ([2, 3, 4], 'three')])
-        >>> S.edges.members(dtype=dict)
+        >>> S.edges.members(dtype=dict) # doctest: +SKIP
         {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}), 0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
 
         Attributes for each simplex may be specified using a 2-tuple for each simplex.
@@ -381,6 +415,8 @@ class SimplicialComplex(Hypergraph):
 
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
+
+            faces = []  # container to store subfaces
             for id, members in ebunch_to_add.items():
 
                 # check that it does not exist yet (based on members, not ID)
@@ -393,26 +429,31 @@ class SimplicialComplex(Hypergraph):
 
                 if max_order != None:
                     if len(members) > max_order + 1:
-                        combos = combinations(members, max_order + 1)
-                        self.add_simplices_from(list(combos), max_order=None)
+                        combos = powerset(members, include_singletons=False)
+                        faces += list(combos)
 
                         continue
+
                 try:
-                    self._edge[id] = frozenset(members)
+                    _ = frozenset(members)
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
-                for n in members:
-                    if n not in self._node:
-                        self._node[n] = set()
-                        self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].add(id)
-                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+
+                self._add_simplex(frozenset(members), id)
 
                 update_uid_counter(self, id)
 
-                # add subfaces
-                faces = self._subfaces(members)
-                self.add_simplices_from(faces)
+                # store subfaces
+                faces += self._subfaces(members)
+
+            # add subfaces
+            faces = set(faces)  # get unique subfaces
+            for members in faces:
+                # check that it does not exist yet (based on members, not ID)
+                if not members or self.has_simplex(members):
+                    continue
+
+                self._add_face(members)
 
             return
 
@@ -446,6 +487,7 @@ class SimplicialComplex(Hypergraph):
         ):
             raise XGIError("Members cannot be specified as a string")
 
+        faces = []
         # now we may iterate over the rest
         e = first_edge
         while True:
@@ -469,7 +511,6 @@ class SimplicialComplex(Hypergraph):
             if not members or self.has_simplex(members):
                 try:
                     e = next(new_edges)
-
                 except StopIteration:
                     break
 
@@ -479,10 +520,11 @@ class SimplicialComplex(Hypergraph):
             # we're skipping ID numbers when edges already exist
             if format1 or format3:
                 id = next(self._edge_uid)
+
             if max_order != None:
                 if len(members) > max_order + 1:
-                    combos = combinations(members, max_order + 1)
-                    self.add_simplices_from(list(combos), max_order=None)
+                    combos = powerset(members, include_singletons=False)
+                    faces += list(combos)  # store faces
 
                     try:
                         e = next(new_edges)
@@ -493,35 +535,48 @@ class SimplicialComplex(Hypergraph):
 
             if id in self._edge.keys():  # check that uid is not present yet
                 warn(f"uid {id} already exists, cannot add simplex {members}.")
-            else:
 
                 try:
-                    self._edge[id] = frozenset(members)
-                except TypeError as e:
-                    raise XGIError("Invalid ebunch format") from e
+                    e = next(new_edges)
+                except StopIteration:
+                    break
 
-                for n in members:
-                    if n not in self._node:
-                        self._node[n] = set()
-                        self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].add(id)
+                continue
 
-                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
-                self._edge_attr[id].update(attr)
-                self._edge_attr[id].update(eattr)
+            try:
+                self._edge[id] = frozenset(members)
+            except TypeError as e:
+                raise XGIError("Invalid ebunch format") from e
 
-                if format2 or format4:
-                    update_uid_counter(self, id)
+            for n in members:
+                if n not in self._node:
+                    self._node[n] = set()
+                    self._node_attr[n] = self._node_attr_dict_factory()
+                self._node[n].add(id)
 
-                # add subfaces
-                faces = self._subfaces(members)
-                self.add_simplices_from(faces)
+            self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+            self._edge_attr[id].update(attr)
+            self._edge_attr[id].update(eattr)
+
+            update_uid_counter(self, id)
+
+            # store subfaces
+            faces += self._subfaces(members)
 
             try:
                 e = next(new_edges)
             except StopIteration:
-
                 break
+
+        # add subfaces
+        faces = set(faces)  # get unique faces
+        for members in faces:
+
+            # check that it does not exist yet (based on members, not ID)
+            if not members or self.has_simplex(members):
+                continue
+
+            self._add_face(members)
 
     def close(self):
         """Adds all missing subfaces to the complex.
@@ -592,6 +647,21 @@ class SimplicialComplex(Hypergraph):
         except KeyError:
             XGIError("Empty or invalid simplices specified.")
 
+    def _remove_simplex_id(self, id):
+        """Helper function to remove a simplex with a given id
+
+        Parameters
+        ----------
+        id : Hashable
+            edge ID to remove
+
+        """
+
+        for node in self.edges.members(id):
+            self._node[node].remove(id)
+        del self._edge[id]
+        del self._edge_attr[id]
+
     def remove_simplex_id(self, id):
         """Remove a simplex with a given id.
 
@@ -616,13 +686,11 @@ class SimplicialComplex(Hypergraph):
 
             # remove all simplices that contain simplex
             supfaces_ids = self._supfaces_id(self._edge[id])
-            self.remove_simplex_ids_from(supfaces_ids)
+            for sup_id in supfaces_ids:
+                self._remove_simplex_id(sup_id)
 
             # remove simplex
-            for node in self.edges.members(id):
-                self._node[node].remove(id)
-            del self._edge[id]
-            del self._edge_attr[id]
+            self._remove_simplex_id(id)
 
         except KeyError as e:
             raise XGIError(f"Simplex {id} is not in the Simplicialcomplex") from e
@@ -647,10 +715,7 @@ class SimplicialComplex(Hypergraph):
 
         """
         for id in ebunch:
-            for node in self.edges.members(id):
-                self._node[node].remove(id)
-            del self._edge[id]
-            del self._edge_attr[id]
+            self.remove_simplex_id(id)
 
     def has_simplex(self, simplex):
         """Whether a simplex appears in the simplicial complex.
