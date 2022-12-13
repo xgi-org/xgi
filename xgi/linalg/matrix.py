@@ -426,6 +426,7 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
 
     if orientations is None:
         orientations = {idd: 0 for idd in S.edges.filterby("order", 1, mode="geq")}
+        print(orientations)
 
     B = np.zeros((nd, nu))
     if not (nu == 0 or nd == 0):

@@ -1,6 +1,7 @@
 """Simulation of the Kuramoto model."""
 
 import numpy as np
+from scipy.integrate import solve_ivp
 
 import xgi
 
@@ -77,15 +78,9 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.
 
         for i, j, k in triangles:
 
-            r2[i] += np.exp(2j * theta[j] - 1j * theta[k]) + np.exp(
-                2j * theta[k] - 1j * theta[j]
-            )
-            r2[j] += np.exp(2j * theta[i] - 1j * theta[k]) + np.exp(
-                2j * theta[k] - 1j * theta[i]
-            )
-            r2[k] += np.exp(2j * theta[i] - 1j * theta[j]) + np.exp(
-                2j * theta[j] - 1j * theta[i]
-            )
+            r2[i] += np.exp(2j * theta[j] - 1j * theta[k]) + np.exp(2j * theta[k] - 1j * theta[j])
+            r2[j] += np.exp(2j * theta[i] - 1j * theta[k]) + np.exp(2j * theta[k] - 1j * theta[i])
+            r2[k] += np.exp(2j * theta[i] - 1j * theta[j]) + np.exp(2j * theta[j] - 1j * theta[i])
 
         d_theta = (
             w
@@ -104,16 +99,17 @@ def simulate_simplicial_kuramoto(
     S,
     orientations=None,
     order=1,
-    omega=[],
+    omega=None,
     sigma=1,
-    theta0=[],
+    theta0=None,
     T=10,
     n_steps=10000,
     index=False,
+    integrator="explicit_euler",
 ):
     """
-    This function simulates the simplicial Kuramoto model's dynamics on an oriented simplicial complex
-    using explicit Euler numerical integration scheme.
+    This function simulates the simplicial Kuramoto model's dynamics on an oriented simplicial
+    complex using explicit Euler numerical integration scheme, or scipy.integrate.solve_ivp.
 
     Parameters
     ----------
@@ -125,20 +121,22 @@ def simulate_simplicial_kuramoto(
     order: integer
         The order of the oscillating simplices
     omega: numpy.ndarray
-        The simplicial oscillators' natural frequencies, has dimension
-        (n_simplices of given order, 1)
+        The simplicial oscillators' natural frequencies, has dimension of n_simplices of given order
+        if None, random will be chosen
     sigma: positive real value
         The coupling strength
     theta0: numpy.ndarray
-        The initial phase distribution, has dimension
-        (n_simplices of given order, 1)
+        The initial phase distribution, has dimension n_simplices of given order
+        if None, random will be chosen
     T: positive real value
         The final simulation time.
     n_steps: integer greater than 1
-        The number of integration timesteps for
-        the explicit Euler method.
+        The number of integration timesteps.
     index: bool, default: False
         Specifies whether to output dictionaries mapping the node and edge IDs to indices
+    integrator: str, default: BDF
+        Speficies the type of numerical integrator to use, can be explicit_euler,
+        or any available via scipy.integrate.solve_ivp
 
     Returns
     -------
@@ -182,11 +180,8 @@ def simulate_simplicial_kuramoto(
     else:
         B_o = xgi.matrix.boundary_matrix(S, order, orientations, False)
     D_om1 = np.transpose(B_o)
-
     if index:
-        B_op1, __, op1_dict = xgi.matrix.boundary_matrix(
-            S, order + 1, orientations, True
-        )
+        B_op1, __, op1_dict = xgi.matrix.boundary_matrix(S, order + 1, orientations, True)
     else:
         B_op1 = xgi.matrix.boundary_matrix(S, order + 1, orientations, False)
     D_o = np.transpose(B_op1)
@@ -194,15 +189,33 @@ def simulate_simplicial_kuramoto(
     # Compute the number of oscillating simplices
     n_o = np.shape(B_o)[1]
 
+    if omega is None:
+        omega = np.random.normal(0, 1, n_o)
+
+    if theta0 is None:
+        theta0 = np.random.normal(0, 1, n_o)
+
     dt = T / n_steps
     theta = np.zeros((n_o, n_steps))
-    theta[:, [0]] = theta0
-    for t in range(1, n_steps):
-        theta[:, [t]] = theta[:, [t - 1]] + dt * (
-            omega
-            - sigma * D_om1 @ np.sin(B_o @ theta[:, [t - 1]])
-            - sigma * B_op1 @ np.sin(D_o @ theta[:, [t - 1]])
-        )
+    theta[:, 0] = theta0
+
+    def rhs(_, _theta):
+        return omega - sigma * (D_om1 @ np.sin(B_o @ _theta) + B_op1 @ np.sin(D_o @ _theta))
+
+    if integrator == "explicit_euler":
+        for t in range(1, n_steps):
+            theta[:, t] = theta[:, t - 1] + dt * rhs(0, theta[:, t - 1])
+    else:
+        theta = solve_ivp(
+            rhs,
+            [0, T],
+            theta0,
+            t_eval=np.linspace(0, T, n_steps),
+            method=integrator,
+            rtol=1.0e-8,
+            atol=1.0e-8,
+        ).y
+
     theta_minus = B_o @ theta
     theta_plus = D_o @ theta
     if index:

@@ -40,7 +40,7 @@ def test_simulate_simplicial_kuramoto():
     n2 = len(S.edges.filterby("order", 2))
 
     theta, theta_minus, theta_plus = xgi.simulate_simplicial_kuramoto(
-        S, None, 1, np.ones((n1, 1)), 1, np.ones((n1, 1)), 1, 30, False
+        S, None, 1, np.ones(n1), 1, np.ones(n1), 1, 30, False
     )
     r = xgi.compute_simplicial_order_parameter(theta_minus, theta_plus)
 
