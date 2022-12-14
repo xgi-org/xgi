@@ -85,3 +85,103 @@ def test_simulate_simplicial_kuramoto():
     )
 
     assert norm(r - output) < 1e-07
+
+
+def test_simulate_simplicial_sakaguchi_kuramoto():
+    S = xgi.random_simplicial_complex(40, [0.08, 0.03], seed=0)
+    n0 = len(S.nodes)
+    n1 = len(S.edges.filterby("order", 1))
+    n2 = len(S.edges.filterby("order", 2))
+
+    theta, theta_minus, theta_plus = xgi.simulate_simplicial_sakaguchi_kuramoto(
+        S, None, 1, np.ones(n1), 1.0, True, 1, np.ones(n1), 1, 30, False
+    )
+    r = xgi.compute_simplicial_order_parameter(theta_minus, theta_plus)
+
+    assert np.shape(theta) == (n1, 30)
+    assert np.shape(theta_minus) == (n0, 30)
+    assert np.shape(theta_plus) == (n2, 30)
+    assert len(r) == 30
+
+    output = np.array(
+        [
+            0.49621306,
+            0.52948851,
+            0.52363131,
+            0.51321491,
+            0.51583117,
+            0.51208825,
+            0.49988031,
+            0.49549666,
+            0.51100881,
+            0.51125107,
+            0.50711096,
+            0.49553279,
+            0.48854057,
+            0.47552711,
+            0.47991634,
+            0.47462188,
+            0.47454695,
+            0.46251969,
+            0.46332552,
+            0.47221073,
+            0.4716475,
+            0.45471295,
+            0.44471146,
+            0.44260013,
+            0.43455512,
+            0.43517392,
+            0.44323849,
+            0.44135109,
+            0.43016681,
+            0.42665677,
+        ]
+    )
+    assert norm(r - output) < 1e-07
+
+    # without orientation preserving
+    theta, theta_minus, theta_plus = xgi.simulate_simplicial_sakaguchi_kuramoto(
+        S, None, 1, np.ones(n1), 1.0, False, 1, np.ones(n1), 1, 30, False
+    )
+    r = xgi.compute_simplicial_order_parameter(theta_minus, theta_plus)
+
+    assert np.shape(theta) == (n1, 30)
+    assert np.shape(theta_minus) == (n0, 30)
+    assert np.shape(theta_plus) == (n2, 30)
+    assert len(r) == 30
+
+    output = np.array(
+        [
+            0.49621306,
+            0.6126584,
+            0.70094599,
+            0.76249214,
+            0.81016895,
+            0.84569572,
+            0.87019944,
+            0.88023566,
+            0.88174598,
+            0.87795785,
+            0.87079713,
+            0.86174925,
+            0.8518659,
+            0.84183632,
+            0.83208089,
+            0.82283363,
+            0.81420588,
+            0.80623202,
+            0.79890078,
+            0.792176,
+            0.78601005,
+            0.78035222,
+            0.77515394,
+            0.77037188,
+            0.76596964,
+            0.76191855,
+            0.75819768,
+            0.75479313,
+            0.75169662,
+            0.74890335,
+        ]
+    )
+    assert norm(r - output) < 1e-07

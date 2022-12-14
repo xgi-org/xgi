@@ -10,6 +10,7 @@ from ..exception import XGIError
 __all__ = [
     "compute_kuramoto_order_parameter",
     "simulate_simplicial_kuramoto",
+    "simulate_simplicial_sakaguchi_kuramoto",
     "compute_simplicial_order_parameter",
 ]
 
@@ -134,9 +135,9 @@ def simulate_simplicial_kuramoto(
         The number of integration timesteps.
     index: bool, default: False
         Specifies whether to output dictionaries mapping the node and edge IDs to indices
-    integrator: str, default: BDF
+    integrator: str, default: explicit_euler
         Speficies the type of numerical integrator to use, can be explicit_euler,
-        or any available via scipy.integrate.solve_ivp
+        or any available via scipy.integrate.solve_ivp (BDF is recomended)
 
     Returns
     -------
@@ -195,14 +196,160 @@ def simulate_simplicial_kuramoto(
     if theta0 is None:
         theta0 = np.random.normal(0, 1, n_o)
 
-    dt = T / n_steps
-    theta = np.zeros((n_o, n_steps))
-    theta[:, 0] = theta0
-
     def rhs(_, _theta):
         return omega - sigma * (D_om1 @ np.sin(B_o @ _theta) + B_op1 @ np.sin(D_o @ _theta))
 
+    theta = np.zeros((n_o, n_steps))
+    theta[:, 0] = theta0
+
     if integrator == "explicit_euler":
+        dt = T / n_steps
+        for t in range(1, n_steps):
+            theta[:, t] = theta[:, t - 1] + dt * rhs(0, theta[:, t - 1])
+    else:
+        theta = solve_ivp(
+            rhs,
+            [0, T],
+            theta0,
+            t_eval=np.linspace(0, T, n_steps),
+            method=integrator,
+            rtol=1.0e-8,
+            atol=1.0e-8,
+        ).y
+
+    theta_minus = B_o @ theta
+    theta_plus = D_o @ theta
+    if index:
+        return theta, theta_minus, theta_plus, om1_dict, o_dict, op1_dict
+    else:
+        return theta, theta_minus, theta_plus
+
+
+def simulate_simplicial_sakaguchi_kuramoto(
+    S,
+    orientations=None,
+    order=1,
+    omega=None,
+    alpha=0,
+    orientation_preserving=True,
+    sigma=1,
+    theta0=None,
+    T=10,
+    n_steps=10000,
+    index=False,
+    integrator="explicit_euler",
+):
+    """
+    This function simulates the simplicial Kuramoto model's dynamics on an oriented simplicial
+    complex using explicit Euler numerical integration scheme, or scipy.integrate.solve_ivp.
+
+    Parameters
+    ----------
+    S: simplicial complex object
+        The simplicial complex on which you
+        run the simplicial Kuramoto model
+    orientations: dict, Default : None
+        Dictionary mapping non-singleton simplices IDs to their boolean orientation
+    order: integer
+        The order of the oscillating simplices
+    omega: numpy.ndarray
+        The simplicial oscillators' natural frequencies, has dimension of n_simplices of given order
+        if None, random will be chosen
+    alpha: float/numpy.ndarray
+        Frustration, has to be of double (order+1) size if orientation_preserving=True,
+        else (order) size
+    orientation_preserving: bool
+        Set to False to not have orientation preserving frustration
+    sigma: positive real value
+        The coupling strength
+    theta0: numpy.ndarray
+        The initial phase distribution, has dimension n_simplices of given order
+        if None, random will be chosen
+    T: positive real value
+        The final simulation time.
+    n_steps: integer greater than 1
+        The number of integration timesteps.
+    index: bool, default: False
+        Specifies whether to output dictionaries mapping the node and edge IDs to indices
+    integrator: str, default: explicit_euler
+        Speficies the type of numerical integrator to use, can be explicit_euler,
+        or any available via scipy.integrate.solve_ivp (BDF is recomended)
+
+    Returns
+    -------
+    theta: numpy.ndarray
+        Timeseries of the simplicial oscillators' phases, has dimension
+        (n_simplices of given order, n_steps)
+    theta_minus: numpy array of floats
+        Timeseries of the projection of the phases onto lower order simplices,
+        has dimension (n_simplices of given order - 1, n_steps)
+    theta_plus: numpy array of floats
+        Timeseries of the projection of the phases onto higher order simplices,
+        has dimension (n_simplices of given order + 1, n_steps)
+    om1_dict: dict
+        The dictionary mapping indices to (order-1)-simplices IDs, if index is True
+    o_dict: dict
+        The dictionary mapping indices to (order)-simplices IDs, if index is True
+    op1_dict: dict
+        The dictionary mapping indices to (order+1)-simplices IDs, if index is True
+
+    References
+    ----------
+    "Connecting Hodge and Sakaguchi-Kuramoto through a mathematical
+    framework for coupled oscillators on simplicial complexes"
+    by Alexis Arnaudon, Robert L. Peach, Giovanni Petri, and Paul Expert
+    https://doi.org/10.1038/s42005-022-00963-7
+
+    """
+    if not isinstance(S, xgi.SimplicialComplex):
+        raise XGIError(
+            "The simplicial Kuramoto model can be simulated only on a SimplicialComplex object"
+        )
+
+    if index:
+        B_o, om1_dict, o_dict = xgi.matrix.boundary_matrix(S, order, orientations, True)
+    else:
+        B_o = xgi.matrix.boundary_matrix(S, order, orientations, False)
+    D_om1 = np.transpose(B_o)
+    if index:
+        B_op1, __, op1_dict = xgi.matrix.boundary_matrix(S, order + 1, orientations, True)
+    else:
+        B_op1 = xgi.matrix.boundary_matrix(S, order + 1, orientations, False)
+    D_o = np.transpose(B_op1)
+
+    # Compute the number of oscillating simplices
+    n_o = np.shape(B_o)[1]
+    n_o_up = np.shape(D_o)[0]
+
+    if omega is None:
+        omega = np.random.normal(0, 1, n_o)
+
+    if theta0 is None:
+        theta0 = np.random.normal(0, 1, n_o)
+
+    def neg(matrix):
+        """Return negative part of matrix."""
+        _matrix = matrix.copy()
+        _matrix[_matrix > 0] = 0
+        return _matrix
+
+    if orientation_preserving:
+        V2 = np.concatenate((np.eye(n_o_up), -np.eye(n_o_up)), axis=0)
+        LD_o = V2 @ D_o
+        LB_op1 = neg(B_op1 @ V2.T)
+    else:
+        LD_o = D_o
+        LB_op1 = B_op1
+
+    def rhs(_, _theta):
+        return omega - sigma * (
+            D_om1 @ np.sin(B_o @ _theta) + LB_op1 @ np.sin(LD_o @ _theta + alpha)
+        )
+
+    theta = np.zeros((n_o, n_steps))
+    theta[:, 0] = theta0
+    if integrator == "explicit_euler":
+        dt = T / n_steps
         for t in range(1, n_steps):
             theta[:, t] = theta[:, t - 1] + dt * rhs(0, theta[:, t - 1])
     else:
