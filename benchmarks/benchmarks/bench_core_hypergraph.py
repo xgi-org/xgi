@@ -7,20 +7,19 @@ from .common import Benchmark
 
 class CoreHypergraph(Benchmark):
     def setup(self):
-        fname = "../../data/disGene.txt"
-        self.hypergraph = xgi.read_bipartite_edgelist(fname, delimiter=" ")
-        self.disgene_edgelist = xgi.to_hyperedge_list(self.hypergraph)
-        self.disgene_edgedict = xgi.to_hyperedge_dict(self.hypergraph)
-        self.disgene_df = pd.read_csv(fname, delimiter=" ", header=None)
+        self.hypergraph = xgi.load_xgi_data("email-enron")
+        self.enron_edgelist = xgi.to_hyperedge_list(self.hypergraph)
+        self.enron_edgedict = xgi.to_hyperedge_dict(self.hypergraph)
+        self.enron_df = xgi.to_bipartite_pandas_dataframe(self.hypergraph)
 
     def time_edgelist_construction(self):
-        xgi.Hypergraph(self.disgene_edgelist)
+        xgi.Hypergraph(self.enron_edgelist)
 
     def time_edgedict_construction(self):
-        xgi.Hypergraph(self.disgene_edgedict)
+        xgi.Hypergraph(self.enron_edgedict)
 
     def time_df_construction(self):
-        xgi.Hypergraph(self.disgene_df)
+        xgi.Hypergraph(self.enron_df)
 
     def time_node_memberships(self):
         [self.hypergraph.nodes.memberships(n) for n in self.hypergraph.nodes]
