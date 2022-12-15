@@ -1,13 +1,16 @@
 import requests
+import json
+import os
 
 from .. import convert
 from ..exception import XGIError
 
-__all__ = ["load_xgi_data"]
+__all__ = ["load_xgi_data", "download_xgi_data", "_clean_file_path", 
+    "_request_from_xgi_data"]
 
-
-def load_xgi_data(dataset, nodetype=None, edgetype=None, max_order=None):
-    """_summary_
+def load_xgi_data(dataset, path='', read=True, nodetype=None, edgetype=None, 
+    max_order=None):
+    """Load a data set from the xgi-data repository or a local file.
 
     Parameters
     ----------
@@ -15,6 +18,11 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None, max_order=None):
         Dataset name. Valid options are the top-level tags of the
         index.json file in the xgi-data repository.
 
+    path : str, optional
+        Path to a local copy of the data set
+    read : bool, optional
+        If read==True, search for a local copy of the data set. Use the local
+        copy instead of the xgi-data repository.
     nodetype : type, optional
         Type to cast the node ID to
     edgetype : type, optional
@@ -32,15 +40,94 @@ def load_xgi_data(dataset, nodetype=None, edgetype=None, max_order=None):
     XGIError
        The specified dataset does not exist.
     """
-    index_url = "https://raw.githubusercontent.com/ComplexGroupInteractions/xgi-data/main/index.json"
+
+    if read:
+        cfp = _clean_file_path(path, dataset)
+        if os.path.exists(cfp):
+            data = json.load(open(cfp, 'r'))
+        else:
+            data = _request_from_xgi_data(dataset)
+    else:
+        data = _request_from_xgi_data(dataset)
+
+    return convert.dict_to_hypergraph(
+        data, nodetype=nodetype, edgetype=edgetype, max_order=max_order
+    )
+
+
+def download_xgi_data(dataset, path=''):
+    """Make a local copy of a dataset in the xgi-data repository.
+
+    Parameters
+    ----------
+    dataset : str
+        Dataset name. Valid options are the top-level tags of the
+        index.json file in the xgi-data repository.
+
+    path : str, optional
+        Path to where the local copy should be saved. If none is given, save
+        file to local directory.
+    """
+
+    jsondata = _request_from_xgi_data(dataset)
+    jsonfile = open(_clean_file_path(path, dataset), 'w')
+    json.dump(jsondata, jsonfile)
+    jsonfile.close()
+
+
+def _clean_file_path(path, dataset):
+    """Create a clean path to file to an xgi data set in json format.
+    
+    Parameters
+    ----------
+    path : str
+        Path to a local directory.
+
+    dataset : str
+        Dataset name. Valid options are the top-level tags of the
+        index.json file in the xgi-data repository.
+
+    Returns
+    -------
+    Filepath
+        The cleaned file path.
+    """
+
+    if len(path)>0:
+        if path[-1] not in ['/', '\\']:
+            path = path + '/'
+        elif path[-1]=='\\':
+            path = path.replace('\\', '/')
+
+    filepath = path + dataset + '.json'
+
+    return filepath  
+
+
+def _request_from_xgi_data(dataset):
+    """Request a dataset from xgi-data.
+
+    Parameters
+    ----------
+    dataset : str
+        Dataset name. Valid options are the top-level tags of the
+        index.json file in the xgi-data repository.
+
+    Returns
+    -------
+    Data
+        The requested data loaded from a json file.
+    """
+
+    index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
     index = requests.get(index_url).json()
-    if dataset not in index:
+
+    key = dataset.lower()
+    if key not in index:
         print("Valid dataset names:")
         print(*index, sep="\n")
         raise XGIError("Must choose a valid dataset name!")
 
-    r = requests.get(index[dataset]["url"])
+    data = requests.get(index[key]["url"]).json()
 
-    return convert.dict_to_hypergraph(
-        r.json(), nodetype=nodetype, edgetype=edgetype, max_order=max_order
-    )
+    return data
