@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 
 import xgi
@@ -68,6 +69,28 @@ def test_from_bipartite_pandas_dataframe(dataframe5):
         xgi.from_bipartite_pandas_dataframe(
             dataframe5, node_column=0, edge_column="test2"
         )
+
+
+def test_to_bipartite_pandas_dataframe():
+    true_bi_el1 = [
+        [1, 0],
+        [2, 0],
+        [3, 0],
+        [4, 1],
+        [5, 2],
+        [6, 2],
+        [6, 3],
+        [7, 3],
+        [8, 3],
+    ]
+
+    true_df = pd.DataFrame(true_bi_el1, columns=["Node ID", "Edge ID"])
+    H1 = xgi.Hypergraph(true_df)
+
+    df = xgi.to_bipartite_pandas_dataframe(H1)
+
+    assert df.shape == true_df.shape
+    assert df.equals(true_df)
 
 
 def test_to_bipartite_graph(edgelist1, edgelist3, edgelist4):
