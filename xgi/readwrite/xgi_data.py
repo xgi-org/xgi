@@ -5,8 +5,7 @@ import os
 from .. import convert
 from ..exception import XGIError
 
-__all__ = ["load_xgi_data", "download_xgi_data", "_clean_file_path", 
-    "_request_from_xgi_data"]
+__all__ = ["load_xgi_data", "download_xgi_data"]
 
 def load_xgi_data(dataset, path='', read=True, nodetype=None, edgetype=None, 
     max_order=None):
@@ -42,7 +41,7 @@ def load_xgi_data(dataset, path='', read=True, nodetype=None, edgetype=None,
     """
 
     if read:
-        cfp = _clean_file_path(path, dataset)
+        cfp = _make_unix_file_path(path, dataset)
         if os.path.exists(cfp):
             data = json.load(open(cfp, 'r'))
         else:
@@ -70,13 +69,13 @@ def download_xgi_data(dataset, path=''):
     """
 
     jsondata = _request_from_xgi_data(dataset)
-    jsonfile = open(_clean_file_path(path, dataset), 'w')
+    jsonfile = open(_make_unix_file_path(path, dataset), 'w')
     json.dump(jsondata, jsonfile)
     jsonfile.close()
 
 
-def _clean_file_path(path, dataset):
-    """Create a clean path to file to an xgi data set in json format.
+def _make_unix_file_path(path, dataset):
+    """Create a path to file in unix format to an xgi data set in a jason file.
     
     Parameters
     ----------
@@ -90,7 +89,7 @@ def _clean_file_path(path, dataset):
     Returns
     -------
     Filepath
-        The cleaned file path.
+        The unix-format file path.
     """
 
     if len(path)>0:
