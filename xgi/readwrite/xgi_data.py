@@ -21,7 +21,7 @@ def load_xgi_data(dataset, path='', read=True, nodetype=None, edgetype=None,
         Path to a local copy of the data set
     read : bool, optional
         If read==True, search for a local copy of the data set. Use the local
-        copy instead of the xgi-data repository.
+        copy if it exists, otherwise use the  xgi-data repository.
     nodetype : type, optional
         Type to cast the node ID to
     edgetype : type, optional
