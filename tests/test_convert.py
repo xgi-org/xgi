@@ -84,13 +84,23 @@ def test_to_bipartite_pandas_dataframe():
         [8, 3],
     ]
 
-    true_df = pd.DataFrame(true_bi_el1, columns=["Node ID", "Edge ID"])
-    H1 = xgi.Hypergraph(true_df)
+    true_bi_el2 = [[1, 0], [2, 0], [3, 0], [3, 1], [4, 1], [4, 2], [5, 2], [6, 2]]
 
-    df = xgi.to_bipartite_pandas_dataframe(H1)
+    true_df1 = pd.DataFrame(true_bi_el1, columns=["Node ID", "Edge ID"])
+    H1 = xgi.Hypergraph(true_df1)
 
-    assert df.shape == true_df.shape
-    assert df.equals(true_df)
+    df1 = xgi.to_bipartite_pandas_dataframe(H1)
+
+    assert df1.shape == true_df1.shape
+    assert df1.equals(true_df1)
+
+    true_df2 = pd.DataFrame(true_bi_el2, columns=["Node ID", "Edge ID"])
+    H2 = xgi.Hypergraph(true_df2)
+
+    df2 = xgi.to_bipartite_pandas_dataframe(H2)
+
+    assert df2.shape == true_df2.shape
+    assert df2.equals(true_df2)
 
 
 def test_to_bipartite_graph(edgelist1, edgelist3, edgelist4):
