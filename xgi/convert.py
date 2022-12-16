@@ -27,6 +27,7 @@ __all__ = [
     "from_hyperedge_dict",
     "to_hyperedge_dict",
     "from_bipartite_pandas_dataframe",
+    "to_bipartite_pandas_dataframe",
     "from_incidence_matrix",
     "from_simplicial_complex_to_hypergraph",
     "to_incidence_matrix",
@@ -322,6 +323,32 @@ def from_bipartite_pandas_dataframe(
             H.add_node_to_edge(edge, node)
 
     return H
+
+
+def to_bipartite_pandas_dataframe(H):
+    """Create a two column dataframe from a hypergraph.
+
+    Parameters
+    ----------
+    H : Hypergraph or Simplicial Complex
+        A dataframe where specified columns list the node IDs
+        and the associated edge IDs
+
+    Returns
+    -------
+    Pandas Dataframe object
+        A two column dataframe
+
+    Raises
+    ------
+    XGIError
+        Raises an error if the user specifies invalid column names
+    """
+    data = []
+    for id1, members in H._node.items():
+        for id2 in members:
+            data.append([id1, id2])
+    return pd.DataFrame(data, columns=["Node ID", "Edge ID"])
 
 
 def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None):

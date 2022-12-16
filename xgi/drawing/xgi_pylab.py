@@ -365,7 +365,7 @@ def draw_xgi_hyperedges(
 
     if not max_order:
         max_order = max_edge_order(H)
-        
+
     dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
     dyad_lw = _scalar_arg_to_dict(
         dyad_lw, H.edges, settings["min_dyad_lw"], settings["max_dyad_lw"]
