@@ -290,8 +290,8 @@ def random_hypergraph(N, ps, seed=None):
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
 
-    nodes = range(N)  # list(G.nodes())
-    hyperedges = []  # hyperedges = list(G.edges())
+    nodes = range(N)
+    hyperedges = []
 
     for i, p in enumerate(ps):
         d = i + 1  # order, ps[0] is prob of edges (d=1)
@@ -303,8 +303,6 @@ def random_hypergraph(N, ps, seed=None):
         edges_to_add = [e for e, val in zip(potential_edges, mask) if val]
 
         hyperedges += edges_to_add
-
-    hyperedges += [[i] for i in nodes]  # add singleton edges
 
     H = empty_hypergraph()
     H.add_nodes_from(nodes)
@@ -358,7 +356,7 @@ def random_simplicial_complex(N, ps, seed=None):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
 
     nodes = range(N)
-    simplices = [[i] for i in nodes]  # add singleton edges
+    simplices = []
 
     for i, p in enumerate(ps):
         d = i + 1  # order, ps[0] is prob of edges (d=1)
