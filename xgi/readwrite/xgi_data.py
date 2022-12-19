@@ -45,6 +45,7 @@ def load_xgi_data(dataset, path='', read=True, nodetype=None, edgetype=None,
         if os.path.exists(cfp):
             data = json.load(open(cfp, 'r'))
         else:
+            warn(f"No local copy was found at {cfp}. The data is requested from the xgi-data repository instead. To download a local copy, use `download_xgi_data`.")
             data = _request_from_xgi_data(dataset)
     else:
         data = _request_from_xgi_data(dataset)
