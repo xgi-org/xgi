@@ -41,7 +41,7 @@ def load_xgi_data(dataset, path='', read=True, nodetype=None, edgetype=None,
     """
 
     if read:
-        cfp = os.path.join(path, dataset)
+        cfp = os.path.join(path, dataset+'.json')
         if os.path.exists(cfp):
             data = json.load(open(cfp, 'r'))
         else:
@@ -70,7 +70,7 @@ def download_xgi_data(dataset, path=''):
     """
 
     jsondata = _request_from_xgi_data(dataset)
-    jsonfile = open(os.path.join(path, dataset), 'w')
+    jsonfile = open(os.path.join(path, dataset+'.json'), 'w')
     json.dump(jsondata, jsonfile)
     jsonfile.close()
 
