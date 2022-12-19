@@ -7,16 +7,17 @@ import xgi
 from ..exception import XGIError
 
 __all__ = [
+    "simulate_kuramoto",
     "compute_kuramoto_order_parameter",
     "simulate_simplicial_kuramoto",
     "compute_simplicial_order_parameter",
 ]
 
 
-def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.002):
-    """This function calculates the order parameter for the Kuramoto model on hypergraphs.
+def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.002):
+    """Simulates the Kuramoto model on hypergraphs.
     This solves the Kuramoto model ODE on hypergraphs with edges of sizes 2 and 3
-    using the Euler Method. It returns an order parameter which is a measure of synchrony.
+    using the Euler Method. It returns timeseries of the phases.
 
     Parameters
     ----------
@@ -26,10 +27,10 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.
         The coupling strength for links
     k3 : float
         The coupling strength for triangles
-    w : numpy array of real values
-        The natural frequency of the nodes.
+    omega : numpy array of real values
+        The natural frequency of the nodes. If None (default), randomly drawn from a normal distribution
     theta : numpy array of real values
-        The initial phase distribution of nodes.
+        The initial phase distribution of nodes. If None (default), randomly drawn from a normal distribution
     timesteps : int greater than 1, default: 10000
         The number of timesteps for Euler Method.
     dt : float greater than 0, default: 0.002
@@ -37,8 +38,10 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.
 
     Returns
     -------
-    r_time : numpy array of floats
-        timeseries for Kuramoto model order parameter
+    theta_time: numpy array of floats
+        Timeseries of phases from the Kuramoto model, of dimension (N, T)
+    times: numpy array of floats
+        Times corresponding to the simulate phases
 
     References
     ----------
@@ -52,9 +55,9 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.
     >>> import xgi
     >>> n = 50
     >>> H = xgi.random_hypergraph(n, [0.05, 0.001], seed=None)
-    >>> w = 2*np.ones(n)
+    >>> omega = 2*np.ones(n)
     >>> theta = np.linspace(0, 2*np.pi, n)
-    >>> R = compute_kuramoto_order_parameter(H, k2 = 2, k3 = 3, w = w, theta = theta)
+    >>> theta_time, times = simulate_kuramoto(H, k2=2, k3=3, omega=omega, theta=theta)
 
     """
     H_int = xgi.convert_labels_to_integers(H, "label")
@@ -63,9 +66,18 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.
     triangles = H_int.edges.filterby("size", 3).members()
     n = H_int.num_nodes
 
-    r_time = np.zeros(timesteps)
+    theta_time = np.zeros((n, timesteps))
+    times = np.arange(timesteps) * dt
+
+    if omega is None:
+        omega = np.random.normal(0, 1, n)
+
+    if theta is None:
+        theta = np.random.normal(0, 1, n)
 
     for t in range(timesteps):
+
+        theta_time[:, t] = theta
 
         r1 = np.zeros(n, dtype=complex)
         r2 = np.zeros(n, dtype=complex)
@@ -88,14 +100,34 @@ def compute_kuramoto_order_parameter(H, k2, k3, w, theta, timesteps=10000, dt=0.
             )
 
         d_theta = (
-            w
+            omega
             + k2 * np.multiply(r1, np.exp(-1j * theta)).imag
             + k3 * np.multiply(r2, np.exp(-1j * theta)).imag
         )
         theta_new = theta + d_theta * dt
         theta = theta_new
-        z = np.mean(np.exp(1j * theta))
-        r_time[t] = abs(z)
+
+    return theta_time, times
+
+
+def compute_kuramoto_order_parameter(theta_time):
+    """This function calculates the order parameter for the Kuramoto model on hypergraphs,
+    from time series, which is a measure of synchrony.
+
+    Parameters
+    ----------
+    theta_time: numpy array of floats
+        Timeseries of phases from the Kuramoto model, of dimension (N, T)
+
+    Returns
+    -------
+    r_time : numpy array of floats
+        Timeseries for Kuramoto model order parameter
+
+    """
+
+    z = np.mean(np.exp(1j * theta_time), axis=0)
+    r_time = np.abs(z)
 
     return r_time
 
