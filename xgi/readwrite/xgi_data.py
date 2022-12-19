@@ -117,6 +117,10 @@ def _request_from_xgi_data(dataset):
     -------
     Data
         The requested data loaded from a json file.
+        
+   See also
+   ---------
+   load_xgi_data
     """
 
     index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
