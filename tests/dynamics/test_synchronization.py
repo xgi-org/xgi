@@ -5,32 +5,98 @@ from numpy.linalg import norm
 import xgi
 
 
-@pytest.mark.slow
-def test_compute_kuramoto_order_parameter():
-    H1 = xgi.random_hypergraph(100, [0.05, 0.001], seed=0)
-    r = xgi.compute_kuramoto_order_parameter(
-        H1, 1, 1, np.ones(100), np.linspace(0, 2 * np.pi, 100), 10, 0.002
-    )
+def test_simulate_kuramoto():
+    N = 5
+    n_steps = 10
+    dt = 0.002
+    theta0 = np.linspace(0, 2 * np.pi, N)
+    H1 = xgi.random_hypergraph(N, [0.05, 0.001], seed=0)
+    theta_time, times = xgi.simulate_kuramoto(H1, 1, 1, np.ones(N), theta0, n_steps, dt)
 
-    assert len(r) == 10
-    assert np.all(r >= 0)
+    assert theta_time.shape == (N, n_steps)
+    assert np.all(times == np.arange(n_steps) * dt)
 
     output = np.array(
         [
-            0.01050032,
-            0.01101978,
-            0.01155656,
-            0.01210898,
-            0.01267545,
-            0.01325451,
-            0.01384479,
-            0.01444504,
-            0.01505404,
-            0.01567069,
+            [
+                0.00000000e00,
+                2.00000000e-03,
+                4.00000000e-03,
+                6.00000000e-03,
+                8.00000000e-03,
+                1.00000000e-02,
+                1.20000000e-02,
+                1.40000000e-02,
+                1.60000000e-02,
+                1.80000000e-02,
+            ],
+            [
+                1.57079633e00,
+                1.57279633e00,
+                1.57479633e00,
+                1.57679633e00,
+                1.57879633e00,
+                1.58079633e00,
+                1.58279633e00,
+                1.58479633e00,
+                1.58679633e00,
+                1.58879633e00,
+            ],
+            [
+                3.14159265e00,
+                3.14359265e00,
+                3.14559265e00,
+                3.14759265e00,
+                3.14959265e00,
+                3.15159265e00,
+                3.15359265e00,
+                3.15559265e00,
+                3.15759265e00,
+                3.15959265e00,
+            ],
+            [
+                4.71238898e00,
+                4.71438898e00,
+                4.71638898e00,
+                4.71838898e00,
+                4.72038898e00,
+                4.72238898e00,
+                4.72438898e00,
+                4.72638898e00,
+                4.72838898e00,
+                4.73038898e00,
+            ],
+            [
+                6.28318531e00,
+                6.28518531e00,
+                6.28718531e00,
+                6.28918531e00,
+                6.29118531e00,
+                6.29318531e00,
+                6.29518531e00,
+                6.29718531e00,
+                6.29918531e00,
+                6.30118531e00,
+            ],
         ]
     )
 
-    assert norm(r - output) < 1e-07
+    assert norm(theta_time - output) < 1e-07
+
+
+def test_compute_kuramoto_order_parameter():
+
+    N = 5
+    n_steps = 10
+    dt = 0.002
+    theta0 = np.linspace(0, 2 * np.pi, N)
+    H1 = xgi.random_hypergraph(N, [0.05, 0.001], seed=0)
+    theta_time, times = xgi.simulate_kuramoto(H1, 1, 1, np.ones(N), theta0, n_steps, dt)
+
+    r_time = xgi.compute_kuramoto_order_parameter(theta_time)
+
+    output = np.array([0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2])
+    assert norm(r_time - output) < 1e-07
 
 
 def test_simulate_simplicial_kuramoto():
