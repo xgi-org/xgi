@@ -1,7 +1,7 @@
 import requests
 import json
 import os
-
+from warnings import warn
 from .. import convert
 from ..exception import XGIError
 
