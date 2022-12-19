@@ -41,7 +41,7 @@ def load_xgi_data(dataset, path='', read=True, nodetype=None, edgetype=None,
     """
 
     if read:
-        cfp = _make_unix_file_path(path, dataset)
+        cfp = os.path.join(path, dataset)
         if os.path.exists(cfp):
             data = json.load(open(cfp, 'r'))
         else:
@@ -70,38 +70,9 @@ def download_xgi_data(dataset, path=''):
     """
 
     jsondata = _request_from_xgi_data(dataset)
-    jsonfile = open(_make_unix_file_path(path, dataset), 'w')
+    jsonfile = open(os.path.join(path, dataset), 'w')
     json.dump(jsondata, jsonfile)
     jsonfile.close()
-
-
-def _make_unix_file_path(path, dataset):
-    """Create a path to file in unix format to an xgi data set in a jason file.
-    
-    Parameters
-    ----------
-    path : str
-        Path to a local directory.
-
-    dataset : str
-        Dataset name. Valid options are the top-level tags of the
-        index.json file in the xgi-data repository.
-
-    Returns
-    -------
-    Filepath
-        The unix-format file path.
-    """
-
-    if len(path)>0:
-        if path[-1] not in ['/', '\\']:
-            path = path + '/'
-        elif path[-1]=='\\':
-            path = path.replace('\\', '/')
-
-    filepath = path + dataset + '.json'
-
-    return filepath  
 
 
 def _request_from_xgi_data(dataset):
