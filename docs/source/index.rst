@@ -67,7 +67,7 @@ mind.
 - PyPI: https://pypi.org/project/xgi/
 - Documentation: https://xgi.readthedocs.io/
 
-Sign up for our `mailing list <http://eepurl.com/igE6ez>`_!
+Sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
 
 
 Installation
