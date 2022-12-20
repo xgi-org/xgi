@@ -30,7 +30,8 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
     omega : numpy array of real values
         The natural frequency of the nodes. If None (default), randomly drawn from a normal distribution
     theta : numpy array of real values
-        The initial phase distribution of nodes. If None (default), randomly drawn from a normal distribution
+        The initial phase distribution of nodes. If None (default), drawn from a random uniform distribution
+        on [0, 2pi[.
     timesteps : int greater than 1, default: 10000
         The number of timesteps for Euler Method.
     dt : float greater than 0, default: 0.002
