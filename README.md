@@ -47,7 +47,19 @@ To get started, take a look at the [tutorials](/tutorials/) illustrating the lib
 For more documentation, see our [Read The Docs](https://xgi.readthedocs.io/en/latest/) page.
 
 ## Contributing
-Contributions are always welcome. Please report any bugs that you find [here](../../issues). Or, even better, fork the repository on [GitHub](../../) and create a pull request (PR). We welcome all changes, big or small, and we will help you make the PR if you are new to `git` (just ask on the issue and/or see our [contributing guidelines](CONTRIBUTING.md)).
+If you want to contribute to this project, please make sure to read the
+[code of conduct](CODE_OF_CONDUCT.md)
+and the [contributing guidelines](CONTRIBUTING.md).
+
+The best way to contribute to XGI is by submitting a bug or request a new feature by
+opening a [new issue](https://github.com/ComplexGroupInteractions/xgi/issues/new).
+
+To get more actively involved, you are invited to browse the [issues page](../../issues) and choose one that you can
+work on.  The core developers will be happy to help you understand the codebase and any
+other doubts you may have while working on your contribution.
+
+If you are interested in the daily goings-on of XGI, you are invited to join our [Zulip
+channel](https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/).
 
 ## How to Cite
 
