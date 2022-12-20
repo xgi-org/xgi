@@ -1,14 +1,18 @@
-import requests
 import json
 import os
 from warnings import warn
+
+import requests
+
 from .. import convert
 from ..exception import XGIError
 
 __all__ = ["load_xgi_data", "download_xgi_data"]
 
-def load_xgi_data(dataset, path='', read=True, nodetype=None, edgetype=None, 
-    max_order=None):
+
+def load_xgi_data(
+    dataset, path="", read=True, nodetype=None, edgetype=None, max_order=None
+):
     """Load a data set from the xgi-data repository or a local file.
 
     Parameters
@@ -41,11 +45,13 @@ def load_xgi_data(dataset, path='', read=True, nodetype=None, edgetype=None,
     """
 
     if read:
-        cfp = os.path.join(path, dataset+'.json')
+        cfp = os.path.join(path, dataset + ".json")
         if os.path.exists(cfp):
-            data = json.load(open(cfp, 'r'))
+            data = json.load(open(cfp, "r"))
         else:
-            warn(f"No local copy was found at {cfp}. The data is requested from the xgi-data repository instead. To download a local copy, use `download_xgi_data`.")
+            warn(
+                f"No local copy was found at {cfp}. The data is requested from the xgi-data repository instead. To download a local copy, use `download_xgi_data`."
+            )
             data = _request_from_xgi_data(dataset)
     else:
         data = _request_from_xgi_data(dataset)
@@ -55,7 +61,7 @@ def load_xgi_data(dataset, path='', read=True, nodetype=None, edgetype=None,
     )
 
 
-def download_xgi_data(dataset, path=''):
+def download_xgi_data(dataset, path=""):
     """Make a local copy of a dataset in the xgi-data repository.
 
     Parameters
@@ -70,7 +76,7 @@ def download_xgi_data(dataset, path=''):
     """
 
     jsondata = _request_from_xgi_data(dataset)
-    jsonfile = open(os.path.join(path, dataset+'.json'), 'w')
+    jsonfile = open(os.path.join(path, dataset + ".json"), "w")
     json.dump(jsondata, jsonfile)
     jsonfile.close()
 
@@ -78,20 +84,20 @@ def download_xgi_data(dataset, path=''):
 def _request_from_xgi_data(dataset):
     """Request a dataset from xgi-data.
 
-    Parameters
-    ----------
-    dataset : str
-        Dataset name. Valid options are the top-level tags of the
-        index.json file in the xgi-data repository.
+     Parameters
+     ----------
+     dataset : str
+         Dataset name. Valid options are the top-level tags of the
+         index.json file in the xgi-data repository.
 
-    Returns
-    -------
-    Data
-        The requested data loaded from a json file.
-        
-   See also
-   ---------
-   load_xgi_data
+     Returns
+     -------
+     Data
+         The requested data loaded from a json file.
+
+    See also
+    ---------
+    load_xgi_data
     """
 
     index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
