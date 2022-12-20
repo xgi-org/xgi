@@ -7,6 +7,8 @@ xgi.dynamics.synchronization
    
    .. rubric:: Functions
    
+   .. autofunction:: simulate_kuramoto
+
    .. autofunction:: compute_kuramoto_order_parameter
 
    .. autofunction:: simulate_simplicial_kuramoto
