@@ -73,7 +73,7 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
         omega = np.random.normal(0, 1, n)
 
     if theta is None:
-        theta = np.random.normal(0, 1, n)
+        theta = np.random.random(n) * 2 * np.pi
 
     for t in range(timesteps):
 
