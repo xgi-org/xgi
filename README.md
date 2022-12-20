@@ -7,6 +7,8 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the rep
 * [**GitHub Discussions**](../../discussions)
 * [**Documentation**](https://xgi.readthedocs.io/en/latest/)
 
+Sign up for our [mailing list](http://eepurl.com/igE6ez)!
+
 ## Table of Contents:
   - [Installation](#installation)
   - [Getting Started](#getting-started)

@@ -67,6 +67,8 @@ mind.
 - PyPI: https://pypi.org/project/xgi/
 - Documentation: https://xgi.readthedocs.io/
 
+Sign up for our `mailing list <http://eepurl.com/igE6ez>`_!
+
 
 Installation
 ============
