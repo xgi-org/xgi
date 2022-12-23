@@ -69,5 +69,3 @@ Giovanni Petri <giovanni.petri@isi.it>
 Alice Patania <apatania@uvm.edu>
 
 Alice Schwarze <alice.c.schwarze@dartmouth.edu>
-
-Martina Contisciani <martina.contisciani@tue.mpg.de>
