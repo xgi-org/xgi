@@ -96,8 +96,6 @@ Alice Patania <apatania@uvm.edu>
 
 Alice Schwarze <alice.c.schwarze@dartmouth.edu>
 
-Martina Contisciani <martina.contisciani@tue.mpg.de>
-
 The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](LICENSE.md)
 
 ## Funding
