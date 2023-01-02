@@ -97,16 +97,21 @@ def download_xgi_data(dataset, path=""):
 def _request_from_xgi_data(dataset):
     """Request a dataset from xgi-data.
 
-     Parameters
-     ----------
-     dataset : str
-         Dataset name. Valid options are the top-level tags of the
-         index.json file in the xgi-data repository.
+    Parameters
+    ----------
+    dataset : str
+        Dataset name. Valid options are the top-level tags of the
+        index.json file in the xgi-data repository.
 
-     Returns
-     -------
-     Data
-         The requested data loaded from a json file.
+    Returns
+    -------
+    Data
+        The requested data loaded from a json file.
+
+    Raises
+    ------
+    XGIError
+        If HTTP request is not successful of the dataset does not exist.
 
     See also
     ---------
@@ -119,7 +124,7 @@ def _request_from_xgi_data(dataset):
     if r.ok:
         index_data = r.json()
     else:
-        raise XGIError("Error: HTTP response {r.status_code}")
+        raise XGIError(f"Error: HTTP response {r.status_code}")
 
     key = dataset.lower()
     if key not in index_data:
@@ -131,7 +136,7 @@ def _request_from_xgi_data(dataset):
     if r.ok:
         return r.json()
     else:
-        raise XGIError("Error: HTTP response {r.status_code}")
+        raise XGIError(f"Error: HTTP response {r.status_code}")
 
 
 @lru_cache(maxsize=None)
@@ -140,16 +145,16 @@ def _request_from_xgi_data_cached(dataset):
 
     Wraps `_request_from_xgi_data` in an lru_cache decorator.
 
-     Parameters
-     ----------
-     dataset : str
-         Dataset name. Valid options are the top-level tags of the
-         index.json file in the xgi-data repository.
+    Parameters
+    ----------
+    dataset : str
+        Dataset name. Valid options are the top-level tags of the
+        index.json file in the xgi-data repository.
 
-     Returns
-     -------
-     Data
-         The requested data loaded from a json file.
+    Returns
+    -------
+    Data
+        The requested data loaded from a json file.
 
     See also
     ---------
