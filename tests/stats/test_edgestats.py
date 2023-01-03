@@ -71,6 +71,13 @@ def test_aggregates(edgelist1, edgelist2, edgelist8):
     assert round(H.edges.order.var(), 3) == 0.765
 
 
+def test_stats_items(edgelist1):
+    d = {0: 2, 1: 0, 2: 1, 3: 2}
+    H = xgi.Hypergraph(edgelist1)
+    for e, s in H.edges.order.items():
+        assert d[e] == s
+
+
 def test_stats_are_views(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     es = H.edges.order

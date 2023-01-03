@@ -117,6 +117,9 @@ class IDStat:
     def __iter__(self):
         return iter(self._val.items())
 
+    def items(self):
+        return self._val.items()
+
     @property
     def _val(self):
         return self.func(self.net, self.view.ids, *self.args, **self.kwargs)
