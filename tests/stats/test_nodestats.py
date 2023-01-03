@@ -125,6 +125,11 @@ def test_single_node(edgelist1):
     with pytest.raises(KeyError):
         H.nodes.degree[-1]
 
+def test_stats_items(edgelist1):
+    deg = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
+    H = xgi.Hypergraph(edgelist1)
+    for n, d in H.nodes.degree.items():
+        assert deg[n] == d
 
 def test_degree(edgelist1, edgelist8):
     H = xgi.Hypergraph(edgelist1)
