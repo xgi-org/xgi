@@ -63,6 +63,15 @@ def test_flag_complex():
     assert S4.num_edges == S5.num_edges
     assert set(S4.edges.members()) == set(S5.edges.members())
 
+def test_flag_complex_d2():
+
+    G = nx.erdos_renyi_graph(15, 0.3, seed=3)
+
+    S = xgi.flag_complex(G, max_order=2)
+    S2 = xgi.flag_complex_d2(G)
+
+    assert set(S.edges.members()) == set(S2.edges.members())
+
 
 def test_ring_lattice():
     H = xgi.ring_lattice(5, 2, 2, 0)
