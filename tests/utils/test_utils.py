@@ -1,3 +1,5 @@
+import networkx as nx
+
 import xgi
 
 
@@ -42,3 +44,25 @@ def test_powerset():
     assert list(PS) == out
     assert list(PS1) == [()] + out
     assert list(PS2) == [()] + out + [tuple(edge)]
+
+
+def test_find_triangles():
+
+    G = nx.erdos_renyi_graph(20, 0.2, seed=0)
+    triangles = xgi.find_triangles(G)
+
+    cliques = [
+        {8, 9, 17},
+        {8, 9, 19},
+        {9, 16, 19},
+        {8, 13, 17},
+        {6, 17, 18},
+        {2, 6, 12},
+        {7, 8, 13},
+        {2, 6, 18},
+    ]
+
+    num_tri = sum(nx.triangles(G).values()) / 3
+
+    assert triangles == cliques
+    assert num_tri == len(cliques)
