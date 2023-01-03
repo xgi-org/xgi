@@ -118,7 +118,7 @@ class IDStat:
         return iter(self._val.items())
 
     def items(self):
-        return iter(self._val.items())
+        return self._val.items()
 
     @property
     def _val(self):
