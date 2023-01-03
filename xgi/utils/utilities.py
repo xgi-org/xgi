@@ -3,7 +3,12 @@
 from collections import defaultdict
 from itertools import chain, combinations, count
 
-__all__ = ["dual_dict", "powerset", "update_uid_counter"]
+__all__ = [
+    "dual_dict",
+    "powerset",
+    "update_uid_counter",
+    "find_triangles",
+]
 
 
 def dual_dict(edge_dict):
@@ -114,3 +119,25 @@ def update_uid_counter(H, new_id):
     else:
         start = uid
     H._edge_uid = count(start=start)
+
+
+def find_triangles(G):
+    """Returns list of 3-node cliques present in a graph
+
+    Parameters
+    ----------
+    G : networkx Graph
+        Graph to consider
+
+    Returns
+    -------
+    list of 3-node cliques (triangles)
+    """
+
+    triangles = set(
+        frozenset((n, nbr, nbr2))
+        for n in G
+        for nbr, nbr2 in combinations(G[n], 2)
+        if nbr in G[nbr2]
+    )
+    return [set(tri) for tri in triangles]
