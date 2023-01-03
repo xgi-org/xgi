@@ -10,7 +10,7 @@ import numpy as np
 from scipy.special import comb
 
 from ..classes import SimplicialComplex
-from .classic import empty_hypergraph, ring_lattice
+from .classic import empty_hypergraph, ring_lattice, flag_complex_d2
 
 __all__ = [
     "chung_lu_hypergraph",
@@ -406,20 +406,7 @@ def random_flag_complex_d2(N, p, seed=None):
 
     G = nx.fast_gnp_random_graph(N, p, seed=seed)
 
-    nodes = G.nodes()
-    edges = list(G.edges())
-
-    # compute all triangles to fill
-    all_cliques = list(nx.enumerate_all_cliques(G))
-    triad_cliques = [tuple(x) for x in all_cliques if len(x) == 3]
-
-    simplices = edges + triad_cliques
-
-    S = SimplicialComplex()
-    S.add_nodes_from(nodes)
-    S.add_simplices_from(simplices)
-
-    return S
+    return flag_complex_d2(G)
 
 
 def random_flag_complex(N, p, max_order=2, seed=None):
