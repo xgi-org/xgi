@@ -79,6 +79,7 @@ def test_stats_items(edgelist1):
     for e, s in H.edges.order.items():
         assert d[e] == s
 
+
 def test_stats_are_views(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     es = H.edges.order

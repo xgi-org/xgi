@@ -1,9 +1,10 @@
 """Functional interface to hypergraph methods and assorted utilities."""
 
-from scipy.special import comb
 from collections import Counter
 from copy import deepcopy
 from warnings import warn
+
+from scipy.special import comb
 
 from ..exception import IDNotFound, XGIError
 from .hypergraph import Hypergraph
@@ -750,7 +751,7 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
 
     if order is None and max_order is None:
         numer = H.num_edges
-        denom = 2 ** n - 1
+        denom = 2**n - 1
         if ignore_singletons:
             numer -= len(order_filter(0, mode="eq"))
             denom -= n
