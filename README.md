@@ -13,6 +13,7 @@ Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twit
   - [Installation](#installation)
   - [Getting Started](#getting-started)
   - [Documentation](#documentation)
+  - [Corresponding Data](#corresponding-data)
   - [Contributing](#contributing)
   - [How to Cite](#how-to-cite)
   - [Code of Conduct](#code-of-conduct)
@@ -47,6 +48,10 @@ To get started, take a look at the [tutorials](/tutorials/) illustrating the lib
 ## Documentation
 
 For more documentation, see our [Read The Docs](https://xgi.readthedocs.io/en/latest/) page.
+
+## Corresponding Data
+
+A number of higher-order datasets are available in the [XGI-DATA repository](https://gitlab.com/complexgroupinteractions/xgi-data) and can be easily accessed with the `load_xgi_data()` function.
 
 ## Contributing
 If you want to contribute to this project, please make sure to read the
@@ -101,7 +106,7 @@ The XGI library has copied or modified code from the HyperNetX and NetworkX libr
 ## Funding
 The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905).
 
-## Other resources
+## Other Resources
 This library may not meet your needs and if this is this case, consider checking out these other resources:
 * [HyperNetX](https://pnnl.github.io/HyperNetX): A package in Python for representing, analyzing, and visualizing hypergraphs.
 * [Reticula](https://docs.reticula.network/): A package with a Python wrapper of C++ functions for representing, analyzing, and visualizing temporal and static graphs and hypergraphs.

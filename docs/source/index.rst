@@ -93,6 +93,11 @@ If that command does not work, you may try the following instead
 
 XGI was developed and tested for Python 3.7-3.11 on Mac OS, Windows, and Ubuntu.
 
+Corresponding Data
+==================
+
+A number of higher-order datasets are available in the `XGI-DATA repository <https://gitlab.com/complexgroupinteractions/xgi-data>`_ and can be easily accessed with the ``load_xgi_data()`` function.
+
 
 Academic References
 ===================
