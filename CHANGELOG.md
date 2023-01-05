@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.5.2
+
+* Added the `find_triangles()` and `flag_complex_d2()` functions. The `flag_complex_d2()` function is much faster than `flag_complex()` for simplicial complexes of max order 2. Also refactored `random_flag_complex_d2()` to use `flag_complex_d2()` [#263](https://github.com/ComplexGroupInteractions/xgi/pull/263) (@maximelucas).
+* add the `items()` method so NodeStats and EdgeStats are even more dict-like [#233](https://github.com/ComplexGroupInteractions/xgi/pull/233) (@leotrs).
+* Added the ability to cache the output of `load_xgi_data()` and added more interpretable errors when the http request fails [#261](https://github.com/ComplexGroupInteractions/xgi/pull/261) (@nwlandry).
+* Deleted the data folder [#260](https://github.com/ComplexGroupInteractions/xgi/pull/260) (@nwlandry).
+* Split the simulation of the Kuramoto model and its order parameter into two functions [#257](https://github.com/ComplexGroupInteractions/xgi/pull/257) (@maximelucas).
+* Added the ability to write/read xgi-data datasets to/from a file, and pointed the `load_xgi_data()` function to the new xgi-data collection in Gitlab [#254](https://github.com/ComplexGroupInteractions/xgi/pull/254) (@acuschwarze).
+* remove singletons from random generators [#256](https://github.com/ComplexGroupInteractions/xgi/pull/256) (@maximelucas).
+* Remove references to the disGene dataset in the data folder [#253](https://github.com/ComplexGroupInteractions/xgi/pull/253) (@nwlandry).
+* Updated the new release process [#249](https://github.com/ComplexGroupInteractions/xgi/pull/249) (@nwlandry).
+
 ## v0.5.1
 
 * `draw()` now correctly plots simplicial complexes with the `max_order` keyword [#248](https://github.com/ComplexGroupInteractions/xgi/pull/248) (@maximelucas).
