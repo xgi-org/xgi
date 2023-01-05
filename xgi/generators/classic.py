@@ -203,7 +203,7 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
 
     Notes
     -----
-    Computing all cliques quickly becomes heavy for large networks. `flag_complex_d2` 
+    Computing all cliques quickly becomes heavy for large networks. `flag_complex_d2`
     is faster to compute up to order 2.
 
     See also
@@ -249,6 +249,7 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
 
     return S
 
+
 def flag_complex_d2(G, p2=None, seed=None):
     """Generate a flag (or clique) complex from a
     NetworkX graph by filling all cliques up to dimension 2.
@@ -268,7 +269,7 @@ def flag_complex_d2(G, p2=None, seed=None):
 
     Notes
     -----
-    Computing all cliques quickly becomes heavy for large networks. This 
+    Computing all cliques quickly becomes heavy for large networks. This
     is faster than `flag_complex` to compute up to order 2.
 
     See also
