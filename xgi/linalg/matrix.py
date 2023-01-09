@@ -2,7 +2,7 @@
 from warnings import warn
 
 import numpy as np
-from scipy.sparse import csr_matrix, diags
+from scipy.sparse import csr_array, diags
 
 __all__ = [
     "incidence_matrix",
@@ -40,7 +40,7 @@ def incidence_matrix(
 
     Returns
     -------
-    I: numpy.ndarray or scipy csr_matrix
+    I: numpy.ndarray or scipy csr_array
         The incidence matrix, has dimension (n_nodes, n_edges)
     rowdict: dict
         The dictionary mapping indices to node IDs, if index is True
@@ -85,7 +85,7 @@ def incidence_matrix(
                     data.append(0)
                     rows.append(node_dict[node])
                     cols.append(edge_dict[edge])
-        I = csr_matrix((data, (rows, cols)))
+        I = csr_array((data, (rows, cols)))
     else:
         # Create an np.matrix
         I = np.zeros((num_nodes, num_edges), dtype=int)

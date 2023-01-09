@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_array
 from scipy.sparse.linalg import norm as spnorm
 
 import xgi
@@ -89,7 +89,7 @@ def test_incidence_matrix(edgelist1, edgelist3, edgelist4):
     assert I6[node_dict6[8], edge_dict6[3]] == 1
 
     data = xgi.incidence_matrix(H1)
-    assert type(data) == csr_matrix
+    assert type(data) == csr_array
 
     H7 = xgi.empty_hypergraph()
     H7.add_nodes_from(range(8))  # disconnected node 0
@@ -158,7 +158,7 @@ def test_adjacency_matrix(edgelist1, edgelist4):
     node_dict2 = {k: v for v, k in node_dict.items()}
 
     data = xgi.adjacency_matrix(H2)
-    assert type(data) == csr_matrix
+    assert type(data) == csr_array
 
     for i in range(np.size(A1, axis=0)):
         assert A1[i, i] == 0
@@ -390,7 +390,7 @@ def test_clique_motif_matrix(edgelist4):
     node_dict1 = {k: v for v, k in node_dict.items()}
 
     data = xgi.clique_motif_matrix(H1)
-    assert type(data) == csr_matrix
+    assert type(data) == csr_array
 
     for i in range(np.size(W1, axis=0)):
         assert W1[i, i] == 0

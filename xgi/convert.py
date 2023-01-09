@@ -5,7 +5,16 @@ import networkx as nx
 import pandas as pd
 from networkx.algorithms import bipartite
 from numpy import matrix, ndarray
-from scipy.sparse import coo_matrix, csc_matrix, csr_matrix, lil_matrix
+from scipy.sparse import (
+    coo_array,
+    coo_matrix,
+    csc_array,
+    csc_matrix,
+    csr_array,
+    csr_matrix,
+    lil_array,
+    lil_matrix,
+)
 
 from .classes import (
     Hypergraph,
@@ -161,7 +170,19 @@ def convert_to_simplicial_complex(data, create_using=None):
         # edge dict in the form we need
         raise XGIError("Cannot generate SimplicialComplex from simplex dictionary")
     elif isinstance(
-        data, (ndarray, matrix, csr_matrix, csc_matrix, coo_matrix, lil_matrix)
+        data,
+        (
+            ndarray,
+            matrix,
+            csr_array,
+            csc_array,
+            coo_array,
+            lil_array,
+            csr_matrix,
+            csc_matrix,
+            coo_matrix,
+            lil_matrix,
+        ),
     ):
         # incidence matrix
         raise XGIError(
@@ -382,7 +403,7 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
     incidence_matrix
     to_incidence_matrix
     """
-    I = coo_matrix(d)
+    I = coo_array(d)
     n, m = I.shape
 
     if nodelabels is None:
@@ -447,7 +468,7 @@ def to_incidence_matrix(H, sparse=True, index=False):
 
     Returns
     -------
-    numpy.ndarray or scipy csr_matrix
+    numpy.ndarray or scipy csr_array
         The incidence matrix
     dict
         The dictionary mapping indices to node IDs, if index is True
