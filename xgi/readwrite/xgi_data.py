@@ -12,7 +12,7 @@ __all__ = ["load_xgi_data", "download_xgi_data"]
 
 
 def load_xgi_data(
-    dataset,
+    dataset=None,
     cache=True,
     read=False,
     path="",
@@ -24,9 +24,10 @@ def load_xgi_data(
 
     Parameters
     ----------
-    dataset : str
+    dataset : str, default: None
         Dataset name. Valid options are the top-level tags of the
-        index.json file in the xgi-data repository.
+        index.json file in the xgi-data repository. If None, prints
+        the list of available datasets.
     cache : bool, optional
         Whether to cache the input data
     read : bool, optional
@@ -94,14 +95,15 @@ def download_xgi_data(dataset, path=""):
     jsonfile.close()
 
 
-def _request_from_xgi_data(dataset):
+def _request_from_xgi_data(dataset=None):
     """Request a dataset from xgi-data.
 
     Parameters
     ----------
-    dataset : str
+    dataset : str, default: None
         Dataset name. Valid options are the top-level tags of the
-        index.json file in the xgi-data repository.
+        index.json file in the xgi-data repository. If None, prints
+        the list of available datasets.
 
     Returns
     -------
@@ -123,6 +125,11 @@ def _request_from_xgi_data(dataset):
 
     if r.ok:
         index_data = r.json()
+
+        if dataset is None:
+            print("Available datasets are the following:")
+            print(*index_data, sep="\n")
+            return
     else:
         raise XGIError(f"Error: HTTP response {r.status_code}")
 
