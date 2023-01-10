@@ -9,7 +9,7 @@ and study of the structure, dynamics, and functions of complex systems with grou
 
 Installation
 ------------
-XGI runs on Python 3.7 or higher.
+XGI runs on Python 3.8 or higher.
 
 To install the latest version of XGI, run the following command::
 

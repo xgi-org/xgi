@@ -91,7 +91,7 @@ If that command does not work, you may try the following instead
 
    pip install -e .\[all\]
 
-XGI was developed and tested for Python 3.7-3.11 on Mac OS, Windows, and Ubuntu.
+XGI was developed and tested for Python 3.8-3.11 on Mac OS, Windows, and Ubuntu.
 
 Corresponding Data
 ==================
