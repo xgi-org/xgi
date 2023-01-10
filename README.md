@@ -22,7 +22,7 @@ Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twit
   - [Other Resources](#other-resources)
 
 ## Installation
-XGI runs on Python 3.7 or higher.
+XGI runs on Python 3.8 or higher.
 
 To install the latest version of XGI, run the following command:
 ```sh

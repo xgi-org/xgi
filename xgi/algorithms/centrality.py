@@ -220,8 +220,8 @@ def node_edge_centrality(
     check = np.inf
 
     for iter in range(max_iter):
-        u = np.multiply(x, g(I * f(y)))
-        v = np.multiply(y, psi(I.T * phi(x)))
+        u = np.multiply(x, g(I @ f(y)))
+        v = np.multiply(y, psi(I.T @ phi(x)))
         new_x = u / norm(u)
         new_y = v / norm(v)
 
