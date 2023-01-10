@@ -93,7 +93,19 @@ def convert_to_hypergraph(data, create_using=None):
         from_hyperedge_dict(data, create_using)
 
     elif isinstance(
-        data, (ndarray, matrix, csr_matrix, csc_matrix, coo_matrix, lil_matrix)
+        data,
+        (
+            ndarray,
+            matrix,
+            csr_array,
+            csc_array,
+            coo_array,
+            lil_array,
+            csr_matrix,
+            csc_matrix,
+            coo_matrix,
+            lil_matrix,
+        ),
     ):
         from_incidence_matrix(data, create_using)
 
@@ -117,7 +129,7 @@ def convert_to_graph(H):
     """
 
     A = adjacency_matrix(H)  # This is unweighted by design
-    G = nx.from_scipy_sparse_matrix(A)
+    G = nx.from_scipy_sparse_array(A)
     G = nx.relabel_nodes(G, {i: node for i, node in enumerate(H.nodes)})
     return G
 
