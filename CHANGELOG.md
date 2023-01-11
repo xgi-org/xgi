@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.3
+
+* Added support for NetworkX 3.0, removed support for Python 3.7, and changed all scipy sparse matrices to scipy sparse arrays [#268](https://github.com/ComplexGroupInteractions/xgi/pull/268) (@nwlandry).
+* Added the ability to display the list of available datasets in xgi-data with `load_xgi_data()` [#266](https://github.com/ComplexGroupInteractions/xgi/pull/266) (@nwlandry).
+
 ## v0.5.2
 
 * Added the `find_triangles()` and `flag_complex_d2()` functions. The `flag_complex_d2()` function is much faster than `flag_complex()` for simplicial complexes of max order 2. Also refactored `random_flag_complex_d2()` to use `flag_complex_d2()` [#263](https://github.com/ComplexGroupInteractions/xgi/pull/263) (@maximelucas).
