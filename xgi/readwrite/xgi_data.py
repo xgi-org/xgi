@@ -55,7 +55,7 @@ def load_xgi_data(
 
     if dataset is None:
         index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
-        index_data = request_json_from_url(index_url)
+        index_data = _request_json_from_url(index_url)
         print("Available datasets are the following:")
         print(*index_data, sep="\n")
         return
@@ -129,7 +129,7 @@ def _request_from_xgi_data(dataset=None):
     """
 
     index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
-    index_data = request_json_from_url(index_url)
+    index_data = _request_json_from_url(index_url)
 
     key = dataset.lower()
     if key not in index_data:
@@ -137,7 +137,7 @@ def _request_from_xgi_data(dataset=None):
         print(*index_data, sep="\n")
         raise XGIError("Must choose a valid dataset name!")
 
-    return request_json_from_url(index_data[key]["url"])
+    return _request_json_from_url(index_data[key]["url"])
 
 
 @lru_cache(maxsize=None)
@@ -165,7 +165,25 @@ def _request_from_xgi_data_cached(dataset):
     return _request_from_xgi_data(dataset)
 
 
-def request_json_from_url(url):
+def _request_json_from_url(url):
+    """HTTP request json file and return as dict.
+
+    Parameters
+    ----------
+    url : str
+        The url where the json file is located.
+
+    Returns
+    -------
+    dict
+        A dictionary of the JSON requested.
+
+    Raises
+    ------
+    XGIError
+        If the connection fails or if there is a bad HTTP request.
+    """
+    
     try:
         r = requests.get(url)
     except requests.ConnectionError:
