@@ -53,6 +53,13 @@ def load_xgi_data(
        The specified dataset does not exist.
     """
 
+    if dataset is None:
+        index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
+        index_data = request_json_from_url(index_url)
+        print("Available datasets are the following:")
+        print(*index_data, sep="\n")
+        return
+
     if read:
         cfp = os.path.join(path, dataset + ".json")
         if os.path.exists(cfp):
@@ -70,6 +77,7 @@ def load_xgi_data(
     else:
         data = _request_from_xgi_data(dataset)
 
+    # if users actually requested data and didn't just 
     return convert.dict_to_hypergraph(
         data, nodetype=nodetype, edgetype=edgetype, max_order=max_order
     )
@@ -121,17 +129,7 @@ def _request_from_xgi_data(dataset=None):
     """
 
     index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
-    r = requests.get(index_url)
-
-    if r.ok:
-        index_data = r.json()
-
-        if dataset is None:
-            print("Available datasets are the following:")
-            print(*index_data, sep="\n")
-            return
-    else:
-        raise XGIError(f"Error: HTTP response {r.status_code}")
+    index_data = request_json_from_url(index_url)
 
     key = dataset.lower()
     if key not in index_data:
@@ -139,11 +137,7 @@ def _request_from_xgi_data(dataset=None):
         print(*index_data, sep="\n")
         raise XGIError("Must choose a valid dataset name!")
 
-    r = requests.get(index_data[key]["url"])
-    if r.ok:
-        return r.json()
-    else:
-        raise XGIError(f"Error: HTTP response {r.status_code}")
+    return request_json_from_url(index_data[key]["url"])
 
 
 @lru_cache(maxsize=None)
@@ -169,3 +163,15 @@ def _request_from_xgi_data_cached(dataset):
     """
 
     return _request_from_xgi_data(dataset)
+
+
+def request_json_from_url(url):
+    try:
+        r = requests.get(url)
+    except requests.ConnectionError:
+        raise XGIError("Connection Error!")
+    
+    if r.ok:
+        return r.json()
+    else:
+        raise XGIError(f"Error: HTTP response {r.status_code}")
