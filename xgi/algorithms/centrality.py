@@ -25,7 +25,8 @@ def CEC_centrality(H, tol=1e-6):
     Returns
     -------
     dict
-        Centrality, where keys are node IDs and values are centralities.
+        Centrality, where keys are node IDs and values are centralities. The
+        centralities are 1-normalized.
 
     References
     ----------
@@ -36,7 +37,7 @@ def CEC_centrality(H, tol=1e-6):
     W, node_dict = clique_motif_matrix(H, index=True)
     _, v = eigsh(W.asfptype(), k=1, which="LM", tol=tol)
 
-    # normalize and enforce positivity
+    # multiply by the sign to try and enforce positivity
     v = np.sign(v[0]) * v / norm(v, 1)
     return {node_dict[n]: v[n].item() for n in node_dict}
 
@@ -56,7 +57,8 @@ def ZEC_centrality(H, max_iter=100, tol=1e-6):
     Returns
     -------
     dict
-        Centrality, where keys are node IDs and values are centralities.
+        Centrality, where keys are node IDs and values are centralities. The
+        centralities are 1-normalized.
 
     Notes
     -----
@@ -78,6 +80,7 @@ def ZEC_centrality(H, max_iter=100, tol=1e-6):
 
     for iter in range(max_iter):
         new_x = apply(new_H, x, g)
+        # multiply by the sign to try and enforce positivity
         new_x = np.sign(new_x[0]) * new_x / norm(new_x, 1)
         if norm(x - new_x) <= tol:
             break
@@ -102,7 +105,8 @@ def HEC_centrality(H, max_iter=100, tol=1e-6):
     Returns
     -------
     dict
-        Centrality, where keys are node IDs and values are centralities.
+        Centrality, where keys are node IDs and values are centralities. The
+        centralities are 1-normalized.
 
     Raises
     ------
@@ -129,6 +133,7 @@ def HEC_centrality(H, max_iter=100, tol=1e-6):
     for iter in range(max_iter):
         new_x = apply(new_H, x, g)
         new_x = f(new_x, m)
+        # multiply by the sign to try and enforce positivity
         new_x = np.sign(new_x[0]) * new_x / norm(new_x, 1)
         if norm(x - new_x) <= tol:
             break
@@ -202,7 +207,8 @@ def node_edge_centrality(
     dict, dict
         The node centrality where keys are node IDs and values are associated
         centralities and the edge centrality where keys are the edge IDs and
-        values are associated centralities.
+        values are associated centralities. The centralities of both the nodes
+        and edges are 1-normalized.
 
     Notes
     -----
@@ -229,6 +235,7 @@ def node_edge_centrality(
     for iter in range(max_iter):
         u = np.multiply(x, g(I @ f(y)))
         v = np.multiply(y, psi(I.T @ phi(x)))
+        # multiply by the sign to try and enforce positivity
         new_x = np.sign(u[0]) * u / norm(u, 1)
         new_y = np.sign(v[0]) * v / norm(v, 1)
 
