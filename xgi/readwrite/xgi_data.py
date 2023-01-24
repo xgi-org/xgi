@@ -77,7 +77,6 @@ def load_xgi_data(
     else:
         data = _request_from_xgi_data(dataset)
 
-    # if users actually requested data and didn't just 
     return convert.dict_to_hypergraph(
         data, nodetype=nodetype, edgetype=edgetype, max_order=max_order
     )
@@ -121,7 +120,7 @@ def _request_from_xgi_data(dataset=None):
     Raises
     ------
     XGIError
-        If HTTP request is not successful of the dataset does not exist.
+        If the HTTP request is not successful or the dataset does not exist.
 
     See also
     ---------
