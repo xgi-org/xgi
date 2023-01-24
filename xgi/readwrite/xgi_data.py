@@ -53,6 +53,7 @@ def load_xgi_data(
        The specified dataset does not exist.
     """
 
+    # If no dataset is specified, print a list of the available datasets.
     if dataset is None:
         index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
         index_data = _request_json_from_url(index_url)
