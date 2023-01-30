@@ -5,40 +5,11 @@ from copy import copy, deepcopy
 from itertools import count
 from warnings import warn
 
-from ..exception import IDNotFound, XGIError
-from ..utils.utilities import update_uid_counter
+from ..exception import XGIError
+from ..utils import IDDict, update_uid_counter
 from .reportviews import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
-
-
-class IDDict(dict):
-    """A dict that holds (node or edge) IDs.
-
-    For internal use only.  Adds input validation functionality to the internal dicts
-    that hold nodes and edges in a network.
-
-    """
-
-    def __getitem__(self, item):
-        try:
-            return dict.__getitem__(self, item)
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
-
-    def __setitem__(self, item, value):
-        if item is None:
-            raise XGIError("None cannot be a node or edge")
-        try:
-            return dict.__setitem__(self, item, value)
-        except TypeError as e:
-            raise TypeError(f"ID {item} not a valid type") from e
-
-    def __delitem__(self, item):
-        try:
-            return dict.__delitem__(self, item)
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
 
 
 class Hypergraph:
