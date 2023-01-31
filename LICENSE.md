@@ -1,6 +1,6 @@
 XGI is distributed with the 3-clause BSD license.
 
-Copyright (C) 2021, XGI Developers
+Copyright (C) 2023, XGI Developers
 
 Nicholas Landry <nicholas.landry.91@gmail.com>
 
@@ -30,7 +30,7 @@ met:
        disclaimer in the documentation and/or other materials provided
        with the distribution.
 
-* Neither the name of the NetworkX Developers nor the names of its
+* Neither the names of the XGI Developers nor the names of its
        contributors may be used to endorse or promote products derived
        from this software without specific prior written permission.
 
