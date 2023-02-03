@@ -183,12 +183,12 @@ def _request_json_from_url(url):
     XGIError
         If the connection fails or if there is a bad HTTP request.
     """
-    
+
     try:
         r = requests.get(url)
     except requests.ConnectionError:
         raise XGIError("Connection Error!")
-    
+
     if r.ok:
         return r.json()
     else:

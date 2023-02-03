@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.4
+
+* Fixed issue #270 [#271](https://github.com/ComplexGroupInteractions/xgi/pull/271) (@nwlandry).
+* Fixed the centralities so that they are positive and 1-normalized [#274](https://github.com/ComplexGroupInteractions/xgi/pull/274) (@nwlandry).
+
 ## v0.5.3
 
 * Added support for NetworkX 3.0, removed support for Python 3.7, and changed all scipy sparse matrices to scipy sparse arrays [#268](https://github.com/ComplexGroupInteractions/xgi/pull/268) (@nwlandry).
