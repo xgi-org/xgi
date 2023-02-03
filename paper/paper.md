@@ -43,7 +43,7 @@ affiliations:
  - name: Max Planck Institute for Mathematics in the Sciences, Germany
    index: 6
 
-date: 03/12/2023
+date: 3 February 2023
 bibliography: references.bib
 
 ---
