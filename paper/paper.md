@@ -65,7 +65,7 @@ We provide an overview of the functionality of the XGI library.
 ## Core architecture: hypergraphs and simplicial complexes
 The two core classes of the library are those representing hypergraphs and simplicial complexes. The data structure (seen in \autoref{fig:diagram}) employed by XGI for those two is a bipartite graph with entities represented by one node type and relationships among entities (i.e., hyperedges or simplices) represented by a second node type. 
 
-![Illustration of the underlying data structure. The hypergraph is internally represented as a bipartite network stored as two dictionaries, where keys are the node or edge IDs and the values are sets specifying which edges (or nodes) that node (edge) is connected to. Unique identifiers allow for multi-edges, as can be seen for edge IDs 1 and 2. \label{fig:diagram}](Figures/fig1_joss.pdf)
+![Illustration of the underlying data structure. The hypergraph is internally represented as a bipartite network stored as two dictionaries, where keys are the node or edge IDs and the values are sets specifying which edges (or nodes) that node (edge) is connected to. Unique identifiers allow for multi-edges, as can be seen for edge IDs 1 and 2. \label{fig:diagram}](Figures/fig1.pdf)
 
 
 
@@ -89,7 +89,7 @@ Currently, XGI provides functions to simulate two types of synchronization model
 ## Visualizing
 The `draw()` function in XGI allows the user to visualize both hypergraphs and simplicial complexes. \autoref{fig:viz} illustrates an example of a hypergraph visualization. XGI currently supports multiple layouts and allows users to control many of the drawing parameters. [MENTION NODESTATS IF WE CAN] An example is shown in \autoref{fig:viz} where nodes are colored and sized by the degree and centrality respectively.
 
-![A visualization of the email-enron dataset [@landry_xgi-data_2023;@benson_data_2021] with hyperedges of sizes 2 and 3 (all isolated nodes removed). The nodes are colored by their degree and their size proportional to the Clique motif Eigenvector Centrality [@benson_three_2019]. \label{fig:viz}](Figures/fig_2_joss.pdf)
+![A visualization of the email-enron dataset [@landry_xgi-data_2023;@benson_data_2021] with hyperedges of sizes 2 and 3 (all isolated nodes removed). The nodes are colored by their degree and their size proportional to the Clique motif Eigenvector Centrality [@benson_three_2019]. \label{fig:viz}](Figures/fig_2.pdf)
 
 # Projects using XGI
 One of the goals of XGI was to provide a common language and framework on top of which many projects could be built. Even in its nascence, XGI has proved to be an invaluable resource for research projects [@zhang_higher-order_2022] on higher-order networks as well as other software projects [@landry_hypercontagion_2022]. We expect that as this library matures, it will become a more essential part of the higher-order network science community.
