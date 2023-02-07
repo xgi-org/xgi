@@ -59,40 +59,25 @@ Higher-order interaction networks promotes rich dynamical behavior [@iacopini_si
 # Related Software
 There are several existing packages to represent and analyze higher-order networks: `HyperNetX` [@doecode_22160] and `Reticula` [@badie-modiri_reticula_2023] in Python, `SimpleHypergraphs.jl` [@spagnuolo_analyzing_2020]  and `HyperGraphs.jl` [@diaz_hypergraphsjl_2022] in Julia, and `hyperG` in R. XGI is a valuable addition to the network science practitioner’s toolbox for several reasons. First, XGI is implemented in pure Python, ensuring interoperability and easy installation across operating systems. Second, like several of the packages listed, XGI has a well-documented codebase and tutorials designed to make the learning process intuitive. Third, in contrast to existing packages, XGI contains a `stats` module enabling researchers to easily access established nodal and edge quantities, and even define custom quantities. Fourth, XGI offers data structures for hypergraphs and simplicial complexes, which allows users to explore a wider range of interaction models than comparable packages. Lastly, XGI integrates higher-order datasets with its interface, providing a standard format in which to store hypergraphs with attributes and a data repository with corresponding functions to load these datasets.
 
-# Overview of the API
-We provide an overview of the functionality of the XGI library.
+# Overview of the package
 
-## Core architecture: hypergraphs and simplicial complexes
-The two core classes of the library are those representing hypergraphs and simplicial complexes. The data structure (seen in \autoref{fig:diagram}) employed by XGI for those two is a bipartite graph with entities represented by one node type and relationships among entities (i.e., hyperedges or simplices) represented by a second node type. 
+The two core classes of the library are those representing hypergraphs and simplicial complexes. The data structure (seen in \autoref{fig:diagram}) employed by XGI for those two is a bipartite graph with entities represented by one node type and relationships among entities (i.e., hyperedges or simplices) represented by a second node type.
 
-![Illustration of the underlying data structure. The hypergraph is internally represented as a bipartite network stored as two dictionaries, where keys are the node or edge IDs and the values are sets specifying which edges (or nodes) that node (edge) is connected to. Unique identifiers allow for multi-edges, as can be seen for edge IDs 1 and 2. \label{fig:diagram}](Figures/fig1.pdf)
+![A hypergraph is internally represented as a bipartite network stored as two dictionaries, where keys are node IDs and sets specify the edges to which they belong, and vice-versa. Unique identifiers allow for multi-edges, as can be seen for edge IDs 1 and 2. \label{fig:diagram}](Figures/fig1.pdf)
 
+XGI provides several ways to create hypergraphs and simplicial complexes. First, by adding or removing nodes or hyperedges (or simplices). Second, by creating generative models, which can produce datasets with desired structural characteristics. Third, by loading existing datasets. Indeed, XGI allows easy and unified access to many hypergraph datasets currently existing in diverse formats [@benson_data_2021;@peixoto_netzschleuder_2021;@clauset_colorado_2016] in three ways: first, by implementing a standard for hypergraph data in JSON format; second, by storing datasets in this format in a single repository, XGI-DATA [@landry_xgi-data_2023]; and third, by providing file I/O for common formats. Each dataset in XGI-DATA can be easily accessed through the library's API and the repository provides a description of it.
 
+XGI provides many standard and state-of-the-art measures such as assortativity, centralities, connectedness, and clustering. A strength of XGI is its `stats` package: it provides a convenient and unified interface for computing statistics of nodes and edges, such as degree centrality or edge order. Any measure that can be conceived of as a node/edge-to-quantity mapping has the same interface. Stats can be used to filter nodes and edges and multiple stats filters can be combined.
+XGI provides convenient visualization functions, as illustrated in \autoref{fig:viz}. We support multiple layouts and allow users to control many of the drawing parameters, including via stats. 
 
-XGI provides several ways to create and manipulate hypergraphs and simplicial complexes. First, by adding or removing nodes or hyperedges (or simplices). Second, by converting between multiple formats for representing hypergraphs. For example, in contagion models, it is important to efficiently access nodal neighbors whereas when computing averages over hyperedges (e.g., assortativity or modularity) it may be better to represent a hypergraph by a list of hyperedges. Third, by using generative models, which are useful as null models to create datasets with characteristics to empirical ones.
-
-### File I/O
-Although there are many excellent collections of hypergraph datasets [@benson_data_2021;@peixoto_netzschleuder_2021;@clauset_colorado_2016], the format of each dataset and the information about how and why it was collected varies widely. With larger datasets becoming more widely available, it is important to close the gap between dataset creators and consumers [@gebru_datasheets_2021,bagrow_network_2022]. XGI does this in two ways: first, by implementing methods for importing and writing hypergraphs from several common formats and second, by implementing a standard for hypergraph data in JSON format. The XGI-DATA repository [@landry_xgi-data_2023] is a collection of openly available hypergraph datasets in this standard JSON format with documentation that describes each one extensively.
-
-## Analyzing
-For hypergraphs and simplicial complexes, XGI offers methods for easily getting common basic outputs, including the number of nodes or hyperedges, the nodes that are members of a particular edge, and, conversely, the edges to which a node belongs to, subsets of hypergraphs, attributes of nodes or hyperedges. Below, we detail the stats subpackage, as well as more complex measures and dynamic simulations available in XGI.
-
-### Stats
-The `stats` package provides a way to compute statistics of nodes and edges, such as degree centrality or edge order. The main benefit of the `stats` package is that any measure that can be conceived of as a node-to-quantity mapping has the same interface.  [MENTION MULTIPLE STATS? ADD CODE?]
-
-### Algorithms
-XGI has implemented important measures of assortativity, centrality, connectedness, and clustering, and it will continue to incorporate more higher-order metrics in the future.
-
-### Dynamics
-Currently, XGI provides functions to simulate two types of synchronization models on hypergraphs: one where oscillators are placed only on the nodes of the hypergraphs [@adhikari_synchronization_2022;@lucas_multiorder_2020], and one where oscillators can also be placed on simplices [@millan_explosive_2020;@arnaudon_connecting_2022]. In the future, the library could be extended to other landmark dynamical processes on higher-order networks such as spreading, diffusion, and socio-physics models.
-
-## Visualizing
-The `draw()` function in XGI allows the user to visualize both hypergraphs and simplicial complexes. \autoref{fig:viz} illustrates an example of a hypergraph visualization. XGI currently supports multiple layouts and allows users to control many of the drawing parameters. [MENTION NODESTATS IF WE CAN] An example is shown in \autoref{fig:viz} where nodes are colored and sized by the degree and centrality respectively.
+Finally, XGI provides functions to simulate synchronization models on hypergraphs and simplicial complexes [@adhikari_synchronization_2022;@lucas_multiorder_2020;@millan_explosive_2020;@arnaudon_connecting_2022].
 
 ![A visualization of the email-enron dataset [@landry_xgi-data_2023;@benson_data_2021] with hyperedges of sizes 2 and 3 (all isolated nodes removed). The nodes are colored by their degree and their size proportional to the Clique motif Eigenvector Centrality [@benson_three_2019]. \label{fig:viz}](Figures/fig2.pdf)
 
+XGI is under active development, Future developments include more algorithms and dynamical processes.
+
 # Projects using XGI
-One of the goals of XGI was to provide a common language and framework on top of which many projects could be built. Even in its nascence, XGI has proved to be an invaluable resource for research projects [@zhang_higher-order_2022] on higher-order networks as well as other software projects [@landry_hypercontagion_2022]. We expect that as this library matures, it will become a more essential part of the higher-order network science community.
+XGI has proved to be an invaluable resource for research projects [@zhang_higher-order_2022] on higher-order networks as well as other software projects [@landry_hypercontagion_2022]. We expect that as this library matures, it will become a more essential part of the higher-order network science community.
 
 # Funding
 N.W.L. acknowledges support from the National Science Foundation Grant 2121905, "HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks", and from the National Institutes of Health 1P20 GM125498-01 Centers of Biomedical Research Excellence Award. I.I. acknowledges support from the James S. McDonnell Foundation $21^{\text{st}}$ Century Science Initiative Understanding Dynamic and Multi-scale Systems - Postdoctoral Fellowship Award.
@@ -101,4 +86,3 @@ N.W.L. acknowledges support from the National Science Foundation Grant 2121905, 
 We acknowledge contributions from Martina Contisciani, Tim LaRock, Marco Nurisso, Alexis Arnaudon, and Sabina Adhikari.
 
 # References
-
