@@ -49,10 +49,10 @@ bibliography: references.bib
 ---
 
 # Summary
-Comple**X** **G**roup **I**nteractions (XGI) is a library for higher-order networks. The library provides multiple methods to build hypergraphs and simplicial complexes. It comes with algorithms to analyze their structure, visualize them, and simulate dynamical processes on them. In addition, it is accompanied by a collection of higher-order datasets. XGI is implemented in pure Python and integrates with the rest of the Python scientific stack. XGI is designed and developed by network scientists with the needs of network scientists in mind.
+Comple**X** **G**roup **I**nteractions (XGI) is a library for higher-order networks. This library provides methods for building hypergraphs and simplicial complexes; algorithms to analyze their structure, visualize them, and simulate dynamical processes on them; and a collection of higher-order datasets. XGI is implemented in pure Python and integrates with the rest of the Python scientific stack. XGI is designed and developed by network scientists with the needs of network scientists in mind.
 
 # Statement of need
-The field of network science bridges across many different disciplines, bringing together theorists, computational scientists, social scientists, and many others. To facilitate cross-disciplinary collaboration, a common tool kit is crucial. Existing packages like NetworkX [@hagberg_exploring_2008], graph-tool [@peixoto_graph-tool_2014], and igraph [@igraph] have been successful in facilitating collaboration for traditional networks, restricted to pairwise interactions. However, the rapidly growing subfield of higher-order network science, which models interactions between any number of entities, requires a different approach. 
+The field of network science bridges across many different disciplines, bringing together theorists, computational scientists, social scientists, and many others. To facilitate cross-disciplinary collaboration, a common tool kit is crucial. Existing packages like NetworkX [@hagberg_exploring_2008], graph-tool [@peixoto_graph-tool_2014], and igraph [@igraph] have been successful in facilitating collaboration for traditional networks, restricted to pairwise interactions. However, the rapidly growing subfield of higher-order network science [@battiston_networks_2020], which models interactions between any number of entities, requires a different approach. 
 Higher-order interaction networks promotes rich dynamical behavior [@iacopini_simplicial_2019;@skardal_abrupt_2019;@neuhauser_multibody_2020;@hickok_bounded-confidence_2022], and can model some empirical interaction patterns more accurately than pairwise networks [@chodrow_configuration_2020]. We anticipate that this field will have lasting impacts on various research areas such as infectious diseases, dynamical systems, and behavioral science. To support the higher-order network science community, we have developed the Comple**X** **G**roup **I**nteractions (XGI)---an open-source solution in Python.
 
 
@@ -82,4 +82,3 @@ N.W.L. acknowledges support from the National Science Foundation Grant 2121905, 
 We acknowledge contributions from Martina Contisciani, Tim LaRock, Marco Nurisso, Alexis Arnaudon, and Sabina Adhikari.
 
 # References
-
