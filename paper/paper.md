@@ -59,7 +59,7 @@ Higher-order interaction networks promotes rich dynamical behavior [@iacopini_si
 # Related Software
 There are several existing packages to represent and analyze higher-order networks: `HyperNetX` [@doecode_22160] and `Reticula` [@badie-modiri_reticula_2023] in Python, `SimpleHypergraphs.jl` [@spagnuolo_analyzing_2020]  and `HyperGraphs.jl` [@diaz_hypergraphsjl_2022] in Julia, and `hyperG` in R. XGI is a valuable addition to the network science practitioner’s toolbox for several reasons. First, XGI is implemented in pure Python, ensuring interoperability and easy installation across operating systems. Second, like several of the packages listed, XGI has a well-documented codebase and tutorials designed to make the learning process intuitive. Third, in contrast to existing packages, XGI contains a `stats` module enabling researchers to easily access established nodal and edge quantities, and even define custom quantities. Fourth, XGI offers data structures for hypergraphs and simplicial complexes, which allows users to explore a wider range of interaction models than comparable packages. Lastly, XGI integrates higher-order datasets with its interface, providing a standard format in which to store hypergraphs with attributes and a data repository with corresponding functions to load these datasets.
 
-# Overview of the package
+# Overview
 
 The two core classes of the library are those representing hypergraphs and simplicial complexes. The data structure (seen in \autoref{fig:diagram}) employed by XGI for both is a bipartite graph with entities represented by one node type and relationships among entities (i.e., hyperedges or simplices) represented by a second node type.
 
