@@ -1,5 +1,5 @@
 ---
-title: 'XGI: A Python package for research on higher-order interactions'
+title: 'XGI: A Python package for higher-order interaction networks'
 tags:
   - python
   - higher-order
@@ -49,10 +49,10 @@ bibliography: references.bib
 ---
 
 # Summary
-The Comple**X** **G**roup **I**nteractions (XGI) library provides data structures and algorithms for modeling, analyzing, and visualizing complex networks with group (i.e., higher-order) interactions. It includes both hypergraphs and simplicial complexes. XGI provides multiple methods to build them, standard and advanced algorithms to analyze their structure, flexible visualization functions. and simulation capabilities for dynamical processes. The library is accompanied by a collection of datasets including group interactions. XGI is implemented in pure Python and interoperates with the rest of the Python scientific stack (Numpy, Scipy, Pandas, Matplotlib, NetworkX). XGI is designed and developed by network scientists with the needs of network scientists in mind.
+Comple**X** **G**roup **I**nteractions (XGI) is a library for higher-order networks. The library provides multiple methods to build hypergraphs and simplicial complexes. It comes with algorithms to analyze their structure, visualize them, and simulate dynamical processes on them. In addition, it is accompanied by a collection of higher-order datasets. XGI is implemented in pure Python and integrates with the rest of the Python scientific stack. XGI is designed and developed by network scientists with the needs of network scientists in mind.
 
 # Statement of need
-The field of network science bridges across many different disciplines, bringing together theorists, computational scientists, social scientists, and many others. To facilitate cross-disciplinary collaboration, a common tool kit is crucial. Existing packages like NetworkX [@hagberg_exploring_2008], graph-tool [@peixoto_graph-tool_2014], and igraph [@igraph] have been successful in facilitating collaboration for traditional networks, restricted to pairwise interactions. However, the rapidly growing subfield of higher-order network science, that goes beyond pairwise to model group interactions of any number of units, requires a different approach. 
+The field of network science bridges across many different disciplines, bringing together theorists, computational scientists, social scientists, and many others. To facilitate cross-disciplinary collaboration, a common tool kit is crucial. Existing packages like NetworkX [@hagberg_exploring_2008], graph-tool [@peixoto_graph-tool_2014], and igraph [@igraph] have been successful in facilitating collaboration for traditional networks, restricted to pairwise interactions. However, the rapidly growing subfield of higher-order network science, which models interactions between any number of entities, requires a different approach. 
 Higher-order interaction networks promotes rich dynamical behavior [@iacopini_simplicial_2019;@skardal_abrupt_2019;@neuhauser_multibody_2020;@hickok_bounded-confidence_2022], and can model some empirical interaction patterns more accurately than pairwise networks [@chodrow_configuration_2020]. We anticipate that this field will have lasting impacts on various research areas such as infectious diseases, dynamical systems, and behavioral science. To support the higher-order network science community, we have developed the Comple**X** **G**roup **I**nteractions (XGI)---an open-source solution in Python.
 
 
@@ -61,16 +61,14 @@ There are several existing packages to represent and analyze higher-order networ
 
 # Overview of the package
 
-The two core classes of the library are those representing hypergraphs and simplicial complexes. The data structure (seen in \autoref{fig:diagram}) employed by XGI for those two is a bipartite graph with entities represented by one node type and relationships among entities (i.e., hyperedges or simplices) represented by a second node type.
+The two core classes of the library are those representing hypergraphs and simplicial complexes. The data structure (seen in \autoref{fig:diagram}) employed by XGI for both is a bipartite graph with entities represented by one node type and relationships among entities (i.e., hyperedges or simplices) represented by a second node type.
 
 ![A hypergraph is internally represented as a bipartite network stored as two dictionaries, where keys are node IDs and sets specify the edges to which they belong, and vice-versa. Unique identifiers allow for multi-edges, as can be seen for edge IDs 1 and 2. \label{fig:diagram}](Figures/fig1.pdf)
 
 XGI provides several ways to create hypergraphs and simplicial complexes. First, by adding or removing nodes or hyperedges (or simplices). Second, by creating generative models, which can produce datasets with desired structural characteristics. Third, by loading existing datasets. Indeed, XGI allows easy and unified access to many hypergraph datasets currently existing in diverse formats [@benson_data_2021;@peixoto_netzschleuder_2021;@clauset_colorado_2016] in three ways: first, by implementing a standard for hypergraph data in JSON format; second, by storing datasets in this format in a single repository, XGI-DATA [@landry_xgi-data_2023]; and third, by providing file I/O for common formats. Each dataset in XGI-DATA can be easily accessed through the library's API and the repository provides a description of it.
 
 XGI provides many standard and state-of-the-art measures such as assortativity, centralities, connectedness, and clustering. A strength of XGI is its `stats` package: it provides a convenient and unified interface for computing statistics of nodes and edges, such as degree centrality or edge order. Any measure that can be conceived of as a node/edge-to-quantity mapping has the same interface. Stats can be used to filter nodes and edges and multiple stats filters can be combined.
-XGI provides convenient visualization functions, as illustrated in \autoref{fig:viz}. We support multiple layouts and allow users to control many of the drawing parameters, including via stats. 
-
-Finally, XGI provides functions to simulate synchronization models on hypergraphs and simplicial complexes [@adhikari_synchronization_2022;@lucas_multiorder_2020;@millan_explosive_2020;@arnaudon_connecting_2022].
+XGI provides convenient visualization functions, as illustrated in \autoref{fig:viz}. We support multiple layouts and allow users to control many of the drawing parameters, including via stats. Finally, XGI provides functions to simulate synchronization models on hypergraphs and simplicial complexes [@adhikari_synchronization_2022;@lucas_multiorder_2020;@millan_explosive_2020;@arnaudon_connecting_2022].
 
 ![A visualization of the email-enron dataset [@landry_xgi-data_2023;@benson_data_2021] with hyperedges of sizes 2 and 3 (all isolated nodes removed). The nodes are colored by their degree and their size proportional to the Clique motif Eigenvector Centrality [@benson_three_2019]. \label{fig:viz}](Figures/fig2.pdf)
 
