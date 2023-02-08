@@ -43,13 +43,13 @@ affiliations:
  - name: Max Planck Institute for Mathematics in the Sciences, Germany
    index: 6
 
-date: 03/12/2023
+date: 08 February 2023
 bibliography: references.bib
 
 ---
 
 # Summary
-Comple**X** **G**roup **I**nteractions (XGI) is a library for higher-order networks. This library provides methods for building hypergraphs and simplicial complexes; algorithms to analyze their structure, visualize them, and simulate dynamical processes on them; and a collection of higher-order datasets. XGI is implemented in pure Python and integrates with the rest of the Python scientific stack. XGI is designed and developed by network scientists with the needs of network scientists in mind.
+Comple**X** **G**roup **I**nteractions (XGI) is a library for higher-order networks, which model interactions of arbitrary size between entities in a complex system. This library provides methods for building hypergraphs and simplicial complexes; algorithms to analyze their structure, visualize them, and simulate dynamical processes on them; and a collection of higher-order datasets. XGI is implemented in pure Python and integrates with the rest of the Python scientific stack. XGI is designed and developed by network scientists with the needs of network scientists in mind.
 
 # Statement of need
 The field of network science bridges across many different disciplines, bringing together theorists, computational scientists, social scientists, and many others. To facilitate cross-disciplinary collaboration, a common tool kit is crucial. Existing packages like NetworkX [@hagberg_exploring_2008], graph-tool [@peixoto_graph-tool_2014], and igraph [@igraph] have been successful in facilitating collaboration for traditional networks, restricted to pairwise interactions. However, the rapidly growing subfield of higher-order network science [@battiston_networks_2020], which models interactions between any number of entities, requires a different approach. 
@@ -82,3 +82,4 @@ N.W.L. acknowledges support from the National Science Foundation Grant 2121905, 
 We acknowledge contributions from Martina Contisciani, Tim LaRock, Marco Nurisso, Alexis Arnaudon, and Sabina Adhikari.
 
 # References
+
