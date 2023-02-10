@@ -18,7 +18,7 @@ __all__ = [
 
 
 def incidence_matrix(
-    H, order=None, sparse=True, index=False, weight=lambda node, edge, H: 1
+    H, order=None, sparse=True, sort_ids=False, index=False, weight=lambda node, edge, H: 1
 ):
     """
     A function to generate a weighted incidence matrix from a Hypergraph object,
@@ -33,7 +33,10 @@ def incidence_matrix(
         must be >= 1.
     sparse: bool, default: True
         Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
-    index: bool, default: False
+    sort_ids: bool, default: False
+        If False, IDs are in the order that the node/edge was added to the hypergraph.
+        If True, IDs are sorted if possible.
+    index: bool, default: True
         Specifies whether to output dictionaries mapping the node and edge IDs to indices
     weight: lambda function, default=lambda function outputting 1
         A function specifying the weight, given a node and edge
@@ -59,8 +62,17 @@ def incidence_matrix(
     num_edges = len(edge_ids)
     num_nodes = len(node_ids)
 
-    node_dict = dict(zip(node_ids, range(num_nodes)))
-    edge_dict = dict(zip(edge_ids, range(num_edges)))
+    if sort_ids:
+        try:
+            node_dict = dict(zip(sorted(list(node_ids)), range(num_nodes)))
+            edge_dict = dict(zip(sorted(list(edge_ids)), range(num_edges)))
+        except TypeError:
+            warn("Unable to sort the IDs!")
+            node_dict = dict(zip(node_ids, range(num_nodes)))
+            edge_dict = dict(zip(edge_ids, range(num_edges)))
+    else:
+        node_dict = dict(zip(node_ids, range(num_nodes)))
+        edge_dict = dict(zip(edge_ids, range(num_edges)))
 
     if index:
         rowdict = {v: k for k, v in node_dict.items()}
@@ -99,7 +111,7 @@ def incidence_matrix(
         return I
 
 
-def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
+def adjacency_matrix(H, order=None, s=1, weighted=False, sort_ids=False, index=False):
     """
     A function to generate an adjacency matrix (N,N) from a Hypergraph object.
 
@@ -112,6 +124,11 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
         must be >= 1.
     s: int, default: 1
         Specifies the number of overlapping edges to be considered connected.
+    weighted: bool, default: False
+        Whether the entries encode the counts of s-connections or not.
+    sort_ids: bool, default: False
+        If False, IDs are in the order that the node/edge was added to the hypergraph.
+        If True, IDs are sorted if possible.
     index: bool, default: False
         Specifies whether to output disctionaries mapping the node IDs to indices
 
@@ -123,7 +140,7 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
         return A
 
     """
-    I, rowdict, coldict = incidence_matrix(H, index=True, order=order)
+    I, rowdict, coldict = incidence_matrix(H, index=True, order=order, sort_ids=sort_ids)
 
     if I.shape == (0,):
         if not rowdict:
