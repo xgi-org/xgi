@@ -1,5 +1,4 @@
 """Simulation of the Kuramoto model."""
-
 import numpy as np
 
 import xgi
@@ -28,10 +27,11 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
     k3 : float
         The coupling strength for triangles
     omega : numpy array of real values
-        The natural frequency of the nodes. If None (default), randomly drawn from a normal distribution
+        The natural frequency of the nodes. If None (default), randomly drawn from a normal
+        distribution
     theta : numpy array of real values
-        The initial phase distribution of nodes. If None (default), drawn from a random uniform distribution
-        on [0, 2pi[.
+        The initial phase distribution of nodes. If None (default), drawn from a random uniform
+        distribution on [0, 2pi[.
     timesteps : int greater than 1, default: 10000
         The number of timesteps for Euler Method.
     dt : float greater than 0, default: 0.002
@@ -90,15 +90,9 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
 
         for i, j, k in triangles:
 
-            r2[i] += np.exp(2j * theta[j] - 1j * theta[k]) + np.exp(
-                2j * theta[k] - 1j * theta[j]
-            )
-            r2[j] += np.exp(2j * theta[i] - 1j * theta[k]) + np.exp(
-                2j * theta[k] - 1j * theta[i]
-            )
-            r2[k] += np.exp(2j * theta[i] - 1j * theta[j]) + np.exp(
-                2j * theta[j] - 1j * theta[i]
-            )
+            r2[i] += np.exp(2j * theta[j] - 1j * theta[k]) + np.exp(2j * theta[k] - 1j * theta[j])
+            r2[j] += np.exp(2j * theta[i] - 1j * theta[k]) + np.exp(2j * theta[k] - 1j * theta[i])
+            r2[k] += np.exp(2j * theta[i] - 1j * theta[j]) + np.exp(2j * theta[j] - 1j * theta[i])
 
         d_theta = (
             omega
@@ -145,8 +139,8 @@ def simulate_simplicial_kuramoto(
     index=False,
 ):
     """
-    This function simulates the simplicial Kuramoto model's dynamics on an oriented simplicial complex
-    using explicit Euler numerical integration scheme.
+    This function simulates the simplicial Kuramoto model's dynamics on an oriented simplicial
+    complex using explicit Euler numerical integration scheme.
 
     Parameters
     ----------
@@ -217,9 +211,7 @@ def simulate_simplicial_kuramoto(
     D_om1 = np.transpose(B_o)
 
     if index:
-        B_op1, __, op1_dict = xgi.matrix.boundary_matrix(
-            S, order + 1, orientations, True
-        )
+        B_op1, __, op1_dict = xgi.matrix.boundary_matrix(S, order + 1, orientations, True)
     else:
         B_op1 = xgi.matrix.boundary_matrix(S, order + 1, orientations, False)
     D_o = np.transpose(B_op1)

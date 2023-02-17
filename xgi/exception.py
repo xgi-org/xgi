@@ -1,3 +1,6 @@
+"""XGI exceptions."""
+
+
 class XGIException(Exception):
     """Base class for exceptions in XGI."""
 

@@ -1,13 +1,17 @@
 """Base class for undirected hypergraphs."""
 from collections import defaultdict
-from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
+from collections.abc import Hashable
+from collections.abc import Iterable
+from copy import copy
+from copy import deepcopy
 from itertools import count
 from warnings import warn
 
-from ..exception import IDNotFound, XGIError
+from ..exception import IDNotFound
+from ..exception import XGIError
 from ..utils.utilities import update_uid_counter
-from .reportviews import EdgeView, NodeView
+from .reportviews import EdgeView
+from .reportviews import NodeView
 
 __all__ = ["Hypergraph"]
 
@@ -177,9 +181,11 @@ class Hypergraph:
 
         """
         try:
-            return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
+            return f"""{type(self).__name__} named {self['name']} with {self.num_nodes} nodes
+        and {self.num_edges} hyperedges"""
         except XGIError:
-            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
+            return f"""Unnamed {type(self).__name__} with {self.num_nodes} nodes
+        and {self.num_edges} hyperedges"""
 
     def __iter__(self):
         """Iterate over the nodes.
@@ -570,8 +576,8 @@ class Hypergraph:
             as edge ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add`
             may be a dict of the form `{edge_id: edge_members}` (Format 5).
 
-            Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while `id`s must be.
-            In Formats 2-4, each element of `ebunch_to_add` must have the same length,
+            Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while `id`s must
+            be. In Formats 2-4, each element of `ebunch_to_add` must have the same length,
             i.e. you cannot mix different formats.  The iterables containing edge
             members cannot be strings.
 
@@ -772,9 +778,7 @@ class Hypergraph:
 
         """
         try:
-            self.add_edges_from(
-                ((edge[:-1], {weight: edge[-1]}) for edge in ebunch), **attr
-            )
+            self.add_edges_from(((edge[:-1], {weight: edge[-1]}) for edge in ebunch), **attr)
         except KeyError:
             XGIError("Empty or invalid edges specified.")
 
@@ -829,9 +833,9 @@ class Hypergraph:
                 "One of the nodes specified doesn't belong to the specified edge."
             ) from e
 
-        if len(set(temp_members1)) < len(set(self._edge[e_id1])) or len(
-            set(temp_members2)
-        ) < len(set(self._edge[e_id2])):
+        if len(set(temp_members1)) < len(set(self._edge[e_id1])) or len(set(temp_members2)) < len(
+            set(self._edge[e_id2])
+        ):
             raise XGIError("This will create a loopy hyperedge.")
 
         self._node[n_id1] = set(temp_memberships1)
@@ -1010,9 +1014,7 @@ class Hypergraph:
         self._edge.clear()
         self._edge_attr.clear()
 
-    def merge_duplicate_edges(
-        self, rename="first", merge_rule="first", multiplicity=None
-    ):
+    def merge_duplicate_edges(self, rename="first", merge_rule="first", multiplicity=None):
         """Merges edges which have the same members.
 
         Parameters
@@ -1146,14 +1148,12 @@ class Hypergraph:
                 elif merge_rule == "union":
                     attrs = {field for id in dup_ids for field in self._edge_attr[id]}
                     new_attrs = {
-                        attr: {self._edge_attr[id].get(attr) for id in dup_ids}
-                        for attr in attrs
+                        attr: {self._edge_attr[id].get(attr) for id in dup_ids} for attr in attrs
                     }
                 elif merge_rule == "intersection":
                     attrs = {field for id in dup_ids for field in self._edge_attr[id]}
                     set_attrs = {
-                        attr: {self._edge_attr[id].get(attr) for id in dup_ids}
-                        for attr in attrs
+                        attr: {self._edge_attr[id].get(attr) for id in dup_ids} for attr in attrs
                     }
                     new_attrs = {
                         attr: (None if len(val) != 1 else next(iter(val)))
@@ -1169,9 +1169,7 @@ class Hypergraph:
         self.add_edges_from(new_edges)
 
         if merge_rule == "union":
-            warn(
-                "You will not be able to color/draw by merged attributes with xgi.draw()!"
-            )
+            warn("You will not be able to color/draw by merged attributes with xgi.draw()!")
 
     def copy(self):
         """A deep copy of the hypergraph.
@@ -1189,8 +1187,7 @@ class Hypergraph:
         cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
         ee = self.edges
         cp.add_edges_from(
-            (e, id, deepcopy(self.edges[id]))
-            for id, e in ee.members(dtype=dict).items()
+            (e, id, deepcopy(self.edges[id])) for id, e in ee.members(dtype=dict).items()
         )
         cp._hypergraph = deepcopy(self._hypergraph)
 
@@ -1211,9 +1208,7 @@ class Hypergraph:
         """
         dual = self.__class__()
         nn = self.nodes
-        dual.add_edges_from(
-            (nn.memberships(n), n, deepcopy(attr)) for n, attr in nn.items()
-        )
+        dual.add_edges_from((nn.memberships(n), n, deepcopy(attr)) for n, attr in nn.items())
         ee = self.edges
         dual.add_nodes_from((e, deepcopy(attr)) for e, attr in ee.items())
         dual._hypergraph = deepcopy(self._hypergraph)
@@ -1261,8 +1256,7 @@ class Hypergraph:
                 self.clear()
                 self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
                 self.add_edges_from(
-                    (e, id, deepcopy(temp.edges[id]))
-                    for id, e in ee.members(dtype=dict).items()
+                    (e, id, deepcopy(temp.edges[id])) for id, e in ee.members(dtype=dict).items()
                 )
                 self._hypergraph = deepcopy(temp._hypergraph)
         else:

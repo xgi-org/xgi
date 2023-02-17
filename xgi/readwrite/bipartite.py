@@ -112,9 +112,7 @@ def read_bipartite_edgelist(
 
     """
     with open(path, "rb") as file:
-        lines = (
-            line if isinstance(line, str) else line.decode(encoding) for line in file
-        )
+        lines = (line if isinstance(line, str) else line.decode(encoding) for line in file)
         return parse_bipartite_edgelist(
             lines,
             comments=comments,

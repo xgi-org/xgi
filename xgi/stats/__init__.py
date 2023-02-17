@@ -236,9 +236,7 @@ class MultiIDStat(IDStat):
             name = self.statsclass.__name__
             raise TypeError(f"must pass an iterable of {name}, not a single {name}")
         elif isinstance(stats, str):
-            raise TypeError(
-                f"must pass an iterable of {self.statsclass.__name__}, not str"
-            )
+            raise TypeError(f"must pass an iterable of {self.statsclass.__name__}, not str")
         self.stats = [self._get_stat(f) for f in stats]
 
     def _get_stat(self, s):
@@ -250,12 +248,7 @@ class MultiIDStat(IDStat):
             raise TypeError(f"{s.__name__} must be str or {self.statsclass.__name__}")
 
     def __repr__(self):
-        return (
-            f"{self.__class__.__name__}"
-            + "("
-            + ", ".join(s.name for s in self.stats)
-            + ")"
-        )
+        return f"{self.__class__.__name__}" + "(" + ", ".join(s.name for s in self.stats) + ")"
 
     @property
     def name(self):

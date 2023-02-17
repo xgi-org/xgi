@@ -7,10 +7,14 @@ edge size of a hypergraph.  Views are automatically updaed when the hypergraph c
 """
 
 from collections import defaultdict
-from collections.abc import Mapping, Set
+from collections.abc import Mapping
+from collections.abc import Set
 
-from ..exception import IDNotFound, XGIError
-from ..stats import IDStat, dispatch_many_stats, dispatch_stat
+from ..exception import IDNotFound
+from ..exception import XGIError
+from ..stats import IDStat
+from ..stats import dispatch_many_stats
+from ..stats import dispatch_stat
 
 __all__ = [
     "NodeView",
@@ -264,7 +268,8 @@ class IDView(Mapping, Set):
             bunch = [node for node in self if val[0] <= values[node] <= val[1]]
         else:
             raise ValueError(
-                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
+                f"""Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt',
+                'leq', 'geq', or 'between'."""
             )
         return type(self).from_view(self, bunch)
 
@@ -300,38 +305,25 @@ class IDView(Mapping, Set):
         values = attrs(attr, missing).asdict()
 
         if mode == "eq":
-            bunch = [
-                idx for idx in self if values[idx] is not None and values[idx] == val
-            ]
+            bunch = [idx for idx in self if values[idx] is not None and values[idx] == val]
         elif mode == "neq":
-            bunch = [
-                idx for idx in self if values[idx] is not None and values[idx] != val
-            ]
+            bunch = [idx for idx in self if values[idx] is not None and values[idx] != val]
         elif mode == "lt":
-            bunch = [
-                idx for idx in self if values[idx] is not None and values[idx] < val
-            ]
+            bunch = [idx for idx in self if values[idx] is not None and values[idx] < val]
         elif mode == "gt":
-            bunch = [
-                idx for idx in self if values[idx] is not None and values[idx] > val
-            ]
+            bunch = [idx for idx in self if values[idx] is not None and values[idx] > val]
         elif mode == "leq":
-            bunch = [
-                idx for idx in self if values[idx] is not None and values[idx] <= val
-            ]
+            bunch = [idx for idx in self if values[idx] is not None and values[idx] <= val]
         elif mode == "geq":
-            bunch = [
-                idx for idx in self if values[idx] is not None and values[idx] >= val
-            ]
+            bunch = [idx for idx in self if values[idx] is not None and values[idx] >= val]
         elif mode == "between":
             bunch = [
-                idx
-                for idx in self
-                if values[idx] is not None and val[0] <= values[idx] <= val[1]
+                idx for idx in self if values[idx] is not None and val[0] <= values[idx] <= val[1]
             ]
         else:
             raise ValueError(
-                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
+                f"""Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt',
+                'leq', 'geq', or 'between'."""
             )
         return type(self).from_view(self, bunch)
 
@@ -364,9 +356,7 @@ class IDView(Mapping, Set):
         {1, 3, 4}
 
         """
-        return {i for n in self._id_dict[id] for i in self._bi_id_dict[n]}.difference(
-            {id}
-        )
+        return {i for n in self._id_dict[id] for i in self._bi_id_dict[n]}.difference({id})
 
     def duplicates(self):
         """Find IDs that have a duplicate.
@@ -563,11 +553,7 @@ class NodeView(IDView):
             If `n` is not hashable or if it is not in the hypergraph.
 
         """
-        return (
-            {key: self._id_dict[key] for key in self}
-            if n is None
-            else self._id_dict[n].copy()
-        )
+        return {key: self._id_dict[key] for key in self} if n is None else self._id_dict[n].copy()
 
     def isolates(self, ignore_singletons=True):
         """Nodes that belong to no edges.

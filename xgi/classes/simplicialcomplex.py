@@ -6,14 +6,18 @@ and can associate key/value attribute pairs with each undirected simplex and nod
 Multi-simplices are not allowed.
 """
 
-from collections.abc import Hashable, Iterable
-from itertools import combinations, count
+from collections.abc import Hashable
+from collections.abc import Iterable
+from itertools import combinations
+from itertools import count
 from warnings import warn
 
 from ..exception import XGIError
-from ..utils.utilities import powerset, update_uid_counter
+from ..utils.utilities import powerset
+from ..utils.utilities import update_uid_counter
 from .hypergraph import Hypergraph
-from .reportviews import EdgeView, NodeView
+from .reportviews import EdgeView
+from .reportviews import NodeView
 
 __all__ = ["SimplicialComplex"]
 
@@ -105,9 +109,11 @@ class SimplicialComplex(Hypergraph):
 
         """
         try:
-            return f"{type(self).__name__} named '{self['name']}' with {self.num_nodes} nodes and {self.num_edges} simplices"
+            return f"""{type(self).__name__} named '{self['name']}' with {self.num_nodes}
+        nodes and {self.num_edges} simplices"""
         except XGIError:
-            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} simplices"
+            return f"""Unnamed {type(self).__name__} with {self.num_nodes} nodes and
+        {self.num_edges} simplices"""
 
     def add_edge(self, edge, id=None, **attr):
         """add_edge is deprecated in SimplicialComplex. Use add_simplex instead"""
@@ -116,17 +122,17 @@ class SimplicialComplex(Hypergraph):
 
     def add_edges_from(self, ebunch_to_add, max_order=None, **attr):
         """add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead"""
-        warn(
-            "add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead"
-        )
+        warn("add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead")
         return self.add_simplices_from(ebunch_to_add, max_order=None, **attr)
 
-    def add_weighted_edges_from(
-        self, ebunch_to_add, max_order=None, weight="weight", **attr
-    ):
-        """add_weighted_edges_from is deprecated in SimplicialComplex. Use add_weighted_simplices_from instead"""
+    def add_weighted_edges_from(self, ebunch_to_add, max_order=None, weight="weight", **attr):
+        """add_weighted_edges_from is deprecated in SimplicialComplex.
+
+        Use add_weighted_simplices_from instead
+        """
         warn(
-            "add_weighted_edges_from is deprecated in SimplicialComplex. Use add_weighted_simplices_from instead"
+            """add_weighted_edges_from is deprecated in SimplicialComplex.
+            Use add_weighted_simplices_from instead"""
         )
         return self.add_weighted_simplices_from(
             ebunch_to_add, max_order=None, weight="weight", **attr
@@ -134,15 +140,17 @@ class SimplicialComplex(Hypergraph):
 
     def remove_edge(self, id):
         """remove_edge is deprecated in SimplicialComplex. Use remove_simplex_id instead"""
-        warn(
-            "remove_edge is deprecated in SimplicialComplex. Use remove_simplex_id instead"
-        )
-        return self.remove_simplex_id(id, **attr)
+        warn("remove_edge is deprecated in SimplicialComplex. Use remove_simplex_id instead")
+        return self.remove_simplex_id(id)
 
     def remove_edges_from(self, ebunch):
-        """remove_edges_from is deprecated in SimplicialComplex. Use remove_simplex_ids_from instead"""
+        """remove_edges_from is deprecated in SimplicialComplex.
+
+        Use remove_simplex_ids_from instead.
+        """
         warn(
-            "remove_edges_from is deprecated in SimplicialComplex. Use remove_simplex_ids_from instead"
+            """remove_edges_from is deprecated in SimplicialComplex.
+            Use remove_simplex_ids_from instead."""
         )
         return self.remove_simplex_ids_from(ebunch)
 
@@ -334,8 +342,8 @@ class SimplicialComplex(Hypergraph):
             as simplex ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add`
             may be a dict of the form `{simplex_id: simplex_members}` (Format 5).
 
-            Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while `id`s must be.
-            In Formats 2-4, each element of `ebunch_to_add` must have the same length,
+            Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while `id`s must
+            be. In Formats 2-4, each element of `ebunch_to_add` must have the same length,
             i.e. you cannot mix different formats.  The iterables containing simplex
             members cannot be strings.
 
@@ -363,14 +371,16 @@ class SimplicialComplex(Hypergraph):
 
         >>> S.add_simplices_from([[0, 1], [1, 2], [2, 3, 4]])
         >>> S.edges.members(dtype=dict) # doctest: +SKIP
-        {0: frozenset({0, 1}), 1: frozenset({1, 2}), 2: frozenset({2, 3, 4}), 3: frozenset({2, 3}), 4: frozenset({2, 4}), 5: frozenset({3, 4})}
+        {0: frozenset({0, 1}), 1: frozenset({1, 2}), 2: frozenset({2, 3, 4}),
+        3: frozenset({2, 3}), 4: frozenset({2, 4}), 5: frozenset({3, 4})}
 
         Custom simplex ids can be specified using a dict.
 
         >>> S = xgi.SimplicialComplex()
         >>> S.add_simplices_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
         >>> S.edges.members(dtype=dict) # doctest: +SKIP
-        {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}), 0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
+        {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}),
+        0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
 
         You can use the dict format to easily add simplices from another simplicial complex.
 
@@ -384,7 +394,8 @@ class SimplicialComplex(Hypergraph):
         >>> S = xgi.SimplicialComplex()
         >>> S.add_simplices_from([([0, 1], 'one'), ([1, 2], 'two'), ([2, 3, 4], 'three')])
         >>> S.edges.members(dtype=dict) # doctest: +SKIP
-        {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}), 0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
+        {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}),
+        0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
 
         Attributes for each simplex may be specified using a 2-tuple for each simplex.
         Numeric IDs will be assigned automatically.
@@ -409,7 +420,8 @@ class SimplicialComplex(Hypergraph):
         ... ]
         >>> S.add_simplices_from(simplices)
         >>> {e: S.edges[e] for e in S.edges}
-        {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40}, 0: {}, 1: {}, 2: {}}
+        {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40},
+        0: {}, 1: {}, 2: {}}
 
         """
 
@@ -427,7 +439,7 @@ class SimplicialComplex(Hypergraph):
                     warn(f"uid {id} already exists, cannot add simplex {members}.")
                     continue
 
-                if max_order != None:
+                if max_order is not None:
                     if len(members) > max_order + 1:
                         combos = powerset(members, include_singletons=False)
                         faces += list(combos)
@@ -521,7 +533,7 @@ class SimplicialComplex(Hypergraph):
             if format1 or format3:
                 id = next(self._edge_uid)
 
-            if max_order != None:
+            if max_order is not None:
                 if len(members) > max_order + 1:
                     combos = powerset(members, include_singletons=False)
                     faces += list(combos)  # store faces
@@ -594,18 +606,13 @@ class SimplicialComplex(Hypergraph):
         ebunch_to_close = list(map(list, self.edges.members()))
         for simplex in ebunch_to_close:
             if isinstance(simplex[-1], dict):
-                dd = simplex[-1]
                 simplex = simplex[:-1]
-            else:
-                dd = {}
 
             if simplex:
                 new_faces = self._subfaces(simplex)
                 self.add_simplices_from(new_faces)
 
-    def add_weighted_simplices_from(
-        self, ebunch_to_add, max_order=None, weight="weight", **attr
-    ):
+    def add_weighted_simplices_from(self, ebunch_to_add, max_order=None, weight="weight", **attr):
         """Add weighted simplices in `ebunch_to_add` with specified weight attr
 
         Parameters

@@ -1,7 +1,9 @@
 """General utilities."""
 
 from collections import defaultdict
-from itertools import chain, combinations, count
+from itertools import chain
+from itertools import combinations
+from itertools import count
 
 __all__ = [
     "dual_dict",
@@ -43,9 +45,7 @@ def dual_dict(edge_dict):
     return dict(node_dict)
 
 
-def powerset(
-    iterable, include_empty=False, include_full=False, include_singletons=True
-):
+def powerset(iterable, include_empty=False, include_full=False, include_singletons=True):
     """Returns all possible subsets of the elements in iterable, with options
     to include the empty set and the set containing all elements.
 

@@ -1,9 +1,9 @@
 """Algorithms to compute node positions for drawing."""
-
 import networkx as nx
 
 from .. import convert
-from ..classes import SimplicialComplex, max_edge_order
+from ..classes import SimplicialComplex
+from ..classes import max_edge_order
 
 __all__ = [
     "random_layout",
@@ -161,7 +161,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     for d in range(2, max_edge_order(H) + 1):
         # Hyperedges of order d (d=2: triplets, etc.)
         for he in H.edges.filterby("order", d).members():
-            # Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
+            # Adding one phantom node for each hyperedge and linking it to the nodes of hyperedge
             for n in he:
                 G.add_edge(phantom_node_id, n)
             phantom_node_id += 1
@@ -239,7 +239,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     for d in range(2, max_edge_order(H) + 1):
         # Hyperedges of order d (d=2: triplets, etc.)
         for he_id, members in H.edges.filterby("order", d).members(dtype=dict).items():
-            # Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
+            # Adding one phantom node for each hyperedge and linking it to the nodes of hyperedge
             for n in members:
                 G.add_edge(phantom_node_id, n, weight=d)
             phantom_node_id += 1

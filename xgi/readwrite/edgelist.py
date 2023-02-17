@@ -99,9 +99,7 @@ def read_edgelist(
 
     """
     with open(path, "rb") as file:
-        lines = (
-            line if isinstance(line, str) else line.decode(encoding) for line in file
-        )
+        lines = (line if isinstance(line, str) else line.decode(encoding) for line in file)
         return parse_edgelist(
             lines,
             comments=comments,
@@ -111,9 +109,7 @@ def read_edgelist(
         )
 
 
-def parse_edgelist(
-    lines, comments="#", delimiter=None, create_using=None, nodetype=None
-):
+def parse_edgelist(lines, comments="#", delimiter=None, create_using=None, nodetype=None):
     """
     A helper function to read a iterable of strings containing a hyperedge list and
     convert it to a Hypergraph object.

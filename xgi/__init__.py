@@ -1,3 +1,4 @@
+"""XGI."""
 import pkg_resources
 
 from . import (

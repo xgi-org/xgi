@@ -4,27 +4,26 @@ from copy import deepcopy
 import networkx as nx
 import pandas as pd
 from networkx.algorithms import bipartite
-from numpy import matrix, ndarray
-from scipy.sparse import (
-    coo_array,
-    coo_matrix,
-    csc_array,
-    csc_matrix,
-    csr_array,
-    csr_matrix,
-    lil_array,
-    lil_matrix,
-)
+from numpy import matrix
+from numpy import ndarray
+from scipy.sparse import coo_array
+from scipy.sparse import coo_matrix
+from scipy.sparse import csc_array
+from scipy.sparse import csc_matrix
+from scipy.sparse import csr_array
+from scipy.sparse import csr_matrix
+from scipy.sparse import lil_array
+from scipy.sparse import lil_matrix
 
-from .classes import (
-    Hypergraph,
-    SimplicialComplex,
-    maximal_simplices,
-    set_edge_attributes,
-)
+from .classes import Hypergraph
+from .classes import SimplicialComplex
+from .classes import maximal_simplices
+from .classes import set_edge_attributes
 from .exception import XGIError
-from .generators import empty_hypergraph, empty_simplicial_complex
-from .linalg import adjacency_matrix, incidence_matrix
+from .generators import empty_hypergraph
+from .generators import empty_simplicial_complex
+from .linalg import adjacency_matrix
+from .linalg import incidence_matrix
 from .utils.utilities import dual_dict
 
 __all__ = [
@@ -166,9 +165,7 @@ def convert_to_simplicial_complex(data, create_using=None):
         H = empty_simplicial_complex(create_using)
         H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
         ee = data.edges
-        H.add_simplices_from(
-            (ee.members(e), e, deepcopy(attr)) for e, attr in ee.items()
-        )
+        H.add_simplices_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
         H._hypergraph = deepcopy(data._hypergraph)
 
     elif isinstance(data, list):
@@ -197,9 +194,7 @@ def convert_to_simplicial_complex(data, create_using=None):
         ),
     ):
         # incidence matrix
-        raise XGIError(
-            "Not implemented: construction of a SimplicialComplex from incidence matrix"
-        )
+        raise XGIError("Not implemented: construction of a SimplicialComplex from incidence matrix")
     else:
         raise XGIError("Input data has unsupported type.")
 
@@ -299,9 +294,7 @@ def to_hyperedge_dict(H):
     return deepcopy(H._edge)
 
 
-def from_bipartite_pandas_dataframe(
-    df, create_using=None, node_column=0, edge_column=1
-):
+def from_bipartite_pandas_dataframe(df, create_using=None, node_column=0, edge_column=1):
     """Create a hypergraph from a pandas dataframe given
     specified node and edge columns.
 
@@ -415,8 +408,8 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
     incidence_matrix
     to_incidence_matrix
     """
-    I = coo_array(d)
-    n, m = I.shape
+    I_mat = coo_array(d)
+    n, m = I_mat.shape
 
     if nodelabels is None:
         nodedict = dict(zip(range(n), range(n)))
@@ -434,7 +427,7 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
 
     H = empty_hypergraph(create_using)
 
-    for node, edge in zip(I.row, I.col):
+    for node, edge in zip(I_mat.row, I_mat.col):
         node = nodedict[node]
         edge = edgedict[edge]
         H.add_node_to_edge(edge, node)
@@ -656,9 +649,7 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
                 try:
                     id = nodetype(id)
                 except ValueError as e:
-                    raise TypeError(
-                        f"Failed to convert edge IDs to type {nodetype}."
-                    ) from e
+                    raise TypeError(f"Failed to convert edge IDs to type {nodetype}.") from e
             H.add_node(id, **dd)
     except KeyError:
         raise XGIError("Failed to import node attributes.")
@@ -679,9 +670,7 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
                 try:
                     edge = {nodetype(n) for n in edge}
                 except ValueError as e:
-                    raise TypeError(
-                        f"Failed to convert nodes to type {nodetype}."
-                    ) from e
+                    raise TypeError(f"Failed to convert nodes to type {nodetype}.") from e
             H.add_edge(edge, id)
 
     except KeyError as e:
@@ -689,14 +678,10 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
 
     try:
         if edgetype is None:
-            edge_data = {
-                key: val for key, val in data["edge-data"].items() if key in H.edges
-            }
+            edge_data = {key: val for key, val in data["edge-data"].items() if key in H.edges}
         else:
             edge_data = {
-                edgetype(e): dd
-                for e, dd in data["edge-data"].items()
-                if edgetype(e) in H.edges
+                edgetype(e): dd for e, dd in data["edge-data"].items() if edgetype(e) in H.edges
             }
 
         set_edge_attributes(

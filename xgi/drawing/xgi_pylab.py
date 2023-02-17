@@ -7,12 +7,16 @@ from itertools import combinations
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
-from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.colors import ListedColormap
 
 from .. import convert
-from ..classes import Hypergraph, SimplicialComplex, max_edge_order
+from ..classes import Hypergraph
+from ..classes import SimplicialComplex
+from ..classes import max_edge_order
 from ..exception import XGIError
-from ..stats import EdgeStat, NodeStat
+from ..stats import EdgeStat
+from ..stats import NodeStat
 from .layout import barycenter_spring_layout
 
 __all__ = [
@@ -56,8 +60,8 @@ def draw(
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
         (specified with dyad_color_cmap) associated to it.
     dyad_lw : int, float, dict, iterable, or EdgeStat (default=1.5)
-        Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all edges.
-        If a dict, must contain (edge_id: width) pairs.  If iterable, assume the widths are
+        Line width of edges of order 1 (dyadic links). If int or float, use the same width for all.
+        If a dict, must contain (edge_id: width) pairs. If iterable, assume the widths are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a monotonic
         linear interpolation defined between min_dyad_lw and max_dyad_lw.
     edge_fc : str, dict, iterable, or EdgeStat (default=None)
@@ -77,7 +81,7 @@ def draw(
         specified in the same order as the nodes are found in H.nodes. If NodeStat,
         use the colormap specified with node_ec_cmap.
     node_lw : int, float, dict, iterable, or NodeStat (default=1)
-        Line width of the node borders in pixels.  If int or float, use the same width for all node borders.
+        Line width of the node borders in pixels.  If int or float, use the same width for all.
         If a dict, must contain (node_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
         linear interpolation defined between min_node_lw and max_node_lw.
@@ -229,7 +233,7 @@ def draw_xgi_nodes(
         specified in the same order as the nodes are found in H.nodes. If NodeStat,
         use the colormap specified with node_ec_cmap.
     node_lw : int, float, dict, iterable, or EdgeStat (default=1)
-        Line width of the node borders in pixels.  If int or float, use the same width for all node borders.
+        Line width of the node borders in pixels.  If int or float, use the same width for all.
         If a dict, must contain (node_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
         linear interpolation defined between min_node_lw and max_node_lw.
@@ -327,7 +331,7 @@ def draw_xgi_hyperedges(
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
         (specified with dyad_color_cmap) associated to it.
     dyad_lw : int, float, dict, iterable, or EdgeStat
-        Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all edges.
+        Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all.
         If a dict, must contain (edge_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a monotonic
         linear interpolation defined between min_dyad_lw and max_dyad_lw.
@@ -443,7 +447,7 @@ def draw_xgi_simplices(
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
         (specified with dyad_color_cmap) associated to it.
     dyad_lw : int, float, dict, iterable, or EdgeStat
-        Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all edges.
+        Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all.
         If a dict, must contain (edge_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a monotonic
         linear interpolation defined between min_dyad_lw and max_dyad_lw.
@@ -533,9 +537,7 @@ def draw_xgi_simplices(
             for i, j in combinations(sorted_coordinates, 2):
                 x_coords = [i[0], j[0]]
                 y_coords = [i[1], j[1]]
-                line = plt.Line2D(
-                    x_coords, y_coords, color=dyad_color[id], lw=dyad_lw[id]
-                )
+                line = plt.Line2D(x_coords, y_coords, color=dyad_color[id], lw=dyad_lw[id])
                 ax.add_line(line)
 
     if hyperedge_labels:
@@ -585,7 +587,7 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
         return {id: arg[idx] for idx, id in enumerate(ids)}
     else:
         raise TypeError(
-            f"Argument must be int, float, dict, iterable, or NodeStat/EdgeStat. Received {type(arg)}"
+            f"Argument must be int, float, dict, iterable or NodeStat/EdgeStat, got {type(arg)}"
         )
 
 
@@ -775,7 +777,7 @@ def draw_hyperedge_labels(
         Font weight.
     alpha_edges : float (default=None)
         The text transparency.
-    bbox_edges : Matplotlib bbox (default={boxstyle='round', ec=(1.0, 1.0, 1.0), fc=(1.0, 1.0, 1.0)})
+    bbox_edges : Matplotlib bbox (default={boxstyle='round', ec=(1, 1, 1), fc=(1, 1, 1)})
         Specify text box properties (e.g. shape, color etc.) for edge labels.
     horizontalalignment_edges : str (default='center')
         Horizontal alignment {'center', 'right', 'left'}.
@@ -827,9 +829,9 @@ def draw_hyperedge_labels(
                     angle += 180
                 # Transform data coordinate angle to screen coordinate angle
                 xy = np.array((x, y))
-                trans_angle = ax.transData.transform_angles(
-                    np.array((angle,)), xy.reshape((1, 2))
-                )[0]
+                trans_angle = ax.transData.transform_angles(np.array((angle,)), xy.reshape((1, 2)))[
+                    0
+                ]
             else:
                 trans_angle = 0.0
         else:

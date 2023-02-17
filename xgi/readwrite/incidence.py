@@ -11,9 +11,7 @@ __all__ = [
 ]
 
 
-def read_incidence_matrix(
-    path, comments="#", delimiter=None, create_using=None, encoding="utf-8"
-):
+def read_incidence_matrix(path, comments="#", delimiter=None, create_using=None, encoding="utf-8"):
     """Read a file containing an incidence matrix and
     convert it to a Hypergraph object.
 
@@ -78,5 +76,5 @@ def write_incidence_matrix(H, path, delimiter=" ", encoding="utf-8"):
     >>> # xgi.write_incidence_matrix(H, "test.csv", delimiter=",")
 
     """
-    I = incidence_matrix(H, sparse=False)
-    np.savetxt(path, I, delimiter=delimiter, newline="\n", encoding=encoding)
+    I_mat = incidence_matrix(H, sparse=False)
+    np.savetxt(path, I_mat, delimiter=delimiter, newline="\n", encoding=encoding)

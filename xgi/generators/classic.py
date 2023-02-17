@@ -172,9 +172,7 @@ def star_clique(n_star, n_clique, d_max):
     H.add_edge((nodes_star[0], nodes_clique[0]))
 
     # add clique hyperedges up to order d_max
-    H.add_edges_from(
-        [e for d in range(1, d_max + 1) for e in combinations(nodes_clique, d + 1)]
-    )
+    H.add_edges_from([e for d in range(1, d_max + 1) for e in combinations(nodes_clique, d + 1)])
 
     return H
 
@@ -302,7 +300,7 @@ def flag_complex_d2(G, p2=None, seed=None):
     return S
 
 
-def ring_lattice(n, d, k, l):
+def ring_lattice(n, d, k, l_val):
     """A ring lattice hypergraph.
 
     A d-uniform hypergraph on n nodes where each node is part of k edges and the
@@ -316,7 +314,7 @@ def ring_lattice(n, d, k, l):
         Edge size
     k : int
         Number of edges of which a node is a part. Should be a multiple of 2.
-    l : int
+    l_val : int
         Overlap between edges
 
     Returns
@@ -346,7 +344,7 @@ def ring_lattice(n, d, k, l):
         warn("k is not divisible by 2")
 
     edges = [
-        [node] + [(start + l + i) % n for i in range(d - 1)]
+        [node] + [(start + l_val + i) % n for i in range(d - 1)]
         for node in range(n)
         for start in range(node + 1, node + k // 2 + 1)
     ]
@@ -355,7 +353,7 @@ def ring_lattice(n, d, k, l):
     return H
 
 
-def sunflower(l, c, m):
+def sunflower(l_val, c, m):
     """Create a sunflower hypergraph.
 
     This creates an m-uniform hypergraph
@@ -363,7 +361,7 @@ def sunflower(l, c, m):
 
     Parameters
     ----------
-    l : int
+    l_val : int
         Number of petals
     c : int
         Size of the core
@@ -388,7 +386,7 @@ def sunflower(l, c, m):
 
     H = Hypergraph()
     start_label = c
-    while start_label + (m - c) <= c + (m - c) * l:
+    while start_label + (m - c) <= c + (m - c) * l_val:
         H.add_edge(core_nodes + [start_label + i for i in range(m - c)])
         start_label = start_label + (m - c)
 

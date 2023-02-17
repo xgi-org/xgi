@@ -5,9 +5,11 @@ import numpy as np
 from numpy.linalg import norm
 from scipy.sparse.linalg import eigsh
 
-from ..classes import convert_labels_to_integers, is_uniform
+from ..classes import convert_labels_to_integers
+from ..classes import is_uniform
 from ..exception import XGIError
-from ..linalg import clique_motif_matrix, incidence_matrix
+from ..linalg import clique_motif_matrix
+from ..linalg import incidence_matrix
 
 __all__ = ["CEC_centrality", "HEC_centrality", "ZEC_centrality", "node_edge_centrality"]
 
@@ -246,6 +248,4 @@ def node_edge_centrality(
         y = new_y.copy()
     else:
         warn("Iteration did not converge!")
-    return {node_dict[n]: new_x[n] for n in node_dict}, {
-        edge_dict[e]: new_y[e] for e in edge_dict
-    }
+    return {node_dict[n]: new_x[n] for n in node_dict}, {edge_dict[e]: new_y[e] for e in edge_dict}

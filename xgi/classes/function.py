@@ -7,7 +7,8 @@ from warnings import warn
 
 from scipy.special import comb
 
-from ..exception import IDNotFound, XGIError
+from ..exception import IDNotFound
+from ..exception import XGIError
 from ..utils.utilities import powerset
 from .hypergraph import Hypergraph
 
@@ -678,9 +679,7 @@ def convert_labels_to_integers(H, label_attribute="label"):
     temp_H._hypergraph = deepcopy(H._hypergraph)
 
     temp_H.add_nodes_from((id, deepcopy(H.nodes[n])) for n, id in node_dict.items())
-    set_node_attributes(
-        temp_H, {n: {label_attribute: id} for id, n in node_dict.items()}
-    )
+    set_node_attributes(temp_H, {n: {label_attribute: id} for id, n in node_dict.items()})
 
     temp_H.add_edges_from(
         (
@@ -690,9 +689,7 @@ def convert_labels_to_integers(H, label_attribute="label"):
         )
         for id, e in H.edges.members(dtype=dict).items()
     )
-    set_edge_attributes(
-        temp_H, {e: {label_attribute: id} for id, e in edge_dict.items()}
-    )
+    set_edge_attributes(temp_H, {e: {label_attribute: id} for id, e in edge_dict.items()})
 
     return temp_H
 
@@ -742,7 +739,7 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
     -----
     If both `order` and `max_order` are not None, `max_order` is ignored.
 
-    """
+    """  # noqa
     n = H.num_nodes
     if n < 1:
         raise XGIError("Density not defined for empty hypergraph")

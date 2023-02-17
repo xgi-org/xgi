@@ -4,7 +4,8 @@ from itertools import combinations
 
 import numpy as np
 
-from ..classes import is_uniform, unique_edge_sizes
+from ..classes import is_uniform
+from ..classes import unique_edge_sizes
 from ..exception import XGIError
 
 __all__ = ["dynamical_assortativity", "degree_assortativity"]
@@ -51,11 +52,7 @@ def dynamical_assortativity(H):
     k1 = d.mean()
     k2 = d.moment(2)
     kk1 = np.mean(
-        [
-            degs[n1] * degs[n2]
-            for e in H.edges
-            for n1, n2 in combinations(H.edges.members(e), 2)
-        ]
+        [degs[n1] * degs[n2] for e in H.edges for n1, n2 in combinations(H.edges.members(e), 2)]
     )
 
     return kk1 * k1**2 / k2**2 - 1

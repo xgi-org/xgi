@@ -2,7 +2,8 @@
 from warnings import warn
 
 import numpy as np
-from scipy.sparse import csr_array, diags
+from scipy.sparse import csr_array
+from scipy.sparse import diags
 
 __all__ = [
     "incidence_matrix",
@@ -17,9 +18,7 @@ __all__ = [
 ]
 
 
-def incidence_matrix(
-    H, order=None, sparse=True, index=False, weight=lambda node, edge, H: 1
-):
+def incidence_matrix(H, order=None, sparse=True, index=False, weight=lambda node, edge, H: 1):
     """
     A function to generate a weighted incidence matrix from a Hypergraph object,
     where the rows correspond to nodes and the columns correspond to edges.
@@ -85,18 +84,18 @@ def incidence_matrix(
                     data.append(0)
                     rows.append(node_dict[node])
                     cols.append(edge_dict[edge])
-        I = csr_array((data, (rows, cols)))
+        I_mat = csr_array((data, (rows, cols)))
     else:
         # Create an np.matrix
-        I = np.zeros((num_nodes, num_edges), dtype=int)
+        I_mat = np.zeros((num_nodes, num_edges), dtype=int)
         for edge in edge_ids:
             members = H.edges.members(edge)
             for node in members:
-                I[node_dict[node], edge_dict[edge]] = weight(node, edge, H)
+                I_mat[node_dict[node], edge_dict[edge]] = weight(node, edge, H)
     if index:
-        return I, rowdict, coldict
+        return I_mat, rowdict, coldict
     else:
-        return I
+        return I_mat
 
 
 def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
@@ -170,11 +169,11 @@ def intersection_profile(H, order=None, index=False):
     """
 
     if index:
-        I, _, coldict = incidence_matrix(H, order=order, index=True)
+        I_mat, _, coldict = incidence_matrix(H, order=order, index=True)
     else:
-        I = incidence_matrix(H, order=order, index=False)
+        I_mat = incidence_matrix(H, order=order, index=False)
 
-    P = I.T.dot(I)
+    P = I_mat.T.dot(I_mat)
 
     if index:
         return P, coldict
@@ -308,7 +307,8 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
             # avoid getting nans from dividing by 0
             # manually setting contribution to 0 as it should be
             warn(
-                f"No edges of order {d}. Contribution of that order is zero. Its weight is effectively zero."
+                f"""No edges of order {d}. Contribution of that order is zero. Its weight is
+                effectively zero."""
             )
         else:
             L_multi += L * w / np.mean(K)
@@ -348,14 +348,14 @@ def clique_motif_matrix(H, index=False):
 
     """
     if index:
-        I, rowdict, _ = incidence_matrix(H, index=True)
+        I_mat, rowdict, _ = incidence_matrix(H, index=True)
     else:
-        I = incidence_matrix(H, index=False)
+        I_mat = incidence_matrix(H, index=False)
 
-    if I.shape == (0,):
+    if I_mat.shape == (0,):
         return (np.array([]), rowdict) if index else np.array([])
 
-    W = I.dot(I.T)
+    W = I_mat.dot(I_mat.T)
     W.setdiag(0)
     W.eliminate_zeros()
 
@@ -441,12 +441,8 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
                 matrix_id = simplices_u_dict[u_simplex_id]
                 head_idx = u_simplex[1]
                 tail_idx = u_simplex[0]
-                B[simplices_d_dict[head_idx], matrix_id] = (-1) ** orientations[
-                    u_simplex_id
-                ]
-                B[simplices_d_dict[tail_idx], matrix_id] = -(
-                    (-1) ** orientations[u_simplex_id]
-                )
+                B[simplices_d_dict[head_idx], matrix_id] = (-1) ** orientations[u_simplex_id]
+                B[simplices_d_dict[tail_idx], matrix_id] = -((-1) ** orientations[u_simplex_id])
         else:
             for u_simplex_id in simplices_u_ids:
                 u_simplex = list(S.edges.members(u_simplex_id))
@@ -459,8 +455,7 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
                 matrix_id = simplices_u_dict[u_simplex_id]
                 u_simplex_subfaces = S._subfaces(u_simplex, all=False)
                 subfaces_induced_orientation = [
-                    (orientations[u_simplex_id] + order - i) % 2
-                    for i in range(order + 1)
+                    (orientations[u_simplex_id] + order - i) % 2 for i in range(order + 1)
                 ]
                 for count, subf in enumerate(u_simplex_subfaces):
                     subface_ID = list(S.edges)[S.edges.members().index(frozenset(subf))]

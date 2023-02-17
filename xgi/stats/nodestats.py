@@ -139,15 +139,9 @@ def degree(net, bunch, order=None, weight=None):
     if order is None and weight is None:
         return {n: len(net._node[n]) for n in bunch}
     if order is None and weight:
-        return {
-            n: sum(net._edge_attr[e].get(weight, 1) for e in net._node[n])
-            for n in bunch
-        }
+        return {n: sum(net._edge_attr[e].get(weight, 1) for e in net._node[n]) for n in bunch}
     if order is not None and weight is None:
-        return {
-            n: len([e for e in net._node[n] if len(net._edge[e]) == order + 1])
-            for n in bunch
-        }
+        return {n: len([e for e in net._node[n] if len(net._edge[e]) == order + 1]) for n in bunch}
     if order is not None and weight:
         return {
             n: sum(

@@ -140,9 +140,7 @@ def order(net, bunch, degree=None):
     if degree is None:
         return {e: len(net._edge[e]) - 1 for e in bunch}
     else:
-        return {
-            e: sum(len(net._node[n]) == degree for n in net._edge[e]) - 1 for e in bunch
-        }
+        return {e: sum(len(net._node[n]) == degree for n in net._edge[e]) - 1 for e in bunch}
 
 
 def size(net, bunch, degree=None):
@@ -176,10 +174,7 @@ def size(net, bunch, degree=None):
     if degree is None:
         return {e: len(net._edge[e]) for e in bunch}
     else:
-        return {
-            e: len(n for n in net._edge[e] if len(net._node[n]) == degree)
-            for e in bunch
-        }
+        return {e: len(n for n in net._edge[e] if len(net._node[n]) == degree) for e in bunch}
 
 
 def node_edge_centrality(

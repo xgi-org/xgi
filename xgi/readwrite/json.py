@@ -29,18 +29,16 @@ def write_json(H, path):
     # get node data
     try:
         data["node-data"] = {str(id): H.nodes[id] for id in H.nodes}
-    except:
+    except Exception:
         raise XGIError("Node attributes not saved!")
 
     try:
         data["edge-data"] = {str(id): H.edges[id] for id in H.edges}
-    except:
+    except Exception:
         raise XGIError("Edge attributes not saved!")
 
     # hyperedge dict
-    data["edge-dict"] = {
-        str(id): [str(n) for n in H.edges.members(id)] for id in H.edges
-    }
+    data["edge-dict"] = {str(id): [str(n) for n in H.edges.members(id)] for id in H.edges}
 
     datastring = json.dumps(data, indent=2)
 

@@ -10,7 +10,9 @@ import numpy as np
 from scipy.special import comb
 
 from ..classes import SimplicialComplex
-from .classic import empty_hypergraph, flag_complex_d2, ring_lattice
+from .classic import empty_hypergraph
+from .classic import flag_complex_d2
+from .classic import ring_lattice
 
 __all__ = [
     "chung_lu_hypergraph",
@@ -78,9 +80,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     m = len(k2)
 
     if sum(k1.values()) != sum(k2.values()):
-        warnings.warn(
-            "The sum of the degree sequence does not match the sum of the size sequence"
-        )
+        warnings.warn("The sum of the degree sequence does not match the sum of the size sequence")
 
     S = sum(k1.values())
 
@@ -187,9 +187,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     # these checks verify that the sum of node and edge degrees and the sum of node degrees
     # and the sum of community connection matrix differ by less than a single edge.
     if abs(sum(k1.values()) - sum(k2.values())) > 1:
-        warnings.warn(
-            "The sum of the degree sequence does not match the sum of the size sequence"
-        )
+        warnings.warn("The sum of the degree sequence does not match the sum of the size sequence")
 
     if abs(sum(k1.values()) - np.sum(omega)) > 1:
         warnings.warn(
@@ -221,9 +219,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
         for group2 in community2_nodes.keys():
             # for each constant probability patch
             try:
-                group_constant = omega[group1, group2] / (
-                    kappa1[group1] * kappa2[group2]
-                )
+                group_constant = omega[group1, group2] / (kappa1[group1] * kappa2[group2])
             except ZeroDivisionError:
                 group_constant = 0
 
@@ -440,7 +436,6 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     G = nx.fast_gnp_random_graph(N, p, seed=seed)
 
     nodes = G.nodes()
-    edges = list(G.edges())
 
     # compute all triangles to fill
     max_cliques = list(nx.find_cliques(G))
@@ -452,10 +447,10 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     return S
 
 
-def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
+def watts_strogatz_hypergraph(n, d, k, l_val, p, seed=None):
     if seed is not None:
         np.random.seed(seed)
-    H = ring_lattice(n, d, k, l)
+    H = ring_lattice(n, d, k, l_val)
     to_remove = []
     to_add = []
     for e in H.edges:

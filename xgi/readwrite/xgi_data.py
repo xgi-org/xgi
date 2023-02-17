@@ -55,7 +55,7 @@ def load_xgi_data(
 
     # If no dataset is specified, print a list of the available datasets.
     if dataset is None:
-        index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
+        index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"  # noqa
         index_data = _request_json_from_url(index_url)
         print("Available datasets are the following:")
         print(*index_data, sep="\n")
@@ -71,7 +71,8 @@ def load_xgi_data(
             )
         else:
             warn(
-                f"No local copy was found at {cfp}. The data is requested from the xgi-data repository instead. To download a local copy, use `download_xgi_data`."
+                f"""No local copy was found at {cfp}. The data is requested from the xgi-data
+                repository instead. To download a local copy, use `download_xgi_data`."""
             )
     if cache:
         data = _request_from_xgi_data_cached(dataset)
@@ -128,7 +129,9 @@ def _request_from_xgi_data(dataset=None):
     load_xgi_data
     """
 
-    index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
+    index_url = (
+        "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
+    )
     index_data = _request_json_from_url(index_url)
 
     key = dataset.lower()
