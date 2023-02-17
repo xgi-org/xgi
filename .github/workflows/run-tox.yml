@@ -1,0 +1,38 @@
+name: Run all tox python3
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools
+    - name: Run tox
+      run: |
+        tox
+    - name: Upload to codecov
+      if: ${{matrix.python-version == '3.10'}}
+      uses: codecov/codecov-action@v1
+      with:
+        fail_ci_if_error: false
+        files: ./coverage.xml
+        flags: pytest
+        name: "xgi-py310"
