@@ -25,6 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools
+        pip install tox-gh-actions
     - name: Run tox
       run: |
         tox
