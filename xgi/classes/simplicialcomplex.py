@@ -109,11 +109,9 @@ class SimplicialComplex(Hypergraph):
 
         """
         try:
-            return f"""{type(self).__name__} named '{self['name']}' with {self.num_nodes}
-        nodes and {self.num_edges} simplices"""
+            return f"{type(self).__name__} named '{self['name']}' with {self.num_nodes} nodes and {self.num_edges} simplices"  # noqa
         except XGIError:
-            return f"""Unnamed {type(self).__name__} with {self.num_nodes} nodes and
-        {self.num_edges} simplices"""
+            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} simplices"  # noqa
 
     def add_edge(self, edge, id=None, **attr):
         """add_edge is deprecated in SimplicialComplex. Use add_simplex instead"""
@@ -371,16 +369,14 @@ class SimplicialComplex(Hypergraph):
 
         >>> S.add_simplices_from([[0, 1], [1, 2], [2, 3, 4]])
         >>> S.edges.members(dtype=dict) # doctest: +SKIP
-        {0: frozenset({0, 1}), 1: frozenset({1, 2}), 2: frozenset({2, 3, 4}),
-        3: frozenset({2, 3}), 4: frozenset({2, 4}), 5: frozenset({3, 4})}
+        {0: frozenset({0, 1}), 1: frozenset({1, 2}), 2: frozenset({2, 3, 4}), 3: frozenset({2, 3}), 4: frozenset({2, 4}), 5: frozenset({3, 4})}
 
         Custom simplex ids can be specified using a dict.
 
         >>> S = xgi.SimplicialComplex()
         >>> S.add_simplices_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
         >>> S.edges.members(dtype=dict) # doctest: +SKIP
-        {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}),
-        0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
+        {'one': frozenset({0, 1}), 'two': frozenset({1, 2}), 'three': frozenset({2, 3, 4}), 0: frozenset({2, 3}), 1: frozenset({2, 4}), 2: frozenset({3, 4})}
 
         You can use the dict format to easily add simplices from another simplicial complex.
 
@@ -420,10 +416,9 @@ class SimplicialComplex(Hypergraph):
         ... ]
         >>> S.add_simplices_from(simplices)
         >>> {e: S.edges[e] for e in S.edges}
-        {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40},
-        0: {}, 1: {}, 2: {}}
+        {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40}, 0: {}, 1: {}, 2: {}}
 
-        """
+        """  # noqa
 
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):

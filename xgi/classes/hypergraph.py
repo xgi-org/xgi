@@ -181,11 +181,9 @@ class Hypergraph:
 
         """
         try:
-            return f"""{type(self).__name__} named {self['name']} with {self.num_nodes} nodes
-        and {self.num_edges} hyperedges"""
+            return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"  # noqa
         except XGIError:
-            return f"""Unnamed {type(self).__name__} with {self.num_nodes} nodes
-        and {self.num_edges} hyperedges"""
+            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"  # noqa
 
     def __iter__(self):
         """Iterate over the nodes.
