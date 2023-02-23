@@ -143,8 +143,7 @@ def draw(
 
     if ax is None:
         ax = plt.gca()
-    ax.set_xlim([-1.1, 1.1])
-    ax.set_ylim([-1.1, 1.1])
+
     ax.get_xaxis().set_ticks([])
     ax.get_yaxis().set_ticks([])
     ax.axis("off")
@@ -194,6 +193,20 @@ def draw(
         node_labels,
         **kwargs,
     )
+
+    # compute axis limits
+    pos_arr = np.asarray([[x, y] for n, (x, y) in pos.items()])
+
+    maxx, maxy = np.max(pos_arr, axis=0)
+    minx, miny = np.min(pos_arr, axis=0)
+    w = maxx - minx
+    h = maxy - miny
+
+    # update view after drawing
+    padx, pady = 0.05 * w, 0.05 * h
+    corners = (minx - padx, miny - pady), (maxx + padx, maxy + pady)
+    ax.update_datalim(corners)
+    ax.autoscale_view()
 
 
 def draw_xgi_nodes(

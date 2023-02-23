@@ -292,7 +292,7 @@ def flag_complex_d2(G, p2=None, seed=None):
 
     triangles_empty = find_triangles(G)
 
-    if p2:
+    if p2 is not None:
         triangles = [el for el in triangles_empty if random.random() <= p2]
     else:
         triangles = triangles_empty
