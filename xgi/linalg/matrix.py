@@ -26,6 +26,13 @@ array([[1, 0, 0],
 >>> # Indexing a Pandas dataframe by the node/edge IDs
 >>> df = pd.DataFrame(I, index=nodedict.values(), columns=edgedict.values())
 
+If the nodes are already sorted, this order can be preserved by adding the nodes
+to the hypergraph prior to adding edges. For example,
+
+>>> import xgi
+>>> H = xgi.Hypergraph()
+>>> H.add_nodes_from(range(1, 8))
+>>> H.add_edges_from([[1, 2, 3, 7], [4], [5, 6, 7]])
 """
 from warnings import warn
 
