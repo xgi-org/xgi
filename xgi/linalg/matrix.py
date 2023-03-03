@@ -1,4 +1,48 @@
-"""Matrices associated to hypergraphs."""
+"""Matrices associated to hypergraphs.
+
+Note that the order of the rows and columns of the
+matrices in this module correspond to the order in
+which nodes/edges are added to the hypergraph or
+simplicial complex. If the node and edge IDs are
+able to be sorted, the following is an example to sort
+by the node and edge IDs.
+
+>>> import xgi
+>>> import pandas as pd
+>>> H = xgi.Hypergraph([[1, 2, 3, 7], [4], [5, 6, 7]])
+>>> I, nodedict, edgedict = xgi.incidence_matrix(H, sparse=False, index=True)
+>>> # Sorting the resulting numpy array:
+>>> sortedI = I.copy()
+>>> sortedI = sortedI[sorted(nodedict, key=nodedict.get), :]
+>>> sortedI = sortedI[:, sorted(edgedict, key=edgedict.get)]
+>>> sortedI
+array([[1, 0, 0],
+       [1, 0, 0],
+       [1, 0, 0],
+       [0, 1, 0],
+       [0, 0, 1],
+       [0, 0, 1],
+       [1, 0, 1]])
+>>> # Indexing a Pandas dataframe by the node/edge IDs
+>>> df = pd.DataFrame(I, index=nodedict.values(), columns=edgedict.values())
+
+If the nodes are already sorted, this order can be preserved by adding the nodes
+to the hypergraph prior to adding edges. For example,
+
+>>> import xgi
+>>> H = xgi.Hypergraph()
+>>> H.add_nodes_from(range(1, 8))
+>>> H.add_edges_from([[1, 2, 3, 7], [4], [5, 6, 7]])
+>>> xgi.incidence_matrix(H, sparse=False)
+array([[1, 0, 0],
+       [1, 0, 0],
+       [1, 0, 0],
+       [0, 1, 0],
+       [0, 0, 1],
+       [0, 0, 1],
+       [1, 0, 1]])
+
+"""
 from warnings import warn
 
 import numpy as np
