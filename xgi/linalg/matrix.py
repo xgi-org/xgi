@@ -33,6 +33,15 @@ to the hypergraph prior to adding edges. For example,
 >>> H = xgi.Hypergraph()
 >>> H.add_nodes_from(range(1, 8))
 >>> H.add_edges_from([[1, 2, 3, 7], [4], [5, 6, 7]])
+>>> xgi.incidence_matrix(H, sparse=False)
+array([[1, 0, 0],
+       [1, 0, 0],
+       [1, 0, 0],
+       [0, 1, 0],
+       [0, 0, 1],
+       [0, 0, 1],
+       [1, 0, 1]])
+
 """
 from warnings import warn
 
