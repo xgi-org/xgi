@@ -99,7 +99,7 @@ def incidence_matrix(
         return I
 
 
-def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
+def adjacency_matrix(H, order=None, sparse=True, s=1, weighted=False, index=False):
     """
     A function to generate an adjacency matrix (N,N) from a Hypergraph object.
 
@@ -110,6 +110,8 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
     order: int, optional
         Order of interactions to use. If None (default), all orders are used. If int,
         must be >= 1.
+    sparse: bool, default: True
+        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
     s: int, default: 1
         Specifies the number of overlapping edges to be considered connected.
     index: bool, default: False
@@ -123,7 +125,7 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
         return A
 
     """
-    I, rowdict, coldict = incidence_matrix(H, index=True, order=order)
+    I, rowdict, coldict = incidence_matrix(H, order=order, sparse=sparse, index=True)
 
     if I.shape == (0,):
         if not rowdict:
@@ -146,7 +148,7 @@ def adjacency_matrix(H, order=None, s=1, weighted=False, index=False):
         return A
 
 
-def intersection_profile(H, order=None, index=False):
+def intersection_profile(H, order=None, sparse=True, index=False):
     """
     A function to generate an intersection profile from a Hypergraph object.
 
@@ -157,6 +159,8 @@ def intersection_profile(H, order=None, index=False):
     order: int, optional
         Order of interactions to use. If None (default), all orders are used. If int,
         must be >= 1.
+    sparse: bool, default: True
+        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
     index: bool, default: False
         Specifies whether to output dictionaries mapping the edge IDs to indices
 
@@ -169,11 +173,8 @@ def intersection_profile(H, order=None, index=False):
 
     """
 
-    if index:
-        I, _, coldict = incidence_matrix(H, order=order, index=True)
-    else:
-        I = incidence_matrix(H, order=order, index=False)
-
+    I, _, coldict = incidence_matrix(H, order=order, sparse=sparse, index=True)
+    
     P = I.T.dot(I)
 
     if index:
@@ -182,7 +183,7 @@ def intersection_profile(H, order=None, index=False):
         return P
 
 
-def degree_matrix(H, order=None, index=False):
+def degree_matrix(H, order=None, sparse=True, index=False):
     """Returns the degree of each node as an array
 
     Parameters
@@ -192,6 +193,8 @@ def degree_matrix(H, order=None, index=False):
     order: int, optional
         Order of interactions to use. If None (default), all orders are used. If int,
         must be >= 1.
+    sparse: bool, default: True
+        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
     index: bool, default: False
         Specifies whether to output disctionaries mapping the node and edge IDs to indices
 
@@ -203,7 +206,7 @@ def degree_matrix(H, order=None, index=False):
         return K
 
     """
-    I, rowdict, _ = incidence_matrix(H, order=order, index=True)
+    I, rowdict, _ = incidence_matrix(H, order=order, sparse=sparse, index=True)
 
     if I.shape == (0,):
         K = np.zeros(H.num_nodes)
@@ -213,7 +216,7 @@ def degree_matrix(H, order=None, index=False):
     return (K, rowdict) if index else K
 
 
-def laplacian(H, order=1, rescale_per_node=False, index=False):
+def laplacian(H, order=1, sparse=True, rescale_per_node=False, index=False):
     """Laplacian matrix of order d, see [1].
 
     Parameters
@@ -223,6 +226,8 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
     order : int
         Order of interactions to consider. If order=1 (default),
         returns the usual graph Laplacian
+    sparse: bool, default: True
+        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
     index: bool, default: False
         Specifies whether to output disctionaries mapping the node and edge IDs to indices
 
@@ -244,11 +249,11 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
         Physical Review Research, 2(3), 033410.
 
     """
-    A, row_dict = adjacency_matrix(H, order=order, weighted=True, index=True)
+    A, row_dict = adjacency_matrix(H, order=order, sparse=sparse, weighted=True, index=True)
     if A.shape == (0,):
         return (np.array([]), {}) if index else np.array([])
 
-    K = degree_matrix(H, order=order, index=False)
+    K = degree_matrix(H, order=order, sparse=sparse, index=False)
 
     L = order * np.diag(K) - A  # ravel needed to convert sparse matrix
     L = np.asarray(L)
@@ -262,7 +267,7 @@ def laplacian(H, order=1, rescale_per_node=False, index=False):
         return L
 
 
-def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False):
+def multiorder_laplacian(H, orders, weights, sparse=True, rescale_per_node=False, index=False):
     """Multiorder Laplacian matrix, see [1].
 
     Parameters
@@ -273,6 +278,8 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
         Orders of interactions to consider.
     weights: list of float
         Weights associated to each order, i.e coupling strengths gamma_i in [1].
+    sparse: bool, default: True
+        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
     rescale_per_node: bool, (default=False)
         Whether to rescale each Laplacian of order d by d (per node).
     index: bool, default: False
@@ -299,8 +306,8 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
     if len(orders) != len(weights):
         raise ValueError("orders and weights must have the same length.")
 
-    Ls = [laplacian(H, order=i, rescale_per_node=rescale_per_node) for i in orders]
-    Ks = [degree_matrix(H, order=i) for i in orders]
+    Ls = [laplacian(H, order=i, sparse=sparse, rescale_per_node=rescale_per_node) for i in orders]
+    Ks = [degree_matrix(H, order=i, sparse=sparse) for i in orders]
 
     L_multi = np.zeros((H.num_nodes, H.num_nodes))
     for L, K, w, d in zip(Ls, Ks, weights, orders):
@@ -314,13 +321,12 @@ def multiorder_laplacian(H, orders, weights, rescale_per_node=False, index=False
             L_multi += L * w / np.mean(K)
 
     if index:
-        _, rowdict, _ = incidence_matrix(H, index=True)
-        return L_multi, rowdict
+        return L_multi, dict(zip(range(H.num_nodes), H.nodes))
     else:
         return L_multi
 
 
-def clique_motif_matrix(H, index=False):
+def clique_motif_matrix(H, sparse=True, index=False):
     """
     A function to generate a weighted clique motif matrix
     from a Hypergraph object.
@@ -329,6 +335,8 @@ def clique_motif_matrix(H, index=False):
     ----------
     H: Hypergraph object
         The hypergraph of interest
+    sparse: bool, default: True
+        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
     index: bool, default: False
         Specifies whether to output dictionaries
         mapping the node and edge IDs to indices
@@ -347,10 +355,7 @@ def clique_motif_matrix(H, index=False):
     https://doi.org/10.1126/science.aad9029
 
     """
-    if index:
-        I, rowdict, _ = incidence_matrix(H, index=True)
-    else:
-        I = incidence_matrix(H, index=False)
+    I, rowdict, _ = incidence_matrix(H, sparse=sparse, index=True)
 
     if I.shape == (0,):
         return (np.array([]), rowdict) if index else np.array([])
