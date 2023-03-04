@@ -9,7 +9,6 @@ on:
       - main
 
 jobs:
-
   tutorials:
     runs-on: ubuntu-latest
     strategy:
