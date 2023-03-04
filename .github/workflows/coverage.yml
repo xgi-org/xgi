@@ -23,7 +23,7 @@ jobs:
           python -m pip list
       - name: Run tests and collect coverage
         run: |
-        cd tests/
-        pytest --cov=xgi --cov-report=xml
+          cd tests/
+          pytest --cov=xgi --cov-report=xml
       - name: Upload coverage reports to Codecov with GitHub Action
         uses: codecov/codecov-action@v3
