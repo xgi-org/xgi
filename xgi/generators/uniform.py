@@ -257,7 +257,7 @@ def uniform_hypergraph_planted_partition_model(n, m, rho, k, epsilon):
 
 
 def uniform_erdos_renyi_hypergraph(n, m, k):
-    """Generate an m-uniform Erdos-Renyi hypergraph
+    """Generate an m-uniform Erdős–Rényi hypergraph
 
     Parameters
     ----------
