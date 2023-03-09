@@ -215,28 +215,28 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     for id, g in g2.items():
         kappa2[g] += k2[id]
 
-    for group1, _kappa1 in community1_nodes.items():
-        for group2, _kappa2 in community2_nodes.items():
+    for group1, comm1 in community1_nodes.items():
+        for group2, comm2 in community2_nodes.items():
             # for each constant probability patch
             try:
-                group_constant = omega[group1, group2] / (_kappa1 * _kappa2)
+                group_constant = omega[group1, group2] / (kappa1[group1] * kappa2[group2])
             except ZeroDivisionError:
                 group_constant = 0
 
-            for u in community1_nodes[group1]:
+            for u in comm1:
                 j = 0
-                v = community2_nodes[group2][j]  # start from beginning every time
+                v = comm2[j]  # start from beginning every time
                 # max probability
                 p = min(k1[u] * k2[v] * group_constant, 1)
-                while j < len(community2_nodes[group2]):
+                while j < len(comm2):
                     if p != 1:
                         r = random.random()
                         try:
                             j = j + math.floor(math.log(r) / math.log(1 - p))
                         except ZeroDivisionError:
                             j = np.inf
-                    if j < len(community2_nodes[group2]):
-                        v = community2_nodes[group2][j]
+                    if j < len(comm2):
+                        v = comm2[j]
                         q = min((k1[u] * k2[v]) * group_constant, 1)
                         r = random.random()
                         if r < q / p:
