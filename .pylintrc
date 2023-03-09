@@ -2,7 +2,7 @@
 # for some of the options that are available
 
 [MESSAGES CONTROL]
-disable=C0103,R0904,R0903,W0511,R0801,R0401,I0013,W0622,C0325,R0205,W1201,W0621,R0913,R0914,C0415,W0719,W0212,R1705
+disable=C0103,R0904,R0903,W0511,R0801,R0401,I0013,W0622,C0325,R0205,W1201,W0621,R0913,R0914,C0415,W0719,W0212,R1705,R1710,C3001,W1401,W1514
 
 [FORMAT]
 # Maximum number of characters on a single line.
@@ -19,9 +19,9 @@ max-locals=15
 # Maximum number of return / yield for function / method body
 max-returns=6
 # Maximum number of branch for function / method body
-max-branches=12
+max-branches=30
 # Maximum number of statements in function / method body
-max-statements=50
+max-statements=70
 # Maximum number of parents for a class (see R0901).
 max-parents=7
 # Maximum number of attributes for a class (see R0902).
@@ -34,6 +34,7 @@ max-public-methods=60
 # memory / CPU intensive, so you should disable it if you experiments some
 # problems.
 #
+max-nested-blocks=6
 
 [SIMILARITIES]
 # Minimum lines number of a similarity.

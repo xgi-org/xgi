@@ -155,7 +155,7 @@ def star_clique(n_star, n_clique, d_max):
         raise ValueError("n_clique must be an integer > 0.")
     if d_max < 0:
         raise ValueError("d_max must be an integer >= 0.")
-    elif d_max > n_clique - 1:
+    if d_max > n_clique - 1:
         raise ValueError("d_max must be <= n_clique - 1.")
 
     nodes_star = range(n_star)

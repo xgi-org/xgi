@@ -143,7 +143,7 @@ def choose_degrees(e, k, kind="uniform"):
             j = i
             while i == j:
                 j = np.random.randint(len(e))
-            return (k[e[i]], k[e[j]])
+            return (k[e[i]], k[e[j]])  # pylint:disable=invalid-sequence-index
 
         elif kind == "top-2":
             degs = sorted([k[i] for i in e])[-2:]

@@ -215,11 +215,11 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     for id, g in g2.items():
         kappa2[g] += k2[id]
 
-    for group1 in community1_nodes.keys():
-        for group2 in community2_nodes.keys():
+    for _kappa1, group1 in community1_nodes.items():
+        for _kappa2, group2 in community2_nodes.items():
             # for each constant probability patch
             try:
-                group_constant = omega[group1, group2] / (kappa1[group1] * kappa2[group2])
+                group_constant = omega[group1, group2] / (_kappa1 * _kappa2)
             except ZeroDivisionError:
                 group_constant = 0
 
@@ -448,6 +448,7 @@ def random_flag_complex(N, p, max_order=2, seed=None):
 
 
 def watts_strogatz_hypergraph(n, d, k, l_val, p, seed=None):
+    """Watts Strogatz hypergraph."""
     if seed is not None:
         np.random.seed(seed)
     H = ring_lattice(n, d, k, l_val)

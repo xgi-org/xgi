@@ -15,6 +15,8 @@ from .reportviews import NodeView
 
 __all__ = ["Hypergraph"]
 
+# pylint:disable=too-many-lines
+
 
 class IDDict(dict):
     """A dict that holds (node or edge) IDs.
@@ -181,9 +183,9 @@ class Hypergraph:
 
         """
         try:
-            return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"  # noqa
+            return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"  # noqa, pylint:disable=line-too-long
         except XGIError:
-            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"  # noqa
+            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"  # noqa, pylint:disable=line-too-long
 
     def __iter__(self):
         """Iterate over the nodes.
@@ -233,8 +235,8 @@ class Hypergraph:
         """Read hypergraph attribute."""
         try:
             return self._hypergraph[attr]
-        except KeyError:
-            raise XGIError("This attribute has not been set.")
+        except KeyError as exc:
+            raise XGIError("This attribute has not been set.") from exc
 
     def __setitem__(self, attr, val):
         """Write hypergraph attribute."""
@@ -252,7 +254,7 @@ class Hypergraph:
                 f"{attr} is not a method of Hypergraph or a recognized NodeStat or EdgeStat"
             )
 
-        def func(node=None, *args, **kwargs):
+        def func(node=None, *args, **kwargs):  # pylint:disable=keyword-arg-before-vararg
             val = stat(*args, **kwargs).asdict()
             return val if node is None else val[node]
 
@@ -777,8 +779,8 @@ class Hypergraph:
         """
         try:
             self.add_edges_from(((edge[:-1], {weight: edge[-1]}) for edge in ebunch), **attr)
-        except KeyError:
-            XGIError("Empty or invalid edges specified.")
+        except KeyError as exc:
+            raise XGIError("Empty or invalid edges specified.") from exc
 
     def double_edge_swap(self, n_id1, n_id2, e_id1, e_id2):
         """Swap the edge memberships of two selected nodes, given two edges.
@@ -1126,7 +1128,7 @@ class Hypergraph:
         for idx, members in self._edge.items():
             hashes[frozenset(members)].append(idx)
 
-        new_edges = list()
+        new_edges = []
         for members, dup_ids in hashes.items():
             if len(dup_ids) > 1:
                 dups.extend(dup_ids)

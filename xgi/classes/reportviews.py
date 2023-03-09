@@ -107,6 +107,7 @@ class IDView(Mapping, Set):
         return stat
 
     def multi(self, names):
+        """multi"""
         return dispatch_many_stats(self._id_kind, self._net, self, names)
 
     @property
@@ -477,7 +478,7 @@ class IDView(Mapping, Set):
             A view that is identical to `view` but keeps track of different IDs.
 
         """
-        newview = cls(None)
+        newview = cls(None)  # pylint:disable=no-value-for-parameter
         newview._net = view._net
         newview._id_dict = view._id_dict
         newview._id_attr = view._id_attr
@@ -494,7 +495,7 @@ class IDView(Mapping, Set):
             newview._ids = bunch
         return newview
 
-    def _from_iterable(self, it):
+    def _from_iterable(self, it):  # pylint:disable=arguments-differ
         """Construct an instance of the class from any iterable input.
 
         This overrides collections.abc.Set._from_iterable, which is in turn used to

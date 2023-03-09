@@ -23,19 +23,19 @@ def write_json(H, path):
     data = {}
 
     # get overall hypergraph attributes, name always gets written (default is an empty string)
-    data["hypergraph-data"] = dict()
+    data["hypergraph-data"] = {}
     data["hypergraph-data"].update(H._hypergraph)
 
     # get node data
     try:
         data["node-data"] = {str(id): H.nodes[id] for id in H.nodes}
-    except Exception:
-        raise XGIError("Node attributes not saved!")
+    except Exception as exc:
+        raise XGIError("Node attributes not saved!") from exc
 
     try:
         data["edge-data"] = {str(id): H.edges[id] for id in H.edges}
-    except Exception:
-        raise XGIError("Edge attributes not saved!")
+    except Exception as exc:
+        raise XGIError("Edge attributes not saved!") from exc
 
     # hyperedge dict
     data["edge-dict"] = {str(id): [str(n) for n in H.edges.members(id)] for id in H.edges}

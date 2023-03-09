@@ -1,3 +1,4 @@
+"""Convert module."""
 from collections import defaultdict
 from copy import deepcopy
 
@@ -129,7 +130,7 @@ def convert_to_graph(H):
 
     A = adjacency_matrix(H)  # This is unweighted by design
     G = nx.from_scipy_sparse_array(A)
-    G = nx.relabel_nodes(G, {i: node for i, node in enumerate(H.nodes)})
+    G = nx.relabel_nodes(G, dict(enumerate(H.nodes)))
     return G
 
 
@@ -332,8 +333,8 @@ def from_bipartite_pandas_dataframe(df, create_using=None, node_column=0, edge_c
         try:
             columns = list(df.columns)
             d = df[[columns[node_column], columns[edge_column]]]
-        except (KeyError, TypeError):
-            raise XGIError("Invalid columns specified")
+        except (KeyError, TypeError) as exc:
+            raise XGIError("Invalid columns specified") from exc
 
     if isinstance(H, SimplicialComplex):
         simplex_list = defaultdict(list)
@@ -448,7 +449,7 @@ def from_simplicial_complex_to_hypergraph(SC):
     Hypergraph
 
     """
-    if type(SC) != SimplicialComplex:
+    if not isinstance(SC, SimplicialComplex):
         raise XGIError("The input must be a SimplicialComplex")
 
     max_simplices = maximal_simplices(SC)
@@ -640,8 +641,8 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
     H = empty_hypergraph()
     try:
         H._hypergraph.update(data["hypergraph-data"])
-    except KeyError:
-        raise XGIError("Failed to get hypergraph data attributes.")
+    except KeyError as exc:
+        raise XGIError("Failed to get hypergraph data attributes.") from exc
 
     try:
         for id, dd in data["node-data"].items():
@@ -651,8 +652,8 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
                 except ValueError as e:
                     raise TypeError(f"Failed to convert edge IDs to type {nodetype}.") from e
             H.add_node(id, **dd)
-    except KeyError:
-        raise XGIError("Failed to import node attributes.")
+    except KeyError as exc:
+        raise XGIError("Failed to import node attributes.") from exc
 
     try:
         for id, edge in data["edge-dict"].items():

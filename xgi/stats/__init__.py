@@ -118,6 +118,7 @@ class IDStat:
         return iter(self._val.items())
 
     def items(self):
+        """items"""
         return self._val.items()
 
     @property
@@ -198,6 +199,7 @@ class IDStat:
         return spmoment(arr, moment=order) if center else np.mean(arr**order)
 
     def dist(self):
+        """dist"""
         return np.histogram(self.asnumpy(), density=True)
 
 
@@ -232,15 +234,18 @@ class MultiIDStat(IDStat):
 
     def __init__(self, network, view, stats):
         super().__init__(network, view, None)
+        # pylint:disable=isinstance-second-argument-not-valid-type
         if isinstance(stats, self.statsclass):
             name = self.statsclass.__name__
             raise TypeError(f"must pass an iterable of {name}, not a single {name}")
-        elif isinstance(stats, str):
+        if isinstance(stats, str):
             raise TypeError(f"must pass an iterable of {self.statsclass.__name__}, not str")
         self.stats = [self._get_stat(f) for f in stats]
 
     def _get_stat(self, s):
+        # pylint:disable=isinstance-second-argument-not-valid-type
         if isinstance(s, str):
+            # pylint:disable=not-callable
             return self.statsclass(self.net, self.view, getattr(self.statsmodule, s))
         elif isinstance(s, self.statsclass):
             return s
@@ -419,6 +424,7 @@ _dispatch_data = {
 
 
 def dispatch_stat(kind, net, view, name):
+    """dispatch"""
     try:
         func = getattr(_dispatch_data[kind]["module"], name)
     except AttributeError as e:
@@ -427,6 +433,7 @@ def dispatch_stat(kind, net, view, name):
 
 
 def dispatch_many_stats(kind, net, view, stats):
+    """dispatch many"""
     return _dispatch_data[kind]["multistatclass"](net, view, stats)
 
 

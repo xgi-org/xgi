@@ -1,3 +1,4 @@
+"""Readwrite module."""
 from . import bipartite, edgelist, incidence, json, xgi_data
 from .bipartite import *
 from .edgelist import *

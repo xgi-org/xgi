@@ -94,7 +94,7 @@ def is_possible_order(H, d):
 
     """
     d_max = max_edge_order(H)
-    return (d >= 1) and (d <= d_max)
+    return d_max >= d >= 1
 
 
 def is_uniform(H):
@@ -471,8 +471,8 @@ def set_node_attributes(H, values, name=None):
                     H._node_attr[n].update(d)
                 except IDNotFound:
                     warn(f"Node {n} does not exist!")
-        except (TypeError, ValueError, AttributeError):
-            raise XGIError("Must pass a dictionary of dictionaries")
+        except (TypeError, ValueError, AttributeError) as exc:
+            raise XGIError("Must pass a dictionary of dictionaries") from exc
 
 
 def get_node_attributes(H, name=None):
@@ -554,10 +554,10 @@ def set_edge_attributes(H, values, name=None):
                     H._edge_attr[e].update(d)
                 except IDNotFound:
                     warn(f"Edge {e} does not exist!")
-        except AttributeError:
+        except AttributeError as exc:
             raise XGIError(
                 "name property has not been set and a dict-of-dicts has not been provided."
-            )
+            ) from exc
 
 
 def get_edge_attributes(H, name=None):
@@ -739,7 +739,7 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
     -----
     If both `order` and `max_order` are not None, `max_order` is ignored.
 
-    """  # noqa
+    """  # noqa, pylint:disable=line-too-long
     n = H.num_nodes
     if n < 1:
         raise XGIError("Density not defined for empty hypergraph")

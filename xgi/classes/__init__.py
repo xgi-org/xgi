@@ -1,3 +1,4 @@
+"""Classes module."""
 from .hypergraph import Hypergraph
 from .function import *
 from .hypergraphviews import subhypergraph

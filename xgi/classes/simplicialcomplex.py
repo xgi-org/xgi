@@ -21,6 +21,8 @@ from .reportviews import NodeView
 
 __all__ = ["SimplicialComplex"]
 
+# pylint:disable=too-many-branches,too-many-statements
+
 
 class SimplicialComplex(Hypergraph):
     r"""A class to represent undirected simplicial complexes.
@@ -75,7 +77,7 @@ class SimplicialComplex(Hypergraph):
 
     """
 
-    def __init__(self, incoming_data=None, **attr):
+    def __init__(self, incoming_data=None, **attr):  # pylint:disable=super-init-not-called
         self._edge_uid = count()
         self._hypergraph = self._hypergraph_attr_dict_factory()
         self._node = self._node_dict_factory()
@@ -109,21 +111,25 @@ class SimplicialComplex(Hypergraph):
 
         """
         try:
-            return f"{type(self).__name__} named '{self['name']}' with {self.num_nodes} nodes and {self.num_edges} simplices"  # noqa
+            return f"{type(self).__name__} named '{self['name']}' with {self.num_nodes} nodes and {self.num_edges} simplices"  # noqa, pylint:disable=line-too-long
         except XGIError:
-            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} simplices"  # noqa
+            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} simplices"  # noqa, pylint:disable=line-too-long
 
-    def add_edge(self, edge, id=None, **attr):
+    def add_edge(self, edge, id=None, **attr):  # pylint:disable=arguments-renamed
         """add_edge is deprecated in SimplicialComplex. Use add_simplex instead"""
         warn("add_edge is deprecated in SimplicialComplex. Use add_simplex instead")
         return self.add_simplex(edge, id=None, **attr)
 
-    def add_edges_from(self, ebunch_to_add, max_order=None, **attr):
+    def add_edges_from(
+        self, ebunch_to_add, max_order=None, **attr
+    ):  # pylint:disable=unused-argument
         """add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead"""
         warn("add_edges_from is deprecated in SimplicialComplex. Use add_simplices_from instead")
         return self.add_simplices_from(ebunch_to_add, max_order=None, **attr)
 
-    def add_weighted_edges_from(self, ebunch_to_add, max_order=None, weight="weight", **attr):
+    def add_weighted_edges_from(
+        self, ebunch_to_add, max_order=None, weight="weight", **attr
+    ):  # pylint:disable=arguments-renamed, unused-argument
         """add_weighted_edges_from is deprecated in SimplicialComplex.
 
         Use add_weighted_simplices_from instead
@@ -250,8 +256,8 @@ class SimplicialComplex(Hypergraph):
 
         try:
             members = frozenset(members)
-        except TypeError:
-            raise XGIError("The simplex cannot be cast to a frozenset.")
+        except TypeError as exc:
+            raise XGIError("The simplex cannot be cast to a frozenset.") from exc
 
         if not members:
             raise XGIError("Cannot add an empty edge")
@@ -418,7 +424,7 @@ class SimplicialComplex(Hypergraph):
         >>> {e: S.edges[e] for e in S.edges}
         {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40}, 0: {}, 1: {}, 2: {}}
 
-        """  # noqa
+        """  # noqa, pylint:disable=line-too-long
 
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
@@ -646,8 +652,8 @@ class SimplicialComplex(Hypergraph):
                 max_order=max_order,
                 **attr,
             )
-        except KeyError:
-            XGIError("Empty or invalid simplices specified.")
+        except KeyError as exc:
+            raise XGIError("Empty or invalid simplices specified.") from exc
 
     def _remove_simplex_id(self, id):
         """Helper function to remove a simplex with a given id

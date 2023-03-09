@@ -80,7 +80,7 @@ def ZEC_centrality(H, max_iter=100, tol=1e-6):
     x = np.random.uniform(size=(new_H.num_nodes))
     x = x / norm(x, 1)
 
-    for iter in range(max_iter):
+    for _ in range(max_iter):
         new_x = apply(new_H, x, g)
         # multiply by the sign to try and enforce positivity
         new_x = np.sign(new_x[0]) * new_x / norm(new_x, 1)
@@ -132,7 +132,7 @@ def HEC_centrality(H, max_iter=100, tol=1e-6):
     x = np.random.uniform(size=(new_H.num_nodes))
     x = x / norm(x, 1)
 
-    for iter in range(max_iter):
+    for _ in range(max_iter):
         new_x = apply(new_H, x, g)
         new_x = f(new_x, m)
         # multiply by the sign to try and enforce positivity
@@ -166,8 +166,8 @@ def apply(H, x, g=lambda v, e: np.sum(v[list(e)])):
     for edge in H.edges.members():
         edge = list(edge)
         # ordered permutations
-        for shift in range(len(edge)):
-            new_x[edge[shift]] += g(x, edge[shift + 1 :] + edge[:shift])
+        for shift, _edge in enumerate(edge):
+            new_x[_edge] += g(x, edge[shift + 1 :] + edge[:shift])
     return new_x
 
 
@@ -234,7 +234,7 @@ def node_edge_centrality(
 
     check = np.inf
 
-    for iter in range(max_iter):
+    for _ in range(max_iter):
         u = np.multiply(x, g(I @ f(y)))
         v = np.multiply(y, psi(I.T @ phi(x)))
         # multiply by the sign to try and enforce positivity

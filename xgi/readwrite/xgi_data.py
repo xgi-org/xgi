@@ -1,3 +1,4 @@
+"""XGI data module."""
 import json
 import os
 from functools import lru_cache
@@ -55,7 +56,7 @@ def load_xgi_data(
 
     # If no dataset is specified, print a list of the available datasets.
     if dataset is None:
-        index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"  # noqa
+        index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"  # noqa, pylint:disable=line-too-long
         index_data = _request_json_from_url(index_url)
         print("Available datasets are the following:")
         print(*index_data, sep="\n")
@@ -64,7 +65,8 @@ def load_xgi_data(
     if read:
         cfp = os.path.join(path, dataset + ".json")
         if os.path.exists(cfp):
-            data = json.load(open(cfp, "r"))
+            with open(cfp, "r") as f:
+                data = json.load(f)
 
             return convert.dict_to_hypergraph(
                 data, nodetype=nodetype, edgetype=edgetype, max_order=max_order
@@ -99,9 +101,8 @@ def download_xgi_data(dataset, path=""):
     """
 
     jsondata = _request_from_xgi_data(dataset)
-    jsonfile = open(os.path.join(path, dataset + ".json"), "w")
-    json.dump(jsondata, jsonfile)
-    jsonfile.close()
+    with open(os.path.join(path, dataset + ".json"), "w") as jsonfile:
+        json.dump(jsondata, jsonfile)
 
 
 def _request_from_xgi_data(dataset=None):
@@ -188,9 +189,9 @@ def _request_json_from_url(url):
     """
 
     try:
-        r = requests.get(url)
-    except requests.ConnectionError:
-        raise XGIError("Connection Error!")
+        r = requests.get(url)  # pylint:disable=missing-timeout
+    except requests.ConnectionError as exc:
+        raise XGIError("Connection Error!") from exc
 
     if r.ok:
         return r.json()

@@ -28,6 +28,8 @@ __all__ = [
     "draw_hyperedge_labels",
 ]
 
+# pylint:disable=no-member
+
 
 def draw(
     H,
@@ -298,7 +300,7 @@ def draw_xgi_nodes(
         valid_label_kwds = signature(draw_node_labels).parameters.keys()
         # Remove the arguments of this function (draw_networkx)
         valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "node_labels"}
-        if any([k not in valid_label_kwds for k in kwargs]):
+        if any(k not in valid_label_kwds for k in kwargs):
             invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
             raise ValueError(f"Received invalid argument(s): {invalid_args}")
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
@@ -414,7 +416,7 @@ def draw_xgi_hyperedges(
         valid_label_kwds = signature(draw_hyperedge_labels).parameters.keys()
         # Remove the arguments of this function (draw_networkx)
         valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "hyperedge_labels"}
-        if any([k not in valid_label_kwds for k in kwargs]):
+        if any(k not in valid_label_kwds for k in kwargs):
             invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
             raise ValueError(f"Received invalid argument(s): {invalid_args}")
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
@@ -545,7 +547,7 @@ def draw_xgi_simplices(
         valid_label_kwds = signature(draw_hyperedge_labels).parameters.keys()
         # Remove the arguments of this function (draw_networkx)
         valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "hyperedge_labels"}
-        if any([k not in valid_label_kwds for k in kwargs]):
+        if any(k not in valid_label_kwds for k in kwargs):
             invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
             raise ValueError(f"Received invalid argument(s): {invalid_args}")
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
@@ -580,7 +582,7 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
         return {id: arg[id] for id in arg if id in ids}
     elif type(arg) in [int, float]:
         return {id: arg for id in ids}
-    elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
+    elif isinstance(arg, (NodeStat, EdgeStat)):
         vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [min_val, max_val])
         return dict(zip(ids, vals))
     elif isinstance(arg, Iterable):
@@ -617,7 +619,7 @@ def _color_arg_to_dict(arg, ids, cmap):
         return {id: arg[id] for id in arg if id in ids}
     elif isinstance(arg, str):
         return {id: arg for id in ids}
-    elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
+    elif isinstance(arg, (NodeStat, EdgeStat)):
         if isinstance(cmap, ListedColormap):
             vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [0, cmap.N])
         elif isinstance(cmap, LinearSegmentedColormap):
@@ -839,7 +841,7 @@ def draw_hyperedge_labels(
 
         # Use default box of white with white border
         if bbox_edges is None:
-            bbox = dict(boxstyle="round", ec=(1.0, 1.0, 1.0), fc=(1.0, 1.0, 1.0))
+            bbox = {"boxstyle": "round", "ec": (1.0, 1.0, 1.0), "fc": (1.0, 1.0, 1.0)}
         else:
             bbox = bbox_edges
 

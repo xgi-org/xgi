@@ -131,9 +131,9 @@ def simulate_simplicial_kuramoto(
     S,
     orientations=None,
     order=1,
-    omega=[],
+    omega=None,
     sigma=1,
-    theta0=[],
+    theta0=None,
     T=10,
     n_steps=10000,
     index=False,
@@ -192,7 +192,10 @@ def simulate_simplicial_kuramoto(
     https://doi.org/10.1103/PhysRevLett.124.218301
 
     """
-
+    if omega is None:
+        omega = []
+    if theta0 is None:
+        theta0 = []
     # Notation:
     # B_o - boundary matrix acting on (order)-simplices
     # D_o - adjoint boundary matrix acting on (order)-simplices
