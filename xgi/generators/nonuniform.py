@@ -215,8 +215,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     for id, g in g2.items():
         kappa2[g] += k2[id]
 
-    for _kappa1, group1 in community1_nodes.items():
-        for _kappa2, group2 in community2_nodes.items():
+    for group1, _kappa1 in community1_nodes.items():
+        for group2, _kappa2 in community2_nodes.items():
             # for each constant probability patch
             try:
                 group_constant = omega[group1, group2] / (_kappa1 * _kappa2)
