@@ -134,6 +134,36 @@ def convert_to_graph(H):
     return G
 
 
+def convert_to_line_graph(H):
+    """Line graph of the hypergraph H. This is the graph
+    whose nodes correspond to each hyperedge in H, linked
+    together if they share at least one vertex.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest
+
+    Returns
+    -------
+    LG : networkx.Graph
+         The line graph associated to the Hypergraph
+    """
+
+    LG = nx.Graph()
+
+    edge_label_dict = {
+        tuple(edge): index for index, edge in enumerate(H.edges.members())
+    }
+    LG.add_nodes_from(edge_label_dict.values())
+
+    for edge1, edge2 in combinations(H.edges.members(), 2):
+        if edge1.intersection(edge2):
+            LG.add_edge(edge_label_dict[tuple(edge1)], edge_label_dict[tuple(edge2)])
+
+    return LG
+
+
 def convert_to_simplicial_complex(data, create_using=None):
     """Make a hypergraph from a known data structure.
     The preferred way to call this is automatically

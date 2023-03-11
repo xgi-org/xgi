@@ -6,6 +6,7 @@ from numpy.linalg import norm
 from scipy.sparse.linalg import eigsh
 
 from ..classes import convert_labels_to_integers, is_uniform
+from ..convert import convert_to_line_graph
 from ..exception import XGIError
 from ..linalg import clique_motif_matrix, incidence_matrix
 
@@ -249,3 +250,61 @@ def node_edge_centrality(
     return {node_dict[n]: new_x[n] for n in node_dict}, {
         edge_dict[e]: new_y[e] for e in edge_dict
     }
+
+
+def vector_centrality(H):
+    """
+    Compute the vector centrality of nodes in hypergraphs
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest
+
+    Returns
+    -------
+    dict
+        Centrality, where keys are node IDs and values are lists of centralities.
+
+    References
+    ----------
+    Vector centrality in hypergraphs,
+    K. Kovalenko, M. Romance, E. Vasilyeva, D. Aleja, R. Criado, D. Musatov,
+    A.M. Raigorodskii, J. Flores, I. Samoylenko, K. Alfaro-Bittner, M. Perc, S. Boccaletti,
+    https://doi.org/10.1016/j.chaos.2022.112397
+    """
+
+    if not xgi.is_connected(H):
+        raise XGIError("This method is not defined non-connected hypergraphs.")
+
+    LG = convert_to_line_graph(H)
+    LGcent = nx.eigenvector_centrality(LG)
+
+    vc = {node: [] for node in H.nodes}
+
+    edge_label_dict = {
+        tuple(edge): index for index, edge in enumerate(H.edges.members())
+    }
+    hyperedge_dims = {tuple(edge): len(edge) for edge in H.edges.members()}
+
+    D = np.max(list(hyperedge_dims.values()))
+
+    for k in range(2, D + 1):
+        c_i = np.zeros(len(H.nodes))
+
+        for edge, _ in list(filter(lambda x: x[1] == k, hyperedge_dims.items())):
+
+            for node in edge:
+                try:
+                    c_i[node] += LGcent[edge_label_dict[edge]]
+                except IndexError:
+                    raise Exception(
+                        "Nodes must be written with the Pythonic indexing (0,1,2...)"
+                    )
+
+        c_i *= 1 / k
+
+        for node in H.nodes:
+            vc[node].append(c_i[node])
+
+    return vc

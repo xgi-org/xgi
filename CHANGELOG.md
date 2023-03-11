@@ -1,5 +1,9 @@
 # Changelog
 
+## Current version
+
+* Added the `convert_to_line_graph()` function and the `vector_centrality()` function, which uses it (@goznalo-git).
+
 ## v0.5.4
 
 * Fixed issue #270 [#271](https://github.com/ComplexGroupInteractions/xgi/pull/271) (@nwlandry).
