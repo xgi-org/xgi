@@ -285,7 +285,7 @@ def line_vector_centrality(H):
     }
     hyperedge_dims = {tuple(edge): len(edge) for edge in H.edges.members()}
 
-    D = np.max(list(hyperedge_dims.values()))
+    D = H.edges.size.max()
 
     for k in range(2, D + 1):
         c_i = np.zeros(len(H.nodes))

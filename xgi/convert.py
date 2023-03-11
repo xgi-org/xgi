@@ -135,9 +135,11 @@ def convert_to_graph(H):
 
 
 def convert_to_line_graph(H):
-    """Line graph of the hypergraph H. This is the graph
-    whose nodes correspond to each hyperedge in H, linked
-    together if they share at least one vertex.
+    """Line graph of the hypergraph.
+    
+    The line graph of the hypergraph `H` is the graph whose
+    nodes correspond to each hyperedge in `H`, linked together
+    if they share at least one vertex.
 
     Parameters
     ----------
