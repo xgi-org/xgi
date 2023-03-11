@@ -11,4 +11,4 @@ xgi.algorithms.centrality
    .. autofunction:: HEC_centrality
    .. autofunction:: ZEC_centrality
    .. autofunction:: node_edge_centrality
-   .. autofunction:: vector_centrality
+   .. autofunction:: line_vector_centrality
