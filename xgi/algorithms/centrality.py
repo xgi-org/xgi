@@ -253,9 +253,7 @@ def node_edge_centrality(
 
 
 def vector_centrality(H):
-    """
-    Compute the vector centrality of nodes in hypergraphs
-
+    """The vector centrality of nodes in the line graph of the hypergraph.
     Parameters
     ----------
     H : Hypergraph
