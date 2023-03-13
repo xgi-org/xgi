@@ -12,8 +12,8 @@ from .classic import empty_hypergraph
 
 __all__ = [
     "uniform_hypergraph_configuration_model",
-    "uniform_SBM_hypergraph",
-    "uniform_hypergraph_planted_partition_model",
+    "uniform_HSBM",
+    "uniform_HPPM",
     "uniform_erdos_renyi_hypergraph",
 ]
 
@@ -102,8 +102,8 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     return H
 
 
-def uniform_SBM_hypergraph(n, m, p, sizes, seed=None):
-    """Create a uniform SBM hypergraph.
+def uniform_HSBM(n, m, p, sizes, seed=None):
+    """Create a uniform hypergraph stochastic block model (HSBM).
 
     Parameters
     ----------
@@ -133,10 +133,10 @@ def uniform_SBM_hypergraph(n, m, p, sizes, seed=None):
         - If the sum of the vector of sizes does not equal the number of nodes.
     Exception
         If there is an integer overflow error
-    
+
     See Also
     --------
-    uniform_hypergraph_planted_partition_model
+    uniform_HPPM
 
     References
     ----------
@@ -159,7 +159,7 @@ def uniform_SBM_hypergraph(n, m, p, sizes, seed=None):
         raise XGIError("Sum of sizes does not match n")
 
     if seed is not None:
-        random.seed(seed)
+        np.random.seed(seed)
 
     node_labels = range(n)
     H = empty_hypergraph()
@@ -194,7 +194,7 @@ def uniform_SBM_hypergraph(n, m, p, sizes, seed=None):
     return H
 
 
-def uniform_hypergraph_planted_partition_model(n, m, rho, k, epsilon):
+def uniform_HPPM(n, m, rho, k, epsilon, seed=None):
     """Construct the m-uniform hypergraph planted partition model (m-HPPM)
 
     Parameters
@@ -209,6 +209,8 @@ def uniform_hypergraph_planted_partition_model(n, m, rho, k, epsilon):
         Mean degree
     epsilon : float > 0
         Imbalance parameter
+    seed : integer or None (default)
+        The seed for the random number generator
 
     Returns
     -------
@@ -221,10 +223,10 @@ def uniform_hypergraph_planted_partition_model(n, m, rho, k, epsilon):
         - If rho is not between 0 and 1
         - If the mean degree is negative.
         - If epsilon is not between 0 and 1
-    
+
     See Also
     --------
-    uniform_SBM_hypergraph
+    uniform_HSBM
 
     References
     ----------
@@ -253,11 +255,15 @@ def uniform_hypergraph_planted_partition_model(n, m, rho, k, epsilon):
     p[tuple([0] * m)] = p_in
     p[tuple([1] * m)] = p_in
 
-    return uniform_SBM_hypergraph(n, m, p, sizes)
+    return uniform_HSBM(n, m, p, sizes, seed=seed)
 
 
-def uniform_erdos_renyi_hypergraph(n, m, k):
+def uniform_erdos_renyi_hypergraph(n, m, k, seed=None):
     """Generate an m-uniform Erdős–Rényi hypergraph
+
+    This creates a hypergraph with `n` nodes where
+    hyperedges of size `m` are created at random to
+    obtain a mean degree of `k`.
 
     Parameters
     ----------
@@ -267,17 +273,22 @@ def uniform_erdos_renyi_hypergraph(n, m, k):
         Hyperedge size
     k : int > 0
         Mean degree
+    seed : integer or None (default)
+        The seed for the random number generator
 
     Returns
     -------
     Hypergraph
         The Erdos Renyi hypergraph
-    
-    
+
+
     See Also
     --------
     random_hypergraph
     """
+    if seed is not None:
+        np.random.seed(seed)
+
     node_labels = range(n)
     H = empty_hypergraph()
     H.add_nodes_from(node_labels)
@@ -313,7 +324,7 @@ def _index_to_edge(index, n, m):
     See Also
     --------
     _index_to_edge_partition
-    
+
     References
     ----------
     https://stackoverflow.com/questions/53834707/element-at-index-in-itertools-product
@@ -338,7 +349,7 @@ def _index_to_edge_partition(index, partition_sizes, m):
     -------
     list
         The reconstructed hyperedge
-    
+
     See Also
     --------
     _index_to_edge
