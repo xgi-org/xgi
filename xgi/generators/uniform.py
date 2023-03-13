@@ -258,7 +258,7 @@ def uniform_HPPM(n, m, rho, k, epsilon, seed=None):
     return uniform_HSBM(n, m, p, sizes, seed=seed)
 
 
-def uniform_erdos_renyi_hypergraph(n, m, k, seed=None):
+def uniform_erdos_renyi_hypergraph(n, m, p, p_type="degree", seed=None):
     """Generate an m-uniform Erdős–Rényi hypergraph
 
     This creates a hypergraph with `n` nodes where
@@ -271,8 +271,11 @@ def uniform_erdos_renyi_hypergraph(n, m, k, seed=None):
         Number of nodes
     m : int > 0
         Hyperedge size
-    k : int > 0
-        Mean degree
+    p : float or int > 0
+        Mean expected degree if p_type="degree" and
+        probability of an m-hyperedge if p_type="prob"
+    p_type : str
+        "degree" or "prob", by default "degree"
     seed : integer or None (default)
         The seed for the random number generator
 
@@ -293,14 +296,23 @@ def uniform_erdos_renyi_hypergraph(n, m, k, seed=None):
     H = empty_hypergraph()
     H.add_nodes_from(node_labels)
 
-    p = k / (m * n ** (m - 1)) # wiring probability
-    index = np.random.geometric(p) - 1  # -1 b/c zero indexing
+    if p_type == "degree":
+        q = p / (m * n ** (m - 1))  # wiring probability
+    elif p_type == "prob":
+        q = p
+    else:
+        raise XGIError("Invalid p_type!")
+
+    if q > 1 or q < 0:
+        raise XGIError("Probability not in [0,1].")
+
+    index = np.random.geometric(q) - 1  # -1 b/c zero indexing
     max_index = n**m
     while index < max_index:
         e = set(_index_to_edge(index, n, m))
         if len(e) == m:
             H.add_edge(e)
-        index += np.random.geometric(p)
+        index += np.random.geometric(q)
     return H
 
 

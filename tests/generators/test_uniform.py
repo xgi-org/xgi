@@ -1,8 +1,9 @@
-import pytest
 import numpy as np
+import pytest
 
 import xgi
 from xgi.exception import XGIError
+
 
 def test_uniform_configuration_model_hypergraph():
     m = 3
@@ -18,8 +19,9 @@ def test_uniform_configuration_model_hypergraph():
         H = xgi.uniform_hypergraph_configuration_model(k, m)
     assert H.nodes.degree.asnumpy().sum() % m == 0
 
+
 def test_uniform_HSBM():
-    
+
     # sum of sizes != n
     with pytest.raises(XGIError):
         m = 2
@@ -60,7 +62,7 @@ def test_uniform_HSBM():
         sizes = [4, 6]
         p = np.array([[0.5, -0.1], [0.1, 0.5]])
         xgi.uniform_HSBM(n, m, p, sizes)
-    
+
     # test p > 1
     with pytest.raises(XGIError):
         m = 2
@@ -68,7 +70,7 @@ def test_uniform_HSBM():
         sizes = [4, 6]
         p = np.array([[0.5, 1.1], [0.1, 0.5]])
         xgi.uniform_HSBM(n, m, p, sizes)
-    
+
     m = 2
     n = 10
     sizes = [4, 6]
@@ -93,7 +95,7 @@ def test_uniform_HPPM():
         k = 2
         epsilon = 0.5
         xgi.uniform_HPPM(n, m, rho, k, epsilon)
-    
+
     # rho > 1
     with pytest.raises(XGIError):
         m = 2
@@ -130,7 +132,6 @@ def test_uniform_HPPM():
         epsilon = 1.1
         xgi.uniform_HPPM(n, m, rho, k, epsilon)
 
-    
     m = 2
     n = 10
     rho = 0.5
@@ -160,3 +161,24 @@ def test_uniform_erdos_renyi_hypergraph():
     H2 = xgi.uniform_erdos_renyi_hypergraph(n, m, k, seed=0)
 
     assert H1.edges.members(dtype=dict) == H2.edges.members(dtype=dict)
+
+    # test p < 0
+    with pytest.raises(XGIError):
+        m = 2
+        n = 10
+        p = -0.1
+        xgi.uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob")
+
+    # test p > 1
+    with pytest.raises(XGIError):
+        m = 2
+        n = 10
+        p = 1.1
+        xgi.uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob")
+
+    # test wrong p_type arg
+    with pytest.raises(XGIError):
+        m = 2
+        n = 10
+        k = 2
+        xgi.uniform_erdos_renyi_hypergraph(n, m, k, p_type="test")
