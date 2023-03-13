@@ -284,7 +284,7 @@ def uniform_erdos_renyi_hypergraph(n, m, k):
     H = empty_hypergraph()
     H.add_nodes_from(node_labels)
 
-    p = k / (m * n ** (m - 1))
+    p = k / (m * n ** (m - 1)) # wiring probability
     index = np.random.geometric(p) - 1  # -1 b/c zero indexing
     max_index = n**m
     while index < max_index:
