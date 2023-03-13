@@ -534,7 +534,7 @@ class Hypergraph:
             warn(f"uid {id} already exists, cannot add edge {members}")
             return
 
-        uid = next(self._edge_uid) if not id else id
+        uid = next(self._edge_uid) if id is None else id
 
         self._edge[uid] = set()
         for node in members:
