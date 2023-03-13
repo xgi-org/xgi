@@ -4,7 +4,7 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the rep
 
 [![Test Status](https://github.com/ComplexGroupInteractions/xgi/workflows/test/badge.svg?branch=main)](https://github.com/ComplexGroupInteractions/xgi/actions?query=workflow%3A%22test%22)
 [![codecov](https://codecov.io/gh/ComplexGroupInteractions/xgi/branch/main/graph/badge.svg?token=BI6TX2WDSG)](https://codecov.io/gh/ComplexGroupInteractions/xgi)
-[![Good First Issue](https://img.shields.io/github/labels/networkx/networkx/Good%20First%20Issue?color=brightgreen&label=contribute%20&style=flat)](https://github.com/ComplexGroupInteractions/xgi/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
+[![Good First Issue](https://img.shields.io/badge/contribute-Good%20First%20Issue-%232EBC4F)](https://github.com/ComplexGroupInteractions/xgi/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
 
 * [**Source**](../../)
 * [**Bug reports**](../../issues)
