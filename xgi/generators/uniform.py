@@ -187,7 +187,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
 
             while index < max_index:
                 indices = _index_to_edge_partition(index, partition_sizes, m)
-                e = [partition[block[i]][indices[i]] for i in range(m)]
+                e = {partition[block[i]][indices[i]] for i in range(m)}
                 if len(e) == m:
                     H.add_edge(e)
                 index += np.random.geometric(p[block])
@@ -297,7 +297,7 @@ def uniform_erdos_renyi_hypergraph(n, m, k, seed=None):
     index = np.random.geometric(p) - 1  # -1 b/c zero indexing
     max_index = n**m
     while index < max_index:
-        e = _index_to_edge(index, n, m)
+        e = set(_index_to_edge(index, n, m))
         if len(e) == m:
             H.add_edge(e)
         index += np.random.geometric(p)
@@ -329,7 +329,7 @@ def _index_to_edge(index, n, m):
     ----------
     https://stackoverflow.com/questions/53834707/element-at-index-in-itertools-product
     """
-    return {(index // (n**r) % n) for r in range(m - 1, -1, -1)}
+    return [(index // (n**r) % n) for r in range(m - 1, -1, -1)]
 
 
 def _index_to_edge_partition(index, partition_sizes, m):
@@ -355,9 +355,9 @@ def _index_to_edge_partition(index, partition_sizes, m):
     _index_to_edge
     """
     try:
-        return {
+        return [
             int(index // np.prod(partition_sizes[r + 1 :]) % partition_sizes[r])
             for r in range(m)
-        }
+        ]
     except:
         raise Exception("Invalid parameters")
