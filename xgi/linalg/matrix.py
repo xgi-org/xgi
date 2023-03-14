@@ -179,7 +179,7 @@ def intersection_profile(H, order=None, sparse=True, index=False):
     return (P, coldict) if index else P
 
 
-def degree_matrix(H, order=None, sparse=False, index=False):
+def degree_matrix(H, order=None, index=False):
     """Returns the degree of each node as an array
 
     Parameters
@@ -189,8 +189,6 @@ def degree_matrix(H, order=None, sparse=False, index=False):
     order: int, optional
         Order of interactions to use. If None (default), all orders are used. If int,
         must be >= 1.
-    sparse: bool, default: False
-        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
     index: bool, default: False
         Specifies whether to output disctionaries mapping the node and edge IDs to indices
 
@@ -202,19 +200,14 @@ def degree_matrix(H, order=None, sparse=False, index=False):
         return K
 
     """
-    I, rowdict, _ = incidence_matrix(H, order=order, sparse=sparse, index=True)
+    I, rowdict, _ = incidence_matrix(H, order=order, index=True)
 
     if I.shape == (0,):
         K = np.zeros(H.num_nodes)
     else:
         K = np.ravel(np.sum(I, axis=1))  # flatten
 
-    if sparse:
-        D = csr_array(diags(K))
-    else:
-        D = np.diag(K)
-
-    return (D, rowdict) if index else D
+    return (K, rowdict) if index else K
 
 
 def laplacian(H, order=1, sparse=False, rescale_per_node=False, index=False):
@@ -257,7 +250,11 @@ def laplacian(H, order=1, sparse=False, rescale_per_node=False, index=False):
     if A.shape == (0,):
         return (np.array([]), {}) if index else np.array([])
 
-    K = degree_matrix(H, order=order, sparse=sparse, index=False)
+    if sparse:
+        K = csr_array(diags(degree_matrix(H, order=order)))
+    else:
+        K = np.diag(degree_matrix(H, order=order))
+
     L = order * K - A  # ravel needed to convert sparse matrix
 
     if rescale_per_node:
@@ -311,7 +308,7 @@ def multiorder_laplacian(
         laplacian(H, order=i, sparse=False, rescale_per_node=rescale_per_node)
         for i in orders
     ]
-    Ks = [degree_matrix(H, order=i, sparse=False) for i in orders]
+    Ks = [degree_matrix(H, order=i) for i in orders]
 
     L_multi = np.zeros((H.num_nodes, H.num_nodes))
 
