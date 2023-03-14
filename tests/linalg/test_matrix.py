@@ -241,6 +241,13 @@ def test_adjacency_matrix(edgelist1, edgelist4):
     assert A4[node_dict4[4], node_dict4[5]] == 0
     assert A4[node_dict4[4], node_dict4[6]] == 0
 
+    A5 = xgi.adjacency_matrix(H1, sparse=False)
+    assert isinstance(A5, np.ndarray)
+    assert np.all(A5 == A1.todense())
+
+    A6 = xgi.adjacency_matrix(H1, order=1, sparse=False)
+    assert np.all(A6 == A3.todense())
+
 
 def test_laplacian(edgelist2, edgelist6):
     el1 = edgelist6
@@ -250,6 +257,8 @@ def test_laplacian(edgelist2, edgelist6):
 
     L1, node_dict1 = xgi.laplacian(H1, order=2, index=True)
     node_dict1 = {k: v for v, k in node_dict1.items()}
+
+    assert isinstance(L1, np.ndarray)
 
     assert L1[node_dict1[0], node_dict1[0]] == 2
     assert L1[node_dict1[1], node_dict1[1]] == 4
@@ -306,6 +315,10 @@ def test_laplacian(edgelist2, edgelist6):
     assert L3[node_dict3[2], node_dict3[4]] == 0
     assert L3[node_dict3[3], node_dict3[4]] == -1
 
+    L4 = xgi.laplacian(H1, order=2, sparse=True)
+    assert isinstance(L4, csr_array)
+    assert np.all(L1 == L4.todense())
+
 
 def test_multiorder_laplacian(edgelist2, edgelist6):
     el1 = edgelist6
@@ -349,7 +362,12 @@ def test_multiorder_laplacian(edgelist2, edgelist6):
     assert L2[node_dict2[3], node_dict2[6]] == 0
 
     L2 = xgi.multiorder_laplacian(H2, orders=[1, 2], weights=[1, 1])
+    assert isinstance(L2, np.ndarray)
     assert np.shape(L2) == (6, 6)
+
+    L3 = xgi.multiorder_laplacian(H2, orders=[1, 2], weights=[1, 1], sparse=True)
+    assert isinstance(L3, csr_array)
+    assert np.all(L2 == L3.todense())
 
 
 def test_intersection_profile(edgelist2):
@@ -403,6 +421,10 @@ def test_clique_motif_matrix(edgelist4):
     assert W1[node_dict1[2], node_dict1[5]] == 1
     assert W1[node_dict1[3], node_dict1[4]] == 2
     assert W1[node_dict1[5], node_dict1[1]] == 0
+
+    W2 = xgi.clique_motif_matrix(H1, sparse=False)
+    assert isinstance(W2, np.ndarray)
+    assert np.all(W1.todense() == W2)
 
 
 def test_boundary_matrix(edgelist4):
@@ -566,7 +588,7 @@ def test_empty():
     assert xgi.incidence_matrix(H).shape == (0,)
     assert xgi.adjacency_matrix(H).shape == (0, 0)
     assert xgi.laplacian(H).shape == (0, 0)
-    assert xgi.clique_motif_matrix(H).shape == (0,)
+    assert xgi.clique_motif_matrix(H).shape == (0, 0)
 
     # with indices
     data = xgi.incidence_matrix(H, index=True)
@@ -586,5 +608,5 @@ def test_empty():
 
     data = xgi.clique_motif_matrix(H, index=True)
     assert len(data) == 2
-    assert data[0].shape == (0,)
+    assert data[0].shape == (0, 0)
     assert type(data[1]) == dict
