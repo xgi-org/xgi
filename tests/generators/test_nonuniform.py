@@ -7,16 +7,23 @@ import xgi
 
 
 def test_chung_lu_hypergraph():
+    
     k1 = {1: 1, 2: 2, 3: 3, 4: 4}
     k2 = {1: 2, 2: 2, 3: 3, 4: 3}
     H = xgi.chung_lu_hypergraph(k1, k2)
     assert H.num_nodes == 4
 
+    # seed 
+    H1 = xgi.chung_lu_hypergraph(k1, k2, seed=1)
+    H2 = xgi.chung_lu_hypergraph(k1, k2, seed=2)
+    H3 = xgi.chung_lu_hypergraph(k1, k2, seed=2)
+    assert H1._edge != H2._edge
+    assert H2._edge == H3._edge
+
     with pytest.warns(Warning):
         k1 = {1: 1, 2: 2}
         k2 = {1: 2, 1: 2}
-        H = xgi.chung_lu_hypergraph(k1, k2)
-
+        H = xgi.chung_lu_hypergraph(k1, k2)    
 
 def test_dcsbm_hypergraph():
 
@@ -30,6 +37,13 @@ def test_dcsbm_hypergraph():
     H = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega)
 
     assert H.num_nodes == 50
+
+    # seed 
+    H1 = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=1)
+    H2 = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=2)
+    H3 = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=2)
+    assert H1._edge != H2._edge
+    assert H2._edge == H3._edge
 
 
 def test_random_hypergraph():
