@@ -21,6 +21,11 @@ def test_random_layout():
 
     assert len(pos1) == H.num_nodes
 
+    # simplicial complex
+    S = xgi.random_flag_complex_d2(10, 0.2)
+    pos = xgi.random_layout(S)
+    assert len(pos) == S.num_nodes
+
 
 def test_pairwise_spring_layout():
 

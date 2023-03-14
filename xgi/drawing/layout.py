@@ -52,6 +52,9 @@ def random_layout(H, center=None, dim=2, seed=None):
     """
     import numpy as np
 
+    if isinstance(H, SimplicialComplex):
+        H = convert.from_simplicial_complex_to_hypergraph(H)
+
     if seed is not None:
         np.random.seed(seed)
 
