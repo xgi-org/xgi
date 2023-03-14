@@ -37,8 +37,12 @@ def test_pairwise_spring_layout():
 
     assert len(pos1) == H.num_nodes
 
+    # simplicial complex
+    S = xgi.random_flag_complex_d2(10, 0.2, seed=1)
+    pos = xgi.pairwise_spring_layout(S, seed=1)
 
-def test_barycenter_spring_layout():
+
+def test_barycenter_spring_layout(hypergraph1):
 
     H = xgi.random_hypergraph(10, [0.2], seed=1)
 
@@ -59,8 +63,21 @@ def test_barycenter_spring_layout():
     assert pos4.keys() == pos5.keys()
     assert np.allclose(list(pos4.values()), list(pos5.values()))
 
+    # simplicial complex
+    S = xgi.random_flag_complex_d2(10, 0.2)
+    pos = xgi.barycenter_spring_layout(S)
+    assert len(pos) == S.num_nodes
 
-def test_weighted_barycenter_spring_layout():
+    # str nodes
+    pos = xgi.barycenter_spring_layout(hypergraph1)
+    assert len(pos) == hypergraph1.num_nodes
+
+    # larger hyperedges
+    H = xgi.random_hypergraph(10, [0.2, 0.1])
+    pos = xgi.barycenter_spring_layout(H)
+    assert len(pos) == H.num_nodes
+
+def test_weighted_barycenter_spring_layout(hypergraph1):
 
     H = xgi.random_hypergraph(10, [0.2], seed=1)
 
@@ -82,3 +99,17 @@ def test_weighted_barycenter_spring_layout():
     pos5 = xgi.weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=1)
     assert pos4.keys() == pos5.keys()
     assert np.allclose(list(pos4.values()), list(pos5.values()))
+
+    # simplicial complex
+    S = xgi.random_flag_complex_d2(10, 0.2)
+    pos = xgi.weighted_barycenter_spring_layout(S)
+    assert len(pos) == S.num_nodes
+
+    # str nodes
+    pos = xgi.weighted_barycenter_spring_layout(hypergraph1)
+    assert len(pos) == hypergraph1.num_nodes
+
+    # larger hyperedges
+    H = xgi.random_hypergraph(10, [0.2, 0.1])
+    pos = xgi.weighted_barycenter_spring_layout(H)
+    assert len(pos) == H.num_nodes
