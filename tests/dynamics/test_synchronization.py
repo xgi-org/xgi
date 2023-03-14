@@ -13,7 +13,7 @@ def test_simulate_kuramoto():
     H1 = xgi.random_hypergraph(N, [0.05, 0.001], seed=0)
     theta_time, times = xgi.simulate_kuramoto(H1, 1, 1, np.ones(N), theta0, n_steps, dt)
 
-    assert theta_time.shape == (N, n_steps)
+    assert theta_time.shape == (n_steps, N)
     assert np.all(times == np.arange(n_steps) * dt)
 
     output = np.array(
@@ -81,7 +81,7 @@ def test_simulate_kuramoto():
         ]
     )
 
-    assert norm(theta_time - output) < 1e-07
+    assert norm(theta_time - output.T) < 1e-07
 
 
 def test_compute_kuramoto_order_parameter():

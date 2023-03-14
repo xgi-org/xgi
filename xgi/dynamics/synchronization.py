@@ -40,7 +40,7 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
     Returns
     -------
     theta_time: numpy array of floats
-        Timeseries of phases from the Kuramoto model, of dimension (N, T)
+        Timeseries of phases from the Kuramoto model, of dimension (T, N)
     times: numpy array of floats
         Times corresponding to the simulate phases
 
@@ -67,7 +67,7 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
     triangles = H_int.edges.filterby("size", 3).members()
     n = H_int.num_nodes
 
-    theta_time = np.zeros((n, timesteps))
+    theta_time = np.zeros((timesteps, n))
     times = np.arange(timesteps) * dt
 
     if omega is None:
@@ -78,7 +78,7 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
 
     for t in range(timesteps):
 
-        theta_time[:, t] = theta
+        theta_time[t] = theta
 
         r1 = np.zeros(n, dtype=complex)
         r2 = np.zeros(n, dtype=complex)
@@ -118,7 +118,7 @@ def compute_kuramoto_order_parameter(theta_time):
     Parameters
     ----------
     theta_time: numpy array of floats
-        Timeseries of phases from the Kuramoto model, of dimension (N, T)
+        Timeseries of phases from the Kuramoto model, of dimension (T, N)
 
     Returns
     -------
@@ -127,7 +127,7 @@ def compute_kuramoto_order_parameter(theta_time):
 
     """
 
-    z = np.mean(np.exp(1j * theta_time), axis=0)
+    z = np.mean(np.exp(1j * theta_time), axis=1)
     r_time = np.abs(z)
 
     return r_time
