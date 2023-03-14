@@ -17,14 +17,15 @@ def test_chung_lu_hypergraph():
         k2 = {1: 2, 1: 2}
         H = xgi.chung_lu_hypergraph(k1, k2)
 
+
 def test_dcsbm_hypergraph():
 
     n = 50
-    k1 = {i : random.randint(1, n) for i in range(n)}
-    k2 = {i : sorted(k1.values())[i] for i in range(n)}
-    g1 = {i : random.choice([0, 1]) for i in range(n)}
-    g2 = {i : random.choice([0, 1]) for i in range(n)}
-    omega = np.array([[n//2, 10], [10, n//2]])
+    k1 = {i: random.randint(1, n) for i in range(n)}
+    k2 = {i: sorted(k1.values())[i] for i in range(n)}
+    g1 = {i: random.choice([0, 1]) for i in range(n)}
+    g2 = {i: random.choice([0, 1]) for i in range(n)}
+    omega = np.array([[n // 2, 10], [10, n // 2]])
 
     H = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega)
 
@@ -47,6 +48,7 @@ def test_random_hypergraph():
     with pytest.raises(ValueError):
         H1 = xgi.random_hypergraph(10, [1, -2])
 
+
 def test_random_simplicial_complex():
 
     # seed
@@ -57,7 +59,7 @@ def test_random_simplicial_complex():
     assert S1._edge != S2._edge
     assert S2._edge == S3._edge
 
-    # wrong input 
+    # wrong input
     with pytest.raises(ValueError):
         S1 = xgi.random_simplicial_complex(10, [1, 1.1])
     with pytest.raises(ValueError):
@@ -96,9 +98,3 @@ def test_random_flag_complex_d2():
         S1 = xgi.random_flag_complex_d2(10, 1.1)
     with pytest.raises(ValueError):
         S1 = xgi.random_flag_complex_d2(10, -2)
-
-
-
-
-
-
