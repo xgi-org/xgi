@@ -2,4 +2,5 @@ pytest>=6.2
 pytest-cov>=2.12
 coverage>=6.0
 ipython
+ipykernel
 testbook
