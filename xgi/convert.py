@@ -444,7 +444,7 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
 
 def from_simplicial_complex_to_hypergraph(SC):
     """Returns a hypergraph constructed from the
-    maximal simpices of the provided simplicial complex.
+    maximal simplices of the provided simplicial complex.
 
     Parameters
     ----------
@@ -460,6 +460,7 @@ def from_simplicial_complex_to_hypergraph(SC):
 
     max_simplices = maximal_simplices(SC)
     H = Hypergraph()
+    H.add_nodes_from(SC.nodes) # to keep node order and isolated nodes
     H.add_edges_from([list(SC.edges.members(e)) for e in max_simplices])
     return H
 
