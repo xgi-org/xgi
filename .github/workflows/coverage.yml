@@ -18,7 +18,7 @@ jobs:
       - name: Install packages
         run: |
           python -m pip install --upgrade pip wheel setuptools
-          pip install -r requirements/default.txt -r requirements/test.txt
+          pip install -r requirements/default.txt -r requirements/test.txt -r requirements/tutorial.txt
           pip install .
           python -m pip list
       - name: Run tests and collect coverage
