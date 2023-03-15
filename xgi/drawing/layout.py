@@ -1,5 +1,6 @@
 """Algorithms to compute node positions for drawing."""
 import random
+
 import networkx as nx
 
 from .. import convert

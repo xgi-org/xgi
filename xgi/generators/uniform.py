@@ -369,8 +369,7 @@ def _index_to_edge_partition(index, partition_sizes, m):
     """
     try:
         return [
-            int(index // np.prod(partition_sizes[r + 1 :]) % partition_sizes[r])
-            for r in range(m)
+            int(index // np.prod(partition_sizes[r + 1 :]) % partition_sizes[r]) for r in range(m)
         ]
-    except:
-        raise Exception("Invalid parameters")
+    except ValueError as exc:
+        raise Exception("Invalid parameters") from exc

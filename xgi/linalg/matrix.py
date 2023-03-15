@@ -137,7 +137,7 @@ def incidence_matrix(H, order=None, sparse=True, index=False, weight=lambda node
             for node in members:
                 I_mat[node_dict[node], edge_dict[edge]] = weight(node, edge, H)
 
-    return I_mat, rowdict, coldict if index else I_mat
+    return (I_mat, rowdict, coldict) if index else I_mat
 
 
 def adjacency_matrix(H, order=None, sparse=True, s=1, weighted=False, index=False):
@@ -219,7 +219,7 @@ def intersection_profile(H, order=None, sparse=True, index=False):
     """
     I_mat, _, coldict = incidence_matrix(H, order=order, sparse=sparse, index=True)
     P = I_mat.T.dot(I_mat)
-    return P, coldict if index else P
+    return (P, coldict) if index else P
 
 
 def degree_matrix(H, order=None, index=False):
@@ -396,7 +396,7 @@ def clique_motif_matrix(H, sparse=True, index=False):
 
     """
     W, rowdict = adjacency_matrix(H, sparse=sparse, weighted=True, index=True)
-    return W, rowdict if index else W
+    return (W, rowdict) if index else W
 
 
 def boundary_matrix(S, order=1, orientations=None, index=False):
