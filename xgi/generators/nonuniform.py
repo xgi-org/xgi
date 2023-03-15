@@ -414,7 +414,7 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     N : int
         Number of nodes
     p : float
-        Probabilities (between 0 and 1) to create an edge
+        Probability (between 0 and 1) to create an edge
         between any 2 nodes
     max_order : int
         maximal dimension of simplices to add to the output simplicial complex

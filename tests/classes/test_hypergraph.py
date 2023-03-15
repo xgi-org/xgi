@@ -181,10 +181,10 @@ def test_add_edge():
 
     # check that uid works correctly
     H1 = xgi.Hypergraph()
-    H1.add_edge([1, 2], id=1)
-    H1.add_edge([3, 4])
+    H1.add_edge([1, 2], id=0)
+    H1.add_edge([3, 4], id=2)
     H1.add_edge([5, 6])
-    assert H1._edge == {1: {1, 2}, 2: {3, 4}, 3: {5, 6}}
+    assert H1._edge == {0: {1, 2}, 2: {3, 4}, 3: {5, 6}}
 
     H2 = xgi.Hypergraph()
     H2.add_edge([1, 2])

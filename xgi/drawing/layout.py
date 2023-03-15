@@ -1,4 +1,5 @@
 """Algorithms to compute node positions for drawing."""
+import random
 import networkx as nx
 
 from .. import convert
@@ -61,7 +62,7 @@ def random_layout(H, center=None, dim=2, seed=None):
     return pos
 
 
-def pairwise_spring_layout(H):
+def pairwise_spring_layout(H, seed=None):
     """
     Position the nodes using Fruchterman-Reingold force-directed
     algorithm using the graph projection of the hypergraph
@@ -71,6 +72,13 @@ def pairwise_spring_layout(H):
     ----------
     H : Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
+    seed : int, RandomState instance or None  optional (default=None)
+        Set the random state for deterministic node layouts.
+        If int, `seed` is the seed used by the random number generator,
+        if numpy.random.RandomState instance, `seed` is the random
+        number generator,
+        if None, the random number generator is the RandomState instance used
+        by numpy.random.
 
     Returns
     -------
@@ -95,14 +103,18 @@ def pairwise_spring_layout(H):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.pairwise_spring_layout(H)
     """
+
+    if seed is not None:
+        random.seed(seed)
+
     if isinstance(H, SimplicialComplex):
         H = convert.from_simplicial_complex_to_hypergraph(H)
     G = convert.convert_to_graph(H)
-    pos = nx.spring_layout(G)
+    pos = nx.spring_layout(G, seed=seed)
     return pos
 
 
-def barycenter_spring_layout(H, return_phantom_graph=False):
+def barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
     """
     Position the nodes using Fruchterman-Reingold force-directed
     algorithm using an augmented version of the the graph projection
@@ -115,6 +127,13 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     ----------
     H : xgi Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
+    seed : int, RandomState instance or None  optional (default=None)
+        Set the random state for deterministic node layouts.
+        If int, `seed` is the seed used by the random number generator,
+        if numpy.random.RandomState instance, `seed` is the random
+        number generator,
+        if None, the random number generator is the RandomState instance used
+        by numpy.random.
 
     Returns
     -------
@@ -135,6 +154,9 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
     >>> pos = xgi.barycenter_spring_layout(H)
 
     """
+    if seed is not None:
+        random.seed(seed)
+
     if isinstance(H, SimplicialComplex):
         H = convert.from_simplicial_complex_to_hypergraph(H)
 
@@ -167,7 +189,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
             phantom_node_id += 1
 
     # Creating a dictionary for the position of the nodes with the standard spring layout
-    pos_with_phantom_nodes = nx.spring_layout(G)
+    pos_with_phantom_nodes = nx.spring_layout(G, seed=seed)
 
     # Retaining only the positions of the real nodes
     pos = {k: pos_with_phantom_nodes[k] for k in list(H.nodes)}
@@ -178,7 +200,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False):
         return pos
 
 
-def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
+def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
     """
     Position the nodes using Fruchterman-Reingold force-directed
     algorithm using an augmented version of the the graph projection
@@ -194,6 +216,13 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     ----------
     H : Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
+    seed : int, RandomState instance or None  optional (default=None)
+        Set the random state for deterministic node layouts.
+        If int, `seed` is the seed used by the random number generator,
+        if numpy.random.RandomState instance, `seed` is the random
+        number generator,
+        if None, the random number generator is the RandomState instance used
+        by numpy.random.
 
     Returns
     -------
@@ -213,6 +242,9 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.weighted_barycenter_spring_layout(H)
     """
+    if seed is not None:
+        random.seed(seed)
+
     if isinstance(H, SimplicialComplex):
         H = convert.from_simplicial_complex_to_hypergraph(H)
 
@@ -245,7 +277,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False):
             phantom_node_id += 1
 
     # Creating a dictionary for the position of the nodes with the standard spring layout
-    pos_with_phantom_nodes = nx.spring_layout(G, weight="weight")
+    pos_with_phantom_nodes = nx.spring_layout(G, weight="weight", seed=seed)
 
     # Retaining only the positions of the real nodes
     pos = {k: pos_with_phantom_nodes[k] for k in list(H.nodes)}

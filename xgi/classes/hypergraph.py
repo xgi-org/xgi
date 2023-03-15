@@ -383,6 +383,8 @@ class Hypergraph:
         See Also
         --------
         add_nodes_from
+        set_node_attributes
+        get_node_attributes
 
         Notes
         -----
@@ -412,7 +414,8 @@ class Hypergraph:
         See Also
         --------
         add_node
-
+        set_node_attributes
+        get_node_attributes
         """
         for n in nodes_for_adding:
             try:
@@ -508,6 +511,8 @@ class Hypergraph:
         See Also
         --------
         add_edges_from : Add a collection of edges.
+        set_edge_attributes
+        get_edge_attributes
 
         Examples
         --------
@@ -540,7 +545,7 @@ class Hypergraph:
             warn(f"uid {id} already exists, cannot add edge {members}")
             return
 
-        uid = next(self._edge_uid) if not id else id
+        uid = next(self._edge_uid) if id is None else id
 
         self._edge[uid] = set()
         for node in members:
@@ -589,6 +594,8 @@ class Hypergraph:
         --------
         add_edge : Add a single edge.
         add_weighted_edges_from : Convenient way to add weighted edges.
+        set_edge_attributes
+        get_edge_attributes
 
         Notes
         -----
@@ -762,6 +769,8 @@ class Hypergraph:
         --------
         add_edge : Add a single edge.
         add_edges_from : Add multiple edges.
+        set_edge_attributes
+        get_edge_attributes
 
         Notes
         -----
