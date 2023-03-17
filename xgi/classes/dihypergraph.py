@@ -329,7 +329,7 @@ class DiHypergraph:
                 self._node_attr[node] = self._node_attr_dict_factory()
             self._node_out[node].add(uid)
             self._edge_in[uid].add(node)
-        
+
         for node in tail:
             if node not in self._node_in:
                 self._node_in[node] = set()
@@ -450,7 +450,7 @@ class DiHypergraph:
                     tail = set(members["tail"])
                 except TypeError:
                     raise XGIError("Edge must be a dictionary with head and tail keys!")
-                
+
                 if id in self._edge_in.keys():  # check that uid is not present yet
                     warn(f"uid {id} already exists, cannot add edge {members}.")
                     continue
@@ -459,14 +459,14 @@ class DiHypergraph:
                     self._edge_out[id] = set(tail)
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
-                
+
                 for n in head:
                     if n not in self._node_in:
                         self._node_in[n] = set()
                         self._node_out[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node_out[n].add(id)
-                
+
                 for n in tail:
                     if n not in self._node_in:
                         self._node_in[n] = set()
@@ -540,7 +540,7 @@ class DiHypergraph:
                         self._node_out[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node_out[n].add(id)
-                
+
                 for n in tail:
                     if n not in self._node_in:
                         self._node_in[n] = set()
@@ -585,7 +585,7 @@ class DiHypergraph:
             self._node_out[node].remove(id)
         for node in tail:
             self._node_in[node].remove(id)
-        
+
         del self._edge_in[id]
         del self._edge_out[id]
         del self._edge_attr[id]
@@ -616,7 +616,7 @@ class DiHypergraph:
                 self._node_out[node].remove(id)
             for node in tail:
                 self._node_in[node].remove(id)
-            
+
             del self._edge_in[id]
             del self._edge_out[id]
             del self._edge_attr[id]
