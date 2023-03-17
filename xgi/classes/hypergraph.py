@@ -891,7 +891,7 @@ class Hypergraph:
         remove_edges_from : Remove multiple edges.
 
         """
-        for node in self.edges.members(id):
+        for node in self._edge[id].copy():
             self._node[node].remove(id)
         del self._edge[id]
         del self._edge_attr[id]
@@ -915,7 +915,7 @@ class Hypergraph:
 
         """
         for id in ebunch:
-            for node in self.edges.members(id):
+            for node in self._edge[id].copy():
                 self._node[node].remove(id)
             del self._edge[id]
             del self._edge_attr[id]
