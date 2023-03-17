@@ -9,7 +9,7 @@ from ..exception import XGIError
 from ..utils import IDDict, update_uid_counter
 from .reportviews import EdgeView, NodeView
 
-__all__ = ["Hypergraph"]
+__all__ = ["DiHypergraph"]
 
 
 class DiHypergraph:
