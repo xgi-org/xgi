@@ -71,7 +71,7 @@ class DiHypergraph:
     _hyperedge_attr_dict_factory = IDDict
     _hypergraph_attr_dict_factory = dict
 
-    def __init__(self, incoming_data=None, **attr):
+    def __init__(self, **attr):
         self._edge_uid = count()
         self._hypergraph = self._hypergraph_attr_dict_factory()
         self._node_in = self._node_dict_factory()
@@ -81,18 +81,6 @@ class DiHypergraph:
         self._edge_out = self._hyperedge_dict_factory()
         self._edge_attr = self._hyperedge_attr_dict_factory()
 
-        # self._nodeview = NodeView(self)
-        # """A :class:`~xgi.classes.reportviews.NodeView` of the hypergraph."""
-
-        # self._edgeview = EdgeView(self)
-        # """An :class:`~xgi.classes.reportviews.EdgeView` of the hypergraph."""
-
-        if incoming_data is not None:
-            # This import needs to happen when this function is called, not when it is
-            # defined.  Otherwise, a circular import error would happen.
-            from ..convert import convert_to_hypergraph
-
-            convert_to_hypergraph(incoming_data, create_using=self)
         self._hypergraph.update(attr)  # must be after convert
 
     @property
