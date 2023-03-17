@@ -157,7 +157,8 @@ def convert_to_line_graph(H):
     edge_label_dict = {
         tuple(edge): index for index, edge in enumerate(H.edges.members())
     }
-    LG.add_nodes_from(edge_label_dict.values())
+    nodes = sorted(set(edge_label_dict.values()))
+    LG.add_nodes_from(nodes)
 
     for edge1, edge2 in combinations(H.edges.members(), 2):
         if edge1.intersection(edge2):

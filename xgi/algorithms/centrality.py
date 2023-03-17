@@ -273,7 +273,7 @@ def line_vector_centrality(H):
     """
 
     if not xgi.is_connected(H):
-        raise XGIError("This method is not defined non-connected hypergraphs.")
+        raise XGIError("This method is not defined for non-connected hypergraphs.")
 
     LG = convert_to_line_graph(H)
     LGcent = nx.eigenvector_centrality(LG)
