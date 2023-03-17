@@ -274,6 +274,36 @@ class DiHypergraph:
             self.remove_node(n)
 
     def add_edge(self, members, id=None, **attr):
+        """Add one edge with optional attributes.
+
+        Parameters
+        ----------
+        members : Iterable
+            An iterable of the ids of the nodes contained in the new edge.
+        id : hashable, default None
+            Id of the new edge. If None, a unique numeric ID will be created.
+        **attr : dict, optional
+            Attributes of the new edge.
+
+        Raises
+        -----
+        XGIError
+            If `members` is empty.
+
+        See Also
+        --------
+        add_edges_from : Add a collection of edges.
+
+        Examples
+        --------
+
+        Add edges with or without specifying an edge id.
+
+        >>> import xgi
+        >>> H = xgi.DiHypergraph()
+        >>> H.add_edge({"head": [1, 2, 3], "tail": [2, 3, 4]})
+        >>> H.add_edge({"head": [3, 4], "tail":{}}, id='myedge')
+        """
         try:
             head = set(members["head"])
             tail = set(members["tail"])
@@ -315,21 +345,134 @@ class DiHypergraph:
             update_uid_counter(self, id)
 
     def add_edges_from(self, ebunch_to_add, **attr):
+        """Add multiple edges with optional attributes.
+
+        Parameters
+        ----------
+        ebunch_to_add : Iterable
+
+            An iterable of edges.  This may be an iterable of iterables (Format 1),
+            where each element contains the members of the edge specified as valid node IDs.
+            Alternatively, each element could also be a tuple in any of the following
+            formats:
+
+            * Format 2: 2-tuple (members, edge_id), or
+            * Format 3: 2-tuple (members, attr), or
+            * Format 4: 3-tuple (members, edge_id, attr),
+
+            where `members` is an iterable of node IDs, `edge_id` is a hashable to use
+            as edge ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add`
+            may be a dict of the form `{edge_id: edge_members}` (Format 5).
+
+            Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while `id`s must be.
+            In Formats 2-4, each element of `ebunch_to_add` must have the same length,
+            i.e. you cannot mix different formats.  The iterables containing edge
+            members cannot be strings.
+
+        attr : \*\*kwargs, optional
+            Additional attributes to be assigned to all edges. Attribues specified via
+            `ebunch_to_add` take precedence over `attr`.
+
+        See Also
+        --------
+        add_edge : Add a single edge.
+        add_weighted_edges_from : Convenient way to add weighted edges.
+
+        Notes
+        -----
+        Adding the same edge twice will create a multi-edge. Currently
+        cannot add empty edges; the method skips over them.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph()
+
+        When specifying edges by their members only, numeric edge IDs will be assigned
+        automatically.
+
+        >>> H.add_edges_from([[0, 1], [1, 2], [2, 3, 4]])
+        >>> H.edges.members(dtype=dict)
+        {0: {0, 1}, 1: {1, 2}, 2: {2, 3, 4}}
+
+        Custom edge ids can be specified using a dict.
+
+        >>> H = xgi.Hypergraph()
+        >>> H.add_edges_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
+        >>> H.edges.members(dtype=dict)
+        {'one': {0, 1}, 'two': {1, 2}, 'three': {2, 3, 4}}
+
+        You can use the dict format to easily add edges from another hypergraph.
+
+        >>> H2 = xgi.Hypergraph()
+        >>> H2.add_edges_from(H.edges.members(dtype=dict))
+        >>> H.edges == H2.edges
+        True
+
+        Alternatively, edge ids can be specified using an iterable of 2-tuples.
+
+        >>> H = xgi.Hypergraph()
+        >>> H.add_edges_from([([0, 1], 'one'), ([1, 2], 'two'), ([2, 3, 4], 'three')])
+        >>> H.edges.members(dtype=dict)
+        {'one': {0, 1}, 'two': {1, 2}, 'three': {2, 3, 4}}
+
+        Attributes for each edge may be specified using a 2-tuple for each edge.
+        Numeric IDs will be assigned automatically.
+
+        >>> H = xgi.Hypergraph()
+        >>> edges = [
+        ...     ([0, 1], {'color': 'red'}),
+        ...     ([1, 2], {'age': 30}),
+        ...     ([2, 3, 4], {'color': 'blue', 'age': 40}),
+        ... ]
+        >>> H.add_edges_from(edges)
+        >>> {e: H.edges[e] for e in H.edges}
+        {0: {'color': 'red'}, 1: {'age': 30}, 2: {'color': 'blue', 'age': 40}}
+
+        Attributes and custom IDs may be specified using a 3-tuple for each edge.
+
+        >>> H = xgi.Hypergraph()
+        >>> edges = [
+        ...     ([0, 1], 'one', {'color': 'red'}),
+        ...     ([1, 2], 'two', {'age': 30}),
+        ...     ([2, 3, 4], 'three', {'color': 'blue', 'age': 40}),
+        ... ]
+        >>> H.add_edges_from(edges)
+        >>> {e: H.edges[e] for e in H.edges}
+        {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40}}
+
+        """
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
             for id, members in ebunch_to_add.items():
-                if id in self._edge.keys():  # check that uid is not present yet
+                try:
+                    head = set(members["head"])
+                    tail = set(members["tail"])
+                except TypeError:
+                    raise XGIError("Edge must be a dictionary with head and tail keys!")
+                
+                if id in self._edge_in.keys():  # check that uid is not present yet
                     warn(f"uid {id} already exists, cannot add edge {members}.")
                     continue
                 try:
-                    self._edge[id] = set(members)
+                    self._edge_in[id] = set(head)
+                    self._edge_out[id] = set(tail)
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
-                for n in members:
-                    if n not in self._node:
-                        self._node[n] = set()
+                
+                for n in head:
+                    if n not in self._node_in:
+                        self._node_in[n] = set()
+                        self._node_out[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].add(id)
+                    self._node_out[n].add(id)
+                
+                for n in tail:
+                    if n not in self._node_in:
+                        self._node_in[n] = set()
+                        self._node_out[n] = set()
+                        self._node_attr[n] = self._node_attr_dict_factory()
+                    self._node_in[n].add(id)
                 self._edge_attr[id] = self._hyperedge_attr_dict_factory()
 
                 update_uid_counter(self, id)
@@ -349,10 +492,8 @@ class DiHypergraph:
             first_elem = None
 
         format1, format2, format3, format4 = False, False, False, False
-        if isinstance(first_elem, Iterable):
-            if all(isinstance(e, str) for e in first_edge):
-                format1 = True
-            elif len(first_edge) == 2 and issubclass(type(first_edge[1]), Hashable):
+        if not isinstance(first_edge, dict):
+            if len(first_edge) == 2 and issubclass(type(first_edge[1]), Hashable):
                 format2 = True
             elif len(first_edge) == 2:
                 format3 = True
@@ -378,20 +519,34 @@ class DiHypergraph:
             elif format4:
                 members, id, eattr = e[0], e[1], e[2]
 
-            if id in self._edge.keys():  # check that uid is not present yet
+            if id in self._edge_in.keys():  # check that uid is not present yet
                 warn(f"uid {id} already exists, cannot add edge {members}.")
             else:
+                try:
+                    head = set(members["head"])
+                    tail = set(members["tail"])
+                except TypeError:
+                    raise XGIError("Edge must be a dictionary with head and tail keys!")
 
                 try:
-                    self._edge[id] = set(members)
+                    self._edge_in[id] = set(head)
+                    self._edge_out[id] = set(tail)
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
 
-                for n in members:
-                    if n not in self._node:
-                        self._node[n] = set()
+                for n in head:
+                    if n not in self._node_out:
+                        self._node_in[n] = set()
+                        self._node_out[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].add(id)
+                    self._node_out[n].add(id)
+                
+                for n in tail:
+                    if n not in self._node_in:
+                        self._node_in[n] = set()
+                        self._node_out[n] = set()
+                        self._node_attr[n] = self._node_attr_dict_factory()
+                    self._node_in[n].add(id)
 
                 self._edge_attr[id] = self._hyperedge_attr_dict_factory()
                 self._edge_attr[id].update(attr)
@@ -404,106 +559,6 @@ class DiHypergraph:
                 if format2 or format4:
                     update_uid_counter(self, id)
                 break
-
-    def double_edge_swap(self, n_id1, n_id2, e_id1, e_id2):
-        """Swap the edge memberships of two selected nodes, given two edges.
-
-        Parameters
-        ----------
-        n_id1 : hashable
-            The ID of the first node, originally a member of the first edge.
-        n_id2 : hashable
-            The ID of the second node, originally a member of the second edge.
-        e_id1 : hashable
-            The ID of the first edge.
-        e_id2 : hashable
-            The ID of the second edge.
-
-        Raises
-        ------
-        XGIError
-            If loopy hyperedges are created
-        IDNotFound
-            If user specifies nodes or edges that do not exist or
-            nodes that are not part of edges.
-
-        Examples
-        --------
-        >>> import xgi
-        >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4]])
-        >>> H.double_edge_swap(1, 4, 0, 1)
-        >>> H.edges.members()
-        [{2, 3, 4}, {1, 3}]
-
-        """
-        # Assign edges to modify
-        try:
-
-            temp_memberships1 = list(self._node[n_id1])
-            temp_memberships1[temp_memberships1.index(e_id1)] = e_id2
-
-            temp_memberships2 = list(self._node[n_id2])
-            temp_memberships2[temp_memberships2.index(e_id2)] = e_id1
-
-            temp_members1 = list(self._edge[e_id1])
-            temp_members1[temp_members1.index(n_id1)] = n_id2
-
-            temp_members2 = list(self._edge[e_id2])
-            temp_members2[temp_members2.index(n_id2)] = n_id1
-
-        except ValueError as e:
-            raise XGIError(
-                "One of the nodes specified doesn't belong to the specified edge."
-            ) from e
-
-        if len(set(temp_members1)) < len(set(self._edge[e_id1])) or len(
-            set(temp_members2)
-        ) < len(set(self._edge[e_id2])):
-            raise XGIError("This will create a loopy hyperedge.")
-
-        self._node[n_id1] = set(temp_memberships1)
-        self._node[n_id2] = set(temp_memberships2)
-
-        self._edge[e_id1] = set(temp_members1)
-        self._edge[e_id2] = set(temp_members2)
-
-    def add_node_to_edge(self, edge, node):
-        """Add one node to an existing edge.
-
-        If the node or edge IDs do not exist, they are created.
-
-        Parameters
-        ----------
-        edge : hashable
-            edge ID
-        node : hashable
-            node ID
-
-        See Also
-        --------
-        add_node
-        add_edge
-
-        Examples
-        --------
-        >>> import xgi
-        >>> H = xgi.Hypergraph()
-        >>> H.add_edge(['apple', 'banana'], 'fruits')
-        >>> H.add_node_to_edge('fruits', 'pear')
-        >>> H.add_node_to_edge('veggies', 'lettuce')
-        >>> d = H.edges.members(dtype=dict)
-        >>> {id: sorted(list(e)) for id, e in d.items()}
-        {'fruits': ['apple', 'banana', 'pear'], 'veggies': ['lettuce']}
-
-        """
-        if edge not in self._edge:
-            self._edge[edge] = set()
-            self._edge_attr[edge] = {}
-        if node not in self._node:
-            self._node[node] = set()
-            self._node_attr[node] = {}
-        self._edge[edge].add(node)
-        self._node[node].add(edge)
 
     def remove_edge(self, id):
         """Remove one edge.
@@ -523,6 +578,7 @@ class DiHypergraph:
         remove_edges_from : Remove multiple edges.
 
         """
+
         for node in self.edges.members(id):
             self._node[node].remove(id)
         del self._edge[id]
@@ -551,42 +607,3 @@ class DiHypergraph:
                 self._node[node].remove(id)
             del self._edge[id]
             del self._edge_attr[id]
-
-    def remove_node_from_edge(self, edge, node):
-        """Remove a node from an existing edge.
-
-        Parameters
-        ----------
-        edge : hashable
-            The edge ID
-        node : hashable
-            The node ID
-
-        Raises
-        ------
-        XGIError
-            If either the node or edge does not exist.
-
-        Notes
-        -----
-        If edge is left empty as a result of removing node from it, the edge is also
-        removed.
-
-        """
-        try:
-            self._node[node].remove(edge)
-        except KeyError as e:
-            raise XGIError(f"Node {node} not in the hypergraph") from e
-        except ValueError as e:
-            raise XGIError(f"Node {node} not in edge {edge}") from e
-
-        try:
-            self._edge[edge].remove(node)
-        except KeyError as e:
-            raise XGIError(f"Edge {edge} not in the hypergraph") from e
-        except ValueError as e:
-            raise XGIError(f"Edge {edge} does not contain node {node}") from e
-
-        if not self._edge[edge]:
-            del self._edge[edge]
-            del self._edge_attr[edge]
