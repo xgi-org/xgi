@@ -154,9 +154,8 @@ def convert_to_line_graph(H):
 
     LG = nx.Graph()
 
-    edge_label_dict = {
-        tuple(edge): index for index, edge in enumerate(H.edges.members())
-    }
+    edge_label_dict = {tuple(edge): index for index, edge in H._edge.items()}
+    
     nodes = sorted(set(edge_label_dict.values()))
     LG.add_nodes_from(nodes)
 
