@@ -190,11 +190,11 @@ class DiHypergraph:
         """
         for n in nodes_for_adding:
             try:
-                newnode = n not in self._node
+                newnode = n not in self._node_in
                 newdict = attr
             except TypeError:
                 n, ndict = n
-                newnode = n not in self._node
+                newnode = n not in self._node_in
                 newdict = attr.copy()
                 newdict.update(ndict)
             if newnode:
@@ -274,66 +274,39 @@ class DiHypergraph:
             self.remove_node(n)
 
     def add_edge(self, members, id=None, **attr):
-        """Add one edge with optional attributes.
+        try:
+            head = set(members["head"])
+            tail = set(members["tail"])
+        except TypeError:
+            raise XGIError("Edge must be a dictionary with head and tail keys!")
 
-        Parameters
-        ----------
-        members : Iterable
-            An iterable of the ids of the nodes contained in the new edge.
-        id : hashable, default None
-            Id of the new edge. If None, a unique numeric ID will be created.
-        **attr : dict, optional
-            Attributes of the new edge.
-
-        Raises
-        -----
-        XGIError
-            If `members` is empty.
-
-        See Also
-        --------
-        add_edges_from : Add a collection of edges.
-
-        Examples
-        --------
-
-        Add edges with or without specifying an edge id.
-
-        >>> import xgi
-        >>> H = xgi.Hypergraph()
-        >>> H.add_edge([1, 2, 3])
-        >>> H.add_edge([3, 4], id='myedge')
-        >>> H.edges
-        EdgeView((0, 'myedge'))
-
-        Access attributes using square brackets.  By default no attributes are created.
-
-        >>> H.edges[0]
-        {}
-        >>> H.add_edge([1, 4], color='red', place='peru')
-        >>> H.edges
-        EdgeView((0, 'myedge', 1))
-        >>> H.edges[1]
-        {'color': 'red', 'place': 'peru'}
-
-        """
-        members = set(members)
         if not members:
             raise XGIError("Cannot add an empty edge")
 
-        if id in self._edge.keys():  # check that uid is not present yet
+        if id in self._edge_in.keys():  # check that uid is not present yet
             warn(f"uid {id} already exists, cannot add edge {members}")
             return
 
-        uid = next(self._edge_uid) if not id else id
+        uid = next(self._edge_uid) if id is None else id
 
-        self._edge[uid] = set()
-        for node in members:
-            if node not in self._node:
-                self._node[node] = set()
+        self._edge_in[uid] = set()
+        self._edge_out[uid] = set()
+
+        for node in head:
+            if node not in self._node_out:
+                self._node_in[node] = set()
+                self._node_out[node] = set()
                 self._node_attr[node] = self._node_attr_dict_factory()
-            self._node[node].add(uid)
-            self._edge[uid].add(node)
+            self._node_out[node].add(uid)
+            self._edge_in[uid].add(node)
+        
+        for node in tail:
+            if node not in self._node_in:
+                self._node_in[node] = set()
+                self._node_out[node] = set()
+                self._node_attr[node] = self._node_attr_dict_factory()
+            self._node_in[node].add(uid)
+            self._edge_out[uid].add(node)
 
         self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
@@ -342,103 +315,6 @@ class DiHypergraph:
             update_uid_counter(self, id)
 
     def add_edges_from(self, ebunch_to_add, **attr):
-        """Add multiple edges with optional attributes.
-
-        Parameters
-        ----------
-        ebunch_to_add : Iterable
-
-            An iterable of edges.  This may be an iterable of iterables (Format 1),
-            where each element contains the members of the edge specified as valid node IDs.
-            Alternatively, each element could also be a tuple in any of the following
-            formats:
-
-            * Format 2: 2-tuple (members, edge_id), or
-            * Format 3: 2-tuple (members, attr), or
-            * Format 4: 3-tuple (members, edge_id, attr),
-
-            where `members` is an iterable of node IDs, `edge_id` is a hashable to use
-            as edge ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add`
-            may be a dict of the form `{edge_id: edge_members}` (Format 5).
-
-            Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while `id`s must be.
-            In Formats 2-4, each element of `ebunch_to_add` must have the same length,
-            i.e. you cannot mix different formats.  The iterables containing edge
-            members cannot be strings.
-
-        attr : \*\*kwargs, optional
-            Additional attributes to be assigned to all edges. Attribues specified via
-            `ebunch_to_add` take precedence over `attr`.
-
-        See Also
-        --------
-        add_edge : Add a single edge.
-        add_weighted_edges_from : Convenient way to add weighted edges.
-
-        Notes
-        -----
-        Adding the same edge twice will create a multi-edge. Currently
-        cannot add empty edges; the method skips over them.
-
-        Examples
-        --------
-        >>> import xgi
-        >>> H = xgi.Hypergraph()
-
-        When specifying edges by their members only, numeric edge IDs will be assigned
-        automatically.
-
-        >>> H.add_edges_from([[0, 1], [1, 2], [2, 3, 4]])
-        >>> H.edges.members(dtype=dict)
-        {0: {0, 1}, 1: {1, 2}, 2: {2, 3, 4}}
-
-        Custom edge ids can be specified using a dict.
-
-        >>> H = xgi.Hypergraph()
-        >>> H.add_edges_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
-        >>> H.edges.members(dtype=dict)
-        {'one': {0, 1}, 'two': {1, 2}, 'three': {2, 3, 4}}
-
-        You can use the dict format to easily add edges from another hypergraph.
-
-        >>> H2 = xgi.Hypergraph()
-        >>> H2.add_edges_from(H.edges.members(dtype=dict))
-        >>> H.edges == H2.edges
-        True
-
-        Alternatively, edge ids can be specified using an iterable of 2-tuples.
-
-        >>> H = xgi.Hypergraph()
-        >>> H.add_edges_from([([0, 1], 'one'), ([1, 2], 'two'), ([2, 3, 4], 'three')])
-        >>> H.edges.members(dtype=dict)
-        {'one': {0, 1}, 'two': {1, 2}, 'three': {2, 3, 4}}
-
-        Attributes for each edge may be specified using a 2-tuple for each edge.
-        Numeric IDs will be assigned automatically.
-
-        >>> H = xgi.Hypergraph()
-        >>> edges = [
-        ...     ([0, 1], {'color': 'red'}),
-        ...     ([1, 2], {'age': 30}),
-        ...     ([2, 3, 4], {'color': 'blue', 'age': 40}),
-        ... ]
-        >>> H.add_edges_from(edges)
-        >>> {e: H.edges[e] for e in H.edges}
-        {0: {'color': 'red'}, 1: {'age': 30}, 2: {'color': 'blue', 'age': 40}}
-
-        Attributes and custom IDs may be specified using a 3-tuple for each edge.
-
-        >>> H = xgi.Hypergraph()
-        >>> edges = [
-        ...     ([0, 1], 'one', {'color': 'red'}),
-        ...     ([1, 2], 'two', {'age': 30}),
-        ...     ([2, 3, 4], 'three', {'color': 'blue', 'age': 40}),
-        ... ]
-        >>> H.add_edges_from(edges)
-        >>> {e: H.edges[e] for e in H.edges}
-        {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40}}
-
-        """
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
             for id, members in ebunch_to_add.items():
