@@ -578,10 +578,16 @@ class DiHypergraph:
         remove_edges_from : Remove multiple edges.
 
         """
+        head = self._edge_in[id].copy()
+        tail = self._edge_out[id].copy()
 
-        for node in self.edges.members(id):
-            self._node[node].remove(id)
-        del self._edge[id]
+        for node in head:
+            self._node_out[node].remove(id)
+        for node in tail:
+            self._node_in[node].remove(id)
+        
+        del self._edge_in[id]
+        del self._edge_out[id]
         del self._edge_attr[id]
 
     def remove_edges_from(self, ebunch):
@@ -603,7 +609,14 @@ class DiHypergraph:
 
         """
         for id in ebunch:
-            for node in self.edges.members(id):
-                self._node[node].remove(id)
-            del self._edge[id]
+            head = self._edge_in[id].copy()
+            tail = self._edge_out[id].copy()
+
+            for node in head:
+                self._node_out[node].remove(id)
+            for node in tail:
+                self._node_in[node].remove(id)
+            
+            del self._edge_in[id]
+            del self._edge_out[id]
             del self._edge_attr[id]
