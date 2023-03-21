@@ -11,3 +11,4 @@ xgi.drawing.layout
    .. autofunction:: pairwise_spring_layout
    .. autofunction:: barycenter_spring_layout
    .. autofunction:: weighted_barycenter_spring_layout
+   .. autofunction:: pca_transform

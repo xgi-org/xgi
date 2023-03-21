@@ -297,14 +297,14 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
 
 def pca_transform(pos, theta, degrees=True):
     """Transforms the positions of the nodes based on the
-    principle components.
+    principal components.
 
     Parameters
     ----------
     pos : dict of numpy arrays
         The output from any layout function
     theta : float
-        The angle between the horizontal axis and the principle axis
+        The angle between the horizontal axis and the principal axis
         measured counterclockwise.
     degrees : bool, optional
         Whether the angle specified is in degrees, by default True
