@@ -3,8 +3,8 @@
 import random
 
 import networkx as nx
-from numpy.linalg import svd
 import numpy as np
+from numpy.linalg import svd
 
 from .. import convert
 from ..classes import SimplicialComplex, max_edge_order

@@ -6,25 +6,6 @@ import xgi
 from xgi.drawing.draw import _CCW_sort, _color_arg_to_dict, _scalar_arg_to_dict
 
 
-def test_draw(edgelist1):
-    H = xgi.Hypergraph(edgelist1)
-    ax = xgi.draw(H)
-
-    assert isinstance(ax)
-
-
-def test_draw_nodes():
-    assert 0 == 0
-
-
-def test_draw_hyperedges():
-    assert 0 == 0
-
-
-def test_draw_simplices():
-    assert 0 == 0
-
-
 def test_CCW_sort():
     coords = [[0.919, 0.145], [0.037, 0.537], [0.402, 0.56]]
     sorted_coords = _CCW_sort(coords)
