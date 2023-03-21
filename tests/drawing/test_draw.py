@@ -4,11 +4,13 @@ from matplotlib import cm
 
 import xgi
 from xgi.drawing.draw import _CCW_sort, _color_arg_to_dict, _scalar_arg_to_dict
-from xgi.exception import XGIError
 
 
-def test_draw():
-    assert 0 == 0
+def test_draw(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    ax = xgi.draw(H)
+
+    assert isinstance(ax)
 
 
 def test_draw_nodes():
@@ -102,11 +104,3 @@ def test_color_arg_to_dict(edgelist4):
     assert np.allclose(d[1], np.array([[0.99692426, 0.89619377, 0.84890427, 1.0]]))
     assert np.allclose(d[2], np.array([[0.98357555, 0.41279508, 0.28835063, 1.0]]))
     assert np.allclose(d[3], np.array([[0.59461745, 0.0461361, 0.07558631, 1.0]]))
-
-
-def test_draw_node_labels():
-    assert 0 == 0
-
-
-def test_draw_hyperedge_labels():
-    assert 0 == 0
