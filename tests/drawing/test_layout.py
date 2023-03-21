@@ -1,6 +1,5 @@
-import pytest
-
 import numpy as np
+import pytest
 
 import xgi
 from xgi.exception import XGIError
@@ -81,6 +80,7 @@ def test_barycenter_spring_layout(hypergraph1):
     H = xgi.random_hypergraph(10, [0.2, 0.1])
     pos = xgi.barycenter_spring_layout(H)
     assert len(pos) == H.num_nodes
+
 
 def test_weighted_barycenter_spring_layout(hypergraph1):
 
