@@ -345,12 +345,15 @@ def multiorder_laplacian(
         raise ValueError("orders and weights must have the same length.")
 
     Ls = [
-        laplacian(H, order=i, sparse=False, rescale_per_node=rescale_per_node)
-        for i in orders
+        laplacian(H, order=d, sparse=sparse, rescale_per_node=rescale_per_node)
+        for d in orders
     ]
-    Ks = [degree_matrix(H, order=i) for i in orders]
+    Ks = [degree_matrix(H, order=d) for d in orders]
 
-    L_multi = np.zeros((H.num_nodes, H.num_nodes))
+    if sparse:
+        L_multi = csr_array((H.num_nodes, H.num_nodes))
+    else:
+        L_multi = np.zeros((H.num_nodes, H.num_nodes))
 
     for L, K, w, d in zip(Ls, Ks, weights, orders):
         if np.all(K == 0):
@@ -362,10 +365,8 @@ def multiorder_laplacian(
         else:
             L_multi += L * w / np.mean(K)
 
-    if sparse:
-        L_multi = csr_array(L_multi)
+    rowdict = {i: v for i, v in enumerate(H.nodes)}
 
-    rowdict = dict(zip(range(H.num_nodes), H.nodes))
     return (L_multi, rowdict) if index else L_multi
 
 
