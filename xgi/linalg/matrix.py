@@ -98,7 +98,11 @@ def incidence_matrix(
     if order is not None:
         edge_ids = H.edges.filterby("order", order)
     if not edge_ids or not node_ids:
-        return (np.array([]), {}, {}) if index else np.array([])
+        if sparse:
+            I = csr_array((0, 0), dtype=int)
+        else:
+            I = np.empty((0, 0), dtype=int)
+        return (I, {}, {}) if index else I
 
     num_edges = len(edge_ids)
     num_nodes = len(node_ids)
@@ -110,33 +114,23 @@ def incidence_matrix(
         rowdict = {v: k for k, v in node_dict.items()}
         coldict = {v: k for k, v in edge_dict.items()}
 
+    # Compute the non-zero values, row and column indices for the given order
+    rows = []
+    cols = []
+    data = []
+    for edge in edge_ids:
+        members = H._edge[edge]
+        for node in members:
+            rows.append(node_dict[node])
+            cols.append(edge_dict[edge])
+            data.append(weight(node, edge, H))
+
+    # Create the incidence matrix as a CSR matrix
     if sparse:
-        # Create csr sparse matrix
-        rows = []
-        cols = []
-        data = []
-        for node in node_ids:
-            memberships = H.nodes.memberships(node)
-            # keep only those with right order
-            memberships = [i for i in memberships if i in edge_ids]
-            if len(memberships) > 0:
-                for edge in memberships:
-                    data.append(weight(node, edge, H))
-                    rows.append(node_dict[node])
-                    cols.append(edge_dict[edge])
-            else:  # include disconnected nodes
-                for edge in edge_ids:
-                    data.append(0)
-                    rows.append(node_dict[node])
-                    cols.append(edge_dict[edge])
-        I = csr_array((data, (rows, cols)))
+        I = csr_array((data, (rows, cols)), shape=(num_nodes, num_edges), dtype=int)
     else:
-        # Create an np.matrix
         I = np.zeros((num_nodes, num_edges), dtype=int)
-        for edge in edge_ids:
-            members = H.edges.members(edge)
-            for node in members:
-                I[node_dict[node], edge_dict[edge]] = weight(node, edge, H)
+        I[rows, cols] = data
 
     return (I, rowdict, coldict) if index else I
 
@@ -169,11 +163,12 @@ def adjacency_matrix(H, order=None, sparse=True, s=1, weighted=False, index=Fals
     """
     I, rowdict, coldict = incidence_matrix(H, order=order, sparse=sparse, index=True)
 
-    if I.shape == (0,):
+    if I.shape == (0, 0):
         if not rowdict:
-            A = np.array([])
+            A = csr_array((0, 0)) if sparse else np.empty((0, 0))
         if not coldict:
-            A = np.zeros((H.num_nodes, H.num_nodes))
+            shape = (H.num_nodes, H.num_nodes)
+            A = csr_array(shape, dtype=int) if sparse else np.zeros(shape, dtype=int)
         return (A, {}) if index else A
 
     A = I.dot(I.T)
@@ -246,7 +241,7 @@ def degree_matrix(H, order=None, index=False):
     """
     I, rowdict, _ = incidence_matrix(H, order=order, index=True)
 
-    if I.shape == (0,):
+    if I.shape == (0, 0):
         K = np.zeros(H.num_nodes)
     else:
         K = np.ravel(np.sum(I, axis=1))  # flatten
@@ -291,8 +286,9 @@ def laplacian(H, order=1, sparse=False, rescale_per_node=False, index=False):
         H, order=order, sparse=sparse, weighted=True, index=True
     )
 
-    if A.shape == (0,):
-        return (np.array([]), {}) if index else np.array([])
+    if A.shape == (0, 0):
+        L = csr_array((0, 0)) if sparse else np.empty((0, 0))
+        return (L, {}) if index else L
 
     if sparse:
         K = csr_array(diags(degree_matrix(H, order=order)))
@@ -349,12 +345,15 @@ def multiorder_laplacian(
         raise ValueError("orders and weights must have the same length.")
 
     Ls = [
-        laplacian(H, order=i, sparse=False, rescale_per_node=rescale_per_node)
-        for i in orders
+        laplacian(H, order=d, sparse=sparse, rescale_per_node=rescale_per_node)
+        for d in orders
     ]
-    Ks = [degree_matrix(H, order=i) for i in orders]
+    Ks = [degree_matrix(H, order=d) for d in orders]
 
-    L_multi = np.zeros((H.num_nodes, H.num_nodes))
+    if sparse:
+        L_multi = csr_array((H.num_nodes, H.num_nodes))
+    else:
+        L_multi = np.zeros((H.num_nodes, H.num_nodes))
 
     for L, K, w, d in zip(Ls, Ks, weights, orders):
         if np.all(K == 0):
@@ -366,10 +365,8 @@ def multiorder_laplacian(
         else:
             L_multi += L * w / np.mean(K)
 
-    if sparse:
-        L_multi = csr_array(L_multi)
+    rowdict = {i: v for i, v in enumerate(H.nodes)}
 
-    rowdict = dict(zip(range(H.num_nodes), H.nodes))
     return (L_multi, rowdict) if index else L_multi
 
 
