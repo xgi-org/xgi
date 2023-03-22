@@ -596,10 +596,20 @@ def test_boundary_matrix(edgelist4):
 
 def test_empty_order(edgelist6):
     H = xgi.Hypergraph(edgelist6)
-    I, _, _ = xgi.incidence_matrix(H, order=1, index=True)
-    A, _ = xgi.adjacency_matrix(H, order=1, index=True)
+    I, _, _ = xgi.incidence_matrix(H, order=1, sparse=False, index=True)
+    A, _ = xgi.adjacency_matrix(H, order=1, sparse=False, index=True)
+    L, _ = xgi.laplacian(H, order=1, sparse=False, index=True)
     assert I.shape == (0, 0)
     assert A.shape == (5, 5)
+    assert L.shape == (5, 5)
+
+    # sparse
+    I_sp, _, _ = xgi.incidence_matrix(H, order=1, sparse=True, index=True)
+    A_sp, _ = xgi.adjacency_matrix(H, order=1, sparse=True, index=True)
+    L_sp, _ = xgi.laplacian(H, order=1, sparse=True, index=True)
+    assert I_sp.shape == (0, 0)
+    assert A_sp.shape == (5, 5)
+    assert L_sp.shape == (5, 5)
 
 
 def test_empty():
