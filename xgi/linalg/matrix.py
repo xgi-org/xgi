@@ -98,7 +98,11 @@ def incidence_matrix(
     if order is not None:
         edge_ids = H.edges.filterby("order", order)
     if not edge_ids or not node_ids:
-        return (np.array([]), {}, {}) if index else np.array([])
+        if sparse: 
+            I = csr_array((0, 0), dtype=int)
+        else: 
+            I = np.empty((0, 0), dtype=int)
+        return (I, {}, {}) if index else I
 
     num_edges = len(edge_ids)
     num_nodes = len(node_ids)
@@ -159,11 +163,12 @@ def adjacency_matrix(H, order=None, sparse=True, s=1, weighted=False, index=Fals
     """
     I, rowdict, coldict = incidence_matrix(H, order=order, sparse=sparse, index=True)
 
-    if I.shape == (0,):
+    if I.shape == (0, 0):
         if not rowdict:
-            A = np.array([])
+            A = csr_array((0,0)) if sparse else np.empty((0,0))
         if not coldict:
-            A = np.zeros((H.num_nodes, H.num_nodes))
+            shape = (H.num_nodes, H.num_nodes)
+            A = csr_array(shape, dtype=int) if sparse else np.zeros(shape, dtype=int)
         return (A, {}) if index else A
 
     A = I.dot(I.T)
@@ -236,7 +241,7 @@ def degree_matrix(H, order=None, index=False):
     """
     I, rowdict, _ = incidence_matrix(H, order=order, index=True)
 
-    if I.shape == (0,):
+    if I.shape == (0, 0):
         K = np.zeros(H.num_nodes)
     else:
         K = np.ravel(np.sum(I, axis=1))  # flatten
@@ -281,8 +286,9 @@ def laplacian(H, order=1, sparse=False, rescale_per_node=False, index=False):
         H, order=order, sparse=sparse, weighted=True, index=True
     )
 
-    if A.shape == (0,):
-        return (np.array([]), {}) if index else np.array([])
+    if A.shape == (0, 0):
+        L = csr_array((0,0)) if sparse else np.empty((0,0))
+        return (L, {}) if index else L
 
     if sparse:
         K = csr_array(diags(degree_matrix(H, order=order)))

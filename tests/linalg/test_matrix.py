@@ -579,13 +579,13 @@ def test_empty_order(edgelist6):
     H = xgi.Hypergraph(edgelist6)
     I, _, _ = xgi.incidence_matrix(H, order=1, index=True)
     A, _ = xgi.adjacency_matrix(H, order=1, index=True)
-    assert I.shape == (0,)
+    assert I.shape == (0, 0)
     assert A.shape == (5, 5)
 
 
 def test_empty():
     H = xgi.Hypergraph([])
-    assert xgi.incidence_matrix(H).shape == (0,)
+    assert xgi.incidence_matrix(H).shape == (0, 0)
     assert xgi.adjacency_matrix(H).shape == (0, 0)
     assert xgi.laplacian(H).shape == (0, 0)
     assert xgi.clique_motif_matrix(H).shape == (0, 0)
@@ -593,7 +593,7 @@ def test_empty():
     # with indices
     data = xgi.incidence_matrix(H, index=True)
     assert len(data) == 3
-    assert data[0].shape == (0,)
+    assert data[0].shape == (0, 0)
     assert type(data[1]) == dict and type(data[2]) == dict
 
     data = xgi.adjacency_matrix(H, index=True)
