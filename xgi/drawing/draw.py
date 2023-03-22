@@ -17,9 +17,9 @@ from .layout import barycenter_spring_layout
 
 __all__ = [
     "draw",
-    "draw_xgi_nodes",
-    "draw_xgi_hyperedges",
-    "draw_xgi_simplices",
+    "draw_nodes",
+    "draw_hyperedges",
+    "draw_simplices",
     "draw_node_labels",
     "draw_hyperedge_labels",
 ]
@@ -110,13 +110,13 @@ def draw(
     >>> import xgi
     >>> H = xgi.Hypergraph()
     >>> H.add_edges_from([[1,2,3],[3,4],[4,5,6,7],[7,8,9,10,11]])
-    >>> xgi.draw(H, pos=xgi.barycenter_spring_layout(H))
+    >>> ax = xgi.draw(H, pos=xgi.barycenter_spring_layout(H))
 
     See Also
     --------
-    draw_xgi_nodes
-    draw_xgi_hyperedges
-    draw_xgi_simplices
+    draw_nodes
+    draw_hyperedges
+    draw_simplices
     draw_node_labels
     draw_hyperedge_labels
     """
@@ -152,7 +152,7 @@ def draw(
         max_order = max_edge_order(H)
 
     if isinstance(H, SimplicialComplex):
-        draw_xgi_simplices(
+        draw_simplices(
             H,
             pos,
             ax,
@@ -165,7 +165,7 @@ def draw(
             **kwargs,
         )
     elif isinstance(H, Hypergraph):
-        draw_xgi_hyperedges(
+        draw_hyperedges(
             H,
             pos,
             ax,
@@ -180,7 +180,7 @@ def draw(
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
-    draw_xgi_nodes(
+    draw_nodes(
         H,
         pos,
         ax,
@@ -208,8 +208,10 @@ def draw(
     ax.update_datalim(corners)
     ax.autoscale_view()
 
+    return ax
 
-def draw_xgi_nodes(
+
+def draw_nodes(
     H,
     pos,
     ax,
@@ -269,8 +271,8 @@ def draw_xgi_nodes(
     See Also
     --------
     draw
-    draw_xgi_hyperedges
-    draw_xgi_simplices
+    draw_hyperedges
+    draw_simplices
     draw_node_labels
     draw_hyperedge_labels
     """
@@ -313,8 +315,10 @@ def draw_xgi_nodes(
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
         draw_node_labels(H, pos, node_labels, ax_nodes=ax, **label_kwds)
 
+    return ax
 
-def draw_xgi_hyperedges(
+
+def draw_hyperedges(
     H,
     pos,
     ax,
@@ -370,8 +374,8 @@ def draw_xgi_hyperedges(
     See Also
     --------
     draw
-    draw_xgi_nodes
-    draw_xgi_simplices
+    draw_nodes
+    draw_simplices
     draw_node_labels
     draw_hyperedge_labels
     """
@@ -429,8 +433,10 @@ def draw_xgi_hyperedges(
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
         draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
 
+    return ax
 
-def draw_xgi_simplices(
+
+def draw_simplices(
     SC,
     pos,
     ax,
@@ -490,8 +496,8 @@ def draw_xgi_simplices(
     See Also
     --------
     draw
-    draw_xgi_nodes
-    draw_xgi_hyperedges
+    draw_nodes
+    draw_hyperedges
     draw_node_labels
     draw_hyperedge_labels
     """
@@ -562,6 +568,8 @@ def draw_xgi_simplices(
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
         draw_hyperedge_labels(H_, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
 
+    return ax
+
 
 def _scalar_arg_to_dict(arg, ids, min_val, max_val):
     """Map different types of arguments for drawing style to a dict with scalar values.
@@ -587,7 +595,11 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
     TypeError
         If a int, float, list, dict, or NodeStat/EdgeStat is not passed.
     """
-    if isinstance(arg, dict):
+    if isinstance(arg, str):
+        raise TypeError(
+            f"Argument must be int, float, dict, iterable, or NodeStat/EdgeStat. Received {type(arg)}"
+        )
+    elif isinstance(arg, dict):
         return {id: arg[id] for id in arg if id in ids}
     elif type(arg) in [int, float]:
         return {id: arg for id in ids}
@@ -709,9 +721,9 @@ def draw_node_labels(
     See Also
     --------
     draw
-    draw_xgi_nodes
-    draw_xgi_hyperedges
-    draw_xgi_simplices
+    draw_nodes
+    draw_hyperedges
+    draw_simplices
     draw_hyperedge_labels
     """
     if ax_nodes is None:
@@ -809,9 +821,9 @@ def draw_hyperedge_labels(
     See Also
     --------
     draw
-    draw_xgi_nodes
-    draw_xgi_hyperedges
-    draw_xgi_simplices
+    draw_nodes
+    draw_hyperedges
+    draw_simplices
     draw_node_labels
     """
     if ax_edges is None:

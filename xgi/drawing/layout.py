@@ -3,6 +3,8 @@
 import random
 
 import networkx as nx
+import numpy as np
+from numpy.linalg import inv, svd
 
 from .. import convert
 from ..classes import SimplicialComplex, max_edge_order
@@ -12,6 +14,7 @@ __all__ = [
     "pairwise_spring_layout",
     "barycenter_spring_layout",
     "weighted_barycenter_spring_layout",
+    "pca_transform",
 ]
 
 
@@ -290,3 +293,38 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
         return pos, G
     else:
         return pos
+
+
+def pca_transform(pos, theta=0, degrees=True):
+    """Transforms the positions of the nodes based on the
+    principal components.
+
+    Parameters
+    ----------
+    pos : dict of numpy arrays
+        The output from any layout function
+    theta : float, optional
+        The angle between the horizontal axis and the principal axis
+        measured counterclockwise, by default 0.
+    degrees : bool, optional
+        Whether the angle specified is in degrees (True) or in radians (False), by default True.
+
+    Returns
+    -------
+    dict of nump arrays
+        The transformed positions.
+    """
+    p = np.array(list(pos.values()))
+    _, _, w = svd(p)
+
+    pa = inv(w)
+
+    if degrees:
+        theta *= np.pi / 180
+
+    r = np.array([[np.cos(theta), np.sin(theta)], [-np.sin(theta), np.cos(theta)]])
+    t_p = p.dot(pa).dot(r).T
+    x = t_p[0]
+    y = t_p[1]
+
+    return {n: np.array([x[i], y[i]]) for i, n in enumerate(pos.keys())}

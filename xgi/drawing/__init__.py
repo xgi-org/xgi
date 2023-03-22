@@ -1,2 +1,2 @@
 from .layout import *
-from .xgi_pylab import *
+from .draw import *

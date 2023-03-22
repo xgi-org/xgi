@@ -8,4 +8,4 @@ drawing package
    :toctree: drawing
 
    ~xgi.drawing.layout
-   ~xgi.drawing.xgi_pylab
+   ~xgi.drawing.draw
