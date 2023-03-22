@@ -307,7 +307,7 @@ def pca_transform(pos, theta=0, degrees=True):
         The angle between the horizontal axis and the principal axis
         measured counterclockwise, by default 0.
     degrees : bool, optional
-        Whether the angle specified is in degrees, by default True
+        Whether the angle specified is in degrees (True) or in radians (False), by default True.
 
     Returns
     -------
