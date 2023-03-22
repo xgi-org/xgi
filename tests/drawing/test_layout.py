@@ -118,3 +118,24 @@ def test_weighted_barycenter_spring_layout(hypergraph1):
     H = xgi.random_hypergraph(10, [0.2, 0.1])
     pos = xgi.weighted_barycenter_spring_layout(H)
     assert len(pos) == H.num_nodes
+
+
+def test_pca_transform():
+    pos1 = {1: [0, 0], 2: [1, 0]}
+    transform1_pos1 = xgi.pca_transform(pos1)
+    assert np.allclose(transform1_pos1[1], np.array([0, 0]))
+    assert np.allclose(transform1_pos1[2], np.array([-1, 0]))
+
+    transform2_pos1 = xgi.pca_transform(pos1, theta=30)
+    assert np.allclose(transform2_pos1[1], np.array([0, 0]))
+    assert np.allclose(transform2_pos1[2], np.array([-0.5 * np.sqrt(3), -0.5]))
+
+    transform3_pos1 = xgi.pca_transform(pos1, theta=np.pi / 6, degrees=False)
+    assert np.allclose(transform3_pos1[1], np.array([0, 0]))
+    assert np.allclose(transform3_pos1[2], np.array([-0.5 * np.sqrt(3), -0.5]))
+
+    pos2 = {1: [-0.5, 0.5], 2: [1, 2], 3: [4, -2]}
+    transform1_pos2 = xgi.pca_transform(pos2)
+    assert np.allclose(transform1_pos2[1], np.array([-0.67296626, -0.21706316]))
+    assert np.allclose(transform1_pos2[2], np.array([-0.02177678, -2.23596193]))
+    assert np.allclose(transform1_pos2[3], np.array([4.47192387, -0.04355357]))

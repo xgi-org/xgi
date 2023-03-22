@@ -4,7 +4,7 @@ import random
 
 import networkx as nx
 import numpy as np
-from numpy.linalg import svd
+from numpy.linalg import inv, svd
 
 from .. import convert
 from ..classes import SimplicialComplex, max_edge_order
@@ -295,7 +295,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
         return pos
 
 
-def pca_transform(pos, theta, degrees=True):
+def pca_transform(pos, theta=0, degrees=True):
     """Transforms the positions of the nodes based on the
     principal components.
 
@@ -303,9 +303,9 @@ def pca_transform(pos, theta, degrees=True):
     ----------
     pos : dict of numpy arrays
         The output from any layout function
-    theta : float
+    theta : float, optional
         The angle between the horizontal axis and the principal axis
-        measured counterclockwise.
+        measured counterclockwise, by default 0.
     degrees : bool, optional
         Whether the angle specified is in degrees, by default True
 
@@ -317,11 +317,13 @@ def pca_transform(pos, theta, degrees=True):
     p = np.array(list(pos.values()))
     _, _, w = svd(p)
 
+    pa = inv(w)
+
     if degrees:
         theta *= np.pi / 180
 
     r = np.array([[np.cos(theta), np.sin(theta)], [-np.sin(theta), np.cos(theta)]])
-    t_p = p.dot(w).dot(r).T
+    t_p = p.dot(pa).dot(r).T
     x = t_p[0]
     y = t_p[1]
 

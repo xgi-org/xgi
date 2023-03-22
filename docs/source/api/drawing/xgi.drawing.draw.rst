@@ -1,9 +1,9 @@
-xgi.drawing.xgi_pylab
-=====================
+xgi.drawing.draw
+================
 
-.. currentmodule:: xgi.drawing.xgi_pylab
+.. currentmodule:: xgi.drawing.draw
 
-.. automodule:: xgi.drawing.xgi_pylab
+.. automodule:: xgi.drawing.draw
    
    .. rubric:: Functions
    
