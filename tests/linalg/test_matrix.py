@@ -242,11 +242,17 @@ def test_adjacency_matrix(edgelist1, edgelist4):
     assert A4[node_dict4[4], node_dict4[6]] == 0
 
     A5 = xgi.adjacency_matrix(H1, sparse=False)
+    A5_sp = xgi.adjacency_matrix(H1, sparse=True)
     assert isinstance(A5, np.ndarray)
-    assert np.all(A5 == A1.todense())
+    assert np.all(A5 == A5_sp.todense())
 
     A6 = xgi.adjacency_matrix(H1, order=1, sparse=False)
-    assert np.all(A6 == A3.todense())
+    A6_sp = xgi.adjacency_matrix(H1, order=1, sparse=True)
+    assert np.all(A6 == A6_sp.todense())
+
+    A7 = xgi.adjacency_matrix(H1, order=2, sparse=False)
+    A7_sp = xgi.adjacency_matrix(H1, order=2, sparse=True)
+    assert np.all(A7 == A7_sp.todense())
 
 
 def test_laplacian(edgelist2, edgelist6):
@@ -318,6 +324,19 @@ def test_laplacian(edgelist2, edgelist6):
     L4 = xgi.laplacian(H1, order=2, sparse=True)
     assert isinstance(L4, csr_array)
     assert np.all(L1 == L4.todense())
+
+    L5 = xgi.laplacian(H1, sparse=False)
+    L5_sp = xgi.laplacian(H1, sparse=True)
+    assert isinstance(L5, np.ndarray)
+    assert np.all(L5 == L5_sp.todense())
+
+    L6 = xgi.laplacian(H1, order=1, sparse=False)
+    L6_sp = xgi.laplacian(H1, order=1, sparse=True)
+    assert np.all(L6 == L6_sp.todense())
+
+    L7 = xgi.laplacian(H1, order=2, sparse=False)
+    L7_sp = xgi.laplacian(H1, order=2, sparse=True)
+    assert np.all(L7 == L7_sp.todense())
 
 
 def test_multiorder_laplacian(edgelist2, edgelist6):
@@ -610,3 +629,14 @@ def test_empty():
     assert len(data) == 2
     assert data[0].shape == (0, 0)
     assert type(data[1]) == dict
+
+    # sparse 
+    assert xgi.incidence_matrix(H, sparse=True).shape == (0, 0)
+    assert xgi.incidence_matrix(H, sparse=False).shape == (0, 0)
+
+    assert xgi.adjacency_matrix(H, sparse=True).shape == (0, 0)
+    assert xgi.adjacency_matrix(H, sparse=False).shape == (0, 0)
+
+    assert xgi.laplacian(H, sparse=True).shape == (0, 0)
+    assert xgi.laplacian(H, sparse=False).shape == (0, 0)
+
