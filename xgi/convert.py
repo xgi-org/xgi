@@ -5,23 +5,11 @@ import networkx as nx
 import pandas as pd
 from networkx.algorithms import bipartite
 from numpy import matrix, ndarray
-from scipy.sparse import (
-    coo_array,
-    coo_matrix,
-    csc_array,
-    csc_matrix,
-    csr_array,
-    csr_matrix,
-    lil_array,
-    lil_matrix,
-)
+from scipy.sparse import (coo_array, coo_matrix, csc_array, csc_matrix,
+                          csr_array, csr_matrix, lil_array, lil_matrix)
 
-from .classes import (
-    Hypergraph,
-    SimplicialComplex,
-    maximal_simplices,
-    set_edge_attributes,
-)
+from .classes import (Hypergraph, SimplicialComplex, maximal_simplices,
+                      set_edge_attributes)
 from .exception import XGIError
 from .generators import empty_hypergraph, empty_simplicial_complex
 from .linalg import adjacency_matrix, incidence_matrix
@@ -136,7 +124,7 @@ def convert_to_graph(H):
 
 def convert_to_line_graph(H):
     """Line graph of the hypergraph.
-    
+
     The line graph of the hypergraph `H` is the graph whose
     nodes correspond to each hyperedge in `H`, linked together
     if they share at least one vertex.
@@ -155,7 +143,7 @@ def convert_to_line_graph(H):
     LG = nx.Graph()
 
     edge_label_dict = {tuple(edge): index for index, edge in H._edge.items()}
-    
+
     nodes = sorted(set(edge_label_dict.values()))
     LG.add_nodes_from(nodes)
 
@@ -492,7 +480,7 @@ def from_simplicial_complex_to_hypergraph(SC):
 
     max_simplices = maximal_simplices(SC)
     H = Hypergraph()
-    H.add_nodes_from(SC.nodes) # to keep node order and isolated nodes
+    H.add_nodes_from(SC.nodes)  # to keep node order and isolated nodes
     H.add_edges_from([list(SC.edges.members(e)) for e in max_simplices])
     return H
 

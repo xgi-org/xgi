@@ -98,9 +98,9 @@ def incidence_matrix(
     if order is not None:
         edge_ids = H.edges.filterby("order", order)
     if not edge_ids or not node_ids:
-        if sparse: 
+        if sparse:
             I = csr_array((0, 0), dtype=int)
-        else: 
+        else:
             I = np.empty((0, 0), dtype=int)
         return (I, {}, {}) if index else I
 
@@ -124,14 +124,14 @@ def incidence_matrix(
             rows.append(node_dict[node])
             cols.append(edge_dict[edge])
             data.append(weight(node, edge, H))
-    
+
     # Create the incidence matrix as a CSR matrix
     if sparse:
         I = csr_array((data, (rows, cols)), shape=(num_nodes, num_edges), dtype=int)
     else:
         I = np.zeros((num_nodes, num_edges), dtype=int)
         I[rows, cols] = data
-    
+
     return (I, rowdict, coldict) if index else I
 
 
@@ -165,7 +165,7 @@ def adjacency_matrix(H, order=None, sparse=True, s=1, weighted=False, index=Fals
 
     if I.shape == (0, 0):
         if not rowdict:
-            A = csr_array((0,0)) if sparse else np.empty((0,0))
+            A = csr_array((0, 0)) if sparse else np.empty((0, 0))
         if not coldict:
             shape = (H.num_nodes, H.num_nodes)
             A = csr_array(shape, dtype=int) if sparse else np.zeros(shape, dtype=int)
@@ -287,7 +287,7 @@ def laplacian(H, order=1, sparse=False, rescale_per_node=False, index=False):
     )
 
     if A.shape == (0, 0):
-        L = csr_array((0,0)) if sparse else np.empty((0,0))
+        L = csr_array((0, 0)) if sparse else np.empty((0, 0))
         return (L, {}) if index else L
 
     if sparse:

@@ -640,7 +640,7 @@ def test_empty():
     assert data[0].shape == (0, 0)
     assert type(data[1]) == dict
 
-    # sparse 
+    # sparse
     assert xgi.incidence_matrix(H, sparse=True).shape == (0, 0)
     assert xgi.incidence_matrix(H, sparse=False).shape == (0, 0)
 
@@ -649,4 +649,3 @@ def test_empty():
 
     assert xgi.laplacian(H, sparse=True).shape == (0, 0)
     assert xgi.laplacian(H, sparse=False).shape == (0, 0)
-

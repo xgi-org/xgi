@@ -281,7 +281,7 @@ def line_vector_centrality(H):
     vc = {node: [] for node in H.nodes}
 
     edge_label_dict = {tuple(edge): index for index, edge in H._edge.items()}
-    
+
     hyperedge_dims = {tuple(edge): len(edge) for edge in H.edges.members()}
 
     D = H.edges.size.max()
