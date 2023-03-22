@@ -110,34 +110,24 @@ def incidence_matrix(
         rowdict = {v: k for k, v in node_dict.items()}
         coldict = {v: k for k, v in edge_dict.items()}
 
+    # Compute the non-zero values, row and column indices for the given order
+    rows = []
+    cols = []
+    data = []
+    for edge in edge_ids:
+        members = H._edge[edge]
+        for node in members:
+            rows.append(node_dict[node])
+            cols.append(edge_dict[edge])
+            data.append(weight(node, edge, H))
+    
+    # Create the incidence matrix as a CSR matrix
     if sparse:
-        # Create csr sparse matrix
-        rows = []
-        cols = []
-        data = []
-        for node in node_ids:
-            memberships = H.nodes.memberships(node)
-            # keep only those with right order
-            memberships = [i for i in memberships if i in edge_ids]
-            if len(memberships) > 0:
-                for edge in memberships:
-                    data.append(weight(node, edge, H))
-                    rows.append(node_dict[node])
-                    cols.append(edge_dict[edge])
-            else:  # include disconnected nodes
-                for edge in edge_ids:
-                    data.append(0)
-                    rows.append(node_dict[node])
-                    cols.append(edge_dict[edge])
-        I = csr_array((data, (rows, cols)))
+        I = csr_array((data, (rows, cols)), shape=(num_nodes, num_edges), dtype=int)
     else:
-        # Create an np.matrix
         I = np.zeros((num_nodes, num_edges), dtype=int)
-        for edge in edge_ids:
-            members = H.edges.members(edge)
-            for node in members:
-                I[node_dict[node], edge_dict[edge]] = weight(node, edge, H)
-
+        I[rows, cols] = data
+    
     return (I, rowdict, coldict) if index else I
 
 
