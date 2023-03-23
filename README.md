@@ -89,7 +89,7 @@ Our full code of conduct, and how we enforce it, can be read in [our repository]
 ## License
 Released under the 3-Clause BSD license (see [`LICENSE.md`](LICENSE.md))
 
-Copyright (C) 2021 XGI Developers
+Copyright (C) 2021-2023 XGI Developers
 
 Nicholas Landry <nicholas.landry@uvm.edu>
 

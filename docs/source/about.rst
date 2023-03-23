@@ -108,4 +108,4 @@ License
 This project is licensed under the `BSD 3-Clause License
 <https://github.com/ComplexGroupInteractions/xgi/blob/main/LICENSE.md>`_.
 
-Copyright (C) 2021 XGI Developers
+Copyright (C) 2021-2023 XGI Developers

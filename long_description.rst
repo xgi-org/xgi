@@ -54,7 +54,7 @@ License
 -------
 Released under the 3-Clause BSD license (see the `license file <https://github.com/ComplexGroupInteractions/xgi/tree/main/license.md>`_)
 
-Copyright (C) 2021 XGI Developers
+Copyright (C) 2021-2023 XGI Developers
 
 Nicholas Landry <nicholas.landry@colorado.edu>
 
