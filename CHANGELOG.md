@@ -1,8 +1,23 @@
 # Changelog
 
-## Current version
+## v0.5.5
 
-* Added the `convert_to_line_graph()` function and the `vector_centrality()` function, which uses it (@goznalo-git).
+* Refactored `incidence_matrix()` for ~4x speedup, made output consistent for empty matrices, added tests, and refactored `multiorder_laplacian()` so all internal variables are sparse if sparse=True. Fixes [#301](https://github.com/ComplexGroupInteractions/xgi/issues/301). [#303](https://github.com/ComplexGroupInteractions/xgi/pull/303) (@maximelucas).
+* Renamed plotting functions, `xgi_pylab` module, and node/hyperedge/simplex plotting functions. All drawing functions now return axes. Added `pca_transform()` to rotate the node positions relative to the principal axes [#300](https://github.com/ComplexGroupInteractions/xgi/pull/300) (@nwlandry).
+* Changed the Github actions to test all notebooks in the tutorial folder [#299](https://github.com/ComplexGroupInteractions/xgi/pull/299) (@nwlandry).
+* Added the `convert_to_line_graph()` function and the `vector_centrality()` function, which uses it [#290](https://github.com/ComplexGroupInteractions/xgi/pull/290) (@goznalo-git).
+* Fixed the quickstart notebook by updating the synchronization  [#294](https://github.com/ComplexGroupInteractions/xgi/pull/294) (@nwlandry).
+* Added more tests for the layout functions [#296](https://github.com/ComplexGroupInteractions/xgi/pull/296) (@maximelucas).
+* Added basic tests for layout functions [#293](https://github.com/ComplexGroupInteractions/xgi/pull/293) (@maximelucas).
+* Added tests for generators [#291](https://github.com/ComplexGroupInteractions/xgi/pull/291) (@maximelucas).
+* Added the ability to specify sparsity in the matrix functions in the linalg module [#284](https://github.com/ComplexGroupInteractions/xgi/pull/284) (@nwlandry).
+* Added the `uniform_HSBM()` and `uniform_HPPM` generative models [#286](https://github.com/ComplexGroupInteractions/xgi/pull/286) (@nwlandry).
+* Up-versioned requirements to fix [#287](https://github.com/ComplexGroupInteractions/xgi/issues/287) and make compatible with NetworkX [#288](https://github.com/ComplexGroupInteractions/xgi/pull/288) (@nwlandry).
+* Added code coverage with `codecov` and displayed coverage on main page [#285](https://github.com/ComplexGroupInteractions/xgi/pull/285) (@nwlandry).
+* Fixed a bug in the `add_edge()` method [#289](https://github.com/ComplexGroupInteractions/xgi/pull/289) (@nwlandry).
+* Added examples of sorting matrices by node/edge IDs to the documentation [#282](https://github.com/ComplexGroupInteractions/xgi/pull/282) (@nwlandry).
+* Added the ability in `draw()` to plot any node positions by rescaling the plot area [#279](https://github.com/ComplexGroupInteractions/xgi/pull/279) (@maximelucas).
+
 
 ## v0.5.4
 
