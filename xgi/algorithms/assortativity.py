@@ -37,8 +37,10 @@ def dynamical_assortativity(H):
     DOI: 10.1063/5.0086905
 
     """
-    if H.num_nodes == 0 or H.num_edges == 0:
-        raise XGIError("Hypergraph must contain nodes and edges!")
+    if H.num_nodes == 0:
+        raise XGIError("Hypergraph must contain nodes")
+    elif H.num_edges == 0:
+        raise XGIError("Hypergraph must contain edges!")
 
     if not is_uniform(H):
         raise XGIError("Hypergraph must be uniform!")
