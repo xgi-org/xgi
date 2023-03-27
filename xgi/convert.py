@@ -1,15 +1,28 @@
 from collections import defaultdict
 from copy import deepcopy
+from itertools import combinations
 
 import networkx as nx
 import pandas as pd
 from networkx.algorithms import bipartite
 from numpy import matrix, ndarray
-from scipy.sparse import (coo_array, coo_matrix, csc_array, csc_matrix,
-                          csr_array, csr_matrix, lil_array, lil_matrix)
+from scipy.sparse import (
+    coo_array,
+    coo_matrix,
+    csc_array,
+    csc_matrix,
+    csr_array,
+    csr_matrix,
+    lil_array,
+    lil_matrix,
+)
 
-from .classes import (Hypergraph, SimplicialComplex, maximal_simplices,
-                      set_edge_attributes)
+from .classes import (
+    Hypergraph,
+    SimplicialComplex,
+    maximal_simplices,
+    set_edge_attributes,
+)
 from .exception import XGIError
 from .generators import empty_hypergraph, empty_simplicial_complex
 from .linalg import adjacency_matrix, incidence_matrix
