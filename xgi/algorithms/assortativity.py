@@ -82,6 +82,11 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     float
         the degree assortativity
 
+    Raises
+    ------
+    XGIError
+        If there are no nodes or no edges
+
     References
     ----------
     Phil Chodrow,
@@ -89,6 +94,12 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     Journal of Complex Networks 2020.
     DOI: 10.1093/comnet/cnaa018
     """
+
+    if H.num_nodes == 0:
+        raise XGIError("Hypergraph must contain nodes")
+    elif H.num_edges == 0:
+        raise XGIError("Hypergraph must contain edges!")
+
     degs = H.degree()
     if exact:
         k1k2 = [

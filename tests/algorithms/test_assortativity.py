@@ -50,6 +50,15 @@ def test_degree_assortativity(edgelist1, edgelist5):
     assert -1 <= xgi.degree_assortativity(H1, kind="top-2", exact=True) <= 1
     assert -1 <= xgi.degree_assortativity(H1, kind="top-bottom", exact=True) <= 1
 
+    # test empty
+    H = xgi.Hypergraph()
+    with pytest.raises(XGIError):
+        xgi.degree_assortativity(H)
+
+    H.add_nodes_from([0, 1, 2])
+    with pytest.raises(XGIError):
+        xgi.degree_assortativity(H)
+
 
 def test_choose_degrees(edgelist1, edgelist6):
     H1 = xgi.Hypergraph(edgelist1)
