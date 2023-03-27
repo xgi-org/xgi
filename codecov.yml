@@ -6,8 +6,8 @@ coverage:
     project:
       default:
         # basic
-        target: 0
-        threshold: 1
+        target: auto
+        threshold: 0.5
     patch:
       default:
         # basic
