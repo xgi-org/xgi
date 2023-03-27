@@ -507,7 +507,7 @@ def draw_simplices(
         SC = SimplicialComplex(max_edges)  # SC without simplices larger than max_order
 
     # Plot only the maximal simplices, thus let's convert the SC to H
-    H_ = convert.from_simplicial_complex_to_hypergraph(SC)
+    H_ = convert.from_max_simplices(SC)
 
     if not max_order:
         max_order = max_edge_order(H_)
