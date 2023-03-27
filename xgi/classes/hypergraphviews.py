@@ -18,7 +18,7 @@ from .function import freeze
 __all__ = ["subhypergraph"]
 
 
-def subhypergraph(H, nodes=None, edges=None):
+def subhypergraph(H, nodes=None, edges=None, keep_isolates=True):
     """View of `H` applying a filter on nodes and edges.
 
     `subhypergraph_view` provides a read-only view of the induced subhypergraph that
@@ -46,6 +46,8 @@ def subhypergraph(H, nodes=None, edges=None):
     edges : list or set, default: None
         A list of the edges desired for the subhypergraph.
         If None, uses all the edges.
+    keep_isolates : bool, default : False
+        Whether to keep isolated nodes in the subhypergraph.
 
     Returns
     -------
@@ -65,5 +67,8 @@ def subhypergraph(H, nodes=None, edges=None):
         for uid, attr in H.edges.items()
         if uid in edges and set(H.edges.members(uid)).issubset(nodes)
     )
+
+    if not keep_isolates:
+        new.remove_nodes_from(new.nodes.isolates())
 
     return freeze(new)

@@ -1,5 +1,6 @@
 from collections import defaultdict
 from copy import deepcopy
+from itertools import combinations
 
 import networkx as nx
 import pandas as pd

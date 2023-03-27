@@ -69,3 +69,11 @@ def test_subhypergraph(edgelist1):
     assert set(new_H.nodes) == {3, 4, 5, 6}
     assert set(new_H.edges) == {2}
     assert set(new_H.nodes.isolates(ignore_singletons=False)) == {3, 4}
+
+    # test keep isolates
+    new_H = xgi.classes.hypergraphviews.subhypergraph(
+        H, nodes=[3, 4, 5, 6], edges=[2], keep_isolates=False
+    )
+    assert set(new_H.nodes) == {5, 6}
+    assert set(new_H.edges) == {2}
+    assert set(new_H.nodes.isolates(ignore_singletons=False)) == set()
