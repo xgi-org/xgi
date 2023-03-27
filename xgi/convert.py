@@ -38,7 +38,7 @@ __all__ = [
     "from_bipartite_pandas_dataframe",
     "to_bipartite_pandas_dataframe",
     "from_incidence_matrix",
-    "from_simplicial_complex_to_hypergraph",
+    "from_max_simplices",
     "to_incidence_matrix",
     "from_bipartite_graph",
     "to_bipartite_graph",
@@ -474,7 +474,7 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
     return H
 
 
-def from_simplicial_complex_to_hypergraph(SC):
+def from_max_simplices(SC):
     """Returns a hypergraph constructed from the
     maximal simplices of the provided simplicial complex.
 

@@ -56,7 +56,7 @@ def random_layout(H, center=None, dim=2, seed=None):
     import numpy as np
 
     if isinstance(H, SimplicialComplex):
-        H = convert.from_simplicial_complex_to_hypergraph(H)
+        H = convert.from_max_simplices(H)
 
     if seed is not None:
         np.random.seed(seed)
@@ -115,7 +115,7 @@ def pairwise_spring_layout(H, seed=None):
         random.seed(seed)
 
     if isinstance(H, SimplicialComplex):
-        H = convert.from_simplicial_complex_to_hypergraph(H)
+        H = convert.from_max_simplices(H)
     G = convert.convert_to_graph(H)
     pos = nx.spring_layout(G, seed=seed)
     return pos
@@ -165,7 +165,7 @@ def barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
         random.seed(seed)
 
     if isinstance(H, SimplicialComplex):
-        H = convert.from_simplicial_complex_to_hypergraph(H)
+        H = convert.from_max_simplices(H)
 
     # Creating the projected networkx Graph, I will fill it manually
     G = nx.Graph()
@@ -253,7 +253,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
         random.seed(seed)
 
     if isinstance(H, SimplicialComplex):
-        H = convert.from_simplicial_complex_to_hypergraph(H)
+        H = convert.from_max_simplices(H)
 
     # Creating the projected networkx Graph, I will fill it manually
     G = nx.Graph()
