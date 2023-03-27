@@ -1,10 +1,14 @@
 coverage:
   precision: 2
   round: down
-  range: "60..85"
+  range: 60..85
   status:
     project:
       default:
         # basic
         target: 0
         threshold: 1
+    patch:
+      default:
+        # basic
+        target: 0
