@@ -7,7 +7,6 @@ import xgi
 
 
 def test_chung_lu_hypergraph():
-
     k1 = {1: 1, 2: 2, 3: 3, 4: 4}
     k2 = {1: 2, 2: 2, 3: 3, 4: 3}
     H = xgi.chung_lu_hypergraph(k1, k2)
@@ -27,7 +26,6 @@ def test_chung_lu_hypergraph():
 
 
 def test_dcsbm_hypergraph():
-
     n = 50
     k1 = {i: random.randint(1, n) for i in range(n)}
     k2 = {i: sorted(k1.values())[i] for i in range(n)}
@@ -48,7 +46,6 @@ def test_dcsbm_hypergraph():
 
 
 def test_random_hypergraph():
-
     # seed
     H1 = xgi.random_hypergraph(10, [0.1, 0.001], seed=1)
     H2 = xgi.random_hypergraph(10, [0.1, 0.001], seed=2)
@@ -65,7 +62,6 @@ def test_random_hypergraph():
 
 
 def test_random_simplicial_complex():
-
     # seed
     S1 = xgi.random_simplicial_complex(10, [0.1, 0.001], seed=1)
     S2 = xgi.random_simplicial_complex(10, [0.1, 0.001], seed=2)
@@ -82,7 +78,6 @@ def test_random_simplicial_complex():
 
 
 def test_random_flag_complex():
-
     # seed
     S1 = xgi.random_flag_complex(10, 0.1, seed=1)
     S2 = xgi.random_flag_complex(10, 0.1, seed=2)
@@ -99,7 +94,6 @@ def test_random_flag_complex():
 
 
 def test_random_flag_complex_d2():
-
     # seed
     S1 = xgi.random_flag_complex_d2(10, 0.1, seed=1)
     S2 = xgi.random_flag_complex_d2(10, 0.1, seed=2)

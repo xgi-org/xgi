@@ -77,19 +77,16 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
         theta = np.random.random(n) * 2 * np.pi
 
     for t in range(timesteps):
-
         theta_time[t] = theta
 
         r1 = np.zeros(n, dtype=complex)
         r2 = np.zeros(n, dtype=complex)
 
         for i, j in links:
-
             r1[i] += np.exp(1j * theta[j])
             r1[j] += np.exp(1j * theta[i])
 
         for i, j, k in triangles:
-
             r2[i] += np.exp(2j * theta[j] - 1j * theta[k]) + np.exp(
                 2j * theta[k] - 1j * theta[j]
             )

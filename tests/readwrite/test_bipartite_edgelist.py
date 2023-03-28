@@ -41,7 +41,6 @@ bipartite_edgelist_commas_string = """0,0
     ),
 )
 def test_read_bipartite_edgelist(file_string, extra_kwargs):
-
     _, filename = tempfile.mkstemp()
 
     with open(filename, "w") as file:

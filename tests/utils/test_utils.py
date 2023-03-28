@@ -17,7 +17,6 @@ def test_dual_dict(dict5):
 
 
 def test_powerset():
-
     edge = [1, 2, 3, 4]
 
     PS = xgi.powerset(edge)
@@ -47,7 +46,6 @@ def test_powerset():
 
 
 def test_find_triangles():
-
     G = nx.erdos_renyi_graph(20, 0.2, seed=0)
     triangles = xgi.find_triangles(G)
 

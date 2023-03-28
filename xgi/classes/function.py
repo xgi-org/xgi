@@ -906,7 +906,6 @@ def subfaces(edges, order=None):
         if order is None:  # add all subfaces down to nodes
             faces_to_add = list(powerset(edge))
         elif order == -1:  # add subfaces of order below
-
             faces_to_add = list(combinations(edge, size - 1))
         elif order >= 0:  # add subfaces of order d
             faces_to_add = list(combinations(edge, order + 1))

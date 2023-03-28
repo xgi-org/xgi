@@ -268,7 +268,6 @@ class SimplicialComplex(Hypergraph):
         faces = self._subfaces(members)
         faces = set(faces)  # get unique faces
         for members_sub in faces:
-
             # check that it does not exist yet (based on members, not ID)
             if not members_sub or self.has_simplex(members_sub):
                 continue
@@ -415,10 +414,8 @@ class SimplicialComplex(Hypergraph):
 
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
-
             faces = []  # container to store subfaces
             for id, members in ebunch_to_add.items():
-
                 # check that it does not exist yet (based on members, not ID)
                 if not members or self.has_simplex(members):
                     continue
@@ -571,7 +568,6 @@ class SimplicialComplex(Hypergraph):
         # add subfaces
         faces = set(faces)  # get unique faces
         for members in faces:
-
             # check that it does not exist yet (based on members, not ID)
             if not members or self.has_simplex(members):
                 continue
@@ -683,7 +679,6 @@ class SimplicialComplex(Hypergraph):
         remove_edges_from : remove a collection of edges
         """
         try:
-
             # remove all simplices that contain simplex
             supfaces_ids = self._supfaces_id(self._edge[id])
             for sup_id in supfaces_ids:

@@ -6,7 +6,6 @@ from xgi.exception import XGIError
 
 
 def test_random_layout():
-
     H = xgi.random_hypergraph(10, [0.2], seed=1)
 
     # seed
@@ -27,7 +26,6 @@ def test_random_layout():
 
 
 def test_pairwise_spring_layout():
-
     H = xgi.random_hypergraph(10, [0.2], seed=1)
 
     # seed
@@ -47,7 +45,6 @@ def test_pairwise_spring_layout():
 
 
 def test_barycenter_spring_layout(hypergraph1):
-
     H = xgi.random_hypergraph(10, [0.2], seed=1)
 
     # seed
@@ -83,7 +80,6 @@ def test_barycenter_spring_layout(hypergraph1):
 
 
 def test_weighted_barycenter_spring_layout(hypergraph1):
-
     H = xgi.random_hypergraph(10, [0.2], seed=1)
 
     # seed

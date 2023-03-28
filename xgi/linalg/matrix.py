@@ -510,7 +510,6 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
 
 
 def hodge_laplacian(S, order=1, orientations=None, index=False):
-
     """
     A function to compute the Hodge Laplacians of an oriented
     simplicial complex.
