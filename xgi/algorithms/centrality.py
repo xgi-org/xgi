@@ -53,64 +53,6 @@ def CEC_centrality(H, tol=1e-6):
     return {node_dict[n]: v[n].item() for n in node_dict}
 
 
-def ZEC_centrality(H, max_iter=100, tol=1e-6):
-    """Compute the ZEC centrality of a hypergraph.
-
-    Parameters
-    ----------
-    H : Hypergraph
-        The hypergraph of interest.
-    max_iter : int, default: 100
-        The maximum number of iterations before the algorithm terminates.
-    tol : float > 0, default: 1e-6
-        The desired L2 error in the centrality vector.
-
-    Returns
-    -------
-    dict
-        Centrality, where keys are node IDs and values are centralities. The
-        centralities are 1-normalized.
-
-    Notes
-    -----
-    As noted in the corresponding reference, the eigenvectors may not be unique,
-    i.e., the algorithm may converge to different values for each run.
-
-    References
-    ----------
-    Three Hypergraph Eigenvector Centralities,
-    Austin R. Benson,
-    https://doi.org/10.1137/18M1203031
-    """
-    from ..algorithms import is_connected
-
-    # if there aren't any nodes, return an empty dict
-    if H.num_nodes == 0:
-        return dict()
-    # if the hypergraph is not connected,
-    # this metric doesn't make sense and should return NaN.
-    if not is_connected(H):
-        return {n: np.NaN for n in H.nodes}
-
-    new_H = convert_labels_to_integers(H, "old-label")
-
-    g = lambda v, e: np.prod(v[list(e)])
-
-    x = np.random.uniform(size=(new_H.num_nodes))
-    x = x / norm(x, 1)
-
-    for iter in range(max_iter):
-        new_x = apply(new_H, x, g)
-        # multiply by the sign to try and enforce positivity
-        new_x = np.sign(new_x[0]) * new_x / norm(new_x, 1)
-        if norm(x - new_x) <= tol:
-            break
-        x = new_x.copy()
-    else:
-        warn("Iteration did not converge!")
-    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
-
-
 def HEC_centrality(H, max_iter=100, tol=1e-6):
     """Compute the HEC centrality of a uniform hypergraph.
 
