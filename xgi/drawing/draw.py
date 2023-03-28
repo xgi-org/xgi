@@ -81,7 +81,7 @@ def draw(
         If a dict, must contain (node_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
         linear interpolation defined between min_node_lw and max_node_lw.
-    node_size : int, float, dict, iterable, or NodeStat (default=10)
+    node_size : int, float, dict, iterable, or NodeStat (default=15)
         Radius of the nodes in pixels.  If int or float, use the same radius for all nodes.
         If a dict, must contain (node_id: radius) pairs.  If iterable, assume the radiuses are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
@@ -213,15 +213,15 @@ def draw(
 
 def draw_nodes(
     H,
-    pos,
-    ax,
-    node_fc,
-    node_ec,
-    node_lw,
-    node_size,
-    zorder,
-    settings,
-    node_labels,
+    pos=None,
+    ax=None,
+    node_fc="white",
+    node_ec="black",
+    node_lw=1,
+    node_size=15,
+    zorder=None,
+    settings=None,
+    node_labels=False,
     **kwargs,
 ):
     """Draw the nodes of a hypergraph
@@ -231,9 +231,10 @@ def draw_nodes(
     H : Hypergraph or SimplicialComplex
         Higher-order network to plot.
     ax : matplotlib.pyplot.axes
-    pos : dict
-        Dictionary of positions node_id:(x,y) of every node.
-    node_fc : str, dict, iterable, or NodeStat
+    pos : dict (default=None)
+        If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
+        If None (default), use the `barycenter_spring_layout` to compute the positions.
+    node_fc : str, dict, iterable, or NodeStat (default='white')
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the nodes are found in H.nodes. If NodeStat,
@@ -248,7 +249,7 @@ def draw_nodes(
         If a dict, must contain (node_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
         linear interpolation defined between min_node_lw and max_node_lw.
-    node_size : int, float, dict, iterable, or NodeStat (default=10)
+    node_size : int, float, dict, iterable, or NodeStat (default=15)
         Radius of the nodes in pixels.  If int or float, use the same radius for all nodes.
         If a dict, must contain (node_id: radius) pairs.  If iterable, assume the radiuses are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
@@ -276,6 +277,25 @@ def draw_nodes(
     draw_node_labels
     draw_hyperedge_labels
     """
+
+    if settings is None:
+        settings = {
+            "min_node_size": 10.0,
+            "max_node_size": 30.0,
+            "min_node_lw": 1.0,
+            "max_node_lw": 5.0,
+            "node_fc_cmap": cm.Reds,
+            "node_ec_cmap": cm.Greys,
+        }
+
+    settings.update(kwargs)
+
+    if pos is None:
+        pos = barycenter_spring_layout(H)
+
+    if ax is None:
+        ax = plt.gca()
+
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
     node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
     node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_ec_cmap"])
@@ -320,14 +340,14 @@ def draw_nodes(
 
 def draw_hyperedges(
     H,
-    pos,
-    ax,
-    dyad_color,
-    dyad_lw,
-    edge_fc,
-    max_order,
-    settings,
-    hyperedge_labels,
+    pos=None,
+    ax=None,
+    dyad_color="black",
+    dyad_lw=1.5,
+    edge_fc=None,
+    max_order=None,
+    settings=None,
+    hyperedge_labels=False,
     **kwargs,
 ):
     """Draw hyperedges.
@@ -336,14 +356,15 @@ def draw_hyperedges(
     ----------
     H : Hypergraph
     ax : matplotlib.pyplot.axes
-    pos : dict
-        Dictionary of positions node_id:(x,y) of every node.
-    dyad_color : str, dict, iterable, or EdgeStat
+    pos : dict (default=None)
+        If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
+        If None (default), use the `barycenter_spring_layout` to compute the positions.
+    dyad_color : str, dict, iterable, or EdgeStat (default='black')
         Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
         contain (edge_id: color_str) pairs.  If iterable, assume the colors are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
         (specified with dyad_color_cmap) associated to it.
-    dyad_lw : int, float, dict, iterable, or EdgeStat
+    dyad_lw : int, float, dict, iterable, or EdgeStat (default=1.5)
         Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all edges.
         If a dict, must contain (edge_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a monotonic
@@ -353,9 +374,9 @@ def draw_hyperedges(
         contain (edge_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the hyperedges are found in H.edges. If EdgeStat,
         use the colormap specified with edge_fc_cmap.
-    max_order : int
+    max_order : int (default=None)
         Maximum of hyperedges to plot.
-    hyperedge_labels : bool, or dict
+    hyperedge_labels : bool, or dict (default=False)
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
@@ -380,8 +401,24 @@ def draw_hyperedges(
     draw_hyperedge_labels
     """
 
-    if not max_order:
+    if pos is None:
+        pos = barycenter_spring_layout(H)
+
+    if ax is None:
+        ax = plt.gca()
+
+    if max_order is None:
         max_order = max_edge_order(H)
+
+    if settings is None:
+        settings = {
+            "min_dyad_lw": 2.0,
+            "max_dyad_lw": 10.0,
+            "edge_fc_cmap": cm.Blues,
+            "dyad_color_cmap": cm.Greys,
+        }
+
+    settings.update(kwargs)
 
     dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
     dyad_lw = _scalar_arg_to_dict(
@@ -438,14 +475,14 @@ def draw_hyperedges(
 
 def draw_simplices(
     SC,
-    pos,
-    ax,
-    dyad_color,
-    dyad_lw,
-    edge_fc,
-    max_order,
-    settings,
-    hyperedge_labels,
+    pos=None,
+    ax=None,
+    dyad_color="black",
+    dyad_lw=1.5,
+    edge_fc=None,
+    max_order=None,
+    settings=None,
+    hyperedge_labels=False,
     **kwargs,
 ):
     """Draw maximal simplices and pairwise faces.
@@ -454,8 +491,9 @@ def draw_simplices(
     ----------
     SC : SimplicialComplex
     ax : matplotlib.pyplot.axes
-    pos : dict
-        Dictionary of positions node_id:(x,y) of every node.
+    pos : dict (default=None)
+        If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
+        If None (default), use the `barycenter_spring_layout` to compute the positions.
     dyad_color : str, dict, iterable, or EdgeStat
         Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
         contain (edge_id: color_str) pairs.  If iterable, assume the colors are
@@ -501,6 +539,22 @@ def draw_simplices(
     draw_node_labels
     draw_hyperedge_labels
     """
+
+    if pos is None:
+        pos = barycenter_spring_layout(H)
+
+    if ax is None:
+        ax = plt.gca()
+
+    if settings is None:
+        settings = {
+            "min_dyad_lw": 2.0,
+            "max_dyad_lw": 10.0,
+            "edge_fc_cmap": cm.Blues,
+            "dyad_color_cmap": cm.Greys,
+        }
+
+    settings.update(kwargs)
 
     if max_order:
         max_edges = SC.edges.filterby("order", max_order, "leq").members()

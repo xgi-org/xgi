@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -161,6 +162,26 @@ def test_average_neighbor_degree(edgelist1, edgelist8):
     assert H.nodes.average_neighbor_degree().aslist() == list(vals.values())
 
 
+def test_clustering():
+
+    # no nodes
+    H = xgi.Hypergraph()
+
+    assert H.clustering() == dict()
+    assert H.nodes.clustering().aslist() == []
+    assert H.nodes.clustering().asdict() == dict()
+
+    # no edges
+    H.add_nodes_from(range(3))
+    assert H.nodes.clustering().aslist() == [0.0, 0.0, 0.0]
+    assert H.nodes.clustering().asdict() == {0: 0.0, 1: 0.0, 2: 0.0}
+
+    # edges
+    edges = [[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]]
+    H = xgi.Hypergraph(edges)
+    assert np.allclose(H.nodes.clustering.aslist(), [0., 4. , 1.33333333, 3., 3.])
+
+
 def test_aggregates(edgelist1, edgelist2, edgelist8):
     H = xgi.Hypergraph(edgelist1)
     assert H.nodes.degree.max() == 2
@@ -208,6 +229,9 @@ def test_attrs(hyperwithattrs, attr1, attr2, attr3, attr4, attr5):
 
     filtered = H.nodes([1, 2, 3]).filterby("degree", 3).attrs
     assert filtered.asdict() == {3: attr3}
+
+    with pytest.raises(ValueError):
+        H.nodes.attrs(-1).asdict()
 
 
 def test_stats_are_views(edgelist1):
