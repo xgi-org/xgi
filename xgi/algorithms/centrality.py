@@ -1,6 +1,7 @@
 """Algorithms for computing the centralities of nodes (and edges) in a hypergraph."""
 from warnings import warn
 
+import networkx as nx
 import numpy as np
 from numpy.linalg import norm
 from scipy.sparse.linalg import eigsh
@@ -35,6 +36,15 @@ def CEC_centrality(H, tol=1e-6):
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
     """
+    from ..algorithms import is_connected
+
+    # if there aren't any nodes, return an empty dict
+    if H.num_nodes == 0:
+        return dict()
+    # if the hypergraph is not connected,
+    # this metric doesn't make sense and should return NaN.
+    if not is_connected(H):
+        return {n: np.NaN for n in H.nodes}
     W, node_dict = clique_motif_matrix(H, index=True)
     _, v = eigsh(W.asfptype(), k=1, which="LM", tol=tol)
 
@@ -72,6 +82,16 @@ def ZEC_centrality(H, max_iter=100, tol=1e-6):
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
     """
+    from ..algorithms import is_connected
+
+    # if there aren't any nodes, return an empty dict
+    if H.num_nodes == 0:
+        return dict()
+    # if the hypergraph is not connected,
+    # this metric doesn't make sense and should return NaN.
+    if not is_connected(H):
+        return {n: np.NaN for n in H.nodes}
+
     new_H = convert_labels_to_integers(H, "old-label")
 
     g = lambda v, e: np.prod(v[list(e)])
@@ -120,11 +140,22 @@ def HEC_centrality(H, max_iter=100, tol=1e-6):
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
     """
-    new_H = convert_labels_to_integers(H, "old-label")
+    from ..algorithms import is_connected
+
+    # if there aren't any nodes, return an empty dict
+    if H.num_nodes == 0:
+        return dict()
+    # if the hypergraph is not connected,
+    # this metric doesn't make sense and should return NaN.
+    if not is_connected(H):
+        return {n: np.NaN for n in H.nodes}
 
     m = is_uniform(H)
     if not m:
         raise XGIError("This method is not defined for non-uniform hypergraphs.")
+
+    new_H = convert_labels_to_integers(H, "old-label")
+
     f = lambda v, m: np.power(v, 1.0 / m)
     g = lambda v, x: np.prod(v[list(x)])
 
@@ -223,6 +254,15 @@ def node_edge_centrality(
     Francesco Tudisco & Desmond J. Higham,
     https://doi.org/10.1038/s42005-021-00704-2
     """
+    from ..algorithms import is_connected
+
+    # if there aren't any nodes or edges, return an empty dict
+    if H.num_nodes == 0 or H.num_edges == 0 or not is_connected(H):
+        return {n: np.NaN for n in H.nodes}, {e: np.NaN for e in H.edges}
+    # if the hypergraph is not connected,
+    # this metric doesn't make sense and should return NaN.
+    # if not is_connected(H):
+    #     return {n: np.NaN for n in H.nodes}, {e: np.NaN for e in H.edges}
 
     n = H.num_nodes
     m = H.num_edges
@@ -271,8 +311,9 @@ def line_vector_centrality(H):
     A.M. Raigorodskii, J. Flores, I. Samoylenko, K. Alfaro-Bittner, M. Perc, S. Boccaletti,
     https://doi.org/10.1016/j.chaos.2022.112397
     """
+    from ..algorithms import is_connected
 
-    if not xgi.is_connected(H):
+    if not is_connected(H):
         raise XGIError("This method is not defined for non-connected hypergraphs.")
 
     LG = convert_to_line_graph(H)
@@ -290,7 +331,6 @@ def line_vector_centrality(H):
         c_i = np.zeros(len(H.nodes))
 
         for edge, _ in list(filter(lambda x: x[1] == k, hyperedge_dims.items())):
-
             for node in edge:
                 try:
                     c_i[node] += LGcent[edge_label_dict[edge]]
