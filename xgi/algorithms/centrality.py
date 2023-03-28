@@ -11,7 +11,12 @@ from ..convert import convert_to_line_graph
 from ..exception import XGIError
 from ..linalg import clique_motif_matrix, incidence_matrix
 
-__all__ = ["CEC_centrality", "HEC_centrality", "ZEC_centrality", "node_edge_centrality"]
+__all__ = [
+    "CEC_centrality",
+    "HEC_centrality",
+    "node_edge_centrality",
+    "line_vector_centrality",
+]
 
 
 def CEC_centrality(H, tol=1e-6):
@@ -255,8 +260,12 @@ def line_vector_centrality(H):
     """
     from ..algorithms import is_connected
 
+    # If the hypergraph is empty, then return an empty dictionary
+    if H.num_nodes == 0:
+        return dict()
+
     if not is_connected(H):
-        raise XGIError("This method is not defined for non-connected hypergraphs.")
+        raise XGIError("This method is not defined for disconnected hypergraphs.")
 
     LG = convert_to_line_graph(H)
     LGcent = nx.eigenvector_centrality(LG)
