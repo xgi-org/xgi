@@ -46,7 +46,7 @@ def subhypergraph(H, nodes=None, edges=None, keep_isolates=True):
     edges : list or set, default: None
         A list of the edges desired for the subhypergraph.
         If None, uses all the edges.
-    keep_isolates : bool, default : False
+    keep_isolates : bool, default : True
         Whether to keep isolated nodes in the subhypergraph.
 
     Returns
