@@ -195,18 +195,7 @@ def draw(
     )
 
     # compute axis limits
-    pos_arr = np.asarray([[x, y] for n, (x, y) in pos.items()])
-
-    maxx, maxy = np.max(pos_arr, axis=0)
-    minx, miny = np.min(pos_arr, axis=0)
-    w = maxx - minx
-    h = maxy - miny
-
-    # update view after drawing
-    padx, pady = 0.05 * w, 0.05 * h
-    corners = (minx - padx, miny - pady), (maxx + padx, maxy + pady)
-    ax.update_datalim(corners)
-    ax.autoscale_view()
+    _update_lims(pos, ax)
 
     return ax
 
@@ -296,6 +285,10 @@ def draw_nodes(
     if ax is None:
         ax = plt.gca()
 
+    ax.get_xaxis().set_ticks([])
+    ax.get_yaxis().set_ticks([])
+    ax.axis("off")
+
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
     node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
     node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_ec_cmap"])
@@ -334,6 +327,9 @@ def draw_nodes(
             raise ValueError(f"Received invalid argument(s): {invalid_args}")
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
         draw_node_labels(H, pos, node_labels, ax_nodes=ax, **label_kwds)
+
+    # compute axis limits
+    _update_lims(pos, ax)
 
     return ax
 
@@ -410,6 +406,13 @@ def draw_hyperedges(
     if max_order is None:
         max_order = max_edge_order(H)
 
+    if edge_fc is None:
+        edge_fc = H.edges.size
+
+    ax.get_xaxis().set_ticks([])
+    ax.get_yaxis().set_ticks([])
+    ax.axis("off")
+
     if settings is None:
         settings = {
             "min_dyad_lw": 2.0,
@@ -469,6 +472,9 @@ def draw_hyperedges(
             raise ValueError(f"Received invalid argument(s): {invalid_args}")
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
         draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
+
+    # compute axis limits
+    _update_lims(pos, ax)
 
     return ax
 
@@ -540,11 +546,28 @@ def draw_simplices(
     draw_hyperedge_labels
     """
 
+    if max_order:
+        max_edges = SC.edges.filterby("order", max_order, "leq").members()
+        SC = SimplicialComplex(max_edges)  # SC without simplices larger than max_order
+
+    # Plot only the maximal simplices, thus let's convert the SC to H
+    H_ = convert.from_max_simplices(SC)
+
+    if not max_order:
+        max_order = max_edge_order(H_)
+
     if pos is None:
-        pos = barycenter_spring_layout(H)
+        pos = barycenter_spring_layout(H_)
 
     if ax is None:
         ax = plt.gca()
+
+    if edge_fc is None:
+        edge_fc = H_.edges.size
+
+    ax.get_xaxis().set_ticks([])
+    ax.get_yaxis().set_ticks([])
+    ax.axis("off")
 
     if settings is None:
         settings = {
@@ -555,16 +578,6 @@ def draw_simplices(
         }
 
     settings.update(kwargs)
-
-    if max_order:
-        max_edges = SC.edges.filterby("order", max_order, "leq").members()
-        SC = SimplicialComplex(max_edges)  # SC without simplices larger than max_order
-
-    # Plot only the maximal simplices, thus let's convert the SC to H
-    H_ = convert.from_max_simplices(SC)
-
-    if not max_order:
-        max_order = max_edge_order(H_)
 
     dyad_color = _color_arg_to_dict(dyad_color, H_.edges, settings["dyad_color_cmap"])
     dyad_lw = _scalar_arg_to_dict(
@@ -621,6 +634,9 @@ def draw_simplices(
             raise ValueError(f"Received invalid argument(s): {invalid_args}")
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
         draw_hyperedge_labels(H_, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
+
+    # compute axis limits
+    _update_lims(pos, ax)
 
     return ax
 
@@ -942,3 +958,21 @@ def draw_hyperedge_labels(
         text_items[id] = t
 
     return text_items
+
+
+def _update_lims(pos, ax):
+    """Update Axis limits based on node positions"""
+
+    # compute axis limits
+    pos_arr = np.asarray([[x, y] for n, (x, y) in pos.items()])
+
+    maxx, maxy = np.max(pos_arr, axis=0)
+    minx, miny = np.min(pos_arr, axis=0)
+    w = maxx - minx
+    h = maxy - miny
+
+    # update view after drawing
+    padx, pady = 0.05 * w, 0.05 * h
+    corners = (minx - padx, miny - pady), (maxx + padx, maxy + pady)
+    ax.update_datalim(corners)
+    ax.autoscale_view()

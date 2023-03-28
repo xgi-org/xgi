@@ -179,7 +179,7 @@ def test_clustering():
     # edges
     edges = [[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]]
     H = xgi.Hypergraph(edges)
-    assert np.allclose(H.nodes.clustering.aslist(), [0., 4. , 1.33333333, 3., 3.])
+    assert np.allclose(H.nodes.clustering.aslist(), [0.0, 4.0, 1.33333333, 3.0, 3.0])
 
 
 def test_aggregates(edgelist1, edgelist2, edgelist8):
