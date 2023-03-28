@@ -117,17 +117,12 @@ def ratio(r, m, kind="CEC"):
     m : int
         Size of edges
     kind : str, default: "CEC"
-        "CEC", "HEC", or "ZEC"
+        "CEC" or "HEC"
 
     Returns
     -------
     float
         Ratio
-
-    Raises
-    ------
-    XGIError
-        If edge size is too small for ZEC
 
     References
     ----------
