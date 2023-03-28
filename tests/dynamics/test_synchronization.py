@@ -85,7 +85,6 @@ def test_simulate_kuramoto():
 
 
 def test_compute_kuramoto_order_parameter():
-
     N = 5
     n_steps = 10
     dt = 0.002

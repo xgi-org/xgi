@@ -38,7 +38,6 @@ incidence_matrix_commas_string = """1,0,0,0
     ),
 )
 def test_read_incidence_matrix(file_string, extra_kwargs):
-
     _, filename = tempfile.mkstemp()
 
     with open(filename, "w") as file:

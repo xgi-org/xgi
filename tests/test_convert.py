@@ -52,7 +52,6 @@ def test_to_hyperedge_dict(edgelist1):
 
 
 def test_from_bipartite_pandas_dataframe(dataframe5):
-
     H1 = xgi.from_bipartite_pandas_dataframe(
         dataframe5, node_column="col2", edge_column="col1"
     )

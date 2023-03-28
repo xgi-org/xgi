@@ -65,7 +65,6 @@ def test_flag_complex():
 
 
 def test_flag_complex_d2():
-
     G = nx.erdos_renyi_graph(15, 0.3, seed=3)
 
     S = xgi.flag_complex(G, max_order=2)

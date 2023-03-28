@@ -289,7 +289,7 @@ def draw_nodes(
         node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
     )
 
-    x, y, s, c, ec, lw, = zip(
+    (x, y, s, c, ec, lw,) = zip(
         *[
             (
                 pos[i][0],

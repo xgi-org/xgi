@@ -721,7 +721,6 @@ class Hypergraph:
             if id in self._edge.keys():  # check that uid is not present yet
                 warn(f"uid {id} already exists, cannot add edge {members}.")
             else:
-
                 try:
                     self._edge[id] = set(members)
                 except TypeError as e:
@@ -740,7 +739,6 @@ class Hypergraph:
             try:
                 e = next(new_edges)
             except StopIteration:
-
                 if format2 or format4:
                     update_uid_counter(self, id)
                 break
@@ -820,7 +818,6 @@ class Hypergraph:
         """
         # Assign edges to modify
         try:
-
             temp_memberships1 = list(self._node[n_id1])
             temp_memberships1[temp_memberships1.index(e_id1)] = e_id2
 

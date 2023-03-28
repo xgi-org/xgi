@@ -5,7 +5,6 @@ from xgi.exception import IDNotFound, XGIError
 
 
 def test_num_edges_order(edgelist2):
-
     H = xgi.Hypergraph(edgelist2)
 
     assert xgi.num_edges_order(H, 0) == 0
@@ -723,7 +722,6 @@ def test_incidence_density(edgelist1):
 
 
 def test_subfaces(edgelist5):
-
     assert xgi.subfaces(edgelist5) == [
         (0,),
         (1,),

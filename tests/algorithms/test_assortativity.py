@@ -7,7 +7,6 @@ from xgi.exception import XGIError
 
 
 def test_dynamical_assortativity(edgelist1, edgelist6, edgelist9, edgelist10):
-
     H = xgi.Hypergraph()
     with pytest.raises(XGIError):
         xgi.dynamical_assortativity(H)

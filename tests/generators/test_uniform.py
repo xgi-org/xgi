@@ -21,7 +21,6 @@ def test_uniform_configuration_model_hypergraph():
 
 
 def test_uniform_HSBM():
-
     # sum of sizes != n
     with pytest.raises(XGIError):
         m = 2

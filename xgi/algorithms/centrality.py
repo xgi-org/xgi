@@ -1,6 +1,7 @@
 """Algorithms for computing the centralities of nodes (and edges) in a hypergraph."""
 from warnings import warn
 
+import networkx as nx
 import numpy as np
 from numpy.linalg import norm
 from scipy.sparse.linalg import eigsh
@@ -10,7 +11,12 @@ from ..convert import convert_to_line_graph
 from ..exception import XGIError
 from ..linalg import clique_motif_matrix, incidence_matrix
 
-__all__ = ["CEC_centrality", "HEC_centrality", "ZEC_centrality", "node_edge_centrality"]
+__all__ = [
+    "CEC_centrality",
+    "HEC_centrality",
+    "node_edge_centrality",
+    "line_vector_centrality",
+]
 
 
 def CEC_centrality(H, tol=1e-6):
@@ -35,60 +41,21 @@ def CEC_centrality(H, tol=1e-6):
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
     """
+    from ..algorithms import is_connected
+
+    # if there aren't any nodes, return an empty dict
+    if H.num_nodes == 0:
+        return dict()
+    # if the hypergraph is not connected,
+    # this metric doesn't make sense and should return NaN.
+    if not is_connected(H):
+        return {n: np.NaN for n in H.nodes}
     W, node_dict = clique_motif_matrix(H, index=True)
     _, v = eigsh(W.asfptype(), k=1, which="LM", tol=tol)
 
     # multiply by the sign to try and enforce positivity
     v = np.sign(v[0]) * v / norm(v, 1)
     return {node_dict[n]: v[n].item() for n in node_dict}
-
-
-def ZEC_centrality(H, max_iter=100, tol=1e-6):
-    """Compute the ZEC centrality of a hypergraph.
-
-    Parameters
-    ----------
-    H : Hypergraph
-        The hypergraph of interest.
-    max_iter : int, default: 100
-        The maximum number of iterations before the algorithm terminates.
-    tol : float > 0, default: 1e-6
-        The desired L2 error in the centrality vector.
-
-    Returns
-    -------
-    dict
-        Centrality, where keys are node IDs and values are centralities. The
-        centralities are 1-normalized.
-
-    Notes
-    -----
-    As noted in the corresponding reference, the eigenvectors may not be unique,
-    i.e., the algorithm may converge to different values for each run.
-
-    References
-    ----------
-    Three Hypergraph Eigenvector Centralities,
-    Austin R. Benson,
-    https://doi.org/10.1137/18M1203031
-    """
-    new_H = convert_labels_to_integers(H, "old-label")
-
-    g = lambda v, e: np.prod(v[list(e)])
-
-    x = np.random.uniform(size=(new_H.num_nodes))
-    x = x / norm(x, 1)
-
-    for iter in range(max_iter):
-        new_x = apply(new_H, x, g)
-        # multiply by the sign to try and enforce positivity
-        new_x = np.sign(new_x[0]) * new_x / norm(new_x, 1)
-        if norm(x - new_x) <= tol:
-            break
-        x = new_x.copy()
-    else:
-        warn("Iteration did not converge!")
-    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
 
 
 def HEC_centrality(H, max_iter=100, tol=1e-6):
@@ -120,11 +87,22 @@ def HEC_centrality(H, max_iter=100, tol=1e-6):
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
     """
-    new_H = convert_labels_to_integers(H, "old-label")
+    from ..algorithms import is_connected
+
+    # if there aren't any nodes, return an empty dict
+    if H.num_nodes == 0:
+        return dict()
+    # if the hypergraph is not connected,
+    # this metric doesn't make sense and should return NaN.
+    if not is_connected(H):
+        return {n: np.NaN for n in H.nodes}
 
     m = is_uniform(H)
     if not m:
         raise XGIError("This method is not defined for non-uniform hypergraphs.")
+
+    new_H = convert_labels_to_integers(H, "old-label")
+
     f = lambda v, m: np.power(v, 1.0 / m)
     g = lambda v, x: np.prod(v[list(x)])
 
@@ -223,6 +201,15 @@ def node_edge_centrality(
     Francesco Tudisco & Desmond J. Higham,
     https://doi.org/10.1038/s42005-021-00704-2
     """
+    from ..algorithms import is_connected
+
+    # if there aren't any nodes or edges, return an empty dict
+    if H.num_nodes == 0 or H.num_edges == 0 or not is_connected(H):
+        return {n: np.NaN for n in H.nodes}, {e: np.NaN for e in H.edges}
+    # if the hypergraph is not connected,
+    # this metric doesn't make sense and should return NaN.
+    # if not is_connected(H):
+    #     return {n: np.NaN for n in H.nodes}, {e: np.NaN for e in H.edges}
 
     n = H.num_nodes
     m = H.num_edges
@@ -271,9 +258,14 @@ def line_vector_centrality(H):
     A.M. Raigorodskii, J. Flores, I. Samoylenko, K. Alfaro-Bittner, M. Perc, S. Boccaletti,
     https://doi.org/10.1016/j.chaos.2022.112397
     """
+    from ..algorithms import is_connected
 
-    if not xgi.is_connected(H):
-        raise XGIError("This method is not defined for non-connected hypergraphs.")
+    # If the hypergraph is empty, then return an empty dictionary
+    if H.num_nodes == 0:
+        return dict()
+
+    if not is_connected(H):
+        raise XGIError("This method is not defined for disconnected hypergraphs.")
 
     LG = convert_to_line_graph(H)
     LGcent = nx.eigenvector_centrality(LG)
@@ -290,7 +282,6 @@ def line_vector_centrality(H):
         c_i = np.zeros(len(H.nodes))
 
         for edge, _ in list(filter(lambda x: x[1] == k, hyperedge_dims.items())):
-
             for node in edge:
                 try:
                     c_i[node] += LGcent[edge_label_dict[edge]]

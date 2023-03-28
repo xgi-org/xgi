@@ -28,7 +28,6 @@ __all__ = [
     "average_neighbor_degree",
     "clustering",
     "cec_centrality",
-    "zec_centrality",
     "hec_centrality",
     "node_edge_centrality",
 ]
@@ -259,35 +258,6 @@ def cec_centrality(net, bunch, tol=1e-6):
     https://doi.org/10.1137/18M1203031
     """
     c = xgi.CEC_centrality(net, tol)
-    return {n: c[n] for n in c if n in bunch}
-
-
-def zec_centrality(net, bunch, max_iter=10, tol=1e-6):
-    """Compute the ZEC centrality of a hypergraph.
-
-    Parameters
-    ----------
-    net : xgi.Hypergraph
-        The hypergraph of interest.
-    bunch : Iterable
-        Nodes in `net`.
-    max_iter : int, default: 10
-        The maximum number of iterations before the algorithm terminates.
-    tol : float > 0, default: 1e-6
-        The desired L2 error in the centrality vector.
-
-    Returns
-    -------
-    dict
-        Centrality, where keys are node IDs and values are centralities.
-
-    References
-    ----------
-    Three Hypergraph Eigenvector Centralities,
-    Austin R. Benson,
-    https://doi.org/10.1137/18M1203031
-    """
-    c = xgi.ZEC_centrality(net, max_iter, tol)
     return {n: c[n] for n in c if n in bunch}
 
 
