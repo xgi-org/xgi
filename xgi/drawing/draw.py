@@ -994,114 +994,54 @@ def _update_lims(pos, ax):
     ax.update_datalim(corners)
     ax.autoscale_view()
     
-def draw_hull(node_positions, radius, ax, contour_color, filling_color, alpha_filling):
-    """ Draws an hyperedge as a convex hull encompassing the nodes participating in it
-    
-    
-    Parameters
-    ----------
-    node_positions : np.array
-        array containing the positions (in 2d) of the nodes participating in the hyperedge
-    
-    radius : float
-        radius of the circle created around each node to avoid the covex hull 'touching' the nodes
-    
-    ax : matplotlib.pyplot.axes
-    
-    contour_color : string
-    
-    filling_color : string
-    
-    alpha_filling : float
-
-    Returns
-    -------
-    ax : matplotlib.pyplot.axes
-    """
-    points = node_positions.copy()
-    for i in node_positions:
+def _draw_hull(node_pos, radius, ax, edges_ec, facecolor, alpha):
+    #add_description
+    points = node_pos.copy()
+    for i in node_pos:
         center = i
-        circle = [center + radius * np.array([np.cos(theta), np.sin(theta)]) for theta in np.linspace(0, 2 * np.pi, num=100, endpoint=False)]
+        thetas = np.linspace(0, 2 * np.pi, num=100, endpoint=False)
+        circle = [center + radius * np.array([np.cos(theta), np.sin(theta)]) for theta in thetas]
         points = np.vstack([circle, points])
     
     hull = ConvexHull(points)
 
     for simplex in hull.simplices:
-        plt.plot(points[simplex,0], points[simplex,1], color=contour_color)
-    plt.fill(points[hull.vertices,0], points[hull.vertices,1], color=filling_color, alpha=alpha_filling)
+        ax.plot(points[simplex,0], points[simplex,1], color=edges_ec)
+    ax.fill(points[hull.vertices,0], points[hull.vertices,1], color=facecolor, alpha=alpha)
 
     return ax
 
 def draw_hypergraph_hull(
-        H, 
-        pos=None, 
-        ax=None, 
-        max_order=None, 
-        radius=0.05, 
-        alpha_filling=0.4, 
-        palette=None, 
-        node_size=60, 
-        node_color='tab:blue', 
-        node_shape='o', 
-        node_linewidths=1, 
-        node_edgecolors='black',
-        dyad_color='black'
-
+        H,
+        pos=None,
+        ax=None,
+        dyad_color = "black",
+        node_fc="white",
+        node_ec="black",
+        node_lw=1,
+        node_size=15,
+        edge_fc=None,
+        edges_ec="tab:gray",
+        max_order=None,
+        node_labels=False,
+        radius=0.05,
+        **kwargs
 ):
-    """Draw hypergraph with hyperedges of >3 elements displayed as convex hull
+    #add description
+    settings = {
+        "edge_fc_cmap": cm.Blues,
+        "alpha": 0.4
+    }
+    
 
-    Parameters
-    ----------
-    H : Hypergraph
+    alpha = settings["alpha"]
     
-    pos : dict (default=None)
-        If passed, this dictionary of positions node_id:(x,y) is used for placing the nodes.
-        If None (default), use the `barycenter_spring_layout` to compute the positions.
+    if edge_fc is None:
+        edge_fc = H.edges.size
+        
+    edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
     
-    ax : matplotlib.pyplot.axes (default=None)
-    
-    max_order : int (default=None)
-        Maximum of hyperedges to plot. If None (default), plots all orders.
-    
-    radius : flot (default = 0.05)
-        radius of the convex hull in the vicinity of the nodes.
-    
-    alpha_filling : float (default=0.4)
-        The hyperedges transparency.
-    palette : None or array of colors (default=None)
-        Array of colors given by the hyperedges of different orders
-    
-    node_size : scalar or array (default=300)
-        Size of nodes.  If an array it must be the same length as nodelist.
-    
-    node_color : color or array of colors (default='tab:blue')
-        Node color. Can be a single color or a sequence of colors with the same
-        length as nodelist. Color can be string or rgb (or rgba) tuple of
-        floats from 0-1. If numeric values are specified they will be
-        mapped to colors using the cmap and vmin,vmax parameters. See
-        matplotlib.scatter for more details.
-    
-    node_shape : string (default='o')
-        The marker used for nodes, used in determining edge positioning.
-        Specification is as a `matplotlib.markers` marker, e.g. one of 'so^>v<dph8'.
-    
-    node_linewidths : None, scalar, sequence (default=1.0)
-        Line width of symbol border
-    
-    node_edgecolors : None, scalar, sequence (default = 'black')
-        Colors of node borders
-    
-    dyad_color : str, dict, iterable, or EdgeStat (default='black')
-        Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
-        contain (edge_id: color_str) pairs.  If iterable, assume the colors are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
-        (specified with dyad_color_cmap) associated to it
-
-    Returns
-    -------
-    ax : matplotlib.pyplot.axes
-
-    """
+    settings.update(kwargs)
     
     if pos is None:
         pos = barycenter_spring_layout(H)
@@ -1115,9 +1055,6 @@ def draw_hypergraph_hull(
     
     if not max_order:
         max_order = max_edge_order(H)
-    
-    if palette is None:
-        palette=sns.color_palette("deep", 6)
     
     for id, he in H.edges.members(dtype=dict).items():
         d = len(he) - 1
@@ -1133,15 +1070,29 @@ def draw_hypergraph_hull(
                 y_coords,
                 color=dyad_color,
                 zorder=1,
-                alpha = 1,
+                alpha=1,
             )
             ax.add_line(line)
             
         else:
             coordinates = [[pos[n][0], pos[n][1]] for n in he]
-            draw_hull(node_positions=np.array(coordinates), radius=radius, ax=ax, contour_color='tab:gray', filling_color=palette[d-1], alpha_filling=alpha_filling)
+            _draw_hull(node_pos=np.array(coordinates), radius=radius, ax=ax, edges_ec=edges_ec, facecolor=edge_fc[id], alpha=alpha)
     
-    G=convert_to_graph(H)
-    nx.draw_networkx_nodes(G, pos=pos, node_size=node_size, node_color=node_color, node_shape=node_shape, ax=ax, linewidths=node_linewidths, edgecolors=node_edgecolors, alpha=1)    
-    
+    draw_nodes(
+        H,
+        pos,
+        ax,
+        node_fc,
+        node_ec,
+        node_lw,
+        node_size,
+        max_order,
+        settings,
+        node_labels,
+        **kwargs,
+    )
+
+    # compute axis limits
+    _update_lims(pos, ax)
+
     return ax
