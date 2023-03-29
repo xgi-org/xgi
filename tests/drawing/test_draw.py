@@ -1,9 +1,11 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from matplotlib import cm
 
 import xgi
 from xgi.drawing.draw import _CCW_sort, _color_arg_to_dict, _scalar_arg_to_dict
+from xgi.exception import XGIError
 
 
 def test_CCW_sort():
@@ -85,3 +87,85 @@ def test_color_arg_to_dict(edgelist4):
     assert np.allclose(d[1], np.array([[0.99692426, 0.89619377, 0.84890427, 1.0]]))
     assert np.allclose(d[2], np.array([[0.98357555, 0.41279508, 0.28835063, 1.0]]))
     assert np.allclose(d[3], np.array([[0.59461745, 0.0461361, 0.07558631, 1.0]]))
+
+
+def test_draw(edgelist8):
+
+    H = xgi.Hypergraph(edgelist8)
+
+    ax = xgi.draw(H)
+
+    # number of elements
+    assert len(ax.lines) == len(H.edges.filterby("size", 2))  # dyads
+    assert len(ax.patches) == len(H.edges.filterby("size", 2, mode="gt"))  # hyperedges
+    assert len(ax.collections[0].get_sizes()) == H.num_nodes  # nodes
+
+    # zorder
+    for line in ax.lines:  # dyads
+        assert line.get_zorder() == 3
+    for patch, z in zip(ax.patches, [2, 2, 0, 2, 2]):  # hyperedges
+        assert patch.get_zorder() == z
+    assert ax.collections[0].get_zorder() == 4  # nodes
+
+    plt.close()
+
+
+def test_draw_nodes(edgelist8):
+
+    H = xgi.Hypergraph(edgelist8)
+
+    ax = xgi.draw_nodes(H)
+
+    # number of elements
+    assert len(ax.lines) == 0  # dyads
+    assert len(ax.patches) == 0  # hyperedges
+    assert len(ax.collections[0].get_sizes()) == H.num_nodes  # nodes
+
+    # zorder
+    assert ax.collections[0].get_zorder() == 0  # nodes
+
+    plt.close()
+
+
+def test_draw_hyperedges(edgelist8):
+
+    H = xgi.Hypergraph(edgelist8)
+
+    ax = xgi.draw_hyperedges(H)
+
+    # number of elements
+    assert len(ax.lines) == len(H.edges.filterby("size", 2))  # dyads
+    assert len(ax.patches) == len(H.edges.filterby("size", 2, mode="gt"))  # hyperedges
+    assert len(ax.collections) == 0  # nodes
+
+    # zorder
+    for line in ax.lines:  # dyads
+        assert line.get_zorder() == 3
+    for patch, z in zip(ax.patches, [2, 2, 0, 2, 2]):  # hyperedges
+        assert patch.get_zorder() == z
+
+    plt.close()
+
+
+def test_draw_simplices(edgelist8):
+
+    with pytest.raises(XGIError):
+        H = xgi.Hypergraph(edgelist8)
+        ax = xgi.draw_simplices(H)
+        plt.close()
+
+    S = xgi.SimplicialComplex(edgelist8)
+    ax = xgi.draw_simplices(S)
+
+    # number of elements
+    assert len(ax.lines) == 18  # dyads
+    assert len(ax.patches) == 3  # hyperedges
+    assert len(ax.collections) == 0  # nodes
+
+    # zorder
+    for line in ax.lines:  # dyads
+        assert line.get_zorder() == 3
+    for patch, z in zip(ax.patches, [0, 2, 2]):  # hyperedges
+        assert patch.get_zorder() == z
+
+    plt.close()
