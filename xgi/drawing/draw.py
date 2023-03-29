@@ -613,14 +613,23 @@ def draw_simplices(
             coordinates = [[pos[n][0], pos[n][1]] for n in he]
             # Sorting the points counterclockwise (needed to have the correct filling)
             sorted_coordinates = _CCW_sort(coordinates)
-            obj = plt.Polygon(sorted_coordinates, facecolor=edge_fc[id], alpha=0.4)
+            obj = plt.Polygon(
+                sorted_coordinates,
+                facecolor=edge_fc[id],
+                alpha=0.4,
+                zorder=max_order - d,
+            )
             ax.add_patch(obj)
             # Drawing all the edges within
             for i, j in combinations(sorted_coordinates, 2):
                 x_coords = [i[0], j[0]]
                 y_coords = [i[1], j[1]]
                 line = plt.Line2D(
-                    x_coords, y_coords, color=dyad_color[id], lw=dyad_lw[id]
+                    x_coords,
+                    y_coords,
+                    color=dyad_color[id],
+                    lw=dyad_lw[id],
+                    zorder=max_order - 1,
                 )
                 ax.add_line(line)
 

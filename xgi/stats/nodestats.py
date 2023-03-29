@@ -189,7 +189,7 @@ def average_neighbor_degree(net, bunch):
     return result
 
 
-def clustering(H, bunch):
+def clustering(net, bunch):
     """Local clustering coefficient.
 
     The clustering coefficient of a node `n` is defined as `num / denom`, where `num`
@@ -198,8 +198,8 @@ def clustering(H, bunch):
 
     Parameters
     ----------
-    H : xgi.Hypergraph
-        The hypergraph.
+    net : xgi.Hypergraph
+        The network.
     bunch : Iterable
         Nodes in `net`.
 
@@ -220,12 +220,12 @@ def clustering(H, bunch):
     array([0.   , 4.   , 1.333, 3.   , 3.   ])
 
     """
-    adj, index = xgi.adjacency_matrix(H, index=True)
+    adj, index = xgi.adjacency_matrix(net, index=True)
     node_to_index = {n: i for i, n in index.items()}
     mat = adj.dot(adj).dot(adj)
     result = {}
     for n in bunch:
-        deg = len(H.nodes.memberships(n))
+        deg = len(net.nodes.memberships(n))
         denom = deg * (deg - 1) / 2
         if denom <= 0:
             result[n] = 0.0

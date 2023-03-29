@@ -95,9 +95,18 @@ def test_draw(edgelist8):
 
     ax = xgi.draw(H)
 
+    # number of elements
     assert len(ax.lines) == len(H.edges.filterby("size", 2))  # dyads
     assert len(ax.patches) == len(H.edges.filterby("size", 2, mode="gt"))  # hyperedges
     assert len(ax.collections[0].get_sizes()) == H.num_nodes  # nodes
+
+    # zorder
+    for line in ax.lines:  # dyads
+        assert line.get_zorder() == 3
+    for patch, z in zip(ax.patches, [2, 2, 0, 2, 2]):  # hyperedges
+        assert patch.get_zorder() == z
+    assert ax.collections[0].get_zorder() == 4  # nodes
+
     plt.close()
 
 
@@ -107,9 +116,14 @@ def test_draw_nodes(edgelist8):
 
     ax = xgi.draw_nodes(H)
 
+    # number of elements
     assert len(ax.lines) == 0  # dyads
     assert len(ax.patches) == 0  # hyperedges
     assert len(ax.collections[0].get_sizes()) == H.num_nodes  # nodes
+
+    # zorder
+    assert ax.collections[0].get_zorder() == 0  # nodes
+
     plt.close()
 
 
@@ -119,9 +133,17 @@ def test_draw_hyperedges(edgelist8):
 
     ax = xgi.draw_hyperedges(H)
 
+    # number of elements
     assert len(ax.lines) == len(H.edges.filterby("size", 2))  # dyads
     assert len(ax.patches) == len(H.edges.filterby("size", 2, mode="gt"))  # hyperedges
     assert len(ax.collections) == 0  # nodes
+
+    # zorder
+    for line in ax.lines:  # dyads
+        assert line.get_zorder() == 3
+    for patch, z in zip(ax.patches, [2, 2, 0, 2, 2]):  # hyperedges
+        assert patch.get_zorder() == z
+
     plt.close()
 
 
@@ -135,7 +157,15 @@ def test_draw_simplices(edgelist8):
     S = xgi.SimplicialComplex(edgelist8)
     ax = xgi.draw_simplices(S)
 
+    # number of elements
     assert len(ax.lines) == 18  # dyads
     assert len(ax.patches) == 3  # hyperedges
     assert len(ax.collections) == 0  # nodes
+
+    # zorder
+    for line in ax.lines:  # dyads
+        assert line.get_zorder() == 3
+    for patch, z in zip(ax.patches, [0, 2, 2]):  # hyperedges
+        assert patch.get_zorder() == z
+
     plt.close()
