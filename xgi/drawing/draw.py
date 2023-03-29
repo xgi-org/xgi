@@ -1018,7 +1018,7 @@ def draw_hypergraph_hull(
         node_fc="tab:blue",
         node_ec="black",
         node_lw=1,
-        node_size=5,
+        node_size=7,
         edge_fc=None,
         edges_ec="tab:gray",
         max_order=None,
@@ -1028,7 +1028,7 @@ def draw_hypergraph_hull(
 ):
     #add description
     settings = {
-        "min_node_size": 10.0,
+        "min_node_size": 5.0,
         "max_node_size": 30.0,
         "min_node_lw": 1.0,
         "max_node_lw": 5.0,
