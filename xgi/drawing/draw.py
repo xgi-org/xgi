@@ -28,6 +28,8 @@ __all__ = [
     "draw_simplices",
     "draw_node_labels",
     "draw_hyperedge_labels",
+    "draw_hull",
+    "draw_hypergraph_hull"
 ]
 
 
