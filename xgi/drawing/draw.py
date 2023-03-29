@@ -28,7 +28,6 @@ __all__ = [
     "draw_simplices",
     "draw_node_labels",
     "draw_hyperedge_labels",
-    "draw_hull",
     "draw_hypergraph_hull"
 ]
 
@@ -1016,10 +1015,10 @@ def draw_hypergraph_hull(
         pos=None,
         ax=None,
         dyad_color = "black",
-        node_fc="white",
+        node_fc="tab:blue",
         node_ec="black",
         node_lw=1,
-        node_size=15,
+        node_size=5,
         edge_fc=None,
         edges_ec="tab:gray",
         max_order=None,
@@ -1029,6 +1028,12 @@ def draw_hypergraph_hull(
 ):
     #add description
     settings = {
+        "min_node_size": 10.0,
+        "max_node_size": 30.0,
+        "min_node_lw": 1.0,
+        "max_node_lw": 5.0,
+        "node_fc_cmap": cm.Reds,
+        "node_ec_cmap": cm.Greys,
         "edge_fc_cmap": cm.Blues,
         "alpha": 0.4
     }
