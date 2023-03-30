@@ -1034,7 +1034,7 @@ def draw_hypergraph_hull(
         ax=None,
         dyad_color = "black",
         edge_fc=None,
-        edges_ec="tab:gray",
+        edge_ec="tab:gray",
         node_fc="tab:blue",
         node_ec="black",
         node_lw=1,
@@ -1066,7 +1066,7 @@ def draw_hypergraph_hull(
         specified in the same order as the hyperedges are found in H.edges. If EdgeStat,
         use the colormap specified with edge_fc_cmap. If None (default),
         use the H.edges.size.
-    edges_ec : str, dict, iterable, or EdgeStat (default='black')
+    edge_ec : str, dict, iterable, or EdgeStat (default='black')
         Color of the borders of the hyperdges of order k>1.  If str, use the same color for all edges. If a dict, must
         contain (edge_id: color_str) pairs.  If iterable, assume the colors are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
@@ -1107,6 +1107,7 @@ def draw_hypergraph_hull(
         * node_ec_cmap
         * dyad_color_cmap
         * edge_fc_cmap
+        * edge_ec_cmap
         * alpha
 
     Returns
@@ -1124,6 +1125,7 @@ def draw_hypergraph_hull(
         "node_ec_cmap": cm.Greys,
         "dyad_color_cmap": cm.Greys,
         "edge_fc_cmap": cm.Blues,
+        "edge_ec_cmap": cm.Greys,
         "alpha": 0.4
     }
     
@@ -1134,6 +1136,11 @@ def draw_hypergraph_hull(
         edge_fc = H.edges.size
         
     edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
+
+    if edge_ec is None:
+        edge_ec = H.edges.size
+        
+    edge_ec = _color_arg_to_dict(edge_ec, H.edges, settings["edge_ec_cmap"])
     
     settings.update(kwargs)
     
@@ -1173,7 +1180,7 @@ def draw_hypergraph_hull(
             
         else:
             coordinates = [[pos[n][0], pos[n][1]] for n in he]
-            _draw_hull(node_pos=np.array(coordinates), ax=ax, edges_ec=edges_ec, facecolor=edge_fc[id], alpha=alpha, radius=radius)
+            _draw_hull(node_pos=np.array(coordinates), ax=ax, edges_ec=edge_ec[id], facecolor=edge_fc[id], alpha=alpha, radius=radius)
     
     draw_nodes(
         H,
