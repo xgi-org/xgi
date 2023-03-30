@@ -1034,7 +1034,7 @@ def draw_hypergraph_hull(
         ax=None,
         dyad_color = "black",
         edge_fc=None,
-        edge_ec="tab:gray",
+        edge_ec=None,
         node_fc="tab:blue",
         node_ec="black",
         node_lw=1,
@@ -1066,11 +1066,11 @@ def draw_hypergraph_hull(
         specified in the same order as the hyperedges are found in H.edges. If EdgeStat,
         use the colormap specified with edge_fc_cmap. If None (default),
         use the H.edges.size.
-    edge_ec : str, dict, iterable, or EdgeStat (default='tab:gray')
+    edge_ec : str, dict, iterable, or EdgeStat (default=None)
         Color of the borders of the hyperdges of order k>1.  If str, use the same color for all edges. If a dict, must
         contain (edge_id: color_str) pairs.  If iterable, assume the colors are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
-        (specified with edge_ec_cmap) associated to it. If None,
+        (specified with edge_ec_cmap) associated to it. If None (default),
         use the H.edges.size.
     node_fc : node_fc : str, dict, iterable, or NodeStat (default='tab:blue')
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
