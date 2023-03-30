@@ -46,7 +46,7 @@ array([[1, 0, 0],
 from warnings import warn
 
 import numpy as np
-from scipy.sparse import csr_array, diags, identity
+from scipy.sparse import csr_array, diags
 
 from ..exception import XGIError
 
@@ -57,7 +57,7 @@ __all__ = [
     "degree_matrix",
     "laplacian",
     "multiorder_laplacian",
-    "normalized_laplacian",
+    "normalized_hypergraph_laplacian",
     "clique_motif_matrix",
     "boundary_matrix",
     "hodge_laplacian",
@@ -373,7 +373,7 @@ def multiorder_laplacian(
     return (L_multi, rowdict) if index else L_multi
 
 
-def normalized_laplacian(H, sparse=True, index=False):
+def normalized_hypergraph_laplacian(H, sparse=True, index=False):
     """Compute the normalized Laplacian.
 
     Parameters

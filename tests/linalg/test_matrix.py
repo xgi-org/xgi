@@ -594,21 +594,21 @@ def test_boundary_matrix(edgelist4):
     assert np.linalg.norm(B2 @ B3) == 0
 
 
-def test_normalized_laplacian():
+def test_normalized_hypergraph_laplacian():
     el = [[1, 2, 3], [4], [5, 6], [6, 7, 8]]
     H = xgi.Hypergraph(el)
-    L1 = xgi.normalized_laplacian(H)
+    L1 = xgi.normalized_hypergraph_laplacian(H)
 
     assert isinstance(L1, csr_array)
     assert L1.shape == (8, 8)
 
-    L2 = xgi.normalized_laplacian(H, sparse=False)
+    L2 = xgi.normalized_hypergraph_laplacian(H, sparse=False)
 
     assert isinstance(L2, np.ndarray)
     assert np.all(L1.toarray() == L2)
     assert np.all(np.diag(L2) == 0.5)
 
-    L3, d = xgi.normalized_laplacian(H, index=True)
+    L3, d = xgi.normalized_hypergraph_laplacian(H, index=True)
 
     assert d == {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8}
     true_L = np.array(
@@ -667,7 +667,7 @@ def test_empty():
     assert data[0].shape == (0, 0)
     assert type(data[1]) == dict
 
-    data = xgi.normalized_laplacian(H, index=True)
+    data = xgi.normalized_hypergraph_laplacian(H, index=True)
     assert len(data) == 2
     assert data[0].shape == (0, 0)
     assert type(data[1]) == dict
@@ -687,8 +687,8 @@ def test_empty():
     assert xgi.laplacian(H, sparse=True).shape == (0, 0)
     assert xgi.laplacian(H, sparse=False).shape == (0, 0)
 
-    assert xgi.normalized_laplacian(H, sparse=True).shape == (0, 0)
-    assert xgi.normalized_laplacian(H, sparse=False).shape == (0, 0)
+    assert xgi.normalized_hypergraph_laplacian(H, sparse=True).shape == (0, 0)
+    assert xgi.normalized_hypergraph_laplacian(H, sparse=False).shape == (0, 0)
 
     assert xgi.boundary_matrix(H).shape == (0, 0)
 
