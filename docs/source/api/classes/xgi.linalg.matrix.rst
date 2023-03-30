@@ -14,3 +14,6 @@
    .. autofunction:: intersection_profile
    .. autofunction:: laplacian
    .. autofunction:: multiorder_laplacian
+   .. autofunction:: normalized_hypergraph_laplacian
+   .. autofunction:: boundary_matrix
+   .. autofunction:: hodge_laplacian

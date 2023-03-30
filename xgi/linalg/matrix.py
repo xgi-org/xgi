@@ -48,6 +48,8 @@ from warnings import warn
 import numpy as np
 from scipy.sparse import csr_array, diags
 
+from ..exception import XGIError
+
 __all__ = [
     "incidence_matrix",
     "adjacency_matrix",
@@ -55,6 +57,7 @@ __all__ = [
     "degree_matrix",
     "laplacian",
     "multiorder_laplacian",
+    "normalized_hypergraph_laplacian",
     "clique_motif_matrix",
     "boundary_matrix",
     "hodge_laplacian",
@@ -368,6 +371,61 @@ def multiorder_laplacian(
     rowdict = {i: v for i, v in enumerate(H.nodes)}
 
     return (L_multi, rowdict) if index else L_multi
+
+
+def normalized_hypergraph_laplacian(H, sparse=True, index=False):
+    """Compute the normalized Laplacian.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        Hypergraph
+    sparse : bool, optional
+        whether or not the laplacian is sparse, by default True
+    index : bool, optional
+        whether to return a dictionary mapping IDs to rows, by default False
+
+    Returns
+    -------
+    array
+        csr_array if sparse and if not, a numpy ndarray
+    dict
+        a dictionary mapping node IDs to rows and columns
+        if index is True.
+
+
+    Raises
+    ------
+    XGIError
+        If there are isolated nodes.
+
+    References
+    ----------
+    "Learning with Hypergraphs: Clustering, Classification, and Embedding"
+    by Dengyong Zhou, Jiayuan Huang, Bernhard Schölkopf
+    Advances in Neural Information Processing Systems (2006)
+    """
+
+    from ..algorithms import is_connected
+
+    if H.nodes.isolates():
+        raise XGIError(
+            "Every node must be a member of an edge to avoid divide by zero error!"
+        )
+
+    D = degree_matrix(H)
+    A, rowdict = clique_motif_matrix(H, sparse=sparse, index=True)
+
+    if sparse:
+        Dinvsqrt = csr_array(diags(np.power(D, -0.5)))
+        I = csr_array((H.num_nodes, H.num_nodes))
+        I.setdiag(1)
+    else:
+        Dinvsqrt = np.diag(np.power(D, -0.5))
+        I = np.eye(H.num_nodes)
+
+    L = 0.5 * (I - Dinvsqrt @ A @ Dinvsqrt)
+    return (L, rowdict) if index else L
 
 
 def clique_motif_matrix(H, sparse=True, index=False):
