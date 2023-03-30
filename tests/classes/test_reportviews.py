@@ -211,8 +211,13 @@ def test_isolates(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     assert list(H.nodes.isolates(ignore_singletons=True)) == [4]
     assert list(H.nodes.isolates()) == []
-    H.remove_nodes_from(H.nodes.isolates())
+    H.remove_nodes_from(H.nodes.isolates(ignore_singletons=True))
     assert 4 not in H
+
+    H.add_nodes_from([10, 11, 12])
+    assert 10 in H and 11 in H and 12 in H
+    H.remove_nodes_from(H.nodes.isolates())
+    assert 10 not in H and 11 not in H and 12 not in H
 
 
 def test_singletons(edgelist1):
