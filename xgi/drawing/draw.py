@@ -1041,6 +1041,7 @@ def draw_hypergraph_hull(
         node_size=7,
         max_order=None,
         node_labels=False,
+        hyperedge_labels=False,
         radius=0.05,
         **kwargs
 ):
@@ -1096,6 +1097,8 @@ def draw_hypergraph_hull(
         Maximum of hyperedges to plot. If None (default), plots all orders.
     node_labels : bool, or dict (default=False)
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
+    hyperedge_labels : bool, or dict (default=False)
+        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
     radius : float (deafault=0.05)
         Radius of the convex hull in the vicinity of the nodes.
     **kwargs : optional args
@@ -1182,6 +1185,17 @@ def draw_hypergraph_hull(
         else:
             coordinates = [[pos[n][0], pos[n][1]] for n in he]
             _draw_hull(node_pos=np.array(coordinates), ax=ax, edges_ec=edge_ec[id], facecolor=edge_fc[id], alpha=alpha, radius=radius)
+
+    if hyperedge_labels:
+        # Get all valid keywords by inspecting the signatures of draw_node_labels
+        valid_label_kwds = signature(draw_hyperedge_labels).parameters.keys()
+        # Remove the arguments of this function (draw_networkx)
+        valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "hyperedge_labels"}
+        if any([k not in valid_label_kwds for k in kwargs]):
+            invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
+            raise ValueError(f"Received invalid argument(s): {invalid_args}")
+        label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
+        draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
     
     draw_nodes(
         H,
