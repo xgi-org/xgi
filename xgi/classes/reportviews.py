@@ -569,15 +569,15 @@ class NodeView(IDView):
             else self._id_dict[n].copy()
         )
 
-    def isolates(self, ignore_singletons=True):
+    def isolates(self, ignore_singletons=False):
         """Nodes that belong to no edges.
 
-        When ignore_singletons is True (default), a node is considered isolated from the
+        When ignore_singletons is True, a node is considered isolated from the
         rest of the hypergraph when it is included in no edges of size two or more.  In
         particular, whether the node is part of any singleton edges is irrelevant to
         determine whether it is isolated.
 
-        When ignore_singletons is False, a node is isolated only when it is a member of
+        When ignore_singletons is False (default), a node is isolated only when it is a member of
         exactly zero edges, including singletons.
 
         Parameters

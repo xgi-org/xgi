@@ -16,3 +16,5 @@
 
    .. autofunction:: dual_dict
    .. autofunction:: powerset
+   .. autofunction:: update_uid_counter
+   .. autofunction:: find_triangles
