@@ -1164,7 +1164,7 @@ def draw_hypergraph_hull(
     dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
     
     
-    for id, he in H.edges.members(dtype=dict).items():
+    for id, he in H._edge.items():
         d = len(he) - 1
         if d > max_order:
             continue
