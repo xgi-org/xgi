@@ -990,7 +990,7 @@ def _update_lims(pos, ax):
     ax.update_datalim(corners)
     ax.autoscale_view()
     
-def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, radius):
+def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, zorder,radius):
     """Draw a convex hull encompassing the nodes in node_pos
 
     Parameters
@@ -1023,8 +1023,8 @@ def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, radius):
     hull = ConvexHull(points)
 
     for simplex in hull.simplices:
-        ax.plot(points[simplex,0], points[simplex,1], color=edges_ec)
-    ax.fill(points[hull.vertices,0], points[hull.vertices,1], color=facecolor, alpha=alpha)
+        ax.plot(points[simplex,0], points[simplex,1], color=edges_ec, zorder=zorder)
+    ax.fill(points[hull.vertices,0], points[hull.vertices,1], color=facecolor, alpha=alpha, zorder=zorder)
 
     return ax
 
@@ -1184,7 +1184,7 @@ def draw_hypergraph_hull(
             
         else:
             coordinates = [[pos[n][0], pos[n][1]] for n in he]
-            _draw_hull(node_pos=np.array(coordinates), ax=ax, edges_ec=edge_ec[id], facecolor=edge_fc[id], alpha=alpha, radius=radius)
+            _draw_hull(node_pos=np.array(coordinates), ax=ax, edges_ec=edge_ec[id], facecolor=edge_fc[id], alpha=alpha, zorder=max_order - d, radius=radius)
 
     if hyperedge_labels:
         # Get all valid keywords by inspecting the signatures of draw_node_labels
