@@ -1177,7 +1177,7 @@ def draw_hypergraph_hull(
                 x_coords,
                 y_coords,
                 color=dyad_color[id],
-                zorder=1,
+                zorder=max_order-1,
                 alpha=1,
             )
             ax.add_line(line)
