@@ -5,6 +5,6 @@ utils package
 .. rubric:: Modules
 
 .. autosummary::
-   :toctree: classes
+   :toctree: utils
 
    ~xgi.utils.utilities
