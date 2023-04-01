@@ -43,7 +43,7 @@ array([[1, 0, 0],
        [1, 0, 1]])
 
 """
-from warnings import warn
+from warnings import catch_warnings, warn
 
 import numpy as np
 from scipy.sparse import csr_array, diags
@@ -163,6 +163,11 @@ def adjacency_matrix(H, order=None, sparse=True, s=1, weighted=False, index=Fals
     else:
         return A
 
+    Warns
+    -----
+    warn
+        If there are isolated nodes and the matrix is sparse.
+
     """
     I, rowdict, coldict = incidence_matrix(H, order=order, sparse=sparse, index=True)
 
@@ -177,7 +182,12 @@ def adjacency_matrix(H, order=None, sparse=True, s=1, weighted=False, index=Fals
     A = I.dot(I.T)
 
     if sparse:
-        A.setdiag(0)
+        with catch_warnings(record=True) as w:
+            A.setdiag(0)
+        if w:
+            warn(
+                "Forming the adjacency matrix can be expensive when there are isolated nodes!"
+            )
     else:
         np.fill_diagonal(A, 0)
 
