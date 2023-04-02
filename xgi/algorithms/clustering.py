@@ -112,9 +112,9 @@ def clustering_coefficient(H):
     -------
     >>> import xgi
     >>> H = xgi.random_hypergraph(3, [1, 1])
-    >>> cc = xgi.clustering_coefficient(H, kind="union")
+    >>> cc = xgi.clustering_coefficient(H)
     >>> cc
-    {0: 0.5, 1: 0.5, 2: 0.5}
+    {0: 1.0, 1: 1.0, 2: 1.0}
     """
     adj, index = adjacency_matrix(H, index=True)
     node_to_index = {n: i for i, n in index.items()}
@@ -158,9 +158,9 @@ def two_node_clustering_coefficient(H, kind="union"):
     -------
     >>> import xgi
     >>> H = xgi.random_hypergraph(3, [1, 1])
-    >>> cc = xgi.two_node_clustering_coefficient(H)
+    >>> cc = xgi.two_node_clustering_coefficient(H, kind="union")
     >>> cc
-    {0: 1.0, 1: 1.0, 2: 1.0}
+    {0: 0.5, 1: 0.5, 2: 0.5}
     """
     result = {}
     memberships = H.nodes.memberships()

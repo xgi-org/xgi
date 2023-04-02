@@ -90,7 +90,6 @@ def test_color_arg_to_dict(edgelist4):
 
 
 def test_draw(edgelist8):
-
     H = xgi.Hypergraph(edgelist8)
 
     ax = xgi.draw(H)
@@ -111,7 +110,6 @@ def test_draw(edgelist8):
 
 
 def test_draw_nodes(edgelist8):
-
     H = xgi.Hypergraph(edgelist8)
 
     ax = xgi.draw_nodes(H)
@@ -128,7 +126,6 @@ def test_draw_nodes(edgelist8):
 
 
 def test_draw_hyperedges(edgelist8):
-
     H = xgi.Hypergraph(edgelist8)
 
     ax = xgi.draw_hyperedges(H)
@@ -148,7 +145,6 @@ def test_draw_hyperedges(edgelist8):
 
 
 def test_draw_simplices(edgelist8):
-
     with pytest.raises(XGIError):
         H = xgi.Hypergraph(edgelist8)
         ax = xgi.draw_simplices(H)

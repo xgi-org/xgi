@@ -163,7 +163,6 @@ def test_average_neighbor_degree(edgelist1, edgelist8):
 
 
 def test_clustering():
-
     # no nodes
     H = xgi.Hypergraph()
 
