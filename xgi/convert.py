@@ -44,6 +44,7 @@ __all__ = [
     "from_bipartite_graph",
     "to_bipartite_graph",
     "dict_to_hypergraph",
+    "to_line_graph",
 ]
 
 
@@ -135,7 +136,7 @@ def convert_to_graph(H):
     return G
 
 
-def convert_to_line_graph(H):
+def to_line_graph(H):
     """Line graph of the hypergraph.
 
     The line graph of the hypergraph `H` is the graph whose
