@@ -6,7 +6,7 @@ from ..linalg import adjacency_matrix
 __all__ = [
     "local_clustering_coefficient",
     "clustering_coefficient",
-    "two_node_clustering_coefficent",
+    "two_node_clustering_coefficient",
 ]
 
 
@@ -34,13 +34,20 @@ def local_clustering_coefficient(H):
     "Hypergraphs for predicting essential genes using multiprotein complex data"
     by Florian Klimm, Charlotte M. Deane, and Gesine Reinert.
     https://doi.org/10.1093/comnet/cnaa028
+
+    Example
+    -------
+    >>> import xgi
+    >>> H = xgi.random_hypergraph(3, [1, 1])
+    >>> cc = xgi.local_clustering_coefficient(H)
+    >>> cc
+    {0: 1.0, 1: 1.0, 2: 1.0}
     """
     result = {}
 
     memberships = H.nodes.memberships()
     members = H.edges.members()
 
-    # go over each node
     for n in H.nodes:
         ev = list(memberships[n])
         dv = len(ev)
@@ -97,7 +104,17 @@ def clustering_coefficient(H):
 
     References
     ----------
-    Clustering Coefficients in Protein Interaction Hypernetworks
+    "Clustering Coefficients in Protein Interaction Hypernetworks"
+    by Suzanne Gallagher and Debra Goldberg.
+    DOI: 10.1145/2506583.2506635
+
+    Example
+    -------
+    >>> import xgi
+    >>> H = xgi.random_hypergraph(3, [1, 1])
+    >>> cc = xgi.clustering_coefficient(H, kind="union")
+    >>> cc
+    {0: 0.5, 1: 0.5, 2: 0.5}
     """
     adj, index = adjacency_matrix(H, index=True)
     node_to_index = {n: i for i, n in index.items()}
@@ -106,15 +123,15 @@ def clustering_coefficient(H):
     for n in H.nodes:
         neighbors = len(H.nodes.neighbors(n))
         denom = neighbors * (neighbors - 1) / 2
-        if denom <= 0:
-            result[n] = 0.0
+        if denom == 0:
+            result[n] = np.NaN
         else:
             i = node_to_index[n]
             result[n] = 0.5 * mat[i, i] / denom
     return result
 
 
-def two_node_clustering_coefficent(H, kind="union"):
+def two_node_clustering_coefficient(H, kind="union"):
     """Return the clustering coefficients for
     each node in a Hypergraph.
 
@@ -136,14 +153,25 @@ def two_node_clustering_coefficent(H, kind="union"):
     "Clustering Coefficients in Protein Interaction Hypernetworks"
     by Suzanne Gallagher and Debra Goldberg.
     DOI: 10.1145/2506583.2506635
+
+    Example
+    -------
+    >>> import xgi
+    >>> H = xgi.random_hypergraph(3, [1, 1])
+    >>> cc = xgi.two_node_clustering_coefficient(H)
+    >>> cc
+    {0: 1.0, 1: 1.0, 2: 1.0}
     """
     result = {}
     memberships = H.nodes.memberships()
     for n in H.nodes:
-        result[n] = 0.0
         neighbors = H.nodes.neighbors(n)
-        for v in neighbors:
-            result[n] += _uv_cc(n, v, memberships, kind=kind) / len(neighbors)
+        if not neighbors:
+            result[n] = np.NaN
+        else:
+            result[n] = 0.0
+            for v in neighbors:
+                result[n] += _uv_cc(n, v, memberships, kind=kind) / len(neighbors)
     return result
 
 
@@ -200,6 +228,6 @@ def _uv_cc(u, v, memberships, kind="union"):
         raise XGIError("Invalid kind of clustering.")
 
     if denom == 0:
-        return 0
+        return np.NaN
 
     return num / denom
