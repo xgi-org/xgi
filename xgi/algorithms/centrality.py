@@ -7,7 +7,7 @@ from numpy.linalg import norm
 from scipy.sparse.linalg import eigsh
 
 from ..classes import convert_labels_to_integers, is_uniform
-from ..convert import convert_to_line_graph
+from ..convert import to_line_graph
 from ..exception import XGIError
 from ..linalg import clique_motif_matrix, incidence_matrix
 
@@ -267,7 +267,7 @@ def line_vector_centrality(H):
     if not is_connected(H):
         raise XGIError("This method is not defined for disconnected hypergraphs.")
 
-    LG = convert_to_line_graph(H)
+    LG = to_line_graph(H)
     LGcent = nx.eigenvector_centrality(LG)
 
     vc = {node: [] for node in H.nodes}
