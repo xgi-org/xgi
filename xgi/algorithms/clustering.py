@@ -10,7 +10,6 @@ __all__ = [
 ]
 
 
-# Properties of metabolic graphs: biological organization or representation artifacts?
 def local_clustering_coefficient(H):
     """Compute the local clusterin coefficient
 
