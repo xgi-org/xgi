@@ -1,12 +1,21 @@
 # Changelog
 
-## v0.5.5
+## v0.5.6
+* Renamed `convert_to_line_graph()` to `to_line_graph()`, added an `s` parameter to the function, and added corresponding unit tests [#318](https://github.com/ComplexGroupInteractions/xgi/pull/318) (@nwlandry).
+- Made the sparse warning in the `adjacency_matrix()` function more intelligible [#315](https://github.com/ComplexGroupInteractions/xgi/pull/315) (@nwlandry).
+- Added a function for the normalized hypergraph laplacian [#314](https://github.com/ComplexGroupInteractions/xgi/pull/314) (@nwlandry).
+- Added tests for draw functions [#312](https://github.com/ComplexGroupInteractions/xgi/pull/312) (@maximelucas).
+- Updated the centrality functions so they more gracefully handle empty and disconnected hypergraphs [#313](https://github.com/ComplexGroupInteractions/xgi/pull/313) (@nwlandry).
+- Added `keep_isolates` argument to the subhypergraph function [#308](https://github.com/ComplexGroupInteractions/xgi/pull/308) (@maximelucas).
+- Fix: raise error for assortativity of empty hypergraph [#307](https://github.com/ComplexGroupInteractions/xgi/pull/307) (@maximelucas).
+- minor: renamed to from_max_simplices [#306](https://github.com/ComplexGroupInteractions/xgi/pull/306) (@maximelucas).
 
-* Refactored `incidence_matrix()` for ~4x speedup, made output consistent for empty matrices, added tests, and refactored `multiorder_laplacian()` so all internal variables are sparse if sparse=True. Fixes [#301](https://github.com/ComplexGroupInteractions/xgi/issues/301). [#303](https://github.com/ComplexGroupInteractions/xgi/pull/303) (@maximelucas).
+## v0.5.5
+* Refactored `incidence_matrix()` for ~4x speedup, made output consistent for empty matrices, added tests, and refactored `multiorder_laplacian()` so all internal variables are sparse if sparse=True. Fixes [#301](https://github.com/ComplexGroupInteractions/xgi/issues/301) [#303](https://github.com/ComplexGroupInteractions/xgi/pull/303) (@maximelucas).
 * Renamed plotting functions, `xgi_pylab` module, and node/hyperedge/simplex plotting functions. All drawing functions now return axes. Added `pca_transform()` to rotate the node positions relative to the principal axes [#300](https://github.com/ComplexGroupInteractions/xgi/pull/300) (@nwlandry).
 * Changed the Github actions to test all notebooks in the tutorial folder [#299](https://github.com/ComplexGroupInteractions/xgi/pull/299) (@nwlandry).
 * Added the `convert_to_line_graph()` function and the `vector_centrality()` function, which uses it [#290](https://github.com/ComplexGroupInteractions/xgi/pull/290) (@goznalo-git).
-* Fixed the quickstart notebook by updating the synchronization  [#294](https://github.com/ComplexGroupInteractions/xgi/pull/294) (@nwlandry).
+* Fixed the quickstart notebook by updating the synchronization [#294](https://github.com/ComplexGroupInteractions/xgi/pull/294) (@nwlandry).
 * Added more tests for the layout functions [#296](https://github.com/ComplexGroupInteractions/xgi/pull/296) (@maximelucas).
 * Added basic tests for layout functions [#293](https://github.com/ComplexGroupInteractions/xgi/pull/293) (@maximelucas).
 * Added tests for generators [#291](https://github.com/ComplexGroupInteractions/xgi/pull/291) (@maximelucas).
@@ -20,17 +29,16 @@
 
 
 ## v0.5.4
-
 * Fixed issue #270 [#271](https://github.com/ComplexGroupInteractions/xgi/pull/271) (@nwlandry).
 * Fixed the centralities so that they are positive and 1-normalized [#274](https://github.com/ComplexGroupInteractions/xgi/pull/274) (@nwlandry).
 
-## v0.5.3
 
+## v0.5.3
 * Added support for NetworkX 3.0, removed support for Python 3.7, and changed all scipy sparse matrices to scipy sparse arrays [#268](https://github.com/ComplexGroupInteractions/xgi/pull/268) (@nwlandry).
 * Added the ability to display the list of available datasets in xgi-data with `load_xgi_data()` [#266](https://github.com/ComplexGroupInteractions/xgi/pull/266) (@nwlandry).
 
-## v0.5.2
 
+## v0.5.2
 * Added the `find_triangles()` and `flag_complex_d2()` functions. The `flag_complex_d2()` function is much faster than `flag_complex()` for simplicial complexes of max order 2. Also refactored `random_flag_complex_d2()` to use `flag_complex_d2()` [#263](https://github.com/ComplexGroupInteractions/xgi/pull/263) (@maximelucas).
 * add the `items()` method so NodeStats and EdgeStats are even more dict-like [#233](https://github.com/ComplexGroupInteractions/xgi/pull/233) (@leotrs).
 * Added the ability to cache the output of `load_xgi_data()` and added more interpretable errors when the http request fails [#261](https://github.com/ComplexGroupInteractions/xgi/pull/261) (@nwlandry).
@@ -41,8 +49,8 @@
 * Remove references to the disGene dataset in the data folder [#253](https://github.com/ComplexGroupInteractions/xgi/pull/253) (@nwlandry).
 * Updated the new release process [#249](https://github.com/ComplexGroupInteractions/xgi/pull/249) (@nwlandry).
 
-## v0.5.1
 
+## v0.5.1
 * `draw()` now correctly plots simplicial complexes with the `max_order` keyword [#248](https://github.com/ComplexGroupInteractions/xgi/pull/248) (@maximelucas).
 * Changed the `add_simplex` method to be non recursive [#247](https://github.com/ComplexGroupInteractions/xgi/pull/247) (@maximelucas).
 * Added tests for the SimplicialComplex class [#245](https://github.com/ComplexGroupInteractions/xgi/pull/245) (@maximelucas).
@@ -62,8 +70,8 @@
 * Sped up the `add_simplices_from()` method [#223](https://github.com/ComplexGroupInteractions/xgi/pull/223) (@maximelucas).
 * Updated the `add_simplices_from()` method to match `add_hyperedges_from()` [#220](https://github.com/ComplexGroupInteractions/xgi/pull/220) (@maximelucas).
 
-## v0.5.0
 
+## v0.5.0
 * Fixed [#214](https://github.com/ComplexGroupInteractions/xgi/issues/214), added a `powerset()` function, added a `subfaces()` function, and added examples of these functions ([#209](https://github.com/ComplexGroupInteractions/xgi/pull/209)).
 * Refactored the NodeStats and EdgeStats classes to be more efficient ([#209](https://github.com/ComplexGroupInteractions/xgi/pull/209)).
 * Implemented set operations for NodeView and EdgeView ([#208](https://github.com/ComplexGroupInteractions/xgi/pull/208)).
@@ -80,8 +88,8 @@
 
 Contributors: @leotrs, @maximelucas, and @nwlandry
 
-## v0.4.3
 
+## v0.4.3
 * `Hypergraph.has_edge` is now `IDView.lookup`, `Hypergraph.duplicate_edges` is now `IDView.duplicates`, and `utilities.convert_labels_to_integer` is now `function.convert_labels_to_integer` ([#150](https://github.com/ComplexGroupInteractions/xgi/pull/150)).
 * Added some unit tests for the convert module, the function module, and the classic generators module. Fixed for minor bugs encountered while writing tests and added documentation to Read The Docs for the drawing module. ([#153](https://github.com/ComplexGroupInteractions/xgi/pull/153))
 * Fixed a bug in `remove_node_from_edge()` ([#154](https://github.com/ComplexGroupInteractions/xgi/pull/154)).
@@ -98,11 +106,13 @@ Contributors: @leotrs, @maximelucas, and @nwlandry
 
 Contributors: @nwlandry, @leotrs, and @saad1282
 
+
 ## v0.4.2
 * Keyword arguments are now consistent in the `draw()` function ([#148](https://github.com/ComplexGroupInteractions/xgi/pull/148)).
 * Notebooks are now formatted with black and the requirements have been updated to reflect this ([#148](https://github.com/ComplexGroupInteractions/xgi/pull/148)).
 
 Contributors: @nwlandry
+
 
 ## v0.4.1
 * Added the ability to color nodes and edges in `xgi.draw()` by value, iterable, or NodeStat/EdgeStat ([#139](https://github.com/ComplexGroupInteractions/xgi/pull/139), [#142](https://github.com/ComplexGroupInteractions/xgi/pull/142), and [#143](https://github.com/ComplexGroupInteractions/xgi/pull/143)).
@@ -114,6 +124,7 @@ Contributors: @nwlandry
 * Added unit tests ([#147](https://github.com/ComplexGroupInteractions/xgi/pull/147)).
 
 Contributors: @nwlandry, @leotrs, and @maximelucas
+
 
 ## v0.4
 * Added the `stats` package which implements `NodeStat`, `EdgeStat` and related functionality. This package now handles computation of edge size and degree ([#120](https://github.com/ComplexGroupInteractions/xgi/pull/120)).
@@ -134,6 +145,7 @@ Contributors: @nwlandry, @leotrs, and @maximelucas
 
 Contributors: @leotrs, @nwlandry, and @iaciac
 
+
 ## v0.3.1
 * Refactored the subhypergraph methods
 * Moved functions not related to the core Hypergraph data structure to functions.py
@@ -145,6 +157,7 @@ Contributors: @leotrs, @nwlandry, and @iaciac
 * A method for double edge swaps is now implemented.
 
 Contributors: @leotrs and @nwlandry
+
 
 ## v0.3
 * Added the ability to convert to and from a NetworkX bipartite graph.
@@ -169,6 +182,7 @@ Contributors: @leotrs and @nwlandry
 * Added an abstract class `IDDict` to handle data validation.
 
 Contributors: @iaciac, @leotrs, @lordgrilo, @maximelucas, @nwlandry, and @tlarock
+
 
 ## v0.2
 * `H[attr]` now accesses hypergraph attributes
