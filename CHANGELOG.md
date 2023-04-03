@@ -2,13 +2,13 @@
 
 ## v0.5.6
 * Renamed `convert_to_line_graph()` to `to_line_graph()`, added an `s` parameter to the function, and added corresponding unit tests [#318](https://github.com/ComplexGroupInteractions/xgi/pull/318) (@nwlandry).
-- Made the sparse warning in the `adjacency_matrix()` function more intelligible [#315](https://github.com/ComplexGroupInteractions/xgi/pull/315) (@nwlandry).
-- Added a function for the normalized hypergraph laplacian [#314](https://github.com/ComplexGroupInteractions/xgi/pull/314) (@nwlandry).
-- Added tests for draw functions [#312](https://github.com/ComplexGroupInteractions/xgi/pull/312) (@maximelucas).
-- Updated the centrality functions so they more gracefully handle empty and disconnected hypergraphs [#313](https://github.com/ComplexGroupInteractions/xgi/pull/313) (@nwlandry).
-- Added `keep_isolates` argument to the subhypergraph function [#308](https://github.com/ComplexGroupInteractions/xgi/pull/308) (@maximelucas).
-- Fix: raise error for assortativity of empty hypergraph [#307](https://github.com/ComplexGroupInteractions/xgi/pull/307) (@maximelucas).
-- minor: renamed to from_max_simplices [#306](https://github.com/ComplexGroupInteractions/xgi/pull/306) (@maximelucas).
+* Made the sparse warning in the `adjacency_matrix()` function more intelligible [#315](https://github.com/ComplexGroupInteractions/xgi/pull/315) (@nwlandry).
+* Added a function for the normalized hypergraph laplacian [#314](https://github.com/ComplexGroupInteractions/xgi/pull/314) (@nwlandry).
+* Added tests for draw functions [#312](https://github.com/ComplexGroupInteractions/xgi/pull/312) (@maximelucas).
+* Updated the centrality functions so they more gracefully handle empty and disconnected hypergraphs [#313](https://github.com/ComplexGroupInteractions/xgi/pull/313) (@nwlandry).
+* Added `keep_isolates` argument to the subhypergraph function [#308](https://github.com/ComplexGroupInteractions/xgi/pull/308) (@maximelucas).
+* Fix: raise error for assortativity of empty hypergraph [#307](https://github.com/ComplexGroupInteractions/xgi/pull/307) (@maximelucas).
+* Minor: renamed to from_max_simplices [#306](https://github.com/ComplexGroupInteractions/xgi/pull/306) (@maximelucas).
 
 ## v0.5.5
 * Refactored `incidence_matrix()` for ~4x speedup, made output consistent for empty matrices, added tests, and refactored `multiorder_laplacian()` so all internal variables are sparse if sparse=True. Fixes [#301](https://github.com/ComplexGroupInteractions/xgi/issues/301) [#303](https://github.com/ComplexGroupInteractions/xgi/pull/303) (@maximelucas).
