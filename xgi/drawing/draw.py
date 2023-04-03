@@ -9,14 +9,14 @@ import numpy as np
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 
+# added for convex hull drawing
+from scipy.spatial import ConvexHull
+
 from .. import convert
 from ..classes import Hypergraph, SimplicialComplex, max_edge_order
 from ..exception import XGIError
 from ..stats import EdgeStat, NodeStat
 from .layout import barycenter_spring_layout
-
-#added for convex hull drawing
-from scipy.spatial import ConvexHull
 
 __all__ = [
     "draw",
@@ -25,7 +25,7 @@ __all__ = [
     "draw_simplices",
     "draw_node_labels",
     "draw_hyperedge_labels",
-    "draw_hypergraph_hull"
+    "draw_hypergraph_hull",
 ]
 
 
@@ -989,8 +989,9 @@ def _update_lims(pos, ax):
     corners = (minx - padx, miny - pady), (maxx + padx, maxy + pady)
     ax.update_datalim(corners)
     ax.autoscale_view()
-    
-def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, zorder,radius):
+
+
+def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, zorder, radius):
     """Draw a convex hull encompassing the nodes in node_pos
 
     Parameters
@@ -1012,41 +1013,51 @@ def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, zorder,radius):
     ax : matplotlib.pyplot.axes
 
     """
-    #add_description
+    # add_description
     points = node_pos.copy()
     for i in node_pos:
         center = i
         thetas = np.linspace(0, 2 * np.pi, num=100, endpoint=False)
-        circle = [center + radius * np.array([np.cos(theta), np.sin(theta)]) for theta in thetas]
+        circle = [
+            center + radius * np.array([np.cos(theta), np.sin(theta)])
+            for theta in thetas
+        ]
         points = np.vstack([circle, points])
-    
+
     hull = ConvexHull(points)
 
     for simplex in hull.simplices:
-        ax.plot(points[simplex,0], points[simplex,1], color=edges_ec, zorder=zorder)
-    ax.fill(points[hull.vertices,0], points[hull.vertices,1], color=facecolor, alpha=alpha, zorder=zorder)
+        ax.plot(points[simplex, 0], points[simplex, 1], color=edges_ec, zorder=zorder)
+    ax.fill(
+        points[hull.vertices, 0],
+        points[hull.vertices, 1],
+        color=facecolor,
+        alpha=alpha,
+        zorder=zorder,
+    )
 
     return ax
 
+
 def draw_hypergraph_hull(
-        H,
-        pos=None,
-        ax=None,
-        dyad_color = "black",
-        edge_fc=None,
-        edge_ec=None,
-        node_fc="tab:blue",
-        node_ec="black",
-        node_lw=1,
-        node_size=7,
-        max_order=None,
-        node_labels=False,
-        hyperedge_labels=False,
-        radius=0.05,
-        **kwargs
+    H,
+    pos=None,
+    ax=None,
+    dyad_color="black",
+    edge_fc=None,
+    edge_ec=None,
+    node_fc="tab:blue",
+    node_ec="black",
+    node_lw=1,
+    node_size=7,
+    max_order=None,
+    node_labels=False,
+    hyperedge_labels=False,
+    radius=0.05,
+    **kwargs,
 ):
     """Draw hypergraphs displaying the hyperedges of order k>1 as convex hulls
-    
+
 
     Parameters
     ----------
@@ -1130,40 +1141,38 @@ def draw_hypergraph_hull(
         "dyad_color_cmap": cm.Greys,
         "edge_fc_cmap": cm.Blues,
         "edge_ec_cmap": cm.Greys,
-        "alpha": 0.4
+        "alpha": 0.4,
     }
-    
 
     alpha = settings["alpha"]
-    
+
     if edge_fc is None:
         edge_fc = H.edges.size
-        
+
     edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
 
     if edge_ec is None:
         edge_ec = H.edges.size
-        
+
     edge_ec = _color_arg_to_dict(edge_ec, H.edges, settings["edge_ec_cmap"])
-    
+
     settings.update(kwargs)
-    
+
     if pos is None:
         pos = barycenter_spring_layout(H)
-        
+
     if ax is None:
         ax = plt.gca()
 
     ax.get_xaxis().set_ticks([])
     ax.get_yaxis().set_ticks([])
     ax.axis("off")
-    
+
     if not max_order:
         max_order = max_edge_order(H)
-    
+
     dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
-    
-    
+
     for id, he in H._edge.items():
         d = len(he) - 1
         if d > max_order:
@@ -1177,14 +1186,22 @@ def draw_hypergraph_hull(
                 x_coords,
                 y_coords,
                 color=dyad_color[id],
-                zorder=max_order-1,
+                zorder=max_order - 1,
                 alpha=1,
             )
             ax.add_line(line)
-            
+
         else:
             coordinates = [[pos[n][0], pos[n][1]] for n in he]
-            _draw_hull(node_pos=np.array(coordinates), ax=ax, edges_ec=edge_ec[id], facecolor=edge_fc[id], alpha=alpha, zorder=max_order - d, radius=radius)
+            _draw_hull(
+                node_pos=np.array(coordinates),
+                ax=ax,
+                edges_ec=edge_ec[id],
+                facecolor=edge_fc[id],
+                alpha=alpha,
+                zorder=max_order - d,
+                radius=radius,
+            )
 
     if hyperedge_labels:
         # Get all valid keywords by inspecting the signatures of draw_node_labels
@@ -1196,7 +1213,7 @@ def draw_hypergraph_hull(
             raise ValueError(f"Received invalid argument(s): {invalid_args}")
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
         draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
-    
+
     draw_nodes(
         H,
         pos,
