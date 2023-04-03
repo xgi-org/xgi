@@ -194,11 +194,11 @@ def test_to_line_graph(edgelist1, hypergraph1):
     assert set(L.nodes) == {"e1", "e2", "e3"}
     assert [set(e) for e in L.edges] == [{"e1", "e2"}, {"e2", "e3"}]
 
-    L = xgi.to_line_graph(hypergraph1,s=2)
+    L = xgi.to_line_graph(hypergraph1, s=2)
     assert set(L.nodes) == {"e1", "e2", "e3"}
     assert [set(e) for e in L.edges] == [{"e1", "e2"}]
 
-    L = xgi.to_line_graph(hypergraph1,s=3)
+    L = xgi.to_line_graph(hypergraph1, s=3)
     assert set(L.nodes) == {"e1", "e2", "e3"}
     assert [set(e) for e in L.edges] == []
 
