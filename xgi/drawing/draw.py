@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
-
-# added for convex hull drawing
 from scipy.spatial import ConvexHull
 
 from .. import convert
@@ -1013,7 +1011,7 @@ def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, zorder, radius):
     ax : matplotlib.pyplot.axes
 
     """
-    # add_description
+
     points = node_pos.copy()
     for i in node_pos:
         center = i
