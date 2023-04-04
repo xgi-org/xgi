@@ -248,7 +248,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     return H
 
 
-def random_hypergraph(N, ps, seed=None):
+def random_hypergraph(N, ps, order=None, seed=None):
     """Generates a random hypergraph
 
     Generate N nodes, and connect any d+1 nodes
@@ -263,6 +263,9 @@ def random_hypergraph(N, ps, seed=None):
         hyperedge at each order d between any d+1 nodes. For example,
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
         of any triangles (3 nodes).
+    order: int of None (default)
+        If None, ignore. If int, generates a uniform hypergraph with edges 
+        of order `order` (ps must have only one element). 
     seed : integer or None (default)
             Seed for the random number generator.
 
@@ -283,6 +286,10 @@ def random_hypergraph(N, ps, seed=None):
     """
     if seed is not None:
         np.random.seed(seed)
+
+    if order is not None:
+        if len(ps) != 1:
+            raise ValueError("ps must contain a single element if order is an int")
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
