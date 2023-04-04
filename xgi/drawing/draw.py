@@ -48,10 +48,12 @@ def draw(
     Parameters
     ----
     H : Hypergraph or SimplicialComplex.
+        Hypergraph to draw
     pos : dict (default=None)
         If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
         If None (default), use the `barycenter_spring_layout` to compute the positions.
     ax : matplotlib.pyplot.axes (default=None)
+        Axis to draw on
     dyad_color : str, dict, iterable, or EdgeStat (default='black')
         Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
         contain (edge_id: color_str) pairs.  If iterable, assume the colors are
@@ -222,6 +224,7 @@ def draw_nodes(
     H : Hypergraph or SimplicialComplex
         Higher-order network to plot.
     ax : matplotlib.pyplot.axes
+        Axis to draw on
     pos : dict (default=None)
         If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
         If None (default), use the `barycenter_spring_layout` to compute the positions.
@@ -354,6 +357,7 @@ def draw_hyperedges(
     ----------
     H : Hypergraph
     ax : matplotlib.pyplot.axes
+        Axis to draw on
     pos : dict (default=None)
         If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
         If None (default), use the `barycenter_spring_layout` to compute the positions.
@@ -498,7 +502,9 @@ def draw_simplices(
     Parameters
     ----------
     SC : SimplicialComplex
+        Simplicial complex to draw
     ax : matplotlib.pyplot.axes
+        Axis to draw on
     pos : dict (default=None)
         If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
         If None (default), use the `barycenter_spring_layout` to compute the positions.

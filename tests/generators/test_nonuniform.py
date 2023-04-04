@@ -63,7 +63,7 @@ def test_random_hypergraph():
     with pytest.raises(ValueError):
         H1 = xgi.random_hypergraph(10, [1, -2])
 
-    # uniform 
+    # uniform
     H4 = xgi.random_hypergraph(10, [0.1], order=2, seed=1)
     assert H4.num_nodes == 10
     assert xgi.unique_edge_sizes(H4) == [3]
