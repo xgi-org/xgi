@@ -11,7 +11,11 @@ __all__ = [
 
 
 def local_clustering_coefficient(H):
-    """Compute the local clusterin coefficient
+    """Compute the local clustering coefficient.
+
+    This clustering coefficient is based on the
+    overlap of the edges connected to a given node,
+    normalized by the size of the node's neighborhood.
 
     Parameters
     ----------
@@ -90,6 +94,9 @@ def local_clustering_coefficient(H):
 def clustering_coefficient(H):
     """Return the clustering coefficients for
     each node in a Hypergraph.
+
+    This clustering coefficient is computed on the
+    unweighted pairwise projection of the hypergraph.
 
     Parameters
     ----------
