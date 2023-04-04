@@ -9,8 +9,8 @@
 
    .. autofunction:: attrs
    .. autofunction:: average_neighbor_degree
-   .. autofunction:: cec_centrality
+   .. autofunction:: clique_eigenvector_centrality
    .. autofunction:: clustering
    .. autofunction:: degree
-   .. autofunction:: hec_centrality
+   .. autofunction:: h_eigenvector_centrality
    .. autofunction:: node_edge_centrality

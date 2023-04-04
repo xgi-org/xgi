@@ -12,15 +12,15 @@ from ..exception import XGIError
 from ..linalg import clique_motif_matrix, incidence_matrix
 
 __all__ = [
-    "CEC_centrality",
-    "HEC_centrality",
+    "clique_eigenvector_centrality",
+    "h_eigenvector_centrality",
     "node_edge_centrality",
     "line_vector_centrality",
 ]
 
 
-def CEC_centrality(H, tol=1e-6):
-    """Compute the CEC centrality of a hypergraph.
+def clique_eigenvector_centrality(H, tol=1e-6):
+    """Compute the clique motif eigenvector centrality of a hypergraph.
 
     Parameters
     ----------
@@ -58,8 +58,8 @@ def CEC_centrality(H, tol=1e-6):
     return {node_dict[n]: v[n].item() for n in node_dict}
 
 
-def HEC_centrality(H, max_iter=100, tol=1e-6):
-    """Compute the HEC centrality of a uniform hypergraph.
+def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
+    """Compute the H-eigenvector centrality of a uniform hypergraph.
 
     Parameters
     ----------

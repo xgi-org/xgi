@@ -27,8 +27,8 @@ __all__ = [
     "degree",
     "average_neighbor_degree",
     "clustering",
-    "cec_centrality",
-    "hec_centrality",
+    "clique_eigenvector_centrality",
+    "h_eigenvector_centrality",
     "node_edge_centrality",
 ]
 
@@ -234,8 +234,8 @@ def clustering(net, bunch):
     return result
 
 
-def cec_centrality(net, bunch, tol=1e-6):
-    """Compute the CEC centrality of a hypergraph.
+def clique_eigenvector_centrality(net, bunch, tol=1e-6):
+    """Compute the clique motif eigenvector centrality of a hypergraph.
 
     Parameters
     ----------
@@ -257,12 +257,12 @@ def cec_centrality(net, bunch, tol=1e-6):
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
     """
-    c = xgi.CEC_centrality(net, tol)
+    c = xgi.clique_eigenvector_centrality(net, tol)
     return {n: c[n] for n in c if n in bunch}
 
 
-def hec_centrality(net, bunch, max_iter=10, tol=1e-6):
-    """Compute the HEC centrality of a hypergraph.
+def h_eigenvector_centrality(net, bunch, max_iter=10, tol=1e-6):
+    """Compute the H-eigenvector centrality of a hypergraph.
 
     Parameters
     ----------
@@ -286,7 +286,7 @@ def hec_centrality(net, bunch, max_iter=10, tol=1e-6):
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
     """
-    c = xgi.HEC_centrality(net, max_iter, tol)
+    c = xgi.h_eigenvector_centrality(net, max_iter, tol)
     return {n: c[n] for n in c if n in bunch}
 
 
