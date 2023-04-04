@@ -1,4 +1,4 @@
-"""Matrices associated to hypergraphs.
+"""Laplacian matrices associated to hypergraphs.
 
 Note that the order of the rows and columns of the
 matrices in this module correspond to the order in

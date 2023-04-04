@@ -7,4 +7,6 @@ linalg package
 .. autosummary::
    :toctree: linalg
 
-   ~xgi.linalg.matrix
+   ~xgi.linalg.hypergraph_matrix
+   ~xgi.linalg.laplacian_matrix
+   ~xgi.linalg.hodge_matrix
