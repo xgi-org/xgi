@@ -1012,8 +1012,9 @@ def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, zorder, radius):
 
     """
     
+    offsets = radius * np.array([np.cos(thetas), np.sin(thetas)]).T
     thetas = np.linspace(0, 2*np.pi, num=100, endpoint=False)
-    points = np.vstack([p + radius * np.array([np.cos(thetas), np.sin(thetas)]).T for p in node_pos])
+    points = np.vstack([p + offsets for p in node_pos])
     points = np.vstack([node_pos, points])
 
     hull = ConvexHull(points)
