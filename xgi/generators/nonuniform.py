@@ -10,7 +10,9 @@ import numpy as np
 from scipy.special import comb
 
 from ..classes import SimplicialComplex
-from .classic import empty_hypergraph, flag_complex_d2, ring_lattice
+from .classic import empty_hypergraph
+from .lattice import ring_lattice
+from .simplicial_complexes import flag_complex_d2
 
 __all__ = [
     "chung_lu_hypergraph",
