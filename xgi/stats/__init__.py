@@ -370,7 +370,7 @@ class MultiIDStat(IDStat):
         --------
         >>> import xgi
         >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
-        >>> H.nodes.multi(['degree', 'clustering']).aspandas()  # doctest: +NORMALIZE_WHITESPACE
+        >>> H.nodes.multi(['degree', 'clustering_coefficient']).aspandas()  # doctest: +NORMALIZE_WHITESPACE
            degree  clustering_coefficient
         1       1    0.000000
         2       2    4.000000
