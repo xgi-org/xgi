@@ -1011,16 +1011,10 @@ def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, zorder, radius):
     ax : matplotlib.pyplot.axes
 
     """
-
-    points = node_pos.copy()
-    for i in node_pos:
-        center = i
-        thetas = np.linspace(0, 2 * np.pi, num=100, endpoint=False)
-        circle = [
-            center + radius * np.array([np.cos(theta), np.sin(theta)])
-            for theta in thetas
-        ]
-        points = np.vstack([circle, points])
+    
+    thetas = np.linspace(0, 2*np.pi, num=100, endpoint=False)
+    points = np.vstack([p + radius * np.array([np.cos(thetas), np.sin(thetas)]).T for p in node_pos])
+    points = np.vstack([node_pos, points])
 
     hull = ConvexHull(points)
 
