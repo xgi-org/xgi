@@ -95,8 +95,13 @@ def clustering_coefficient(H):
     """Return the clustering coefficients for
     each node in a Hypergraph.
 
-    This clustering coefficient is computed on the
-    unweighted pairwise projection of the hypergraph.
+    This clustering coefficient is defined as the
+    clustering coefficient of the unweighted pairwise
+    projection of the hypergraph, i.e., `num / denom`,
+    where `num` equals `A^3[n, n]` and `denom` equals
+    `nu*(nu-1)/2`.  Here `A` is the adjacency matrix
+    of the network and `nu` is the number of pairwise
+    neighbors of `n`.
 
     Parameters
     ----------

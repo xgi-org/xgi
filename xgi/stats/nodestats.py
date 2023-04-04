@@ -26,7 +26,9 @@ __all__ = [
     "attrs",
     "degree",
     "average_neighbor_degree",
-    "clustering",
+    "local_clustering_coefficient",
+    "clustering_coefficient",
+    "two_node_clustering_coefficient",
     "clique_eigenvector_centrality",
     "h_eigenvector_centrality",
     "node_edge_centrality",
@@ -188,12 +190,16 @@ def average_neighbor_degree(net, bunch):
     return result
 
 
-def clustering(net, bunch):
+def clustering_coefficient(net, bunch):
     """Local clustering coefficient.
 
-    The clustering coefficient of a node `n` is defined as `num / denom`, where `num`
-    equals `A^3[n, n]` and `denom` equals `d*(d-1)/2`.  Here `A` is the adjacency matrix
-    of the network and `d` is the degree of `n`.
+    This clustering coefficient is defined as the
+    clustering coefficient of the unweighted pairwise
+    projection of the hypergraph, i.e., `num / denom`,
+    where `num` equals `A^3[n, n]` and `denom` equals
+    `nu*(nu-1)/2`.  Here `A` is the adjacency matrix
+    of the network and `nu` is the number of pairwise
+    neighbors of `n`.
 
     Parameters
     ----------
@@ -215,23 +221,97 @@ def clustering(net, bunch):
     --------
     >>> import xgi, numpy as np
     >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
-    >>> np.round(H.nodes.clustering.asnumpy(), 3)
-    array([0.   , 4.   , 1.333, 3.   , 3.   ])
+    >>> H.nodes.two_node_clustering_coefficient.asnumpy()
+    array([0.41666667, 0.45833333, 0.58333333, 0.66666667, 0.66666667])
 
     """
-    adj, index = xgi.adjacency_matrix(net, index=True)
-    node_to_index = {n: i for i, n in index.items()}
-    mat = adj.dot(adj).dot(adj)
-    result = {}
-    for n in bunch:
-        deg = len(net.nodes.memberships(n))
-        denom = deg * (deg - 1) / 2
-        if denom <= 0:
-            result[n] = 0.0
-        else:
-            i = node_to_index[n]
-            result[n] = mat[i, i] / denom / 2
-    return result
+    cc = xgi.clustering_coefficient(net)
+    return {n: cc[n] for n in cc if n in bunch}
+
+
+def local_clustering_coefficient(net, bunch):
+    """Compute the local clustering coefficient.
+
+    This clustering coefficient is based on the
+    overlap of the edges connected to a given node,
+    normalized by the size of the node's neighborhood.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Nodes in `net`.
+
+    Returns
+    -------
+    dict
+        keys are node IDs and values are the
+        clustering coefficients.
+
+    References
+    ----------
+    "Properties of metabolic graphs: biological organization or representation artifacts?"
+    by Wanding Zhou and Luay Nakhleh.
+    https://doi.org/10.1186/1471-2105-12-132
+
+    "Hypergraphs for predicting essential genes using multiprotein complex data"
+    by Florian Klimm, Charlotte M. Deane, and Gesine Reinert.
+    https://doi.org/10.1093/comnet/cnaa028
+
+    Example
+    -------
+    >>> import xgi
+    >>> H = xgi.random_hypergraph(3, [1, 1])
+    >>> H.nodes.local_clustering_coefficient.asdict()
+    {0: 1.0, 1: 1.0, 2: 1.0}
+    """
+    cc = xgi.local_clustering_coefficient(net)
+    return {n: cc[n] for n in cc if n in bunch}
+
+
+def two_node_clustering_coefficient(net, bunch, kind="union"):
+    """Return the clustering coefficients for
+    each node in a Hypergraph.
+
+    This definition averages over all of the
+    two-node clustering coefficients involving the node.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Nodes in `net`.
+    kind : str
+        The type of two-node clustering coefficient.
+        Types are:
+
+        - "union"
+        - "min"
+        - "max"
+        by default, "union".
+
+    Returns
+    -------
+    dict
+        nodes are keys, clustering coefficients are values.
+
+    References
+    ----------
+    "Clustering Coefficients in Protein Interaction Hypernetworks"
+    by Suzanne Gallagher and Debra Goldberg.
+    DOI: 10.1145/2506583.2506635
+
+    Example
+    -------
+    >>> import xgi
+    >>> H = xgi.random_hypergraph(3, [1, 1])
+    >>> H.nodes.two_node_clustering_coefficient.asdict()
+    {0: 0.5, 1: 0.5, 2: 0.5}
+    """
+    cc = xgi.two_node_clustering_coefficient(net, kind=kind)
+    return {n: cc[n] for n in cc if n in bunch}
 
 
 def clique_eigenvector_centrality(net, bunch, tol=1e-6):

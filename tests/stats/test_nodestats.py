@@ -162,23 +162,29 @@ def test_average_neighbor_degree(edgelist1, edgelist8):
     assert H.nodes.average_neighbor_degree().aslist() == list(vals.values())
 
 
-def test_clustering():
+def test_clustering_coefficient():
     # no nodes
     H = xgi.Hypergraph()
 
-    assert H.clustering() == dict()
-    assert H.nodes.clustering().aslist() == []
-    assert H.nodes.clustering().asdict() == dict()
+    assert H.clustering_coefficient() == dict()
+    assert H.nodes.clustering_coefficient().aslist() == []
+    assert H.nodes.clustering_coefficient().asdict() == dict()
 
     # no edges
     H.add_nodes_from(range(3))
-    assert H.nodes.clustering().aslist() == [0.0, 0.0, 0.0]
-    assert H.nodes.clustering().asdict() == {0: 0.0, 1: 0.0, 2: 0.0}
+    assert H.nodes.clustering_coefficient().aslist() == [np.NaN, np.NaN, np.NaN]
+    assert H.nodes.clustering_coefficient().asdict() == {
+        0: np.NaN,
+        1: np.NaN,
+        2: np.NaN,
+    }
 
     # edges
     edges = [[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]]
     H = xgi.Hypergraph(edges)
-    assert np.allclose(H.nodes.clustering.aslist(), [0.0, 4.0, 1.33333333, 3.0, 3.0])
+    assert np.allclose(
+        H.nodes.clustering_coefficient.aslist(), np.array([1, 2/3, 2/3, 1, 1])
+    )
 
 
 def test_aggregates(edgelist1, edgelist2, edgelist8):
