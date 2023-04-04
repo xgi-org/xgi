@@ -264,8 +264,8 @@ def random_hypergraph(N, ps, order=None, seed=None):
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
         of any triangles (3 nodes).
     order: int of None (default)
-        If None, ignore. If int, generates a uniform hypergraph with edges 
-        of order `order` (ps must have only one element). 
+        If None, ignore. If int, generates a uniform hypergraph with edges
+        of order `order` (ps must have only one element).
     seed : integer or None (default)
             Seed for the random number generator.
 
@@ -298,7 +298,11 @@ def random_hypergraph(N, ps, order=None, seed=None):
     hyperedges = []
 
     for i, p in enumerate(ps):
-        d = i + 1  # order, ps[0] is prob of edges (d=1)
+
+        if order is not None:
+            d = order
+        else:
+            d = i + 1  # order, ps[0] is prob of edges (d=1)
 
         potential_edges = combinations(nodes, d + 1)
         n_comb = comb(N, d + 1, exact=True)

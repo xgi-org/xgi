@@ -1,6 +1,6 @@
-from . import classic, nonuniform, uniform, simple, lattice, simplicial_complexes
+from . import classic, uniform, random, simple, lattice, simplicial_complexes
 from .classic import *
-from .nonuniform import *
+from .random import *
 from .uniform import *
 from .simple import *
 from .lattice import *

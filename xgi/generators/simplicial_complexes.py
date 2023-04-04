@@ -212,6 +212,7 @@ def flag_complex_d2(G, p2=None, seed=None):
 
     return S
 
+
 def random_flag_complex_d2(N, p, seed=None):
     """Generate a maximal simplicial complex (up to order 2) from a
     :math:`G_{N,p}` Erdős-Rényi random graph by filling all empty triangles with 2-simplices.
