@@ -183,7 +183,70 @@ def test_clustering_coefficient():
     edges = [[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]]
     H = xgi.Hypergraph(edges)
     assert np.allclose(
-        H.nodes.clustering_coefficient.aslist(), np.array([1, 2/3, 2/3, 1, 1])
+        H.nodes.clustering_coefficient.aslist(), np.array([1, 2 / 3, 2 / 3, 1, 1])
+    )
+
+
+def test_local_clustering_coefficient():
+    # no nodes
+    H = xgi.Hypergraph()
+
+    assert H.local_clustering_coefficient() == dict()
+    assert H.nodes.local_clustering_coefficient().aslist() == []
+    assert H.nodes.local_clustering_coefficient().asdict() == dict()
+
+    # no edges
+    H.add_nodes_from(range(3))
+    assert H.nodes.local_clustering_coefficient().aslist() == [np.NaN, np.NaN, np.NaN]
+    assert H.nodes.local_clustering_coefficient().asdict() == {
+        0: np.NaN,
+        1: np.NaN,
+        2: np.NaN,
+    }
+
+    # edges
+    edges = [[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]]
+    H = xgi.Hypergraph(edges)
+    assert np.allclose(
+        H.nodes.local_clustering_coefficient.aslist(), np.array([0, 0, 0.25, 0, 0])
+    )
+
+
+def test_two_node_clustering_coefficient():
+    # no nodes
+    H = xgi.Hypergraph()
+
+    assert H.two_node_clustering_coefficient() == dict()
+    assert H.nodes.two_node_clustering_coefficient().aslist() == []
+    assert H.nodes.two_node_clustering_coefficient().asdict() == dict()
+
+    # no edges
+    H.add_nodes_from(range(3))
+    assert H.nodes.two_node_clustering_coefficient().aslist() == [
+        np.NaN,
+        np.NaN,
+        np.NaN,
+    ]
+    assert H.nodes.two_node_clustering_coefficient().asdict() == {
+        0: np.NaN,
+        1: np.NaN,
+        2: np.NaN,
+    }
+
+    # edges
+    edges = [[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]]
+    H = xgi.Hypergraph(edges)
+    assert np.allclose(
+        H.nodes.two_node_clustering_coefficient(kind="union").aslist(),
+        np.array(
+            [
+                0.41666666666666663,
+                0.45833333333333326,
+                0.5833333333333333,
+                0.6666666666666666,
+                0.6666666666666666,
+            ]
+        ),
     )
 
 

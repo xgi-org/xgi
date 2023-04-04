@@ -7,6 +7,6 @@ xgi.algorithms.clustering
    
    .. rubric:: Functions
    
-   .. autofunction:: local_clustering_coefficient
    .. autofunction:: clustering_coefficient
+   .. autofunction:: local_clustering_coefficient
    .. autofunction:: two_node_clustering_coefficient
