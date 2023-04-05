@@ -613,19 +613,22 @@ def from_bipartite_graph(G, create_using=None, dual=False):
     return H.dual() if dual else H
 
 
-def to_bipartite_graph(H):
-    """
-    Create a NetworkX bipartite network from a hypergraph.
+def to_bipartite_graph(H, index=False):
+    """Create a NetworkX bipartite network from a hypergraph.
 
     Parameters
     ----------
     H: xgi.Hypergraph
         The XGI hypergraph object of interest
+    index: bool (default False)
+        If False (default), return only the graph.  If True, additionally return the
+        index-to-node and index-to-edge mappings.
 
     Returns
     -------
-    nx.Graph
-        The resulting equivalent bipartite graph
+    nx.Graph[, dict, dict]
+        The resulting equivalent bipartite graph, and optionally the index-to-unit
+        mappings.
 
     References
     ----------
@@ -639,6 +642,8 @@ def to_bipartite_graph(H):
     >>> hyperedge_list = [[1, 2], [2, 3, 4]]
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> G = xgi.to_bipartite_graph(H)
+    >>> G, itn, ite = xgi.to_bipartite_graph(H, index=True)
+
     """
     G = nx.Graph()
 
@@ -650,11 +655,14 @@ def to_bipartite_graph(H):
         for edge in H.nodes.memberships(node):
             G.add_edge(node_dict[node], edge_dict[edge])
 
-    return (
-        G,
-        dict(zip(range(H.num_nodes), H.nodes)),
-        dict(zip(range(H.num_nodes, H.num_nodes + H.num_edges), H.edges)),
-    )
+    if index:
+        return (
+            G,
+            dict(zip(range(H.num_nodes), H.nodes)),
+            dict(zip(range(H.num_nodes, H.num_nodes + H.num_edges), H.edges)),
+        )
+    else:
+        return G
 
 
 def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
