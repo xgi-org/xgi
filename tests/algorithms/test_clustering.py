@@ -29,7 +29,9 @@ def test_local_clustering_coefficient(edgelist8):
     H = xgi.Hypergraph()
     H.add_nodes_from(range(3))
     cc = xgi.local_clustering_coefficient(H)
-    assert cc == {0: np.nan, 1: np.nan, 2: np.nan}
+    assert set(cc) == {0, 1, 2}
+    for i in cc:
+        assert np.isnan(cc[i])
 
     H = xgi.Hypergraph(edgelist8)
     cc = xgi.local_clustering_coefficient(H)
@@ -69,7 +71,9 @@ def test_clustering_coefficient(edgelist1):
     H = xgi.Hypergraph()
     H.add_nodes_from(range(3))
     cc = xgi.clustering_coefficient(H)
-    assert cc == {0: np.nan, 1: np.nan, 2: np.nan}
+    assert set(cc) == {0, 1, 2}
+    for i in cc:
+        assert np.isnan(cc[i])
 
     H = xgi.Hypergraph(edgelist1)
     cc = xgi.clustering_coefficient(H)
