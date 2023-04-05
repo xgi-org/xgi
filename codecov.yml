@@ -8,7 +8,5 @@ coverage:
         # basic
         target: auto
         threshold: 0.1
-    patch:
-      default:
-        # basic
-        target: 0
+        removed_code_behavior: removals_only # off, removals_only, adjust_base
+    patch: off

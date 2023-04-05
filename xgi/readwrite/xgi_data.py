@@ -1,3 +1,4 @@
+"""Load a data set from the xgi-data repository or a local file."""
 import json
 import os
 from functools import lru_cache

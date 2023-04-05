@@ -47,18 +47,26 @@ def test_dcsbm_hypergraph():
 
 def test_random_hypergraph():
     # seed
-    H1 = xgi.random_hypergraph(10, [0.1, 0.001], seed=1)
-    H2 = xgi.random_hypergraph(10, [0.1, 0.001], seed=2)
-    H3 = xgi.random_hypergraph(10, [0.1, 0.001], seed=2)
+    H1 = xgi.random_hypergraph(10, [0.1, 0.01], seed=1)
+    H2 = xgi.random_hypergraph(10, [0.1, 0.01], seed=2)
+    H3 = xgi.random_hypergraph(10, [0.1, 0.01], seed=2)
 
     assert H1._edge != H2._edge
     assert H2._edge == H3._edge
+
+    assert H1.num_nodes == 10
+    assert xgi.unique_edge_sizes(H1) == [2, 3]
 
     # wrong input
     with pytest.raises(ValueError):
         H1 = xgi.random_hypergraph(10, [1, 1.1])
     with pytest.raises(ValueError):
         H1 = xgi.random_hypergraph(10, [1, -2])
+
+    # uniform
+    H4 = xgi.random_hypergraph(10, [0.1], order=2, seed=1)
+    assert H4.num_nodes == 10
+    assert xgi.unique_edge_sizes(H4) == [3]
 
 
 def test_random_simplicial_complex():

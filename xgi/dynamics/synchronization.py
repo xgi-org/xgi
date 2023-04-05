@@ -5,6 +5,7 @@ import numpy as np
 import xgi
 
 from ..exception import XGIError
+from ..linalg.hodge_matrix import boundary_matrix
 
 __all__ = [
     "simulate_kuramoto",
@@ -208,17 +209,15 @@ def simulate_simplicial_kuramoto(
         )
 
     if index:
-        B_o, om1_dict, o_dict = xgi.matrix.boundary_matrix(S, order, orientations, True)
+        B_o, om1_dict, o_dict = boundary_matrix(S, order, orientations, True)
     else:
-        B_o = xgi.matrix.boundary_matrix(S, order, orientations, False)
+        B_o = boundary_matrix(S, order, orientations, False)
     D_om1 = np.transpose(B_o)
 
     if index:
-        B_op1, __, op1_dict = xgi.matrix.boundary_matrix(
-            S, order + 1, orientations, True
-        )
+        B_op1, __, op1_dict = boundary_matrix(S, order + 1, orientations, True)
     else:
-        B_op1 = xgi.matrix.boundary_matrix(S, order + 1, orientations, False)
+        B_op1 = boundary_matrix(S, order + 1, orientations, False)
     D_o = np.transpose(B_op1)
 
     # Compute the number of oscillating simplices
