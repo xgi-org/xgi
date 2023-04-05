@@ -12,10 +12,10 @@ def test_clique_eigenvector_centrality():
     assert xgi.clique_eigenvector_centrality(H) == dict()
     # Test no edges
     H.add_nodes_from([0, 1, 2])
-    assert xgi.clique_eigenvector_centrality(H) == {0: np.NaN, 1: np.NaN, 2: np.NaN}
+    assert xgi.clique_eigenvector_centrality(H) == {0: np.nan, 1: np.nan, 2: np.nan}
     # test disconnected
     H.add_edge([0, 1])
-    assert xgi.clique_eigenvector_centrality(H) == {0: np.NaN, 1: np.NaN, 2: np.NaN}
+    assert xgi.clique_eigenvector_centrality(H) == {0: np.nan, 1: np.nan, 2: np.nan}
 
     H = xgi.sunflower(3, 1, 3)
     c = H.nodes.clique_eigenvector_centrality.asnumpy()
@@ -37,11 +37,11 @@ def test_h_eigenvector_centrality():
     # Test no edges
     H.add_nodes_from([0, 1, 2])
     c = xgi.h_eigenvector_centrality(H)
-    assert c == {0: np.NaN, 1: np.NaN, 2: np.NaN}
+    assert c == {0: np.nan, 1: np.nan, 2: np.nan}
     # test disconnected
     H.add_edge([0, 1])
     c = xgi.h_eigenvector_centrality(H)
-    assert c == {0: np.NaN, 1: np.NaN, 2: np.NaN}
+    assert c == {0: np.nan, 1: np.nan, 2: np.nan}
 
     H = xgi.sunflower(3, 1, 5)
     c = H.nodes.h_eigenvector_centrality(max_iter=1000).asnumpy()
@@ -64,12 +64,12 @@ def test_node_edge_centrality():
     assert xgi.node_edge_centrality(H) == (dict(), dict())
     # Test no edges
     H.add_nodes_from([0, 1, 2])
-    assert xgi.node_edge_centrality(H) == ({0: np.NaN, 1: np.NaN, 2: np.NaN}, dict())
+    assert xgi.node_edge_centrality(H) == ({0: np.nan, 1: np.nan, 2: np.nan}, dict())
     # test disconnected
     H.add_edge([0, 1])
     assert xgi.node_edge_centrality(H) == (
-        {0: np.NaN, 1: np.NaN, 2: np.NaN},
-        {0: np.NaN},
+        {0: np.nan, 1: np.nan, 2: np.nan},
+        {0: np.nan},
     )
 
     H = xgi.Hypergraph([[0, 1, 2, 3, 4]])

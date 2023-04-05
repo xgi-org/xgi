@@ -47,9 +47,9 @@ def clique_eigenvector_centrality(H, tol=1e-6):
     if H.num_nodes == 0:
         return dict()
     # if the hypergraph is not connected,
-    # this metric doesn't make sense and should return NaN.
+    # this metric doesn't make sense and should return nan.
     if not is_connected(H):
-        return {n: np.NaN for n in H.nodes}
+        return {n: np.nan for n in H.nodes}
     W, node_dict = clique_motif_matrix(H, index=True)
     _, v = eigsh(W.asfptype(), k=1, which="LM", tol=tol)
 
@@ -93,9 +93,9 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     if H.num_nodes == 0:
         return dict()
     # if the hypergraph is not connected,
-    # this metric doesn't make sense and should return NaN.
+    # this metric doesn't make sense and should return nan.
     if not is_connected(H):
-        return {n: np.NaN for n in H.nodes}
+        return {n: np.nan for n in H.nodes}
 
     m = is_uniform(H)
     if not m:
@@ -205,11 +205,11 @@ def node_edge_centrality(
 
     # if there aren't any nodes or edges, return an empty dict
     if H.num_nodes == 0 or H.num_edges == 0 or not is_connected(H):
-        return {n: np.NaN for n in H.nodes}, {e: np.NaN for e in H.edges}
+        return {n: np.nan for n in H.nodes}, {e: np.nan for e in H.edges}
     # if the hypergraph is not connected,
-    # this metric doesn't make sense and should return NaN.
+    # this metric doesn't make sense and should return nan.
     # if not is_connected(H):
-    #     return {n: np.NaN for n in H.nodes}, {e: np.NaN for e in H.edges}
+    #     return {n: np.nan for n in H.nodes}, {e: np.nan for e in H.edges}
 
     n = H.num_nodes
     m = H.num_edges

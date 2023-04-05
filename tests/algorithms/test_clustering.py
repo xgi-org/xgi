@@ -29,7 +29,7 @@ def test_local_clustering_coefficient(edgelist8):
     H = xgi.Hypergraph()
     H.add_nodes_from(range(3))
     cc = xgi.local_clustering_coefficient(H)
-    assert cc == {0: np.NaN, 1: np.NaN, 2: np.NaN}
+    assert cc == {0: np.nan, 1: np.nan, 2: np.nan}
 
     H = xgi.Hypergraph(edgelist8)
     cc = xgi.local_clustering_coefficient(H)
@@ -69,11 +69,11 @@ def test_clustering_coefficient(edgelist1):
     H = xgi.Hypergraph()
     H.add_nodes_from(range(3))
     cc = xgi.clustering_coefficient(H)
-    assert cc == {0: np.NaN, 1: np.NaN, 2: np.NaN}
+    assert cc == {0: np.nan, 1: np.nan, 2: np.nan}
 
     H = xgi.Hypergraph(edgelist1)
     cc = xgi.clustering_coefficient(H)
-    true_cc = {1: 1.0, 2: 1.0, 3: 1.0, 4: np.NaN, 5: np.NaN, 6: 1 / 3, 8: 1.0, 7: 1.0}
+    true_cc = {1: 1.0, 2: 1.0, 3: 1.0, 4: np.nan, 5: np.nan, 6: 1 / 3, 8: 1.0, 7: 1.0}
     assert cc == true_cc
 
 
@@ -98,9 +98,9 @@ def test_two_node_clustering_coefficient(edgelist1, edgelist8):
     cc2 = xgi.two_node_clustering_coefficient(H, kind="min")
     cc3 = xgi.two_node_clustering_coefficient(H, kind="max")
 
-    true_cc1 = {1: 1.0, 2: 1.0, 3: 1.0, 4: np.NaN, 5: 0.5, 6: 0.5, 8: 0.75, 7: 0.75}
-    true_cc2 = {1: 1.0, 2: 1.0, 3: 1.0, 4: np.NaN, 5: 1.0, 6: 1.0, 8: 1.0, 7: 1.0}
-    true_cc3 = {1: 1.0, 2: 1.0, 3: 1.0, 4: np.NaN, 5: 0.5, 6: 0.5, 8: 0.75, 7: 0.75}
+    true_cc1 = {1: 1.0, 2: 1.0, 3: 1.0, 4: np.nan, 5: 0.5, 6: 0.5, 8: 0.75, 7: 0.75}
+    true_cc2 = {1: 1.0, 2: 1.0, 3: 1.0, 4: np.nan, 5: 1.0, 6: 1.0, 8: 1.0, 7: 1.0}
+    true_cc3 = {1: 1.0, 2: 1.0, 3: 1.0, 4: np.nan, 5: 0.5, 6: 0.5, 8: 0.75, 7: 0.75}
     assert cc1 == true_cc1
     assert cc2 == true_cc2
     assert cc3 == true_cc3
@@ -119,6 +119,6 @@ def test_two_node_clustering_coefficient(edgelist1, edgelist8):
         4: 0.5666666666666667,
         5: 0.5,
         6: 0.5,
-        10: np.NaN,
+        10: np.nan,
     }
     assert cc == true_cc
