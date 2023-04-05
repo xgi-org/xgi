@@ -5,6 +5,6 @@ linalg package
 .. rubric:: Modules
 
 .. autosummary::
-   :toctree: classes
+   :toctree: linalg
 
    ~xgi.linalg.matrix

@@ -7,7 +7,7 @@ xgi.algorithms.centrality
    
    .. rubric:: Functions
    
-   .. autofunction:: CEC_centrality
-   .. autofunction:: HEC_centrality
+   .. autofunction:: clique_eigenvector_centrality
+   .. autofunction:: h_eigenvector_centrality
    .. autofunction:: node_edge_centrality
    .. autofunction:: line_vector_centrality
