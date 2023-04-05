@@ -169,3 +169,20 @@ def test_draw_simplices(edgelist8):
         assert patch.get_zorder() == z
 
     plt.close()
+
+def test_draw_hypergraph_hull(edgelist8):
+
+    H = xgi.Hypergraph(edgelist8)
+
+    ax = xgi.draw_hypergraph_hull(H)
+
+    # number of elements
+    assert len(ax.patches) == len(H.edges.filterby("size", 2, mode="gt"))  # hyperedges
+    assert len(ax.collections[0].get_sizes()) == H.num_nodes  # nodes
+
+    # zorder
+    for patch, z in zip(ax.patches, [2, 2, 0, 2, 2]):  # hyperedges
+        assert patch.get_zorder() == z
+    assert ax.collections[0].get_zorder() == 4  # nodes
+
+    plt.close()
