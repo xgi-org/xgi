@@ -10,6 +10,58 @@ __all__ = [
 ]
 
 
+def clustering_coefficient(H):
+    """Return the clustering coefficients for
+    each node in a Hypergraph.
+
+    This clustering coefficient is defined as the
+    clustering coefficient of the unweighted pairwise
+    projection of the hypergraph, i.e., `num / denom`,
+    where `num` equals `A^3[n, n]` and `denom` equals
+    `k*(k-1)/2`.  Here `A` is the adjacency matrix
+    of the network and `k` is the pairwise
+    degree of `n`.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        Hypergraph
+
+    Returns
+    -------
+    dict
+        nodes are keys, clustering coefficients are values.
+
+    References
+    ----------
+    "Clustering Coefficients in Protein Interaction Hypernetworks"
+    by Suzanne Gallagher and Debra Goldberg.
+    DOI: 10.1145/2506583.2506635
+
+    Example
+    -------
+    >>> import xgi
+    >>> H = xgi.random_hypergraph(3, [1, 1])
+    >>> cc = xgi.clustering_coefficient(H)
+    >>> cc
+    {0: 1.0, 1: 1.0, 2: 1.0}
+    """
+    adj, index = adjacency_matrix(H, index=True)
+    node_to_index = {n: i for i, n in index.items()}
+    mat = adj.dot(adj).dot(adj)
+    k = adj.sum(axis=1)
+    result = {}
+    for n in H.nodes:
+        k = len(H.nodes.neighbors(n))
+        denom = k * (k - 1) / 2
+        if denom == 0:
+            result[n] = np.NaN
+        else:
+            i = node_to_index[n]
+            result[n] = 0.5 * mat[i, i] / denom
+    return result
+
+
 def local_clustering_coefficient(H):
     """Compute the local clustering coefficient.
 
@@ -88,57 +140,6 @@ def local_clustering_coefficient(H):
 
             # include normalisation by degree k*(k-1)/2
             result[n] = 2 * total_eo / (dv * (dv - 1))
-    return result
-
-
-def clustering_coefficient(H):
-    """Return the clustering coefficients for
-    each node in a Hypergraph.
-
-    This clustering coefficient is defined as the
-    clustering coefficient of the unweighted pairwise
-    projection of the hypergraph, i.e., `num / denom`,
-    where `num` equals `A^3[n, n]` and `denom` equals
-    `nu*(nu-1)/2`.  Here `A` is the adjacency matrix
-    of the network and `nu` is the number of pairwise
-    neighbors of `n`.
-
-    Parameters
-    ----------
-    H : Hypergraph
-        Hypergraph
-
-    Returns
-    -------
-    dict
-        nodes are keys, clustering coefficients are values.
-
-    References
-    ----------
-    "Clustering Coefficients in Protein Interaction Hypernetworks"
-    by Suzanne Gallagher and Debra Goldberg.
-    DOI: 10.1145/2506583.2506635
-
-    Example
-    -------
-    >>> import xgi
-    >>> H = xgi.random_hypergraph(3, [1, 1])
-    >>> cc = xgi.clustering_coefficient(H)
-    >>> cc
-    {0: 1.0, 1: 1.0, 2: 1.0}
-    """
-    adj, index = adjacency_matrix(H, index=True)
-    node_to_index = {n: i for i, n in index.items()}
-    mat = adj.dot(adj).dot(adj)
-    result = {}
-    for n in H.nodes:
-        neighbors = len(H.nodes.neighbors(n))
-        denom = neighbors * (neighbors - 1) / 2
-        if denom == 0:
-            result[n] = np.NaN
-        else:
-            i = node_to_index[n]
-            result[n] = 0.5 * mat[i, i] / denom
     return result
 
 
