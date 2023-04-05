@@ -145,3 +145,39 @@ def test_uniform_HPPM():
     H2 = xgi.uniform_HPPM(n, m, rho, k, epsilon, seed=0)
 
     assert H1.edges.members(dtype=dict) == H2.edges.members(dtype=dict)
+
+
+def test_uniform_erdos_renyi_hypergraph():
+    m = 2
+    n = 10
+    k = 2
+    H1 = xgi.uniform_erdos_renyi_hypergraph(n, m, k, seed=0)
+
+    assert H1.num_nodes == 10
+    assert xgi.unique_edge_sizes(H1) == [2]
+
+    # test that the seed works
+    H2 = xgi.uniform_erdos_renyi_hypergraph(n, m, k, seed=0)
+
+    assert H1.edges.members(dtype=dict) == H2.edges.members(dtype=dict)
+
+    # test p < 0
+    with pytest.raises(XGIError):
+        m = 2
+        n = 10
+        p = -0.1
+        xgi.uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob")
+
+    # test p > 1
+    with pytest.raises(XGIError):
+        m = 2
+        n = 10
+        p = 1.1
+        xgi.uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob")
+
+    # test wrong p_type arg
+    with pytest.raises(XGIError):
+        m = 2
+        n = 10
+        k = 2
+        xgi.uniform_erdos_renyi_hypergraph(n, m, k, p_type="test")
