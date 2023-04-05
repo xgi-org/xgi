@@ -32,6 +32,13 @@ def clustering_coefficient(H):
     dict
         nodes are keys, clustering coefficients are values.
 
+    Notes
+    -----
+    The clustering coefficient is undefined when the number of
+    neighbors is 0 or 1, but we set the clustering coefficient
+    to 0 in these cases. For more discussion, see
+    https://arxiv.org/abs/0802.2512
+
     References
     ----------
     "Clustering Coefficients in Protein Interaction Hypernetworks"
@@ -47,18 +54,16 @@ def clustering_coefficient(H):
     {0: 1.0, 1: 1.0, 2: 1.0}
     """
     adj, index = adjacency_matrix(H, index=True)
-    node_to_index = {n: i for i, n in index.items()}
+    ndict = {n: i for i, n in index.items()}
 
     k = adj.sum(axis=1)
     denom = k * (k - 1) / 2
     mat = adj.dot(adj).dot(adj)
 
     with np.errstate(divide="ignore", invalid="ignore"):
-        result = 0.5 * mat.diagonal() / denom
+        result = np.nan_to_num(0.5 * mat.diagonal() / denom)
 
-    return {
-        n: result[node_to_index[n]] if n in node_to_index else np.nan for n in H.nodes
-    }
+    return {n: result[ndict[n]] if n in ndict else 0 for n in H.nodes}
 
 
 def local_clustering_coefficient(H):
@@ -78,6 +83,13 @@ def local_clustering_coefficient(H):
     dict
         keys are node IDs and values are the
         clustering coefficients.
+
+    Notes
+    -----
+    The clustering coefficient is undefined when the number of
+    neighbors is 0 or 1, but we set the clustering coefficient
+    to 0 in these cases. For more discussion, see
+    https://arxiv.org/abs/0802.2512
 
     References
     ----------
@@ -105,9 +117,7 @@ def local_clustering_coefficient(H):
     for n in H.nodes:
         ev = list(memberships[n])
         dv = len(ev)
-        if dv == 0:
-            result[n] = np.nan
-        elif dv == 1:
+        if dv <= 1:
             result[n] = 0
         else:
             total_eo = 0
@@ -159,6 +169,13 @@ def two_node_clustering_coefficient(H, kind="union"):
     dict
         nodes are keys, clustering coefficients are values.
 
+    Notes
+    -----
+    The clustering coefficient is undefined when the number of
+    neighbors is 0 or 1, but we set the clustering coefficient
+    to 0 in these cases. For more discussion, see
+    https://arxiv.org/abs/0802.2512
+
     References
     ----------
     "Clustering Coefficients in Protein Interaction Hypernetworks"
@@ -177,12 +194,9 @@ def two_node_clustering_coefficient(H, kind="union"):
     memberships = H.nodes.memberships()
     for n in H.nodes:
         neighbors = H.nodes.neighbors(n)
-        if not neighbors:
-            result[n] = np.nan
-        else:
-            result[n] = 0.0
-            for v in neighbors:
-                result[n] += _uv_cc(n, v, memberships, kind=kind) / len(neighbors)
+        result[n] = 0.0
+        for v in neighbors:
+            result[n] += _uv_cc(n, v, memberships, kind=kind) / len(neighbors)
     return result
 
 

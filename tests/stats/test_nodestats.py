@@ -172,12 +172,8 @@ def test_clustering_coefficient():
 
     # no edges
     H.add_nodes_from(range(3))
-    assert H.nodes.clustering_coefficient().aslist() == [np.NaN, np.NaN, np.NaN]
-    assert H.nodes.clustering_coefficient().asdict() == {
-        0: np.NaN,
-        1: np.NaN,
-        2: np.NaN,
-    }
+    assert H.nodes.clustering_coefficient().aslist() == [0, 0, 0]
+    assert H.nodes.clustering_coefficient().asdict() == {0: 0, 1: 0, 2: 0}
 
     # edges
     edges = [[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]]
@@ -197,12 +193,8 @@ def test_local_clustering_coefficient():
 
     # no edges
     H.add_nodes_from(range(3))
-    assert H.nodes.local_clustering_coefficient().aslist() == [np.NaN, np.NaN, np.NaN]
-    assert H.nodes.local_clustering_coefficient().asdict() == {
-        0: np.NaN,
-        1: np.NaN,
-        2: np.NaN,
-    }
+    assert H.nodes.local_clustering_coefficient().aslist() == [0, 0, 0]
+    assert H.nodes.local_clustering_coefficient().asdict() == {0: 0, 1: 0, 2: 0}
 
     # edges
     edges = [[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]]
@@ -222,16 +214,8 @@ def test_two_node_clustering_coefficient():
 
     # no edges
     H.add_nodes_from(range(3))
-    assert H.nodes.two_node_clustering_coefficient().aslist() == [
-        np.NaN,
-        np.NaN,
-        np.NaN,
-    ]
-    assert H.nodes.two_node_clustering_coefficient().asdict() == {
-        0: np.NaN,
-        1: np.NaN,
-        2: np.NaN,
-    }
+    assert H.nodes.two_node_clustering_coefficient().aslist() == [0, 0, 0]
+    assert H.nodes.two_node_clustering_coefficient().asdict() == {0: 0, 1: 0, 2: 0}
 
     # edges
     edges = [[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]]

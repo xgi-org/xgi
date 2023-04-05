@@ -90,7 +90,6 @@ def test_node_edge_centrality():
     assert set(nc) == {0, 1, 2}
     for i in nc:
         assert np.isnan(nc[i])
-
     assert set(ec) == {0}
     for i in ec:
         assert np.isnan(ec[i])
