@@ -48,18 +48,17 @@ def clustering_coefficient(H):
     """
     adj, index = adjacency_matrix(H, index=True)
     node_to_index = {n: i for i, n in index.items()}
-    mat = adj.dot(adj).dot(adj)
+
     k = adj.sum(axis=1)
-    result = {}
-    for n in H.nodes:
-        k = len(H.nodes.neighbors(n))
-        denom = k * (k - 1) / 2
-        if denom == 0:
-            result[n] = np.NaN
-        else:
-            i = node_to_index[n]
-            result[n] = 0.5 * mat[i, i] / denom
-    return result
+    denom = k * (k - 1) / 2
+    mat = adj.dot(adj).dot(adj)
+
+    with np.errstate(divide="ignore", invalid="ignore"):
+        result = 0.5 * mat.diagonal() / denom
+
+    return {
+        n: result[node_to_index[n]] if n in node_to_index else np.nan for n in H.nodes
+    }
 
 
 def local_clustering_coefficient(H):
@@ -107,7 +106,7 @@ def local_clustering_coefficient(H):
         ev = list(memberships[n])
         dv = len(ev)
         if dv == 0:
-            result[n] = np.NaN
+            result[n] = np.nan
         elif dv == 1:
             result[n] = 0
         else:
@@ -179,7 +178,7 @@ def two_node_clustering_coefficient(H, kind="union"):
     for n in H.nodes:
         neighbors = H.nodes.neighbors(n)
         if not neighbors:
-            result[n] = np.NaN
+            result[n] = np.nan
         else:
             result[n] = 0.0
             for v in neighbors:
@@ -240,6 +239,6 @@ def _uv_cc(u, v, memberships, kind="union"):
         raise XGIError("Invalid kind of clustering.")
 
     if denom == 0:
-        return np.NaN
+        return np.nan
 
     return num / denom

@@ -10,12 +10,20 @@ def test_clique_eigenvector_centrality():
     # test empty hypergraph
     H = xgi.Hypergraph()
     assert xgi.clique_eigenvector_centrality(H) == dict()
+
     # Test no edges
     H.add_nodes_from([0, 1, 2])
-    assert xgi.clique_eigenvector_centrality(H) == {0: np.nan, 1: np.nan, 2: np.nan}
+    cec = xgi.clique_eigenvector_centrality(H)
+    assert set(cec) == {0, 1, 2}
+    for i in cec:
+        assert np.isnan(cec[i])
+
     # test disconnected
     H.add_edge([0, 1])
-    assert xgi.clique_eigenvector_centrality(H) == {0: np.nan, 1: np.nan, 2: np.nan}
+    cec = xgi.clique_eigenvector_centrality(H)
+    assert set(cec) == {0, 1, 2}
+    for i in cec:
+        assert np.isnan(cec[i])
 
     H = xgi.sunflower(3, 1, 3)
     c = H.nodes.clique_eigenvector_centrality.asnumpy()
@@ -34,14 +42,19 @@ def test_h_eigenvector_centrality():
     H = xgi.Hypergraph()
     c = xgi.h_eigenvector_centrality(H)
     assert c == dict()
+
     # Test no edges
     H.add_nodes_from([0, 1, 2])
-    c = xgi.h_eigenvector_centrality(H)
-    assert c == {0: np.nan, 1: np.nan, 2: np.nan}
+    hec = xgi.h_eigenvector_centrality(H)
+    for i in hec:
+        assert np.isnan(hec[i])
+
     # test disconnected
     H.add_edge([0, 1])
-    c = xgi.h_eigenvector_centrality(H)
-    assert c == {0: np.nan, 1: np.nan, 2: np.nan}
+    hec = xgi.h_eigenvector_centrality(H)
+    assert set(hec) == {0, 1, 2}
+    for i in hec:
+        assert np.isnan(hec[i])
 
     H = xgi.sunflower(3, 1, 5)
     c = H.nodes.h_eigenvector_centrality(max_iter=1000).asnumpy()
@@ -62,15 +75,25 @@ def test_node_edge_centrality():
     # test empty hypergraph
     H = xgi.Hypergraph()
     assert xgi.node_edge_centrality(H) == (dict(), dict())
+
     # Test no edges
     H.add_nodes_from([0, 1, 2])
-    assert xgi.node_edge_centrality(H) == ({0: np.nan, 1: np.nan, 2: np.nan}, dict())
+    nc, ec = xgi.node_edge_centrality(H)
+    assert set(nc) == {0, 1, 2}
+    for i in nc:
+        assert np.isnan(nc[i])
+    assert ec == dict()
+
     # test disconnected
     H.add_edge([0, 1])
-    assert xgi.node_edge_centrality(H) == (
-        {0: np.nan, 1: np.nan, 2: np.nan},
-        {0: np.nan},
-    )
+    nc, ec = xgi.node_edge_centrality(H)
+    assert set(nc) == {0, 1, 2}
+    for i in nc:
+        assert np.isnan(nc[i])
+
+    assert set(ec) == {0}
+    for i in ec:
+        assert np.isnan(ec[i])
 
     H = xgi.Hypergraph([[0, 1, 2, 3, 4]])
     c = H.nodes.node_edge_centrality.asnumpy()
