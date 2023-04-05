@@ -135,18 +135,18 @@ def test_to_bipartite_graph(edgelist1, edgelist3, edgelist4):
 
     G1, node_dict, edge_dict = xgi.to_bipartite_graph(H1, index=True)
     bi_el1 = [[node_dict[u], edge_dict[v]] for u, v in G1.edges]
-
     assert sorted(bi_el1) == sorted(true_bi_el1)
+    assert G1.edges() == xgi.to_bipartite_graph(H1, index=False).edges()
 
     G2, node_dict, edge_dict = xgi.to_bipartite_graph(H2, index=True)
     bi_el2 = [[node_dict[u], edge_dict[v]] for u, v in G2.edges]
-
     assert sorted(bi_el2) == sorted(true_bi_el2)
+    assert G2.edges() == xgi.to_bipartite_graph(H2, index=False).edges()
 
     G3, node_dict, edge_dict = xgi.to_bipartite_graph(H3, index=True)
     bi_el3 = [[node_dict[u], edge_dict[v]] for u, v in G3.edges]
-
     assert sorted(bi_el3) == sorted(true_bi_el3)
+    assert G3.edges() == xgi.to_bipartite_graph(H3, index=False).edges()
 
 
 def test_from_bipartite_graph(
