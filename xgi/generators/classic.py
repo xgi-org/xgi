@@ -5,7 +5,6 @@ hypergraph).
 
 """
 
-
 __all__ = [
     "empty_hypergraph",
     "empty_simplicial_complex",

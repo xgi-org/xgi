@@ -43,12 +43,7 @@ array([[1, 0, 0],
        [1, 0, 1]])
 
 """
-from warnings import catch_warnings, warn
-
 import numpy as np
-from scipy.sparse import csr_array, diags
-
-from ..exception import XGIError
 
 __all__ = [
     "boundary_matrix",

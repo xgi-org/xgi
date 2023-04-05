@@ -4,16 +4,9 @@ All the functions in this module return a Hypergraph class (i.e. a simple, undir
 hypergraph).
 
 """
-
-import random
-from collections import defaultdict
 from itertools import combinations
 
-import networkx as nx
-
-from ..classes.function import subfaces
 from ..exception import XGIError
-from ..utils.utilities import find_triangles
 from .classic import empty_hypergraph
 
 __all__ = [
