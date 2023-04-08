@@ -17,12 +17,7 @@ from scipy.sparse import (
     lil_matrix,
 )
 
-from .classes import (
-    Hypergraph,
-    SimplicialComplex,
-    maximal_simplices,
-    set_edge_attributes,
-)
+from .classes import Hypergraph, SimplicialComplex, set_edge_attributes
 from .exception import XGIError
 from .generators import empty_hypergraph, empty_simplicial_complex
 from .linalg import adjacency_matrix, incidence_matrix
@@ -500,7 +495,7 @@ def from_max_simplices(SC):
     if type(SC) != SimplicialComplex:
         raise XGIError("The input must be a SimplicialComplex")
 
-    max_simplices = maximal_simplices(SC)
+    max_simplices = SC.edges.maximal()
     H = Hypergraph()
     H.add_nodes_from(SC.nodes)  # to keep node order and isolated nodes
     H.add_edges_from([list(SC.edges.members(e)) for e in max_simplices])

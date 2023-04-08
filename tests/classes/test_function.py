@@ -352,34 +352,6 @@ def test_convert_labels_to_integers(hypergraph1, hypergraph2):
     assert H3.edges[0]["old_ids"] == "e1"
 
 
-def test_maximal_simplices(edgelist5, edgelist8):
-    S1 = xgi.SimplicialComplex(edgelist5)
-    S2 = xgi.SimplicialComplex(edgelist8)
-
-    m1 = xgi.maximal_simplices(S1)
-    m2 = xgi.maximal_simplices(S2)
-
-    simp1 = S1.edges(m1).members()
-    simp2 = S2.edges(m2).members()
-
-    assert len(m1) == 4
-    assert {0, 1, 2, 3} in simp1
-    assert {4} in simp1
-    assert {5, 6} in simp1
-    assert {6, 7, 8} in simp1
-
-    assert len(m2) == 5
-    assert {0, 1, 2, 3, 4} in simp2
-    assert {2, 4, 5} in simp2
-    assert {1, 3, 5} in simp2
-    assert {1, 6} in simp2
-    assert {0, 6} in simp2
-
-    H = xgi.Hypergraph(edgelist5)
-    with pytest.raises(XGIError):
-        xgi.maximal_simplices(H)
-
-
 def test_density_no_nodes():
     H = xgi.Hypergraph()
     with pytest.raises(XGIError):
