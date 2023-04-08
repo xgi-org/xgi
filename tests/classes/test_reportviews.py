@@ -267,3 +267,36 @@ def test_set_operations(hyperwithattrs):
     assert set(edges1 & edges2) == {0, 2}
     assert set(edges1 | edges2) == {0, 1, 2}
     assert set(edges1 ^ edges2) == {1}
+
+
+def test_maximal(edgelist5, edgelist8):
+    S1 = xgi.SimplicialComplex(edgelist5)
+    S2 = xgi.SimplicialComplex(edgelist8)
+
+    m1 = S1.edges.maximal()
+    m2 = S2.edges.maximal()
+
+    simp1 = S1.edges(m1).members()
+    simp2 = S2.edges(m2).members()
+
+    assert len(m1) == 4
+    assert {0, 1, 2, 3} in simp1
+    assert {4} in simp1
+    assert {5, 6} in simp1
+    assert {6, 7, 8} in simp1
+
+    assert len(m2) == 5
+    assert {0, 1, 2, 3, 4} in simp2
+    assert {2, 4, 5} in simp2
+    assert {1, 3, 5} in simp2
+    assert {1, 6} in simp2
+    assert {0, 6} in simp2
+
+    H = xgi.Hypergraph([{1, 2, 3}, {1, 2}, {2, 3}, {2}, {2}, {3, 4}, {1, 2, 3}])
+
+    m = H.edges.maximal()
+    assert set(m) == {0, 5, 6}
+
+    H.add_node(10)
+    m = H.edges.maximal()
+    assert set(m) == {0, 5, 6}
