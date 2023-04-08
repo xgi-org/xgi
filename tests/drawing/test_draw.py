@@ -166,6 +166,7 @@ def test_draw_simplices(edgelist8):
 
     plt.close()
 
+
 def test_draw_hypergraph_hull(edgelist8):
 
     H = xgi.Hypergraph(edgelist8)
