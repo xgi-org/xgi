@@ -709,6 +709,10 @@ class EdgeView(IDView):
         eliminating these duplicates by running `H.cleanup()`
         or `H.remove_edges_from(H.edges.duplicates())`
 
+        References
+        ----------
+        https://stackoverflow.com/questions/14106121/efficient-algorithm-for-finding-all-maximal-subsets
+
         Example
         -------
 
@@ -723,17 +727,20 @@ class EdgeView(IDView):
         nodes = self._bi_id_dict
         max_edges = set()
 
-        hashes = defaultdict(list)
+        # This data structure so that the algorithm can handle multi-edges
+        dups = defaultdict(list)
         for idx, members in edges.items():
-            hashes[frozenset(members)].append(idx)
+            dups[frozenset(members)].append(idx)
 
         _intersection = lambda x, y: x & y
 
         for i, e in edges.items():
+            # If a multi-edge has already been added to the set of
+            # maximal edges, we don't need to check.
             if i not in max_edges:
                 in_common = reduce(_intersection, (nodes[n] for n in e))
 
-                if in_common == set(hashes[frozenset(e)]):
+                if in_common == set(dups[frozenset(e)]):
                     max_edges.update(in_common)
 
         return self.from_view(self, bunch=max_edges)
