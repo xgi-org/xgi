@@ -731,7 +731,7 @@ class EdgeView(IDView):
 
         for i, e in edges.items():
             if i not in max_edges:
-                in_common = reduce(_intersection, [nodes[n] for n in e])
+                in_common = reduce(_intersection, (nodes[n] for n in e))
 
                 if in_common == set(hashes[frozenset(e)]):
                     max_edges.update(in_common)
