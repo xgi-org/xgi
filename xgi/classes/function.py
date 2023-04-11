@@ -177,7 +177,9 @@ def edge_neighborhood(H, n, include_self=False):
 
 
 def degree_counts(H, order=None):
-    """Returns a list of the frequency of each degree value.
+    """Returns a list of the the number of occurrences of each degree value.
+
+    The counts correspond to degrees from 0 to max(degree).
 
     Parameters
     ----------
@@ -197,6 +199,10 @@ def degree_counts(H, order=None):
     -----
     Note: the bins are width one, hence len(list) can be large
     (Order(num_edges))
+
+    The degree is defined as the number of edges to which a node belongs.
+    A node belonging only to a singleton edge will thus have degree 1 and
+    contribute accordingly to the degree count.
 
     Examples
     --------
