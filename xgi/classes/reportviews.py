@@ -694,7 +694,7 @@ class EdgeView(IDView):
         return self.filterby("size", 1)
 
     def maximal(self):
-        """Returns the maximal edges as an EdgeView
+        """Returns the maximal edges as an EdgeView. Maximal edges are those that are not subsets of any other edges in the hypergraph.
 
         Returns
         -------
