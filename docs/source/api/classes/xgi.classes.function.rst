@@ -23,7 +23,6 @@
    .. autofunction:: is_possible_order
    .. autofunction:: is_uniform
    .. autofunction:: max_edge_order
-   .. autofunction:: maximal_simplices
    .. autofunction:: num_edges_order
    .. autofunction:: set_edge_attributes
    .. autofunction:: set_node_attributes

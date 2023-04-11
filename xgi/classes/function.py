@@ -28,7 +28,6 @@ __all__ = [
     "set_edge_attributes",
     "get_edge_attributes",
     "is_empty",
-    "maximal_simplices",
     "convert_labels_to_integers",
     "density",
     "incidence_density",
@@ -613,40 +612,6 @@ def is_empty(H):
     False
     """
     return len(H.edges) == 0
-
-
-def maximal_simplices(SC):
-    """Return the IDs of the maximal simplices of the input.
-
-    Parameters
-    ----------
-    SC : xgi SimplicialComplex
-
-    Returns
-    -------
-    maximal_simplices : list(int)
-        A list of IDs correspondent to the maximal simplices in `SC`.
-
-    """
-    # This import needs to happen when this function is called, not when it is
-    # defined.  Otherwise, a circular import error would happen.
-    from .simplicialcomplex import SimplicialComplex
-
-    if not isinstance(SC, SimplicialComplex):
-        raise XGIError("The input must be a SimplicialComplex")
-
-    max_simplices = []
-
-    for i in SC.edges:
-        maximal = True
-        for j in SC.edges:
-            # i is a subface of j, I remove it
-            if SC.edges.members(i) < SC.edges.members(j):
-                maximal = False
-                break
-        if maximal:
-            max_simplices.append(i)
-    return max_simplices
 
 
 def convert_labels_to_integers(H, label_attribute="label"):

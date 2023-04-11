@@ -8,6 +8,7 @@ edge size of a hypergraph.  Views are automatically updaed when the hypergraph c
 
 from collections import defaultdict
 from collections.abc import Mapping, Set
+from functools import reduce
 
 from ..exception import IDNotFound, XGIError
 from ..stats import IDStat, dispatch_many_stats, dispatch_stat
@@ -420,7 +421,10 @@ class IDView(Mapping, Set):
             hashes[frozenset(members)].append(idx)
         for _, edges in hashes.items():
             if len(edges) > 1:
-                dups.extend(sorted(edges)[1:])
+                try:
+                    dups.extend(sorted(edges)[1:])
+                except TypeError:
+                    dups.extend(edges[1:])
         return self.__class__.from_view(self, bunch=dups)
 
     def lookup(self, neighbors):
@@ -688,3 +692,55 @@ class EdgeView(IDView):
 
         """
         return self.filterby("size", 1)
+
+    def maximal(self):
+        """Returns the maximal edges as an EdgeView. Maximal edges are those that are not subsets of any other edges in the hypergraph.
+
+        Returns
+        -------
+        EdgeView
+            The maximal edges
+
+        Notes
+        -----
+        When there are maximal edges that are also multi-edges,
+        `maximal()` returns all of these multi-edges rather than
+        choosing one of them to return. There are methods for
+        eliminating these duplicates by running `H.cleanup()`
+        or `H.remove_edges_from(H.edges.duplicates())`
+
+        References
+        ----------
+        https://stackoverflow.com/questions/14106121/efficient-algorithm-for-finding-all-maximal-subsets
+
+        Example
+        -------
+
+        >>> import xgi
+        >>> H = xgi.Hypergraph([{1, 2, 3},{1, 2}, {2, 3}, {2}, {2}, {3, 4}, {1, 2, 3}])
+        >>> H.edges.maximal()
+        EdgeView((0, 5, 6))
+        >>> H.edges.maximal().members()
+        [{1, 2, 3}, {3, 4}, {1, 2, 3}]
+        """
+        edges = self._id_dict
+        nodes = self._bi_id_dict
+        max_edges = set()
+
+        # This data structure so that the algorithm can handle multi-edges
+        dups = defaultdict(list)
+        for idx, members in edges.items():
+            dups[frozenset(members)].append(idx)
+
+        _intersection = lambda x, y: x & y
+
+        for i, e in edges.items():
+            # If a multi-edge has already been added to the set of
+            # maximal edges, we don't need to check.
+            if i not in max_edges:
+                in_common = reduce(_intersection, (nodes[n] for n in e))
+
+                if in_common == set(dups[frozenset(e)]):
+                    max_edges.update(in_common)
+
+        return self.from_view(self, bunch=max_edges)

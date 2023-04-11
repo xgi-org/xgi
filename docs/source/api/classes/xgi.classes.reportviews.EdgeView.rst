@@ -22,6 +22,7 @@ xgi.classes.reportviews.EdgeView
 
       ~EdgeView.members
       ~EdgeView.singletons
+      ~EdgeView.maximal
       ~IDView.neighbors
       ~IDView.duplicates
       ~IDView.lookup
