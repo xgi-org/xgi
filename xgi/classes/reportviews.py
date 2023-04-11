@@ -693,9 +693,15 @@ class EdgeView(IDView):
         """
         return self.filterby("size", 1)
 
-    def maximal(self):
-        """Returns the maximal edges as an EdgeView. Maximal edges are those that are not subsets of any other edges in the hypergraph.
+    def maximal(self, multiedges=True):
+        """Returns the maximal edges as an EdgeView.
 
+        Maximal edges are those that are not strict subsets of any other edges in the hypergraph.
+
+        Parameters
+        ----------
+        multiedges : bool
+            Whether to allow multi-edges to be maximal edges.
         Returns
         -------
         EdgeView
@@ -727,20 +733,25 @@ class EdgeView(IDView):
         nodes = self._bi_id_dict
         max_edges = set()
 
-        # This data structure so that the algorithm can handle multi-edges
-        dups = defaultdict(list)
-        for idx, members in edges.items():
-            dups[frozenset(members)].append(idx)
-
         _intersection = lambda x, y: x & y
 
-        for i, e in edges.items():
-            # If a multi-edge has already been added to the set of
-            # maximal edges, we don't need to check.
-            if i not in max_edges:
-                in_common = reduce(_intersection, (nodes[n] for n in e))
+        if multiedges:
+            # This data structure so that the algorithm can handle multi-edges
+            dups = defaultdict(list)
+            for idx, members in edges.items():
+                dups[frozenset(members)].append(idx)
 
-                if in_common == set(dups[frozenset(e)]):
-                    max_edges.update(in_common)
+            for i, e in edges.items():
+                # If a multi-edge has already been added to the set of
+                # maximal edges, we don't need to check.
+                if i not in max_edges:
+                    if reduce(_intersection, (nodes[n] for n in e)) == set(
+                        dups[frozenset(e)]
+                    ):
+                        max_edges.update(dups[frozenset(e)])
+        else:
+            for i, e in edges.items():
+                if reduce(_intersection, (nodes[n] for n in e)) == {i}:
+                    max_edges.add(i)
 
         return self.from_view(self, bunch=max_edges)
