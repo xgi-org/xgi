@@ -338,6 +338,10 @@ class SimplicialComplex(Hypergraph):
             i.e. you cannot mix different formats.  The iterables containing simplex
             members cannot be strings.
 
+        max_order : None or int
+            Maximal dimension of simplices to add. If None (default), adds all simplices.
+            If int, and `ebunch_to_add` contains simplices of order > `max_order`, creates
+            and adds all its subfaces up to `max_order`.
         attr : \*\*kwargs, optional
             Additional attributes to be assigned to all simplices. Attribues specified via
             `ebunch_to_add` take precedence over `attr`.
