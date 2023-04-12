@@ -7,7 +7,7 @@
     "branches": ["main"],
     "dvcs": "git",
     "environment_type": "conda",
-    "show_commit_url": "https://github.com/ComplexGroupInteractions/xgi/commit/",
+    "show_commit_url": "https://github.com/xgi/xgi/commit/",
     "pythons": ["3.10"],
     "benchmark_dir": "benchmarks",
     "results_dir": "results",

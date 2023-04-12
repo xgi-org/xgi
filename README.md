@@ -2,9 +2,9 @@
 <img src='logo/logo.svg' width='150px' align="right" style="float:right;margin-left:10pt"></img>
 Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the representation, manipulation, and study of the structure, dynamics, and functions of complex systems with group (higher-order) interactions.
 
-[![Test Status](https://github.com/ComplexGroupInteractions/xgi/workflows/test/badge.svg?branch=main)](https://github.com/ComplexGroupInteractions/xgi/actions?query=workflow%3A%22test%22)
-[![codecov](https://codecov.io/gh/ComplexGroupInteractions/xgi/branch/main/graph/badge.svg?token=BI6TX2WDSG)](https://codecov.io/gh/ComplexGroupInteractions/xgi)
-[![Good First Issue](https://img.shields.io/badge/contribute-Good%20First%20Issue-%232EBC4F)](https://github.com/ComplexGroupInteractions/xgi/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
+[![Test Status](https://github.com/xgi/xgi/workflows/test/badge.svg?branch=main)](https://github.com/xgi/xgi/actions?query=workflow%3A%22test%22)
+[![codecov](https://codecov.io/gh/xgi/xgi/branch/main/graph/badge.svg?token=BI6TX2WDSG)](https://codecov.io/gh/xgi/xgi)
+[![Good First Issue](https://img.shields.io/badge/contribute-Good%20First%20Issue-%232EBC4F)](https://github.com/xgi/xgi/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
 
 * [**Source**](../../)
 * [**Bug reports**](../../issues)
@@ -63,7 +63,7 @@ If you want to contribute to this project, please make sure to read the
 and the [contributing guidelines](CONTRIBUTING.md).
 
 The best way to contribute to XGI is by submitting a bug or request a new feature by
-opening a [new issue](https://github.com/ComplexGroupInteractions/xgi/issues/new).
+opening a [new issue](https://github.com/xgi/xgi/issues/new).
 
 To get more actively involved, you are invited to browse the [issues page](../../issues) and choose one that you can
 work on.  The core developers will be happy to help you understand the codebase and any
