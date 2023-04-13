@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.5.7
+* Changed the organization name to `xgi-org` and removed `codecov` from the test requirements file [#334](https://github.com/xgi-org/xgi/pull/334) (@nwlandry).
+* Fix: improved the `degree_counts` documentation [#329](https://github.com/xgi-org/xgi/pull/329) (@maximelucas).
+* Added the `maximal()` method to EdgeView, removed the `maximal_simplices()` method, and removed a bug from the `duplicates()` method [#324](https://github.com/xgi-org/xgi/pull/324) (@nwlandry).
+* Fix: documented max_order in `add_simplices_from()` [#328](https://github.com/xgi-org/xgi/pull/328) (@maximelucas).
+* Restructured folder for the generators and linalg modules [#321](https://github.com/xgi-org/xgi/pull/321) (@maximelucas).
+* Added 3 clustering coefficient definitions to the `algorithms` module as well as to NodeStats [#316](https://github.com/xgi-org/xgi/pull/316) (@nwlandry).
+* Added the ability to choose whether to output the index-to-ID mappings from `to_bipartite_graph()` method. Fixes #322 [#323](https://github.com/xgi-org/xgi/pull/323) (@leotrs).
+* Added the ability to draw hypergraphs with hyperedges as convex hulls [#320](https://github.com/xgi-org/xgi/pull/320) (@thomasrobiglio).
+
+
 ## v0.5.6
 * Renamed `convert_to_line_graph()` to `to_line_graph()`, added an `s` parameter to the function, and added corresponding unit tests [#318](https://github.com/xgi-org/xgi/pull/318) (@nwlandry).
 * Made the sparse warning in the `adjacency_matrix()` function more intelligible [#315](https://github.com/xgi-org/xgi/pull/315) (@nwlandry).
