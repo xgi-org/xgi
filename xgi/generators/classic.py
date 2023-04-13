@@ -8,6 +8,7 @@ hypergraph).
 __all__ = [
     "empty_hypergraph",
     "empty_simplicial_complex",
+    "trivial_hypergraph",
 ]
 
 
@@ -98,3 +99,40 @@ def empty_simplicial_complex(create_using=None, default=None):
     if default is None:
         default = xgi.SimplicialComplex
     return _empty_network(create_using, default)
+
+
+def trivial_hypergraph(create_using=None, default=None):
+    """Returns a hypergraph with one node and zero edges.
+
+    Parameters
+    ----------
+    create_using : Hypergraph Instance, Constructor or None
+        If None, use the `default` constructor.
+        If a constructor, call it to create an empty hypergraph.
+    default : Hypergraph constructor (default None)
+        The constructor to use if create_using is None.
+        If None, then xgi.Hypergraph is used.
+
+    Returns
+    -------
+    Hypergraph object
+        A trivial hypergraph
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.trivial_hypergraph()
+    >>> H.num_nodes, H.num_edges
+    (1, 0)
+
+    """
+    # this import needs to happen when the function runs, not when the module is first
+    # imported, to avoid circular imports
+    import xgi
+
+    if default is None:
+        default = xgi.Hypergraph
+    H = _empty_network(create_using, default)
+    H.add_node(0)
+
+    return H

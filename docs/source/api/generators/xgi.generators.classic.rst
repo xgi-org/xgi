@@ -9,3 +9,4 @@
    
    .. autofunction:: empty_hypergraph
    .. autofunction:: empty_simplicial_complex
+   .. autofunction:: trivial_simplicial_complex
