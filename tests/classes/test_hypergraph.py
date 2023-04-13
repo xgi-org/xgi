@@ -437,7 +437,7 @@ def test_copy(edgelist1):
 
 
 def test_copy_issue128():
-    # see https://github.com/ComplexGroupInteractions/xgi/issues/128
+    # see https://github.com/xgi-org/xgi/issues/128
     H = xgi.Hypergraph()
     H["key"] = "value"
     K = H.copy()
