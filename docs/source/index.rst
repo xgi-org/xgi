@@ -14,7 +14,7 @@
    :caption: Tutorials
    :hidden:
 
-   See on GitHub <https://github.com/ComplexGroupInteractions/xgi/tree/main/tutorials>
+   See on GitHub <https://github.com/xgi-org/xgi/tree/main/tutorials>
 
 .. toctree::
    :maxdepth: 2
@@ -44,7 +44,7 @@
 About
 =====
 
-The Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/ComplexGroupInteractions/xgi>`_
+The Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/xgi-org/xgi>`_
 library provides data structures and algorithms for modeling and analyzing complex systems
 with group (higher-order) interactions.
 
@@ -63,7 +63,7 @@ rest of the Python scientific stack (numpy, scipy, pandas, matplotlib, etc).  XG
 designed and developed by network scientists with the needs of network scientists in
 mind.
 
-- Repository: https://github.com/ComplexGroupInteractions/xgi
+- Repository: https://github.com/xgi-org/xgi
 - PyPI: https://pypi.org/project/xgi/
 - Documentation: https://xgi.readthedocs.io/
 
@@ -124,15 +124,15 @@ Contributing
 
 If you want to contribute to this project, please make sure to read the
 `code of conduct
-<https://github.com/ComplexGroupInteractions/xgi/blob/main/CODE_OF_CONDUCT.md>`_
+<https://github.com/xgi-org/xgi/blob/main/CODE_OF_CONDUCT.md>`_
 and the `contributing guidelines
-<https://github.com/ComplexGroupInteractions/xgi/blob/main/CONTRIBUTING.md>`_.
+<https://github.com/xgi-org/xgi/blob/main/CONTRIBUTING.md>`_.
 
 The best way to contribute to XGI is by submitting a bug or request a new feature by
-opening a `new issue <https://github.com/ComplexGroupInteractions/xgi/issues/new>`_.
+opening a `new issue <https://github.com/xgi-org/xgi/issues/new>`_.
 
 To get more actively involved, you are invited to browse the `issues page
-<https://github.com/ComplexGroupInteractions/xgi/issues>`_ and choose one that you can
+<https://github.com/xgi-org/xgi/issues>`_ and choose one that you can
 work on.  The core developers will be happy to help you understand the codebase and any
 other doubts you may have while working on your contribution.
 
@@ -171,6 +171,6 @@ License
 =======
 
 This project is licensed under the `BSD 3-Clause License
-<https://github.com/ComplexGroupInteractions/xgi/blob/main/LICENSE.md>`_.
+<https://github.com/xgi-org/xgi/blob/main/LICENSE.md>`_.
 
 Copyright (C) 2021-2023 XGI Developers

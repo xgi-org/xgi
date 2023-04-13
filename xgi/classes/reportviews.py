@@ -206,7 +206,7 @@ class IDView(Mapping, Set):
         See Also
         --------
         For more details, see the `tutorial
-        <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+        <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
         Examples
         --------
@@ -289,7 +289,7 @@ class IDView(Mapping, Set):
         See Also
         --------
         Works identically to `filterby`.  For more details, see the `tutorial
-        <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+        <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
         Notes
         -----
@@ -533,7 +533,7 @@ class NodeView(IDView):
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `NodeView` class.  For more details, see the
     `tutorial
-    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
     """
 
@@ -625,7 +625,7 @@ class EdgeView(IDView):
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `EdgeView` class.  For more details, see the
     `tutorial
-    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
     """
 
