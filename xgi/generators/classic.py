@@ -101,11 +101,13 @@ def empty_simplicial_complex(create_using=None, default=None):
     return _empty_network(create_using, default)
 
 
-def trivial_hypergraph(create_using=None, default=None):
+def trivial_hypergraph(n=1, create_using=None, default=None):
     """Returns a hypergraph with one node and zero edges.
 
     Parameters
     ----------
+    n : int, optional
+        Number of nodes (default is 1)
     create_using : Hypergraph Instance, Constructor or None
         If None, use the `default` constructor.
         If a constructor, call it to create an empty hypergraph.
@@ -116,7 +118,7 @@ def trivial_hypergraph(create_using=None, default=None):
     Returns
     -------
     Hypergraph object
-        A trivial hypergraph
+        A trivial hypergraph with `n` nodes
 
     Examples
     --------
@@ -133,6 +135,7 @@ def trivial_hypergraph(create_using=None, default=None):
     if default is None:
         default = xgi.Hypergraph
     H = _empty_network(create_using, default)
-    H.add_node(0)
+    nodes = range(n)
+    H.add_nodes_from(nodes)
 
     return H
