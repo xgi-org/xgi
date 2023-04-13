@@ -50,6 +50,11 @@ def empty_hypergraph(create_using=None, default=None):
     Hypergraph object
         An empty hypergraph
 
+    See also
+    --------
+    empty_simplicial_complex
+    trivial_hypergraph
+
     Examples
     --------
     >>> import xgi
@@ -84,6 +89,11 @@ def empty_simplicial_complex(create_using=None, default=None):
     SimplicialComplex
         An empty simplicial complex.
 
+    See also
+    --------
+    empty_hypergraph
+    trivial_hypergraph
+
     Examples
     --------
     >>> import xgi
@@ -102,7 +112,7 @@ def empty_simplicial_complex(create_using=None, default=None):
 
 
 def trivial_hypergraph(n=1, create_using=None, default=None):
-    """Returns a hypergraph with one node and zero edges.
+    """Returns a hypergraph with `n` node and zero edges.
 
     Parameters
     ----------
@@ -119,6 +129,11 @@ def trivial_hypergraph(n=1, create_using=None, default=None):
     -------
     Hypergraph object
         A trivial hypergraph with `n` nodes
+
+    See also
+    --------
+    empty_hypergraph
+    empty_simplicial_complex
 
     Examples
     --------
