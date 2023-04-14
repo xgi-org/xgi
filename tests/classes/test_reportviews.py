@@ -300,3 +300,7 @@ def test_maximal(edgelist5, edgelist8):
     H.add_node(10)
     m = H.edges.maximal()
     assert set(m) == {0, 5, 6}
+
+    # try strict=True
+    m = H.edges.maximal(strict=True)
+    assert set(m) == {5}

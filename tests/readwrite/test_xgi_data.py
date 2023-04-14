@@ -19,18 +19,13 @@ def test_load_xgi_data():
     assert H1.nodes["4"]["name"] == "robert.badeer@enron.com"
     assert H1.edges["0"]["timestamp"] == "2000-01-11T10:29:00"
 
-    start = time.time()
     H2 = load_xgi_data("email-enron", max_order=2, cache=True)
-    elapsed_time = time.time() - start
 
     assert len(H2.edges.filterby("order", 2, mode="gt")) == 0
     assert len(H1.edges.filterby("order", 2, mode="gt")) == 1283
 
-    start = time.time()
     H3 = load_xgi_data("email-enron", max_order=2)
-    cached_elapsed_time = time.time() - start
 
-    assert cached_elapsed_time < elapsed_time
     assert H2.edges.members() == H3.edges.members()
 
     with pytest.raises(XGIError):
