@@ -8,6 +8,7 @@ hypergraph).
 __all__ = [
     "empty_hypergraph",
     "empty_simplicial_complex",
+    "trivial_hypergraph",
 ]
 
 
@@ -49,6 +50,11 @@ def empty_hypergraph(create_using=None, default=None):
     Hypergraph object
         An empty hypergraph
 
+    See also
+    --------
+    empty_simplicial_complex
+    trivial_hypergraph
+
     Examples
     --------
     >>> import xgi
@@ -83,6 +89,11 @@ def empty_simplicial_complex(create_using=None, default=None):
     SimplicialComplex
         An empty simplicial complex.
 
+    See also
+    --------
+    empty_hypergraph
+    trivial_hypergraph
+
     Examples
     --------
     >>> import xgi
@@ -98,3 +109,48 @@ def empty_simplicial_complex(create_using=None, default=None):
     if default is None:
         default = xgi.SimplicialComplex
     return _empty_network(create_using, default)
+
+
+def trivial_hypergraph(n=1, create_using=None, default=None):
+    """Returns a hypergraph with `n` node and zero edges.
+
+    Parameters
+    ----------
+    n : int, optional
+        Number of nodes (default is 1)
+    create_using : Hypergraph Instance, Constructor or None
+        If None, use the `default` constructor.
+        If a constructor, call it to create an empty hypergraph.
+    default : Hypergraph constructor (default None)
+        The constructor to use if create_using is None.
+        If None, then xgi.Hypergraph is used.
+
+    Returns
+    -------
+    Hypergraph object
+        A trivial hypergraph with `n` nodes
+
+    See also
+    --------
+    empty_hypergraph
+    empty_simplicial_complex
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.trivial_hypergraph()
+    >>> H.num_nodes, H.num_edges
+    (1, 0)
+
+    """
+    # this import needs to happen when the function runs, not when the module is first
+    # imported, to avoid circular imports
+    import xgi
+
+    if default is None:
+        default = xgi.Hypergraph
+    H = _empty_network(create_using, default)
+    nodes = range(n)
+    H.add_nodes_from(nodes)
+
+    return H
