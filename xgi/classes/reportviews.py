@@ -693,15 +693,21 @@ class EdgeView(IDView):
         """
         return self.filterby("size", 1)
 
-    def maximal(self, multiedges=True):
+    def maximal(self, strict=False):
         """Returns the maximal edges as an EdgeView.
 
-        Maximal edges are those that are not strict subsets of any other edges in the hypergraph.
+        Maximal edges are those that are not subsets
+        of any other edges in the hypergraph. The strict
+        keyword determines whether the subsets
+        are strict or non-strict.
 
         Parameters
         ----------
-        multiedges : bool
-            Whether to allow multi-edges to be maximal edges.
+        strict : bool
+            Whether maximal edges must strictly include all of its
+            subsets (`strict=True`) or whether maximal multiedges
+            are permitted (`strict=False`), by default False.
+            See Notes for more details.
         Returns
         -------
         EdgeView
@@ -709,11 +715,16 @@ class EdgeView(IDView):
 
         Notes
         -----
-        When there are maximal edges that are also multi-edges,
-        `maximal()` returns all of these multi-edges rather than
-        choosing one of them to return. There are methods for
-        eliminating these duplicates by running `H.cleanup()`
-        or `H.remove_edges_from(H.edges.duplicates())`
+        This function implements two definitions of maximal
+        hyperedges: strict and non-strict. For the strict case
+        (`strict=True`), we enforce that a maximal edge must
+        strictly include all of its subsets and by this
+        definition, multiedges can't be included. For the non-strict
+        case (`strict=False`), then we add all the maximal multiedges
+        with non-strict inclusion.
+
+        There are methods for eliminating these duplicates by
+        running `H.cleanup()` or `H.remove_edges_from(H.edges.duplicates())`
 
         References
         ----------
@@ -735,7 +746,11 @@ class EdgeView(IDView):
 
         _intersection = lambda x, y: x & y
 
-        if multiedges:
+        if strict:
+            for i, e in edges.items():
+                if reduce(_intersection, (nodes[n] for n in e)) == {i}:
+                    max_edges.add(i)
+        else:
             # This data structure so that the algorithm can handle multi-edges
             dups = defaultdict(list)
             for idx, members in edges.items():
@@ -749,9 +764,5 @@ class EdgeView(IDView):
                         dups[frozenset(e)]
                     ):
                         max_edges.update(dups[frozenset(e)])
-        else:
-            for i, e in edges.items():
-                if reduce(_intersection, (nodes[n] for n in e)) == {i}:
-                    max_edges.add(i)
 
         return self.from_view(self, bunch=max_edges)

@@ -25,7 +25,7 @@ def test_load_xgi_data():
     assert len(H1.edges.filterby("order", 2, mode="gt")) == 1283
 
     H3 = load_xgi_data("email-enron", max_order=2)
-    
+
     assert H2.edges.members() == H3.edges.members()
 
     with pytest.raises(XGIError):

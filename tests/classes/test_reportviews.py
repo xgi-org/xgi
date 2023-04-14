@@ -301,6 +301,6 @@ def test_maximal(edgelist5, edgelist8):
     m = H.edges.maximal()
     assert set(m) == {0, 5, 6}
 
-    # try excluding multiedges
-    m = H.edges.maximal(multiedges=False)
+    # try strict=True
+    m = H.edges.maximal(strict=True)
     assert set(m) == {5}
