@@ -187,10 +187,10 @@ def complete_hypergraph(N, order=None, max_order=None, include_singletons=False)
     Only one of `order` and `max_order` can be specified by and int (not None).
     Additionally, at least one of either must be specified.
 
-    The number of possible edges grows exponentially as :math:`\approx 2^N for large `N` and
+    The number of possible edges grows exponentially as :math:`2^N` for large `N` and
     quickly becomes impractically long to compute, especially when using `max_order`. For
-    example, `N=100` and `max_order=5` already yields :math:`8\times 10^7` edges. Increasing `N=1000`
-    makes it :math:`8\times 10^{12}`. `N=100` and with a larger `max_order=6` yields :math:`8\times 10^8` edges.
+    example, `N=100` and `max_order=5` already yields :math:`10^8` edges. Increasing `N=1000`
+    makes it :math:`10^{13}`. `N=100` and with a larger `max_order=6` yields :math:`10^9` edges.
 
 
     """
