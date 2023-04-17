@@ -5,10 +5,13 @@ hypergraph).
 
 """
 
+from itertools import chain, combinations
+
 __all__ = [
     "empty_hypergraph",
     "empty_simplicial_complex",
     "trivial_hypergraph",
+    "complete_hypergraph"
 ]
 
 
@@ -184,6 +187,9 @@ def complete_hypergraph(N, order=None, max_order=None, include_singletons=False)
     Only one of `order` and `max_order` can be specified by and int (not None).
     Additionally, at least one of either must be specified.
     """
+    # this import needs to happen when the function runs, not when the module is first
+    # imported, to avoid circular imports
+    import xgi
     
     if bool(order) == bool(max_order):
         raise ValueError("One (and one only) among order and max_order must be specified (not None)")
