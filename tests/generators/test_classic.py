@@ -1,4 +1,5 @@
 from math import comb
+
 import pytest
 
 import xgi
@@ -13,6 +14,7 @@ def test_empty_hypergraph():
     SC = xgi.empty_simplicial_complex()
     assert (SC.num_nodes, SC.num_edges) == (0, 0)
 
+
 def test_trivial_hypergraph():
     H = xgi.trivial_hypergraph()
     assert (H.num_nodes, H.num_edges) == (1, 0)
@@ -22,6 +24,7 @@ def test_trivial_hypergraph():
 
     H = xgi.trivial_hypergraph(n=2)
     assert (H.num_nodes, H.num_edges) == (2, 0)
+
 
 def test_complete_hypergraph():
 
@@ -38,7 +41,7 @@ def test_complete_hypergraph():
     assert H1.edges.members() == [{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}]
     assert H2.edges.members() == [{0, 1, 2}, {0, 1, 3}, {0, 2, 3}, {1, 2, 3}]
     assert H3.edges.members() == [{0, 1, 2, 3}]
-    
+
     assert xgi.unique_edge_sizes(H1) == [2]
     assert xgi.unique_edge_sizes(H2) == [3]
     assert xgi.unique_edge_sizes(H3) == [4]
@@ -69,5 +72,3 @@ def test_complete_hypergraph():
 
     with pytest.raises(ValueError):
         H1 = xgi.complete_hypergraph(N=N, order=None, max_order=None)
-
-

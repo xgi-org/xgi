@@ -11,7 +11,7 @@ __all__ = [
     "empty_hypergraph",
     "empty_simplicial_complex",
     "trivial_hypergraph",
-    "complete_hypergraph"
+    "complete_hypergraph",
 ]
 
 
@@ -163,10 +163,10 @@ def complete_hypergraph(N, order=None, max_order=None, include_singletons=False)
     """
     Generate a complete hypergraph, i.e. one that contains all possible hyperdges
     at a given `order` or up to a `max_order`.
-    
+
     Parameters
     ----------
-    
+
     N : int
         Number of nodes
     order : int or None
@@ -174,14 +174,14 @@ def complete_hypergraph(N, order=None, max_order=None, include_singletons=False)
     max_order : int or None
         If not None (default), specifies the maximum order for which to generate hyperedges
     include_singletons : bool
-        Whether to include singleton edges (default: False). This argument is discarded 
+        Whether to include singleton edges (default: False). This argument is discarded
         if max_order is None.
-        
+
     Return
     ------
     Hypergraph object
         A complete hypergraph with `N` nodes
-        
+
     Note
     ----
     Only one of `order` and `max_order` can be specified by and int (not None).
@@ -190,10 +190,12 @@ def complete_hypergraph(N, order=None, max_order=None, include_singletons=False)
     # this import needs to happen when the function runs, not when the module is first
     # imported, to avoid circular imports
     import xgi
-    
+
     if bool(order) == bool(max_order):
-        raise ValueError("One (and one only) among order and max_order must be specified (not None)")
-    
+        raise ValueError(
+            "One (and one only) among order and max_order must be specified (not None)"
+        )
+
     H = xgi.Hypergraph()
 
     nodes = range(N)
@@ -209,6 +211,5 @@ def complete_hypergraph(N, order=None, max_order=None, include_singletons=False)
         edges = chain.from_iterable(combinations(s, r) for r in range(start, end + 1))
 
     H.add_edges_from(edges)
-    
-    return H
 
+    return H
