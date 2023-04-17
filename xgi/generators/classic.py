@@ -154,3 +154,55 @@ def trivial_hypergraph(n=1, create_using=None, default=None):
     H.add_nodes_from(nodes)
 
     return H
+
+
+def complete_hypergraph(N, order=None, max_order=None, include_singletons=False):
+    """
+    Generate a complete hypergraph, i.e. one that contains all possible hyperdges
+    at a given `order` or up to a `max_order`.
+    
+    Parameters
+    ----------
+    
+    N : int
+        Number of nodes
+    order : int or None
+        If not None (default), specifies the single order for which to generate hyperedges
+    max_order : int or None
+        If not None (default), specifies the maximum order for which to generate hyperedges
+    include_singletons : bool
+        Whether to include singleton edges (default: False). This argument is discarded 
+        if max_order is None.
+        
+    Return
+    ------
+    Hypergraph object
+        A complete hypergraph with `N` nodes
+        
+    Note
+    ----
+    Only one of `order` and `max_order` can be specified by and int (not None).
+    Additionally, at least one of either must be specified.
+    """
+    
+    if bool(order) == bool(max_order):
+        raise ValueError("One (and one only) among order and max_order must be specified (not None)")
+    
+    H = xgi.Hypergraph()
+
+    nodes = range(N)
+    H.add_nodes_from(nodes)
+
+    if order is not None:
+        edges = combinations(nodes, order + 1)
+    elif max_order is not None:
+        start = 1 if include_singletons else 2
+        end = max_order + 1
+
+        s = list(nodes)
+        edges = chain.from_iterable(combinations(s, r) for r in range(start, end + 1))
+
+    H.add_edges_from(edges)
+    
+    return H
+
