@@ -505,8 +505,8 @@ class Hypergraph:
         See Also
         --------
         add_edges_from : Add a collection of edges.
-        set_edge_attributes
-        get_edge_attributes
+        xgi.set_edge_attributes
+        xgi.get_edge_attributes
 
         Examples
         --------
