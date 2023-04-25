@@ -506,7 +506,7 @@ class Hypergraph:
         --------
         add_edges_from : Add a collection of edges.
         xgi.classes.functions.set_edge_attributes
-        xgi.get_edge_attributes
+        :func: `get_edge_attributes`
 
         Examples
         --------
