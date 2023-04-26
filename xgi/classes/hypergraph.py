@@ -505,8 +505,8 @@ class Hypergraph:
         See Also
         --------
         add_edges_from : Add a collection of edges.
-        :meth: set_edge_attributes
-        get_edge_attributes
+        ~xgi.classes.function.set_edge_attributes
+        ~xgi.classes.function.get_edge_attributes
 
         Examples
         --------
