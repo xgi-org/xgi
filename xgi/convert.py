@@ -52,6 +52,7 @@ def convert_to_hypergraph(data, create_using=None):
     ----------
     data : object to be converted
         Current known types are:
+         * a Hypergraph object
          * a SimplicialComplex object
          * list-of-iterables
          * dict-of-iterables
@@ -70,6 +71,15 @@ def convert_to_hypergraph(data, create_using=None):
     """
     if data is None:
         return empty_hypergraph(create_using)
+    
+    elif isinstance(data, Hypergraph):
+        H = empty_simplicial_complex(create_using)
+        H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
+        ee = data.edges
+        H.add_simplices_from(
+            (ee.members(e), e, deepcopy(attr)) for e, attr in ee.items()
+        )
+        return H
 
     elif isinstance(data, SimplicialComplex):
         return from_max_simplices(data)
