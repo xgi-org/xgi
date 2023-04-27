@@ -57,7 +57,7 @@ class Hypergraph:
 
     Parameters
     ----------
-    incoming_data : input hypergraph data (optional, default: None)
+    incoming_data : input hypergraph data, optional
         Data to initialize the hypergraph. If None (default), an empty
         hypergraph is created, i.e. one with no nodes or edges.
         The data can be in the following formats:
@@ -68,8 +68,9 @@ class Hypergraph:
         * Scipy/Numpy incidence matrix
         * Hypergraph object.
 
-    **attr : dict, optional, default: None
+    **attr : dict, optional
         Attributes to add to the hypergraph as key, value pairs.
+        By default, None.
 
     Notes
     -----
@@ -377,8 +378,8 @@ class Hypergraph:
         See Also
         --------
         add_nodes_from
-        set_node_attributes
-        get_node_attributes
+        ~xgi.classes.function.set_node_attributes
+        ~xgi.classes.function.get_node_attributes
 
         Notes
         -----
@@ -408,8 +409,8 @@ class Hypergraph:
         See Also
         --------
         add_node
-        set_node_attributes
-        get_node_attributes
+        ~xgi.classes.function.set_node_attributes
+        ~xgi.classes.function.get_node_attributes
         """
         for n in nodes_for_adding:
             try:
@@ -438,8 +439,8 @@ class Hypergraph:
         n : node
             A node in the hypergraph
 
-        strong : bool (default False)
-            Whether to execute weak or strong removal.
+        strong : bool, optional
+            Whether to execute weak or strong removal. By default, False.
 
         Raises
         ------
@@ -492,8 +493,8 @@ class Hypergraph:
         ----------
         members : Iterable
             An iterable of the ids of the nodes contained in the new edge.
-        id : hashable, default None
-            Id of the new edge. If None, a unique numeric ID will be created.
+        id : hashable, optional
+            Id of the new edge. If None (default), a unique numeric ID will be created.
         **attr : dict, optional
             Attributes of the new edge.
 
@@ -588,8 +589,8 @@ class Hypergraph:
         --------
         add_edge : Add a single edge.
         add_weighted_edges_from : Convenient way to add weighted edges.
-        set_edge_attributes
-        get_edge_attributes
+        ~xgi.classes.function.set_edge_attributes
+        ~xgi.classes.function.get_edge_attributes
 
         Notes
         -----
@@ -862,6 +863,7 @@ class Hypergraph:
         --------
         add_node
         add_edge
+        remove_node_from_edge
 
         Examples
         --------
@@ -946,6 +948,12 @@ class Hypergraph:
         XGIError
             If either the node or edge does not exist.
 
+        See Also
+        --------
+        remove_node
+        remove_edge
+        add_node_to_edge
+
         Notes
         -----
         If edge is left empty as a result of removing node from it, the edge is also
@@ -976,9 +984,9 @@ class Hypergraph:
         Parameters
         ----------
         edges : Iterable, optional
-            Edges to be added.
+            Edges to be added. By default, None.
         nodes : Iterable, optional
-            Nodes to be added.
+            Nodes to be added. By default, None.
 
         See Also
         --------
@@ -998,8 +1006,9 @@ class Hypergraph:
 
         Parameters
         ----------
-        hypergraph_attr : bool, default True
+        hypergraph_attr : bool, optional
             Whether to remove hypergraph attributes as well
+            By default, True.
 
         """
         self._node.clear()
@@ -1024,18 +1033,18 @@ class Hypergraph:
         Parameters
         ----------
         rename : str, optional
-            Either "first", "tuple", or "new", by default "first"
+            Either "first" (default), "tuple", or "new".
             If "first", the new edge ID is the first of the sorted
             duplicate edge IDs. If "tuple", the new edge ID is a
             tuple of the sorted duplicate edge IDs. If "new", a
             new ID will be selected automatically.
         merge_rule : str, optional
-            Either "first" or "union", by default "first"
+            Either "first" (default) or "union".
             If "first", takes the attributes of the first duplicate.
             If "union", takes the set of attributes of all the duplicates.
         multiplicity : str, optional
             The attribute in which to store the multiplicity of the hyperedge,
-            by default None
+            by default None.
 
         Raises
         ------
