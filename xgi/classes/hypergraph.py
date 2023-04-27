@@ -753,9 +753,10 @@ class Hypergraph:
             Each edge given in the list or container will be added
             to the graph. The edges must be given as tuples of
             the form (node1, node2, ..., noden, weight).
-        weight : string, optional (default= 'weight')
-            The attribute name for the edge weights to be added.
-        attr : keyword arguments, optional (default= no attributes)
+        weight : string, optional
+            The attribute name for the edge weights to be added,
+            by default "weight".
+        attr : keyword arguments, optional
             Edge attributes to add/update for all edges.
 
         See Also
@@ -1007,7 +1008,7 @@ class Hypergraph:
         Parameters
         ----------
         hypergraph_attr : bool, optional
-            Whether to remove hypergraph attributes as well
+            Whether to remove hypergraph attributes as well.
             By default, True.
 
         """
