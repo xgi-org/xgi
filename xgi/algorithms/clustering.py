@@ -4,8 +4,8 @@ from ..exception import XGIError
 from ..linalg import adjacency_matrix
 
 __all__ = [
-    "local_clustering_coefficient",
     "clustering_coefficient",
+    "local_clustering_coefficient",
     "two_node_clustering_coefficient",
 ]
 
@@ -17,10 +17,10 @@ def clustering_coefficient(H):
     This clustering coefficient is defined as the
     clustering coefficient of the unweighted pairwise
     projection of the hypergraph, i.e., `num / denom`,
-    where `num` equals `A^3[n, n]` and `denom` equals
-    `k*(k-1)/2`.  Here `A` is the adjacency matrix
-    of the network and `k` is the pairwise
-    degree of `n`.
+    where `num` equals $A^3_{i,i}$ and `denom` equals
+    $\binom{k}{2}$.  Here $A$ is the adjacency matrix
+    of the network and $k$ is the pairwise
+    degree of $i$.
 
     Parameters
     ----------
@@ -38,6 +38,11 @@ def clustering_coefficient(H):
     neighbors is 0 or 1, but we set the clustering coefficient
     to 0 in these cases. For more discussion, see
     https://arxiv.org/abs/0802.2512
+
+    See Also
+    --------
+    local_clustering_coefficient
+    two_node_clustering_coefficient
 
     References
     ----------
@@ -90,6 +95,11 @@ def local_clustering_coefficient(H):
     neighbors is 0 or 1, but we set the clustering coefficient
     to 0 in these cases. For more discussion, see
     https://arxiv.org/abs/0802.2512
+
+    See Also
+    --------
+    clustering_coefficient
+    two_node_clustering_coefficient
 
     References
     ----------
@@ -163,6 +173,9 @@ def two_node_clustering_coefficient(H, kind="union"):
     ----------
     H : Hypergraph
         Hypergraph
+    kind : string, optional
+        The type of two node clustering coefficient. Options
+        are "union", "max", and "min". By default, "union".
 
     Returns
     -------
@@ -175,6 +188,11 @@ def two_node_clustering_coefficient(H, kind="union"):
     neighbors is 0 or 1, but we set the clustering coefficient
     to 0 in these cases. For more discussion, see
     https://arxiv.org/abs/0802.2512
+
+    See Also
+    --------
+    clustering_coefficient
+    local_clustering_coefficient
 
     References
     ----------
@@ -216,7 +234,7 @@ def _uv_cc(u, v, memberships, kind="union"):
     kind : str, optional
         Type of clustering coefficient to compute, by default "union".
         Options:
-
+        
         - "union"
         - "max"
         - "min"
