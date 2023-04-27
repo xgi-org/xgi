@@ -290,7 +290,7 @@ def two_node_clustering_coefficient(net, bunch, kind="union"):
         * "union"
         * "min"
         * "max"
-    
+
     by default, "union".
 
     Returns

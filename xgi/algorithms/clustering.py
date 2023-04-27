@@ -234,7 +234,7 @@ def _uv_cc(u, v, memberships, kind="union"):
     kind : str, optional
         Type of clustering coefficient to compute, by default "union".
         Options:
-        
+
         - "union"
         - "max"
         - "min"

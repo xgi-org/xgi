@@ -34,7 +34,7 @@ def clique_eigenvector_centrality(H, tol=1e-6):
     dict
         Centrality, where keys are node IDs and values are centralities. The
         centralities are 1-normalized.
-    
+
     See Also
     --------
     h_eigenvector_centrality
@@ -85,7 +85,7 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     ------
     XGIError
         If the hypergraph is not uniform.
-    
+
     See Also
     --------
     clique_eigenvector_centrality
