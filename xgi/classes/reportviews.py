@@ -624,7 +624,7 @@ class EdgeView(IDView):
         The hypergraph whose edges this view will keep track of.
     bunch : optional iterable, default None
         The edge ids to keep track of.  If None (default), keep track of all edge ids.
-    
+
     See Also
     --------
     IDView

@@ -50,7 +50,7 @@ class SimplicialComplex(Hypergraph):
     **attr : dict, optional
         Attributes to add to the simplicial complex as key, value pairs.
         By default, None.
-    
+
     See Also
     --------
     ~xgi.classes.hypergraph.Hypergraph

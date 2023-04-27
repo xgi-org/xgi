@@ -56,7 +56,7 @@ def subhypergraph(H, nodes=None, edges=None, keep_isolates=True):
         A read-only hypergraph view of the input hypergraph.
 
 
-    
+
     """
     new = H.__class__()
 
