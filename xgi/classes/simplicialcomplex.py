@@ -36,7 +36,7 @@ class SimplicialComplex(Hypergraph):
 
     Parameters
     ----------
-    incoming_data : input simplicial complex data (optional, default: None)
+    incoming_data : input simplicial complex data, optional
         Data to initialize the simplicial complex. If None (default), an empty
         simplicial complex is created, i.e. one with no nodes or simplices.
         The data can be in the following formats:
@@ -47,8 +47,13 @@ class SimplicialComplex(Hypergraph):
         * Scipy/Numpy incidence matrix
         * SimplicialComplex object.
 
-    **attr : dict, optional, default: None
+    **attr : dict, optional
         Attributes to add to the simplicial complex as key, value pairs.
+        By default, None.
+    
+    See Also
+    --------
+    ~xgi.classes.hypergraph.Hypergraph
 
     Notes
     -----
@@ -129,7 +134,7 @@ class SimplicialComplex(Hypergraph):
             "add_weighted_edges_from is deprecated in SimplicialComplex. Use add_weighted_simplices_from instead"
         )
         return self.add_weighted_simplices_from(
-            ebunch_to_add, max_order=None, weight="weight", **attr
+            ebunch_to_add, max_order=max_order, weight=weight, **attr
         )
 
     def remove_edge(self, id):
@@ -137,7 +142,7 @@ class SimplicialComplex(Hypergraph):
         warn(
             "remove_edge is deprecated in SimplicialComplex. Use remove_simplex_id instead"
         )
-        return self.remove_simplex_id(id, **attr)
+        return self.remove_simplex_id(id)
 
     def remove_edges_from(self, ebunch):
         """remove_edges_from is deprecated in SimplicialComplex. Use remove_simplex_ids_from instead"""
@@ -198,8 +203,8 @@ class SimplicialComplex(Hypergraph):
         ----------
         members : Iterable
             An iterable of the ids of the nodes contained in the new simplex.
-        id : hashable, default None
-            Id of the new simplex. If None, a unique numeric ID will be created.
+        id : hashable, optional
+            Id of the new simplex. If None (default), a unique numeric ID will be created.
         **attr : dict, optional
             Attributes of the new simplex.
 
@@ -281,9 +286,9 @@ class SimplicialComplex(Hypergraph):
         ----------
         simplex: an iterable of hashables
             A list of node ids
-        all: bool, default: True
+        all: bool, optional
             Whether to return all of the subfaces or just
-            those of the order below
+            those of the order below. By default, True.
 
         Returns
         -------
@@ -338,7 +343,7 @@ class SimplicialComplex(Hypergraph):
             i.e. you cannot mix different formats.  The iterables containing simplex
             members cannot be strings.
 
-        max_order : None or int
+        max_order : int, optional
             Maximal dimension of simplices to add. If None (default), adds all simplices.
             If int, and `ebunch_to_add` contains simplices of order > `max_order`, creates
             and adds all its subfaces up to `max_order`.
@@ -614,8 +619,11 @@ class SimplicialComplex(Hypergraph):
             Each simplex given in the list or container will be added
             to the graph. The simplices must be given as tuples of
             the form (node1, node2, ..., noden, weight).
-        weight : string, optional (default= 'weight')
+        max_order : int, optional
+            The maximum order simplex to add, by default None.
+        weight : string, optional
             The attribute name for the simplex weights to be added.
+            By default, "weight".
         attr : keyword arguments, optional (default= no attributes)
             simplex attributes to add/update for all simplices.
 
