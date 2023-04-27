@@ -26,14 +26,18 @@ def clique_eigenvector_centrality(H, tol=1e-6):
     ----------
     H : Hypergraph
         The hypergraph of interest.
-    tol : float, default: 1e-6
-        The tolerance when computing the eigenvector.
+    tol : float, optional
+        The tolerance when computing the eigenvector. By default, 1e-6.
 
     Returns
     -------
     dict
         Centrality, where keys are node IDs and values are centralities. The
         centralities are 1-normalized.
+    
+    See Also
+    --------
+    h_eigenvector_centrality
 
     References
     ----------
@@ -65,10 +69,11 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     ----------
     H : Hypergraph
         The hypergraph of interest.
-    max_iter : int, default: 100
+    max_iter : int, optional
         The maximum number of iterations before the algorithm terminates.
-    tol : float > 0, default: 1e-6
-        The desired L2 error in the centrality vector.
+        By default, 100.
+    tol : float > 0, optional
+        The desired L2 error in the centrality vector. By default, 1e-6.
 
     Returns
     -------
@@ -80,6 +85,10 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     ------
     XGIError
         If the hypergraph is not uniform.
+    
+    See Also
+    --------
+    clique_eigenvector_centrality
 
     References
     ----------
@@ -131,8 +140,8 @@ def apply(H, x, g=lambda v, e: np.sum(v[list(e)])):
         Hypergraph of interest.
     x : 1D numpy array
         1D vector
-    g : lambda function, default: sum
-        function to apply
+    g : lambda function, optional
+        function to apply. By default, sum.
 
     Returns
     -------
@@ -163,23 +172,24 @@ def node_edge_centrality(
     ----------
     H : Hypergraph
         The hypergraph of interest
-    f : lambda function, default: x^2
+    f : lambda function, optional
         The function f as described in Tudisco and Higham.
-        Must accept a numpy array.
-    g : lambda function, default: x^0.5
+        Must accept a numpy array. By default, $x^2$.
+    g : lambda function, optional
         The function g as described in Tudisco and Higham.
-        Must accept a numpy array.
-    phi : lambda function, default: x^2
+        Must accept a numpy array. By default, $\sqrt{x}$.
+    phi : lambda function, optional
         The function phi as described in Tudisco and Higham.
-        Must accept a numpy array.
-    psi : lambda function, default: x^0.5
+        Must accept a numpy array. By default $x^2$.
+    psi : lambda function, optional
         The function psi as described in Tudisco and Higham.
-        Must accept a numpy array.
-    max_iter : int, default: 100
+        Must accept a numpy array. By default: $\sqrt{x}$.
+    max_iter : int, optional
         Number of iterations at which the algorithm terminates
-        if convergence is not reached.
-    tol : float > 0, default: 1e-6
+        if convergence is not reached. By default, 100.
+    tol : float > 0, optional
         The total allowable error in the node and edge centralities.
+        By default, 1e-6.
 
     Returns
     -------
