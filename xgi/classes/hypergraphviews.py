@@ -40,19 +40,22 @@ def subhypergraph(H, nodes=None, edges=None, keep_isolates=True):
     ----------
     H : hypergraph.Hypergraph
         A hypergraph
-    nodes : list or set, default: None
+    nodes : list or set, optional
         A list of the nodes desired for the subhypergraph.
-        If None, uses all the nodes.
-    edges : list or set, default: None
+        If None (default), uses all the nodes.
+    edges : list or set, optional
         A list of the edges desired for the subhypergraph.
-        If None, uses all the edges.
-    keep_isolates : bool, default : True
+        If None (default), uses all the edges.
+    keep_isolates : bool, optional
         Whether to keep isolated nodes in the subhypergraph.
+        By default, True.
 
     Returns
     -------
     Hypergraph object
         A read-only hypergraph view of the input hypergraph.
+
+
 
     """
     new = H.__class__()

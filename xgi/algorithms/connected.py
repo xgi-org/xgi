@@ -137,17 +137,15 @@ def largest_connected_component(H):
 
     See Also
     --------
-    is_connected
     connected_components
-    number_connected_components
     largest_connected_hypergraph
 
     Example
     -------
     >>> import xgi
     >>> H = xgi.random_hypergraph(50, [0.1, 0.01], seed=1)
-    >>> print(xgi.number_connected_components(H))
-    1
+    >>> print(len(xgi.largest_connected_component(H)))
+    50
 
     """
     return max(connected_components(H), key=len)
@@ -213,7 +211,8 @@ def largest_connected_hypergraph(H, in_place=False):
     H: Hypergraph
         The hypergraph of interest
     in_place: bool, optional
-        If False, creates a copy; if True, modifies the existing hypergraph
+        If False, creates a copy; if True, modifies the existing hypergraph.
+        By default, True.
 
     Returns
     -------
@@ -226,17 +225,16 @@ def largest_connected_hypergraph(H, in_place=False):
 
     See Also
     --------
-    is_connected
     connected_components
-    number_connected_components
     largest_connected_component
 
     Example
     -------
     >>> import xgi
-    >>> H = xgi.random_hypergraph(50, [0.1, 0.01], seed=1)
-    >>> print(xgi.number_connected_components(H))
-    1
+    >>> H = xgi.random_hypergraph(10, [0.1, 0.01], seed=1)
+    >>> H_gcc = xgi.largest_connected_hypergraph(H)
+    >>> print(H_gcc.num_nodes)
+    8
 
     """
     connected_nodes = max(connected_components(H), key=len)

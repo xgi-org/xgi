@@ -32,7 +32,7 @@ def test_is_possible_order(edgelist1):
     H1 = xgi.Hypergraph(edgelist1)
 
     assert xgi.is_possible_order(H1, -1) == False
-    assert xgi.is_possible_order(H1, 0) == False
+    assert xgi.is_possible_order(H1, 0) == True
     assert xgi.is_possible_order(H1, 1) == True
     assert xgi.is_possible_order(H1, 2) == True
     assert xgi.is_possible_order(H1, 3) == False

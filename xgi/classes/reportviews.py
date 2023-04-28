@@ -191,7 +191,7 @@ class IDView(Mapping, Set):
         val : Any
             Value of the statistic.  Usually a single numeric value.  When mode is
             'between', must be a tuple of exactly two values.
-        mode : str
+        mode : str, optional
             How to compare each value to `val`.  Can be one of the following.
 
             * 'eq' (default): Return IDs whose value is exactly equal to `val`.
@@ -205,7 +205,7 @@ class IDView(Mapping, Set):
 
         See Also
         --------
-        For more details, see the `tutorial
+        IDView.filterby_attr : For more details, see the `tutorial
         <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
         Examples
@@ -278,17 +278,17 @@ class IDView(Mapping, Set):
             The name of the attribute
         val : Any
             A single value or, in the case of 'between', a list of length 2
-        mode : str, default: "eq"
-            Comparison mode. Valid options are 'eq', 'neq', 'lt', 'gt',
+        mode : str, optional
+            Comparison mode. Valid options are 'eq' (default), 'neq', 'lt', 'gt',
             'leq', 'geq', or 'between'.
-        missing : Any, default: None
-            The default value if the attribute is missing. If None,
+        missing : Any, optional
+            The default value if the attribute is missing. If None (default),
             ignores those IDs.
 
 
         See Also
         --------
-        Works identically to `filterby`.  For more details, see the `tutorial
+        IDView.filterby : Identical method.  For more details, see the `tutorial
         <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
         Notes
@@ -352,7 +352,7 @@ class IDView(Mapping, Set):
 
         See Also
         --------
-        edge_neighborhood
+        ~xgi.classes.function.edge_neighborhood
 
         Examples
         --------
@@ -528,6 +528,10 @@ class NodeView(IDView):
     bunch : optional iterable, default None
         The node ids to keep track of.  If None (default), keep track of all node ids.
 
+    See Also
+    --------
+    IDView
+
     Notes
     -----
     In addition to the methods listed in this page, other methods defined in the `stats`
@@ -553,8 +557,8 @@ class NodeView(IDView):
 
         Parameters
         ----------
-        n : hashable
-            Node ID.
+        n : hashable, optional
+            Node ID. By default, None.
 
         Returns
         -------
@@ -586,8 +590,9 @@ class NodeView(IDView):
 
         Parameters
         ----------
-        ignore_singletons : bool, default False
+        ignore_singletons : bool, optional
             Whether to consider singleton edges.
+            By default, False.
 
         Returns
         -------
@@ -620,6 +625,10 @@ class EdgeView(IDView):
     bunch : optional iterable, default None
         The edge ids to keep track of.  If None (default), keep track of all edge ids.
 
+    See Also
+    --------
+    IDView
+
     Notes
     -----
     In addition to the methods listed in this page, other methods defined in the `stats`
@@ -642,10 +651,11 @@ class EdgeView(IDView):
 
         Parameters
         ----------
-        e : hashable
-            Edge ID.
-        dtype : type, default list
+        e : hashable, optional
+            Edge ID. By default, None.
+        dtype : {list, dict}, optional
             Specify the type of the return value.
+            By default, list.
 
         Returns
         -------
@@ -703,7 +713,7 @@ class EdgeView(IDView):
 
         Parameters
         ----------
-        strict : bool
+        strict : bool, optional
             Whether maximal edges must strictly include all of its
             subsets (`strict=True`) or whether maximal multiedges
             are permitted (`strict=False`), by default False.
