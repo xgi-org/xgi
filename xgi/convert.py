@@ -86,14 +86,23 @@ def convert_to_hypergraph(data, create_using=None):
 
     elif isinstance(data, list):
         # edge list
-        return from_hyperedge_list(data, create_using)
+        if create_using==None:
+            return from_hyperedge_list(data, create_using)
+        else:
+            from_hyperedge_list(data, create_using)
 
     elif isinstance(data, pd.DataFrame):
-        return from_bipartite_pandas_dataframe(data, create_using)
+        if create_using==None:
+            return from_bipartite_pandas_dataframe(data, create_using)
+        else:
+            from_bipartite_pandas_dataframe(data, create_using)
 
     elif isinstance(data, dict):
         # edge dict in the form we need
-        return from_hyperedge_dict(data, create_using)
+        if create_using==None:
+            return from_hyperedge_dict(data, create_using)
+        else:
+            from_hyperedge_dict(data, create_using)
 
     elif isinstance(
         data,
@@ -186,6 +195,7 @@ def convert_to_simplicial_complex(data, create_using=None):
     ----------
     data : object to be converted
         Current known types are:
+         * a SimplicialComplex object
          * a Hypergraph object
          * list-of-iterables
          * dict-of-iterables
@@ -203,7 +213,7 @@ def convert_to_simplicial_complex(data, create_using=None):
     """
 
     if data is None:
-        return empty_hypergraph(create_using)
+        return empty_simplicial_complex(create_using)
 
     elif isinstance(data, SimplicialComplex):
         H = empty_simplicial_complex(create_using)
@@ -226,11 +236,17 @@ def convert_to_simplicial_complex(data, create_using=None):
 
     elif isinstance(data, list):
         # edge list
-        return from_hyperedge_list(data, create_using)
+        if create_using==None:
+            return convert_to_simplicial_complex(from_hyperedge_list(data, create_using))
+        else:
+            from_hyperedge_list(data, create_using)
 
     elif isinstance(data, pd.DataFrame):
-        return from_bipartite_pandas_dataframe(data, create_using)
-
+        if create_using==None:
+            return convert_to_simplicial_complex(from_bipartite_pandas_dataframe(data, create_using))
+        else:
+            from_bipartite_pandas_dataframe(data, create_using)
+            
     elif isinstance(data, dict):
         # edge dict in the form we need
         raise XGIError("Cannot generate SimplicialComplex from simplex dictionary")
