@@ -86,20 +86,20 @@ def convert_to_hypergraph(data, create_using=None):
 
     elif isinstance(data, list):
         # edge list
-        if create_using==None:
+        if isinstance(create_using, Hypergraph):
             return from_hyperedge_list(data, create_using)
         else:
             from_hyperedge_list(data, create_using)
 
     elif isinstance(data, pd.DataFrame):
-        if create_using==None:
+        if isinstance(create_using, Hypergraph):
             return from_bipartite_pandas_dataframe(data, create_using)
         else:
             from_bipartite_pandas_dataframe(data, create_using)
 
     elif isinstance(data, dict):
         # edge dict in the form we need
-        if create_using==None:
+        if isinstance(create_using, Hypergraph):
             return from_hyperedge_dict(data, create_using)
         else:
             from_hyperedge_dict(data, create_using)
@@ -236,13 +236,13 @@ def convert_to_simplicial_complex(data, create_using=None):
 
     elif isinstance(data, list):
         # edge list
-        if create_using==None:
+        if isinstance(create_using, SimplicialComplex):
             return convert_to_simplicial_complex(from_hyperedge_list(data, create_using))
         else:
             from_hyperedge_list(data, create_using)
 
     elif isinstance(data, pd.DataFrame):
-        if create_using==None:
+        if isinstance(create_using, SimplicialComplex):
             return convert_to_simplicial_complex(from_bipartite_pandas_dataframe(data, create_using))
         else:
             from_bipartite_pandas_dataframe(data, create_using)
