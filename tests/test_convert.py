@@ -5,6 +5,21 @@ from networkx import Graph
 import xgi
 from xgi.exception import XGIError
 
+def test_convert_hypergraph_to_simplicial_complex():
+    H = xgi.Hypergraph()
+    H.add_edges_from([[1, 2, 3], [3, 4], [4, 5, 6, 7], [7, 8, 9, 10, 11]])
+    SC = xgi.convert_to_simplicial_complex(H)
+    assert isinstance(SC, xgi.SimplicialComplex)
+    assert H.nodes == SC.nodes
+    assert H.edges.members() == SC.edges.maximal().members()
+
+def test_convert_simplicial_complex_to_hypergraph():
+    SC = xgi.SimplicialComplex()
+    SC.add_simplices_from([[3, 4, 5], [3, 6], [6, 7, 8, 9], [1, 4, 10, 11, 12], [1, 4]])
+    H = xgi.convert_to_hypergraph(SC)
+    assert isinstance(H, xgi.Hypergraph)
+    assert SC.nodes == H.nodes
+    assert SC.edges.maximal().members() == H.edges.members()
 
 def test_convert_empty_hypergraph():
     H = xgi.convert_to_hypergraph(None)
