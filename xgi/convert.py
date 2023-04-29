@@ -72,17 +72,19 @@ def convert_to_hypergraph(data, create_using=None):
     if data is None:
         return empty_hypergraph(create_using)
 
+    elif isinstance(data, Hypergraph) and not isinstance(data, SimplicialComplex):
+        H = empty_simplicial_complex(create_using)
+        H = empty_hypergraph(create_using)
+        H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
+        ee = data.edges
+        H.add_edges_from(
+            (ee.members(e), e, deepcopy(attr)) for e, attr in ee.items()
+        )
+        return H
+    
+
     elif isinstance(data, SimplicialComplex):
-        if not isinstance(create_using, Hypergraph):
-            return from_max_simplices(data)
-        else:
-            H = empty_hypergraph(create_using)
-            H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
-            ee = data.edges
-            H.add_edges_from(
-                (ee.members(e), e, deepcopy(attr)) for e, attr in ee.items()
-            )
-            return H
+        return from_max_simplices(data)
 
     elif isinstance(data, list):
         # edge list
