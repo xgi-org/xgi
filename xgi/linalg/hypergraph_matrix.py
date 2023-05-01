@@ -220,8 +220,8 @@ def intersection_profile(H, order=None, sparse=True, index=False):
         return P
 
     """
-    I, _, coldict = incidence_matrix(H, order=order, sparse=sparse, index=True)
-    P = I.T.dot(I)
+    eye, _, coldict = incidence_matrix(H, order=order, sparse=sparse, index=True)
+    P = eye.T.dot(eye)
     return (P, coldict) if index else P
 
 
@@ -247,12 +247,12 @@ def degree_matrix(H, order=None, index=False):
         return K
 
     """
-    I, rowdict, _ = incidence_matrix(H, order=order, index=True)
+    eye, rowdict, _ = incidence_matrix(H, order=order, index=True)
 
-    if I.shape == (0, 0):
+    if eye.shape == (0, 0):
         K = np.zeros(H.num_nodes)
     else:
-        K = np.ravel(np.sum(I, axis=1))  # flatten
+        K = np.ravel(np.sum(eye, axis=1))  # flatten
 
     return (K, rowdict) if index else K
 

@@ -78,5 +78,5 @@ def write_incidence_matrix(H, path, delimiter=" ", encoding="utf-8"):
     >>> # xgi.write_incidence_matrix(H, "test.csv", delimiter=",")
 
     """
-    I = incidence_matrix(H, sparse=False)
-    np.savetxt(path, I, delimiter=delimiter, newline="\n", encoding=encoding)
+    eye = incidence_matrix(H, sparse=False)
+    np.savetxt(path, eye, delimiter=delimiter, newline="\n", encoding=encoding)

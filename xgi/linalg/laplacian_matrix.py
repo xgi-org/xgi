@@ -213,10 +213,8 @@ def normalized_hypergraph_laplacian(H, sparse=True, index=False):
     "Learning with Hypergraphs: Clustering, Classification, and Embedding"
     by Dengyong Zhou, Jiayuan Huang, Bernhard Schölkopf
     Advances in Neural Information Processing Systems (2006)
+
     """
-
-    from ..algorithms import is_connected
-
     if H.nodes.isolates():
         raise XGIError(
             "Every node must be a member of an edge to avoid divide by zero error!"
@@ -227,11 +225,11 @@ def normalized_hypergraph_laplacian(H, sparse=True, index=False):
 
     if sparse:
         Dinvsqrt = csr_array(diags(np.power(D, -0.5)))
-        I = csr_array((H.num_nodes, H.num_nodes))
-        I.setdiag(1)
+        eye = csr_array((H.num_nodes, H.num_nodes))
+        eye.setdiag(1)
     else:
         Dinvsqrt = np.diag(np.power(D, -0.5))
-        I = np.eye(H.num_nodes)
+        eye = np.eye(H.num_nodes)
 
-    L = 0.5 * (I - Dinvsqrt @ A @ Dinvsqrt)
+    L = 0.5 * (eye - Dinvsqrt @ A @ Dinvsqrt)
     return (L, rowdict) if index else L
