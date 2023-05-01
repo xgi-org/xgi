@@ -263,10 +263,11 @@ def line_vector_centrality(H):
 
     References
     ----------
-    Vector centrality in hypergraphs,
-    K. Kovalenko, M. Romance, E. Vasilyeva, D. Aleja, R. Criado, D. Musatov,
-    A.M. Raigorodskii, J. Flores, I. Samoylenko, K. Alfaro-Bittner, M. Perc, S. Boccaletti,
+    "Vector centrality in hypergraphs", K. Kovalenko, M. Romance, E. Vasilyeva,
+    D. Aleja, R. Criado, D. Musatov, A.M. Raigorodskii, J. Flores, I. Samoylenko,
+    K. Alfaro-Bittner, M. Perc, S. Boccaletti,
     https://doi.org/10.1016/j.chaos.2022.112397
+
     """
     from ..algorithms import is_connected
 

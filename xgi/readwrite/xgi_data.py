@@ -72,7 +72,9 @@ def load_xgi_data(
             )
         else:
             warn(
-                f"No local copy was found at {cfp}. The data is requested from the xgi-data repository instead. To download a local copy, use `download_xgi_data`."
+                f"No local copy was found at {cfp}. The data is requested "
+                "from the xgi-data repository instead. To download a local "
+                "copy, use `download_xgi_data`."
             )
     if cache:
         data = _request_from_xgi_data_cached(dataset)

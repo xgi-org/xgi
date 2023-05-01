@@ -1,11 +1,11 @@
 """View of Hypergraphs as a subhypergraph or read-only.
 
-In some algorithms it is convenient to temporarily morph
-a hypergraph to exclude some nodes or edges. It should be better
-to do that via a view than to remove and then re-add. This module provides those graph views.
+In some algorithms it is convenient to temporarily morph a hypergraph to exclude some
+nodes or edges. It should be better to do that via a view than to remove and then
+re-add. This module provides those graph views.
 
-The resulting views are essentially read-only graphs that
-report data from the original graph object.
+The resulting views are essentially read-only graphs that report data from the original
+graph object.
 
 Note: Since hypergraphviews look like hypergraphs, one can end up with
 view-of-view-of-view chains. Be careful with chains because they become very slow with
@@ -23,18 +23,18 @@ def subhypergraph(H, nodes=None, edges=None, keep_isolates=True):
 
     `subhypergraph_view` provides a read-only view of the induced subhypergraph that
     includes nodes, edges, or both based on what the user specifies. This function
-    automatically filters out edges that are not subsets of the nodes. This function
-    may create isolated nodes.
+    automatically filters out edges that are not subsets of the nodes. This function may
+    create isolated nodes.
 
-    If the user only specifies the nodes to include, the function returns
-    an induced subhypergraph on the nodes.
+    If the user only specifies the nodes to include, the function returns an induced
+    subhypergraph on the nodes.
 
-    If the user only specifies the edges to include, the function returns all of the nodes
-    and the specified edges.
+    If the user only specifies the edges to include, the function returns all of the
+    nodes and the specified edges.
 
     If the user specifies both nodes and edges to include in the subhypergraph, then the
-    function returns a subhypergraph with the specified nodes and edges from the list of specified
-    hyperedges that are induced by the specified nodes.
+    function returns a subhypergraph with the specified nodes and edges from the list of
+    specified hyperedges that are induced by the specified nodes.
 
     Parameters
     ----------
@@ -54,8 +54,6 @@ def subhypergraph(H, nodes=None, edges=None, keep_isolates=True):
     -------
     Hypergraph object
         A read-only hypergraph view of the input hypergraph.
-
-
 
     """
     new = H.__class__()

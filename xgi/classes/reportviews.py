@@ -265,7 +265,8 @@ class IDView(Mapping, Set):
             bunch = [node for node in self if val[0] <= values[node] <= val[1]]
         else:
             raise ValueError(
-                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
+                f"Unrecognized mode {mode}. mode must be one of "
+                "'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
             )
         return type(self).from_view(self, bunch)
 
@@ -332,7 +333,8 @@ class IDView(Mapping, Set):
             ]
         else:
             raise ValueError(
-                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
+                f"Unrecognized mode {mode}. mode must be one of "
+                "'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
             )
         return type(self).from_view(self, bunch)
 
@@ -580,13 +582,13 @@ class NodeView(IDView):
     def isolates(self, ignore_singletons=False):
         """Nodes that belong to no edges.
 
-        When ignore_singletons is True, a node is considered isolated from the
-        rest of the hypergraph when it is included in no edges of size two or more.  In
+        When ignore_singletons is True, a node is considered isolated from the rest of
+        the hypergraph when it is included in no edges of size two or more.  In
         particular, whether the node is part of any singleton edges is irrelevant to
         determine whether it is isolated.
 
-        When ignore_singletons is False (default), a node is isolated only when it is a member of
-        exactly zero edges, including singletons.
+        When ignore_singletons is False (default), a node is isolated only when it is a
+        member of exactly zero edges, including singletons.
 
         Parameters
         ----------

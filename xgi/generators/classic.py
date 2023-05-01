@@ -160,8 +160,7 @@ def trivial_hypergraph(n=1, create_using=None, default=None):
 
 
 def complete_hypergraph(N, order=None, max_order=None, include_singletons=False):
-    """
-    Generate a complete hypergraph, i.e. one that contains all possible hyperdges
+    """Generate a complete hypergraph, i.e. one that contains all possible hyperdges
     at a given `order` or up to a `max_order`.
 
     Parameters
@@ -170,9 +169,11 @@ def complete_hypergraph(N, order=None, max_order=None, include_singletons=False)
     N : int
         Number of nodes
     order : int or None
-        If not None (default), specifies the single order for which to generate hyperedges
+        If not None (default), specifies the single order for which to generate
+        hyperedges
     max_order : int or None
-        If not None (default), specifies the maximum order for which to generate hyperedges
+        If not None (default), specifies the maximum order for which to generate
+        hyperedges
     include_singletons : bool
         Whether to include singleton edges (default: False). This argument is discarded
         if max_order is None.
@@ -188,10 +189,10 @@ def complete_hypergraph(N, order=None, max_order=None, include_singletons=False)
     Additionally, at least one of either must be specified.
 
     The number of possible edges grows exponentially as :math:`2^N` for large `N` and
-    quickly becomes impractically long to compute, especially when using `max_order`. For
-    example, `N=100` and `max_order=5` already yields :math:`10^8` edges. Increasing `N=1000`
-    makes it :math:`10^{13}`. `N=100` and with a larger `max_order=6` yields :math:`10^9` edges.
-
+    quickly becomes impractically long to compute, especially when using
+    `max_order`. For example, `N=100` and `max_order=5` already yields :math:`10^8`
+    edges. Increasing `N=1000` makes it :math:`10^{13}`. `N=100` and with a larger
+    `max_order=6` yields :math:`10^9` edges.
 
     """
     # this import needs to happen when the function runs, not when the module is first

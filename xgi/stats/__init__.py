@@ -44,9 +44,6 @@ statistics.  For more details, see the `tutorial
 
 """
 
-from collections import defaultdict
-from typing import Callable
-
 import numpy as np
 import pandas as pd
 from scipy.stats import moment as spmoment
@@ -71,10 +68,10 @@ class IDStat:
     def __call__(self, *args, **kwargs):
         return self.__class__(self.net, self.view, self.func, args=args, kwargs=kwargs)
 
-    def __getitem__(self, id):
-        if id not in self.view:
-            raise IDNotFound(f'ID "{id}" not in this view')
-        return self.func(self.net, [id], *self.args, **self.kwargs)[id]
+    def __getitem__(self, idx):
+        if idx not in self.view:
+            raise IDNotFound(f'ID "{idx}" not in this view')
+        return self.func(self.net, [idx], *self.args, **self.kwargs)[idx]
 
     def __repr__(self):
         cls = self.__class__.__name__
@@ -355,7 +352,8 @@ class MultiIDStat(IDStat):
         --------
         >>> import xgi
         >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
-        >>> H.nodes.multi(['degree', 'clustering_coefficient']).asnumpy()  # doctest: +NORMALIZE_WHITESPACE
+        >>> H.nodes.multi(['degree', 'clustering_coefficient']).asnumpy()
+        ... # doctest: +NORMALIZE_WHITESPACE
         array([[1.        , 1.        ],
                [2.        , 0.66666667],
                [3.        , 0.66666667],
@@ -372,7 +370,8 @@ class MultiIDStat(IDStat):
         --------
         >>> import xgi
         >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
-        >>> H.nodes.multi(['degree', 'clustering_coefficient']).aspandas()  # doctest: +NORMALIZE_WHITESPACE
+        >>> H.nodes.multi(['degree', 'clustering_coefficient']).aspandas()
+        ... # doctest: +NORMALIZE_WHITESPACE
            degree  clustering_coefficient
         1       1    1.000000
         2       2    0.666667
@@ -440,20 +439,21 @@ def dispatch_many_stats(kind, net, view, stats):
 
 
 def nodestat_func(func):
-    """Decorator that allows arbitrary functions to behave like :class:`NodeStat` objects.
+    """Decorate arbitrary functions to behave like :class:`NodeStat` objects.
 
     Parameters
     ----------
     func : callable
         Function or callable with signature `func(net, bunch)`, where `net` is the
         network and `bunch` is an iterable of nodes in `net`.  The call `func(net,
-        bunch)` must return a dict with pairs of the form `(node: value)` where `node` is
-        in `bunch` and `value` is the value of the statistic at `node`.
+        bunch)` must return a dict with pairs of the form `(node: value)` where `node`
+        is in `bunch` and `value` is the value of the statistic at `node`.
 
     Returns
     -------
     callable
-        The decorated callable unmodified, after registering it in the `stats` framework.
+        The decorated callable unmodified, after registering it in the `stats`
+        framework.
 
     See Also
     --------
@@ -534,7 +534,7 @@ def nodestat_func(func):
 
 
 def edgestat_func(func):
-    """Decorator that allows arbitrary functions to behave like :class:`EdgeStat` objects.
+    """Decorate arbitrary functions to behave like :class:`EdgeStat` objects.
 
     Works identically to :func:`nodestat`.  For extended documentation, see
     :func:`nodestat_func`.
@@ -550,7 +550,8 @@ def edgestat_func(func):
     Returns
     -------
     callable
-        The decorated callable unmodified, after registering it in the `stats` framework.
+        The decorated callable unmodified, after registering it in the `stats`
+        framework.
 
     See Also
     --------

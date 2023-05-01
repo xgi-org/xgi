@@ -60,8 +60,7 @@ __all__ = [
 def incidence_matrix(
     H, order=None, sparse=True, index=False, weight=lambda node, edge, H: 1
 ):
-    """
-    A function to generate a weighted incidence matrix from a Hypergraph object,
+    """A function to generate a weighted incidence matrix from a Hypergraph object,
     where the rows correspond to nodes and the columns correspond to edges.
 
     Parameters
@@ -74,7 +73,8 @@ def incidence_matrix(
     sparse: bool, default: True
         Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
     index: bool, default: False
-        Specifies whether to output dictionaries mapping the node and edge IDs to indices
+        Specifies whether to output dictionaries mapping the node and edge IDs to
+        indices.
     weight: lambda function, default=lambda function outputting 1
         A function specifying the weight, given a node and edge
 
@@ -179,7 +179,8 @@ def adjacency_matrix(H, order=None, sparse=True, s=1, weighted=False, index=Fals
             A.setdiag(0)
         if w:
             warn(
-                "Forming the adjacency matrix can be expensive when there are isolated nodes!"
+                "Forming the adjacency matrix can "
+                "be expensive when there are isolated nodes!"
             )
     else:
         np.fill_diagonal(A, 0)
@@ -235,7 +236,8 @@ def degree_matrix(H, order=None, index=False):
         Order of interactions to use. If None (default), all orders are used. If int,
         must be >= 1.
     index: bool, default: False
-        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+        Specifies whether to output disctionaries mapping the node and edge IDs to
+        indices.
 
     Returns
     -------

@@ -67,11 +67,12 @@ def laplacian(H, order=1, sparse=False, rescale_per_node=False, index=False):
         Hypergraph
     order : int
         Order of interactions to consider. If order=1 (default),
-        returns the usual graph Laplacian
+        returns the usual graph Laplacian.
     sparse: bool, default: False
-        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
+        Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix.
     index: bool, default: False
-        Specifies whether to output disctionaries mapping the node and edge IDs to indices
+        Specifies whether to output disctionaries mapping the node and edge IDs to
+        indices.
 
     Returns
     -------
@@ -130,7 +131,8 @@ def multiorder_laplacian(
     rescale_per_node: bool, (default=False)
         Whether to rescale each Laplacian of order d by d (per node).
     index: bool, default: False
-        Specifies whether to output dictionaries mapping the node and edge IDs to indices
+        Specifies whether to output dictionaries mapping the node and edge IDs to
+        indices.
 
     Returns
     -------
@@ -169,7 +171,8 @@ def multiorder_laplacian(
             # avoid getting nans from dividing by 0
             # manually setting contribution to 0 as it should be
             warn(
-                f"No edges of order {d}. Contribution of that order is zero. Its weight is effectively zero."
+                f"No edges of order {d}. Contribution of "
+                "that order is zero. Its weight is effectively zero."
             )
         else:
             L_multi += L * w / np.mean(K)

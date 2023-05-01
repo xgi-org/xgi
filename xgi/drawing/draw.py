@@ -50,54 +50,59 @@ def draw(
     H : Hypergraph or SimplicialComplex.
         Hypergraph to draw
     pos : dict, optional
-        If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
-        If None (default), use the `barycenter_spring_layout` to compute the positions.
+        If passed, this dictionary of positions node_id:(x,y) is used for placing the
+        0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
+        the positions.
     ax : matplotlib.pyplot.axes, optional
         Axis to draw on. If None (default), get the current axes.
     dyad_color : str, dict, iterable, or EdgeStat, optional
-        Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
-        contain (edge_id: color_str) pairs.  If iterable, assume the colors are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
-        (specified with dyad_color_cmap) associated to it. By default, "black".
+        Color of the dyadic links.  If str, use the same color for all edges. If a dict,
+        must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
+        specified in the same order as the edges are found in H.edges. If EdgeStat, use
+        a colormap (specified with dyad_color_cmap) associated to it. By default,
+        "black".
     dyad_lw : int, float, dict, iterable, or EdgeStat, optional
-        Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all edges.
-        If a dict, must contain (edge_id: width) pairs.  If iterable, assume the widths are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use a monotonic
-        linear interpolation defined between min_dyad_lw and max_dyad_lw. By default, 1.5.
+        Line width of edges of order 1 (dyadic links).  If int or float, use the same
+        width for all edges.  If a dict, must contain (edge_id: width) pairs.  If
+        iterable, assume the widths are specified in the same order as the edges are
+        found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
+        between min_dyad_lw and max_dyad_lw. By default, 1.5.
     edge_fc : str, dict, iterable, or EdgeStat, optional
-        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict, must
-        contain (edge_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the hyperedges are found in H.edges. If EdgeStat,
-        use the colormap specified with edge_fc_cmap. If None (default),
-        use the H.edges.size.
+        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
+        must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
+        are specified in the same order as the hyperedges are found in H.edges. If
+        EdgeStat, use the colormap specified with edge_fc_cmap. If None (default), use
+        the H.edges.size.
     node_fc : str, dict, iterable, or NodeStat, optional
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_fc_cmap. By default, "white".
+        specified in the same order as the nodes are found in H.nodes. If NodeStat, use
+        the colormap specified with node_fc_cmap. By default, "white".
     node_ec : str, dict, iterable, or NodeStat, optional
-        Color of node borders.  If str, use the same color for all nodes.  If a dict, must
-        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat,
+        Color of node borders.  If str, use the same color for all nodes.  If a dict,
+        must contain (node_id: color_str) pairs.  If other iterable, assume the colors
+        are specified in the same order as the nodes are found in H.nodes. If NodeStat,
         use the colormap specified with node_ec_cmap. By default, "black".
     node_lw : int, float, dict, iterable, or NodeStat, optional
-        Line width of the node borders in pixels.  If int or float, use the same width for all node borders.
-        If a dict, must contain (node_id: width) pairs.  If iterable, assume the widths are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_lw and max_node_lw. By default, 1.
+        Line width of the node borders in pixels.  If int or float, use the same width
+        for all node borders.  If a dict, must contain (node_id: width) pairs.  If
+        iterable, assume the widths are specified in the same order as the nodes are
+        found in H.nodes. If NodeStat, use a monotonic linear interpolation defined
+        between min_node_lw and max_node_lw. By default, 1.
     node_size : int, float, dict, iterable, or NodeStat, optional
-        Radius of the nodes in pixels.  If int or float, use the same radius for all nodes.
-        If a dict, must contain (node_id: radius) pairs.  If iterable, assume the radiuses are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_size and max_node_size. By default, 15.
+        Radius of the nodes in pixels.  If int or float, use the same radius for all
+        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
+        the radiuses are specified in the same order as the nodes are found in
+        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
+        min_node_size and max_node_size. By default, 15.
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
         By default, False.
     hyperedge_labels : bool or dict, optional
-        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
-        By default, False.
+        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
+        pairs.  By default, False.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
         * min_node_size
@@ -125,6 +130,7 @@ def draw(
     draw_simplices
     draw_node_labels
     draw_hyperedge_labels
+
     """
     settings = {
         "min_node_size": 10.0,
@@ -228,28 +234,31 @@ def draw_nodes(
     ax : matplotlib.pyplot.axes, optional
         Axis to draw on. If None (default), get the current axes.
     pos : dict, optional
-        If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
-        If None (default), use the `barycenter_spring_layout` to compute the positions.
+        If passed, this dictionary of positions node_id:(x,y) is used for placing the
+        0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
+        the positions.
     node_fc : str, dict, iterable, or NodeStat, optional
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_fc_cmap. By default, "white".
+        specified in the same order as the nodes are found in H.nodes. If NodeStat, use
+        the colormap specified with node_fc_cmap. By default, "white".
     node_ec : str, dict, iterable, or NodeStat, optional
-        Color of node borders.  If str, use the same color for all nodes.  If a dict, must
-        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat,
+        Color of node borders.  If str, use the same color for all nodes.  If a dict,
+        must contain (node_id: color_str) pairs.  If other iterable, assume the colors
+        are specified in the same order as the nodes are found in H.nodes. If NodeStat,
         use the colormap specified with node_ec_cmap. By default, "black".
     node_lw : int, float, dict, iterable, or EdgeStat, optional
-        Line width of the node borders in pixels.  If int or float, use the same width for all node borders.
-        If a dict, must contain (node_id: width) pairs.  If iterable, assume the widths are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_lw and max_node_lw. By default, 1.
+        Line width of the node borders in pixels.  If int or float, use the same width
+        for all node borders.  If a dict, must contain (node_id: width) pairs.  If
+        iterable, assume the widths are specified in the same order as the nodes are
+        found in H.nodes. If NodeStat, use a monotonic linear interpolation defined
+        between min_node_lw and max_node_lw. By default, 1.
     node_size : int, float, dict, iterable, or NodeStat, optional
-        Radius of the nodes in pixels.  If int or float, use the same radius for all nodes.
-        If a dict, must contain (node_id: radius) pairs.  If iterable, assume the radiuses are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_size and max_node_size. By default, 15.
+        Radius of the nodes in pixels.  If int or float, use the same radius for all
+        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
+        the radiuses are specified in the same order as the nodes are found in
+        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
+        min_node_size and max_node_size. By default, 15.
     zorder : int
         The layer on which to draw the nodes.
     node_labels : bool or dict
@@ -272,6 +281,7 @@ def draw_nodes(
     draw_simplices
     draw_node_labels
     draw_hyperedge_labels
+
     """
 
     if settings is None:
@@ -361,28 +371,32 @@ def draw_hyperedges(
     ax : matplotlib.pyplot.axes, optional
         Axis to draw on. If None (default), get the current axes.
     pos : dict, optional
-        If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
-        If None (default), use the `barycenter_spring_layout` to compute the positions.
+        If passed, this dictionary of positions node_id:(x,y) is used for placing the
+        0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
+        the positions.
     dyad_color : str, dict, iterable, or EdgeStat, optional
-        Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
-        contain (edge_id: color_str) pairs.  If iterable, assume the colors are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
-        (specified with dyad_color_cmap) associated to it. By default, "black".
+        Color of the dyadic links.  If str, use the same color for all edges. If a dict,
+        must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
+        specified in the same order as the edges are found in H.edges. If EdgeStat, use
+        a colormap (specified with dyad_color_cmap) associated to it. By default,
+        "black".
     dyad_lw : int, float, dict, iterable, or EdgeStat, optional
-        Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all edges.
-        If a dict, must contain (edge_id: width) pairs.  If iterable, assume the widths are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use a monotonic
-        linear interpolation defined between min_dyad_lw and max_dyad_lw. By default, 1.5.
+        Line width of edges of order 1 (dyadic links).  If int or float, use the same
+        width for all edges.  If a dict, must contain (edge_id: width) pairs.  If
+        iterable, assume the widths are specified in the same order as the edges are
+        found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
+        between min_dyad_lw and max_dyad_lw. By default, 1.5.
     edge_fc : str, dict, iterable, or EdgeStat, optional
-        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict, must
-        contain (edge_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the hyperedges are found in H.edges. If EdgeStat,
-        use the colormap specified with edge_fc_cmap. If None (default), color by edge size.
+        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
+        must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
+        are specified in the same order as the hyperedges are found in H.edges. If
+        EdgeStat, use the colormap specified with edge_fc_cmap. If None (default), color
+        by edge size.
     max_order : int, optional
         Maximum of hyperedges to plot. By default, None.
     hyperedge_labels : bool or dict, optional
-        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
-        By default, None.
+        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
+        pairs.  By default, None.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * min_dyad_lw
@@ -404,6 +418,7 @@ def draw_hyperedges(
     draw_simplices
     draw_node_labels
     draw_hyperedge_labels
+
     """
 
     if pos is None:
@@ -439,7 +454,8 @@ def draw_hyperedges(
 
     edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
 
-    # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
+    # Looping over the hyperedges of different order (reversed) -- nodes will be plotted
+    # separately
     for id, he in H.edges.members(dtype=dict).items():
         d = len(he) - 1
         if d > max_order:
@@ -509,30 +525,35 @@ def draw_simplices(
     ax : matplotlib.pyplot.axes, optional
         Axis to draw on. If None (default), get the current axes.
     pos : dict, optional
-        If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
-        If None (default), use the `barycenter_spring_layout` to compute the positions.
+        If passed, this dictionary of positions node_id:(x,y) is used for placing the
+        0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
+        the positions.
     dyad_color : str, dict, iterable, or EdgeStat, optional
-        Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
-        contain (edge_id: color_str) pairs.  If iterable, assume the colors are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
-        (specified with dyad_color_cmap) associated to it. By default, "black".
+        Color of the dyadic links.  If str, use the same color for all edges. If a dict,
+        must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
+        specified in the same order as the edges are found in H.edges. If EdgeStat, use
+        a colormap (specified with dyad_color_cmap) associated to it. By default,
+        "black".
     dyad_lw : int, float, dict, iterable, or EdgeStat, optional
-        Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all edges.
-        If a dict, must contain (edge_id: width) pairs.  If iterable, assume the widths are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use a monotonic
-        linear interpolation defined between min_dyad_lw and max_dyad_lw. By default, 1.5.
+        Line width of edges of order 1 (dyadic links).  If int or float, use the same
+        width for all edges.  If a dict, must contain (edge_id: width) pairs.  If
+        iterable, assume the widths are specified in the same order as the edges are
+        found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
+        between min_dyad_lw and max_dyad_lw. By default, 1.5.
     edge_fc : str, dict, iterable, or EdgeStat, optional
-        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict, must
-        contain (edge_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the hyperedges are found in H.edges. If EdgeStat,
-        use the colormap specified with edge_fc_cmap. If None (default), color by simplex size.
+        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
+        must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
+        are specified in the same order as the hyperedges are found in H.edges. If
+        EdgeStat, use the colormap specified with edge_fc_cmap. If None (default), color
+        by simplex size.
     max_order : int, optional
         Maximum of hyperedges to plot. By default, None.
     hyperedge_labels : bool or dict, optional
-        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
-        Note, we plot only the maximal simplices so if you pass a dict be careful to match its keys
-        with the new edge ids in the converted SimplicialComplex. These may differ from the
-        edge ids in the given SC. By default, False.
+        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
+        pairs.  Note, we plot only the maximal simplices so if you pass a dict be
+        careful to match its keys with the new edge ids in the converted
+        SimplicialComplex. These may differ from the edge ids in the given SC. By
+        default, False.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * min_dyad_lw
@@ -555,6 +576,7 @@ def draw_simplices(
     draw_hyperedges
     draw_node_labels
     draw_hyperedge_labels
+
     """
 
     if max_order:
@@ -600,7 +622,8 @@ def draw_simplices(
 
     edge_fc = _color_arg_to_dict(edge_fc, H_.edges, settings["edge_fc_cmap"])
 
-    # Looping over the hyperedges of different order (reversed) -- nodes will be plotted separately
+    # Looping over the hyperedges of different order (reversed) -- nodes will be plotted
+    # separately
     for id, he in H_.edges.members(dtype=dict).items():
         d = len(he) - 1
 
@@ -687,7 +710,8 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
     """
     if isinstance(arg, str):
         raise TypeError(
-            f"Argument must be int, float, dict, iterable, or NodeStat/EdgeStat. Received {type(arg)}"
+            "Argument must be int, float, dict, iterable, "
+            f"or NodeStat/EdgeStat. Received {type(arg)}"
         )
     elif isinstance(arg, dict):
         return {id: arg[id] for id in arg if id in ids}
@@ -700,7 +724,8 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
         return {id: arg[idx] for idx, id in enumerate(ids)}
     else:
         raise TypeError(
-            f"Argument must be int, float, dict, iterable, or NodeStat/EdgeStat. Received {type(arg)}"
+            "Argument must be int, float, dict, iterable, "
+            f"or NodeStat/EdgeStat. Received {type(arg)}"
         )
 
 
@@ -730,7 +755,7 @@ def _color_arg_to_dict(arg, ids, cmap):
         return {id: arg[id] for id in arg if id in ids}
     elif isinstance(arg, str):
         return {id: arg for id in ids}
-    elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
+    elif isinstance(arg, (NodeStat, EdgeStat)):
         if isinstance(cmap, ListedColormap):
             vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [0, cmap.N])
         elif isinstance(cmap, LinearSegmentedColormap):
@@ -743,7 +768,8 @@ def _color_arg_to_dict(arg, ids, cmap):
         return {id: arg[idx] for idx, id in enumerate(ids)}
     else:
         raise TypeError(
-            f"Argument must be str, dict, iterable, or NodeStat/EdgeStat. Received {type(arg)}"
+            "Argument must be str, dict, iterable, or "
+            f"NodeStat/EdgeStat. Received {type(arg)}"
         )
 
 
@@ -834,8 +860,8 @@ def draw_node_labels(
     zorder = max_edge_order(H) + 1
 
     text_items = {}
-    for id, label in node_labels.items():
-        (x, y) = pos[id]
+    for idx, label in node_labels.items():
+        (x, y) = pos[idx]
 
         if not isinstance(label, str):
             label = str(label)
@@ -856,7 +882,7 @@ def draw_node_labels(
             clip_on=clip_on_nodes,
             zorder=zorder,
         )
-        text_items[id] = t
+        text_items[idx] = t
 
     return text_items
 
@@ -885,8 +911,8 @@ def draw_hyperedge_labels(
     pos : dict
         Dictionary of positions node_id:(x,y).
     hyperedge_labels : bool or dict, optional
-        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
-        By default, False.
+        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
+        pairs.  By default, False.
     font_size_edges : int, optional
         Font size for text labels, by default 10.
     font_color_edges : str, optional
@@ -925,6 +951,7 @@ def draw_hyperedge_labels(
     draw_hyperedges
     draw_simplices
     draw_node_labels
+
     """
     if ax_edges is None:
         ax = plt.gca()
@@ -1075,55 +1102,59 @@ def draw_hypergraph_hull(
     ----------
     H : Hypergraph
     pos : dict, optional
-        If passed, this dictionary of positions node_id:(x,y) is used for placing the nodes.
-        If None (default), use the `barycenter_spring_layout` to compute the positions.
+        If passed, this dictionary of positions node_id:(x,y) is used for placing the
+        nodes.  If None (default), use the `barycenter_spring_layout` to compute the
+        positions.
     ax : matplotlib.pyplot.axes, optional
         Axis to draw on. If None (default), get the current axes.
     dyad_color : str, dict, iterable, or EdgeStat, optional
-        Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
-        contain (edge_id: color_str) pairs.  If iterable, assume the colors are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
-        (specified with dyad_color_cmap) associated to it. By default, "black".
+        Color of the dyadic links.  If str, use the same color for all edges. If a dict,
+        must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
+        specified in the same order as the edges are found in H.edges. If EdgeStat, use
+        a colormap (specified with dyad_color_cmap) associated to it. By default,
+        "black".
     edge_fc : str, dict, iterable, or EdgeStat, optional
-        Color of the hyperedges of order k>1.  If str, use the same color for all hyperedges of order k>1.  If a dict, must
-        contain (edge_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the hyperedges are found in H.edges. If EdgeStat,
-        use the colormap specified with edge_fc_cmap. If None (default),
-        use the H.edges.size.
+        Color of the hyperedges of order k>1.  If str, use the same color for all
+        hyperedges of order k>1.  If a dict, must contain (edge_id: color_str) pairs.
+        If other iterable, assume the colors are specified in the same order as the
+        hyperedges are found in H.edges. If EdgeStat, use the colormap specified with
+        edge_fc_cmap. If None (default), use the H.edges.size.
     edge_ec : str, dict, iterable, or EdgeStat, optional
-        Color of the borders of the hyperdges of order k>1.  If str, use the same color for all edges. If a dict, must
-        contain (edge_id: color_str) pairs.  If iterable, assume the colors are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
-        (specified with edge_ec_cmap) associated to it. If None (default),
-        use the H.edges.size.
+        Color of the borders of the hyperdges of order k>1.  If str, use the same color
+        for all edges. If a dict, must contain (edge_id: color_str) pairs.  If iterable,
+        assume the colors are specified in the same order as the edges are found in
+        H.edges. If EdgeStat, use a colormap (specified with edge_ec_cmap) associated to
+        it. If None (default), use the H.edges.size.
     node_fc : node_fc : str, dict, iterable, or NodeStat, optional
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_fc_cmap. By default, "tab:blue".
+        specified in the same order as the nodes are found in H.nodes. If NodeStat, use
+        the colormap specified with node_fc_cmap. By default, "tab:blue".
     node_ec : str, dict, iterable, or NodeStat, optional
-        Color of node borders.  If str, use the same color for all nodes.  If a dict, must
-        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat,
+        Color of node borders.  If str, use the same color for all nodes.  If a dict,
+        must contain (node_id: color_str) pairs.  If other iterable, assume the colors
+        are specified in the same order as the nodes are found in H.nodes. If NodeStat,
         use the colormap specified with node_ec_cmap. By default, "black".
     node_lw : int, float, dict, iterable, or EdgeStat, optional
-        Line width of the node borders in pixels.  If int or float, use the same width for all node borders.
-        If a dict, must contain (node_id: width) pairs.  If iterable, assume the widths are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_lw and max_node_lw. By default, 1.
+        Line width of the node borders in pixels.  If int or float, use the same width
+        for all node borders.  If a dict, must contain (node_id: width) pairs.  If
+        iterable, assume the widths are specified in the same order as the nodes are
+        found in H.nodes. If NodeStat, use a monotonic linear interpolation defined
+        between min_node_lw and max_node_lw. By default, 1.
     node_size : int, float, dict, iterable, or NodeStat, optional
-        Radius of the nodes in pixels.  If int or float, use the same radius for all nodes.
-        If a dict, must contain (node_id: radius) pairs.  If iterable, assume the radiuses are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_size and max_node_size. By default, 7.
+        Radius of the nodes in pixels.  If int or float, use the same radius for all
+        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
+        the radiuses are specified in the same order as the nodes are found in
+        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
+        min_node_size and max_node_size. By default, 7.
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     node_labels : bool, or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
         By default, False
     hyperedge_labels : bool, or dict, optional
-        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
-        By default, False.
+        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
+        pairs.  By default, False.
     radius : float, optional
         Radius of the convex hull in the vicinity of the nodes, by default 0.05.
     **kwargs : optional args

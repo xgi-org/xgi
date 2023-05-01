@@ -103,8 +103,8 @@ def local_clustering_coefficient(H):
 
     References
     ----------
-    "Properties of metabolic graphs: biological organization or representation artifacts?"
-    by Wanding Zhou and Luay Nakhleh.
+    "Properties of metabolic graphs: biological organization or representation
+    artifacts?"  by Wanding Zhou and Luay Nakhleh.
     https://doi.org/10.1186/1471-2105-12-132
 
     "Hypergraphs for predicting essential genes using multiprotein complex data"
@@ -118,6 +118,7 @@ def local_clustering_coefficient(H):
     >>> cc = xgi.local_clustering_coefficient(H)
     >>> cc
     {0: 1.0, 1: 1.0, 2: 1.0}
+
     """
     result = {}
 
@@ -147,7 +148,7 @@ def local_clustering_coefficient(H):
                         # the neighbours of D1 and D2, respectively.
                         neighD1 = {i for d in D1 for i in H.nodes.neighbors(d)}
                         neighD2 = {i for d in D2 for i in H.nodes.neighbors(d)}
-                        # compute the extra overlap [len() is used for cardinality of edges]
+                        # compute extra overlap [len() is used for cardinality of edges]
                         eo = (
                             len(neighD1.intersection(D2))
                             + len(neighD2.intersection(D1))

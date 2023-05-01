@@ -60,7 +60,8 @@ def convert_to_hypergraph(data, create_using=None):
          * numpy ndarray
          * scipy sparse matrix
     create_using : Hypergraph constructor, optional (default=Hypergraph)
-        Hypergraph type to create. If hypergraph instance, then cleared before populated.
+        Hypergraph type to create. If hypergraph instance, then cleared before
+        populated.
 
     Returns
     -------
@@ -153,11 +154,11 @@ def to_line_graph(H, s=1):
 
     References
     ----------
-    "Hypernetwork science via high-order hypergraph walks"
-    by Sinan G. Aksoy, Cliff Joslyn, Carlos Ortiz Marrero, Brenda Praggastis & Emilie Purvine.
+    "Hypernetwork science via high-order hypergraph walks", by Sinan G. Aksoy, Cliff
+    Joslyn, Carlos Ortiz Marrero, Brenda Praggastis & Emilie Purvine.
     https://doi.org/10.1140/epjds/s13688-020-00231-0
-    """
 
+    """
     LG = nx.Graph()
 
     edge_label_dict = {tuple(edge): index for index, edge in H._edge.items()}
@@ -188,12 +189,14 @@ def convert_to_simplicial_complex(data, create_using=None):
          * numpy ndarray
          * scipy sparse matrix
     create_using : Hypergraph graph constructor, optional (default=Hypergraph)
-        Hypergraph type to create. If hypergraph instance, then cleared before populated.
+        Hypergraph type to create. If hypergraph instance, then cleared before
+        populated.
 
     Returns
     -------
     Hypergraph object
         A hypergraph constructed from the data
+
     """
 
     if data is None:
