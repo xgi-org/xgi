@@ -756,11 +756,9 @@ class EdgeView(IDView):
         nodes = self._bi_id_dict
         max_edges = set()
 
-        _intersection = lambda x, y: x & y
-
         if strict:
             for i, e in edges.items():
-                if reduce(_intersection, (nodes[n] for n in e)) == {i}:
+                if reduce(lambda x, y: x & y, (nodes[n] for n in e)) == {i}:
                     max_edges.add(i)
         else:
             # This data structure so that the algorithm can handle multi-edges
@@ -772,7 +770,7 @@ class EdgeView(IDView):
                 # If a multi-edge has already been added to the set of
                 # maximal edges, we don't need to check.
                 if i not in max_edges:
-                    if reduce(_intersection, (nodes[n] for n in e)) == set(
+                    if reduce(lambda x, y: x & y, (nodes[n] for n in e)) == set(
                         dups[frozenset(e)]
                     ):
                         max_edges.update(dups[frozenset(e)])

@@ -680,9 +680,9 @@ def test_incidence_density(edgelist1):
             H, max_order=8
         )  # max_order cannot be larger than number of nodes
 
-    dens_ignore_sing = lambda m: xgi.incidence_density(
-        H, max_order=m, ignore_singletons=True
-    )
+    def dens_ignore_sing(m):
+        return xgi.incidence_density(H, max_order=m, ignore_singletons=True)
+
     assert abs(dens_ignore_sing(0) - 0.0) < tol
     assert abs(dens_ignore_sing(1) - 0.25) < tol
     assert abs(dens_ignore_sing(2) - 1 / 3) < tol
