@@ -276,20 +276,16 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     Computing all cliques quickly becomes heavy for large networks.
 
     """
-
     if (p < 0) or (p > 1):
         raise ValueError("p must be between 0 and 1 included.")
 
     G = nx.fast_gnp_random_graph(N, p, seed=seed)
 
-    nodes = G.nodes()
-    edges = list(G.edges())
-
     # compute all triangles to fill
     max_cliques = list(nx.find_cliques(G))
 
     S = SimplicialComplex()
-    S.add_nodes_from(nodes)
+    S.add_nodes_from(G.nodes())
     S.add_simplices_from(max_cliques, max_order=max_order)
 
     return S

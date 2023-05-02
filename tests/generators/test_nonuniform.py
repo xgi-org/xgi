@@ -20,9 +20,7 @@ def test_chung_lu_hypergraph():
     assert H2._edge == H3._edge
 
     with pytest.warns(Warning):
-        k1 = {1: 1, 2: 2}
-        k2 = {1: 2, 1: 2}
-        H = xgi.chung_lu_hypergraph(k1, k2)
+        _ = xgi.chung_lu_hypergraph({1: 1, 2: 2}, {1: 2, 2: 2})
 
 
 def test_dcsbm_hypergraph():
