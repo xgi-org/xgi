@@ -366,11 +366,12 @@ def _index_to_edge_partition(index, partition_sizes, m):
     See Also
     --------
     _index_to_edge
+
     """
     try:
         return [
             int(index // np.prod(partition_sizes[r + 1 :]) % partition_sizes[r])
             for r in range(m)
         ]
-    except:
+    except KeyError:
         raise Exception("Invalid parameters")

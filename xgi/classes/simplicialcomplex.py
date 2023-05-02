@@ -445,7 +445,7 @@ class SimplicialComplex(Hypergraph):
                     warn(f"uid {id} already exists, cannot add simplex {members}.")
                     continue
 
-                if max_order != None:
+                if max_order is not None:
                     if len(members) > max_order + 1:
                         combos = powerset(members, include_singletons=False)
                         faces += list(combos)
@@ -539,7 +539,7 @@ class SimplicialComplex(Hypergraph):
             if format1 or format3:
                 id = next(self._edge_uid)
 
-            if max_order != None:
+            if max_order is not None:
                 if len(members) > max_order + 1:
                     combos = powerset(members, include_singletons=False)
                     faces += list(combos)  # store faces
@@ -607,6 +607,7 @@ class SimplicialComplex(Hypergraph):
         -----
         Adding the same simplex twice will add it only once. Currently
         cannot add empty simplices; the method skips over them.
+
         """
         ebunch_to_close = list(map(list, self.edges.members()))
         for simplex in ebunch_to_close:
