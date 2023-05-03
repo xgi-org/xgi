@@ -16,14 +16,13 @@ Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twit
 ## Table of Contents:
   - [Installation](#installation)
   - [Getting Started](#getting-started)
-  - [Documentation](#documentation)
+  - [How to Contribute](#contributing)
   - [Corresponding Data](#corresponding-data)
-  - [Contributing](#contributing)
   - [How to Cite](#how-to-cite)
-  - [Code of Conduct](#code-of-conduct)
   - [License](#license)
   - [Funding](#funding)
   - [Other Resources](#other-resources)
+
 
 ## Installation
 XGI runs on Python 3.8 or higher.
@@ -45,35 +44,31 @@ pip install -e .["all"]
 pip install -e .\[all\]
 ````
 
-## Getting Started
 
+## Getting Started
 To get started, take a look at the [tutorials](/tutorials/) illustrating the library's basic functionality.
 
-## Documentation
-
-For more documentation, see our [Read The Docs](https://xgi.readthedocs.io/en/latest/) page.
 
 ## Corresponding Data
-
 A number of higher-order datasets are available in the [XGI-DATA repository](https://gitlab.com/complexgroupinteractions/xgi-data) and can be easily accessed with the `load_xgi_data()` function.
 
-## Contributing
+
+## How to Contribute
 If you want to contribute to this project, please make sure to read the
-[code of conduct](CODE_OF_CONDUCT.md)
-and the [contributing guidelines](CONTRIBUTING.md).
+[contributing guidelines](CONTRIBUTING.md). We expect respectful and kind interactions by all contributors and users as laid out in our [code of conduct](CODE_OF_CONDUCT.md).
 
-The best way to contribute to XGI is by submitting a bug or request a new feature by
-opening a [new issue](https://github.com/xgi-org/xgi/issues/new).
+The XGI community always welcomes contributions, no matter how small. We're happy to help troubleshoot XGI issues you run into, assist you if you would like to add functionality or fixes to the codebase, or answer any questions you may have.
 
-To get more actively involved, you are invited to browse the [issues page](../../issues) and choose one that you can
-work on.  The core developers will be happy to help you understand the codebase and any
-other doubts you may have while working on your contribution.
+Some concrete ways that you can get involved:
 
-If you are interested in the daily goings-on of XGI, you are invited to join our [Zulip
-channel](https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/).
+* **Get XGI updates** by following the XGI [Twitter](https://twitter.com/xginets) account, signing up for our [mailing list](http://eepurl.com/igE6ez), or starring this repository.
+* **Spread the word** when you use XGI by sharing with your colleagues and friends.
+* **Request a new feature or report a bug** by raising a [new issue](https://github.com/xgi-org/xgi/issues/new).
+* **Create a Pull Request (PR)** to address an [open issue](../../issues) or add a feature.
+* **Join our [Zulip channel](https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/)** to be a part of the daily goings-on of XGI.
+
 
 ## How to Cite
-
 We acknowledge the importance of good software to support research, and we note
 that research becomes more valuable when it is communicated effectively. To
 demonstrate the value of XGI, we ask that you cite XGI in your work.
@@ -82,28 +77,19 @@ Currently, the best way to cite XGI is to go to our
 click the "cite this repository" button on the right sidebar. This will generate
 a citation in your preferred format, and will also integrate well with citation managers.
 
-## Code of Conduct
-
-Our full code of conduct, and how we enforce it, can be read in [our repository](CODE_OF_CONDUCT.md).
 
 ## License
 Released under the 3-Clause BSD license (see [`LICENSE.md`](LICENSE.md))
 
 Copyright (C) 2021-2023 XGI Developers
 
-Nicholas Landry <nicholas.landry@uvm.edu>
-
-Leo Torres <leo@leotrs.com>
-
-Iacopo Iacopini <iacopiniiacopo@gmail.com>
-
-Maxime Lucas <maxime.lucas@centai.eu>
-
-Giovanni Petri <giovanni.petri@centai.eu>
-
-Alice Patania <apatania@uvm.edu>
-
-Alice Schwarze <alice.c.schwarze@dartmouth.edu>
+* Nicholas Landry <nicholas.landry@uvm.edu>
+* Leo Torres <leo@leotrs.com>
+* Iacopo Iacopini <iacopiniiacopo@gmail.com>
+* Maxime Lucas <maxime.lucas@centai.eu>
+* Giovanni Petri <giovanni.petri@centai.eu>
+* Alice Patania <apatania@uvm.edu>
+* Alice Schwarze <alice.c.schwarze@dartmouth.edu>
 
 The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](LICENSE.md)
 
