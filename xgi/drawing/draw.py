@@ -466,7 +466,6 @@ def draw_hyperedges(
             obj = plt.Polygon(
                 sorted_coordinates,
                 facecolor=edge_fc[id],
-                alpha=0.4,
                 zorder=max_order - d,
             )
             ax.add_patch(obj)
