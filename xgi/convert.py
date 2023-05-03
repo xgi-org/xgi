@@ -73,13 +73,13 @@ def convert_to_hypergraph(data, create_using=None):
         return empty_hypergraph(create_using)
 
     elif isinstance(data, Hypergraph) and not isinstance(data, SimplicialComplex):
-        H = empty_simplicial_complex(create_using)
         H = empty_hypergraph(create_using)
         H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
         ee = data.edges
         H.add_edges_from(
             (ee.members(e), e, deepcopy(attr)) for e, attr in ee.items()
         )
+        H._hypergraph = deepcopy(data._hypergraph)
         return H
     
 
@@ -88,23 +88,20 @@ def convert_to_hypergraph(data, create_using=None):
 
     elif isinstance(data, list):
         # edge list
+        result = from_hyperedge_list(data, create_using)
         if not isinstance(create_using, Hypergraph):
-            return from_hyperedge_list(data, create_using)
-        else:
-            from_hyperedge_list(data, create_using)
+            return result
 
     elif isinstance(data, pd.DataFrame):
+        result = from_bipartite_pandas_dataframe(data, create_using)
         if not isinstance(create_using, Hypergraph):
-            return from_bipartite_pandas_dataframe(data, create_using)
-        else:
-            from_bipartite_pandas_dataframe(data, create_using)
+            return result
 
     elif isinstance(data, dict):
         # edge dict in the form we need
+        result = from_hyperedge_dict(data, create_using)
         if not isinstance(create_using, Hypergraph):
-            return from_hyperedge_dict(data, create_using)
-        else:
-            from_hyperedge_dict(data, create_using)
+            return result
 
     elif isinstance(
         data,
@@ -238,16 +235,14 @@ def convert_to_simplicial_complex(data, create_using=None):
 
     elif isinstance(data, list):
         # edge list
+        result = from_hyperedge_list(data, create_using)
         if not isinstance(create_using, SimplicialComplex):
-            return convert_to_simplicial_complex(from_hyperedge_list(data, create_using))
-        else:
-            from_hyperedge_list(data, create_using)
+            return convert_to_simplicial_complex(result)
 
     elif isinstance(data, pd.DataFrame):
+        result = from_bipartite_pandas_dataframe(data, create_using)
         if not isinstance(create_using, SimplicialComplex):
-            return convert_to_simplicial_complex(from_bipartite_pandas_dataframe(data, create_using))
-        else:
-            from_bipartite_pandas_dataframe(data, create_using)
+            return convert_to_simplicial_complex(result)
             
     elif isinstance(data, dict):
         # edge dict in the form we need
