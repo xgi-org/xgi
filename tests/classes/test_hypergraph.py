@@ -5,6 +5,7 @@ import pytest
 
 import xgi
 from xgi.exception import IDNotFound, XGIError
+from xgi.utils import dual_dict
 
 
 def test_constructor(edgelist5, dict5, incidence5, dataframe5):
@@ -454,8 +455,11 @@ def test_double_edge_swap(edgelist1):
     H.double_edge_swap(1, 6, 0, 3)
     assert H.edges.members() == [{2, 3, 6}, {4}, {5, 6}, {1, 7, 8}]
 
+    assert H._edge == dual_dict(H._node)
+
     H.double_edge_swap(3, 4, 0, 1)
     assert H.edges.members() == [{2, 4, 6}, {3}, {5, 6}, {1, 7, 8}]
+    assert H._edge == dual_dict(H._node)
 
     with pytest.raises(IDNotFound):
         H.double_edge_swap(10, 3, 0, 1)
