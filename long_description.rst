@@ -67,10 +67,6 @@ Currently, the best way to cite XGI is to go to our
 click the "cite this repository" button on the right sidebar. This will generate
 a citation in your preferred format, and will also integrate well with citation managers.
 
-Code of Conduct
----------------
-Our full code of conduct, and how we enforce it, can be read in `our repository <https://github.com/xgi-org/xgi/tree/main/CODE_OF_CONDUCT.md>`_.
-
 License
 -------
 Released under the 3-Clause BSD license (see the `license file <https://github.com/xgi-org/xgi/tree/main/license.md>`_)
