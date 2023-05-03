@@ -844,7 +844,8 @@ class Hypergraph:
             temp_memberships2.add(e_id1)    
 
 
-        except (KeyError, IDNotFound) as e:
+        except KeyError as e:
+
             raise IDNotFound(
                 "One of the nodes specified doesn't belong to the specified edge."
             ) from e
