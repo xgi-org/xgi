@@ -1,6 +1,6 @@
 sphinx~=6.0
 sphinx_copybutton
-pydata-sphinx-theme
+sphinx-rtd-theme>=1.0
 numpydoc>=1.1
 pillow>=8.2
 matplotlib>=3.3
