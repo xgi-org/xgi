@@ -8,7 +8,6 @@ include CITATION.cff
 include CODE_OF_CONDUCT.md
 include pytest.ini
 
-recursive-include tutorials *.ipynb
 recursive-include logo *.pdf *.png *.svg
 recursive-include requirements *.txt *.md
 

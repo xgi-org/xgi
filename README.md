@@ -16,8 +16,8 @@ Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twit
 ## Table of Contents:
   - [Installation](#installation)
   - [Getting Started](#getting-started)
-  - [How to Contribute](#contributing)
   - [Corresponding Data](#corresponding-data)
+  - [How to Contribute](#contributing)
   - [How to Cite](#how-to-cite)
   - [License](#license)
   - [Funding](#funding)
@@ -46,7 +46,7 @@ pip install -e .\[all\]
 
 
 ## Getting Started
-To get started, take a look at the [tutorials](/tutorials/) illustrating the library's basic functionality.
+To get started, take a look at the [tutorials](https://github.com/xgi-org/xgi-tutorials) illustrating the library's basic functionality.
 
 
 ## Corresponding Data
