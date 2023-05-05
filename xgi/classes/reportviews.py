@@ -89,7 +89,7 @@ class IDView(Mapping, Set):
             self._id_attr = None if self._net is None else network._edge_attr
             self._bi_id_dict = None if self._net is None else network._node
             self._bi_id_attr = None if self._net is None else network._node_attr
-        
+
         if ids is None:
             self._ids = self._id_dict
         else:
