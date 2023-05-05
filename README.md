@@ -10,6 +10,7 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the rep
 * [**Bug reports**](../../issues)
 * [**GitHub Discussions**](../../discussions)
 * [**Documentation**](https://xgi.readthedocs.io/en/latest/)
+* [**Tutorials**](https://github.com/xgi-org/xgi-tutorials)
 
 Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twitter](https://twitter.com/xginets) or [Mastodon](https://mathstodon.xyz/@xginets)!
 

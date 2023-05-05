@@ -18,10 +18,9 @@ author_email = "nicholas.landry@uvm.edu"
 
 project_urls = {
     "Documentation": "https://xgi.readthedocs.io/en/latest/",
-    "Bug Reports": "https://github.com/xgi-org/xgi/issues",
+    "Tutorials": "https://github.com/xgi-org/xgi-tutorials",
     "Source": "https://github.com/xgi-org/xgi",
-    "PyPI": "https://pypi.org/project/xgi/",
-    "GitHub Discussions": "https://github.com/xgi-org/xgi/discussions",
+    "Issues": "https://github.com/xgi-org/xgi/issues",
 }
 
 description = """XGI is a Python library for the representation

@@ -64,6 +64,7 @@ designed and developed by network scientists with the needs of network scientist
 mind.
 
 - Repository: https://github.com/xgi-org/xgi
+- Tutorials: https://github.com/xgi-org/xgi-tutorials
 - PyPI: `latest release <https://pypi.org/project/xgi/>`_
 - Twitter: `@xginets <https://twitter.com/xginets>`_
 
