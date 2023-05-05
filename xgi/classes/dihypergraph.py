@@ -1,4 +1,4 @@
-"""Base class for undirected hypergraphs."""
+"""Base class for directed hypergraphs."""
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
 from copy import copy, deepcopy
@@ -7,13 +7,20 @@ from warnings import warn
 
 from ..exception import XGIError
 from ..utils import IDDict, update_uid_counter
-from .reportviews import EdgeView, NodeView
+from .direportviews import EdgeView, NodeView
 
 __all__ = ["DiHypergraph"]
 
 
 class DiHypergraph:
-    r"""A hypergraph is a collection of subsets of a set of *nodes* or *vertices*.
+    r"""A directed hypergraph (dihypergraph) is a collection of directed
+    interactions
+    
+    
+    ordered pairs,
+    $(e^+, e^-)$, where $e^+$ is known as the tail and is the set of senders in
+    this interaction, and $e^-$ is known as the head and is the set of receivers
+    in the interaction.
 
     A hypergraph is a pair :math:`(V, E)`, where :math:`V` is a set of elements called
     *nodes* or *vertices*, and :math:`E` is a set whose elements are subsets of
@@ -301,11 +308,11 @@ class DiHypergraph:
         if not members:
             raise XGIError("Cannot add an empty edge")
 
+        uid = next(self._edge_uid) if id is None else id
+
         if id in self._edge_in.keys():  # check that uid is not present yet
             warn(f"uid {id} already exists, cannot add edge {members}")
             return
-
-        uid = next(self._edge_uid) if id is None else id
 
         self._edge_in[uid] = set()
         self._edge_out[uid] = set()
