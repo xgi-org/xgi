@@ -6,39 +6,10 @@ from itertools import count
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError
-from ..utils.utilities import update_uid_counter
+from ..utils.utilities import IDDict, update_uid_counter
 from .reportviews import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
-
-
-class IDDict(dict):
-    """A dict that holds (node or edge) IDs.
-
-    For internal use only.  Adds input validation functionality to the internal dicts
-    that hold nodes and edges in a network.
-
-    """
-
-    def __getitem__(self, item):
-        try:
-            return dict.__getitem__(self, item)
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
-
-    def __setitem__(self, item, value):
-        if item is None:
-            raise XGIError("None cannot be a node or edge")
-        try:
-            return dict.__setitem__(self, item, value)
-        except TypeError as e:
-            raise TypeError(f"ID {item} not a valid type") from e
-
-    def __delitem__(self, item):
-        try:
-            return dict.__delitem__(self, item)
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
 
 
 class Hypergraph:
@@ -834,15 +805,14 @@ class Hypergraph:
             temp_members1.add(n_id2)
             temp_members2.add(n_id1)
 
-            # Now we handle the memberships   
+            # Now we handle the memberships
             # remove old nodes from edges
             temp_memberships1.remove(e_id1)
             temp_memberships2.remove(e_id2)
 
             # swap nodes
             temp_memberships1.add(e_id2)
-            temp_memberships2.add(e_id1)    
-
+            temp_memberships2.add(e_id1)
 
         except KeyError as e:
 
@@ -850,11 +820,12 @@ class Hypergraph:
                 "One of the nodes specified doesn't belong to the specified edge."
             ) from e
 
-        if (len(temp_memberships1) != len(self._node[n_id1]) or
-            len(temp_memberships2) != len(self._node[n_id2]) or
-            len(temp_members1) != len(self._edge[e_id1]) or
-            len(temp_members2) != len(self._edge[e_id2])
-            ):
+        if (
+            len(temp_memberships1) != len(self._node[n_id1])
+            or len(temp_memberships2) != len(self._node[n_id2])
+            or len(temp_members1) != len(self._edge[e_id1])
+            or len(temp_members2) != len(self._edge[e_id2])
+        ):
             raise XGIError("This swap does not preserve edge sizes.")
 
         self._node[n_id1] = temp_memberships1
