@@ -79,15 +79,19 @@ class IDView(Mapping, Set):
     def __init__(self, network, ids=None):
         self._net = network
 
-        if self._id_kind == "node":
-            self._id_dict = None if self._net is None else network._node
+        if self._id_kind == "dinode":
+            self._in_id_dict = None if self._net is None else network._node_in
+            self._out_id_dict = None if self._net is None else network._node_out
             self._id_attr = None if self._net is None else network._node_attr
-            self._bi_id_dict = None if self._net is None else network._edge
+            self._bi_in_id_dict = None if self._net is None else network._edge_in
+            self._bi_out_id_dict = None if self._net is None else network._edge_out
             self._bi_id_attr = None if self._net is None else network._edge_attr
-        elif self._id_kind == "edge":
-            self._id_dict = None if self._net is None else network._edge
+        elif self._id_kind == "diedge":
+            self._in_id_dict = None if self._net is None else network._edge_in
+            self._out_id_dict = None if self._net is None else network._edge_out
             self._id_attr = None if self._net is None else network._edge_attr
-            self._bi_id_dict = None if self._net is None else network._node
+            self._bi_in_id_dict = None if self._net is None else network._node_in
+            self._bi_out_id_dict = None if self._net is None else network._node_out
             self._bi_id_attr = None if self._net is None else network._node_attr
 
         if ids is None:
@@ -333,141 +337,6 @@ class IDView(Mapping, Set):
             )
         return type(self).from_view(self, bunch)
 
-    def neighbors(self, id):
-        """Find the neighbors of an ID.
-
-        The neighbors of an ID are those IDs that share at least one bipartite ID.
-
-        Parameters
-        ----------
-        id : hashable
-            ID to find neighbors of.
-        Returns
-        -------
-        set
-            A set of the neighboring IDs
-
-        See Also
-        --------
-        ~xgi.classes.function.edge_neighborhood
-
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.nodes.neighbors(1)
-        {2}
-        >>> H.nodes.neighbors(2)
-        {1, 3, 4}
-
-        """
-        return {i for n in self._id_dict[id] for i in self._bi_id_dict[n]}.difference(
-            {id}
-        )
-
-    def duplicates(self):
-        """Find IDs that have a duplicate.
-
-        An ID has a 'duplicate' if there exists another ID with the same bipartite
-        neighbors.
-
-        Returns
-        -------
-        IDView
-            A view containing only those IDs with a duplicate.
-
-        Raises
-        ------
-        TypeError
-            When IDs are of different types. For example, ("a", 1).
-
-        Notes
-        -----
-        The IDs returned are in an arbitrary order, that is duplicates are not
-        guaranteed to be consecutive. For IDs with the same bipartite neighbors,
-        only the first ID added is not a duplicate.
-
-        See Also
-        --------
-        IDView.lookup
-
-        Examples
-        --------
-        >>> import xgi
-        >>> H = xgi.Hypergraph([[0, 1, 2], [3, 4, 2], [0, 1, 2]])
-        >>> H.edges.duplicates()
-        EdgeView((2,))
-
-        Order does not matter:
-
-        >>> H = xgi.Hypergraph([[2, 1, 0], [0, 1, 2]])
-        >>> H.edges.duplicates()
-        EdgeView((1,))
-
-        Repetitions matter:
-
-        >>> H = xgi.Hypergraph([[0, 1], [1, 0]])
-        >>> H.edges.duplicates()
-        EdgeView((1,))
-
-        """
-        dups = []
-        hashes = defaultdict(list)
-        for idx, members in self._id_dict.items():
-            hashes[frozenset(members)].append(idx)
-        for _, edges in hashes.items():
-            if len(edges) > 1:
-                try:
-                    dups.extend(sorted(edges)[1:])
-                except TypeError:
-                    dups.extend(edges[1:])
-        return self.__class__.from_view(self, bunch=dups)
-
-    def lookup(self, neighbors):
-        """Find IDs with the specified bipartite neighbors.
-
-        Parameters
-        ----------
-        neighbors : Iterable
-            An iterable of IDs.
-
-        Returns
-        -------
-        IDView
-            A view containing only those IDs whose bipartite neighbors match
-            `neighbors`.
-
-        See Also
-        --------
-        IDView.duplicates
-
-        Examples
-        --------
-        >>> import xgi
-        >>> H = xgi.Hypergraph([[0, 1, 2], [3, 4], [3, 4, 2]])
-        >>> H.edges.lookup([3, 4])
-        EdgeView((1,))
-        >>> H.add_edge([3, 4])
-        >>> H.edges.lookup([3, 4])
-        EdgeView((1, 3))
-
-        Can be used as a boolean check for edge existence:
-
-        >>> if H.edges.lookup([3, 4]): print('An edge with members [3, 4] exists')
-        An edge with members [3, 4] exists
-
-        Can also be used to check for nodes that belong to a particular set of edges:
-
-        >>> H = xgi.Hypergraph([['a', 'b', 'c'], ['a', 'd', 'e'], ['c', 'd', 'e']])
-        >>> H.nodes.lookup([0, 1])
-        NodeView(('a',))
-
-        """
-        sought = set(neighbors)
-        found = [idx for idx, neighbors in self._id_dict.items() if neighbors == sought]
-        return self.__class__.from_view(self, bunch=found)
-
     @classmethod
     def from_view(cls, view, bunch=None):
         """Create a view from another view.
@@ -490,18 +359,20 @@ class IDView(Mapping, Set):
         """
         newview = cls(None)
         newview._net = view._net
-        newview._id_dict = view._id_dict
+        newview._in_id_dict = view._in_id_dict
+        newview._out_id_dict = view._out_id_dict
         newview._id_attr = view._id_attr
-        newview._bi_id_dict = view._bi_id_dict
+        newview._bi_in_id_dict = view._bi_in_id_dict
+        newview._bi_out_id_dict = view._bi_out_id_dict
         newview._bi_id_attr = view._bi_id_attr
-        all_ids = set(view._id_dict)
+        all_ids = set(view._in_id_dict)
         if bunch is None:
             newview._ids = all_ids
         else:
             bunch = set(bunch)
             wrong = bunch - all_ids
             if wrong:
-                raise IDNotFound(f"Nodes {wrong} not in the hypergraph")
+                raise IDNotFound(f"IDs {wrong} not in the hypergraph")
             newview._ids = bunch
         return newview
 
@@ -538,7 +409,7 @@ class NodeView(IDView):
 
     """
 
-    _id_kind = "node"
+    _id_kind = "dinode"
 
     def __init__(self, H, bunch=None):
         if H is None:
@@ -546,7 +417,7 @@ class NodeView(IDView):
         else:
             super().__init__(H, bunch)
 
-    def memberships(self, n=None):
+    def dimemberships(self, n=None):
         """Get the edge ids of which a node is a member.
 
         Gets all the node memberships for all nodes in the view if n
@@ -569,47 +440,10 @@ class NodeView(IDView):
 
         """
         return (
-            {key: self._id_dict[key] for key in self}
+            {key: (self._out_id_dict[key], self._in_id_dict) for key in self}
             if n is None
-            else self._id_dict[n].copy()
+            else (self._out_id_dict[n].copy(), self._in_id_dict[n].copy())
         )
-
-    def isolates(self, ignore_singletons=False):
-        """Nodes that belong to no edges.
-
-        When ignore_singletons is True, a node is considered isolated from the
-        rest of the hypergraph when it is included in no edges of size two or more.  In
-        particular, whether the node is part of any singleton edges is irrelevant to
-        determine whether it is isolated.
-
-        When ignore_singletons is False (default), a node is isolated only when it is a member of
-        exactly zero edges, including singletons.
-
-        Parameters
-        ----------
-        ignore_singletons : bool, optional
-            Whether to consider singleton edges.
-            By default, False.
-
-        Returns
-        -------
-        NodeView containing the isolated nodes.
-
-        See Also
-        --------
-        :meth:`EdgeView.singletons`
-
-        """
-        if ignore_singletons:
-            nodes_in_edges = set()
-            for members in self._bi_id_dict.values():
-                if len(members) == 1:
-                    continue
-                nodes_in_edges = nodes_in_edges.union(members)
-            isolates = set(self._id_dict) - nodes_in_edges
-            return self.from_view(self, bunch=isolates)
-        else:
-            return self.filterby("degree", 0)
 
 
 class EdgeView(IDView):
@@ -635,7 +469,7 @@ class EdgeView(IDView):
 
     """
 
-    _id_kind = "edge"
+    _id_kind = "diedge"
 
     def __init__(self, H, bunch=None):
         if H is None:
@@ -643,7 +477,7 @@ class EdgeView(IDView):
         else:
             super().__init__(H, bunch)
 
-    def members(self, e=None, dtype=list):
+    def dimembers(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
 
         Parameters
@@ -675,9 +509,9 @@ class EdgeView(IDView):
         """
         if e is None:
             if dtype is dict:
-                return {key: self._id_dict[key] for key in self}
+                return {key: (self._out_id_dict[key].copy(), self._in_id_dict[key].copy()) for key in self}
             elif dtype is list:
-                return [self._id_dict[key] for key in self]
+                return [(self._out_id_dict[key].copy(), self._in_id_dict[key].copy()) for key in self]
             else:
                 raise XGIError(f"Unrecognized dtype {dtype}")
 
@@ -686,90 +520,131 @@ class EdgeView(IDView):
 
         return self._id_dict[e].copy()
 
-    def singletons(self):
-        """Edges that contain exactly one node.
-
-        Returns
-        -------
-        EdgeView containing the singleton edges.
-
-        See Also
-        --------
-        :meth:`NodeView.isolates`
-
-        """
-        return self.filterby("size", 1)
-
-    def maximal(self, strict=False):
-        """Returns the maximal edges as an EdgeView.
-
-        Maximal edges are those that are not subsets
-        of any other edges in the hypergraph. The strict
-        keyword determines whether the subsets
-        are strict or non-strict.
+    def dimembers(self, e=None, dtype=list):
+        """Get the node ids that are members of an edge.
 
         Parameters
         ----------
-        strict : bool, optional
-            Whether maximal edges must strictly include all of its
-            subsets (`strict=True`) or whether maximal multiedges
-            are permitted (`strict=False`), by default False.
-            See Notes for more details.
+        e : hashable, optional
+            Edge ID. By default, None.
+        dtype : {list, dict}, optional
+            Specify the type of the return value.
+            By default, list.
+
         Returns
         -------
-        EdgeView
-            The maximal edges
+        list (if dtype is list, default)
+            Edge members.
+        dict (if dtype is dict)
+            Edge members.
+        set (if e is not None)
+            Members of edge e.
 
-        Notes
-        -----
-        This function implements two definitions of maximal
-        hyperedges: strict and non-strict. For the strict case
-        (`strict=True`), we enforce that a maximal edge must
-        strictly include all of its subsets and by this
-        definition, multiedges can't be included. For the non-strict
-        case (`strict=False`), then we add all the maximal multiedges
-        with non-strict inclusion.
+        Raises
+        ------
+        TypeError
+            If `e` is not None or a hashable
+        XGIError
+            If `dtype` is not dict or list
+        IDNotFound
+            If `e` does not exist in the hypergraph
 
-        There are methods for eliminating these duplicates by
-        running `H.cleanup()` or `H.remove_edges_from(H.edges.duplicates())`
-
-        References
-        ----------
-        https://stackoverflow.com/questions/14106121/efficient-algorithm-for-finding-all-maximal-subsets
-
-        Example
-        -------
-
-        >>> import xgi
-        >>> H = xgi.Hypergraph([{1, 2, 3},{1, 2}, {2, 3}, {2}, {2}, {3, 4}, {1, 2, 3}])
-        >>> H.edges.maximal()
-        EdgeView((0, 5, 6))
-        >>> H.edges.maximal().members()
-        [{1, 2, 3}, {3, 4}, {1, 2, 3}]
         """
-        edges = self._id_dict
-        nodes = self._bi_id_dict
-        max_edges = set()
+        if e is None:
+            if dtype is dict:
+                return {key: set(self._out_id_dict[key].union(self._in_id_dict[key])) for key in self}
+            elif dtype is list:
+                return [set(self._out_id_dict[key].union(self._in_id_dict[key]))  for key in self]
+            else:
+                raise XGIError(f"Unrecognized dtype {dtype}")
 
-        _intersection = lambda x, y: x & y
+        if e not in self:
+            raise IDNotFound(f'ID "{e}" not in this view')
 
-        if strict:
-            for i, e in edges.items():
-                if reduce(_intersection, (nodes[n] for n in e)) == {i}:
-                    max_edges.add(i)
-        else:
-            # This data structure so that the algorithm can handle multi-edges
-            dups = defaultdict(list)
-            for idx, members in edges.items():
-                dups[frozenset(members)].append(idx)
+        return set(self._out_id_dict[e].union(self._in_id_dict[e])) 
 
-            for i, e in edges.items():
-                # If a multi-edge has already been added to the set of
-                # maximal edges, we don't need to check.
-                if i not in max_edges:
-                    if reduce(_intersection, (nodes[n] for n in e)) == set(
-                        dups[frozenset(e)]
-                    ):
-                        max_edges.update(dups[frozenset(e)])
+    def head(self, e=None, dtype=list):
+        """Get the node ids that are members of an edge.
 
-        return self.from_view(self, bunch=max_edges)
+        Parameters
+        ----------
+        e : hashable, optional
+            Edge ID. By default, None.
+        dtype : {list, dict}, optional
+            Specify the type of the return value.
+            By default, list.
+
+        Returns
+        -------
+        list (if dtype is list, default)
+            Edge members.
+        dict (if dtype is dict)
+            Edge members.
+        set (if e is not None)
+            Members of edge e.
+
+        Raises
+        ------
+        TypeError
+            If `e` is not None or a hashable
+        XGIError
+            If `dtype` is not dict or list
+        IDNotFound
+            If `e` does not exist in the hypergraph
+
+        """
+        if e is None:
+            if dtype is dict:
+                return {key: self._in_id_dict[key].copy() for key in self}
+            elif dtype is list:
+                return [self._in_id_dict[key].copy() for key in self]
+            else:
+                raise XGIError(f"Unrecognized dtype {dtype}")
+
+        if e not in self:
+            raise IDNotFound(f'ID "{e}" not in this view')
+
+        return self._id_dict[e].copy()
+
+    def tail(self, e=None, dtype=list):
+        """Get the node ids that are members of an edge.
+
+        Parameters
+        ----------
+        e : hashable, optional
+            Edge ID. By default, None.
+        dtype : {list, dict}, optional
+            Specify the type of the return value.
+            By default, list.
+
+        Returns
+        -------
+        list (if dtype is list, default)
+            Edge members.
+        dict (if dtype is dict)
+            Edge members.
+        set (if e is not None)
+            Members of edge e.
+
+        Raises
+        ------
+        TypeError
+            If `e` is not None or a hashable
+        XGIError
+            If `dtype` is not dict or list
+        IDNotFound
+            If `e` does not exist in the hypergraph
+
+        """
+        if e is None:
+            if dtype is dict:
+                return {key: self._out_id_dict[key].copy() for key in self}
+            elif dtype is list:
+                return [self._out_id_dict[key].copy() for key in self]
+            else:
+                raise XGIError(f"Unrecognized dtype {dtype}")
+
+        if e not in self:
+            raise IDNotFound(f'ID "{e}" not in this view')
+
+        return self._id_dict[e].copy()

@@ -242,11 +242,13 @@ class DiHypergraph:
                 self._edge_in[edge].remove(n)
                 if not self._edge_in[edge]:
                     del self._edge_in[edge]
+                    del self._edge_out[edge]
                     del self._edge_attr[edge]
             for edge in out_edge_neighbors:
                 self._edge_out[edge].remove(n)
                 if not self._edge_out[edge]:
                     del self._edge_out[edge]
+                    del self._edge_in[edge]
                     del self._edge_attr[edge]
 
     def remove_nodes_from(self, nodes):
@@ -299,11 +301,14 @@ class DiHypergraph:
         >>> H.add_edge({"head": [1, 2, 3], "tail": [2, 3, 4]})
         >>> H.add_edge({"head": [3, 4], "tail":{}}, id='myedge')
         """
-        try:
-            head = set(members["head"])
+        if isinstance(members, {tuple, list}):
+            tail = members[0]
+            head = members[1]
+        elif type(members) == dict:
             tail = set(members["tail"])
-        except TypeError:
-            raise XGIError("Edge must be a dictionary with head and tail keys!")
+            head = set(members["head"])
+        else:
+            raise XGIError("Directed edge must be a dictionary, list, or tuple!")
 
         if not members:
             raise XGIError("Cannot add an empty edge")
@@ -440,12 +445,15 @@ class DiHypergraph:
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
             for id, members in ebunch_to_add.items():
-                try:
-                    head = set(members["head"])
+                if isinstance(members, {tuple, list}):
+                    tail = members[0]
+                    head = members[1]
+                elif type(members) == dict:
                     tail = set(members["tail"])
-                except TypeError:
-                    raise XGIError("Edge must be a dictionary with head and tail keys!")
-
+                    head = set(members["head"])
+                else:
+                    raise XGIError("Directed edge must be a dictionary, list, or tuple!")
+                
                 if id in self._edge_in.keys():  # check that uid is not present yet
                     warn(f"uid {id} already exists, cannot add edge {members}.")
                     continue
