@@ -7,6 +7,7 @@ from warnings import warn
 
 from ..exception import XGIError
 from ..utils import IDDict, update_uid_counter
+
 # from .direportviews import EdgeView, NodeView
 
 __all__ = ["DiHypergraph"]
@@ -15,8 +16,8 @@ __all__ = ["DiHypergraph"]
 class DiHypergraph:
     r"""A directed hypergraph (dihypergraph) is a collection of directed
     interactions
-    
-    
+
+
     ordered pairs,
     $(e^+, e^-)$, where $e^+$ is known as the tail and is the set of senders in
     this interaction, and $e^-$ is known as the head and is the set of receivers
@@ -452,8 +453,10 @@ class DiHypergraph:
                     tail = set(members["tail"])
                     head = set(members["head"])
                 else:
-                    raise XGIError("Directed edge must be a dictionary, list, or tuple!")
-                
+                    raise XGIError(
+                        "Directed edge must be a dictionary, list, or tuple!"
+                    )
+
                 if id in self._edge_in.keys():  # check that uid is not present yet
                     warn(f"uid {id} already exists, cannot add edge {members}.")
                     continue

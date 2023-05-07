@@ -509,9 +509,15 @@ class EdgeView(IDView):
         """
         if e is None:
             if dtype is dict:
-                return {key: (self._out_id_dict[key].copy(), self._in_id_dict[key].copy()) for key in self}
+                return {
+                    key: (self._out_id_dict[key].copy(), self._in_id_dict[key].copy())
+                    for key in self
+                }
             elif dtype is list:
-                return [(self._out_id_dict[key].copy(), self._in_id_dict[key].copy()) for key in self]
+                return [
+                    (self._out_id_dict[key].copy(), self._in_id_dict[key].copy())
+                    for key in self
+                ]
             else:
                 raise XGIError(f"Unrecognized dtype {dtype}")
 
@@ -552,16 +558,22 @@ class EdgeView(IDView):
         """
         if e is None:
             if dtype is dict:
-                return {key: set(self._out_id_dict[key].union(self._in_id_dict[key])) for key in self}
+                return {
+                    key: set(self._out_id_dict[key].union(self._in_id_dict[key]))
+                    for key in self
+                }
             elif dtype is list:
-                return [set(self._out_id_dict[key].union(self._in_id_dict[key]))  for key in self]
+                return [
+                    set(self._out_id_dict[key].union(self._in_id_dict[key]))
+                    for key in self
+                ]
             else:
                 raise XGIError(f"Unrecognized dtype {dtype}")
 
         if e not in self:
             raise IDNotFound(f'ID "{e}" not in this view')
 
-        return set(self._out_id_dict[e].union(self._in_id_dict[e])) 
+        return set(self._out_id_dict[e].union(self._in_id_dict[e]))
 
     def head(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
@@ -604,7 +616,7 @@ class EdgeView(IDView):
         if e not in self:
             raise IDNotFound(f'ID "{e}" not in this view')
 
-        return self._id_dict[e].copy()
+        return self._in_id_dict[e].copy()
 
     def tail(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
@@ -647,4 +659,4 @@ class EdgeView(IDView):
         if e not in self:
             raise IDNotFound(f'ID "{e}" not in this view')
 
-        return self._id_dict[e].copy()
+        return self._out_id_dict[e].copy()
