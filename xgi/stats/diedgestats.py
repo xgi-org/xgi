@@ -189,3 +189,85 @@ def size(net, bunch, degree=None):
             )
             for e in bunch
         }
+
+
+def tail_size(net, bunch, degree=None):
+    """Edge size.
+
+    The size of an edge is the number of nodes it contains.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Edges in `net`.
+
+    Returns
+    -------
+    dict
+
+    See Also
+    --------
+    order
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+    >>> H.edges.size.asdict()
+    {0: 3, 1: 4, 2: 3}
+
+    """
+    if degree is None:
+        return {e: len(net._edge_out[e]) for e in bunch}
+    else:
+        return {
+            e: len(
+                n
+                for n in net._edge_out[e]
+                if len(net._node_in[n].union(net._node_out[n])) == degree
+            )
+            for e in bunch
+        }
+
+
+def head_size(net, bunch, degree=None):
+    """Edge size.
+
+    The size of an edge is the number of nodes it contains.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Edges in `net`.
+
+    Returns
+    -------
+    dict
+
+    See Also
+    --------
+    order
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+    >>> H.edges.size.asdict()
+    {0: 3, 1: 4, 2: 3}
+
+    """
+    if degree is None:
+        return {e: len(net._edge_in[e]) for e in bunch}
+    else:
+        return {
+            e: len(
+                n
+                for n in net._edge_in[e]
+                if len(net._node_in[n].union(net._node_out[n])) == degree
+            )
+            for e in bunch
+        }
