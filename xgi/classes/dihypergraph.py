@@ -7,7 +7,7 @@ from warnings import warn
 
 from ..exception import XGIError
 from ..utils import IDDict, update_uid_counter
-from .direportviews import EdgeView, NodeView
+# from .direportviews import EdgeView, NodeView
 
 __all__ = ["DiHypergraph"]
 
