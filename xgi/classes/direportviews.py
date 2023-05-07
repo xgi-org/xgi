@@ -19,7 +19,7 @@ __all__ = [
 ]
 
 
-class IDView(Mapping, Set):
+class DiIDView(Mapping, Set):
     """Base View class for accessing the ids (nodes or edges) of a Hypergraph.
 
     Can optionally keep track of a subset of ids.  By default all node ids or all edge
@@ -95,7 +95,7 @@ class IDView(Mapping, Set):
             self._bi_id_attr = None if self._net is None else network._node_attr
 
         if ids is None:
-            self._ids = self._id_dict
+            self._ids = self._in_id_dict
         else:
             self._ids = ids
 
@@ -386,7 +386,7 @@ class IDView(Mapping, Set):
         return self.from_view(self, it)
 
 
-class NodeView(IDView):
+class DiNodeView(DiIDView):
     """An IDView that keeps track of node ids.
 
     Parameters
@@ -440,13 +440,47 @@ class NodeView(IDView):
 
         """
         return (
-            {key: (self._out_id_dict[key], self._in_id_dict) for key in self}
+            {
+                key: (self._out_id_dict[key].copy(), self._in_id_dict[key].copy())
+                for key in self
+            }
             if n is None
             else (self._out_id_dict[n].copy(), self._in_id_dict[n].copy())
         )
 
+    def memberships(self, n=None):
+        """Get the edge ids of which a node is a member.
 
-class EdgeView(IDView):
+        Gets all the node memberships for all nodes in the view if n
+        not specified.
+
+        Parameters
+        ----------
+        n : hashable, optional
+            Node ID. By default, None.
+
+        Returns
+        -------
+        dict of sets if n is None, otherwise a set
+            Edge memberships.
+
+        Raises
+        ------
+        XGIError
+            If `n` is not hashable or if it is not in the hypergraph.
+
+        """
+        return (
+            {
+                key: set(self._out_id_dict[key].union(self._in_id_dict[key]))
+                for key in self
+            }
+            if n is None
+            else set(self._out_id_dict[n].union(self._in_id_dict[n]))
+        )
+
+
+class DiEdgeView(DiIDView):
     """An IDView that keeps track of edge ids.
 
     Parameters
@@ -524,9 +558,9 @@ class EdgeView(IDView):
         if e not in self:
             raise IDNotFound(f'ID "{e}" not in this view')
 
-        return self._id_dict[e].copy()
+        return (self._out_id_dict[e].copy(), self._out_id_dict[e].copy())
 
-    def dimembers(self, e=None, dtype=list):
+    def members(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
 
         Parameters

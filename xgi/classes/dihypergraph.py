@@ -7,8 +7,7 @@ from warnings import warn
 
 from ..exception import XGIError
 from ..utils import IDDict, update_uid_counter
-
-# from .direportviews import EdgeView, NodeView
+from .direportviews import DiEdgeView, DiNodeView
 
 __all__ = ["DiHypergraph"]
 
@@ -89,6 +88,12 @@ class DiHypergraph:
         self._edge_out = self._hyperedge_dict_factory()
         self._edge_attr = self._hyperedge_attr_dict_factory()
 
+        self._nodeview = DiNodeView(self)
+        """A :class:`~xgi.classes.reportviews.NodeView` of the hypergraph."""
+
+        self._edgeview = DiEdgeView(self)
+        """An :class:`~xgi.classes.reportviews.EdgeView` of the hypergraph."""
+
         self._hypergraph.update(attr)  # must be after convert
 
     @property
@@ -138,6 +143,16 @@ class DiHypergraph:
 
         """
         return len(self._edge_in)
+
+    @property
+    def nodes(self):
+        """A :class:`DiNodeView` of this network."""
+        return self._nodeview
+
+    @property
+    def edges(self):
+        """An :class:`DiEdgeView` of this network."""
+        return self._edgeview
 
     def add_node(self, node, **attr):
         """Add one node with optional attributes.
@@ -241,13 +256,13 @@ class DiHypergraph:
         else:  # weak removal
             for edge in in_edge_neighbors:
                 self._edge_in[edge].remove(n)
-                if not self._edge_in[edge]:
+                if not self._edge_in[edge] and not self._edge_out[edge]:
                     del self._edge_in[edge]
                     del self._edge_out[edge]
                     del self._edge_attr[edge]
             for edge in out_edge_neighbors:
                 self._edge_out[edge].remove(n)
-                if not self._edge_out[edge]:
+                if not self._edge_in[edge] and not self._edge_out[edge]:
                     del self._edge_out[edge]
                     del self._edge_in[edge]
                     del self._edge_attr[edge]
@@ -302,7 +317,7 @@ class DiHypergraph:
         >>> H.add_edge({"head": [1, 2, 3], "tail": [2, 3, 4]})
         >>> H.add_edge({"head": [3, 4], "tail":{}}, id='myedge')
         """
-        if isinstance(members, {tuple, list}):
+        if isinstance(members, (tuple, list)):
             tail = members[0]
             head = members[1]
         elif type(members) == dict:
@@ -446,7 +461,7 @@ class DiHypergraph:
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
             for id, members in ebunch_to_add.items():
-                if isinstance(members, {tuple, list}):
+                if isinstance(members, (tuple, list)):
                     tail = members[0]
                     head = members[1]
                 elif type(members) == dict:
@@ -528,11 +543,16 @@ class DiHypergraph:
             if id in self._edge_in.keys():  # check that uid is not present yet
                 warn(f"uid {id} already exists, cannot add edge {members}.")
             else:
-                try:
-                    head = set(members["head"])
+                if isinstance(members, (tuple, list)):
+                    tail = members[0]
+                    head = members[1]
+                elif type(members) == dict:
                     tail = set(members["tail"])
-                except TypeError:
-                    raise XGIError("Edge must be a dictionary with head and tail keys!")
+                    head = set(members["head"])
+                else:
+                    raise XGIError(
+                        "Directed edge must be a dictionary, list, or tuple!"
+                    )
 
                 try:
                     self._edge_in[id] = set(head)
