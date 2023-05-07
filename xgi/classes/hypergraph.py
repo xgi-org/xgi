@@ -712,7 +712,7 @@ class Hypergraph:
                 e = next(new_edges)
             except StopIteration:
                 if format2 or format4:
-                
+
                     update_uid_counter(self, id)
                 break
 
