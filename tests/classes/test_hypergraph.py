@@ -466,7 +466,7 @@ def test_double_edge_swap(edgelist1):
 
     with pytest.raises(IDNotFound):
         H.double_edge_swap(8, 3, 0, 1)
-    
+
     H = xgi.Hypergraph(edgelist1)
     with pytest.raises(XGIError):
         H.double_edge_swap(6, 7, 2, 3)

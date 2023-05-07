@@ -712,6 +712,7 @@ class Hypergraph:
                 e = next(new_edges)
             except StopIteration:
                 if format2 or format4:
+                
                     update_uid_counter(self, id)
                 break
 
@@ -805,15 +806,14 @@ class Hypergraph:
             temp_members1.add(n_id2)
             temp_members2.add(n_id1)
 
-            # Now we handle the memberships   
+            # Now we handle the memberships
             # remove old nodes from edges
             temp_memberships1.remove(e_id1)
             temp_memberships2.remove(e_id2)
 
             # swap nodes
             temp_memberships1.add(e_id2)
-            temp_memberships2.add(e_id1)    
-
+            temp_memberships2.add(e_id1)
 
         except KeyError as e:
 
@@ -821,11 +821,12 @@ class Hypergraph:
                 "One of the nodes specified doesn't belong to the specified edge."
             ) from e
 
-        if (len(temp_memberships1) != len(self._node[n_id1]) or
-            len(temp_memberships2) != len(self._node[n_id2]) or
-            len(temp_members1) != len(self._edge[e_id1]) or
-            len(temp_members2) != len(self._edge[e_id2])
-            ):
+        if (
+            len(temp_memberships1) != len(self._node[n_id1])
+            or len(temp_memberships2) != len(self._node[n_id2])
+            or len(temp_members1) != len(self._edge[e_id1])
+            or len(temp_members2) != len(self._edge[e_id2])
+        ):
             raise XGIError("This swap does not preserve edge sizes.")
 
         self._node[n_id1] = temp_memberships1
