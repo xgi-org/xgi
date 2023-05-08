@@ -277,13 +277,21 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     G = nx.fast_gnp_random_graph(N, p, seed=seed)
 
     nodes = G.nodes()
-    edges = list(G.edges())
 
-    # compute all triangles to fill
-    max_cliques = list(nx.find_cliques(G))
+    # compute all cliques to fill
+    if max_order is None:
+        cliques = list(nx.find_cliques(G)) # max cliques
+    else: # avoid adding many unnecessary redundant cliques
+        cliques = []
+        for clique in nx.enumerate_all_cliques(G): # sorted by size
+            if len(clique)<=max_order+1: 
+                cliques.append(clique)
+            else:
+                break # dont go over whole list if not necessary
+        cliques = cliques[N:] # remove singletons
 
     S = SimplicialComplex()
     S.add_nodes_from(nodes)
-    S.add_simplices_from(max_cliques, max_order=max_order)
+    S.add_simplices_from(cliques, max_order=max_order)
 
     return S
