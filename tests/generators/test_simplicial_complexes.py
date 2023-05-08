@@ -22,6 +22,7 @@ def test_flag_complex():
 
     assert S.edges.members() == simplices_3
 
+    # ps
     S1 = xgi.flag_complex(G, ps=[1], seed=42)
     S2 = xgi.flag_complex(G, ps=[0.5], seed=42)
     S3 = xgi.flag_complex(G, ps=[0], seed=42)
@@ -29,7 +30,8 @@ def test_flag_complex():
     assert S1.edges.members() == simplices_3
     assert S2.edges.members() == simplices_2
     assert S3.edges.members() == simplices_2
-
+    
+    # complete graph
     G1 = nx.complete_graph(4)
     S4 = xgi.flag_complex(G1)
     S5 = xgi.flag_complex(G1, ps=[1])

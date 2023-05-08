@@ -130,26 +130,31 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
         random.seed(seed)
 
     nodes = G.nodes()
+    N = len(nodes)
     edges = G.edges()
 
-    # compute all maximal cliques to fill
-    max_cliques = list(nx.find_cliques(G))
+    # compute all cliques to fill
+    if max_order is None:
+        cliques_to_add = list(nx.find_cliques(G)) # max cliques
+    else: # avoid adding many unnecessary redundant cliques
+        cliques_to_add = []
+        for clique in nx.enumerate_all_cliques(G): # sorted by size
+            if len(clique)<=max_order+1: 
+                cliques_to_add.append(clique)
+            else:
+                break # dont go over whole list if not necessary
+        cliques_to_add = cliques_to_add[N:] # remove singletons
 
     S = SimplicialComplex()
     S.add_nodes_from(nodes)
     S.add_simplices_from(edges)
     if not ps:  # promote all cliques
-        S.add_simplices_from(max_cliques, max_order=max_order)
+        S.add_simplices_from(cliques_to_add, max_order=max_order)
         return S
-
-    if max_order:  # compute subfaces of order max_order (allowed max cliques)
-        max_cliques_to_add = subfaces(max_cliques, order=max_order)
-    else:
-        max_cliques_to_add = max_cliques
 
     # store max cliques per order
     cliques_d = defaultdict(list)
-    for x in max_cliques_to_add:
+    for x in cliques_to_add:
         cliques_d[len(x)].append(x)
 
     # promote cliques with a given probability
