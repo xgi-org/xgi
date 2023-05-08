@@ -12,7 +12,7 @@ xgi.classes.reportviews.EdgeView
 
    .. autosummary::
 
-      ~NodeView.ids
+      ~EdgeView.ids
 
 
    .. rubric:: Methods
