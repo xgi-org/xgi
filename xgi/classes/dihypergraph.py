@@ -7,7 +7,7 @@ from warnings import warn
 
 from ..exception import XGIError
 from ..utils import IDDict, update_uid_counter
-from .direportviews import DiEdgeView, DiNodeView
+from .reportviews import DiEdgeView, DiNodeView
 
 __all__ = ["DiHypergraph"]
 
@@ -89,10 +89,10 @@ class DiHypergraph:
         self._edge_attr = self._hyperedge_attr_dict_factory()
 
         self._nodeview = DiNodeView(self)
-        """A :class:`~xgi.classes.reportviews.NodeView` of the hypergraph."""
+        """A :class:`~xgi.classes.direportviews.DiNodeView` of the directed hypergraph."""
 
         self._edgeview = DiEdgeView(self)
-        """An :class:`~xgi.classes.reportviews.EdgeView` of the hypergraph."""
+        """An :class:`~xgi.classes.direportviews.DiEdgeView` of the directed hypergraph."""
 
         self._hypergraph.update(attr)  # must be after convert
 
