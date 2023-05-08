@@ -586,6 +586,7 @@ def nodestat_func(func):
     setattr(nodestats, func.__name__, func)
     return func
 
+
 def dinodestat_func(func):
     """Decorator that allows arbitrary functions to behave like :class:`DiNodeStat` objects.
 
@@ -643,6 +644,7 @@ def edgestat_func(func):
     """
     setattr(edgestats, func.__name__, func)
     return func
+
 
 def diedgestat_func(func):
     """Decorator that allows arbitrary functions to behave like :class:`DiEdgeStat` objects.

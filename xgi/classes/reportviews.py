@@ -1314,7 +1314,7 @@ class DiEdgeView(DiIDView):
         if e not in self:
             raise IDNotFound(f'ID "{e}" not in this view')
 
-        return (self._out_id_dict[e].copy(), self._out_id_dict[e].copy())
+        return (self._out_id_dict[e].copy(), self._in_id_dict[e].copy())
 
     def members(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
