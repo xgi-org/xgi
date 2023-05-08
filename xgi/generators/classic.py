@@ -9,6 +9,7 @@ from itertools import chain, combinations
 
 __all__ = [
     "empty_hypergraph",
+    "empty_dihypergraph",
     "empty_simplicial_complex",
     "trivial_hypergraph",
     "complete_hypergraph",
@@ -26,7 +27,7 @@ def _empty_network(create_using, default):
     """
     if create_using is None:
         H = default()
-    elif hasattr(create_using, "_node"):
+    elif hasattr(create_using, "_node") or hasattr(create_using, "_node_in"):
         # create_using is a Hypergraph object
         create_using.clear()
         H = create_using
@@ -72,6 +73,45 @@ def empty_hypergraph(create_using=None, default=None):
 
     if default is None:
         default = xgi.Hypergraph
+    return _empty_network(create_using, default)
+
+
+def empty_dihypergraph(create_using=None, default=None):
+    """Returns the empty dihypergraph with zero nodes and edges.
+
+    Parameters
+    ----------
+    create_using : DiHypergraph Instance, Constructor or None
+        If None, use the `default` constructor.
+        If a constructor, call it to create an empty dihypergraph.
+    default : DiHypergraph constructor (default None)
+        The constructor to use if create_using is None.
+        If None, then xgi.Hypergraph is used.
+
+    Returns
+    -------
+    Hypergraph object
+        An empty hypergraph
+
+    See also
+    --------
+    empty_simplicial_complex
+    trivial_hypergraph
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.empty_dihypergraph()
+    >>> H.num_nodes, H.num_edges
+    (0, 0)
+
+    """
+    # this import needs to happen when the function runs, not when the module is first
+    # imported, to avoid circular imports
+    import xgi
+
+    if default is None:
+        default = xgi.DiHypergraph
     return _empty_network(create_using, default)
 
 

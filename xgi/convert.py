@@ -19,9 +19,8 @@ from scipy.sparse import (
 
 from .classes import DiHypergraph, Hypergraph, SimplicialComplex, set_edge_attributes
 from .exception import XGIError
-from .generators import empty_hypergraph, empty_simplicial_complex
+from .generators import empty_dihypergraph, empty_hypergraph, empty_simplicial_complex
 from .linalg import adjacency_matrix, incidence_matrix
-from .utils.utilities import dual_dict
 
 __all__ = [
     "convert_to_hypergraph",
@@ -149,13 +148,13 @@ def convert_to_dihypergraph(data, create_using=None):
 
     """
     if data is None:
-        return empty_hypergraph(create_using)
+        return empty_dihypergraph(create_using)
 
     elif isinstance(data, DiHypergraph):
-        H = empty_hypergraph(create_using)
+        H = empty_dihypergraph(create_using)
         H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
         ee = data.edges
-        H.add_edges_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
+        H.add_edges_from((ee.dimembers(e), e, deepcopy(attr)) for e, attr in ee.items())
         H._hypergraph = deepcopy(data._hypergraph)
         if not isinstance(create_using, DiHypergraph):
             return H

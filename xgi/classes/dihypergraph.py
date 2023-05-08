@@ -78,12 +78,14 @@ class DiHypergraph:
     _hyperedge_attr_dict_factory = IDDict
     _hypergraph_attr_dict_factory = dict
 
-    def __init__(self, **attr):
+    def __init__(self, incoming_data=None, **attr):
         self._edge_uid = count()
         self._hypergraph = self._hypergraph_attr_dict_factory()
+
         self._node_in = self._node_dict_factory()
         self._node_out = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
+
         self._edge_in = self._hyperedge_dict_factory()
         self._edge_out = self._hyperedge_dict_factory()
         self._edge_attr = self._hyperedge_attr_dict_factory()
@@ -94,6 +96,12 @@ class DiHypergraph:
         self._edgeview = DiEdgeView(self)
         """An :class:`~xgi.classes.direportviews.DiEdgeView` of the directed hypergraph."""
 
+        if incoming_data is not None:
+            # This import needs to happen when this function is called, not when it is
+            # defined.  Otherwise, a circular import error would happen.
+            from ..convert import convert_to_dihypergraph
+
+            convert_to_dihypergraph(incoming_data, create_using=self)
         self._hypergraph.update(attr)  # must be after convert
 
     @property
@@ -498,10 +506,7 @@ class DiHypergraph:
         except StopIteration:
             return
 
-        try:
-            second_elem = list(first_edge)[1]
-        except TypeError:
-            first_elem = None
+        second_elem = list(first_edge)[1]
 
         format1, format2, format3, format4 = False, False, False, False
 
@@ -514,11 +519,6 @@ class DiHypergraph:
                 format2 = True
             elif len(first_edge) == 2:
                 format3 = True
-
-        if (format1 and isinstance(first_edge, str)) or (
-            not format1 and isinstance(first_elem, str)
-        ):
-            raise XGIError("Members cannot be specified as a string")
 
         # now we may iterate over the rest
         e = first_edge
@@ -630,3 +630,24 @@ class DiHypergraph:
             del self._edge_in[id]
             del self._edge_out[id]
             del self._edge_attr[id]
+
+    def clear(self, hypergraph_attr=True):
+        """Remove all nodes and edges from the graph.
+
+        Also removes node and edge attribues, and optionally hypergraph attributes.
+
+        Parameters
+        ----------
+        hypergraph_attr : bool, optional
+            Whether to remove hypergraph attributes as well.
+            By default, True.
+
+        """
+        self._node_in.clear()
+        self._node_out.clear()
+        self._node_attr.clear()
+        self._edge_in.clear()
+        self._edge_out.clear()
+        self._edge_attr.clear()
+        if hypergraph_attr:
+            self._hypergraph.clear()
