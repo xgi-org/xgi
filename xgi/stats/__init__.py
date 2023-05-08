@@ -586,6 +586,35 @@ def nodestat_func(func):
     setattr(nodestats, func.__name__, func)
     return func
 
+def dinodestat_func(func):
+    """Decorator that allows arbitrary functions to behave like :class:`DiNodeStat` objects.
+
+    Works identically to :func:`nodestat`.  For extended documentation, see
+    :func:`nodestat_func`.
+
+    Parameters
+    ----------
+    func : callable
+        Function or callable with signature `func(net, bunch)`, where `net` is the
+        network and `bunch` is an iterable of edges in `net`.  The call `func(net,
+        bunch)` must return a dict with pairs of the form `(edge: value)` where `edge`
+        is in `bunch` and `value` is the value of the statistic at `edge`.
+
+    Returns
+    -------
+    callable
+        The decorated callable unmodified, after registering it in the `stats` framework.
+
+    See Also
+    --------
+    :func:`nodestat_func`
+    :func:`edgestat_func`
+    :func:`diedgestat_func`
+
+    """
+    setattr(dinodestats, func.__name__, func)
+    return func
+
 
 def edgestat_func(func):
     """Decorate arbitrary functions to behave like :class:`EdgeStat` objects.
@@ -613,4 +642,33 @@ def edgestat_func(func):
 
     """
     setattr(edgestats, func.__name__, func)
+    return func
+
+def diedgestat_func(func):
+    """Decorator that allows arbitrary functions to behave like :class:`DiEdgeStat` objects.
+
+    Works identically to :func:`nodestat`.  For extended documentation, see
+    :func:`nodestat_func`.
+
+    Parameters
+    ----------
+    func : callable
+        Function or callable with signature `func(net, bunch)`, where `net` is the
+        network and `bunch` is an iterable of edges in `net`.  The call `func(net,
+        bunch)` must return a dict with pairs of the form `(edge: value)` where `edge`
+        is in `bunch` and `value` is the value of the statistic at `edge`.
+
+    Returns
+    -------
+    callable
+        The decorated callable unmodified, after registering it in the `stats` framework.
+
+    See Also
+    --------
+    :func:`nodestat_func`
+    :func:`dinodestat_func`
+    :func:`diedgestat_func`
+
+    """
+    setattr(diedgestats, func.__name__, func)
     return func
