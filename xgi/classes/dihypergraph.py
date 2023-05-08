@@ -1,5 +1,4 @@
 """Base class for directed hypergraphs."""
-from collections import defaultdict
 from collections.abc import Hashable, Iterable
 from copy import copy, deepcopy
 from itertools import count
@@ -651,3 +650,28 @@ class DiHypergraph:
         self._edge_attr.clear()
         if hypergraph_attr:
             self._hypergraph.clear()
+
+    def copy(self):
+        """A deep copy of the hypergraph.
+
+        A deep copy of the hypergraph, including node, edge, and hypergraph attributes.
+
+        Returns
+        -------
+        H : DiHypergraph
+            A copy of the hypergraph.
+
+        """
+        cp = self.__class__()
+        nn = self.nodes
+        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+        ee = self.edges
+        cp.add_edges_from(
+            (e, id, deepcopy(self.edges[id]))
+            for id, e in ee.dimembers(dtype=dict).items()
+        )
+        cp._hypergraph = deepcopy(self._hypergraph)
+
+        cp._edge_uid = copy(self._edge_uid)
+
+        return cp

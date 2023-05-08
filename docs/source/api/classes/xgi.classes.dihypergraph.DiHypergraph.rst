@@ -32,3 +32,4 @@
       ~DiHypergraph.remove_nodes_from
       ~DiHypergraph.remove_edges_from
       ~DiHypergraph.clear
+      ~DiHypergraph.copy
