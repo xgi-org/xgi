@@ -17,7 +17,7 @@ from scipy.sparse import (
     lil_matrix,
 )
 
-from .classes import Hypergraph, SimplicialComplex, set_edge_attributes
+from .classes import DiHypergraph, Hypergraph, SimplicialComplex, set_edge_attributes
 from .exception import XGIError
 from .generators import empty_hypergraph, empty_simplicial_complex
 from .linalg import adjacency_matrix, incidence_matrix
@@ -25,6 +25,7 @@ from .utils.utilities import dual_dict
 
 __all__ = [
     "convert_to_hypergraph",
+    "convert_to_dihypergraph",
     "convert_to_graph",
     "convert_to_simplicial_complex",
     "from_hyperedge_list",
@@ -116,6 +117,65 @@ def convert_to_hypergraph(data, create_using=None):
         ),
     ):
         from_incidence_matrix(data, create_using)
+
+    else:
+        raise XGIError("Input data has unsupported type.")
+
+
+def convert_to_dihypergraph(data, create_using=None):
+    """Make a dihypergraph from a known data structure.
+
+    The preferred way to call this is automatically from the class constructor.
+
+    Parameters
+    ----------
+    data : object to be converted
+        Current known types are:
+         * a DiHypergraph object
+         * a SimplicialComplex object
+         * list-of-iterables
+         * dict-of-iterables
+         * Pandas DataFrame (bipartite edgelist)
+         * numpy matrix
+         * numpy ndarray
+         * scipy sparse matrix
+    create_using : Hypergraph constructor, optional (default=Hypergraph)
+        Hypergraph type to create. If hypergraph instance, then cleared before populated.
+
+    Returns
+    -------
+    Hypergraph object
+        A hypergraph constructed from the data
+
+    """
+    if data is None:
+        return empty_hypergraph(create_using)
+
+    elif isinstance(data, DiHypergraph):
+        H = empty_hypergraph(create_using)
+        H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
+        ee = data.edges
+        H.add_edges_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
+        H._hypergraph = deepcopy(data._hypergraph)
+        if not isinstance(create_using, DiHypergraph):
+            return H
+
+    elif isinstance(data, list):
+        # edge list
+        result = from_hyperedge_list(data, create_using)
+        if not isinstance(create_using, DiHypergraph):
+            return result
+
+    elif isinstance(data, pd.DataFrame):
+        result = from_bipartite_pandas_dataframe(data, create_using)
+        if not isinstance(create_using, DiHypergraph):
+            return result
+
+    elif isinstance(data, dict):
+        # edge dict in the form we need
+        result = from_hyperedge_dict(data, create_using)
+        if not isinstance(create_using, DiHypergraph):
+            return result
 
     else:
         raise XGIError("Input data has unsupported type.")
@@ -336,7 +396,6 @@ def from_hyperedge_dict(d, create_using=None):
 
     """
     H = empty_hypergraph(create_using)
-    H.add_nodes_from(dual_dict(d))
     H.add_edges_from((members, uid) for uid, members in d.items())
     return H
 

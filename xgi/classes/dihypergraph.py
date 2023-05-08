@@ -314,17 +314,14 @@ class DiHypergraph:
 
         >>> import xgi
         >>> H = xgi.DiHypergraph()
-        >>> H.add_edge({"head": [1, 2, 3], "tail": [2, 3, 4]})
-        >>> H.add_edge({"head": [3, 4], "tail":{}}, id='myedge')
+        >>> H.add_edge(([1, 2, 3], [2, 3, 4]))
+        >>> H.add_edge(([3, 4], set()), id='myedge')
         """
         if isinstance(members, (tuple, list)):
             tail = members[0]
             head = members[1]
-        elif type(members) == dict:
-            tail = set(members["tail"])
-            head = set(members["head"])
         else:
-            raise XGIError("Directed edge must be a dictionary, list, or tuple!")
+            raise XGIError("Directed edge must be a list or tuple!")
 
         if not members:
             raise XGIError("Cannot add an empty edge")
@@ -361,7 +358,7 @@ class DiHypergraph:
             update_uid_counter(self, id)
 
     def add_edges_from(self, ebunch_to_add, **attr):
-        """Add multiple edges with optional attributes.
+        """Add multiple directed edges with optional attributes.
 
         Parameters
         ----------
@@ -373,7 +370,6 @@ class DiHypergraph:
             formats:
 
             * Format 2: 2-tuple (members, edge_id), or
-            * Format 3: 2-tuple (members, attr), or
             * Format 4: 3-tuple (members, edge_id, attr),
 
             where `members` is an iterable of node IDs, `edge_id` is a hashable to use
@@ -464,13 +460,8 @@ class DiHypergraph:
                 if isinstance(members, (tuple, list)):
                     tail = members[0]
                     head = members[1]
-                elif type(members) == dict:
-                    tail = set(members["tail"])
-                    head = set(members["head"])
                 else:
-                    raise XGIError(
-                        "Directed edge must be a dictionary, list, or tuple!"
-                    )
+                    raise XGIError("Directed edge must be a list or tuple!")
 
                 if id in self._edge_in.keys():  # check that uid is not present yet
                     warn(f"uid {id} already exists, cannot add edge {members}.")
@@ -499,6 +490,85 @@ class DiHypergraph:
                 update_uid_counter(self, id)
 
             return
+        # in formats 1-4 we only know that ebunch_to_add is an iterable, so we iterate
+        # over it and use the firs element to determine which format we are working with
+        new_edges = iter(ebunch_to_add)
+        try:
+            first_edge = next(new_edges)
+        except StopIteration:
+            return
+
+        try:
+            second_elem = list(first_edge)[1]
+        except TypeError:
+            first_elem = None
+
+        format1, format2, format3, format4 = False, False, False, False
+
+        if isinstance(second_elem, Iterable) and not isinstance(second_elem, dict):
+            format1 = True
+        else:
+            if len(first_edge) == 3:
+                format4 = True
+            elif len(first_edge) == 2 and issubclass(type(first_edge[1]), Hashable):
+                format2 = True
+            elif len(first_edge) == 2:
+                format3 = True
+
+        if (format1 and isinstance(first_edge, str)) or (
+            not format1 and isinstance(first_elem, str)
+        ):
+            raise XGIError("Members cannot be specified as a string")
+
+        # now we may iterate over the rest
+        e = first_edge
+        while True:
+            if format1:
+                members, id, eattr = e, next(self._edge_uid), {}
+            elif format2:
+                members, id, eattr = e[0], e[1], {}
+            elif format3:
+                members, id, eattr = e[0], next(self._edge_uid), e[1]
+            elif format4:
+                members, id, eattr = e[0], e[1], e[2]
+
+            if id in self._edge_in.keys():  # check that uid is not present yet
+                warn(f"uid {id} already exists, cannot add edge {members}.")
+            else:
+                try:
+                    tail = members[0]
+                    head = members[1]
+                    self._edge_out[id] = set(tail)
+                    self._edge_in[id] = set(head)
+                except TypeError as e:
+                    raise XGIError("Invalid ebunch format") from e
+
+                for node in head:
+                    if node not in self._node_out:
+                        self._node_in[node] = set()
+                        self._node_out[node] = set()
+                        self._node_attr[node] = self._node_attr_dict_factory()
+                    self._node_out[node].add(id)
+                    self._edge_in[id].add(node)
+
+                for node in tail:
+                    if node not in self._node_in:
+                        self._node_in[node] = set()
+                        self._node_out[node] = set()
+                        self._node_attr[node] = self._node_attr_dict_factory()
+                    self._node_in[node].add(id)
+                    self._edge_out[id].add(node)
+
+                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[id].update(attr)
+                self._edge_attr[id].update(eattr)
+
+            try:
+                e = next(new_edges)
+            except StopIteration:
+                if format2 or format4:
+                    update_uid_counter(self, id)
+                break
 
     def remove_edge(self, id):
         """Remove one edge.
