@@ -13,6 +13,6 @@ xgi.classes.reportviews.DiIDView
    .. autosummary::
       :nosignatures:
 
-      ~IDView.from_view
-      ~IDView.filterby
-      ~IDView.filterby_attr
+      ~DiIDView.from_view
+      ~DiIDView.filterby
+      ~DiIDView.filterby_attr

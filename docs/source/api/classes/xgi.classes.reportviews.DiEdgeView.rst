@@ -24,5 +24,5 @@ xgi.classes.reportviews.DiEdgeView
       ~DiEdgeView.dimembers
       ~DiEdgeView.head
       ~DiEdgeView.tail
-      ~IDView.filterby
-      ~IDView.filterby_attr
+      ~DiIDView.filterby
+      ~DiIDView.filterby_attr
