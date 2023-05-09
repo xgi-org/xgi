@@ -1334,11 +1334,11 @@ class DiEdgeView(DiIDView):
             Edge members.
         set (if e is not None)
             Members of edge e.
-        
+
         The members of an edge are the union of
         its head and tail sets.
 
-        The 
+        The
 
         Raises
         ------
