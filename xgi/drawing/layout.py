@@ -138,7 +138,10 @@ def barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
     ----------
     H : xgi Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
-    seed : int, optional
+    return_phantom_graph: bool (default=False)
+        If True the function returns also the augmented version of the 
+        the graph projection of the hypergraph (or simplicial complex).
+    seed : int, RandomState instance or None  optional (default=None)
         Set the random state for deterministic node layouts.
         If int, `seed` is the seed used by the random number generator,
         If None (default), random numbers are sampled from the
@@ -225,7 +228,10 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
     ----------
     H : Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
-    seed : int, optional
+    return_phantom_graph: bool (default=False)
+        If True the function returns also the augmented version of the 
+        the graph projection of the hypergraph (or simplicial complex). 
+    seed : int, RandomState instance or None  optional (default=None)
         Set the random state for deterministic node layouts.
         If int, `seed` is the seed used by the random number generator,
         If None (default), random numbers are sampled from the
@@ -337,3 +343,125 @@ def pca_transform(pos, theta=0, degrees=True):
     y = t_p[1]
 
     return {n: np.array([x[i], y[i]]) for i, n in enumerate(pos.keys())}
+
+def circular_layout(H, scale=1, center=None, dim=2):
+    """
+    Position nodes on a circle.
+
+    Parameters
+    ----------
+    H : Hypergraph or SimplicialComplex
+        A position will be assigned to every node in H.
+    scale : number (default: 1)
+        Scale factor for positions.
+
+    center : array-like or None
+        Coordinate pair around which to center the layout.
+
+    dim : int
+        Dimension of layout.
+
+    Returns
+    -------
+    pos : dict
+        A dictionary of positions keyed by node
+    """
+    
+    G = convert.convert_to_graph(H)
+    pos = nx.circular_layout(G, scale, center, dim)
+    return pos
+
+def spiral_layout(H, scale=1, center=None, dim=2, resolution=0.35, equidistant=False):
+    """Position nodes in a spiral layout.
+
+    Parameters
+    ----------
+    H : Hypergraph or SimplicialComplex
+        A position will be assigned to every node in H.
+    scale : number (default: 1)
+        Scale factor for positions.
+    center : array-like or None
+        Coordinate pair around which to center the layout.
+    dim : int, default=2
+        Dimension of layout, currently only dim=2 is supported.
+        Other dimension values result in a ValueError.
+    resolution : float, default=0.35
+        The compactness of the spiral layout returned.
+        Lower values result in more compressed spiral layouts.
+    equidistant : bool, default=False
+        If True, nodes will be positioned equidistant from each other
+        by decreasing angle further from center.
+        If False, nodes will be positioned at equal angles
+        from each other by increasing separation further from center.
+
+    Returns
+    -------
+    pos : dict
+        A dictionary of positions keyed by node
+    """
+    G = convert.convert_to_graph(H)
+    pos = nx.spiral_layout(G, scale, center, dim, resolution, equidistant)
+    return pos
+    
+
+def barycenter_kamada_kawai_layout(H, return_phantom_graph=False):
+    """
+    Position nodes using Kamada-Kawai path-length cost-function
+    using an augmented version of the the graph projection
+    of the hypergraph (or simplicial complex), where phantom nodes
+    (barycenters) are created for each edge composed by more than two nodes.
+    If a simplicial complex is provided the results will be based on the
+    hypergraph constructed from its maximal simplices.
+
+    Parameters
+    ----------
+    H : xgi Hypergraph or SimplicialComplex
+        A position will be assigned to every node in H.
+    return_phantom_graph: bool (default=False)
+        If True the function returns also the augmented version of the 
+        the graph projection of the hypergraph (or simplicial complex).
+
+    Returns
+    -------
+    pos : dict
+        A dictionary of positions keyed by node
+    """
+    if isinstance(H, SimplicialComplex):
+        H = convert.from_max_simplices(H)    
+    # Creating the projected networkx Graph, I will fill it manually
+    G = nx.Graph()
+
+    # Adding real nodes
+    G.add_nodes_from(list(H.nodes))
+
+    # Adding links (edges composed by two nodes only, for which we don't use phantom nodes
+    for i, j in H.edges.filterby("order", 1).members():
+        G.add_edge(i, j)
+
+    # Adding phantom nodes and connections therein
+    # I will start from the first int node-label available
+    try:
+        phantom_node_id = max([n for n in H.nodes if isinstance(n, int)]) + 1
+    except ValueError:
+        # The list of node-labels has no integers, so I start from 0
+        phantom_node_id = 0
+
+    # Looping over the hyperedges of different order (from triples up)
+    for d in range(2, max_edge_order(H) + 1):
+        # Hyperedges of order d (d=2: triplets, etc.)
+        for he in H.edges.filterby("order", d).members():
+            # Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
+            for n in he:
+                G.add_edge(phantom_node_id, n)
+            phantom_node_id += 1
+
+    # Creating a dictionary for the position of the nodes with the standard spring layout
+    pos_with_phantom_nodes = nx.kamada_kawai_layout(G)
+
+    # Retaining only the positions of the real nodes
+    pos = {k: pos_with_phantom_nodes[k] for k in list(H.nodes)}
+    
+    if return_phantom_graph:
+        return pos, G
+    else:
+        return pos
