@@ -387,8 +387,10 @@ class DiHypergraph:
         if strong:
             for edge in in_edge_neighbors:
                 del self._edge_in[edge]
+                del self._edge_out[edge]
                 del self._edge_attr[edge]
             for edge in out_edge_neighbors:
+                del self._edge_in[edge]
                 del self._edge_out[edge]
                 del self._edge_attr[edge]
         else:  # weak removal
@@ -457,13 +459,16 @@ class DiHypergraph:
         >>> H.add_edge(([1, 2, 3], [2, 3, 4]))
         >>> H.add_edge(([3, 4], set()), id='myedge')
         """
+        if not members:
+            raise XGIError("Cannot add an empty edge")
+
         if isinstance(members, (tuple, list)):
             tail = members[0]
             head = members[1]
         else:
             raise XGIError("Directed edge must be a list or tuple!")
 
-        if not members:
+        if not head and not tail:
             raise XGIError("Cannot add an empty edge")
 
         uid = next(self._edge_uid) if id is None else id
@@ -646,7 +651,11 @@ class DiHypergraph:
 
         format1, format2, format3, format4 = False, False, False, False
 
-        if not isinstance(second_elem, Hashable) and not isinstance(second_elem, dict):
+        if (
+            isinstance(second_elem, Iterable)
+            and not isinstance(second_elem, str)
+            and not isinstance(second_elem, dict)
+        ):
             format1 = True
         else:
             if len(first_edge) == 3:
