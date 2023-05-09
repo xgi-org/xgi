@@ -22,9 +22,7 @@ class Hypergraph:
 
     The Hypergraph class allows any hashable object as a node and can associate
     attributes to each node, edge, or the hypergraph itself, in the form of key/value
-    pairs.
-
-    Multiedges and self-loops are allowed.
+    pairs. In this representation, multiedges are allowed.
 
     Parameters
     ----------
@@ -989,7 +987,7 @@ class Hypergraph:
     def clear(self, hypergraph_attr=True):
         """Remove all nodes and edges from the graph.
 
-        Also removes node and edge attribues, and optionally hypergraph attributes.
+        Also removes node and edge attributes, and optionally hypergraph attributes.
 
         Parameters
         ----------
