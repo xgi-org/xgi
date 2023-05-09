@@ -55,7 +55,14 @@ from xgi.exception import IDNotFound
 
 from . import edgestats, diedgestats, dinodestats, nodestats
 
-__all__ = ["nodestat_func", "edgestat_func", "dispatch_stat", "dispatch_many_stats"]
+__all__ = [
+    "nodestat_func",
+    "edgestat_func",
+    "dinodestat_func",
+    "diedgestat_func",
+    "dispatch_stat",
+    "dispatch_many_stats",
+]
 
 
 class IDStat:
