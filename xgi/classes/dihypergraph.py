@@ -13,20 +13,16 @@ __all__ = ["DiHypergraph"]
 
 class DiHypergraph:
     r"""A directed hypergraph (dihypergraph) is a collection of directed
-    interactions
+    interactions where each interaction has both senders and receivers.
 
+    More formally, a dihypergraph is a pair :math:`(V, E)`, where :math:`V` is
+    a set of elements called *nodes* or *vertices*, and :math:`E` is the set of
+    directed hyperedges. A directed hyperedge is an ordered pair, $(e^+, e^-)$,
+    where $e^+ \subset V$, the set of senders, is known as the "tail" and $e^-\subset V$,
+    the set of receivers, is known as the "head". The equivalent undirected edge,
+    is $e = e^+ \cap e^-$ and the edge size is defined as $|e|$.
 
-    ordered pairs,
-    $(e^+, e^-)$, where $e^+$ is known as the tail and is the set of senders in
-    this interaction, and $e^-$ is known as the head and is the set of receivers
-    in the interaction.
-
-    A hypergraph is a pair :math:`(V, E)`, where :math:`V` is a set of elements called
-    *nodes* or *vertices*, and :math:`E` is a set whose elements are subsets of
-    :math:`V`, that is, each :math:`e \in E` satisfies :math:`e \subset V`.  The
-    elements of :math:`E` are called *hyperedges* or simply *edges*.
-
-    The Hypergraph class allows any hashable object as a node and can associate
+    The DiHypergraph class allows any hashable object as a node and can associate
     attributes to each node, edge, or the hypergraph itself, in the form of key/value
     pairs.
 
@@ -39,11 +35,9 @@ class DiHypergraph:
         hypergraph is created, i.e. one with no nodes or edges.
         The data can be in the following formats:
 
-        * hyperedge list
-        * hyperedge dictionary
-        * 2-column Pandas dataframe (bipartite edges)
-        * Scipy/Numpy incidence matrix
-        * Hypergraph object.
+        * directed hyperedge list
+        * directed hyperedge dictionary
+        * DiHypergraph object.
 
     **attr : dict, optional, default: None
         Attributes to add to the hypergraph as key, value pairs.
@@ -57,19 +51,18 @@ class DiHypergraph:
     attributes see :meth:`add_node` and :meth:`add_edge`.
 
     In addition to the methods listed in this page, other methods defined in the `stats`
-    package are also accessible via the `Hypergraph` class.  For more details, see the
+    package are also accessible via the `DiHypergraph` class.  For more details, see the
     `tutorial
     <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
     Examples
     --------
     >>> import xgi
-    >>> H = xgi.Hypergraph([[1, 2, 3], [4], [5, 6], [6, 7, 8]])
+    >>> H = xgi.DiHypergraph([([1, 2, 3], [4]), ([5, 6], [6, 7, 8])])
     >>> H.nodes
-    NodeView((1, 2, 3, 4, 5, 6, 7, 8))
+    DiNodeView((1, 2, 3, 4, 5, 6, 7, 8))
     >>> H.edges
-    EdgeView((0, 1, 2, 3))
-
+    DiEdgeView((0, 1))
     """
     _node_dict_factory = IDDict
     _node_attr_dict_factory = IDDict
@@ -119,8 +112,8 @@ class DiHypergraph:
         Examples
         --------
         >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
+        >>> hyperedge_list = [([1, 2], [2, 3, 4])]
+        >>> H = xgi.DiHypergraph(hyperedge_list)
         >>> H.num_nodes
         4
 
@@ -129,12 +122,12 @@ class DiHypergraph:
 
     @property
     def num_edges(self):
-        """The number of edges in the hypergraph.
+        """The number of directed edges in the hypergraph.
 
         Returns
         -------
         int
-            The number of edges in the hypergraph.
+            The number of directed edges in the hypergraph.
 
         See Also
         --------
@@ -143,11 +136,10 @@ class DiHypergraph:
         Examples
         --------
         >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
+        >>> hyperedge_list = [([1, 2], [2, 3, 4])]
+        >>> H = xgi.DiHypergraph(hyperedge_list)
         >>> H.num_edges
-        2
-
+        1
         """
         return len(self._edge_in)
 
@@ -299,7 +291,9 @@ class DiHypergraph:
         Parameters
         ----------
         members : Iterable
-            An iterable of the ids of the nodes contained in the new edge.
+            An list or tuple (size 2) of iterables. The first entry contains the
+            elements of the tail and the second entry contains the elements
+            of the head.
         id : hashable, default None
             Id of the new edge. If None, a unique numeric ID will be created.
         **attr : dict, optional
@@ -308,7 +302,7 @@ class DiHypergraph:
         Raises
         -----
         XGIError
-            If `members` is empty.
+            If `members` is empty or is not a list or tuple.
 
         See Also
         --------
@@ -342,14 +336,6 @@ class DiHypergraph:
         self._edge_in[uid] = set()
         self._edge_out[uid] = set()
 
-        for node in head:
-            if node not in self._node_out:
-                self._node_in[node] = set()
-                self._node_out[node] = set()
-                self._node_attr[node] = self._node_attr_dict_factory()
-            self._node_out[node].add(uid)
-            self._edge_in[uid].add(node)
-
         for node in tail:
             if node not in self._node_in:
                 self._node_in[node] = set()
@@ -357,6 +343,14 @@ class DiHypergraph:
                 self._node_attr[node] = self._node_attr_dict_factory()
             self._node_in[node].add(uid)
             self._edge_out[uid].add(node)
+
+        for node in head:
+            if node not in self._node_out:
+                self._node_in[node] = set()
+                self._node_out[node] = set()
+                self._node_attr[node] = self._node_attr_dict_factory()
+            self._node_out[node].add(uid)
+            self._edge_in[uid].add(node)
 
         self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
@@ -371,15 +365,21 @@ class DiHypergraph:
         ----------
         ebunch_to_add : Iterable
 
-            An iterable of edges.  This may be an iterable of iterables (Format 1),
-            where each element contains the members of the edge specified as valid node IDs.
+            Note that here, when we refer to an edge, as in the `add_edge` method,
+            it is a list or tuple (size 2) of iterables. The first entry contains the
+            elements of the tail and the second entry contains the elements
+            of the head.
+
+            An iterable of edges.  This may be an iterable of edges (Format 1),
+            where each edge is in the format described above.
+
             Alternatively, each element could also be a tuple in any of the following
             formats:
 
-            * Format 2: 2-tuple (members, edge_id), or
-            * Format 4: 3-tuple (members, edge_id, attr),
+            * Format 2: 2-tuple (edge, edge_id), or
+            * Format 4: 3-tuple (edge, edge_id, attr),
 
-            where `members` is an iterable of node IDs, `edge_id` is a hashable to use
+            where `edge` is in the format described above, `edge_id` is a hashable to use
             as edge ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add`
             may be a dict of the form `{edge_id: edge_members}` (Format 5).
 
@@ -395,7 +395,6 @@ class DiHypergraph:
         See Also
         --------
         add_edge : Add a single edge.
-        add_weighted_edges_from : Convenient way to add weighted edges.
 
         Notes
         -----
@@ -405,60 +404,58 @@ class DiHypergraph:
         Examples
         --------
         >>> import xgi
-        >>> H = xgi.Hypergraph()
+        >>> H = xgi.DiHypergraph()
 
         When specifying edges by their members only, numeric edge IDs will be assigned
         automatically.
 
-        >>> H.add_edges_from([[0, 1], [1, 2], [2, 3, 4]])
-        >>> H.edges.members(dtype=dict)
-        {0: {0, 1}, 1: {1, 2}, 2: {2, 3, 4}}
+        >>> H.add_edges_from([([0, 1], [1, 2]), ([2, 3, 4], [])])
+        >>> H.edges.dimembers(dtype=dict)
+        {0: ({0, 1}, {1, 2}), 1: ({2, 3, 4}, set())}
 
         Custom edge ids can be specified using a dict.
 
-        >>> H = xgi.Hypergraph()
-        >>> H.add_edges_from({'one': [0, 1], 'two': [1, 2], 'three': [2, 3, 4]})
-        >>> H.edges.members(dtype=dict)
-        {'one': {0, 1}, 'two': {1, 2}, 'three': {2, 3, 4}}
+        >>> H = xgi.DiHypergraph()
+        >>> H.add_edges_from({'one': ([0, 1], [1, 2]), 'two': ([2, 3, 4], [])})
+        >>> H.edges.dimembers(dtype=dict)
+        {'one': ({0, 1}, {1, 2}), 'two': ({2, 3, 4}, set())}
 
         You can use the dict format to easily add edges from another hypergraph.
 
-        >>> H2 = xgi.Hypergraph()
-        >>> H2.add_edges_from(H.edges.members(dtype=dict))
+        >>> H2 = xgi.DiHypergraph()
+        >>> H2.add_edges_from(H.edges.dimembers(dtype=dict))
         >>> H.edges == H2.edges
         True
 
         Alternatively, edge ids can be specified using an iterable of 2-tuples.
 
-        >>> H = xgi.Hypergraph()
-        >>> H.add_edges_from([([0, 1], 'one'), ([1, 2], 'two'), ([2, 3, 4], 'three')])
-        >>> H.edges.members(dtype=dict)
-        {'one': {0, 1}, 'two': {1, 2}, 'three': {2, 3, 4}}
+        >>> H = xgi.DiHypergraph()
+        >>> H.add_edges_from([(([0, 1], [1, 2]), 'one'), (([2, 3, 4], []), 'two')])
+        >>> H.edges.dimembers(dtype=dict)
+        {'one': ({0, 1}, {1, 2}), 'two': ({2, 3, 4}, set())}
 
         Attributes for each edge may be specified using a 2-tuple for each edge.
         Numeric IDs will be assigned automatically.
 
-        >>> H = xgi.Hypergraph()
+        >>> H = xgi.DiHypergraph()
         >>> edges = [
-        ...     ([0, 1], {'color': 'red'}),
-        ...     ([1, 2], {'age': 30}),
-        ...     ([2, 3, 4], {'color': 'blue', 'age': 40}),
+        ...     (([0, 1], [1, 2]), {'color': 'red'}),
+        ...     (([2, 3, 4], []), {'color': 'blue', 'age': 40}),
         ... ]
         >>> H.add_edges_from(edges)
         >>> {e: H.edges[e] for e in H.edges}
-        {0: {'color': 'red'}, 1: {'age': 30}, 2: {'color': 'blue', 'age': 40}}
+        {0: {'color': 'red'}, 1: {'color': 'blue', 'age': 40}}
 
         Attributes and custom IDs may be specified using a 3-tuple for each edge.
 
-        >>> H = xgi.Hypergraph()
+        >>> H = xgi.DiHypergraph()
         >>> edges = [
-        ...     ([0, 1], 'one', {'color': 'red'}),
-        ...     ([1, 2], 'two', {'age': 30}),
-        ...     ([2, 3, 4], 'three', {'color': 'blue', 'age': 40}),
+        ...     (([0, 1], [1, 2]), 'one', {'color': 'red'}),
+        ...     (([2, 3, 4], []), 'two', {'color': 'blue', 'age': 40}),
         ... ]
         >>> H.add_edges_from(edges)
         >>> {e: H.edges[e] for e in H.edges}
-        {'one': {'color': 'red'}, 'two': {'age': 30}, 'three': {'color': 'blue', 'age': 40}}
+        {'one': {'color': 'red'}, 'two': {'color': 'blue', 'age': 40}}
 
         """
         # format 5 is the easiest one
@@ -479,13 +476,6 @@ class DiHypergraph:
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
 
-                for n in head:
-                    if n not in self._node_in:
-                        self._node_in[n] = set()
-                        self._node_out[n] = set()
-                        self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node_out[n].add(id)
-
                 for n in tail:
                     if n not in self._node_in:
                         self._node_in[n] = set()
@@ -493,6 +483,13 @@ class DiHypergraph:
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node_in[n].add(id)
                 self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+
+                for n in head:
+                    if n not in self._node_in:
+                        self._node_in[n] = set()
+                        self._node_out[n] = set()
+                        self._node_attr[n] = self._node_attr_dict_factory()
+                    self._node_out[n].add(id)
 
                 update_uid_counter(self, id)
 
@@ -509,7 +506,7 @@ class DiHypergraph:
 
         format1, format2, format3, format4 = False, False, False, False
 
-        if isinstance(second_elem, Iterable) and not isinstance(second_elem, dict):
+        if not isinstance(second_elem, Hashable) and not isinstance(second_elem, dict):
             format1 = True
         else:
             if len(first_edge) == 3:
@@ -542,14 +539,6 @@ class DiHypergraph:
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
 
-                for node in head:
-                    if node not in self._node_out:
-                        self._node_in[node] = set()
-                        self._node_out[node] = set()
-                        self._node_attr[node] = self._node_attr_dict_factory()
-                    self._node_out[node].add(id)
-                    self._edge_in[id].add(node)
-
                 for node in tail:
                     if node not in self._node_in:
                         self._node_in[node] = set()
@@ -557,6 +546,14 @@ class DiHypergraph:
                         self._node_attr[node] = self._node_attr_dict_factory()
                     self._node_in[node].add(id)
                     self._edge_out[id].add(node)
+
+                for node in head:
+                    if node not in self._node_out:
+                        self._node_in[node] = set()
+                        self._node_out[node] = set()
+                        self._node_attr[node] = self._node_attr_dict_factory()
+                    self._node_out[node].add(id)
+                    self._edge_in[id].add(node)
 
                 self._edge_attr[id] = self._hyperedge_attr_dict_factory()
                 self._edge_attr[id].update(attr)
@@ -633,7 +630,7 @@ class DiHypergraph:
     def clear(self, hypergraph_attr=True):
         """Remove all nodes and edges from the graph.
 
-        Also removes node and edge attribues, and optionally hypergraph attributes.
+        Also removes node and edge attributes, and optionally hypergraph attributes.
 
         Parameters
         ----------
@@ -652,9 +649,9 @@ class DiHypergraph:
             self._hypergraph.clear()
 
     def copy(self):
-        """A deep copy of the hypergraph.
+        """A deep copy of the dihypergraph.
 
-        A deep copy of the hypergraph, including node, edge, and hypergraph attributes.
+        A deep copy of the dihypergraph, including node, edge, and hypergraph attributes.
 
         Returns
         -------
