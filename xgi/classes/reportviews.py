@@ -183,7 +183,7 @@ class IDView(Mapping, Set):
 
         Parameters
         ----------
-        stat : str or :class:`xgi.stats.NodeStat`/`xgi.stats.EdgeStat`
+        stat : str or :class:`xgi.stats.NodeStat`/:class:`xgi.stats.EdgeStat`
             `NodeStat`/`EdgeStat` object, or name of a `NodeStat`/`EdgeStat`.
         val : Any
             Value of the statistic.  Usually a single numeric value.  When mode is
@@ -776,7 +776,7 @@ class EdgeView(IDView):
 
 
 class DiIDView(Mapping, Set):
-    """Base View class for accessing the ids (nodes or edges) of a Hypergraph.
+    """Base View class for accessing the ids (nodes or edges) of a DiHypergraph.
 
     Can optionally keep track of a subset of ids.  By default all node ids or all edge
     ids are kept track of.
@@ -911,7 +911,7 @@ class DiIDView(Mapping, Set):
         return self._id_attr[id]
 
     def __contains__(self, id):
-        """Checks whether the ID is in the hypergraph"""
+        """Checks whether the ID is in the dihypergraph"""
         return id in self._ids
 
     def __str__(self):
@@ -943,8 +943,8 @@ class DiIDView(Mapping, Set):
 
         Parameters
         ----------
-        stat : str or :class:`xgi.stats.NodeStat`
-            `NodeStat` object, or name of a `NodeStat`.
+        stat : str or :class:`xgi.stats.DiNodeStat`/:class:`xgi.stats.DiEdgeStat`
+            `DiNodeStat`/`DiEdgeStat` object, or name of a `DiNodeStat`/`DiEdgeStat`.
         val : Any
             Value of the statistic.  Usually a single numeric value.  When mode is
             'between', must be a tuple of exactly two values.
@@ -971,33 +971,27 @@ class DiIDView(Mapping, Set):
         `val`.
 
         >>> import xgi
-        >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+        >>> H = xgi.DiHypergraph([([1, 2, 3], [2, 3, 4, 5]), ([3, 4, 5], [])])
         >>> n = H.nodes
         >>> n.filterby('degree', 2)
-        NodeView((2, 4, 5))
+        DiNodeView((3, 4, 5))
 
         Can choose other comparison methods via `mode`.
 
         >>> n.filterby('degree', 2, 'eq')
-        NodeView((2, 4, 5))
+        DiNodeView((3, 4, 5))
         >>> n.filterby('degree', 2, 'neq')
-        NodeView((1, 3))
+        DiNodeView((1, 2))
         >>> n.filterby('degree', 2, 'lt')
-        NodeView((1,))
+        DiNodeView((1, 2))
         >>> n.filterby('degree', 2, 'gt')
-        NodeView((3,))
+        DiNodeView(())
         >>> n.filterby('degree', 2, 'leq')
-        NodeView((1, 2, 4, 5))
+        DiNodeView((1, 2, 3, 4, 5))
         >>> n.filterby('degree', 2, 'geq')
-        NodeView((2, 3, 4, 5))
+        DiNodeView((3, 4, 5))
         >>> n.filterby('degree', (2, 3), 'between')
-        NodeView((2, 3, 4, 5))
-
-        Can also pass a :class:`NodeStat` object.
-
-        >>> n.filterby(n.degree(order=2), 2)
-        NodeView((3,))
-
+        DiNodeView((3, 4, 5))
         """
         if not isinstance(stat, IDStat):
             try:
@@ -1045,7 +1039,7 @@ class DiIDView(Mapping, Set):
 
         See Also
         --------
-        IDView.filterby : Identical method.  For more details, see the `tutorial
+        DiIDView.filterby : Identical method.  For more details, see the `tutorial
         <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
         Notes
@@ -1109,7 +1103,7 @@ class DiIDView(Mapping, Set):
 
         Returns
         -------
-        IDView
+        DiIDView
             A view that is identical to `view` but keeps track of different IDs.
 
         """
@@ -1143,18 +1137,18 @@ class DiIDView(Mapping, Set):
 
 
 class DiNodeView(DiIDView):
-    """An IDView that keeps track of node ids.
+    """An DiIDView that keeps track of node ids.
 
     Parameters
     ----------
-    hypergraph : Hypergraph
+    hypergraph : DiHypergraph
         The hypergraph whose nodes this view will keep track of.
     bunch : optional iterable, default None
         The node ids to keep track of.  If None (default), keep track of all node ids.
 
     See Also
     --------
-    IDView
+    DiIDView
 
     Notes
     -----
@@ -1186,8 +1180,8 @@ class DiNodeView(DiIDView):
 
         Returns
         -------
-        dict of sets if n is None, otherwise a set
-            Edge memberships.
+        dict of directed node memberships if n is None,
+            otherwise the directed memberships of a single node.
 
         Raises
         ------
@@ -1218,12 +1212,13 @@ class DiNodeView(DiIDView):
         Returns
         -------
         dict of sets if n is None, otherwise a set
-            Edge memberships.
+            Node memberships, regardless of whether
+            that node is a sender or receiver.
 
         Raises
         ------
         XGIError
-            If `n` is not hashable or if it is not in the hypergraph.
+            If `n` is not hashable or if it is not in the dihypergraph.
 
         """
         return (
@@ -1237,18 +1232,18 @@ class DiNodeView(DiIDView):
 
 
 class DiEdgeView(DiIDView):
-    """An IDView that keeps track of edge ids.
+    """An DiIDView that keeps track of edge ids.
 
     Parameters
     ----------
-    hypergraph : Hypergraph
+    hypergraph : DiHypergraph
         The hypergraph whose edges this view will keep track of.
     bunch : optional iterable, default None
         The edge ids to keep track of.  If None (default), keep track of all edge ids.
 
     See Also
     --------
-    IDView
+    DiIDView
 
     Notes
     -----
@@ -1281,11 +1276,15 @@ class DiEdgeView(DiIDView):
         Returns
         -------
         list (if dtype is list, default)
-            Edge members.
+            Directed edges.
         dict (if dtype is dict)
-            Edge members.
+            Directed edges.
         set (if e is not None)
-            Members of edge e.
+            A single directed edge.
+
+        In all of these cases, a directed edge is
+        a 2-tuple of sets, where the first entry
+        is the tail, and the second entry is the head.
 
         Raises
         ------
@@ -1317,7 +1316,7 @@ class DiEdgeView(DiIDView):
         return (self._out_id_dict[e].copy(), self._in_id_dict[e].copy())
 
     def members(self, e=None, dtype=list):
-        """Get the node ids that are members of an edge.
+        """Get the edges of a directed hypergraph.
 
         Parameters
         ----------
@@ -1335,6 +1334,11 @@ class DiEdgeView(DiIDView):
             Edge members.
         set (if e is not None)
             Members of edge e.
+        
+        The members of an edge are the union of
+        its head and tail sets.
+
+        The 
 
         Raises
         ------
@@ -1366,7 +1370,7 @@ class DiEdgeView(DiIDView):
         return set(self._out_id_dict[e].union(self._in_id_dict[e]))
 
     def head(self, e=None, dtype=list):
-        """Get the node ids that are members of an edge.
+        """Get the node ids that are in the head of a directed edge.
 
         Parameters
         ----------
@@ -1379,11 +1383,11 @@ class DiEdgeView(DiIDView):
         Returns
         -------
         list (if dtype is list, default)
-            Edge members.
+            Head members.
         dict (if dtype is dict)
-            Edge members.
+            Head members.
         set (if e is not None)
-            Members of edge e.
+            Members of the head of edge e.
 
         Raises
         ------
@@ -1409,7 +1413,7 @@ class DiEdgeView(DiIDView):
         return self._in_id_dict[e].copy()
 
     def tail(self, e=None, dtype=list):
-        """Get the node ids that are members of an edge.
+        """Get the node ids that in the tail of a directed edge.
 
         Parameters
         ----------
@@ -1422,11 +1426,11 @@ class DiEdgeView(DiIDView):
         Returns
         -------
         list (if dtype is list, default)
-            Edge members.
+            Tail members.
         dict (if dtype is dict)
-            Edge members.
+            Tail members.
         set (if e is not None)
-            Members of edge e.
+            Tail members of edge e.
 
         Raises
         ------
