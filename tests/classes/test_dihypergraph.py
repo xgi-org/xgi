@@ -276,30 +276,27 @@ def test_add_edges_from_format4():
     assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
 
 
-def test_add_edges_from_dict():
-    edges = {"one": [0, 1], "two": [1, 2], 2: [2, 3, 4]}
-    H = xgi.Hypergraph()
-    H.add_edges_from(edges)
-    assert list(H.edges) == ["one", "two", 2]
-    assert H.edges.members() == [set(edges[e]) for e in edges]
+def test_add_edges_from_dict(diedgedict1):
+    H = xgi.DiHypergraph()
+    H.add_edges_from(diedgedict1)
+    assert list(H.edges) == [0, 1]
+    assert H.edges.members() == [{1, 2, 3, 4}, {5, 6, 7, 8}]
     # check counter
-    H.add_edge([1, 9, 2])
-    assert H.edges.members(3) == {1, 9, 2}
+    H.add_edge(([1, 9, 2], [10]))
+    assert H.edges.members(2) == {1, 2, 9, 10}
 
-    H1 = xgi.Hypergraph([{1, 2}, {2, 3, 4}])
-    with pytest.warns(
-        UserWarning, match="uid 0 already exists, cannot add edge {1, 3}."
-    ):
-        H1.add_edges_from({0: {1, 3}})
-    assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
+    H1 = xgi.DiHypergraph([({1, 2}, {2, 3, 4})])
+    with pytest.warns(Warning):
+        H1.add_edges_from({0: ({1, 3}, {2})})
+    assert H1.edges.dimembers(0) == ({1, 2}, {2, 3, 4})
 
 
 def test_add_edges_from_attr_precedence():
-    H = xgi.Hypergraph()
+    H = xgi.DiHypergraph()
     edges = [
-        ([0, 1], "one", {"color": "red"}),
-        ([1, 2], "two", {"age": 30}),
-        ([2, 3, 4], "three", {"color": "blue", "age": 40}),
+        (([0, 1], [2]), "one", {"color": "red"}),
+        (([1, 2], [0]), "two", {"age": 30}),
+        (([2, 3, 4], [5]), "three", {"color": "blue", "age": 40}),
     ]
     H.add_edges_from(edges, color="black")
     assert H.edges["one"] == {"color": "red"}
