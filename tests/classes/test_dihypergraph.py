@@ -304,41 +304,6 @@ def test_add_edges_from_attr_precedence():
     assert H.edges["three"] == {"age": 40, "color": "blue"}
 
 
-def test_add_edges_from_wrong_format():
-    edges = [0, 1, 2]
-    with pytest.raises(XGIError):
-        xgi.Hypergraph().add_edges_from(edges)
-
-    edges = [
-        ("foo", {"color": "red"}),
-        ("bar", {"age": 30}),
-        ("baz", {"color": "blue", "age": 40}),
-    ]
-
-    with pytest.raises(XGIError):
-        xgi.Hypergraph().add_edges_from(edges)
-
-    edges = [
-        ("foo", "one", {"color": "red"}),
-        ("bar", "two", {"age": 30}),
-        ("baz", "three", {"color": "blue", "age": 40}),
-    ]
-    with pytest.raises(XGIError):
-        xgi.Hypergraph().add_edges_from(edges)
-
-    edges = ["a", "b", "c"]
-    with pytest.raises(XGIError):
-        xgi.Hypergraph().add_edges_from(edges)
-
-    edges = ["foo", "bar", "baz"]
-    with pytest.raises(XGIError):
-        xgi.Hypergraph().add_edges_from(edges)
-
-    edges = ["foo", [1, 2], [2, 3, 4]]
-    with pytest.raises(XGIError):
-        xgi.Hypergraph().add_edges_from(edges)
-
-
 def test_copy(diedgelist1):
     H = xgi.DiHypergraph(diedgelist1)
     H["key"] = "value"
