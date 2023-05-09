@@ -218,6 +218,7 @@ def hypergraph2():
 def diedgelist1():
     return [({1, 2, 3}, {4}), ({5, 6}, {6, 7, 8})]
 
+
 @pytest.fixture
 def diedgelist2():
     return [({0, 1}, {2}), ({1, 2}, {4}), ({2, 3, 4}, {4, 5})]
