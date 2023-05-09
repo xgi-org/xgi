@@ -70,6 +70,55 @@ class DiHypergraph:
     _hyperedge_attr_dict_factory = IDDict
     _hypergraph_attr_dict_factory = dict
 
+    def __getstate__(self):
+        """Function that allows pickling.
+
+        Returns
+        -------
+        dict
+            The keys label the hyeprgraph dict and the values
+            are dictionarys from the Hypergraph class.
+
+        Notes
+        -----
+        This allows the python multiprocessing module to be used.
+
+        """
+        return {
+            "_edge_uid": self._edge_uid,
+            "_hypergraph": self._hypergraph,
+            "_node_in": self._node_in,
+            "_node_out": self._node_out,
+            "_node_attr": self._node_attr,
+            "_edge_in": self._edge_in,
+            "_edge_out": self._edge_out,
+            "_edge_attr": self._edge_attr,
+        }
+
+    def __setstate__(self, state):
+        """Function that allows unpickling of a hypergraph.
+
+        Parameters
+        ----------
+        state
+            The keys access the dictionary names the values are the
+            dictionarys themselves from the Hypergraph class.
+
+        Notes
+        -----
+        This allows the python multiprocessing module to be used.
+        """
+        self._edge_uid = state["_edge_uid"]
+        self._hypergraph = state["_hypergraph"]
+        self._node_in = state["_node_in"]
+        self._node_out = state["_node_out"]
+        self._node_attr = state["_node_attr"]
+        self._edge_in = state["_edge_in"]
+        self._edge_out = state["_edge_out"]
+        self._edge_attr = state["_edge_attr"]
+        self._nodeview = DiNodeView(self)
+        self._edgeview = DiEdgeView(self)
+
     def __init__(self, incoming_data=None, **attr):
         self._edge_uid = count()
         self._hypergraph = self._hypergraph_attr_dict_factory()
@@ -95,6 +144,96 @@ class DiHypergraph:
 
             convert_to_dihypergraph(incoming_data, create_using=self)
         self._hypergraph.update(attr)  # must be after convert
+
+    def __str__(self):
+        """Returns a short summary of the hypergraph.
+
+        Returns
+        -------
+        string
+            Hypergraph information
+
+        """
+        try:
+            return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
+        except XGIError:
+            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
+
+    def __iter__(self):
+        """Iterate over the nodes.
+
+        Returns
+        -------
+        iterator
+            An iterator over all nodes in the hypergraph.
+        """
+        return iter(self._node_in)
+
+    def __contains__(self, n):
+        """Check for if a node is in this hypergraph.
+
+        Parameters
+        ----------
+        n : hashable
+            node ID
+
+        Returns
+        -------
+        bool
+            Whether the node exists in the hypergraph.
+        """
+        try:
+            return n in self._node_in
+        except TypeError:
+            return False
+
+    def __len__(self):
+        """Number of nodes in the hypergraph.
+
+        Returns
+        -------
+        int
+            The number of nodes in the hypergraph.
+
+        See Also
+        --------
+        num_nodes : identical method
+        num_edges : number of edges in the hypergraph
+
+        """
+        return len(self._node_in)
+
+    def __getitem__(self, attr):
+        """Read hypergraph attribute."""
+        try:
+            return self._hypergraph[attr]
+        except KeyError:
+            raise XGIError("This attribute has not been set.")
+
+    def __setitem__(self, attr, val):
+        """Write hypergraph attribute."""
+        self._hypergraph[attr] = val
+
+    def __getattr__(self, attr):
+        stat = getattr(self.nodes, attr, None)
+        word = "nodes"
+        if stat is None:
+            stat = getattr(self.edges, attr, None)
+            word = "edges"
+        if stat is None:
+            word = None
+            raise AttributeError(
+                f"{attr} is not a method of Hypergraph or a recognizedDiNodeStat or DiEdgeStat"
+            )
+
+        def func(node=None, *args, **kwargs):
+            val = stat(*args, **kwargs).asdict()
+            return val if node is None else val[node]
+
+        func.__doc__ = f"""Equivalent to H.{word}.{attr}.asdict(). For accepted *args and
+        **kwargs, see documentation of H.{word}.{attr}."""
+
+        return func
 
     @property
     def num_nodes(self):
