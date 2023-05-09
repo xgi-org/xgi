@@ -118,162 +118,166 @@ def test_dimemberships(diedgelist1):
 
 
 def test_add_edge():
-    for edge in [[1, 2, 3], {1, 2, 3}, iter([1, 2, 3])]:
-        H = xgi.Hypergraph()
+    for edge in [([1, 2, 3], [4]), [{1, 2, 3}, {4}], (iter([1, 2, 3]), iter([4]))]:
+        H = xgi.DiHypergraph()
         H.add_edge(edge)
-        assert (1 in H) and (2 in H) and (3 in H)
+        assert (1 in H) and (2 in H) and (3 in H) and (4 in H)
         assert 0 in H.edges
-        assert {1, 2, 3} in H.edges.members()
-        assert {1, 2, 3} == H.edges.members(0)
-        assert H.edges.members(dtype=dict) == {0: {1, 2, 3}}
+        assert {1, 2, 3, 4} in H.edges.members()
+        assert {1, 2, 3, 4} == H.edges.members(0)
+        assert H.edges.members(dtype=dict) == {0: {1, 2, 3, 4}}
+        assert H.edges.tail(dtype=dict) == {0: {1, 2, 3}}
+        assert H.edges.head(dtype=dict) == {0: {4}}
 
-    H = xgi.Hypergraph()
-    for edge in [[], set(), iter([])]:
+    H = xgi.DiHypergraph()
+    for edge in [[], {}, iter([])]:
         with pytest.raises(XGIError):
             H.add_edge(edge)
 
+    for edge in [[[], []], (set(), set())]:
+        with pytest.raises(XGIError):
+            H.add_edge(edge)
+
+    # type can't be a set.
+    with pytest.raises(XGIError):
+        H.add_edge({(1, 2), (3, 4)})
+
     # check that uid works correctly
-    H1 = xgi.Hypergraph()
-    H1.add_edge([1, 2], id=0)
-    H1.add_edge([3, 4], id=2)
-    H1.add_edge([5, 6])
-    assert H1._edge == {0: {1, 2}, 2: {3, 4}, 3: {5, 6}}
+    H1 = xgi.DiHypergraph()
+    H1.add_edge(([1, 2], [3]), id=0)
+    H1.add_edge(([3, 4], [4, 5]), id=2)
+    H1.add_edge([[5, 6], [2, 3]])
+    assert H1.edges.dimembers(dtype=dict) == {
+        0: ({1, 2}, {3}),
+        2: ({3, 4}, {4, 5}),
+        3: ({5, 6}, {2, 3}),
+    }
 
-    H2 = xgi.Hypergraph()
-    H2.add_edge([1, 2])
-    H2.add_edge([3, 4])
-    with pytest.warns(
-        UserWarning, match="uid 0 already exists, cannot add edge {5, 6}"
-    ):
-        H2.add_edge([5, 6], id=0)
+    H2 = xgi.DiHypergraph()
+    H2.add_edge(([1, 2], [3]))
+    H2.add_edge(([3, 4], [5, 6, 7]))
+    with pytest.warns(Warning):
+        H2.add_edge(([5, 6], [8]), id=0)
 
-    assert H2._edge == {0: {1, 2}, 1: {3, 4}}
+    assert H2._edge_out == {0: {1, 2}, 1: {3, 4}}
 
 
 def test_add_edge_with_id():
-    H = xgi.Hypergraph()
-    H.add_edge([1, 2, 3], id="myedge")
-    assert (1 in H) and (2 in H) and (3 in H)
+    H = xgi.DiHypergraph()
+    H.add_edge(([1, 2, 3], [3, 4]), id="myedge")
+    assert (1 in H) and (2 in H) and (3 in H) and (4 in H)
     assert "myedge" in H.edges
-    assert {1, 2, 3} in H.edges.members()
-    assert {1, 2, 3} == H.edges.members("myedge")
-    assert H.edges.members(dtype=dict) == {"myedge": {1, 2, 3}}
+    assert {1, 2, 3, 4} in H.edges.members()
+    assert {1, 2, 3, 4} == H.edges.members("myedge")
+    assert ({1, 2, 3}, {3, 4}) in H.edges.dimembers()
+    assert ({1, 2, 3}, {3, 4}) == H.edges.dimembers("myedge")
+    assert H.edges.members(dtype=dict) == {"myedge": {1, 2, 3, 4}}
 
 
 def test_add_edge_with_attr():
-    H = xgi.Hypergraph()
-    H.add_edge([1, 2, 3], color="red", place="peru")
-    assert (1 in H) and (2 in H) and (3 in H)
+    H = xgi.DiHypergraph()
+    H.add_edge(([1, 2, 3], [1, 4]), color="red", place="peru")
+    assert (1 in H) and (2 in H) and (3 in H) and (4 in H)
     assert 0 in H.edges
-    assert {1, 2, 3} in H.edges.members()
-    assert {1, 2, 3} == H.edges.members(0)
-    assert H.edges.members(dtype=dict) == {0: {1, 2, 3}}
+    assert {1, 2, 3, 4} in H.edges.members()
+    assert {1, 2, 3, 4} == H.edges.members(0)
+    assert ({1, 2, 3}, {1, 4}) in H.edges.dimembers()
+    assert ({1, 2, 3}, {1, 4}) == H.edges.dimembers(0)
+    assert H.edges.members(dtype=dict) == {0: {1, 2, 3, 4}}
     assert H.edges[0] == {"color": "red", "place": "peru"}
 
 
 def test_add_edges_from_iterable_of_members():
-    edges = [{0, 1}, {1, 2}, {2, 3, 4}]
-    H = xgi.Hypergraph()
+    edges = [({0, 1}, {2}), ({1, 2}, {4}), ({2, 3, 4}, {1})]
+    H = xgi.DiHypergraph()
     H.add_edges_from(edges)
-    assert H.edges.members() == edges
+    assert H.edges.dimembers() == edges
 
-    H1 = xgi.Hypergraph(edges)
+    H1 = xgi.DiHypergraph(edges)
     with pytest.raises(XGIError):
-        xgi.Hypergraph(H1.edges)
+        xgi.DiHypergraph(H1.edges)
 
-    edges = {frozenset([0, 1]), frozenset([1, 2]), frozenset([2, 3, 4])}
-    H = xgi.Hypergraph()
+    edges = {
+        (frozenset([0, 1]), frozenset([2])),
+        (frozenset([1, 2]), frozenset([4])),
+        (frozenset([2, 3, 4]), frozenset([1])),
+    }
+    H = xgi.DiHypergraph()
     H.add_edges_from(edges)
-    assert H.edges.members() == [set(e) for e in edges]
+    assert H.edges.dimembers() == [(set(e[0]), set(e[1])) for e in edges]
 
-    edges = [[0, 1], {1, 2}, (2, 3, 4)]
-    H = xgi.Hypergraph()
+    edges = [([0, 1], {2}), [{1, 2}, [4]], ((2, 3, 4), [1])]
+    H = xgi.DiHypergraph()
     H.add_edges_from(edges)
-    assert H.edges.members() == [set(e) for e in edges]
-
-    edges = [{"foo", "bar"}, {"bar", "baz"}, {"foo", "bar", "baz"}]
-    H = xgi.Hypergraph()
-    H.add_edges_from(edges)
-    assert set(H.nodes) == {"foo", "bar", "baz"}
-    assert H.edges.members() == edges
-
-    edges = [{"a", "b"}, {"b", "c"}, {"c", "d", "e"}]
-    H = xgi.Hypergraph()
-    H.add_edges_from(edges)
-    assert set(H.nodes) == {"a", "b", "c", "d", "e"}
-    assert H.edges.members() == edges
+    assert H.edges.dimembers() == [(set(e[0]), set(e[1])) for e in edges]
 
 
 def test_add_edges_from_format2():
-    edges = [({0, 1}, 0), ({1, 2}, 1), ({2, 3, 4}, 2)]
-    H = xgi.Hypergraph()
+    edges = [(({0, 1}, {2}), 0), (({1, 2}, {4}), 1), (({2, 3, 4}, {1}), 2)]
+    H = xgi.DiHypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
-    assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
+    assert H.edges.dimembers(dtype=dict) == {e[1]: (e[0][0], e[0][1]) for e in edges}
 
-    edges = [({0, 1}, "a"), ({1, 2}, "b"), ({2, 3, 4}, "foo")]
-    H = xgi.Hypergraph()
+    edges = [(({0, 1}, {2}), "a"), (({1, 2}, {4}), "b"), (({2, 3, 4}, {1}), "foo")]
+    H = xgi.DiHypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
-    assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
+    assert H.edges.dimembers(dtype=dict) == {e[1]: (e[0][0], e[0][1]) for e in edges}
 
-    edges = [({0, 1}, "a"), ({1, 2}, "b"), ({2, 3, 4}, 100)]
-    H = xgi.Hypergraph()
+    edges = [(({0, 1}, {2}), "a"), (({1, 2}, {4}), "b"), (({2, 3, 4}, {1}), 100)]
+    H = xgi.DiHypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
-    assert H.edges.members(dtype=dict) == {e[1]: e[0] for e in edges}
+    assert H.edges.dimembers(dtype=dict) == {e[1]: (e[0][0], e[0][1]) for e in edges}
 
     # check counter
-    H.add_edge([1, 9, 2])
-    assert H.edges.members(101) == {1, 9, 2}
+    H.add_edge(([1, 9, 2], [10]))
+    assert H.edges.members(101) == {1, 2, 9, 10}
 
-    H1 = xgi.Hypergraph([{1, 2}, {2, 3, 4}])
-    with pytest.warns(
-        UserWarning, match="uid 0 already exists, cannot add edge {1, 3}."
-    ):
-        H1.add_edges_from([({1, 3}, 0)])
-    assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
+    H1 = xgi.DiHypergraph([({1, 2}, {3}), ({2, 3, 4}, {1})])
+    with pytest.warns(Warning):
+        H1.add_edges_from([(({1, 3}, {2}), 0)])
+    assert H1._edge_out == {0: {1, 2}, 1: {2, 3, 4}}
 
 
 def test_add_edges_from_format3():
     edges = [
-        ({0, 1}, {"color": "red"}),
-        ({1, 2}, {"age": 30}),
-        ({2, 3, 4}, {"color": "blue", "age": 40}),
+        (({0, 1}, {2}), {"color": "red"}),
+        (({1, 2}, {4}), {"age": 30}),
+        (({2, 3, 4}, {1}), {"color": "blue", "age": 40}),
     ]
-    H = xgi.Hypergraph()
+    H = xgi.DiHypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == list(range(len(edges)))
-    assert H.edges.members() == [e[0] for e in edges]
+    assert H.edges.dimembers() == [(e[0][0], e[0][1]) for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][1]
     # check counter
-    H.add_edge([1, 9, 2])
-    assert H.edges.members(3) == {1, 9, 2}
+    H.add_edge(([1, 9, 2], [10]))
+    assert H.edges.members(3) == {1, 2, 9, 10}
 
 
 def test_add_edges_from_format4():
     edges = [
-        ({0, 1}, "one", {"color": "red"}),
-        ({1, 2}, "two", {"age": 30}),
-        ({2, 3, 4}, "three", {"color": "blue", "age": 40}),
+        (({0, 1}, {2}), "one", {"color": "red"}),
+        (({1, 2}, {4}), "two", {"age": 30}),
+        (({2, 3, 4}, {1}), "three", {"color": "blue", "age": 40}),
     ]
-    H = xgi.Hypergraph()
+    H = xgi.DiHypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
-    assert H.edges.members() == [e[0] for e in edges]
+    assert H.edges.dimembers() == [(e[0][0], e[0][1]) for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][2]
     # check counter
-    H.add_edge([1, 9, 2])
-    assert H.edges.members(0) == {1, 9, 2}
+    H.add_edge(([1, 9, 2], [10]))
+    assert H.edges.members(0) == {1, 2, 9, 10}
 
-    H1 = xgi.Hypergraph([{1, 2}, {2, 3, 4}])
-    with pytest.warns(
-        UserWarning, match="uid 0 already exists, cannot add edge {0, 1}."
-    ):
-        H1.add_edges_from([({0, 1}, 0, {"color": "red"})])
-    assert H1._edge == {0: {1, 2}, 1: {2, 3, 4}}
+    H1 = xgi.DiHypergraph([({1, 2}, {3}), ({2, 3, 4}, {1})])
+    with pytest.warns(Warning):
+        H1.add_edges_from([(({0, 1}, {2}), 0, {"color": "red"})])
+    assert H1._edge_out == {0: {1, 2}, 1: {2, 3, 4}}
 
 
 def test_add_edges_from_dict(diedgedict1):
@@ -349,8 +353,8 @@ def test_copy_issue128():
     assert H["key"] == "value"
 
 
-def test_remove_node_weak(edgelist1):
-    H = xgi.Hypergraph(edgelist1)
+def test_remove_node_weak(diedgelist1):
+    H = xgi.DiHypergraph(diedgelist1)
     assert 1 in H
     H.remove_node(1)
     assert 1 not in H
@@ -358,8 +362,8 @@ def test_remove_node_weak(edgelist1):
         H.remove_node(10)
 
 
-def test_remove_node_strong(edgelist1):
-    H = xgi.Hypergraph(edgelist1)
+def test_remove_node_strong(diedgelist1):
+    H = xgi.DiHypergraph(diedgelist1)
     assert 1 in H
     H.remove_node(1, strong=True)
     assert 1 not in H
