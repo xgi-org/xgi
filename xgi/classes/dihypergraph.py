@@ -600,15 +600,16 @@ class DiHypergraph:
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
             for id, members in ebunch_to_add.items():
+                if id in self._edge_in.keys():  # check that uid is not present yet
+                    warn(f"uid {id} already exists, cannot add edge {members}.")
+                    continue
+
                 if isinstance(members, (tuple, list)):
                     tail = members[0]
                     head = members[1]
                 else:
                     raise XGIError("Directed edge must be a list or tuple!")
 
-                if id in self._edge_in.keys():  # check that uid is not present yet
-                    warn(f"uid {id} already exists, cannot add edge {members}.")
-                    continue
                 try:
                     self._edge_in[id] = set(head)
                     self._edge_out[id] = set(tail)
