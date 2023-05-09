@@ -212,3 +212,13 @@ def hypergraph2():
     H.add_nodes_from(["b", "c", 0])
     H.add_edges_from({"e1": [0, "b"], "e2": [0, "c"], "e3": [0, "b", "c"]})
     return H
+
+
+@pytest.fixture
+def diedgelist1():
+    return [({1, 2, 3}, {4}), ({5, 6}, {6, 7, 8})]
+
+
+@pytest.fixture
+def diedgedict1():
+    return {0: ({1, 2, 3}, {4}), 1: ({5, 6}, {6, 7, 8})}
