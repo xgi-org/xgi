@@ -209,8 +209,10 @@ def flag_complex_d2(G, p2=None, seed=None):
 
 
 def random_flag_complex_d2(N, p, seed=None):
-    """Generate a maximal simplicial complex (up to order 2) from a
-    :math:`G_{N,p}` Erdős-Rényi random graph by filling all empty triangles with 2-simplices.
+    """Generate a maximal simplicial complex (up to order 2) from a :math:`G_{N,p}`
+    Erdős-Rényi random graph.
+
+    This proceeds by filling all empty triangles in the graph with 2-simplices.
 
     Parameters
     ----------
@@ -229,6 +231,7 @@ def random_flag_complex_d2(N, p, seed=None):
     Notes
     -----
     Computing all cliques quickly becomes heavy for large networks.
+
     """
     if seed is not None:
         random.seed(seed)
@@ -243,7 +246,9 @@ def random_flag_complex_d2(N, p, seed=None):
 
 def random_flag_complex(N, p, max_order=2, seed=None):
     """Generate a flag (or clique) complex from a
-    :math:`G_{N,p}` Erdős-Rényi random graph by filling all cliques up to dimension max_order.
+    :math:`G_{N,p}` Erdős-Rényi random graph.
+
+    This proceeds by filling all cliques up to dimension max_order.
 
     Parameters
     ----------
@@ -264,8 +269,8 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     Notes
     -----
     Computing all cliques quickly becomes heavy for large networks.
-    """
 
+    """
     if (p < 0) or (p > 1):
         raise ValueError("p must be between 0 and 1 included.")
 

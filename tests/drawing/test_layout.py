@@ -25,23 +25,30 @@ def test_random_layout():
     assert len(pos) == S.num_nodes
 
 
-def test_pairwise_spring_layout():
+def test_pairwise_spring_layout_hypergraph():
     H = xgi.random_hypergraph(10, [0.2], seed=1)
 
-    # seed
     pos1 = xgi.pairwise_spring_layout(H, seed=1)
     pos2 = xgi.pairwise_spring_layout(H, seed=2)
     pos3 = xgi.pairwise_spring_layout(H, seed=2)
-    assert pos1.keys() == pos2.keys()
-    assert pos2.keys() == pos3.keys()
+    assert pos1.keys() == pos2.keys() == pos3.keys()
     assert not np.allclose(list(pos1.values()), list(pos2.values()))
     assert np.allclose(list(pos2.values()), list(pos3.values()))
-
     assert len(pos1) == H.num_nodes
 
     # simplicial complex
+
+
+def test_pairwise_spring_layout_simplicial_complex():
     S = xgi.random_flag_complex_d2(10, 0.2, seed=1)
-    pos = xgi.pairwise_spring_layout(S, seed=1)
+
+    pos1 = xgi.pairwise_spring_layout(S, seed=1)
+    pos2 = xgi.pairwise_spring_layout(S, seed=2)
+    pos3 = xgi.pairwise_spring_layout(S, seed=2)
+    assert pos1.keys() == pos2.keys() == pos3.keys()
+    assert not np.allclose(list(pos1.values()), list(pos2.values()))
+    assert np.allclose(list(pos2.values()), list(pos3.values()))
+    assert len(pos1) == S.num_nodes
 
 
 def test_barycenter_spring_layout(hypergraph1):

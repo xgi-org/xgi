@@ -146,9 +146,9 @@ def is_uniform(H):
 def edge_neighborhood(H, n, include_self=False):
     """The edge neighborhood of the specified node.
 
-    The edge neighborhood of a node `n` in a hypergraph `H` is an edgelist of all the edges
-    containing `n` and its edges are all the edges in `H` that contain
-    `n`.  Usually, the edge neighborhood does not include `n` itself.  This can be controlled
+    The edge neighborhood of a node `n` in a hypergraph `H` is an edgelist of all the
+    edges containing `n` and its edges are all the edges in `H` that contain `n`.
+    Usually, the edge neighborhood does not include `n` itself.  This can be controlled
     with `include_self`.
 
     Parameters
@@ -573,7 +573,8 @@ def set_edge_attributes(H, values, name=None):
                     warn(f"Edge {e} does not exist!")
         except AttributeError:
             raise XGIError(
-                "name property has not been set and a dict-of-dicts has not been provided."
+                "name property has not been set and a "
+                "dict-of-dicts has not been provided."
             )
 
 
@@ -882,7 +883,8 @@ def subfaces(edges, order=None):
     max_order = len(max(edges, key=len)) - 1
     if order and order > max_order:
         raise XGIError(
-            f"order must be less or equal to the maximum order among the edges: {max_order}."
+            "order must be less or equal to the maximum "
+            f"order among the edges: {max_order}."
         )
 
     faces = []

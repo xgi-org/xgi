@@ -251,8 +251,8 @@ def local_clustering_coefficient(net, bunch):
 
     References
     ----------
-    "Properties of metabolic graphs: biological organization or representation artifacts?"
-    by Wanding Zhou and Luay Nakhleh.
+    "Properties of metabolic graphs: biological organization or representation
+    artifacts?"  by Wanding Zhou and Luay Nakhleh.
     https://doi.org/10.1186/1471-2105-12-132
 
     "Hypergraphs for predicting essential genes using multiprotein complex data"
@@ -265,6 +265,7 @@ def local_clustering_coefficient(net, bunch):
     >>> H = xgi.random_hypergraph(3, [1, 1])
     >>> H.nodes.local_clustering_coefficient.asdict()
     {0: 1.0, 1: 1.0, 2: 1.0}
+
     """
     cc = xgi.local_clustering_coefficient(net)
     return {n: cc[n] for n in cc if n in bunch}

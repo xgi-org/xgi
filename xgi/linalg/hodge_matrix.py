@@ -52,9 +52,10 @@ __all__ = [
 
 
 def boundary_matrix(S, order=1, orientations=None, index=False):
-    """
-    A function to generate the boundary matrices of an oriented simplicial complex.
-    The rows correspond to the (order-1)-simplices and the columns to the (order)-simplices.
+    """Generate the boundary matrices of an oriented simplicial complex.
+
+    The rows correspond to the (order-1)-simplices and the columns to the
+    (order)-simplices.
 
     Parameters
     ----------
@@ -122,8 +123,8 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
                     key=lambda e: (isinstance(e, str), e)
                 )  # Sort the simplex's vertices to get a reference orientation
                 # The key is needed to sort a mixed list of numbers and strings:
-                #   it ensures that node labels which are numbers are put before strings,
-                #   thus giving a list [sorted numbers, sorted strings]
+                #   it ensures that node labels which are numbers are put before
+                #   strings, thus giving a list [sorted numbers, sorted strings]
                 matrix_id = simplices_u_dict[u_simplex_id]
                 head_idx = u_simplex[1]
                 tail_idx = u_simplex[0]
@@ -140,8 +141,8 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
                     key=lambda e: (isinstance(e, str), e)
                 )  # Sort the simplex's vertices to get a reference orientation
                 # The key is needed to sort a mixed list of numbers and strings:
-                #   it ensures that node labels which are numbers are put before strings,
-                #   thus giving a list [sorted numbers, sorted strings]
+                #   it ensures that node labels which are numbers are put before
+                #   strings, thus giving a list [sorted numbers, sorted strings]
                 matrix_id = simplices_u_dict[u_simplex_id]
                 u_simplex_subfaces = S._subfaces(u_simplex, all=False)
                 subfaces_induced_orientation = [

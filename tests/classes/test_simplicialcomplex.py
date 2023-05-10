@@ -12,9 +12,9 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     S_sc = xgi.SimplicialComplex(S_list)
 
     with pytest.raises(XGIError):
-        S_dict = xgi.SimplicialComplex(dict5)
+        _ = xgi.SimplicialComplex(dict5)
     with pytest.raises(XGIError):
-        S_mat = xgi.SimplicialComplex(incidence5)
+        _ = xgi.SimplicialComplex(incidence5)
 
     assert set(S_list.nodes) == set(S_df.nodes) == set(S_sc.nodes)
     assert set(S_list.edges) == set(S_df.edges) == set(S_sc.edges)
