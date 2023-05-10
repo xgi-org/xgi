@@ -130,26 +130,21 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
         random.seed(seed)
 
     nodes = G.nodes()
+    N = len(nodes)
     edges = G.edges()
 
-    # compute all maximal cliques to fill
-    max_cliques = list(nx.find_cliques(G))
+    cliques_to_add = _cliques_to_fill(G, max_order)
 
     S = SimplicialComplex()
     S.add_nodes_from(nodes)
     S.add_simplices_from(edges)
     if not ps:  # promote all cliques
-        S.add_simplices_from(max_cliques, max_order=max_order)
+        S.add_simplices_from(cliques_to_add, max_order=max_order)
         return S
-
-    if max_order:  # compute subfaces of order max_order (allowed max cliques)
-        max_cliques_to_add = subfaces(max_cliques, order=max_order)
-    else:
-        max_cliques_to_add = max_cliques
 
     # store max cliques per order
     cliques_d = defaultdict(list)
-    for x in max_cliques_to_add:
+    for x in cliques_to_add:
         cliques_d[len(x)].append(x)
 
     # promote cliques with a given probability
@@ -277,13 +272,47 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     G = nx.fast_gnp_random_graph(N, p, seed=seed)
 
     nodes = G.nodes()
-    edges = list(G.edges())
 
-    # compute all triangles to fill
-    max_cliques = list(nx.find_cliques(G))
+    cliques = _cliques_to_fill(G, max_order)
 
     S = SimplicialComplex()
     S.add_nodes_from(nodes)
-    S.add_simplices_from(max_cliques, max_order=max_order)
+    S.add_simplices_from(cliques, max_order=max_order)
 
     return S
+
+
+def _cliques_to_fill(G, max_order):
+    """Return cliques to fill for flag complexes,
+    to be passed to `add_simplices_from`.
+
+    This function was written to speedup flag_complex functions
+    by avoiding adding redundant faces.
+
+    Parameters
+    ----------
+    G : networkx Graph
+        Graph to consider
+    max_order: int or None
+        If None, return maximal cliques. If int, return all cliques
+        up to max_order.
+
+    Returns
+    -------
+    cliques : list
+        List of cliques
+
+    """
+    if max_order is None:
+        cliques = list(nx.find_cliques(G))  # max cliques
+    else:  # avoid adding many unnecessary redundant cliques
+        cliques = []
+        for clique in nx.enumerate_all_cliques(G):  # sorted by size
+            if len(clique) == 1:
+                continue  # don't add singletons
+            if len(clique) <= max_order + 1:
+                cliques.append(clique)
+            else:
+                break  # dont go over whole list if not necessary
+
+    return cliques

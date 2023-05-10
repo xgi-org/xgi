@@ -217,6 +217,7 @@ def complete_hypergraph(N, order=None, max_order=None, include_singletons=False)
     elif max_order is not None:
         start = 1 if include_singletons else 2
         end = max_order + 1
+        assert end >= start  # can be equal because adding +1 to end below
 
         s = list(nodes)
         edges = chain.from_iterable(combinations(s, r) for r in range(start, end + 1))
