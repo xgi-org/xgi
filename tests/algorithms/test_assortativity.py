@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import xgi
-from xgi.algorithms.assortativity import choose_degrees
+from xgi.algorithms.assortativity import _choose_degrees
 from xgi.exception import XGIError
 
 
@@ -66,22 +66,22 @@ def test_choose_degrees(edgelist1, edgelist6):
     # test singleton edges
     with pytest.raises(XGIError):
         e = H1.edges.members(1)
-        choose_degrees(e, k)
+        _choose_degrees(e, k)
 
     # invalid choice function
     with pytest.raises(XGIError):
         e = H1.edges.members(0)
-        choose_degrees(e, k, "test")
+        _choose_degrees(e, k, "test")
 
     e = H1.edges.members(0)
-    assert np.all(np.array(choose_degrees(e, k)) == 1)
+    assert np.all(np.array(_choose_degrees(e, k)) == 1)
 
     e = H1.edges.members(3)
-    assert set(choose_degrees(e, k, kind="top-2")) == {1, 2}
-    assert set(choose_degrees(e, k, kind="top-bottom")) == {1, 2}
+    assert set(_choose_degrees(e, k, kind="top-2")) == {1, 2}
+    assert set(_choose_degrees(e, k, kind="top-bottom")) == {1, 2}
 
     H2 = xgi.Hypergraph(edgelist6)
     e = H2.edges.members(2)
     k = H2.degree()
-    assert set(choose_degrees(e, k, kind="top-2")) == {2, 3}
-    assert set(choose_degrees(e, k, kind="top-bottom")) == {1, 3}
+    assert set(_choose_degrees(e, k, kind="top-2")) == {2, 3}
+    assert set(_choose_degrees(e, k, kind="top-bottom")) == {1, 3}

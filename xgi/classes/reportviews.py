@@ -45,10 +45,6 @@ class IDView(Mapping, Set):
 
     __slots__ = (
         "_net",
-        "_id_dict",
-        "_id_attr",
-        "_bi_id_dict",
-        "_bi_id_attr",
         "_ids",
     )
 
@@ -63,10 +59,7 @@ class IDView(Mapping, Set):
 
         """
         return {
-            "_id_dict": self._id_dict,
-            "_id_attr": self._id_attr,
-            "_bi_id_dict": self._bi_id_dict,
-            "_bi_id_attr": self._bi_id_attr,
+            "_net": self._net,
             "_ids": self._ids,
         }
 
@@ -80,18 +73,22 @@ class IDView(Mapping, Set):
             and the values are dictionarys from the Hypergraph class.
 
         """
-        self._id_dict = state["_id_dict"]
-        self._id_attr = state["_id_attr"]
-        self._bi_id_dict = state["_bi_id_dict"]
-        self._bi_id_attr = state["_bi_id_attr"]
-        self._ids = state["_ids"]
+        self._net = state["_net"]
+        self._id_kind = state["_id_kind"]
 
-    def __init__(self, network, id_dict, id_attr, bi_id_dict, bi_id_attr, ids=None):
+    def __init__(self, network, ids=None):
         self._net = network
-        self._id_dict = id_dict
-        self._id_attr = id_attr
-        self._bi_id_dict = bi_id_dict
-        self._bi_id_attr = bi_id_attr
+
+        if self._id_kind == "node":
+            self._id_dict = None if self._net is None else network._node
+            self._id_attr = None if self._net is None else network._node_attr
+            self._bi_id_dict = None if self._net is None else network._edge
+            self._bi_id_attr = None if self._net is None else network._edge_attr
+        elif self._id_kind == "edge":
+            self._id_dict = None if self._net is None else network._edge
+            self._id_attr = None if self._net is None else network._edge_attr
+            self._bi_id_dict = None if self._net is None else network._node
+            self._bi_id_attr = None if self._net is None else network._node_attr
 
         if ids is None:
             self._ids = self._id_dict
@@ -116,7 +113,7 @@ class IDView(Mapping, Set):
         always use `x in view`.  The latter is always faster.
 
         """
-        return set(self._id_dict.keys()) if self._ids is None else self._ids
+        return set(self._id_dict) if self._ids is None else self._ids
 
     def __len__(self):
         """The number of IDs."""
@@ -125,7 +122,7 @@ class IDView(Mapping, Set):
     def __iter__(self):
         """Returns an iterator over the IDs."""
         if self._ids is None:
-            return iter({}) if self._id_dict is None else iter(self._id_dict.keys())
+            return iter({}) if self._id_dict is None else iter(self._id_dict)
         else:
             return iter(self._ids)
 
@@ -191,7 +188,7 @@ class IDView(Mapping, Set):
         val : Any
             Value of the statistic.  Usually a single numeric value.  When mode is
             'between', must be a tuple of exactly two values.
-        mode : str
+        mode : str, optional
             How to compare each value to `val`.  Can be one of the following.
 
             * 'eq' (default): Return IDs whose value is exactly equal to `val`.
@@ -205,7 +202,7 @@ class IDView(Mapping, Set):
 
         See Also
         --------
-        For more details, see the `tutorial
+        IDView.filterby_attr : For more details, see the `tutorial
         <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
         Examples
@@ -278,17 +275,17 @@ class IDView(Mapping, Set):
             The name of the attribute
         val : Any
             A single value or, in the case of 'between', a list of length 2
-        mode : str, default: "eq"
-            Comparison mode. Valid options are 'eq', 'neq', 'lt', 'gt',
+        mode : str, optional
+            Comparison mode. Valid options are 'eq' (default), 'neq', 'lt', 'gt',
             'leq', 'geq', or 'between'.
-        missing : Any, default: None
-            The default value if the attribute is missing. If None,
+        missing : Any, optional
+            The default value if the attribute is missing. If None (default),
             ignores those IDs.
 
 
         See Also
         --------
-        Works identically to `filterby`.  For more details, see the `tutorial
+        IDView.filterby : Identical method.  For more details, see the `tutorial
         <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
         Notes
@@ -352,7 +349,7 @@ class IDView(Mapping, Set):
 
         See Also
         --------
-        edge_neighborhood
+        ~xgi.classes.function.edge_neighborhood
 
         Examples
         --------
@@ -497,7 +494,7 @@ class IDView(Mapping, Set):
         newview._id_attr = view._id_attr
         newview._bi_id_dict = view._bi_id_dict
         newview._bi_id_attr = view._bi_id_attr
-        all_ids = set(view._id_dict.keys())
+        all_ids = set(view._id_dict)
         if bunch is None:
             newview._ids = all_ids
         else:
@@ -528,6 +525,10 @@ class NodeView(IDView):
     bunch : optional iterable, default None
         The node ids to keep track of.  If None (default), keep track of all node ids.
 
+    See Also
+    --------
+    IDView
+
     Notes
     -----
     In addition to the methods listed in this page, other methods defined in the `stats`
@@ -541,9 +542,9 @@ class NodeView(IDView):
 
     def __init__(self, H, bunch=None):
         if H is None:
-            super().__init__(None, None, None, None, None, bunch)
+            super().__init__(None, bunch)
         else:
-            super().__init__(H, H._node, H._node_attr, H._edge, H._edge_attr, bunch)
+            super().__init__(H, bunch)
 
     def memberships(self, n=None):
         """Get the edge ids of which a node is a member.
@@ -553,8 +554,8 @@ class NodeView(IDView):
 
         Parameters
         ----------
-        n : hashable
-            Node ID.
+        n : hashable, optional
+            Node ID. By default, None.
 
         Returns
         -------
@@ -586,8 +587,9 @@ class NodeView(IDView):
 
         Parameters
         ----------
-        ignore_singletons : bool, default False
+        ignore_singletons : bool, optional
             Whether to consider singleton edges.
+            By default, False.
 
         Returns
         -------
@@ -620,6 +622,10 @@ class EdgeView(IDView):
     bunch : optional iterable, default None
         The edge ids to keep track of.  If None (default), keep track of all edge ids.
 
+    See Also
+    --------
+    IDView
+
     Notes
     -----
     In addition to the methods listed in this page, other methods defined in the `stats`
@@ -633,19 +639,20 @@ class EdgeView(IDView):
 
     def __init__(self, H, bunch=None):
         if H is None:
-            super().__init__(None, None, None, None, None, bunch)
+            super().__init__(None, bunch)
         else:
-            super().__init__(H, H._edge, H._edge_attr, H._node, H._node_attr, bunch)
+            super().__init__(H, bunch)
 
     def members(self, e=None, dtype=list):
         """Get the node ids that are members of an edge.
 
         Parameters
         ----------
-        e : hashable
-            Edge ID.
-        dtype : type, default list
+        e : hashable, optional
+            Edge ID. By default, None.
+        dtype : {list, dict}, optional
             Specify the type of the return value.
+            By default, list.
 
         Returns
         -------
@@ -703,7 +710,7 @@ class EdgeView(IDView):
 
         Parameters
         ----------
-        strict : bool
+        strict : bool, optional
             Whether maximal edges must strictly include all of its
             subsets (`strict=True`) or whether maximal multiedges
             are permitted (`strict=False`), by default False.

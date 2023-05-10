@@ -26,24 +26,29 @@ def random_layout(H, center=None, dim=2, seed=None):
 
     Parameters
     ----------
-    H : HyperGraph or list of nodes
+    H : Hypergraph or SimplicialComplex
         A position will be assigned to every node in HG.
-    center : array-like or None
+    center : array-like, optional
         Coordinate pair around which to center the layout.
-    dim : int
-        Dimension of layout.
-    seed : int, RandomState instance or None  optional (default=None)
+        If None (default), does not center the positions.
+    dim : int, optional
+        Dimension of layout, by default 2.
+    seed : int, optional
         Set the random state for deterministic node layouts.
         If int, `seed` is the seed used by the random number generator,
-        if numpy.random.RandomState instance, `seed` is the random
-        number generator,
-        if None, the random number generator is the RandomState instance used
-        by numpy.random.
+        If None (default), random numbers are sampled from the
+        numpy random number generator without initialization.
 
     Returns
     -------
     pos : dict
         A dictionary of positions keyed by node
+
+    See Also
+    --------
+    pairwise_spring_layout
+    barycenter_spring_layout
+    weighted_barycenter_spring_layout
 
     Examples
     --------
@@ -79,28 +84,27 @@ def pairwise_spring_layout(H, seed=None):
     ----------
     H : Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
-    seed : int, RandomState instance or None  optional (default=None)
+    seed : int, optional
         Set the random state for deterministic node layouts.
         If int, `seed` is the seed used by the random number generator,
-        if numpy.random.RandomState instance, `seed` is the random
-        number generator,
-        if None, the random number generator is the RandomState instance used
-        by numpy.random.
+        If None (default), random numbers are sampled from the
+        numpy random number generator without initialization.
 
     Returns
     -------
     pos : dict
         A dictionary of positions keyed by node
 
+    See Also
+    --------
+    random_layout
+    barycenter_spring_layout
+    weighted_barycenter_spring_layout
+
     Notes
     -----
     If a simplicial complex is provided the results will be based on the
     hypergraph constructed from its maximal simplices.
-
-    See also
-    --------
-    barycenter_spring_layout
-    weighted_barycenter_spring_layout
 
     Examples
     --------
@@ -134,21 +138,20 @@ def barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
     ----------
     H : xgi Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
-    seed : int, RandomState instance or None  optional (default=None)
+    seed : int, optional
         Set the random state for deterministic node layouts.
         If int, `seed` is the seed used by the random number generator,
-        if numpy.random.RandomState instance, `seed` is the random
-        number generator,
-        if None, the random number generator is the RandomState instance used
-        by numpy.random.
+        If None (default), random numbers are sampled from the
+        numpy random number generator without initialization.
 
     Returns
     -------
     pos : dict
         A dictionary of positions keyed by node
 
-    See also
+    See Also
     --------
+    random_layout
     pairwise_spring_layout
     weighted_barycenter_spring_layout
 
@@ -222,21 +225,20 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
     ----------
     H : Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
-    seed : int, RandomState instance or None  optional (default=None)
+    seed : int, optional
         Set the random state for deterministic node layouts.
         If int, `seed` is the seed used by the random number generator,
-        if numpy.random.RandomState instance, `seed` is the random
-        number generator,
-        if None, the random number generator is the RandomState instance used
-        by numpy.random.
+        If None (default), random numbers are sampled from the
+        numpy random number generator without initialization.
 
     Returns
     -------
     pos : dict
         A dictionary of positions keyed by node
 
-    See also
+    See Also
     --------
+    random_layout
     pairwise_spring_layout
     barycenter_spring_layout
 
@@ -306,12 +308,20 @@ def pca_transform(pos, theta=0, degrees=True):
         The angle between the horizontal axis and the principal axis
         measured counterclockwise, by default 0.
     degrees : bool, optional
-        Whether the angle specified is in degrees (True) or in radians (False), by default True.
+        Whether the angle specified is in degrees (True)
+        or in radians (False), by default True.
 
     Returns
     -------
-    dict of nump arrays
+    dict of numpy arrays
         The transformed positions.
+
+    See Also
+    --------
+    random_layout
+    pairwise_spring_layout
+    barycenter_spring_layout
+    weighted_barycenter_spring_layout
     """
     p = np.array(list(pos.values()))
     _, _, w = svd(p)

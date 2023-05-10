@@ -49,53 +49,55 @@ def draw(
     ----
     H : Hypergraph or SimplicialComplex.
         Hypergraph to draw
-    pos : dict (default=None)
+    pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
         If None (default), use the `barycenter_spring_layout` to compute the positions.
-    ax : matplotlib.pyplot.axes (default=None)
-        Axis to draw on
-    dyad_color : str, dict, iterable, or EdgeStat (default='black')
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
+    dyad_color : str, dict, iterable, or EdgeStat, optional
         Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
         contain (edge_id: color_str) pairs.  If iterable, assume the colors are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
-        (specified with dyad_color_cmap) associated to it.
-    dyad_lw : int, float, dict, iterable, or EdgeStat (default=1.5)
+        (specified with dyad_color_cmap) associated to it. By default, "black".
+    dyad_lw : int, float, dict, iterable, or EdgeStat, optional
         Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all edges.
         If a dict, must contain (edge_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a monotonic
-        linear interpolation defined between min_dyad_lw and max_dyad_lw.
-    edge_fc : str, dict, iterable, or EdgeStat (default=None)
+        linear interpolation defined between min_dyad_lw and max_dyad_lw. By default, 1.5.
+    edge_fc : str, dict, iterable, or EdgeStat, optional
         Color of the hyperedges.  If str, use the same color for all nodes.  If a dict, must
         contain (edge_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the hyperedges are found in H.edges. If EdgeStat,
         use the colormap specified with edge_fc_cmap. If None (default),
         use the H.edges.size.
-    node_fc : str, dict, iterable, or NodeStat (default='white')
+    node_fc : str, dict, iterable, or NodeStat, optional
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_fc_cmap.
-    node_ec : str, dict, iterable, or NodeStat (default='black')
+        use the colormap specified with node_fc_cmap. By default, "white".
+    node_ec : str, dict, iterable, or NodeStat, optional
         Color of node borders.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_ec_cmap.
-    node_lw : int, float, dict, iterable, or NodeStat (default=1)
+        use the colormap specified with node_ec_cmap. By default, "black".
+    node_lw : int, float, dict, iterable, or NodeStat, optional
         Line width of the node borders in pixels.  If int or float, use the same width for all node borders.
         If a dict, must contain (node_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_lw and max_node_lw.
-    node_size : int, float, dict, iterable, or NodeStat (default=15)
+        linear interpolation defined between min_node_lw and max_node_lw. By default, 1.
+    node_size : int, float, dict, iterable, or NodeStat, optional
         Radius of the nodes in pixels.  If int or float, use the same radius for all nodes.
         If a dict, must contain (node_id: radius) pairs.  If iterable, assume the radiuses are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_size and max_node_size.
-    max_order : int (default=None)
+        linear interpolation defined between min_node_size and max_node_size. By default, 15.
+    max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
-    node_labels : bool, or dict (default=False)
+    node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
-    hyperedge_labels : bool, or dict (default=False)
+        By default, False.
+    hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
+        By default, False.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
         * min_node_size
@@ -223,34 +225,34 @@ def draw_nodes(
     ----------
     H : Hypergraph or SimplicialComplex
         Higher-order network to plot.
-    ax : matplotlib.pyplot.axes
-        Axis to draw on
-    pos : dict (default=None)
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
+    pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
         If None (default), use the `barycenter_spring_layout` to compute the positions.
-    node_fc : str, dict, iterable, or NodeStat (default='white')
+    node_fc : str, dict, iterable, or NodeStat, optional
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_fc_cmap.
-    node_ec : str, dict, iterable, or NodeStat (default='black')
+        use the colormap specified with node_fc_cmap. By default, "white".
+    node_ec : str, dict, iterable, or NodeStat, optional
         Color of node borders.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_ec_cmap.
-    node_lw : int, float, dict, iterable, or EdgeStat (default=1)
+        use the colormap specified with node_ec_cmap. By default, "black".
+    node_lw : int, float, dict, iterable, or EdgeStat, optional
         Line width of the node borders in pixels.  If int or float, use the same width for all node borders.
         If a dict, must contain (node_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_lw and max_node_lw.
-    node_size : int, float, dict, iterable, or NodeStat (default=15)
+        linear interpolation defined between min_node_lw and max_node_lw. By default, 1.
+    node_size : int, float, dict, iterable, or NodeStat, optional
         Radius of the nodes in pixels.  If int or float, use the same radius for all nodes.
         If a dict, must contain (node_id: radius) pairs.  If iterable, assume the radiuses are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_size and max_node_size.
+        linear interpolation defined between min_node_size and max_node_size. By default, 15.
     zorder : int
         The layer on which to draw the nodes.
-    node_labels : bool, or dict
+    node_labels : bool or dict
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
@@ -356,30 +358,31 @@ def draw_hyperedges(
     Parameters
     ----------
     H : Hypergraph
-    ax : matplotlib.pyplot.axes
-        Axis to draw on
-    pos : dict (default=None)
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
+    pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
         If None (default), use the `barycenter_spring_layout` to compute the positions.
-    dyad_color : str, dict, iterable, or EdgeStat (default='black')
+    dyad_color : str, dict, iterable, or EdgeStat, optional
         Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
         contain (edge_id: color_str) pairs.  If iterable, assume the colors are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
-        (specified with dyad_color_cmap) associated to it.
-    dyad_lw : int, float, dict, iterable, or EdgeStat (default=1.5)
+        (specified with dyad_color_cmap) associated to it. By default, "black".
+    dyad_lw : int, float, dict, iterable, or EdgeStat, optional
         Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all edges.
         If a dict, must contain (edge_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a monotonic
-        linear interpolation defined between min_dyad_lw and max_dyad_lw.
-    edge_fc : str, dict, iterable, or EdgeStat (default=None)
+        linear interpolation defined between min_dyad_lw and max_dyad_lw. By default, 1.5.
+    edge_fc : str, dict, iterable, or EdgeStat, optional
         Color of the hyperedges.  If str, use the same color for all nodes.  If a dict, must
         contain (edge_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the hyperedges are found in H.edges. If EdgeStat,
-        use the colormap specified with edge_fc_cmap.
-    max_order : int (default=None)
-        Maximum of hyperedges to plot.
-    hyperedge_labels : bool, or dict (default=False)
+        use the colormap specified with edge_fc_cmap. If None (default), color by edge size.
+    max_order : int, optional
+        Maximum of hyperedges to plot. By default, None.
+    hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
+        By default, None.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * min_dyad_lw
@@ -503,33 +506,33 @@ def draw_simplices(
     ----------
     SC : SimplicialComplex
         Simplicial complex to draw
-    ax : matplotlib.pyplot.axes
-        Axis to draw on
-    pos : dict (default=None)
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
+    pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the 0-simplices.
         If None (default), use the `barycenter_spring_layout` to compute the positions.
-    dyad_color : str, dict, iterable, or EdgeStat
+    dyad_color : str, dict, iterable, or EdgeStat, optional
         Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
         contain (edge_id: color_str) pairs.  If iterable, assume the colors are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
-        (specified with dyad_color_cmap) associated to it.
-    dyad_lw : int, float, dict, iterable, or EdgeStat
+        (specified with dyad_color_cmap) associated to it. By default, "black".
+    dyad_lw : int, float, dict, iterable, or EdgeStat, optional
         Line width of edges of order 1 (dyadic links).  If int or float, use the same width for all edges.
         If a dict, must contain (edge_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a monotonic
-        linear interpolation defined between min_dyad_lw and max_dyad_lw.
-    edge_fc : str, dict, iterable, or EdgeStat (default=None)
+        linear interpolation defined between min_dyad_lw and max_dyad_lw. By default, 1.5.
+    edge_fc : str, dict, iterable, or EdgeStat, optional
         Color of the hyperedges.  If str, use the same color for all nodes.  If a dict, must
         contain (edge_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the hyperedges are found in H.edges. If EdgeStat,
-        use the colormap specified with edge_fc_cmap.
-    max_order : int
-        Maximum of hyperedges to plot.
-    hyperedge_labels : bool, or dict
+        use the colormap specified with edge_fc_cmap. If None (default), color by simplex size.
+    max_order : int, optional
+        Maximum of hyperedges to plot. By default, None.
+    hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
         Note, we plot only the maximal simplices so if you pass a dict be careful to match its keys
         with the new edge ids in the converted SimplicialComplex. These may differ from the
-        edge ids in the given SC.
+        edge ids in the given SC. By default, False.
     settings : dict
         Default parameters. Keys that may be useful to override default settings:
         * min_dyad_lw
@@ -777,28 +780,34 @@ def draw_node_labels(
     H : Hypergraph or SimplicialComplex.
     pos : dict
         Dictionary of positions node_id:(x,y).
-    node_labels : bool, or dict (default=False)
+    node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
-    font_size_nodes : int (default=10)
-        Font size for text labels.
-    font_color_nodes : str (default='black')
-        Font color string.
-    font_family_nodes : str (default='sans-serif')
-        Font family.
+        By default, False.
+    font_size_nodes : int, optional
+        Font size for text labels, by default 10.
+    font_color_nodes : str, optional
+        Font color string, by default "black".
+    font_family_nodes : str, optional
+        Font family, by default "sans-serif".
     font_weight_nodes : str (default='normal')
         Font weight.
-    alpha_nodes : float (default=None)
-        The text transparency.
-    bbox_nodes : Matplotlib bbox (default is Matplotlib's ax.text default)
+    alpha_nodes : float, optional
+        The text transparency, by default None.
+    bbox_nodes : Matplotlib bbox, optional
         Specify text box properties (e.g. shape, color etc.) for node labels.
-    horizontalalignment_nodes : str (default='center')
+        When it is None (default), use Matplotlib's ax.text default
+    horizontalalignment_nodes : str, optional
         Horizontal alignment {'center', 'right', 'left'}.
-    verticalalignment_nodes : str (default='center')
+        By default, "center".
+    verticalalignment_nodes : str, optional
         Vertical alignment {'center', 'top', 'bottom', 'baseline', 'center_baseline'}.
-    ax_nodes : matplotlib.pyplot.axes (default=None)
+        By default, "center".
+    ax_nodes : matplotlib.pyplot.axes, optional
         Draw the graph in the specified Matplotlib axes.
-    clip_on_nodes : bool (default=True)
+        By default, None.
+    clip_on_nodes : bool, optional
         Turn on clipping of node labels at axis boundaries.
+        By default, True.
 
     Returns
     -------
@@ -875,30 +884,34 @@ def draw_hyperedge_labels(
     H : Hypergraph.
     pos : dict
         Dictionary of positions node_id:(x,y).
-    hyperedge_labels : bool, or dict (default=False)
+    hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
-    font_size_edges : int (default=10)
-        Font size for text labels.
-    font_color_edges : str (default='black')
-        Font color string.
+        By default, False.
+    font_size_edges : int, optional
+        Font size for text labels, by default 10.
+    font_color_edges : str, optional
+        Font color string, by default "black".
     font_family_edges : str (default='sans-serif')
         Font family.
     font_weight_edges : str (default='normal')
         Font weight.
-    alpha_edges : float (default=None)
-        The text transparency.
-    bbox_edges : Matplotlib bbox (default={boxstyle='round', ec=(1.0, 1.0, 1.0), fc=(1.0, 1.0, 1.0)})
+    alpha_edges : float, optional
+        The text transparency, by default None.
+    bbox_edges : Matplotlib bbox, optional
         Specify text box properties (e.g. shape, color etc.) for edge labels.
-    horizontalalignment_edges : str (default='center')
+        By default, {boxstyle='round', ec=(1.0, 1.0, 1.0), fc=(1.0, 1.0, 1.0)}
+    horizontalalignment_edges : str, optional
         Horizontal alignment {'center', 'right', 'left'}.
-    verticalalignment_edges: str (default='center')
+        By default, "center".
+    verticalalignment_edges: str, optional
         Vertical alignment {'center', 'top', 'bottom', 'baseline', 'center_baseline'}.
-    ax_edges : matplotlib.pyplot.axes (default=None)
-        Draw the graph in the specified Matplotlib axes.
-    rotate_edges : bool (default=False)
-        Rotate edge labels for dyadic links to lie parallel to edges.
-    clip_on_edges: bool (default=True)
-        Turn on clipping of hyperedge labels at axis boundaries.
+        By default, "center".
+    ax_edges : matplotlib.pyplot.axes, optional
+        Draw the graph in the specified Matplotlib axes. By default, None.
+    rotate_edges : bool, optional
+        Rotate edge labels for dyadic links to lie parallel to edges, by default False.
+    clip_on_edges: bool, optional
+        Turn on clipping of hyperedge labels at axis boundaries, by default True.
 
     Returns
     -------
@@ -1061,56 +1074,58 @@ def draw_hypergraph_hull(
     Parameters
     ----------
     H : Hypergraph
-    pos : dict (default=None)
+    pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the nodes.
         If None (default), use the `barycenter_spring_layout` to compute the positions.
-    ax : matplotlib.pyplot.axes (default=None)
-    dyad_color : str, dict, iterable, or EdgeStat (default='black')
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
+    dyad_color : str, dict, iterable, or EdgeStat, optional
         Color of the dyadic links.  If str, use the same color for all edges. If a dict, must
         contain (edge_id: color_str) pairs.  If iterable, assume the colors are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
-        (specified with dyad_color_cmap) associated to it.
-    edge_fc : str, dict, iterable, or EdgeStat (default=None)
-        str, dict, iterable, or EdgeStat (default=None)
+        (specified with dyad_color_cmap) associated to it. By default, "black".
+    edge_fc : str, dict, iterable, or EdgeStat, optional
         Color of the hyperedges of order k>1.  If str, use the same color for all hyperedges of order k>1.  If a dict, must
         contain (edge_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the hyperedges are found in H.edges. If EdgeStat,
         use the colormap specified with edge_fc_cmap. If None (default),
         use the H.edges.size.
-    edge_ec : str, dict, iterable, or EdgeStat (default=None)
+    edge_ec : str, dict, iterable, or EdgeStat, optional
         Color of the borders of the hyperdges of order k>1.  If str, use the same color for all edges. If a dict, must
         contain (edge_id: color_str) pairs.  If iterable, assume the colors are
         specified in the same order as the edges are found in H.edges. If EdgeStat, use a colormap
         (specified with edge_ec_cmap) associated to it. If None (default),
         use the H.edges.size.
-    node_fc : node_fc : str, dict, iterable, or NodeStat (default='tab:blue')
+    node_fc : node_fc : str, dict, iterable, or NodeStat, optional
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_fc_cmap.
-    node_ec : str, dict, iterable, or NodeStat (default='black')
+        use the colormap specified with node_fc_cmap. By default, "tab:blue".
+    node_ec : str, dict, iterable, or NodeStat, optional
         Color of node borders.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
         specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_ec_cmap.
-    node_lw : int, float, dict, iterable, or EdgeStat (default=1)
+        use the colormap specified with node_ec_cmap. By default, "black".
+    node_lw : int, float, dict, iterable, or EdgeStat, optional
         Line width of the node borders in pixels.  If int or float, use the same width for all node borders.
         If a dict, must contain (node_id: width) pairs.  If iterable, assume the widths are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_lw and max_node_lw.
-    node_size : int, float, dict, iterable, or NodeStat (default=7)
+        linear interpolation defined between min_node_lw and max_node_lw. By default, 1.
+    node_size : int, float, dict, iterable, or NodeStat, optional
         Radius of the nodes in pixels.  If int or float, use the same radius for all nodes.
         If a dict, must contain (node_id: radius) pairs.  If iterable, assume the radiuses are
         specified in the same order as the nodes are found in H.nodes. If NodeStat, use a monotonic
-        linear interpolation defined between min_node_size and max_node_size.
-    max_order : int (default=None)
+        linear interpolation defined between min_node_size and max_node_size. By default, 7.
+    max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
-    node_labels : bool, or dict (default=False)
+    node_labels : bool, or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
-    hyperedge_labels : bool, or dict (default=False)
+        By default, False
+    hyperedge_labels : bool, or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label) pairs.
-    radius : float (deafault=0.05)
-        Radius of the convex hull in the vicinity of the nodes.
+        By default, False.
+    radius : float, optional
+        Radius of the convex hull in the vicinity of the nodes, by default 0.05.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
         * min_node_size
@@ -1127,6 +1142,10 @@ def draw_hypergraph_hull(
     Returns
     -------
     ax : matplotlib.pyplot.axes
+
+    See Also
+    --------
+    draw
 
     """
 
