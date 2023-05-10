@@ -30,7 +30,7 @@ def test_flag_complex():
     assert S1.edges.members() == simplices_3
     assert S2.edges.members() == simplices_2
     assert S3.edges.members() == simplices_2
-    
+
     # complete graph
     G1 = nx.complete_graph(4)
     S4 = xgi.flag_complex(G1)
@@ -68,34 +68,35 @@ def test_random_simplicial_complex():
 def test_random_flag_complex():
 
     S = xgi.random_flag_complex(10, 0.4, seed=2)
-    simplices = {frozenset({0, 4}),
-                 frozenset({0, 7}),
-                 frozenset({1, 8}),
-                 frozenset({2, 5}),
-                 frozenset({2, 9}),
-                 frozenset({3, 5}),
-                 frozenset({3, 6}),
-                 frozenset({3, 7}),
-                 frozenset({3, 8}),
-                 frozenset({4, 5}),
-                 frozenset({4, 7}),
-                 frozenset({4, 8}),
-                 frozenset({6, 7}),
-                 frozenset({6, 8}),
-                 frozenset({7, 8}),
-                 frozenset({0, 4, 7}),
-                 frozenset({3, 6, 7}),
-                 frozenset({3, 6, 8}),
-                 frozenset({3, 7, 8}),
-                 frozenset({4, 7, 8}),
-                 frozenset({6, 7, 8})}
+    simplices = {
+        frozenset({0, 4}),
+        frozenset({0, 7}),
+        frozenset({1, 8}),
+        frozenset({2, 5}),
+        frozenset({2, 9}),
+        frozenset({3, 5}),
+        frozenset({3, 6}),
+        frozenset({3, 7}),
+        frozenset({3, 8}),
+        frozenset({4, 5}),
+        frozenset({4, 7}),
+        frozenset({4, 8}),
+        frozenset({6, 7}),
+        frozenset({6, 8}),
+        frozenset({7, 8}),
+        frozenset({0, 4, 7}),
+        frozenset({3, 6, 7}),
+        frozenset({3, 6, 8}),
+        frozenset({3, 7, 8}),
+        frozenset({4, 7, 8}),
+        frozenset({6, 7, 8}),
+    }
 
     assert set(S.edges.members()) == simplices
 
     # max_order
     S = xgi.random_flag_complex(10, 0.4, seed=2, max_order=3)
     assert set(S.edges.members()) == simplices.union({frozenset({3, 6, 7, 8})})
-
 
     # seed
     S1 = xgi.random_flag_complex(10, 0.1, seed=1)
@@ -115,27 +116,29 @@ def test_random_flag_complex():
 def test_random_flag_complex_d2():
 
     S = xgi.random_flag_complex_d2(10, 0.4, seed=2)
-    simplices = {frozenset({0, 4}),
-                 frozenset({0, 7}),
-                 frozenset({1, 8}),
-                 frozenset({2, 5}),
-                 frozenset({2, 9}),
-                 frozenset({3, 5}),
-                 frozenset({3, 6}),
-                 frozenset({3, 7}),
-                 frozenset({3, 8}),
-                 frozenset({4, 5}),
-                 frozenset({4, 7}),
-                 frozenset({4, 8}),
-                 frozenset({6, 7}),
-                 frozenset({6, 8}),
-                 frozenset({7, 8}),
-                 frozenset({0, 4, 7}),
-                 frozenset({3, 6, 7}),
-                 frozenset({3, 6, 8}),
-                 frozenset({3, 7, 8}),
-                 frozenset({4, 7, 8}),
-                 frozenset({6, 7, 8})}
+    simplices = {
+        frozenset({0, 4}),
+        frozenset({0, 7}),
+        frozenset({1, 8}),
+        frozenset({2, 5}),
+        frozenset({2, 9}),
+        frozenset({3, 5}),
+        frozenset({3, 6}),
+        frozenset({3, 7}),
+        frozenset({3, 8}),
+        frozenset({4, 5}),
+        frozenset({4, 7}),
+        frozenset({4, 8}),
+        frozenset({6, 7}),
+        frozenset({6, 8}),
+        frozenset({7, 8}),
+        frozenset({0, 4, 7}),
+        frozenset({3, 6, 7}),
+        frozenset({3, 6, 8}),
+        frozenset({3, 7, 8}),
+        frozenset({4, 7, 8}),
+        frozenset({6, 7, 8}),
+    }
 
     assert set(S.edges.members()) == simplices
 

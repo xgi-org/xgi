@@ -274,7 +274,7 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     nodes = G.nodes()
 
     cliques = _cliques_to_fill(G, max_order)
-        
+
     S = SimplicialComplex()
     S.add_nodes_from(nodes)
     S.add_simplices_from(cliques, max_order=max_order)
@@ -283,7 +283,7 @@ def random_flag_complex(N, p, max_order=2, seed=None):
 
 
 def _cliques_to_fill(G, max_order):
-    """Return cliques to fill for flag complexes, 
+    """Return cliques to fill for flag complexes,
     to be passed to `add_simplices_from`.
 
     This function was written to speedup flag_complex functions
@@ -304,15 +304,15 @@ def _cliques_to_fill(G, max_order):
 
     """
     if max_order is None:
-        cliques = list(nx.find_cliques(G)) # max cliques
-    else: # avoid adding many unnecessary redundant cliques
+        cliques = list(nx.find_cliques(G))  # max cliques
+    else:  # avoid adding many unnecessary redundant cliques
         cliques = []
-        for clique in nx.enumerate_all_cliques(G): # sorted by size
+        for clique in nx.enumerate_all_cliques(G):  # sorted by size
             if len(clique) == 1:
-                continue # don't add singletons
-            if len(clique) <=max_order+1: 
+                continue  # don't add singletons
+            if len(clique) <= max_order + 1:
                 cliques.append(clique)
             else:
-                break # dont go over whole list if not necessary
+                break  # dont go over whole list if not necessary
 
     return cliques
