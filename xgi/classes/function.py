@@ -43,9 +43,18 @@ def num_edges_order(H, d=None):
     H : Hypergraph
         The hypergraph of interest.
 
-    d : int | None, optional
+    d : int, optional
         The order of edges to count. If None (default), counts
         for all orders.
+
+    Returns
+    -------
+    int
+        The number of edges of order d
+
+    See Also
+    --------
+    max_edge_order
     """
 
     if d is not None:
@@ -67,6 +76,9 @@ def max_edge_order(H):
     int
         Maximum order of edges in hypergraph.
 
+    See Also
+    --------
+    num_edges_order
     """
     if H._edge:
         d_max = max(len(edge) for edge in H._edge.values()) - 1
@@ -76,7 +88,7 @@ def max_edge_order(H):
 
 
 def is_possible_order(H, d):
-    """Whether the specified order is between 1 and the maximum order.
+    """Whether the specified order is between 0 (singletons) and the maximum order.
 
     Parameters
     ----------
@@ -92,7 +104,7 @@ def is_possible_order(H, d):
 
     """
     d_max = max_edge_order(H)
-    return (d >= 1) and (d <= d_max)
+    return (d >= 0) and (d <= d_max)
 
 
 def is_uniform(H):
@@ -121,7 +133,7 @@ def is_uniform(H):
     H is uniform!
 
     """
-    edge_sizes = {len(members) for _, members in H._edge.items()}
+    edge_sizes = unique_edge_sizes(H)
     if 1 in edge_sizes:
         edge_sizes.remove(1)  # discard singleton edges
 
@@ -145,9 +157,9 @@ def edge_neighborhood(H, n, include_self=False):
         THe hypergraph of interest
     n : node
         Node whose edge_neighborhood is needed.
-    include_self : bool (default False)
+    include_self : bool, optional
         Whether the edge_neighborhood contains `n`.
-
+        By default, False.
     Returns
     -------
     list
@@ -265,7 +277,7 @@ def unique_edge_sizes(H):
     list()
         The unique edge sizes in ascending order by size.
     """
-    return sorted({len(H.edges.members(edge)) for edge in H.edges})
+    return sorted(set(H.edges.size.asnumpy()))
 
 
 def frozen(*args, **kwargs):
@@ -381,7 +393,7 @@ def create_empty_copy(H, with_data=True):
     H : Hypergraph object
         The hypergraph to copy
     with_data : bool, optional
-        Whether to keep the node and hypergraph data, by default True
+        Whether to keep the node and hypergraph data, by default True.
 
     Returns
     -------
@@ -432,13 +444,14 @@ def set_node_attributes(H, values, name=None):
         by node to either an attribute value or a dict of attribute key/value
         pairs used to update the node's attributes.
     name : string, optional
-        Name of the node attribute to set if values is a scalar, by default None
+        Name of the node attribute to set if values is a scalar, by default None.
 
     See Also
     --------
     get_node_attributes
     set_edge_attributes
-    get_edge_attributes
+    ~xgi.classes.hypergraph.Hypergraph.add_node
+    ~xgi.classes.hypergraph.Hypergraph.add_nodes_from
 
     Notes
     -----
@@ -497,7 +510,6 @@ def get_node_attributes(H, name=None):
     See Also
     --------
     set_node_attributes
-    set_edge_attributes
     get_edge_attributes
 
     """
@@ -524,14 +536,15 @@ def set_edge_attributes(H, values, name=None):
         If `values` is a dict or a dict of dict, it should be keyed
         by edge ID to either an attribute value or a dict of attribute
         key/value pairs used to update the edge's attributes.
-    name : string (optional, default=None)
-        Name of the edge attribute to set if values is a scalar.
+    name : string, optional
+        Name of the edge attribute to set if values is a scalar. By default, None.
 
     See Also
     --------
     set_node_attributes
-    get_node_attributes
     get_edge_attributes
+    ~xgi.classes.hypergraph.Hypergraph.add_edge
+    ~xgi.classes.hypergraph.Hypergraph.add_edges_from
 
     Notes
     -----
@@ -572,7 +585,7 @@ def get_edge_attributes(H, name=None):
     H : Hypergraph object
         The hypergraph to get edge attributes from
     name : string, optional
-       Attribute name. If None, then return the entire attribute dictionary.
+       Attribute name. If None (default), then return the entire attribute dictionary.
 
     Returns
     -------
@@ -695,15 +708,17 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
 
     Parameters
     ---------
-    order : int or None (default)
+    order : int, optional
         If not None, only count edges of the specified order.
+        By default, None.
 
-    max_order : int or None (default)
+    max_order : int, optional
         If not None, only count edges of order up to this value, inclusive.
+        By default, None.
 
-    ignore_singletons : bool (default False)
+    ignore_singletons : bool, optional
         Whether to consider singleton edges.  Ignored if `order` is not None and
-        different from :math:`0`.
+        different from :math:`0`. By default, False.
 
     See Also
     --------
@@ -763,15 +778,17 @@ def incidence_density(H, order=None, max_order=None, ignore_singletons=False):
 
     Parameters
     ---------
-    order : int or None (default)
+    order : int, optional
         If not None, only count edges of the specified order.
+        By default, None.
 
-    max_order : int or None (default)
+    max_order : int, optional
         If not None, only count edges of order up to this value, inclusive.
+        By default, None.
 
-    ignore_singletons : bool (default False)
+    ignore_singletons : bool, optional
         Whether to consider singleton edges.  Ignored if `order` is not None and
-        different from :math:`0`.
+        different from :math:`0`. By default, False.
 
     See Also
     --------
@@ -825,12 +842,13 @@ def subfaces(edges, order=None):
 
     Parameters
     ---------
-    edges: list of edges, default: None
+    edges: list of edges
         Edges to consider, as tuples of nodes
-    order: {None, -1, int}, default: None
+    order: {None, -1, int}, optional
         If None, compute subfaces recursively down to nodes.
         If -1, compute subfaces the order below (e.g. edges for a triangle).
         If d > 0, compute the subfaces of order d.
+        By default, None.
 
     Returns
     -------

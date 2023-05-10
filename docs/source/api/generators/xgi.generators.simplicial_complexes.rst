@@ -1,9 +1,9 @@
-xgi.generators.simplicial_complex
-=================================
+xgi.generators.simplicial_complexes
+===================================
 
-.. currentmodule:: xgi.generators.simplicial_complex
+.. currentmodule:: xgi.generators.simplicial_complexes
 
-.. automodule:: xgi.generators.simplicial_complex
+.. automodule:: xgi.generators.simplicial_complexes
    
     .. rubric:: Functions
 

@@ -4,8 +4,12 @@ XGI
 .. image:: https://github.com/xgi-org/xgi/raw/main/logo/logo.svg
   :width: 200
 
-CompleX Group Interactions (XGI) is a Python package for the representation, manipulation,
-and study of the structure, dynamics, and functions of complex systems with group (higher-order) interactions.
+XGI is a Python package for higher-order networks.
+
+Comple**X** **G**roup **Interactions** (XGI) provides an ecosystem for the
+representation, manipulation, and study of the
+structure, dynamics, and functions of
+complex systems with group (higher-order) interactions.
 
 Installation
 ------------
@@ -29,12 +33,29 @@ Getting Started
 To get started, take a look at the `tutorials <https://github.com/xgi-org/xgi/tree/main/tutorials>`_
 illustrating the library's basic functionality.
 
+Corresponding Data
+------------------
+A number of higher-order datasets are available in the `XGI-DATA repository <https://gitlab.com/complexgroupinteractions/xgi-data>`_ and can be easily accessed with the ``load_xgi_data()`` function.
+
 Contributing
 ------------
-Contributions are always welcome. Please report any bugs that you find `here <https://github.com/xgi-org/xgi/issues>`_.
-Or, even better, fork the repository on `GitHub <https://github.com/xgi-org/xgi>`_ and create a pull request (PR).
-We welcome all changes, big or small, and we will help you make the PR if you are new to `git`
-(just ask on the issue and/or see our `contributing guidelines <https://github.com/xgi-org/xgi/tree/main/CONTRIBUTING.md>`_.
+If you want to contribute to this project, please make sure to read the
+`contributing guidelines <CONTRIBUTING.md>`_.
+We expect respectful and kind interactions by all contributors and users
+as laid out in our `code of conduct <CODE_OF_CONDUCT.md>`_.
+
+The XGI community always welcomes contributions, no matter how small.
+We're happy to help troubleshoot XGI issues you run into,
+assist you if you would like to add functionality or fixes to the codebase,
+or answer any questions you may have.
+
+Some concrete ways that you can get involved:
+
+* **Get XGI updates** by following the XGI `Twitter <https://twitter.com/xginets>`_ account, signing up for our `mailing list <http://eepurl.com/igE6ez>`_, or starring this repository.
+* **Spread the word** when you use XGI by sharing with your colleagues and friends.
+* **Request a new feature or report a bug** by raising a `new issue <https://github.com/xgi-org/xgi/issues/new>`_.
+* **Create a Pull Request (PR)** to address an `open issue <../../issues>`_ or add a feature.
+* **Join our Zulip channel** to be a part of the `daily goings-on of XGI <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_.
 
 How to Cite
 -----------
@@ -45,10 +66,6 @@ Currently, the best way to cite XGI is to go to our
 `repository page <https://github.com/xgi-org/xgi>`_ and
 click the "cite this repository" button on the right sidebar. This will generate
 a citation in your preferred format, and will also integrate well with citation managers.
-
-Code of Conduct
----------------
-Our full code of conduct, and how we enforce it, can be read in `our repository <https://github.com/xgi-org/xgi/tree/main/CODE_OF_CONDUCT.md>`_.
 
 License
 -------

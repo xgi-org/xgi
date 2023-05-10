@@ -12,5 +12,3 @@
       :nosignatures:
       
         Hypergraph
-      
-        IDDict

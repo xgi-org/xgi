@@ -11,6 +11,8 @@
       :toctree: .
       :nosignatures:
 
+        IDDict
+
 
    .. rubric:: Functions
 

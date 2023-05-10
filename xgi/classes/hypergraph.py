@@ -6,39 +6,10 @@ from itertools import count
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError
-from ..utils.utilities import update_uid_counter
+from ..utils.utilities import IDDict, update_uid_counter
 from .reportviews import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
-
-
-class IDDict(dict):
-    """A dict that holds (node or edge) IDs.
-
-    For internal use only.  Adds input validation functionality to the internal dicts
-    that hold nodes and edges in a network.
-
-    """
-
-    def __getitem__(self, item):
-        try:
-            return dict.__getitem__(self, item)
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
-
-    def __setitem__(self, item, value):
-        if item is None:
-            raise XGIError("None cannot be a node or edge")
-        try:
-            return dict.__setitem__(self, item, value)
-        except TypeError as e:
-            raise TypeError(f"ID {item} not a valid type") from e
-
-    def __delitem__(self, item):
-        try:
-            return dict.__delitem__(self, item)
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
 
 
 class Hypergraph:
@@ -57,7 +28,7 @@ class Hypergraph:
 
     Parameters
     ----------
-    incoming_data : input hypergraph data (optional, default: None)
+    incoming_data : input hypergraph data, optional
         Data to initialize the hypergraph. If None (default), an empty
         hypergraph is created, i.e. one with no nodes or edges.
         The data can be in the following formats:
@@ -68,8 +39,9 @@ class Hypergraph:
         * Scipy/Numpy incidence matrix
         * Hypergraph object.
 
-    **attr : dict, optional, default: None
+    **attr : dict, optional
         Attributes to add to the hypergraph as key, value pairs.
+        By default, None.
 
     Notes
     -----
@@ -377,8 +349,8 @@ class Hypergraph:
         See Also
         --------
         add_nodes_from
-        set_node_attributes
-        get_node_attributes
+        ~xgi.classes.function.set_node_attributes
+        ~xgi.classes.function.get_node_attributes
 
         Notes
         -----
@@ -408,8 +380,8 @@ class Hypergraph:
         See Also
         --------
         add_node
-        set_node_attributes
-        get_node_attributes
+        ~xgi.classes.function.set_node_attributes
+        ~xgi.classes.function.get_node_attributes
         """
         for n in nodes_for_adding:
             try:
@@ -438,8 +410,8 @@ class Hypergraph:
         n : node
             A node in the hypergraph
 
-        strong : bool (default False)
-            Whether to execute weak or strong removal.
+        strong : bool, optional
+            Whether to execute weak or strong removal. By default, False.
 
         Raises
         ------
@@ -492,8 +464,8 @@ class Hypergraph:
         ----------
         members : Iterable
             An iterable of the ids of the nodes contained in the new edge.
-        id : hashable, default None
-            Id of the new edge. If None, a unique numeric ID will be created.
+        id : hashable, optional
+            Id of the new edge. If None (default), a unique numeric ID will be created.
         **attr : dict, optional
             Attributes of the new edge.
 
@@ -505,8 +477,8 @@ class Hypergraph:
         See Also
         --------
         add_edges_from : Add a collection of edges.
-        set_edge_attributes
-        get_edge_attributes
+        ~xgi.classes.function.set_edge_attributes
+        ~xgi.classes.function.get_edge_attributes
 
         Examples
         --------
@@ -588,8 +560,8 @@ class Hypergraph:
         --------
         add_edge : Add a single edge.
         add_weighted_edges_from : Convenient way to add weighted edges.
-        set_edge_attributes
-        get_edge_attributes
+        ~xgi.classes.function.set_edge_attributes
+        ~xgi.classes.function.get_edge_attributes
 
         Notes
         -----
@@ -752,9 +724,10 @@ class Hypergraph:
             Each edge given in the list or container will be added
             to the graph. The edges must be given as tuples of
             the form (node1, node2, ..., noden, weight).
-        weight : string, optional (default= 'weight')
-            The attribute name for the edge weights to be added.
-        attr : keyword arguments, optional (default= no attributes)
+        weight : string, optional
+            The attribute name for the edge weights to be added,
+            by default "weight".
+        attr : keyword arguments, optional
             Edge attributes to add/update for all edges.
 
         See Also
@@ -801,11 +774,11 @@ class Hypergraph:
 
         Raises
         ------
-        XGIError
-            If loopy hyperedges are created
         IDNotFound
             If user specifies nodes or edges that do not exist or
             nodes that are not part of edges.
+        XGIError
+            If the swap does not preserve edge sizes.
 
         Examples
         --------
@@ -818,33 +791,48 @@ class Hypergraph:
         """
         # Assign edges to modify
         try:
-            temp_memberships1 = list(self._node[n_id1])
-            temp_memberships1[temp_memberships1.index(e_id1)] = e_id2
+            # Initialize temporary copies to modify
+            temp_memberships1 = self._node[n_id1].copy()
+            temp_memberships2 = self._node[n_id2].copy()
+            temp_members1 = self._edge[e_id1].copy()
+            temp_members2 = self._edge[e_id2].copy()
 
-            temp_memberships2 = list(self._node[n_id2])
-            temp_memberships2[temp_memberships2.index(e_id2)] = e_id1
+            # remove old nodes from edges
+            temp_members1.remove(n_id1)
+            temp_members2.remove(n_id2)
 
-            temp_members1 = list(self._edge[e_id1])
-            temp_members1[temp_members1.index(n_id1)] = n_id2
+            # swap nodes
+            temp_members1.add(n_id2)
+            temp_members2.add(n_id1)
 
-            temp_members2 = list(self._edge[e_id2])
-            temp_members2[temp_members2.index(n_id2)] = n_id1
+            # Now we handle the memberships
+            # remove old nodes from edges
+            temp_memberships1.remove(e_id1)
+            temp_memberships2.remove(e_id2)
 
-        except ValueError as e:
-            raise XGIError(
+            # swap nodes
+            temp_memberships1.add(e_id2)
+            temp_memberships2.add(e_id1)
+
+        except KeyError as e:
+
+            raise IDNotFound(
                 "One of the nodes specified doesn't belong to the specified edge."
             ) from e
 
-        if len(set(temp_members1)) < len(set(self._edge[e_id1])) or len(
-            set(temp_members2)
-        ) < len(set(self._edge[e_id2])):
-            raise XGIError("This will create a loopy hyperedge.")
+        if (
+            len(temp_memberships1) != len(self._node[n_id1])
+            or len(temp_memberships2) != len(self._node[n_id2])
+            or len(temp_members1) != len(self._edge[e_id1])
+            or len(temp_members2) != len(self._edge[e_id2])
+        ):
+            raise XGIError("This swap does not preserve edge sizes.")
 
-        self._node[n_id1] = set(temp_memberships1)
-        self._node[n_id2] = set(temp_memberships2)
+        self._node[n_id1] = temp_memberships1
+        self._node[n_id2] = temp_memberships2
 
-        self._edge[e_id1] = set(temp_members1)
-        self._edge[e_id2] = set(temp_members2)
+        self._edge[e_id1] = temp_members1
+        self._edge[e_id2] = temp_members2
 
     def add_node_to_edge(self, edge, node):
         """Add one node to an existing edge.
@@ -862,6 +850,7 @@ class Hypergraph:
         --------
         add_node
         add_edge
+        remove_node_from_edge
 
         Examples
         --------
@@ -946,6 +935,12 @@ class Hypergraph:
         XGIError
             If either the node or edge does not exist.
 
+        See Also
+        --------
+        remove_node
+        remove_edge
+        add_node_to_edge
+
         Notes
         -----
         If edge is left empty as a result of removing node from it, the edge is also
@@ -976,9 +971,9 @@ class Hypergraph:
         Parameters
         ----------
         edges : Iterable, optional
-            Edges to be added.
+            Edges to be added. By default, None.
         nodes : Iterable, optional
-            Nodes to be added.
+            Nodes to be added. By default, None.
 
         See Also
         --------
@@ -998,8 +993,9 @@ class Hypergraph:
 
         Parameters
         ----------
-        hypergraph_attr : bool, default True
-            Whether to remove hypergraph attributes as well
+        hypergraph_attr : bool, optional
+            Whether to remove hypergraph attributes as well.
+            By default, True.
 
         """
         self._node.clear()
@@ -1024,18 +1020,18 @@ class Hypergraph:
         Parameters
         ----------
         rename : str, optional
-            Either "first", "tuple", or "new", by default "first"
+            Either "first" (default), "tuple", or "new".
             If "first", the new edge ID is the first of the sorted
             duplicate edge IDs. If "tuple", the new edge ID is a
             tuple of the sorted duplicate edge IDs. If "new", a
             new ID will be selected automatically.
         merge_rule : str, optional
-            Either "first" or "union", by default "first"
+            Either "first" (default) or "union".
             If "first", takes the attributes of the first duplicate.
             If "union", takes the set of attributes of all the duplicates.
         multiplicity : str, optional
             The attribute in which to store the multiplicity of the hyperedge,
-            by default None
+            by default None.
 
         Raises
         ------

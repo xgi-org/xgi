@@ -3,7 +3,10 @@
 from collections import defaultdict
 from itertools import chain, combinations, count
 
+from xgi.exception import IDNotFound, XGIError
+
 __all__ = [
+    "IDDict",
     "dual_dict",
     "powerset",
     "update_uid_counter",
@@ -11,34 +14,63 @@ __all__ = [
 ]
 
 
+class IDDict(dict):
+    """A dict that holds (node or edge) IDs.
+
+    For internal use only.  Adds input validation functionality to the internal dicts
+    that hold nodes and edges in a network.
+
+    """
+
+    def __getitem__(self, item):
+        try:
+            return dict.__getitem__(self, item)
+        except KeyError as e:
+            raise IDNotFound(f"ID {item} not found") from e
+
+    def __setitem__(self, item, value):
+        if item is None:
+            raise XGIError("None cannot be a node or edge")
+        try:
+            return dict.__setitem__(self, item, value)
+        except TypeError as e:
+            raise TypeError(f"ID {item} not a valid type") from e
+
+    def __delitem__(self, item):
+        try:
+            return dict.__delitem__(self, item)
+        except KeyError as e:
+            raise IDNotFound(f"ID {item} not found") from e
+
+
 def dual_dict(edge_dict):
     """Given a dictionary with IDs as keys
-    and lists as values, return the dual.
+    and sets as values, return the dual.
 
     Parameters
     ----------
     edge_dict : dict
         A dictionary where the keys are
-        IDs and the values are lists of hashables
+        IDs and the values are sets of hashables
 
     Returns
     -------
     dict
         A dictionary with IDs as keys
-        and lists as values, but the reverse of
+        and sets as values, but the reverse of
         the original dict.
 
     Examples
     --------
     >>> import xgi
     >>> xgi.dual_dict({0 : [1, 2, 3], 1 : [0, 2]})
-    {1: [0], 2: [0, 1], 3: [0], 0: [1]}
+    {1: {0}, 2: {0, 1}, 3: {0}, 0: {1}}
 
     """
-    node_dict = defaultdict(list)
+    node_dict = defaultdict(set)
     for edge_id, members in edge_dict.items():
         for node in members:
-            node_dict[node].append(edge_id)
+            node_dict[node].add(edge_id)
 
     return dict(node_dict)
 

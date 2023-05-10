@@ -23,6 +23,10 @@ def dynamical_assortativity(H):
     float
         The dynamical assortativity
 
+    See Also
+    --------
+    degree_assortativity
+
     Raises
     ------
     XGIError
@@ -70,14 +74,15 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     ----------
     H : Hypergraph
         The hypergraph of interest
-    kind : str, default: "uniform"
+    kind : str, optional
         the type of degree assortativity. valid choices are
-        "uniform", "top-2", and "top-bottom".
-    exact : bool, default: False
-        whether to compute over all edges or
-        sample randomly from the set of edges
-    num_samples : int, default: 1000
+        "uniform", "top-2", and "top-bottom". By default, "uniform".
+    exact : bool, optional
+        whether to compute over all edges or sample randomly from the
+        set of edges. By default, False.
+    num_samples : int, optional
         if not exact, specify the number of samples for the computation.
+        By default, 1000.
 
     Returns
     -------
@@ -88,6 +93,10 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     ------
     XGIError
         If there are no nodes or no edges
+
+    See Also
+    --------
+    dynamical_assortativity
 
     References
     ----------
@@ -105,14 +114,14 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     degs = H.degree()
     if exact:
         k1k2 = [
-            choose_degrees(H.edges.members(e), degs, kind)
+            _choose_degrees(H.edges.members(e), degs, kind)
             for e in H.edges
             if len(H.edges.members(e)) > 1
         ]
     else:
         edges = [e for e in H.edges if len(H.edges.members(e)) > 1]
         k1k2 = [
-            choose_degrees(H.edges.members(random.choice(edges)), degs, kind)
+            _choose_degrees(H.edges.members(random.choice(edges)), degs, kind)
             for _ in range(num_samples)
         ]
 
@@ -122,7 +131,7 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     return rho
 
 
-def choose_degrees(e, k, kind="uniform"):
+def _choose_degrees(e, k, kind="uniform"):
     """Choose the degrees of two nodes in a hyperedge.
 
     Parameters
@@ -131,9 +140,9 @@ def choose_degrees(e, k, kind="uniform"):
         the members in a hyperedge
     k : dict
         the degrees where keys are node IDs and values are degrees
-    kind : str, default: "uniform"
-        the type of degree assortativity, options are
-        "uniform", "top-2", and "top-bottom".
+    kind : str, optional
+        the type of degree assortativity, options are "uniform", "top-2",
+        and "top-bottom". By default, "uniform".
 
     Returns
     -------
@@ -144,6 +153,10 @@ def choose_degrees(e, k, kind="uniform"):
     ------
     XGIError
         if invalid assortativity function chosen
+
+    See Also
+    --------
+    degree_assortativity
 
     References
     ----------
