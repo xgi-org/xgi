@@ -6,39 +6,10 @@ from itertools import count
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError
-from ..utils.utilities import update_uid_counter
+from ..utils.utilities import IDDict, update_uid_counter
 from .reportviews import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
-
-
-class IDDict(dict):
-    """A dict that holds (node or edge) IDs.
-
-    For internal use only.  Adds input validation functionality to the internal dicts
-    that hold nodes and edges in a network.
-
-    """
-
-    def __getitem__(self, item):
-        try:
-            return dict.__getitem__(self, item)
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
-
-    def __setitem__(self, item, value):
-        if item is None:
-            raise XGIError("None cannot be a node or edge")
-        try:
-            return dict.__setitem__(self, item, value)
-        except TypeError as e:
-            raise TypeError(f"ID {item} not a valid type") from e
-
-    def __delitem__(self, item):
-        try:
-            return dict.__delitem__(self, item)
-        except KeyError as e:
-            raise IDNotFound(f"ID {item} not found") from e
 
 
 class Hypergraph:
@@ -810,11 +781,11 @@ class Hypergraph:
 
         Raises
         ------
-        XGIError
-            If loopy hyperedges are created
         IDNotFound
             If user specifies nodes or edges that do not exist or
             nodes that are not part of edges.
+        XGIError
+            If the swap does not preserve edge sizes.
 
         Examples
         --------
@@ -827,33 +798,48 @@ class Hypergraph:
         """
         # Assign edges to modify
         try:
-            temp_memberships1 = list(self._node[n_id1])
-            temp_memberships1[temp_memberships1.index(e_id1)] = e_id2
+            # Initialize temporary copies to modify
+            temp_memberships1 = self._node[n_id1].copy()
+            temp_memberships2 = self._node[n_id2].copy()
+            temp_members1 = self._edge[e_id1].copy()
+            temp_members2 = self._edge[e_id2].copy()
 
-            temp_memberships2 = list(self._node[n_id2])
-            temp_memberships2[temp_memberships2.index(e_id2)] = e_id1
+            # remove old nodes from edges
+            temp_members1.remove(n_id1)
+            temp_members2.remove(n_id2)
 
-            temp_members1 = list(self._edge[e_id1])
-            temp_members1[temp_members1.index(n_id1)] = n_id2
+            # swap nodes
+            temp_members1.add(n_id2)
+            temp_members2.add(n_id1)
 
-            temp_members2 = list(self._edge[e_id2])
-            temp_members2[temp_members2.index(n_id2)] = n_id1
+            # Now we handle the memberships
+            # remove old nodes from edges
+            temp_memberships1.remove(e_id1)
+            temp_memberships2.remove(e_id2)
 
-        except ValueError as e:
-            raise XGIError(
+            # swap nodes
+            temp_memberships1.add(e_id2)
+            temp_memberships2.add(e_id1)
+
+        except KeyError as e:
+
+            raise IDNotFound(
                 "One of the nodes specified doesn't belong to the specified edge."
             ) from e
 
-        if len(set(temp_members1)) < len(set(self._edge[e_id1])) or len(
-            set(temp_members2)
-        ) < len(set(self._edge[e_id2])):
-            raise XGIError("This will create a loopy hyperedge.")
+        if (
+            len(temp_memberships1) != len(self._node[n_id1])
+            or len(temp_memberships2) != len(self._node[n_id2])
+            or len(temp_members1) != len(self._edge[e_id1])
+            or len(temp_members2) != len(self._edge[e_id2])
+        ):
+            raise XGIError("This swap does not preserve edge sizes.")
 
-        self._node[n_id1] = set(temp_memberships1)
-        self._node[n_id2] = set(temp_memberships2)
+        self._node[n_id1] = temp_memberships1
+        self._node[n_id2] = temp_memberships2
 
-        self._edge[e_id1] = set(temp_members1)
-        self._edge[e_id2] = set(temp_members2)
+        self._edge[e_id1] = temp_members1
+        self._edge[e_id2] = temp_members2
 
     def add_node_to_edge(self, edge, node):
         """Add one node to an existing edge.
