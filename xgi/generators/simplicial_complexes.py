@@ -13,7 +13,6 @@ import numpy as np
 from scipy.special import comb
 
 from ..classes import SimplicialComplex
-from ..classes.function import subfaces
 from ..utils.utilities import find_triangles
 
 __all__ = [

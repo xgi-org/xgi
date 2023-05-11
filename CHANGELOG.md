@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.5.8
+* Formatted the codebase with ruff [#346](https://github.com/xgi-org/xgi/pull/346) (@leotrs).
+* Improved the performance of `flag_complex` and `random_flag_complex` [#355](https://github.com/xgi-org/xgi/pull/355) (@maximelucas).
+* Moved the `IDDict` class to utilities and removed unnecessary arguments in the `IDView` constructor [#353](https://github.com/xgi-org/xgi/pull/353) (@nwlandry).
+* Up-versioned sphinx to v6.xxx and up-versioned sphinx-rtd-theme to >= 1.2 to be compatible with Sphinx v6.xxx. Updated the contribution guide and the GH, PyPI, and RTD landing pages [#350](https://github.com/xgi-org/xgi/pull/350) (@nwlandry).
+* Fixed a bug in the double edge swap method [#349](https://github.com/xgi-org/xgi/pull/349) (@nwlandry)
+* Updated the convert module methods to be able to return a hypergraph, addressing Issue [#327](https://github.com/xgi-org/xgi/issues/327). Now the conversion from a simplicial complex to a hypergraph only includes maximal faces [#345](https://github.com/xgi-org/xgi/pull/345) (@thomasrobiglio)
+* Place a ceiling on IPython so that it is Python 3.8 compatible [#344](https://github.com/xgi-org/xgi/pull/344) (@nwlandry).
+* Started fixing the cross references in the "See Also" section in the function/class docstrings [#343](https://github.com/xgi-org/xgi/pull/343) (@nwlandry).
+* Feature: added complete_hypergraph [#337](https://github.com/xgi-org/xgi/pull/337) (@maximelucas).
+* Updated the quickstart notebook [#338](https://github.com/xgi-org/xgi/pull/338) (@nwlandry).
+* Added `strict` keyword to the `maximal()` method [#332](https://github.com/xgi-org/xgi/pull/332) (@nwlandry).
+* Feature: added trivial hypergraph [#335](https://github.com/xgi-org/xgi/pull/335) (@maximelucas).
+
 ## v0.5.7
 * Changed the organization name to `xgi-org` and removed `codecov` from the test requirements file [#334](https://github.com/xgi-org/xgi/pull/334) (@nwlandry).
 * Fix: improved the `degree_counts` documentation [#329](https://github.com/xgi-org/xgi/pull/329) (@maximelucas).
