@@ -15,6 +15,9 @@ __all__ = [
     "barycenter_spring_layout",
     "weighted_barycenter_spring_layout",
     "pca_transform",
+    "circular_layout",
+    "spiral_layout",
+    "barycenter_kamada_kawai_layout"
 ]
 
 
@@ -344,7 +347,7 @@ def pca_transform(pos, theta=0, degrees=True):
 
     return {n: np.array([x[i], y[i]]) for i, n in enumerate(pos.keys())}
 
-def circular_layout(H, scale=1, center=None, dim=2):
+def circular_layout(H, center=None, radius=None):
     """
     Position nodes on a circle.
 
@@ -352,39 +355,49 @@ def circular_layout(H, scale=1, center=None, dim=2):
     ----------
     H : Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
-    scale : number (default: 1)
-        Scale factor for positions.
-
     center : array-like or None
         Coordinate pair around which to center the layout.
-
-    dim : int
-        Dimension of layout.
+        If None set to [0,0]
+    redius : float or None (default=None)
+        Radius of the circle on which to draw the nodes,
+        if None set to 1.0.
 
     Returns
     -------
     pos : dict
         A dictionary of positions keyed by node
     """
+    if center == None:
+        center = [0,0]
     
-    G = convert.convert_to_graph(H)
-    pos = nx.circular_layout(G, scale, center, dim)
+    if radius == None:
+        radius = 1.
+    
+    if len(H) == 0:
+        pos = {}
+    elif len(H) == 1:
+        pos = dict(zip(list(H.nodes), center))
+    else:
+        center = [0,0]
+        theta = np.linspace(0, 1, len(H) + 1)[:-1] * 2 * np.pi
+        pos = np.column_stack(
+            [radius*np.cos(theta)+center[0], radius*np.sin(theta)+center[1]]
+        )
+        pos = dict(zip(list(H.nodes), pos))
+    
+    
     return pos
 
-def spiral_layout(H, scale=1, center=None, dim=2, resolution=0.35, equidistant=False):
+def spiral_layout(H, center=None, dim=2, resolution=0.35, equidistant=False):
     """Position nodes in a spiral layout.
 
     Parameters
     ----------
     H : Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
-    scale : number (default: 1)
-        Scale factor for positions.
     center : array-like or None
         Coordinate pair around which to center the layout.
-    dim : int, default=2
-        Dimension of layout, currently only dim=2 is supported.
-        Other dimension values result in a ValueError.
+        If None set to [0,0]
     resolution : float, default=0.35
         The compactness of the spiral layout returned.
         Lower values result in more compressed spiral layouts.
@@ -399,8 +412,31 @@ def spiral_layout(H, scale=1, center=None, dim=2, resolution=0.35, equidistant=F
     pos : dict
         A dictionary of positions keyed by node
     """
-    G = convert.convert_to_graph(H)
-    pos = nx.spiral_layout(G, scale, center, dim, resolution, equidistant)
+    if len(H) == 0:
+        pos = {}
+        return pos
+    elif len(H) == 1:
+        pos = dict(zip(list(H.nodes), center))
+        return pos
+
+    pos = []
+    if equidistant:
+        chord = 1
+        step = 0.5
+        theta = resolution
+        theta += chord / (step * theta)
+        for _ in range(len(H)):
+            r = step * theta
+            theta += chord / r
+            pos.append([np.cos(theta) * r, np.sin(theta) * r])
+
+    else:
+        dist = np.arange(len(H), dtype=float)
+        angle = resolution * dist
+        pos = np.transpose(dist * np.array([np.cos(angle), np.sin(angle)]))
+    
+    pos = dict(zip(list(H.nodes), pos))
+    
     return pos
     
 
