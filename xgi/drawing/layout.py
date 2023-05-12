@@ -412,6 +412,9 @@ def spiral_layout(H, center=None, dim=2, resolution=0.35, equidistant=False):
     pos : dict
         A dictionary of positions keyed by node
     """
+    if center == None:
+        center = [0,0]
+    
     if len(H) == 0:
         pos = {}
         return pos
