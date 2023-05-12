@@ -376,7 +376,7 @@ def circular_layout(H, center=None, radius=None):
     if len(H) == 0:
         pos = {}
     elif len(H) == 1:
-        pos = dict(zip(list(H.nodes), center))
+        pos = {list(H.nodes)[0]: center}
     else:
         center = [0,0]
         theta = np.linspace(0, 1, len(H) + 1)[:-1] * 2 * np.pi
@@ -419,7 +419,7 @@ def spiral_layout(H, center=None, resolution=0.35, equidistant=False):
         pos = {}
         return pos
     elif len(H) == 1:
-        pos = dict(zip(list(H.nodes), center))
+        pos = {list(H.nodes)[0]: center}
         return pos
 
     pos = []
