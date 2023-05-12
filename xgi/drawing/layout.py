@@ -358,7 +358,7 @@ def circular_layout(H, center=None, radius=None):
     center : array-like or None
         Coordinate pair around which to center the layout.
         If None set to [0,0]
-    redius : float or None (default=None)
+    radius : float or None (default=None)
         Radius of the circle on which to draw the nodes,
         if None set to 1.0.
 
