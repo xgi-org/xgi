@@ -141,6 +141,17 @@ def test_circular_layout():
     H = xgi.random_hypergraph(10, [0.2], seed=1)
     pos = xgi.circular_layout(H)
     assert len(pos) == H.num_nodes
+    
+    # empty hypergraph
+    H = xgi.empty_hypergraph()
+    pos = xgi.circular_layout(H)
+    assert pos == {}
+    
+    # single node hypergraph
+    H = xgi.Hypergraph()
+    H.add_node(1)
+    pos = xgi.circular_layout(H, center=[1,1])
+    assert pos[1] == [1,1]
 
     # simplicial complex
     S = xgi.random_flag_complex_d2(10, 0.2)
@@ -155,6 +166,17 @@ def test_spiral_layout():
     assert pos1.keys() == pos2.keys()
     assert len(pos1) == H.num_nodes
     assert len(pos2) == H.num_nodes
+    
+    # empty hypergraph
+    H = xgi.empty_hypergraph()
+    pos = xgi.spiral_layout(H)
+    assert pos == {}
+    
+    # single node hypergraph
+    H = xgi.Hypergraph()
+    H.add_node(1)
+    pos = xgi.spiral_layout(H, center=[1,1])
+    assert pos[1] == [1,1]
 
     # simplicial complex
     S = xgi.random_flag_complex_d2(10, 0.2)
