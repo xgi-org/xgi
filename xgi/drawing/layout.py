@@ -367,10 +367,10 @@ def circular_layout(H, center=None, radius=None):
     pos : dict
         A dictionary of positions keyed by node
     """
-    if center == None:
+    if center is None:
         center = [0,0]
     
-    if radius == None:
+    if radius is None:
         radius = 1.
     
     if len(H) == 0:
@@ -412,7 +412,7 @@ def spiral_layout(H, center=None, resolution=0.35, equidistant=False):
     pos : dict
         A dictionary of positions keyed by node
     """
-    if center == None:
+    if center is None:
         center = [0,0]
     
     if len(H) == 0:
