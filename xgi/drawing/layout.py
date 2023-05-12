@@ -388,7 +388,7 @@ def circular_layout(H, center=None, radius=None):
     
     return pos
 
-def spiral_layout(H, center=None, dim=2, resolution=0.35, equidistant=False):
+def spiral_layout(H, center=None, resolution=0.35, equidistant=False):
     """Position nodes in a spiral layout.
 
     Parameters
