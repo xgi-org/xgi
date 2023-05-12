@@ -428,8 +428,7 @@ def spiral_layout(H, center=None, dim=2, resolution=0.35, equidistant=False):
         for _ in range(len(H)):
             r = step * theta
             theta += chord / r
-            pos.append([np.cos(theta) * r, np.sin(theta) * r])
-
+            pos.append([np.cos(theta)*r+center[0], np.sin(theta)*r+center[1]])
     else:
         dist = np.arange(len(H), dtype=float)
         angle = resolution * dist
