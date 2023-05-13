@@ -373,12 +373,11 @@ def circular_layout(H, center=None, radius=None):
     if radius is None:
         radius = 1.
     
-    if len(H) == 0:
+    if H.num_nodes == 0:
         pos = {}
-    elif len(H) == 1:
+    elif H.num_nodes == 1:
         pos = {list(H.nodes)[0]: center}
     else:
-        center = [0,0]
         theta = np.linspace(0, 1, len(H) + 1)[:-1] * 2 * np.pi
         pos = np.column_stack(
             [radius*np.cos(theta)+center[0], radius*np.sin(theta)+center[1]]
@@ -415,10 +414,10 @@ def spiral_layout(H, center=None, resolution=0.35, equidistant=False):
     if center is None:
         center = [0,0]
     
-    if len(H) == 0:
+    if H.num_nodes == 0:
         pos = {}
         return pos
-    elif len(H) == 1:
+    elif H.num_nodes == 1:
         pos = {list(H.nodes)[0]: center}
         return pos
 

@@ -148,11 +148,23 @@ def test_circular_layout():
     assert pos == {}
     
     # single node hypergraph
-    H = xgi.Hypergraph()
-    H.add_node(1)
+    H = xgi.trivial_hypergraph()
     pos = xgi.circular_layout(H, center=[1,1])
-    assert pos[1] == [1,1]
-
+    assert pos[0] == [1,1]
+    
+    # test center
+    H = xgi.random_hypergraph(10, [0.2], seed=1)
+    center = [2., 1.]
+    pos = xgi.circular_layout(H, center=center)
+    for i in pos.keys():
+        assert np.round(np.sqrt((pos[i][0]-center[0])**2+(pos[i][1]-center[1])**2), 1) == 1.
+    
+    # test radius
+    H = xgi.random_hypergraph(10, [0.2], seed=1)
+    pos = xgi.circular_layout(H, radius=2.)
+    for i in pos.keys():
+        assert np.round(np.sqrt(pos[i][0]**2+pos[i][1]**2), 1) == 2. 
+    
     # simplicial complex
     S = xgi.random_flag_complex_d2(10, 0.2)
     pos = xgi.circular_layout(S)
@@ -173,10 +185,9 @@ def test_spiral_layout():
     assert pos == {}
     
     # single node hypergraph
-    H = xgi.Hypergraph()
-    H.add_node(1)
+    H = xgi.trivial_hypergraph()
     pos = xgi.spiral_layout(H, center=[1,1])
-    assert pos[1] == [1,1]
+    assert pos[0] == [1,1]
 
     # simplicial complex
     S = xgi.random_flag_complex_d2(10, 0.2)
