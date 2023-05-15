@@ -155,7 +155,10 @@ def _augmented_projection(H, weighted=False):
 
     # Adding links (edges composed by two nodes only, for which we don't use phantom nodes
     for i, j in H.edges.filterby("order", 1).members():
-        G.add_edge(i, j)
+        if weighted == True:
+            G.add_edge(i, j, weight=1)
+        else:
+            G.add_edge(i, j)
 
     # Adding phantom nodes and connections therein
     # I will start from the first int node-label available
