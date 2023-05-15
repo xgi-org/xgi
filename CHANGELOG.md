@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.9
+* Added new drawing layouts (`circular_layout`, `spiral_layout`, and `barycenter_kamada_kawai_layout`) [#360](https://github.com/xgi-org/xgi/pull/360)
+
 ## v0.5.8
 * Formatted the codebase with ruff [#346](https://github.com/xgi-org/xgi/pull/346) (@leotrs).
 * Improved the performance of `flag_complex` and `random_flag_complex` [#355](https://github.com/xgi-org/xgi/pull/355) (@maximelucas).
