@@ -128,15 +128,19 @@ def pairwise_spring_layout(H, seed=None):
     return pos
 
 
-def _augmented_projection(H):
+def _augmented_projection(H, weighted=False):
     """Augmented version of the the graph projection of the hypergraph
     (or simplicial complex), where phantom nodes (barycenters) are created
     for each edge composed by more than two nodes.
 
-
     Parameters
     ----------
     H : Hypergraph or SimplicialComplex
+    weighted : bool (default=False)
+               If True weights are assigned to all hyperedges of order d=1 (links)
+               and to all connections to phantom nodes within each hyperedge of
+               order d>1 to keep them together. Weights scale as the order d.
+
 
     Returns
     -------
@@ -164,10 +168,14 @@ def _augmented_projection(H):
     # Looping over the hyperedges of different order (from triples up)
     for d in range(2, max_edge_order(H) + 1):
         # Hyperedges of order d (d=2: triplets, etc.)
-        for he in H.edges.filterby("order", d).members():
-            # Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
-            for n in he:
-                G.add_edge(phantom_node_id, n)
+        for he_id, members in H.edges.filterby("order", d).members(dtype=dict).items():
+            # Adding one phantom node for each hyperedge and linking it to the nodes of
+            # the hyperedge
+            for n in members:
+                if weighted == True:
+                    G.add_edge(phantom_node_id, n, weight=d)
+                else:
+                    G.add_edge(phantom_node_id, n)
             phantom_node_id += 1
     return G
 
@@ -283,35 +291,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
 
-    # Creating the projected networkx Graph, I will fill it manually
-    G = nx.Graph()
-
-    # Adding real nodes
-    G.add_nodes_from(list(H.nodes))
-
-    # Adding links (edges composed by two nodes only),
-    # for which we don't use phantom nodes.
-    d = 1
-    for i, j in H.edges.filterby("order", d).members():
-        G.add_edge(i, j, weight=d)
-
-    # Adding phantom nodes and connections therein
-    # I will start from the first int node-label available
-    try:
-        phantom_node_id = max([n for n in H.nodes if isinstance(n, int)]) + 1
-    except ValueError:
-        # The list of node-labels has no integers, so I start from 0
-        phantom_node_id = 0
-
-    # Looping over the hyperedges of different order (from triples up)
-    for d in range(2, max_edge_order(H) + 1):
-        # Hyperedges of order d (d=2: triplets, etc.)
-        for he_id, members in H.edges.filterby("order", d).members(dtype=dict).items():
-            # Adding one phantom node for each hyperedge and linking it to the nodes of
-            # the hyperedge
-            for n in members:
-                G.add_edge(phantom_node_id, n, weight=d)
-            phantom_node_id += 1
+    G = _augmented_projection(H, weighted=True)
 
     # Creating a dictionary for node position with the standard spring layout
     pos_with_phantom_nodes = nx.spring_layout(G, weight="weight", seed=seed)
