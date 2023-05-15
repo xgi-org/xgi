@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.5.9
+## v0.5.8.2
 * Added new drawing layouts (`circular_layout`, `spiral_layout`, and `barycenter_kamada_kawai_layout`) [#360](https://github.com/xgi-org/xgi/pull/360) (@thomasrobiglio).
 
 ## v0.5.8
