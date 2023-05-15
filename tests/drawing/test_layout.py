@@ -42,6 +42,7 @@ def test_pairwise_spring_layout():
     # simplicial complex
     S = xgi.random_flag_complex_d2(10, 0.2, seed=1)
     pos = xgi.pairwise_spring_layout(S, seed=1)
+    assert len(pos) == S.num_nodes
 
 
 def test_barycenter_spring_layout(hypergraph1):

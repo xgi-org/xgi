@@ -17,7 +17,7 @@ __all__ = [
     "pca_transform",
     "circular_layout",
     "spiral_layout",
-    "barycenter_kamada_kawai_layout"
+    "barycenter_kamada_kawai_layout",
 ]
 
 
@@ -128,54 +128,21 @@ def pairwise_spring_layout(H, seed=None):
     return pos
 
 
-def barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
-    """
-    Position the nodes using Fruchterman-Reingold force-directed
-    algorithm using an augmented version of the the graph projection
-    of the hypergraph (or simplicial complex), where phantom nodes
-    (barycenters) are created for each edge composed by more than two nodes.
-    If a simplicial complex is provided the results will be based on the
-    hypergraph constructed from its maximal simplices.
+def _augmented_projection(H):
+    """Augmented version of the the graph projection of the hypergraph
+    (or simplicial complex), where phantom nodes (barycenters) are created
+    for each edge composed by more than two nodes.
+
 
     Parameters
     ----------
-    H : xgi Hypergraph or SimplicialComplex
-        A position will be assigned to every node in H.
-    return_phantom_graph: bool (default=False)
-        If True the function returns also the augmented version of the 
-        the graph projection of the hypergraph (or simplicial complex).
-    seed : int, RandomState instance or None  optional (default=None)
-        Set the random state for deterministic node layouts.
-        If int, `seed` is the seed used by the random number generator,
-        If None (default), random numbers are sampled from the
-        numpy random number generator without initialization.
+    H : Hypergraph or SimplicialComplex
 
     Returns
     -------
-    pos : dict
-        A dictionary of positions keyed by node
-
-    See Also
-    --------
-    random_layout
-    pairwise_spring_layout
-    weighted_barycenter_spring_layout
-
-    Examples
-    --------
-    >>> import xgi
-    >>> N = 50
-    >>> ps = [0.1, 0.01]
-    >>> H = xgi.random_hypergraph(N, ps)
-    >>> pos = xgi.barycenter_spring_layout(H)
-
+    G : networkx.Graph
+        The augmented version of the graph projection
     """
-    if seed is not None:
-        random.seed(seed)
-
-    if isinstance(H, SimplicialComplex):
-        H = convert.from_max_simplices(H)
-
     # Creating the projected networkx Graph, I will fill it manually
     G = nx.Graph()
 
@@ -202,6 +169,57 @@ def barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
             for n in he:
                 G.add_edge(phantom_node_id, n)
             phantom_node_id += 1
+    return G
+
+
+def barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
+    """
+    Position the nodes using Fruchterman-Reingold force-directed
+    algorithm using an augmented version of the the graph projection
+    of the hypergraph (or simplicial complex), where phantom nodes
+    (barycenters) are created for each edge composed by more than two nodes.
+    If a simplicial complex is provided the results will be based on the
+    hypergraph constructed from its maximal simplices.
+
+    Parameters
+    ----------
+    H : xgi Hypergraph or SimplicialComplex
+        A position will be assigned to every node in H.
+    return_phantom_graph: bool (default=False)
+        If True the function returns also the augmented version of the
+        the graph projection of the hypergraph (or simplicial complex).
+    seed : int, RandomState instance or None  optional (default=None)
+        Set the random state for deterministic node layouts.
+        If int, `seed` is the seed used by the random number generator,
+        If None (default), random numbers are sampled from the
+        numpy random number generator without initialization.
+
+    Returns
+    -------
+    pos : dict
+        A dictionary of positions keyed by node
+
+    See Also
+    --------
+    random_layout
+    pairwise_spring_layout
+    weighted_barycenter_spring_layout
+
+    Examples
+    --------
+    >>> import xgi
+    >>> N = 50
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_hypergraph(N, ps)
+    >>> pos = xgi.barycenter_spring_layout(H)
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    if isinstance(H, SimplicialComplex):
+        H = convert.from_max_simplices(H)
+
+    G = _augmented_projection(H)
 
     # Creating a dictionary for the position of the nodes with the standard spring layout
     pos_with_phantom_nodes = nx.spring_layout(G, seed=seed)
@@ -216,24 +234,23 @@ def barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
 
 
 def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
-    """
-    Position the nodes using Fruchterman-Reingold force-directed
-    algorithm using an augmented version of the the graph projection
-    of the hypergraph (or simplicial complex), where phantom nodes (barycenters) are created
-    for each edge of order d>1 (composed by more than two nodes).
-    Weights are assigned to all hyperedges of order 1 (links) and
-    to all connections to phantom nodes within each hyperedge
-    to keep them together. Weights scale as the order d.
-    If a simplicial complex is provided the results will be based on the
-    hypergraph constructed from its maximal simplices.
+    """Position the nodes using Fruchterman-Reingold force-directed algorithm.
+
+    This uses an augmented version of the the graph projection of the hypergraph (or
+    simplicial complex), where phantom nodes (barycenters) are created for each edge of
+    order d>1 (composed by more than two nodes).  Weights are assigned to all hyperedges
+    of order 1 (links) and to all connections to phantom nodes within each hyperedge to
+    keep them together. Weights scale as the order d.  If a simplicial complex is
+    provided the results will be based on the hypergraph constructed from its maximal
+    simplices.
 
     Parameters
     ----------
     H : Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
     return_phantom_graph: bool (default=False)
-        If True the function returns also the augmented version of the 
-        the graph projection of the hypergraph (or simplicial complex). 
+        If True the function returns also the augmented version of the
+        the graph projection of the hypergraph (or simplicial complex).
     seed : int, RandomState instance or None  optional (default=None)
         Set the random state for deterministic node layouts.
         If int, `seed` is the seed used by the random number generator,
@@ -258,6 +275,7 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
     >>> ps = [0.1, 0.01]
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.weighted_barycenter_spring_layout(H)
+
     """
     if seed is not None:
         random.seed(seed)
@@ -271,7 +289,8 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
     # Adding real nodes
     G.add_nodes_from(list(H.nodes))
 
-    # Adding links (edges composed by two nodes only, for which we don't use phantom nodes)
+    # Adding links (edges composed by two nodes only),
+    # for which we don't use phantom nodes.
     d = 1
     for i, j in H.edges.filterby("order", d).members():
         G.add_edge(i, j, weight=d)
@@ -288,12 +307,13 @@ def weighted_barycenter_spring_layout(H, return_phantom_graph=False, seed=None):
     for d in range(2, max_edge_order(H) + 1):
         # Hyperedges of order d (d=2: triplets, etc.)
         for he_id, members in H.edges.filterby("order", d).members(dtype=dict).items():
-            # Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
+            # Adding one phantom node for each hyperedge and linking it to the nodes of
+            # the hyperedge
             for n in members:
                 G.add_edge(phantom_node_id, n, weight=d)
             phantom_node_id += 1
 
-    # Creating a dictionary for the position of the nodes with the standard spring layout
+    # Creating a dictionary for node position with the standard spring layout
     pos_with_phantom_nodes = nx.spring_layout(G, weight="weight", seed=seed)
 
     # Retaining only the positions of the real nodes
@@ -347,9 +367,9 @@ def pca_transform(pos, theta=0, degrees=True):
 
     return {n: np.array([x[i], y[i]]) for i, n in enumerate(pos.keys())}
 
+
 def circular_layout(H, center=None, radius=None):
-    """
-    Position nodes on a circle.
+    """Position nodes on a circle.
 
     Parameters
     ----------
@@ -368,11 +388,11 @@ def circular_layout(H, center=None, radius=None):
         A dictionary of positions keyed by node
     """
     if center is None:
-        center = [0,0]
-    
+        center = [0, 0]
+
     if radius is None:
-        radius = 1.
-    
+        radius = 1.0
+
     if H.num_nodes == 0:
         pos = {}
     elif H.num_nodes == 1:
@@ -380,12 +400,12 @@ def circular_layout(H, center=None, radius=None):
     else:
         theta = np.linspace(0, 1, len(H) + 1)[:-1] * 2 * np.pi
         pos = np.column_stack(
-            [radius*np.cos(theta)+center[0], radius*np.sin(theta)+center[1]]
+            [radius * np.cos(theta) + center[0], radius * np.sin(theta) + center[1]]
         )
         pos = dict(zip(list(H.nodes), pos))
-    
-    
+
     return pos
+
 
 def spiral_layout(H, center=None, resolution=0.35, equidistant=False):
     """Position nodes in a spiral layout.
@@ -412,8 +432,8 @@ def spiral_layout(H, center=None, resolution=0.35, equidistant=False):
         A dictionary of positions keyed by node
     """
     if center is None:
-        center = [0,0]
-    
+        center = [0, 0]
+
     if H.num_nodes == 0:
         pos = {}
         return pos
@@ -430,20 +450,19 @@ def spiral_layout(H, center=None, resolution=0.35, equidistant=False):
         for _ in range(len(H)):
             r = step * theta
             theta += chord / r
-            pos.append([np.cos(theta)*r+center[0], np.sin(theta)*r+center[1]])
+            pos.append([np.cos(theta) * r + center[0], np.sin(theta) * r + center[1]])
     else:
         dist = np.arange(len(H), dtype=float)
         angle = resolution * dist
         pos = np.transpose(dist * np.array([np.cos(angle), np.sin(angle)]))
-    
+
     pos = dict(zip(list(H.nodes), pos))
-    
+
     return pos
-    
+
 
 def barycenter_kamada_kawai_layout(H, return_phantom_graph=False):
-    """
-    Position nodes using Kamada-Kawai path-length cost-function
+    """Position nodes using Kamada-Kawai path-length cost-function
     using an augmented version of the the graph projection
     of the hypergraph (or simplicial complex), where phantom nodes
     (barycenters) are created for each edge composed by more than two nodes.
@@ -455,7 +474,7 @@ def barycenter_kamada_kawai_layout(H, return_phantom_graph=False):
     H : xgi Hypergraph or SimplicialComplex
         A position will be assigned to every node in H.
     return_phantom_graph: bool (default=False)
-        If True the function returns also the augmented version of the 
+        If True the function returns also the augmented version of the
         the graph projection of the hypergraph (or simplicial complex).
 
     Returns
@@ -464,40 +483,16 @@ def barycenter_kamada_kawai_layout(H, return_phantom_graph=False):
         A dictionary of positions keyed by node
     """
     if isinstance(H, SimplicialComplex):
-        H = convert.from_max_simplices(H)    
-    # Creating the projected networkx Graph, I will fill it manually
-    G = nx.Graph()
+        H = convert.from_max_simplices(H)
 
-    # Adding real nodes
-    G.add_nodes_from(list(H.nodes))
-
-    # Adding links (edges composed by two nodes only, for which we don't use phantom nodes
-    for i, j in H.edges.filterby("order", 1).members():
-        G.add_edge(i, j)
-
-    # Adding phantom nodes and connections therein
-    # I will start from the first int node-label available
-    try:
-        phantom_node_id = max([n for n in H.nodes if isinstance(n, int)]) + 1
-    except ValueError:
-        # The list of node-labels has no integers, so I start from 0
-        phantom_node_id = 0
-
-    # Looping over the hyperedges of different order (from triples up)
-    for d in range(2, max_edge_order(H) + 1):
-        # Hyperedges of order d (d=2: triplets, etc.)
-        for he in H.edges.filterby("order", d).members():
-            # Adding one phantom node for each hyperedge and linking it to the nodes of the hyperedge
-            for n in he:
-                G.add_edge(phantom_node_id, n)
-            phantom_node_id += 1
+    G = _augmented_projection(H)
 
     # Creating a dictionary for the position of the nodes with the standard spring layout
     pos_with_phantom_nodes = nx.kamada_kawai_layout(G)
 
     # Retaining only the positions of the real nodes
     pos = {k: pos_with_phantom_nodes[k] for k in list(H.nodes)}
-    
+
     if return_phantom_graph:
         return pos, G
     else:
