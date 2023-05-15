@@ -149,9 +149,15 @@ class Hypergraph:
 
         """
         try:
-            return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
+            return (
+                f"{type(self).__name__} named {self['name']} "
+                f"with {self.num_nodes} nodes and {self.num_edges} hyperedges"
+            )
         except XGIError:
-            return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
+            return (
+                f"Unnamed {type(self).__name__} with "
+                f"{self.num_nodes} nodes and {self.num_edges} hyperedges"
+            )
 
     def __iter__(self):
         """Iterate over the nodes.
@@ -217,7 +223,8 @@ class Hypergraph:
         if stat is None:
             word = None
             raise AttributeError(
-                f"{attr} is not a method of Hypergraph or a recognized NodeStat or EdgeStat"
+                f"{attr} is not a method of Hypergraph or a "
+                "recognized NodeStat or EdgeStat"
             )
 
         def func(node=None, *args, **kwargs):
@@ -528,29 +535,29 @@ class Hypergraph:
             update_uid_counter(self, id)
 
     def add_edges_from(self, ebunch_to_add, **attr):
-        """Add multiple edges with optional attributes.
+        r"""Add multiple edges with optional attributes.
 
         Parameters
         ----------
         ebunch_to_add : Iterable
 
             An iterable of edges.  This may be an iterable of iterables (Format 1),
-            where each element contains the members of the edge specified as valid node IDs.
-            Alternatively, each element could also be a tuple in any of the following
-            formats:
+            where each element contains the members of the edge specified as valid node
+            IDs.  Alternatively, each element could also be a tuple in any of the
+            following formats:
 
             * Format 2: 2-tuple (members, edge_id), or
             * Format 3: 2-tuple (members, attr), or
             * Format 4: 3-tuple (members, edge_id, attr),
 
             where `members` is an iterable of node IDs, `edge_id` is a hashable to use
-            as edge ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add`
-            may be a dict of the form `{edge_id: edge_members}` (Format 5).
+            as edge ID, and `attr` is a dict of attributes. Finally, `ebunch_to_add` may
+            be a dict of the form `{edge_id: edge_members}` (Format 5).
 
-            Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while `id`s must be.
-            In Formats 2-4, each element of `ebunch_to_add` must have the same length,
-            i.e. you cannot mix different formats.  The iterables containing edge
-            members cannot be strings.
+            Formats 2 and 3 are unambiguous because `attr` dicts are not hashable, while
+            `id`s must be.  In Formats 2-4, each element of `ebunch_to_add` must have
+            the same length, i.e. you cannot mix different formats.  The iterables
+            containing edge members cannot be strings.
 
         attr : \*\*kwargs, optional
             Additional attributes to be assigned to all edges. Attribues specified via
@@ -1172,7 +1179,8 @@ class Hypergraph:
 
         if merge_rule == "union":
             warn(
-                "You will not be able to color/draw by merged attributes with xgi.draw()!"
+                "You will not be able to color/draw by "
+                "merged attributes with xgi.draw()!"
             )
 
     def copy(self):
@@ -1235,15 +1243,18 @@ class Hypergraph:
         Parameters
         ----------
         isolates : bool, optional
-            Whether isolated nodes are allowed, by default False
+            Whether isolated nodes are allowed, by default False.
         singletons : bool, optional
-            Whether singleton edges are allowed, by default False
+            Whether singleton edges are allowed, by default False.
         multiedges : bool, optional
-            Whether multiedges are allowed, by default False
+            Whether multiedges are allowed, by default False.
         relabel : bool, optional
-            Whether to convert all node and edge labels to sequential integers, by default True
+            Whether to convert all node and edge labels to sequential integers, by
+            default True.
         in_place : bool, optional
-            Whether to modify the current hypergraph or output a new one, by default True
+            Whether to modify the current hypergraph or output a new one, by default
+            True.
+
         """
         if in_place:
             if not multiedges:

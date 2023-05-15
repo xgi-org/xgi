@@ -29,10 +29,11 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
     k3 : float
         The coupling strength for triangles
     omega : numpy array of real values
-        The natural frequency of the nodes. If None (default), randomly drawn from a normal distribution
+        The natural frequency of the nodes. If None (default), randomly drawn from a
+        normal distribution
     theta : numpy array of real values
-        The initial phase distribution of nodes. If None (default), drawn from a random uniform distribution
-        on [0, 2pi[.
+        The initial phase distribution of nodes. If None (default), drawn from a random
+        uniform distribution on [0, 2pi[.
     timesteps : int greater than 1, default: 10000
         The number of timesteps for Euler Method.
     dt : float greater than 0, default: 0.002
@@ -110,8 +111,9 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
 
 
 def compute_kuramoto_order_parameter(theta_time):
-    """This function calculates the order parameter for the Kuramoto model on hypergraphs,
-    from time series, which is a measure of synchrony.
+    """Calculate the order parameter for the Kuramoto model on hypergraphs.
+
+    Calculation proceeds from time series, and the output is a measure of synchrony.
 
     Parameters
     ----------
@@ -142,9 +144,8 @@ def simulate_simplicial_kuramoto(
     n_steps=10000,
     index=False,
 ):
-    """
-    This function simulates the simplicial Kuramoto model's dynamics on an oriented simplicial complex
-    using explicit Euler numerical integration scheme.
+    """Simulate the simplicial Kuramoto model's dynamics on an oriented simplicial
+    complex using explicit Euler numerical integration scheme.
 
     Parameters
     ----------
@@ -166,10 +167,10 @@ def simulate_simplicial_kuramoto(
     T: positive real value
         The final simulation time.
     n_steps: integer greater than 1
-        The number of integration timesteps for
-        the explicit Euler method.
+        The number of integration timesteps for the explicit Euler method.
     index: bool, default: False
-        Specifies whether to output dictionaries mapping the node and edge IDs to indices
+        Specifies whether to output dictionaries mapping the node and edge IDs to
+        indices.
 
     Returns
     -------
@@ -205,7 +206,8 @@ def simulate_simplicial_kuramoto(
 
     if not isinstance(S, xgi.SimplicialComplex):
         raise XGIError(
-            "The simplicial Kuramoto model can be simulated only on a SimplicialComplex object"
+            "The simplicial Kuramoto model can be simulated "
+            "only on a SimplicialComplex object"
         )
 
     if index:

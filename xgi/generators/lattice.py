@@ -43,8 +43,9 @@ def ring_lattice(n, d, k, l):
 
     Notes
     -----
-    ring_lattice(n, 2, k, 0) is a ring lattice graph where each node has k//2 edges on either
-    side.
+    ring_lattice(n, 2, k, 0) is a ring lattice graph where each node has k//2 edges on
+    either side.
+
     """
     from ..classes import Hypergraph
 

@@ -20,9 +20,7 @@ def test_chung_lu_hypergraph():
     assert H2._edge == H3._edge
 
     with pytest.warns(Warning):
-        k1 = {1: 1, 2: 2}
-        k2 = {1: 2, 1: 2}
-        H = xgi.chung_lu_hypergraph(k1, k2)
+        _ = xgi.chung_lu_hypergraph({1: 1, 2: 2}, {1: 2, 2: 2})
 
 
 def test_dcsbm_hypergraph():
@@ -67,51 +65,3 @@ def test_random_hypergraph():
     H4 = xgi.random_hypergraph(10, [0.1], order=2, seed=1)
     assert H4.num_nodes == 10
     assert xgi.unique_edge_sizes(H4) == [3]
-
-
-def test_random_simplicial_complex():
-    # seed
-    S1 = xgi.random_simplicial_complex(10, [0.1, 0.001], seed=1)
-    S2 = xgi.random_simplicial_complex(10, [0.1, 0.001], seed=2)
-    S3 = xgi.random_simplicial_complex(10, [0.1, 0.001], seed=2)
-
-    assert S1._edge != S2._edge
-    assert S2._edge == S3._edge
-
-    # wrong input
-    with pytest.raises(ValueError):
-        S1 = xgi.random_simplicial_complex(10, [1, 1.1])
-    with pytest.raises(ValueError):
-        S1 = xgi.random_simplicial_complex(10, [1, -2])
-
-
-def test_random_flag_complex():
-    # seed
-    S1 = xgi.random_flag_complex(10, 0.1, seed=1)
-    S2 = xgi.random_flag_complex(10, 0.1, seed=2)
-    S3 = xgi.random_flag_complex(10, 0.1, seed=2)
-
-    assert S1._edge != S2._edge
-    assert S2._edge == S3._edge
-
-    # wrong input
-    with pytest.raises(ValueError):
-        S1 = xgi.random_flag_complex(10, 1.1)
-    with pytest.raises(ValueError):
-        S1 = xgi.random_flag_complex(10, -2)
-
-
-def test_random_flag_complex_d2():
-    # seed
-    S1 = xgi.random_flag_complex_d2(10, 0.1, seed=1)
-    S2 = xgi.random_flag_complex_d2(10, 0.1, seed=2)
-    S3 = xgi.random_flag_complex_d2(10, 0.1, seed=2)
-
-    assert S1._edge != S2._edge
-    assert S2._edge == S3._edge
-
-    # wrong input
-    with pytest.raises(ValueError):
-        S1 = xgi.random_flag_complex_d2(10, 1.1)
-    with pytest.raises(ValueError):
-        S1 = xgi.random_flag_complex_d2(10, -2)

@@ -112,8 +112,8 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
 
     new_H = convert_labels_to_integers(H, "old-label")
 
-    f = lambda v, m: np.power(v, 1.0 / m)
-    g = lambda v, x: np.prod(v[list(x)])
+    f = lambda v, m: np.power(v, 1.0 / m)  # noqa: E731
+    g = lambda v, x: np.prod(v[list(x)])  # noqa: E731
 
     x = np.random.uniform(size=(new_H.num_nodes))
     x = x / norm(x, 1)
@@ -263,10 +263,11 @@ def line_vector_centrality(H):
 
     References
     ----------
-    Vector centrality in hypergraphs,
-    K. Kovalenko, M. Romance, E. Vasilyeva, D. Aleja, R. Criado, D. Musatov,
-    A.M. Raigorodskii, J. Flores, I. Samoylenko, K. Alfaro-Bittner, M. Perc, S. Boccaletti,
+    "Vector centrality in hypergraphs", K. Kovalenko, M. Romance, E. Vasilyeva,
+    D. Aleja, R. Criado, D. Musatov, A.M. Raigorodskii, J. Flores, I. Samoylenko,
+    K. Alfaro-Bittner, M. Perc, S. Boccaletti,
     https://doi.org/10.1016/j.chaos.2022.112397
+
     """
     from ..algorithms import is_connected
 

@@ -7,8 +7,8 @@ from xgi.exception import XGIError
 def test_is_connected(edgelist1, edgelist3):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist3)
-    assert xgi.is_connected(H1) == False
-    assert xgi.is_connected(H2) == True
+    assert xgi.is_connected(H1) is False
+    assert xgi.is_connected(H2) is True
 
 
 def test_connected_components(edgelist1, edgelist2, edgelist4):

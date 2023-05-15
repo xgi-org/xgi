@@ -75,15 +75,9 @@ def test_call_filterby(edgelist1, edgelist8):
     assert filtered.asdict() == {1: 3.5}
 
 
-def test_filterby_attr(hyperwithattrs, attr1, attr2, attr3, attr4, attr5):
+def test_filterby_attr(hyperwithattrs):
     H = hyperwithattrs
-    attrs = {
-        1: attr1,
-        2: attr2,
-        3: attr3,
-        4: attr4,
-        5: attr5,
-    }
+
     filtered = H.nodes.filterby_attr("age", 20, "eq")
     assert set(filtered) == {4}
 

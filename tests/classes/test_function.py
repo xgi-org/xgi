@@ -21,7 +21,7 @@ def test_max_edge_order(edgelist1, edgelist4, edgelist5):
     H3 = xgi.Hypergraph(edgelist4)
     H4 = xgi.Hypergraph(edgelist5)
 
-    assert xgi.max_edge_order(H0) == None
+    assert xgi.max_edge_order(H0) is None
     assert xgi.max_edge_order(H1) == 0
     assert xgi.max_edge_order(H2) == 2
     assert xgi.max_edge_order(H3) == 3
@@ -31,11 +31,11 @@ def test_max_edge_order(edgelist1, edgelist4, edgelist5):
 def test_is_possible_order(edgelist1):
     H1 = xgi.Hypergraph(edgelist1)
 
-    assert xgi.is_possible_order(H1, -1) == False
-    assert xgi.is_possible_order(H1, 0) == True
-    assert xgi.is_possible_order(H1, 1) == True
-    assert xgi.is_possible_order(H1, 2) == True
-    assert xgi.is_possible_order(H1, 3) == False
+    assert xgi.is_possible_order(H1, -1) is False
+    assert xgi.is_possible_order(H1, 0) is True
+    assert xgi.is_possible_order(H1, 1) is True
+    assert xgi.is_possible_order(H1, 2) is True
+    assert xgi.is_possible_order(H1, 3) is False
 
 
 def test_is_uniform(edgelist1, edgelist6, edgelist7):
@@ -44,10 +44,10 @@ def test_is_uniform(edgelist1, edgelist6, edgelist7):
     H2 = xgi.Hypergraph(edgelist7)
     H3 = xgi.empty_hypergraph()
 
-    assert xgi.is_uniform(H0) == False
+    assert xgi.is_uniform(H0) is False
     assert xgi.is_uniform(H1) == 2
     assert xgi.is_uniform(H2) == 2
-    assert xgi.is_uniform(H3) == False
+    assert xgi.is_uniform(H3) is False
 
 
 def test_edge_neighborhood(edgelist3):
@@ -157,7 +157,7 @@ def test_create_empty_copy(edgelist1):
     assert E2["name"] == "test"
     assert E2["timestamp"] == "Nov. 20"
     with pytest.raises(XGIError):
-        author = E2["author"]
+        _ = E2["author"]
     for n in E2.nodes:
         assert E2.nodes[n]["name"] == attr_dict[n]["name"]
 
@@ -508,7 +508,9 @@ def test_density(edgelist1):
     with pytest.raises(ValueError):
         xgi.density(H, max_order=8)  # max_order cannot be larger than number of nodes
 
-    dens_ignore_sing = lambda m: xgi.density(H, max_order=m, ignore_singletons=True)
+    def dens_ignore_sing(m):
+        return xgi.density(H, max_order=m, ignore_singletons=True)
+
     assert abs(dens_ignore_sing(0) - 0.0) < tol
     assert abs(dens_ignore_sing(1) - 0.03571428571428571) < tol
     assert abs(dens_ignore_sing(2) - 0.03571428571428571) < tol
@@ -678,9 +680,9 @@ def test_incidence_density(edgelist1):
             H, max_order=8
         )  # max_order cannot be larger than number of nodes
 
-    dens_ignore_sing = lambda m: xgi.incidence_density(
-        H, max_order=m, ignore_singletons=True
-    )
+    def dens_ignore_sing(m):
+        return xgi.incidence_density(H, max_order=m, ignore_singletons=True)
+
     assert abs(dens_ignore_sing(0) - 0.0) < tol
     assert abs(dens_ignore_sing(1) - 0.25) < tol
     assert abs(dens_ignore_sing(2) - 1 / 3) < tol

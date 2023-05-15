@@ -262,7 +262,8 @@ class IDView(Mapping, Set):
             bunch = [node for node in self if val[0] <= values[node] <= val[1]]
         else:
             raise ValueError(
-                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
+                f"Unrecognized mode {mode}. mode must be one of "
+                "'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
             )
         return type(self).from_view(self, bunch)
 
@@ -329,7 +330,8 @@ class IDView(Mapping, Set):
             ]
         else:
             raise ValueError(
-                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
+                f"Unrecognized mode {mode}. mode must be one of "
+                "'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
             )
         return type(self).from_view(self, bunch)
 
@@ -577,13 +579,13 @@ class NodeView(IDView):
     def isolates(self, ignore_singletons=False):
         """Nodes that belong to no edges.
 
-        When ignore_singletons is True, a node is considered isolated from the
-        rest of the hypergraph when it is included in no edges of size two or more.  In
+        When ignore_singletons is True, a node is considered isolated from the rest of
+        the hypergraph when it is included in no edges of size two or more.  In
         particular, whether the node is part of any singleton edges is irrelevant to
         determine whether it is isolated.
 
-        When ignore_singletons is False (default), a node is isolated only when it is a member of
-        exactly zero edges, including singletons.
+        When ignore_singletons is False (default), a node is isolated only when it is a
+        member of exactly zero edges, including singletons.
 
         Parameters
         ----------
@@ -751,11 +753,9 @@ class EdgeView(IDView):
         nodes = self._bi_id_dict
         max_edges = set()
 
-        _intersection = lambda x, y: x & y
-
         if strict:
             for i, e in edges.items():
-                if reduce(_intersection, (nodes[n] for n in e)) == {i}:
+                if reduce(lambda x, y: x & y, (nodes[n] for n in e)) == {i}:
                     max_edges.add(i)
         else:
             # This data structure so that the algorithm can handle multi-edges
@@ -767,7 +767,7 @@ class EdgeView(IDView):
                 # If a multi-edge has already been added to the set of
                 # maximal edges, we don't need to check.
                 if i not in max_edges:
-                    if reduce(_intersection, (nodes[n] for n in e)) == set(
+                    if reduce(lambda x, y: x & y, (nodes[n] for n in e)) == set(
                         dups[frozenset(e)]
                     ):
                         max_edges.update(dups[frozenset(e)])
