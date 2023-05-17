@@ -1,29 +1,70 @@
 # YAML 1.2
----
-authors: 
-  - family-names: Landry
-    given-names: Nicholas
-    
-  - family-names: Torres
-    given-names: Leo
-    
-  - family-names: Iacopini
-    given-names: Iacopo
-    
+cff-version: "1.2.0"
+authors:
+- email: nicholas.landry@uvm.edu
+  family-names: Landry
+  given-names: Nicholas W.
+  orcid: "https://orcid.org/0000-0003-1270-4980"
+- family-names: Lucas
+  given-names: Maxime
+  orcid: "https://orcid.org/0000-0001-8087-2981"
+- family-names: Iacopini
+  given-names: Iacopo
+  orcid: "https://orcid.org/0000-0001-8794-6410"
+- family-names: Petri
+  given-names: Giovanni
+  orcid: "https://orcid.org/0000-0003-1847-5031"
+- family-names: Schwarze
+  given-names: Alice
+  orcid: "https://orcid.org/0000-0002-9146-8068"
+- family-names: Patania
+  given-names: Alice
+  orcid: "https://orcid.org/0000-0002-3047-4376"
+- family-names: Torres
+  given-names: Leo
+  orcid: "https://orcid.org/0000-0002-2675-2775"
+contact:
+- email: nicholas.landry@uvm.edu
+  family-names: Landry
+  given-names: Nicholas W.
+  orcid: "https://orcid.org/0000-0003-1270-4980"
+doi: 10.5281/zenodo.7939055
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - email: nicholas.landry@uvm.edu
+    family-names: Landry
+    given-names: Nicholas W.
+    orcid: "https://orcid.org/0000-0003-1270-4980"
   - family-names: Lucas
     given-names: Maxime
-    
+    orcid: "https://orcid.org/0000-0001-8087-2981"
+  - family-names: Iacopini
+    given-names: Iacopo
+    orcid: "https://orcid.org/0000-0001-8794-6410"
   - family-names: Petri
     given-names: Giovanni
-    
-  - family-names: Patania
-    given-names: Alice
-    
+    orcid: "https://orcid.org/0000-0003-1847-5031"
   - family-names: Schwarze
     given-names: Alice
-
-cff-version: "1.1.0"
-license: "BSD-3"
-message: "If you use this software, please cite it using these metadata."
-title: XGI
-version: "0.6"
+    orcid: "https://orcid.org/0000-0002-9146-8068"
+  - family-names: Patania
+    given-names: Alice
+    orcid: "https://orcid.org/0000-0002-3047-4376"
+  - family-names: Torres
+    given-names: Leo
+    orcid: "https://orcid.org/0000-0002-2675-2775"
+  date-published: 2023-05-17
+  doi: 10.21105/joss.05162
+  issn: 2475-9066
+  issue: 85
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 5162
+  title: "XGI: A Python package for higher-order interaction networks"
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.05162"
+  volume: 8
+title: "XGI: A Python package for higher-order interaction networks"
