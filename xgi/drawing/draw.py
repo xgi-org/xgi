@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+from mpl_toolkits.mplot3d.art3d import Axes3D, Line3DCollection, Poly3DCollection
 from scipy.spatial import ConvexHull
 
 from .. import convert
@@ -1279,5 +1280,168 @@ def draw_hypergraph_hull(
 
     # compute axis limits
     _update_lims(pos, ax)
+
+    return ax
+
+def draw_multilayer(
+    H,
+    pos=None,
+    ax=None,
+    node_fc="tab:blue",
+    node_ec="black",
+    node_lw=0.5,
+    node_size=5,
+    max_order=None,
+    palette='jet',
+    conn_lines=True,
+    conn_lines_style='dotted',
+    width=5,
+    height=5,
+    h_angle=10,
+    v_angle=0,
+    sep=1,
+):
+    """Draw a hypergraph or simplicial complex visualized in 3D
+    showing hyperedges/simplices of different orders on superimposed layers.
+
+    Parameters
+    ----------
+    H : Hypergraph or SimplicialComplex.
+        Higher-order network to plot.
+    pos : dict or None, optional
+        The positions of the nodes in the multilayer network. If None, a default layout will be computed using xgi.barycenter_spring_layout(). Default is None.
+    ax : matplotlib Axes3DSubplot or None, optional
+        The subplot to draw the visualization on. If None, a new subplot will be created. Default is None.
+    node_fc : color or sequence of colors, optional
+        The face color(s) of the nodes. Default is "tab:blue".
+    node_ec : color or sequence of colors, optional
+        The edge color(s) of the nodes. Default is "black".
+    node_lw : float or sequence of floats, optional
+        The linewidth(s) of the node edges. Default is 0.5.
+    node_size : scalar or array-like, optional
+        The size(s) of the nodes. Default is 5.
+    max_order : int or None, optional
+        The maximum order of hyperedges/simplices to consider for coloring. If None edges up to the maximal order are drawn. Default is None.
+    palette : str, optional
+        The name of the matplotlib color palette to use. Default is 'jet'.
+    conn_lines : bool, optional
+        Whether to draw connections between layers. Default is True.
+    conn_lines_style : str, optional
+        The linestyle of the connections between layers. Default is 'dotted'.
+    width : float, optional
+        The width of the figure in inches. Default is 5.
+    height : float, optional
+        The height of the figure in inches. Default is 5.
+    h_angle : float, optional
+        The rotation angle around the horizontal axis in degrees. Default is 10.
+    v_angle : float, optional
+        The rotation angle around the vertical axis in degrees. Default is 0.
+    sep : float, optional
+        The separation between layers. Default is 1.
+
+    Returns
+    -------
+    ax : matplotlib Axes3DSubplot
+        The subplot with the multilayer network visualization.
+    """
+
+    if pos is None:
+        pos = barycenter_spring_layout(H)
+
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=(width, height), dpi=600, subplot_kw={'projection': '3d'})
+
+    if max_order is None:
+        max_order = max_edge_order(H)
+
+    cmap = cm.get_cmap(palette, max_order)
+
+    xs, ys = zip(*pos.values())
+
+    for order in range(1, max_order + 1):
+        zs = [order * sep] * len(xs)
+
+        #draw lines connecting points on the different planes
+        if conn_lines and order > 1:
+            thru_nodes = H.nodes
+            lines3d_between = [
+                (list(pos[i]) + [order * sep - sep], list(pos[i]) + [order * sep])
+                for i in thru_nodes
+            ]
+            between_lines = Line3DCollection(
+                lines3d_between,
+                zorder=order,
+                color='.5',
+                alpha=0.4,
+                linestyle=conn_lines_style,
+                linewidth=1,
+            )
+            ax.add_collection3d(between_lines)
+
+        # draw the edges/simplices of given order
+        edges = H.edges.filterby('order', order).members()
+        #dyads
+        if order == 1:
+            lines3d = [
+                (list(pos[i]) + [order * sep], list(pos[j]) + [order * sep])
+                for i, j in edges
+            ]
+            line_collection = Line3DCollection(
+                lines3d,
+                zorder=order - 1,
+                color=cmap(order - 1),
+                alpha=1,
+                linewidth=0.7,
+            )
+            ax.add_collection3d(line_collection)
+        #higher-orders
+        else:
+            poly = []
+            for e in edges:
+                vertices = np.array([[xs[i - 1], ys[i - 1], zs[i - 1]] for i in e])
+                vertices = _CCW_sort(vertices)
+                poly.append(vertices)
+            poly = Poly3DCollection(
+                poly,
+                zorder=order - 1,
+                color=cmap(order - 1),
+                alpha=0.5,
+            )
+            ax.add_collection3d(poly)
+        #draw nodes
+        ax.scatter(
+            xs,
+            ys,
+            zs,
+            c=node_fc,
+            edgecolors=node_ec,
+            linewidths=node_lw,
+            marker='o',
+            alpha=1,
+            zorder=order + 1,
+            s=node_size,
+        )
+        #draw surfaces corresponding to the different orders
+        xdiff = np.max(xs) - np.min(xs)
+        ydiff = np.max(ys) - np.min(ys)
+        ymin = np.min(ys) - ydiff * 0.1
+        ymax = np.max(ys) + ydiff * 0.1
+        xmin = np.min(xs) - xdiff * 0.1 * (width / height)
+        xmax = np.max(xs) + xdiff * 0.1 * (width / height)
+        xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
+        zz = np.zeros(xx.shape) + order * sep
+        ax.plot_surface(
+            xx,
+            yy,
+            zz,
+            color=cmap(order - 1),
+            alpha=0.1,
+            zorder=order,
+        )
+
+    ax.view_init(h_angle, v_angle)
+    ax.set_ylim(np.min(ys) - ydiff * 0.1, np.max(ys) + ydiff * 0.1)
+    ax.set_xlim(np.min(xs) - xdiff * 0.1, np.max(xs) + xdiff * 0.1)
+    ax.set_axis_off()
 
     return ax
