@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.6
+* Added functions to compute shortest paths (`single_source_shortest_path` and `shortest_path_length`) [#365](https://github.com/xgi-org/xgi/issues/365) (@acombretrenouard)
 * Added new drawing layouts (`circular_layout`, `spiral_layout`, and `barycenter_kamada_kawai_layout`) [#360](https://github.com/xgi-org/xgi/pull/360) (@thomasrobiglio).
 
 ## v0.5.8

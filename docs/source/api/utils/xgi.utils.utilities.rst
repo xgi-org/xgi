@@ -20,3 +20,4 @@
    .. autofunction:: powerset
    .. autofunction:: update_uid_counter
    .. autofunction:: find_triangles
+   .. autofunction:: min_where

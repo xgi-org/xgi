@@ -104,3 +104,4 @@ This library may not meet your needs and if this is this case, consider checking
 * [HyperGraphs.jl](https://github.com/lpmdiaz/HyperGraphs.jl): A package in Julia for representing, analyzing, and generating hypergraphs which may be oriented and weighted.
 * [hyperG](https://cran.r-project.org/package=HyperG): A package in R for storing and analyzing hypergraphs
 * [NetworkX](https://networkx.org/): A package in Python for representing, analyzing, and visualizing networks.
+![](![https://github.com/acombretrenouard/xgi.git](![https://github.com/acombretrenouard/xgi.git](https://github.com/acombretrenouard/xgi.git)))
