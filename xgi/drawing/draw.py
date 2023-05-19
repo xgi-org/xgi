@@ -1283,6 +1283,7 @@ def draw_hypergraph_hull(
 
     return ax
 
+
 def draw_multilayer(
     H,
     pos=None,
@@ -1292,9 +1293,9 @@ def draw_multilayer(
     node_lw=0.5,
     node_size=5,
     max_order=None,
-    palette='jet',
+    palette="jet",
     conn_lines=True,
-    conn_lines_style='dotted',
+    conn_lines_style="dotted",
     width=5,
     height=5,
     h_angle=10,
@@ -1349,7 +1350,9 @@ def draw_multilayer(
         pos = barycenter_spring_layout(H)
 
     if ax is None:
-        fig, ax = plt.subplots(1, 1, figsize=(width, height), dpi=600, subplot_kw={'projection': '3d'})
+        fig, ax = plt.subplots(
+            1, 1, figsize=(width, height), dpi=600, subplot_kw={"projection": "3d"}
+        )
 
     if max_order is None:
         max_order = max_edge_order(H)
@@ -1361,7 +1364,7 @@ def draw_multilayer(
     for order in range(1, max_order + 1):
         zs = [order * sep] * len(xs)
 
-        #draw lines connecting points on the different planes
+        # draw lines connecting points on the different planes
         if conn_lines and order > 1:
             thru_nodes = H.nodes
             lines3d_between = [
@@ -1371,7 +1374,7 @@ def draw_multilayer(
             between_lines = Line3DCollection(
                 lines3d_between,
                 zorder=order,
-                color='.5',
+                color=".5",
                 alpha=0.4,
                 linestyle=conn_lines_style,
                 linewidth=1,
@@ -1379,8 +1382,8 @@ def draw_multilayer(
             ax.add_collection3d(between_lines)
 
         # draw the edges/simplices of given order
-        edges = H.edges.filterby('order', order).members()
-        #dyads
+        edges = H.edges.filterby("order", order).members()
+        # dyads
         if order == 1:
             lines3d = [
                 (list(pos[i]) + [order * sep], list(pos[j]) + [order * sep])
@@ -1394,7 +1397,7 @@ def draw_multilayer(
                 linewidth=0.7,
             )
             ax.add_collection3d(line_collection)
-        #higher-orders
+        # higher-orders
         else:
             poly = []
             for e in edges:
@@ -1408,7 +1411,7 @@ def draw_multilayer(
                 alpha=0.5,
             )
             ax.add_collection3d(poly)
-        #draw nodes
+        # draw nodes
         ax.scatter(
             xs,
             ys,
@@ -1416,12 +1419,12 @@ def draw_multilayer(
             c=node_fc,
             edgecolors=node_ec,
             linewidths=node_lw,
-            marker='o',
+            marker="o",
             alpha=1,
             zorder=order + 1,
             s=node_size,
         )
-        #draw surfaces corresponding to the different orders
+        # draw surfaces corresponding to the different orders
         xdiff = np.max(xs) - np.min(xs)
         ydiff = np.max(ys) - np.min(ys)
         ymin = np.min(ys) - ydiff * 0.1
