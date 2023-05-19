@@ -25,6 +25,7 @@ __all__ = [
     "draw_node_labels",
     "draw_hyperedge_labels",
     "draw_hypergraph_hull",
+    "draw_multilayer"
 ]
 
 
