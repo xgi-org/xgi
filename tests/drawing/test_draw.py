@@ -204,6 +204,7 @@ def test_draw_multilayer(edgelist8):
     plt.close()
 
     # custom parameters
+    pos = xgi.circular_layout(H)
     ax4 = xgi.draw_multilayer(
         H,
         pos=pos,
