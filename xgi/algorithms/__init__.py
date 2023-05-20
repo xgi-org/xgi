@@ -3,3 +3,4 @@ from .assortativity import *
 from .centrality import *
 from .clustering import *
 from .connected import *
+from .shortest_path import *

@@ -143,39 +143,46 @@ def test_pca_transform():
     assert np.allclose(transform1_pos2[2], np.array([-0.02177678, -2.23596193]))
     assert np.allclose(transform1_pos2[3], np.array([4.47192387, -0.04355357]))
 
+
 def test_circular_layout():
     # hypergraph
     H = xgi.random_hypergraph(10, [0.2], seed=1)
     pos = xgi.circular_layout(H)
     assert len(pos) == H.num_nodes
-    
+
     # empty hypergraph
     H = xgi.empty_hypergraph()
     pos = xgi.circular_layout(H)
     assert pos == {}
-    
+
     # single node hypergraph
     H = xgi.trivial_hypergraph()
-    pos = xgi.circular_layout(H, center=[1,1])
-    assert pos[0] == [1,1]
-    
+    pos = xgi.circular_layout(H, center=[1, 1])
+    assert pos[0] == [1, 1]
+
     # test center
     H = xgi.random_hypergraph(10, [0.2], seed=1)
-    center = [2., 1.]
+    center = [2.0, 1.0]
     pos = xgi.circular_layout(H, center=center)
     for i in pos.keys():
-        assert np.round(np.sqrt((pos[i][0]-center[0])**2+(pos[i][1]-center[1])**2), 1) == 1.
-    
+        assert (
+            np.round(
+                np.sqrt((pos[i][0] - center[0]) ** 2 + (pos[i][1] - center[1]) ** 2), 1
+            )
+            == 1.0
+        )
+
     # test radius
     H = xgi.random_hypergraph(10, [0.2], seed=1)
-    pos = xgi.circular_layout(H, radius=2.)
+    pos = xgi.circular_layout(H, radius=2.0)
     for i in pos.keys():
-        assert np.round(np.sqrt(pos[i][0]**2+pos[i][1]**2), 1) == 2. 
-    
+        assert np.round(np.sqrt(pos[i][0] ** 2 + pos[i][1] ** 2), 1) == 2.0
+
     # simplicial complex
     S = xgi.random_flag_complex_d2(10, 0.2)
     pos = xgi.circular_layout(S)
     assert len(pos) == S.num_nodes
+
 
 def test_spiral_layout():
     # hypergraph
@@ -185,22 +192,23 @@ def test_spiral_layout():
     assert pos1.keys() == pos2.keys()
     assert len(pos1) == H.num_nodes
     assert len(pos2) == H.num_nodes
-    
+
     # empty hypergraph
     H = xgi.empty_hypergraph()
     pos = xgi.spiral_layout(H)
     assert pos == {}
-    
+
     # single node hypergraph
     H = xgi.trivial_hypergraph()
-    pos = xgi.spiral_layout(H, center=[1,1])
-    assert pos[0] == [1,1]
+    pos = xgi.spiral_layout(H, center=[1, 1])
+    assert pos[0] == [1, 1]
 
     # simplicial complex
     S = xgi.random_flag_complex_d2(10, 0.2)
     pos = xgi.spiral_layout(S)
     assert len(pos) == S.num_nodes
-    
+
+
 def test_barycenter_kamada_kawai_layout(hypergraph1):
     H = xgi.random_hypergraph(10, [0.2], seed=1)
 

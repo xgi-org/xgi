@@ -3,6 +3,8 @@
 from collections import defaultdict
 from itertools import chain, combinations, count
 
+from numpy import infty
+
 from xgi.exception import IDNotFound, XGIError
 
 __all__ = [
@@ -173,3 +175,38 @@ def find_triangles(G):
         if nbr in G[nbr2]
     )
     return [set(tri) for tri in triangles]
+
+
+def min_where(dicty, where):
+    """
+    Finds the minimum value of a dictonary `dicty`. The dictonary `where`
+    indicates which keys to take into account. The minimum is eventualy
+    infinite.
+
+    Parameters
+    ----------
+    dicty : dict
+        Dictionary of values (int, float...) from which to find
+        the minimum.
+    where : dict
+        Dictionary of booleans that has the same keys as `dicty`.
+        The minimum will be searched among the values for which
+        `where[key]` is TRUE.
+
+    Return
+    ------
+    min_val : float or np.Inf
+        Minimum value found in `dicty`. Is set to np.infty if `where` indicated
+        nowhere or if all values are `np.infty`.
+    """
+
+    min_val = infty
+    for key in dicty.keys():
+        if where[key]:
+            if dicty[key] < min_val:
+                min_val = dicty[key]
+            else:
+                pass
+        else:
+            pass
+    return min_val

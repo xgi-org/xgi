@@ -1,4 +1,5 @@
 import networkx as nx
+from numpy import infty
 
 import xgi
 
@@ -64,3 +65,15 @@ def test_find_triangles():
 
     assert triangles == cliques
     assert num_tri == len(cliques)
+
+
+def test_min_where():
+    vals = {"a": 1.0, "b": 0.0, "c": infty, "d": 2.0}
+
+    where = {"a": True, "b": False, "c": True, "d": True}
+    assert (
+        xgi.utils.utilities.min_where(vals, where) == 1
+    )  # replace with xgi.min_where (it seems not to work...)
+
+    where = {"a": False, "b": False, "c": False, "d": False}
+    assert xgi.utils.utilities.min_where(vals, where) == infty
