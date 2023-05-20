@@ -307,3 +307,76 @@ def line_vector_centrality(H):
             vc[node].append(c_i[node])
 
     return vc
+
+
+
+
+
+def katz_centrality(H, index=False, cutoff=100) :
+    """Returns the Katz-centrality vector of hypergraph H.
+    
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        Hypergraph on which to compute the alpha centralities.
+    index : bool
+        If set to True, will return a dictionary mapping each vector index to a node.
+    cutoff : int
+        Power at which to stop the computation A + alpha * A**2 + alpha**2 * A**3 + ...
+        Default is 100.
+
+    Returns
+    -------
+    c : np.ndarray
+        Vector of the node centralities, sorted by the node indexes.
+
+    Note
+    ----
+    [1] The Katz-centrality is defined as :
+        c = [(I - alpha.A^{t})^{-1} - I] • (1, 1, ..., 1)
+    Where A is the adjency matrix of the the (hyper)graph.
+    Since A^{t} = A for undirected graphs (our case), we have :
+        (I + A + alpha * A**2 + alpha**2 * A**3 + ...) * (I - alpha.A^{t}) = (I + A + alpha * A**2 + alpha**2 * A**3 + ...) * (I - alpha.A)
+                                                                           = (I + A + alpha * A**2 + alpha**2 * A**3 + ...) - A - alpha * A**2 - alpha**2 * A**3 - alpha**3 * A**3 - ...
+                                                                           = I
+    And (I - alpha.A^{t})^{-1} = I + A + alpha * A**2 + alpha**2 * A**3 + ...
+    Thus we can use the power serie to compute the Katz-centrality.
+    [2] The Katz-centrality of isolated nodes (i.e. no hyperedges) is not clearly define.
+    The output in this case could probably be improved.
+
+    References
+    ----------
+    See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited May 20 2023) for a clear 
+    definition of Katz centrality.
+    """
+
+    if index :
+        I, nodedict, _ = incidence_matrix(H, index=True)
+    else :
+        I = incidence_matrix(H, index=False)
+
+    N = len(H.nodes)
+    M = len(H.edges)
+    if N == 0 : # no nodes
+        c = np.array([])
+    elif M == 0 :
+        c = np.ones(N) / N
+    else : # there is at least one edge, both N and M are non-zero
+        A = I.dot(I.transpose()) - np.diag(np.sum(I, axis=1))
+        cutoff = 100
+        alpha = 1/2**N # here, we can replace 2**N by scipy.special.comb(N, d) \
+                       # (where d is the max edge size)
+        mat = A
+        for power in range(1, cutoff) :
+            mat = alpha * mat.dot(A) + A
+        u = 1/N * np.ones(N)
+        c = mat.dot(u)
+    
+    if index :
+        return c, nodedict
+    else :
+        return c
+
+
+
+# to do : maybe add something to measure convergence in the power-serie in katz_centrality
