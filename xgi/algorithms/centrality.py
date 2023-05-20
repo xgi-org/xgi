@@ -311,12 +311,9 @@ def line_vector_centrality(H):
     return vc
 
 
-
-
-
-def katz_centrality(H, index=False, cutoff=100) :
+def katz_centrality(H, index=False, cutoff=100):
     """Returns the Katz-centrality vector of hypergraph H.
-    
+
     Parameters
     ----------
     H : xgi.Hypergraph
@@ -351,37 +348,36 @@ def katz_centrality(H, index=False, cutoff=100) :
 
     References
     ----------
-    See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited May 20 2023) for a clear 
+    See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited May 20 2023) for a clear
     definition of Katz centrality.
     """
 
-    if index :
+    if index:
         I, nodedict, _ = incidence_matrix(H, index=True)
-    else :
+    else:
         I = incidence_matrix(H, index=False)
 
     N = len(H.nodes)
     M = len(H.edges)
-    if N == 0 : # no nodes
+    if N == 0:  # no nodes
         c = np.array([])
-    elif M == 0 :
+    elif M == 0:
         c = np.ones(N) / N
-    else : # there is at least one edge, both N and M are non-zero
+    else:  # there is at least one edge, both N and M are non-zero
         A = I.dot(I.transpose()) - np.diag(np.sum(I, axis=1))
         cutoff = 100
-        alpha = 1/2**N # here, we can replace 2**N by scipy.special.comb(N, d) \
-                       # (where d is the max edge size)
+        alpha = 1 / 2**N  # here, we can replace 2**N by scipy.special.comb(N, d) \
+        # (where d is the max edge size)
         mat = A
-        for power in range(1, cutoff) :
+        for power in range(1, cutoff):
             mat = alpha * mat.dot(A) + A
-        u = 1/N * np.ones(N)
+        u = 1 / N * np.ones(N)
         c = mat.dot(u)
-    
-    if index :
-        return c, nodedict
-    else :
-        return c
 
+    if index:
+        return c, nodedict
+    else:
+        return c
 
 
 # to do : maybe add something to measure convergence in the power-serie in katz_centrality

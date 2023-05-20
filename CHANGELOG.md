@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.6
+* Added Katz-centrality algorithm (`katz_centrality`) [#366](https://github.com/xgi-org/xgi/issues/366) (@acombretrenouard).
+
 * Added new drawing layouts (`circular_layout`, `spiral_layout`, and `barycenter_kamada_kawai_layout`) [#360](https://github.com/xgi-org/xgi/pull/360) (@thomasrobiglio).
 
 ## v0.5.8
