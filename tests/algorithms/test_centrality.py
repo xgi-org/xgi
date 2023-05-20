@@ -182,6 +182,6 @@ def test_katz_centrality(edgelist1, edgelist3) :
     
     # test with no index
     H = xgi.Hypergraph(edgelist3)
-    c, nodedict = xgi.katz_centrality(H, index=False)
+    c = xgi.katz_centrality(H, index=False)
 
     return
