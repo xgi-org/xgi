@@ -16,6 +16,8 @@ __all__ = [
     "h_eigenvector_centrality",
     "node_edge_centrality",
     "line_vector_centrality",
+    "line_vector_centrality",
+    "katz_centrality",
 ]
 
 
@@ -329,6 +331,9 @@ def katz_centrality(H, index=False, cutoff=100) :
     -------
     c : np.ndarray
         Vector of the node centralities, sorted by the node indexes.
+    nodedict : dict
+        If index is set to True, nodedict will contain the nodes ids, keyed by their indice in vector c.
+        <c[key]> will be the centrality of node <nodedict[key]>.
 
     Note
     ----
