@@ -183,8 +183,8 @@ class IDView(Mapping, Set):
 
         Parameters
         ----------
-        stat : str or :class:`xgi.stats.NodeStat`
-            `NodeStat` object, or name of a `NodeStat`.
+        stat : str or :class:`xgi.stats.NodeStat`/`xgi.stats.EdgeStat`
+            `NodeStat`/`EdgeStat` object, or name of a `NodeStat`/`EdgeStat`.
         val : Any
             Value of the statistic.  Usually a single numeric value.  When mode is
             'between', must be a tuple of exactly two values.
@@ -503,7 +503,7 @@ class IDView(Mapping, Set):
             bunch = set(bunch)
             wrong = bunch - all_ids
             if wrong:
-                raise IDNotFound(f"Nodes {wrong} not in the hypergraph")
+                raise IDNotFound(f"IDs {wrong} not in the hypergraph")
             newview._ids = bunch
         return newview
 
@@ -571,7 +571,7 @@ class NodeView(IDView):
 
         """
         return (
-            {key: self._id_dict[key] for key in self}
+            {key: self._id_dict[key].copy() for key in self}
             if n is None
             else self._id_dict[n].copy()
         )
@@ -677,9 +677,9 @@ class EdgeView(IDView):
         """
         if e is None:
             if dtype is dict:
-                return {key: self._id_dict[key] for key in self}
+                return {key: self._id_dict[key].copy() for key in self}
             elif dtype is list:
-                return [self._id_dict[key] for key in self]
+                return [self._id_dict[key].copy() for key in self]
             else:
                 raise XGIError(f"Unrecognized dtype {dtype}")
 
