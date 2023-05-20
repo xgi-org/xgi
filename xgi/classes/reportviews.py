@@ -27,10 +27,8 @@ class IDView(Mapping, Set):
 
     Parameters
     ----------
-    id_dict : dict
-        The original dict this is a view of.
-    id_attrs : dict
-        The original attribute dict this is a view of.
+    network : Hypergraph or Simplicial Complex
+        The underlying network
     ids : iterable
         A subset of the keys in id_dict to keep track of.
 
@@ -137,7 +135,7 @@ class IDView(Mapping, Set):
         Returns
         -------
         dict
-            Node attributes.
+            attributes associated to the ID.
 
         Raises
         ------
@@ -480,7 +478,7 @@ class IDView(Mapping, Set):
         Parameters
         ----------
         view : IDView
-            The view used to initialze the new object
+            The view used to initialize the new object
         bunch : iterable
             IDs the new view will keep track of
 
