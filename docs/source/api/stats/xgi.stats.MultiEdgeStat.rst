@@ -21,7 +21,7 @@
    .. autosummary::
       :nosignatures:
 
-      ~MultiNodeStat.asdict
-      ~MultiNodeStat.aslist
-      ~MultiNodeStat.asnumpy
-      ~MultiNodeStat.aspandas
+      ~MultiEdgeStat.asdict
+      ~MultiEdgeStat.aslist
+      ~MultiEdgeStat.asnumpy
+      ~MultiEdgeStat.aspandas

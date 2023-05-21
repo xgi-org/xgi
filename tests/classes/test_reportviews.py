@@ -182,7 +182,7 @@ def test_edge_members(edgelist3):
 
 def test_node_memberships(edgelist3):
     H = xgi.Hypergraph(edgelist3)
-    
+
     # test that members are copies in memory
     H.nodes.memberships(1).add("a")
     assert "a" not in H.nodes.memberships(1)
