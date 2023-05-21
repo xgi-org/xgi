@@ -30,8 +30,8 @@ class DiHypergraph:
 
     Parameters
     ----------
-    incoming_data : input hypergraph data (optional, default: None)
-        Data to initialize the hypergraph. If None (default), an empty
+    incoming_data : input directed hypergraph data (optional, default: None)
+        Data to initialize the dihypergraph. If None (default), an empty
         hypergraph is created, i.e. one with no nodes or edges.
         The data can be in the following formats:
 
@@ -76,8 +76,8 @@ class DiHypergraph:
         Returns
         -------
         dict
-            The keys label the hyeprgraph dict and the values
-            are dictionarys from the Hypergraph class.
+            The keys label the hypergraph dict and the values
+            are dictionaries from the DiHypergraph class.
 
         Notes
         -----
@@ -96,13 +96,13 @@ class DiHypergraph:
         }
 
     def __setstate__(self, state):
-        """Function that allows unpickling of a hypergraph.
+        """Function that allows unpickling of a dihypergraph.
 
         Parameters
         ----------
         state
             The keys access the dictionary names the values are the
-            dictionarys themselves from the Hypergraph class.
+            dictionarys themselves from the DiHypergraph class.
 
         Notes
         -----
