@@ -16,7 +16,6 @@ __all__ = [
     "h_eigenvector_centrality",
     "node_edge_centrality",
     "line_vector_centrality",
-    "line_vector_centrality",
     "katz_centrality",
 ]
 

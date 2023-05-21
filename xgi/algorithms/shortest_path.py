@@ -5,6 +5,8 @@ import numpy as np
 
 from ..utils import utilities
 
+__all__ = ["single_source_shortest_path_length", "shortest_path_length"]
+
 
 def single_source_shortest_path_length(H, source):
     """
