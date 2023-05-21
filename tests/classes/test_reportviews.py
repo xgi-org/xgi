@@ -167,6 +167,30 @@ def test_edge_members(edgelist3):
     with pytest.raises(IDNotFound):
         H.edges.members("test")
 
+    # test that members are copies in memory
+    H.edges.members(0).add("a")
+    assert "a" not in H.edges.members(0)
+
+    e = H.edges.members()
+    e[0].add("a")
+    assert "a" not in H.edges.members(0)
+
+    e = H.edges.members(dtype=dict)
+    e[0].add("a")
+    assert "a" not in H.edges.members(0)
+
+
+def test_node_memberships(edgelist3):
+    H = xgi.Hypergraph(edgelist3)
+    
+    # test that members are copies in memory
+    H.nodes.memberships(1).add("a")
+    assert "a" not in H.nodes.memberships(1)
+
+    n = H.nodes.memberships()
+    n[1].add("a")
+    assert "a" not in H.nodes.memberships(1)
+
 
 def test_view_len(edgelist2):
     H = xgi.Hypergraph(edgelist2)
