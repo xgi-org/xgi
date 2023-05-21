@@ -1,6 +1,6 @@
 import networkx as nx
-from numpy import infty
 import pytest
+from numpy import infty
 
 import xgi
 from xgi.exception import IDNotFound, XGIError
