@@ -185,7 +185,7 @@ def test_draw_hypergraph_hull(edgelist8):
     plt.close()
 
 
-def test_draw_multilayer(edgelist8):
+def test_correct_number_of_collections_draw_multilayer(edgelist8):
     # hypergraph
     H = xgi.Hypergraph(edgelist8)
     ax1 = xgi.draw_multilayer(H)
