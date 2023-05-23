@@ -313,42 +313,53 @@ def line_vector_centrality(H):
 def katz_centrality(H, index=False, cutoff=100):
     """Returns the Katz-centrality vector of hypergraph H.
 
+    The Katz-centrality measures the relative importance of a node by counting 
+    how many distinct walks start from it. The longer the walk is the smaller 
+    its contribution will be (attenuation factor `alpha`). 
+    Initialy defined for graphs, the Katz-centrality is here generalized to 
+    hypergraphs using the most basic definition of neighbors : two nodes that 
+    share an hyperedge.
+
     Parameters
     ----------
     H : xgi.Hypergraph
         Hypergraph on which to compute the Kayz-centralities.
     index : bool
-        If set to True, will return a dictionary mapping each vector index to a node.
+        If set to `True`, will return a dictionary mapping each vector index to a 
+        node. Default value is `False`.
     cutoff : int
-        Power at which to stop the computation A + alpha * A**2 + alpha**2 * A**3 + ...
-        Default is 100.
+        Power at which to stop the serie A + alpha * A**2 + alpha**2 * A**3 + ..
+        Default value is 100.
 
     Returns
     -------
     c : np.ndarray
         Vector of the node centralities, sorted by the node indexes.
     nodedict : dict
-        If index is set to True, nodedict will contain the nodes ids, keyed by their indice in vector c.
-        <c[key]> will be the centrality of node <nodedict[key]>.
+        If index is set to True, nodedict will contain the nodes ids, keyed by 
+        their indice in vector `c`.
+        Thus, `c[key]` will be the centrality of node `nodedict[key]`.
 
-    Note
-    ----
+    Notes
+    -----
     [1] The Katz-centrality is defined as :
         c = [(I - alpha.A^{t})^{-1} - I] • (1, 1, ..., 1)
     Where A is the adjency matrix of the the (hyper)graph.
     Since A^{t} = A for undirected graphs (our case), we have :
-        (I + A + alpha * A**2 + alpha**2 * A**3 + ...) * (I - alpha.A^{t}) = (I + A + alpha * A**2 + alpha**2 * A**3 + ...) * (I - alpha.A)
-                                                                           = (I + A + alpha * A**2 + alpha**2 * A**3 + ...) - A - alpha * A**2 - alpha**2 * A**3 - alpha**3 * A**3 - ...
-                                                                           = I
+        (I + A + alpha * A**2 + alpha**2 * A**3 + ...) * (I - alpha.A^{t})
+            = (I + A + alpha * A**2 + alpha**2 * A**3 + ...) * (I - alpha.A)
+            = (I + A + alpha * A**2 + alpha**2 * A**3 + ...) - A - alpha * A**2 
+                - alpha**2 * A**3 - alpha**3 * A**4 - ...
+            = I
     And (I - alpha.A^{t})^{-1} = I + A + alpha * A**2 + alpha**2 * A**3 + ...
     Thus we can use the power serie to compute the Katz-centrality.
-    [2] The Katz-centrality of isolated nodes (i.e. no hyperedges) is not clearly define.
-    The output in this case could probably be improved.
+    [2] The Katz-centrality of isolated nodes (i.e. no hyperedges) is not 
+    clearly define. The output in this case could probably be improved.
 
     References
     ----------
-    See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited May 20 2023) for a clear
-    definition of Katz centrality.
+    See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited 
+    May 20 2023) for a clear definition of Katz centrality.
     """
 
     if index:
