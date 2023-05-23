@@ -313,11 +313,11 @@ def line_vector_centrality(H):
 def katz_centrality(H, index=False, cutoff=100):
     """Returns the Katz-centrality vector of a non-empty hypergraph H.
 
-    The Katz-centrality measures the relative importance of a node by counting 
-    how many distinct walks start from it. The longer the walk is the smaller 
-    its contribution will be (attenuation factor `alpha`). 
-    Initialy defined for graphs, the Katz-centrality is here generalized to 
-    hypergraphs using the most basic definition of neighbors : two nodes that 
+    The Katz-centrality measures the relative importance of a node by counting
+    how many distinct walks start from it. The longer the walk is the smaller
+    its contribution will be (attenuation factor `alpha`).
+    Initialy defined for graphs, the Katz-centrality is here generalized to
+    hypergraphs using the most basic definition of neighbors : two nodes that
     share an hyperedge.
 
     Parameters
@@ -325,7 +325,7 @@ def katz_centrality(H, index=False, cutoff=100):
     H : xgi.Hypergraph
         Hypergraph on which to compute the Kayz-centralities.
     index : bool
-        If set to `True`, will return a dictionary mapping each vector index to a 
+        If set to `True`, will return a dictionary mapping each vector index to a
         node. Default value is `False`.
     cutoff : int
         Power at which to stop the serie A + alpha * A**2 + alpha**2 * A**3 + ..
@@ -336,7 +336,7 @@ def katz_centrality(H, index=False, cutoff=100):
     c : np.ndarray
         Vector of the node centralities, sorted by the node indexes.
     nodedict : dict
-        If index is set to True, nodedict will contain the nodes ids, keyed by 
+        If index is set to True, nodedict will contain the nodes ids, keyed by
         their indice in vector `c`.
         Thus, `c[key]` will be the centrality of node `nodedict[key]`.
 
@@ -353,17 +353,17 @@ def katz_centrality(H, index=False, cutoff=100):
     Since A^{t} = A for undirected graphs (our case), we have :
         (I + A + alpha * A**2 + alpha**2 * A**3 + ...) * (I - alpha.A^{t})
             = (I + A + alpha * A**2 + alpha**2 * A**3 + ...) * (I - alpha.A)
-            = (I + A + alpha * A**2 + alpha**2 * A**3 + ...) - A - alpha * A**2 
+            = (I + A + alpha * A**2 + alpha**2 * A**3 + ...) - A - alpha * A**2
                 - alpha**2 * A**3 - alpha**3 * A**4 - ...
             = I
     And (I - alpha.A^{t})^{-1} = I + A + alpha * A**2 + alpha**2 * A**3 + ...
     Thus we can use the power serie to compute the Katz-centrality.
-    [2] The Katz-centrality of isolated nodes (no hyperedges contains them) is 
+    [2] The Katz-centrality of isolated nodes (no hyperedges contains them) is
     zero. The Katz-centrality of an empty hypergraph is not defined.
 
     References
     ----------
-    See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited 
+    See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited
     May 20 2023) for a clear definition of Katz centrality.
     """
 
@@ -375,7 +375,7 @@ def katz_centrality(H, index=False, cutoff=100):
     N = len(H.nodes)
     M = len(H.edges)
     if N == 0:  # no nodes
-        raise XGIError('The Katz-centrality of an empty hypergraph is not defined.')
+        raise XGIError("The Katz-centrality of an empty hypergraph is not defined.")
     elif M == 0:
         c = np.zeros(N)
     else:  # there is at least one edge, both N and M are non-zero
@@ -393,4 +393,3 @@ def katz_centrality(H, index=False, cutoff=100):
         return c, nodedict
     else:
         return c
-
