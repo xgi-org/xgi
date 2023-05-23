@@ -160,13 +160,8 @@ def ratio(r, m, kind="CEC"):
 
 def test_katz_centrality(edgelist1, edgelist3):
 
-    # test empty hypergraph
-    H = xgi.Hypergraph()
-    c, nodedict = xgi.katz_centrality(H, index=True)
-    assert c == np.array([])
-    assert nodedict == dict()
-
     # test hypergraph with no edge
+    H = xgi.Hypergraph()
     H.add_nodes_from([1, 2, 3])
     c, nodedict = xgi.katz_centrality(H, index=True)
     res = np.zeros(3)

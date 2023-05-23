@@ -311,7 +311,7 @@ def line_vector_centrality(H):
 
 
 def katz_centrality(H, index=False, cutoff=100):
-    """Returns the Katz-centrality vector of hypergraph H.
+    """Returns the Katz-centrality vector of a non-empty hypergraph H.
 
     The Katz-centrality measures the relative importance of a node by counting 
     how many distinct walks start from it. The longer the walk is the smaller 
@@ -339,6 +339,11 @@ def katz_centrality(H, index=False, cutoff=100):
         If index is set to True, nodedict will contain the nodes ids, keyed by 
         their indice in vector `c`.
         Thus, `c[key]` will be the centrality of node `nodedict[key]`.
+
+    Raises
+    ------
+    XGIError
+        If the hypergraph is empty.
 
     Notes
     -----
@@ -370,7 +375,7 @@ def katz_centrality(H, index=False, cutoff=100):
     N = len(H.nodes)
     M = len(H.edges)
     if N == 0:  # no nodes
-        c = np.array([])
+        raise XGIError('The Katz-centrality of an empty hypergraph is not defined.')
     elif M == 0:
         c = np.zeros(N)
     else:  # there is at least one edge, both N and M are non-zero
@@ -389,5 +394,3 @@ def katz_centrality(H, index=False, cutoff=100):
     else:
         return c
 
-
-# to do : maybe add something to measure convergence in the power-serie in katz_centrality
