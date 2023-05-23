@@ -1,9 +1,12 @@
 # Changelog
 
-## v0.6
+
+## latest
 
 * Added Katz-centrality algorithm (`katz_centrality`) [#366](https://github.com/xgi-org/xgi/issues/366) (@acombretrenouard).
-* Added functions to compute shortest paths (`single_source_shortest_path` and `shortest_path_length`) [#365](https://github.com/xgi-org/xgi/issues/365) (@acombretrenouard)
+
+## v0.6
+
 * Added new drawing layouts (`circular_layout`, `spiral_layout`, and `barycenter_kamada_kawai_layout`) [#360](https://github.com/xgi-org/xgi/pull/360) (@thomasrobiglio).
 
 ## v0.5.8
