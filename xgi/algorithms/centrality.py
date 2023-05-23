@@ -353,8 +353,8 @@ def katz_centrality(H, index=False, cutoff=100):
             = I
     And (I - alpha.A^{t})^{-1} = I + A + alpha * A**2 + alpha**2 * A**3 + ...
     Thus we can use the power serie to compute the Katz-centrality.
-    [2] The Katz-centrality of isolated nodes (i.e. no hyperedges) is not 
-    clearly define. The output in this case could probably be improved.
+    [2] The Katz-centrality of isolated nodes (no hyperedges contains them) is 
+    zero. The Katz-centrality of an empty hypergraph is not defined.
 
     References
     ----------
@@ -372,12 +372,12 @@ def katz_centrality(H, index=False, cutoff=100):
     if N == 0:  # no nodes
         c = np.array([])
     elif M == 0:
-        c = np.ones(N) / N
+        c = np.zeros(N)
     else:  # there is at least one edge, both N and M are non-zero
         A = I.dot(I.transpose()) - np.diag(np.sum(I, axis=1))
         cutoff = 100
-        alpha = 1 / 2**N  # here, we can replace 2**N by scipy.special.comb(N, d) \
-        # (where d is the max edge size)
+        alpha = 1 / 2**N  # here, we can replace 2**N by \
+        # scipy.special.comb(N, d) (where d is the max edge size)
         mat = A
         for power in range(1, cutoff):
             mat = alpha * mat.dot(A) + A

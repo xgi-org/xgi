@@ -169,7 +169,7 @@ def test_katz_centrality(edgelist1, edgelist3):
     # test hypergraph with no edge
     H.add_nodes_from([1, 2, 3])
     c, nodedict = xgi.katz_centrality(H, index=True)
-    res = np.ones(3)/3
+    res = np.zeros(3)
     assert np.abs(float(np.sum(c - res))) < 1e-3
 
     # test numerical values
