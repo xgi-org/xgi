@@ -316,7 +316,7 @@ def katz_centrality(H, index=False, cutoff=100):
     Parameters
     ----------
     H : xgi.Hypergraph
-        Hypergraph on which to compute the alpha centralities.
+        Hypergraph on which to compute the Kayz-centralities.
     index : bool
         If set to True, will return a dictionary mapping each vector index to a node.
     cutoff : int

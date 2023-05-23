@@ -163,24 +163,23 @@ def test_katz_centrality(edgelist1, edgelist3):
     # test empty hypergraph
     H = xgi.Hypergraph()
     c, nodedict = xgi.katz_centrality(H, index=True)
+    assert c == np.array([])
+    assert nodedict == dict()
 
     # test hypergraph with no edge
     H.add_nodes_from([1, 2, 3])
     c, nodedict = xgi.katz_centrality(H, index=True)
+    res = np.ones(3)/3
+    assert np.abs(float(np.sum(c - res))) < 1e-3
 
     # test numerical values
     H = xgi.Hypergraph(edgelist1)
     c, nodedict = xgi.katz_centrality(H, index=True)
-    for key in nodedict.keys():
-        if nodedict[key] == 4:
-            assert np.abs(c[key] - 0.0) <= 10**-3
-        elif nodedict[key] == 1:
-            assert np.abs(c[key] - 0.2519685) <= 10**-3
-        else:
-            pass
+    res = np.array([0.2519685 , 0.2519685 , 0.2519685 , 0.        , 0.12647448, 0.37746639, 0.25246065, 0.25246065])
+    assert np.abs(float(np.sum(c - res))) < 1e-3
 
     # test with no index
     H = xgi.Hypergraph(edgelist3)
     c = xgi.katz_centrality(H, index=False)
-
-    return
+    res = np.array([0.34686161, 0.34686161, 0.51894799, 0.51894799, 0.34686161, 0.34686161])
+    assert np.abs(float(np.sum(c - res))) < 1e-3
