@@ -166,11 +166,6 @@ def convert_to_dihypergraph(data, create_using=None):
         if not isinstance(create_using, DiHypergraph):
             return result
 
-    elif isinstance(data, pd.DataFrame):
-        result = from_bipartite_pandas_dataframe(data, create_using)
-        if not isinstance(create_using, DiHypergraph):
-            return result
-
     elif isinstance(data, dict):
         # edge dict in the form we need
         result = from_hyperedge_dict(data, create_using)
