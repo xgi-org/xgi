@@ -10,11 +10,11 @@ Examples
 --------
 
 >>> import xgi
->>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+>>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
 >>> H.order()
-{0: 2, 1: 3, 2: 2}
+{0: 3, 1: 2}
 >>> H.edges.order.asdict()
-{0: 2, 1: 3, 2: 2}
+{0: 3, 1: 2}
 
 """
 
@@ -22,7 +22,10 @@ __all__ = [
     "attrs",
     "order",
     "size",
-    "node_edge_centrality",
+    "head_order",
+    "head_size",
+    "tail_order",
+    "tail_size",
 ]
 
 
@@ -55,11 +58,11 @@ def attrs(net, bunch, attr=None, missing=None):
     Examples
     --------
     >>> import xgi
-    >>> H = xgi.Hypergraph()
+    >>> H = xgi.DiHypergraph()
     >>> edges = [
-    ...     ([0, 1], 'one', {'color': 'red'}),
-    ...     ([1, 2], 'two', {'color': 'black', 'age': 30}),
-    ...     ([2, 3, 4], 'three', {'color': 'blue', 'age': 40}),
+    ...     ([{0, 1}, {2, 4}], 'one', {'color': 'red'}),
+    ...     ([{1, 2}, {2, 0}], 'two', {'color': 'black', 'age': 30}),
+    ...     ([{2, 3, 4}, {1}], 'three', {'color': 'blue', 'age': 40}),
     ... ]
     >>> H.add_edges_from(edges)
 
@@ -104,7 +107,8 @@ def attrs(net, bunch, attr=None, missing=None):
 def order(net, bunch, degree=None):
     """Edge order.
 
-    The order of an edge is the number of nodes it contains minus 1.
+    The order of a directed edge is the number of nodes
+    contained in the union of the head and the tail minus 1.
 
     Parameters
     ----------
@@ -126,12 +130,9 @@ def order(net, bunch, degree=None):
     Examples
     --------
     >>> import xgi
-    >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+    >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
     >>> H.edges.order.asdict()
-    {0: 2, 1: 3, 2: 2}
-    >>> H.edges.order(degree=2).asdict()
-    {0: 0, 1: 2, 2: 1}
-
+    {0: 3, 1: 2}
     """
     if degree is None:
         return {e: len(net._edge_in[e].union(net._edge_out[e])) - 1 for e in bunch}
@@ -149,7 +150,8 @@ def order(net, bunch, degree=None):
 def size(net, bunch, degree=None):
     """Edge size.
 
-    The size of an edge is the number of nodes it contains.
+    The size of a directed edge is the number of nodes
+    contained in the union of the head and the tail.
 
     Parameters
     ----------
@@ -169,10 +171,9 @@ def size(net, bunch, degree=None):
     Examples
     --------
     >>> import xgi
-    >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+    >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
     >>> H.edges.size.asdict()
-    {0: 3, 1: 4, 2: 3}
-
+    {0: 4, 1: 3}
     """
     if degree is None:
         return {e: len(net._edge_in[e].union(net._edge_out[e])) for e in bunch}
@@ -187,10 +188,54 @@ def size(net, bunch, degree=None):
         }
 
 
-def tail_size(net, bunch, degree=None):
-    """Edge size.
+def tail_order(net, bunch, degree=None):
+    """Tail order.
 
-    The size of an edge is the number of nodes it contains.
+    The order of the tail is the number of nodes it contains minus 1.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Edges in `net`.
+
+    Returns
+    -------
+    dict
+
+    See Also
+    --------
+    order
+
+    Examples
+    --------
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
+    >>> H.edges.tail_order.asdict()
+    {0: 1, 1: 0}
+
+    """
+    if degree is None:
+        return {e: len(net._edge_out[e]) - 1 for e in bunch}
+    else:
+        return {
+            e: len(
+                n
+                for n in net._edge_out[e]
+                if len(net._node_in[n].union(net._node_out[n])) == degree
+            )
+            - 1
+            for e in bunch
+        }
+
+
+def tail_size(net, bunch, degree=None):
+    """Tail size.
+
+    The size of the tail is the number of nodes it contains.
 
     Parameters
     ----------
@@ -210,10 +255,9 @@ def tail_size(net, bunch, degree=None):
     Examples
     --------
     >>> import xgi
-    >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
-    >>> H.edges.size.asdict()
-    {0: 3, 1: 4, 2: 3}
-
+    >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
+    >>> H.edges.tail_size.asdict()
+    {0: 2, 1: 1}
     """
     if degree is None:
         return {e: len(net._edge_out[e]) for e in bunch}
@@ -228,10 +272,10 @@ def tail_size(net, bunch, degree=None):
         }
 
 
-def head_size(net, bunch, degree=None):
-    """Edge size.
+def head_order(net, bunch, degree=None):
+    """Head order.
 
-    The size of an edge is the number of nodes it contains.
+    The order of the head is the number of nodes it contains minus 1.
 
     Parameters
     ----------
@@ -251,10 +295,50 @@ def head_size(net, bunch, degree=None):
     Examples
     --------
     >>> import xgi
-    >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
-    >>> H.edges.size.asdict()
-    {0: 3, 1: 4, 2: 3}
+    >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
+    >>> H.edges.head_order.asdict()
+    {0: 1, 1: 1}
+    """
+    if degree is None:
+        return {e: len(net._edge_in[e]) - 1 for e in bunch}
+    else:
+        return {
+            e: len(
+                n
+                for n in net._edge_in[e]
+                if len(net._node_in[n].union(net._node_out[n])) == degree
+            )
+            - 1
+            for e in bunch
+        }
 
+
+def head_size(net, bunch, degree=None):
+    """Head size.
+
+    The size of the head is the number of nodes it contains.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Edges in `net`.
+
+    Returns
+    -------
+    dict
+
+    See Also
+    --------
+    order
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
+    >>> H.edges.head_size.asdict()
+    {0: 2, 1: 2}
     """
     if degree is None:
         return {e: len(net._edge_in[e]) for e in bunch}

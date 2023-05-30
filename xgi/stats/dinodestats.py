@@ -10,11 +10,11 @@ Examples
 --------
 
 >>> import xgi
->>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+>>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
 >>> H.degree()
-{1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
+{1: 2, 2: 1, 5: 1, 6: 1, 4: 1, 3: 1}
 >>> H.nodes.degree.asdict()
-{1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
+{1: 2, 2: 1, 5: 1, 6: 1, 4: 1, 3: 1}
 
 """
 
@@ -25,13 +25,8 @@ import xgi
 __all__ = [
     "attrs",
     "degree",
-    "average_neighbor_degree",
-    "local_clustering_coefficient",
-    "clustering_coefficient",
-    "two_node_clustering_coefficient",
-    "clique_eigenvector_centrality",
-    "h_eigenvector_centrality",
-    "node_edge_centrality",
+    "in_degree",
+    "out_degree",
 ]
 
 
@@ -64,7 +59,7 @@ def attrs(net, bunch, attr=None, missing=None):
     Examples
     --------
     >>> import xgi
-    >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
+    >>> H = xgi.DiHypergraph()
     >>> H.add_nodes_from([
     ...         (1, {"color": "red", "name": "horse"}),
     ...         (2, {"color": "blue", "name": "pony"}),
@@ -118,7 +113,8 @@ def attrs(net, bunch, attr=None, missing=None):
 def degree(net, bunch, order=None, weight=None):
     """Node degree.
 
-    The degree of a node is the number of edges it belongs to.
+    The degree of a node is the number of edges it belongs to,
+    regardless of whether it is in the head or the tail.
 
     Parameters
     ----------
@@ -136,6 +132,12 @@ def degree(net, bunch, order=None, weight=None):
     -------
     dict
 
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
+    >>> H.nodes.degree.asdict()
+    {1: 2, 2: 1, 5: 1, 6: 1, 4: 1, 3: 1}
     """
     if order is None and weight is None:
         return {n: len(net._node_in[n].union(net._node_out[n])) for n in bunch}
@@ -170,9 +172,10 @@ def degree(net, bunch, order=None, weight=None):
 
 
 def in_degree(net, bunch, order=None, weight=None):
-    """Node degree.
+    """Node in-degree.
 
-    The degree of a node is the number of edges it belongs to.
+    The in-degree of a node is the number of edges for which
+    the node is in the head (it is a receiver).
 
     Parameters
     ----------
@@ -190,6 +193,12 @@ def in_degree(net, bunch, order=None, weight=None):
     -------
     dict
 
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
+    >>> H.nodes.in_degree.asdict()
+    {1: 1, 2: 1, 5: 0, 6: 0, 4: 1, 3: 0}
     """
     if order is None and weight is None:
         return {n: len(net._node_in[n]) for n in bunch}
@@ -221,9 +230,10 @@ def in_degree(net, bunch, order=None, weight=None):
 
 
 def out_degree(net, bunch, order=None, weight=None):
-    """Node degree.
+    """Node out-degree.
 
-    The degree of a node is the number of edges it belongs to.
+    The out-degree of a node is the number of edges for which
+    the node is in the tail (it is a sender).
 
     Parameters
     ----------
@@ -241,6 +251,12 @@ def out_degree(net, bunch, order=None, weight=None):
     -------
     dict
 
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
+    >>> H.nodes.out_degree.asdict()
+    {1: 1, 2: 0, 5: 1, 6: 1, 4: 0, 3: 1}
     """
     if order is None and weight is None:
         return {n: len(net._node_out[n]) for n in bunch}
