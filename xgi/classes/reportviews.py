@@ -1413,7 +1413,7 @@ class DiEdgeView(DiIDView):
         return self._in_id_dict[e].copy()
 
     def tail(self, e=None, dtype=list):
-        """Get the node ids that in the tail of a directed edge.
+        """Get the node ids that are in the tail of a directed edge.
 
         Parameters
         ----------
@@ -1454,3 +1454,24 @@ class DiEdgeView(DiIDView):
             raise IDNotFound(f'ID "{e}" not in this view')
 
         return self._out_id_dict[e].copy()
+
+    def sources(self, e=None, dtype=list):
+        """Get the nodes that are sources (senders)
+        in the directed edges.
+
+        See Also
+        --------
+        tail: identical method
+        """
+        return self.tail(e=e, dtype=dtype)
+
+    def targets(self, e=None, dtype=list):
+        """Get the nodes that are sources (senders)
+        in the directed edges.
+
+        See Also
+        --------
+        head: identical method
+
+        """
+        return self.head(e=e, dtype=dtype)
