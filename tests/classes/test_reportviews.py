@@ -167,6 +167,7 @@ def test_edge_members(edgelist3):
     with pytest.raises(IDNotFound):
         H.edges.members("test")
 
+
 def test_views_read_only(edgelist3):
     H = xgi.Hypergraph(edgelist3)
     # test that members are copies in memory
