@@ -50,6 +50,14 @@ def test_convert_hypergraph_to_simplicial_complex():
     assert H.edges.members() == SC.edges.maximal().members()
 
 
+def test_convert_dihypergraph_to_hypergraph(diedgelist2):
+    DH = xgi.DiHypergraph(diedgelist2)
+    H = xgi.convert_to_hypergraph(DH)
+    assert isinstance(H, xgi.Hypergraph)
+    assert H.nodes == DH.nodes
+    assert H.edges.members() == [{0, 1, 2}, {1, 2, 4}, {2, 3, 4, 5}]
+
+
 def test_convert_list_to_simplicial_complex(edgelist2):
     SC = xgi.convert_to_simplicial_complex(edgelist2)
     assert isinstance(SC, xgi.SimplicialComplex)
