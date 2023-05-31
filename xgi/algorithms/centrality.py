@@ -9,7 +9,7 @@ from scipy.sparse.linalg import eigsh
 from ..classes import convert_labels_to_integers, is_uniform
 from ..convert import to_line_graph
 from ..exception import XGIError
-from ..linalg import clique_motif_matrix, incidence_matrix
+from ..linalg import clique_motif_matrix, incidence_matrix, clique_motif_matrix
 
 __all__ = [
     "clique_eigenvector_centrality",
@@ -368,21 +368,18 @@ def katz_centrality(H, index=False, cutoff=100):
     """
 
     if index:
-        I, nodedict, _ = incidence_matrix(H, index=True)
+        A, nodedict = clique_motif_matrix(H, index=True)
     else:
-        I = incidence_matrix(H, index=False)
+        A = clique_motif_matrix(H, index=False)
 
     N = len(H.nodes)
     M = len(H.edges)
-    if N == 0:  # no nodes
+    if N == 0: # no nodes
         raise XGIError("The Katz-centrality of an empty hypergraph is not defined.")
     elif M == 0:
         c = np.zeros(N)
     else:  # there is at least one edge, both N and M are non-zero
-        A = I.dot(I.transpose()) - np.diag(np.sum(I, axis=1))
-        cutoff = 100
-        alpha = 1 / 2**N  # here, we can replace 2**N by \
-        # scipy.special.comb(N, d) (where d is the max edge size)
+        alpha = 1 / 2**N
         mat = A
         for power in range(1, cutoff):
             mat = alpha * mat.dot(A) + A
