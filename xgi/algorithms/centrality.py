@@ -352,11 +352,11 @@ def katz_centrality(H, index=False, cutoff=100):
     Where A is the adjency matrix of the the (hyper)graph.
     Since A^{t} = A for undirected graphs (our case), we have :
         (I + A + alpha * A**2 + alpha**2 * A**3 + ...) * (I - alpha.A^{t})
-            = (I + A + alpha * A**2 + alpha**2 * A**3 + ...) * (I - alpha.A)
-            = (I + A + alpha * A**2 + alpha**2 * A**3 + ...) - A - alpha * A**2
-                - alpha**2 * A**3 - alpha**3 * A**4 - ...
+            = (I + A + alpha.A**2 + alpha**2.A**3 + ...) * (I - alpha.A)
+            = (I + A + alpha.A**2 + alpha**2.A**3 + ...) - A - alpha.A**2
+                - alpha**2.A**3 - alpha**3.A**4 - ...
             = I
-    And (I - alpha.A^{t})^{-1} = I + A + alpha * A**2 + alpha**2 * A**3 + ...
+    And (I - alpha.A^{t})^{-1} = I + A + alpha.A**2 + alpha**2.A**3 + ...
     Thus we can use the power serie to compute the Katz-centrality.
     [2] The Katz-centrality of isolated nodes (no hyperedges contains them) is
     zero. The Katz-centrality of an empty hypergraph is not defined.
