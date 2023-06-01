@@ -394,26 +394,22 @@ class DiHypergraph:
         del self._node_attr[n]
 
         if strong:
-            for edge in in_edge_neighbors:
-                del self._edge_in[edge]
-                del self._edge_out[edge]
-                del self._edge_attr[edge]
-            for edge in out_edge_neighbors:
+            for edge in in_edge_neighbors.union(out_edge_neighbors):
                 del self._edge_in[edge]
                 del self._edge_out[edge]
                 del self._edge_attr[edge]
         else:  # weak removal
             for edge in in_edge_neighbors:
                 self._edge_in[edge].remove(n)
-                if not self._edge_in[edge] and not self._edge_out[edge]:
-                    del self._edge_in[edge]
-                    del self._edge_out[edge]
-                    del self._edge_attr[edge]
+
             for edge in out_edge_neighbors:
                 self._edge_out[edge].remove(n)
+
+            # remove empty edges
+            for edge in in_edge_neighbors.union(out_edge_neighbors):
                 if not self._edge_in[edge] and not self._edge_out[edge]:
-                    del self._edge_out[edge]
                     del self._edge_in[edge]
+                    del self._edge_out[edge]
                     del self._edge_attr[edge]
 
     def remove_nodes_from(self, nodes):
@@ -430,7 +426,7 @@ class DiHypergraph:
 
         """
         for n in nodes:
-            if n not in self._node:
+            if n not in self._node_in:
                 warn(f"Node {n} not in dihypergraph")
                 continue
             self.remove_node(n)

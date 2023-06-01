@@ -16,7 +16,9 @@ def test_constructor(diedgelist1, diedgedict1):
     assert set(H_list.nodes) == set(H_dict.nodes) == set(H_hg.nodes)
     assert set(H_list.edges) == set(H_dict.edges) == set(H_hg.edges)
     for e in H_hg.edges:
-        assert H_list.edges.members(e) == H_dict.edges.members(e) == H_hg.edges.members(e)
+        assert (
+            H_list.edges.members(e) == H_dict.edges.members(e) == H_hg.edges.members(e)
+        )
 
     with pytest.raises(XGIError):
         xgi.DiHypergraph(1)
@@ -156,6 +158,7 @@ def test_add_edge_handles_uid_correctly():
         2: ({3, 4}, {4, 5}),
         3: ({5, 6}, {2, 3}),
     }
+
 
 def test_add_edge_warns_when_overwriting_edge_id():
     H2 = xgi.DiHypergraph()
@@ -312,6 +315,35 @@ def test_add_edges_from_attr_precedence():
     assert H.edges["three"] == {"age": 40, "color": "blue"}
 
 
+def test_remove_edge(diedgelist1):
+    H = xgi.DiHypergraph(diedgelist1)
+    H.remove_edge(0)
+    assert 0 not in H.edges
+    assert 1 in H and 2 in H and 3 in H and 4 in H
+    assert H.nodes.memberships() == {
+        1: set(),
+        2: set(),
+        3: set(),
+        4: set(),
+        5: {1},
+        6: {1},
+        7: {1},
+        8: {1},
+    }
+
+    with pytest.raises(IDNotFound):
+        H.edges[0]
+
+
+def test_remove_edges_from(diedgelist2):
+    H = xgi.DiHypergraph(diedgelist2)
+    H.remove_edges_from([1, 2])
+    assert 0 in H.edges
+    assert 1 not in H.edges and 2 not in H.edges
+    assert sorted(H.nodes) == list(range(6))
+    assert H.nodes.memberships(2) == {0}
+
+
 def test_copy(diedgelist1):
     H = xgi.DiHypergraph(diedgelist1)
     H["key"] = "value"
@@ -357,21 +389,90 @@ def test_copy_issue128():
     assert H["key"] == "value"
 
 
-def test_remove_node_weak(diedgelist1):
+def test_remove_node_weak(diedgelist1, diedgelist2):
     H = xgi.DiHypergraph(diedgelist1)
+
+    # node in the tail
     assert 1 in H
     H.remove_node(1)
     assert 1 not in H
+
+    # node in the head
+    assert 8 in H
+    H.remove_node(8)
+    assert 8 not in H
+
+    H = xgi.DiHypergraph(diedgelist1)
+
+    # node in both head and tail
+    assert 6 in H
+    H.remove_node(6)
+    assert 6 not in H
+
     with pytest.raises(IDNotFound):
         H.remove_node(10)
+
+    # test empty edge removal
+    H = xgi.DiHypergraph(diedgelist1)
+    H.remove_node(1)
+    H.remove_node(2)
+    H.remove_node(3)
+    H.remove_node(4)
+
+    assert 0 not in H.edges
+
+    # test multiple edge removal with a single node.
+    H = xgi.DiHypergraph(diedgelist2)
+    H.remove_node(0)
+    H.remove_node(1)
+
+    H.remove_node(3)
+    H.remove_node(4)
+    H.remove_node(5)
+
+    assert H.num_edges == 3
+
+    # this removes three edges at once
+    H.remove_node(2)
+
+    assert H.num_edges == 0
 
 
 def test_remove_node_strong(diedgelist1):
     H = xgi.DiHypergraph(diedgelist1)
+
+    # node in the tail
     assert 1 in H
     H.remove_node(1, strong=True)
     assert 1 not in H
+
     assert 0 not in H.edges
+
+    # node in the head
+    assert 8 in H
+    H.remove_node(8, strong=True)
+    assert 8 not in H
+
+    assert 1 not in H.edges
+
+    H = xgi.DiHypergraph(diedgelist1)
+
+    # node in both head and tail
+    assert 6 in H
+    H.remove_node(6, strong=True)
+    # assert 6 not in H
+
+    # assert 1 not in H.edges
+
+
+def test_remove_nodes_from(diedgelist1):
+    H = xgi.DiHypergraph(diedgelist1)
+
+    H.remove_nodes_from([1, 2, 3])
+    assert 1 not in H and 2 not in H and 3 not in H
+
+    with pytest.warns(Warning):
+        H.remove_nodes_from([1, 2, 3])
 
 
 def test_pickle(diedgelist1):

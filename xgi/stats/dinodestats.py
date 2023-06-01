@@ -152,9 +152,9 @@ def degree(net, bunch, order=None, weight=None):
     if order is not None and weight is None:
         return {
             n: sum(
-                    1
-                    for e in net._node_in[n].union(net._node_out[n])
-                    if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
+                1
+                for e in net._node_in[n].union(net._node_out[n])
+                if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
             )
             for n in bunch
         }
@@ -208,9 +208,9 @@ def in_degree(net, bunch, order=None, weight=None):
     if order is not None and weight is None:
         return {
             n: sum(
-                    1
-                    for e in net._node_in[n]
-                    if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
+                1
+                for e in net._node_in[n]
+                if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
             )
             for n in bunch
         }
@@ -264,9 +264,9 @@ def out_degree(net, bunch, order=None, weight=None):
     if order is not None and weight is None:
         return {
             n: sum(
-                    1
-                    for e in net._node_out[n]
-                    if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
+                1
+                for e in net._node_out[n]
+                if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
             )
             for n in bunch
         }
