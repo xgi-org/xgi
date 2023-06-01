@@ -168,7 +168,7 @@ def test_edge_members(edgelist3):
         H.edges.members("test")
 
 
-def test_views_read_only(edgelist3):
+def test_members_read_only(edgelist3):
     H = xgi.Hypergraph(edgelist3)
     # test that members are copies in memory
     H.edges.members(0).add("a")
@@ -182,7 +182,11 @@ def test_views_read_only(edgelist3):
     e[0].add("a")
     assert "a" not in H.edges.members(0)
 
-    # test that membersships are copies in memory
+
+def test_memberships_read_only(edgelist3):
+    H = xgi.Hypergraph(edgelist3)
+
+    # test that memberships are copies in memory
     H.nodes.memberships(1).add("a")
     assert "a" not in H.nodes.memberships(1)
 

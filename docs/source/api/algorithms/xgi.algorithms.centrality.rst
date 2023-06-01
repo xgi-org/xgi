@@ -11,3 +11,4 @@ xgi.algorithms.centrality
    .. autofunction:: h_eigenvector_centrality
    .. autofunction:: node_edge_centrality
    .. autofunction:: line_vector_centrality
+   .. autofunction:: katz_centrality

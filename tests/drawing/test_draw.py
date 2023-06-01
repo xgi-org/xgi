@@ -183,3 +183,41 @@ def test_draw_hypergraph_hull(edgelist8):
     assert ax.collections[0].get_zorder() == 4  # nodes
 
     plt.close()
+
+
+def test_correct_number_of_collections_draw_multilayer(edgelist8):
+    # hypergraph
+    H = xgi.Hypergraph(edgelist8)
+    ax1 = xgi.draw_multilayer(H)
+    assert xgi.max_edge_order(H) * 4 - 1 == len(ax1.collections)
+    plt.close()
+
+    # max_order parameter
+    max_order = 2
+    ax2 = xgi.draw_multilayer(H, max_order=max_order)
+    assert max_order * 4 - 1 == len(ax2.collections)
+    plt.close()
+
+    # conn_lines parameter
+    ax3 = xgi.draw_multilayer(H, conn_lines=False)
+    assert xgi.max_edge_order(H) * 3 == len(ax3.collections)
+    plt.close()
+
+    # custom parameters
+    pos = xgi.circular_layout(H)
+    ax4 = xgi.draw_multilayer(
+        H,
+        pos=pos,
+        node_fc="red",
+        node_ec="blue",
+        node_size=10,
+        palette="rainbow",
+        conn_lines_style="dashed",
+        width=8,
+        height=6,
+        h_angle=30,
+        v_angle=15,
+        sep=2,
+    )
+    assert xgi.max_edge_order(H) * 4 - 1 == len(ax4.collections)
+    plt.close()
