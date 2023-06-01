@@ -10,5 +10,7 @@
    .. autofunction:: attrs
    .. autofunction:: order
    .. autofunction:: size
+   .. autofunction:: head_order
    .. autofunction:: head_size
+   .. autofunction:: tail_order
    .. autofunction:: tail_size

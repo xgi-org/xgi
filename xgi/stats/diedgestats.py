@@ -222,8 +222,8 @@ def tail_order(net, bunch, degree=None):
         return {e: len(net._edge_out[e]) - 1 for e in bunch}
     else:
         return {
-            e: len(
-                n
+            e: sum(
+                1
                 for n in net._edge_out[e]
                 if len(net._node_in[n].union(net._node_out[n])) == degree
             )
@@ -263,8 +263,8 @@ def tail_size(net, bunch, degree=None):
         return {e: len(net._edge_out[e]) for e in bunch}
     else:
         return {
-            e: len(
-                n
+            e: sum(
+                1
                 for n in net._edge_out[e]
                 if len(net._node_in[n].union(net._node_out[n])) == degree
             )
@@ -303,8 +303,8 @@ def head_order(net, bunch, degree=None):
         return {e: len(net._edge_in[e]) - 1 for e in bunch}
     else:
         return {
-            e: len(
-                n
+            e: sum(
+                1
                 for n in net._edge_in[e]
                 if len(net._node_in[n].union(net._node_out[n])) == degree
             )
@@ -344,8 +344,8 @@ def head_size(net, bunch, degree=None):
         return {e: len(net._edge_in[e]) for e in bunch}
     else:
         return {
-            e: len(
-                n
+            e: sum(
+                1
                 for n in net._edge_in[e]
                 if len(net._node_in[n].union(net._node_out[n])) == degree
             )

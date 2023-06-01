@@ -15,7 +15,8 @@ def test_constructor(diedgelist1, diedgedict1):
 
     assert set(H_list.nodes) == set(H_dict.nodes) == set(H_hg.nodes)
     assert set(H_list.edges) == set(H_dict.edges) == set(H_hg.edges)
-    assert H_list.edges.members(0) == H_dict.edges.members(0) == H_hg.edges.members(0)
+    for e in H_hg.edges:
+        assert H_list.edges.members(e) == H_dict.edges.members(e) == H_hg.edges.members(e)
 
     with pytest.raises(XGIError):
         xgi.DiHypergraph(1)
@@ -49,9 +50,7 @@ def test_string():
 
 
 def test_len(diedgelist1):
-    el1 = diedgelist1
-    H1 = xgi.DiHypergraph(el1)
-    assert len(H1) == 8
+    assert len(xgi.DiHypergraph(diedgelist1)) == 8
 
 
 def test_add_nodes_from(attr1, attr2, attr3):
@@ -117,7 +116,7 @@ def test_dimemberships(diedgelist1):
         H.nodes.memberships(slice(1, 4))
 
 
-def test_add_edge():
+def test_add_edge_accepts_different_types():
     for edge in [([1, 2, 3], [4]), [{1, 2, 3}, {4}], (iter([1, 2, 3]), iter([4]))]:
         H = xgi.DiHypergraph()
         H.add_edge(edge)
@@ -129,6 +128,8 @@ def test_add_edge():
         assert H.edges.tail(dtype=dict) == {0: {1, 2, 3}}
         assert H.edges.head(dtype=dict) == {0: {4}}
 
+
+def test_add_edge_raises_with_empty_edges():
     H = xgi.DiHypergraph()
     for edge in [[], {}, iter([])]:
         with pytest.raises(XGIError):
@@ -138,11 +139,14 @@ def test_add_edge():
         with pytest.raises(XGIError):
             H.add_edge(edge)
 
-    # type can't be a set.
+
+def test_add_edge_rejects_set():
+    H = xgi.DiHypergraph()
     with pytest.raises(XGIError):
         H.add_edge({(1, 2), (3, 4)})
 
-    # check that uid works correctly
+
+def test_add_edge_handles_uid_correctly():
     H1 = xgi.DiHypergraph()
     H1.add_edge(([1, 2], [3]), id=0)
     H1.add_edge(([3, 4], [4, 5]), id=2)
@@ -153,12 +157,12 @@ def test_add_edge():
         3: ({5, 6}, {2, 3}),
     }
 
+def test_add_edge_warns_when_overwriting_edge_id():
     H2 = xgi.DiHypergraph()
     H2.add_edge(([1, 2], [3]))
     H2.add_edge(([3, 4], [5, 6, 7]))
     with pytest.warns(Warning):
         H2.add_edge(([5, 6], [8]), id=0)
-
     assert H2._edge_out == {0: {1, 2}, 1: {3, 4}}
 
 

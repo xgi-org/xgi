@@ -12,15 +12,16 @@ __all__ = ["DiHypergraph"]
 
 
 class DiHypergraph:
-    r"""A directed hypergraph (dihypergraph) is a collection of directed
-    interactions where each interaction has both senders and receivers.
+    r"""A dihypergraph is a collection of directed interactions of arbitrary size.
 
-    More formally, a dihypergraph is a pair :math:`(V, E)`, where :math:`V` is
-    a set of elements called *nodes* or *vertices*, and :math:`E` is the set of
-    directed hyperedges. A directed hyperedge is an ordered pair, $(e^+, e^-)$,
-    where $e^+ \subset V$, the set of senders, is known as the "tail" and $e^-\subset V$,
-    the set of receivers, is known as the "head". The equivalent undirected edge,
-    is $e = e^+ \cap e^-$ and the edge size is defined as $|e|$.
+    More formally, a directed hypergraph (dihypergraph) is a pair :math:`(V, E)`,
+    where :math:`V` is a set of elements called *nodes* or *vertices*,
+    and :math:`E` is the set of directed hyperedges.
+    A directed hyperedge is an ordered pair, $(e^+, e^-)$,
+    where $e^+ \subset V$, the set of senders, is known as the "tail" and
+    $e^-\subset V$, the set of receivers, is known as the "head".
+    The equivalent undirected edge, is $e = e^+ \cap e^-$ and
+    the edge size is defined as $|e|$.
 
     The DiHypergraph class allows any hashable object as a node and can associate
     attributes to each node, edge, or the hypergraph itself, in the form of key/value
@@ -55,6 +56,10 @@ class DiHypergraph:
     `tutorial
     <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
+    References
+    ----------
+    Bretto, Alain. "Hypergraph theory: An introduction."
+    Mathematical Engineering. Cham: Springer (2013).
     Examples
     --------
     >>> import xgi
@@ -63,6 +68,10 @@ class DiHypergraph:
     DiNodeView((1, 2, 3, 4, 5, 6, 7, 8))
     >>> H.edges
     DiEdgeView((0, 1))
+    >>> [[sorted(h), sorted(t)] for h, t in H.edges.dimembers()]
+    [[[1, 2, 3], [4]], [[5, 6], [6, 7, 8]]]
+    >>> [sorted(e) for e in H.edges.members()]
+    [[1, 2, 3, 4], [5, 6, 7, 8]]
     """
     _node_dict_factory = IDDict
     _node_attr_dict_factory = IDDict
@@ -146,12 +155,12 @@ class DiHypergraph:
         self._hypergraph.update(attr)  # must be after convert
 
     def __str__(self):
-        """Returns a short summary of the hypergraph.
+        """Returns a short summary of the directed hypergraph.
 
         Returns
         -------
         string
-            Hypergraph information
+            DiHypergraph information
 
         """
         try:
@@ -165,12 +174,12 @@ class DiHypergraph:
         Returns
         -------
         iterator
-            An iterator over all nodes in the hypergraph.
+            An iterator over all nodes in the dihypergraph.
         """
         return iter(self._node_in)
 
     def __contains__(self, n):
-        """Check for if a node is in this hypergraph.
+        """Check for if a node is in this dihypergraph.
 
         Parameters
         ----------
@@ -180,7 +189,7 @@ class DiHypergraph:
         Returns
         -------
         bool
-            Whether the node exists in the hypergraph.
+            Whether the node exists in the dihypergraph.
         """
         try:
             return n in self._node_in
@@ -188,30 +197,30 @@ class DiHypergraph:
             return False
 
     def __len__(self):
-        """Number of nodes in the hypergraph.
+        """Number of nodes in the dihypergraph.
 
         Returns
         -------
         int
-            The number of nodes in the hypergraph.
+            The number of nodes in the dihypergraph.
 
         See Also
         --------
         num_nodes : identical method
-        num_edges : number of edges in the hypergraph
+        num_edges : number of edges in the dihypergraph
 
         """
         return len(self._node_in)
 
     def __getitem__(self, attr):
-        """Read hypergraph attribute."""
+        """Read dihypergraph attribute."""
         try:
             return self._hypergraph[attr]
         except KeyError:
             raise XGIError("This attribute has not been set.")
 
     def __setitem__(self, attr, val):
-        """Write hypergraph attribute."""
+        """Write dihypergraph attribute."""
         self._hypergraph[attr] = val
 
     def __getattr__(self, attr):
@@ -223,7 +232,7 @@ class DiHypergraph:
         if stat is None:
             word = None
             raise AttributeError(
-                f"{attr} is not a method of Hypergraph or a recognizedDiNodeStat or DiEdgeStat"
+                f"{attr} is not a method of DiHypergraph or a recognized DiNodeStat or DiEdgeStat"
             )
 
         def func(node=None, *args, **kwargs):
@@ -237,16 +246,16 @@ class DiHypergraph:
 
     @property
     def num_nodes(self):
-        """The number of nodes in the hypergraph.
+        """The number of nodes in the dihypergraph.
 
         Returns
         -------
         int
-            The number of nodes in the hypergraph.
+            The number of nodes in the dihypergraph.
 
         See Also
         --------
-        num_edges : returns the number of edges in the hypergraph
+        num_edges : returns the number of edges in the dihypergraph
 
         Examples
         --------
@@ -261,16 +270,16 @@ class DiHypergraph:
 
     @property
     def num_edges(self):
-        """The number of directed edges in the hypergraph.
+        """The number of directed edges in the dihypergraph.
 
         Returns
         -------
         int
-            The number of directed edges in the hypergraph.
+            The number of directed edges in the dihypergraph.
 
         See Also
         --------
-        num_nodes : returns the number of nodes in the hypergraph
+        num_nodes : returns the number of nodes in the dihypergraph
 
         Examples
         --------
@@ -308,7 +317,7 @@ class DiHypergraph:
 
         Notes
         -----
-        If node is already in the hypergraph, its attributes are still updated.
+        If node is already in the dihypergraph, its attributes are still updated.
 
         """
         if node not in self._node_in:
@@ -363,7 +372,7 @@ class DiHypergraph:
         Parameters
         ----------
         n : node
-            A node in the hypergraph
+            A node in the dihypergraph
 
         strong : bool (default False)
             Whether to execute weak or strong removal.
@@ -371,7 +380,7 @@ class DiHypergraph:
         Raises
         ------
         XGIError
-           If n is not in the hypergraph.
+           If n is not in the dihypergraph.
 
         See Also
         --------
@@ -422,7 +431,7 @@ class DiHypergraph:
         """
         for n in nodes:
             if n not in self._node:
-                warn(f"Node {n} not in hypergraph")
+                warn(f"Node {n} not in dihypergraph")
                 continue
             self.remove_node(n)
 
