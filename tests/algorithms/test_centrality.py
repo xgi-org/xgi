@@ -156,3 +156,38 @@ def ratio(r, m, kind="CEC"):
         return 2 * r * (m - 1) / (np.sqrt(m**2 + 4 * (m - 1) * (r - 1)) + m - 2)
     elif kind == "HEC":
         return r ** (1.0 / m)
+
+
+def test_katz_centrality(edgelist1, edgelist3):
+
+    # test hypergraph with no edge
+    H = xgi.Hypergraph()
+    H.add_nodes_from([1, 2, 3])
+    c, nodedict = xgi.katz_centrality(H, index=True)
+    expected_c = np.zeros(3)
+    assert np.allclose(c, expected_c)
+
+    # test numerical values
+    H = xgi.Hypergraph(edgelist1)
+    c, nodedict = xgi.katz_centrality(H, index=True)
+    expected_c = np.array(
+        [
+            0.2519685,
+            0.2519685,
+            0.2519685,
+            0.0,
+            0.12647448,
+            0.37746639,
+            0.25246065,
+            0.25246065,
+        ]
+    )
+    assert np.allclose(c, expected_c)
+
+    # test with no index
+    H = xgi.Hypergraph(edgelist3)
+    c = xgi.katz_centrality(H, index=False)
+    expected_c = np.array(
+        [0.34686161, 0.34686161, 0.51894799, 0.51894799, 0.34686161, 0.34686161]
+    )
+    assert np.allclose(c, expected_c)
