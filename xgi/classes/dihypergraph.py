@@ -6,7 +6,7 @@ from warnings import warn
 
 from ..exception import XGIError
 from ..utils import IDDict, update_uid_counter
-from .reportviews import DiEdgeView, DiNodeView
+from .direportviews import DiEdgeView, DiNodeView
 
 __all__ = ["DiHypergraph"]
 

@@ -12,6 +12,12 @@ def test_convert_empty_hypergraph():
     assert H.num_edges == 0
 
 
+def test_convert_empty_dihypergraph():
+    H = xgi.convert_to_dihypergraph(None)
+    assert H.num_nodes == 0
+    assert H.num_edges == 0
+
+
 def test_convert_simplicial_complex_to_hypergraph():
     SC = xgi.SimplicialComplex()
     SC.add_simplices_from([[3, 4, 5], [3, 6], [6, 7, 8, 9], [1, 4, 10, 11, 12], [1, 4]])
