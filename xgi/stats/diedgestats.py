@@ -179,8 +179,8 @@ def size(net, bunch, degree=None):
         return {e: len(net._edge_in[e].union(net._edge_out[e])) for e in bunch}
     else:
         return {
-            e: len(
-                n
+            e: sum(
+                1
                 for n in net._edge_in[e].union(net._edge_out[e])
                 if len(net._node_in[n].union(net._node_out[n])) == degree
             )

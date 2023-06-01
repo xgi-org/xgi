@@ -194,3 +194,50 @@ def test_moment(diedgelist2):
     assert round(deg.moment(2, center=True), 3) == 0.556
     assert round(deg.moment(3, center=False), 3) == 7.667
     assert round(deg.moment(3, center=True), 3) == 0.259
+
+
+# test pre-defined functions
+def test_attrs(dihyperwithattrs):
+    c = dihyperwithattrs.nodes.attrs("color")
+    assert c.asdict() == {
+        0: "brown",
+        1: "red",
+        2: "blue",
+        3: "yellow",
+        4: "red",
+        5: "blue",
+    }
+    c = dihyperwithattrs.nodes.attrs("age", missing=100)
+    assert c.asdict() == {0: 100, 1: 100, 2: 100, 3: 100, 4: 20, 5: 2}
+    c = dihyperwithattrs.nodes.attrs()
+    assert c.asdict() == {
+        0: {"color": "brown", "name": "camel"},
+        1: {"color": "red", "name": "horse"},
+        2: {"color": "blue", "name": "pony"},
+        3: {"color": "yellow", "name": "zebra"},
+        4: {"color": "red", "name": "orangutan", "age": 20},
+        5: {"color": "blue", "name": "fish", "age": 2},
+    }
+    with pytest.raises(ValueError):
+        dihyperwithattrs.nodes.attrs(attr=100).asdict()
+
+
+def test_degree(diedgelist2):
+    H = xgi.DiHypergraph(diedgelist2)
+
+    assert H.nodes.degree.asdict() == {0: 1, 1: 2, 2: 3, 3: 1, 4: 2, 5: 1}
+    assert H.nodes.degree(order=2).asdict() == {0: 1, 1: 2, 2: 2, 3: 0, 4: 1, 5: 0}
+
+
+def test_in_degree(diedgelist2):
+    H = xgi.DiHypergraph(diedgelist2)
+
+    assert H.nodes.in_degree.asdict() == {0: 1, 1: 2, 2: 2, 3: 1, 4: 1, 5: 0}
+    assert H.nodes.in_degree(order=2).asdict() == {0: 1, 1: 2, 2: 1, 3: 0, 4: 0, 5: 0}
+
+
+def test_out_degree(diedgelist2):
+    H = xgi.DiHypergraph(diedgelist2)
+
+    assert H.nodes.out_degree.asdict() == {0: 0, 1: 0, 2: 1, 3: 0, 4: 2, 5: 1}
+    assert H.nodes.out_degree(order=2).asdict() == {0: 0, 1: 0, 2: 1, 3: 0, 4: 1, 5: 0}
