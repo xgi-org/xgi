@@ -51,9 +51,10 @@ def load_bigg_data(
     index_url = "http://bigg.ucsd.edu/api/v2/models"
     base_url = "http://bigg.ucsd.edu/static/models/"
 
+    index_data = request_json_from_url(index_url)
+
     # If no dataset is specified, print a list of the available datasets.
     if dataset is None:
-        index_data = request_json_from_url(index_url)
         ids = []
         for entry in index_data["results"]:
             ids.append(entry["bigg_id"])
@@ -62,14 +63,14 @@ def load_bigg_data(
         return
 
     if cache:
-        data = request_json_from_url_cached(base_url + dataset + ".json")
+        model_data = request_json_from_url_cached(base_url + dataset + ".json")
     else:
-        data = request_json_from_url(base_url + dataset + ".json")
+        model_data = request_json_from_url(base_url + dataset + ".json")
 
-    return _bigg_to_dihypergraph(data)
+    return _bigg_to_dihypergraph(index_data, model_data)
 
 
-def _bigg_to_dihypergraph(d):
+def _bigg_to_dihypergraph(d_index, d_model):
     """Convert a BIGG-formatted dict to dihypergraph.
 
     Parameters
@@ -86,12 +87,19 @@ def _bigg_to_dihypergraph(d):
 
     DH = DiHypergraph()
 
-    DH["name"] = d["id"]
+    id = d_model["id"]
 
-    for m in d["metabolites"]:
+    DH["name"] = id
+
+    for d in d_index["results"]:
+        if d["bigg_id"] == id:
+            DH["organism"] = d["organism"]
+            break
+
+    for m in d_model["metabolites"]:
         DH.add_node(m["id"], name=m["name"])
 
-    for r in d["reactions"]:
+    for r in d_model["reactions"]:
         head = set()
         tail = set()
         for m, val in r["metabolites"].items():
