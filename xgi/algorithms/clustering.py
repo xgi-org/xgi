@@ -1,3 +1,5 @@
+"""Algorithms for computing nodal clustering coefficients."""
+
 import numpy as np
 
 from ..exception import XGIError

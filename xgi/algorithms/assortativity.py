@@ -1,4 +1,5 @@
 """Algorithms for finding the degree assortativity of a hypergraph."""
+
 import random
 from itertools import combinations
 

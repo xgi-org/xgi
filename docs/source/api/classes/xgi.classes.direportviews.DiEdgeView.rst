@@ -1,7 +1,7 @@
-xgi.classes.reportviews.DiEdgeView
-==================================
+xgi.classes.direportviews.DiEdgeView
+====================================
 
-.. currentmodule:: xgi.classes.reportviews
+.. currentmodule:: xgi.classes.direportviews
 
 .. autoclass:: DiEdgeView
    :show-inheritance:

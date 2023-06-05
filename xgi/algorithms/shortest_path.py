@@ -1,6 +1,5 @@
 """Algorithms for computing shortest paths in a hypergraph."""
 
-
 import numpy as np
 
 from ..utils import utilities
@@ -19,8 +18,8 @@ def single_source_shortest_path_length(H, source):
     source : int
         Index of the node from which to compute the distance to every other node.
 
-    Return
-    ------
+    Returns
+    -------
     dists : dict
         Dictionary where keys are node indexes and values are the distances from source.
     """
@@ -86,13 +85,13 @@ def shortest_path_length(H):
     containing the distances from source to every other node in hypergraph H,
     for all possible source in H.
 
-    Parameter
-    ---------
+    Parameters
+    ----------
     H : xgi.Hypergraph
         Hypergraph on which to compute the distances. Node indexes must be integers.
 
-    Return
-    ------
+    Returns
+    -------
     paths : generator of tuples
         Every tuple is of the form (source, dict_of_lengths), for every possible source.
     """
@@ -100,6 +99,3 @@ def shortest_path_length(H):
     for source in H.nodes:
         dists = single_source_shortest_path_length(H, source)
         yield (source, dists)
-
-
-## to do : allow for nodes to have an id (dict, etc)...
