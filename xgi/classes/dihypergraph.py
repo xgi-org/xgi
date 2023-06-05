@@ -1,4 +1,7 @@
-"""Base class for directed hypergraphs."""
+"""Base class for directed hypergraphs.
+
+**This is currently an experimental feature.**
+"""
 from collections.abc import Hashable, Iterable
 from copy import copy, deepcopy
 from itertools import count
