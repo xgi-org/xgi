@@ -8,8 +8,8 @@ from warnings import warn
 from scipy.special import comb
 
 from ..exception import IDNotFound, XGIError
-from ..utils.utilities import powerset, binomial_sequence
 from ..linalg.hypergraph_matrix import incidence_matrix
+from ..utils.utilities import binomial_sequence, powerset
 from .hypergraph import Hypergraph
 
 __all__ = [
@@ -33,7 +33,7 @@ __all__ = [
     "density",
     "incidence_density",
     "subfaces",
-    "complement_hypergraph",
+    "complement",
 ]
 
 
@@ -907,18 +907,15 @@ def subfaces(edges, order=None):
     return faces
 
 
-
-
-
-def complement_hypergraph(H):
+def complement(H):
     """Returns the complement of hypergraph H.
 
-    The complement of an hypergraph will have the same nodes (same indexes) and 
-    will contain every possible hyperedge linking these nodes, provided it is 
-    not already present in the hypergraph and it is not larger than its largest 
+    The complement of an hypergraph will have the same nodes (same indexes) and
+    will contain every possible hyperedge linking these nodes, provided it is
+    not already present in the hypergraph and it is not larger than its largest
     hyperedge.
     Hyperedges of size one are taken into account.
-    
+
 
 
     Parameters
@@ -976,4 +973,3 @@ def complement_hypergraph(H):
                     pass
             Hc.add_edge(node_set)
         return Hc
-

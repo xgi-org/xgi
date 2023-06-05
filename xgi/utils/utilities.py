@@ -484,7 +484,7 @@ def hist(vals, bins=10, bin_edges=False, density=False, log_binning=False):
         return pd.DataFrame.from_dict({"bin_center": x, "value": y})
 
 def binomial_sequence(k, N):
-    """Returns the set of all the distinct strings (order counts) with k ones 
+    """Returns the set of all the distinct strings (order counts) with k ones
     and N-k zeros. binomial_sequence(2, 4) will output '1010', '1100', '0011', '0110',
     '0101' and '1001'.
 
