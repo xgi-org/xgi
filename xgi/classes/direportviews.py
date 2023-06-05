@@ -1,3 +1,11 @@
+"""View classes for dihypergraphs.
+
+A View class allows for inspection and querying of an underlying object but does not
+allow modification.  This module provides View classes for nodes and edges of a dihypergraph.
+Views are automatically updaed when the dihypergraph changes.
+
+"""
+
 from collections.abc import Mapping, Set
 
 from ..exception import IDNotFound, XGIError
@@ -373,6 +381,9 @@ class DiIDView(Mapping, Set):
 class DiNodeView(DiIDView):
     """An DiIDView that keeps track of node ids.
 
+    .. warning::
+        This is currently an experimental feature.
+
     Parameters
     ----------
     hypergraph : DiHypergraph
@@ -467,6 +478,9 @@ class DiNodeView(DiIDView):
 
 class DiEdgeView(DiIDView):
     """An DiIDView that keeps track of edge ids.
+
+    .. warning::
+        This is currently an experimental feature.
 
     Parameters
     ----------

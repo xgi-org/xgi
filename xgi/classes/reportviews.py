@@ -1,8 +1,8 @@
 """View classes for hypergraphs.
 
 A View class allows for inspection and querying of an underlying object but does not
-allow modification.  This module provides View classes for nodes, edges, degree, and
-edge size of a hypergraph.  Views are automatically updaed when the hypergraph changes.
+allow modification.  This module provides View classes for nodes and edges of a hypergraph.
+Views are automatically updaed when the hypergraph changes.
 
 """
 

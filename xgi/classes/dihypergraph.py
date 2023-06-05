@@ -1,6 +1,8 @@
 """Base class for directed hypergraphs.
 
-**This is currently an experimental feature.**
+.. warning::
+    This is currently an experimental feature.
+
 """
 from collections.abc import Hashable, Iterable
 from copy import copy, deepcopy
@@ -16,6 +18,9 @@ __all__ = ["DiHypergraph"]
 
 class DiHypergraph:
     r"""A dihypergraph is a collection of directed interactions of arbitrary size.
+
+    .. warning::
+        This is currently an experimental feature.
 
     More formally, a directed hypergraph (dihypergraph) is a pair :math:`(V, E)`,
     where :math:`V` is a set of elements called *nodes* or *vertices*,
