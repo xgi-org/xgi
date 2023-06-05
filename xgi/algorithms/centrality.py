@@ -313,7 +313,7 @@ def line_vector_centrality(H):
 
 
 def katz_centrality(H, index=False, cutoff=100):
-    """Returns the Katz-centrality vector of a non-empty hypergraph H.
+    r"""Returns the Katz-centrality vector of a non-empty hypergraph H.
 
     The Katz-centrality measures the relative importance of a node by counting
     how many distinct walks start from it. The longer the walk is the smaller
@@ -330,7 +330,7 @@ def katz_centrality(H, index=False, cutoff=100):
         If set to `True`, will return a dictionary mapping each vector index to a
         node. Default value is `False`.
     cutoff : int
-        Power at which to stop the series A + alpha * A**2 + alpha**2 * A**3 + ..
+        Power at which to stop the series :math:`A + \alpha A^2 + \alpha^2 A^3 + \dots`
         Default value is 100.
 
     Returns
@@ -349,16 +349,27 @@ def katz_centrality(H, index=False, cutoff=100):
 
     Notes
     -----
-    [1] The Katz-centrality is defined as :
-    $$c = [(I - \alpha A^{t})^{-1} - I]{\bf 1},$$
-    where $A$ is the adjency matrix of the the (hyper)graph.
-    Since $A^{t} = A$ for undirected graphs (our case), we have :
-    $$(I + A + \alpha A^2 + \alpha^2 A^3 + ...)(I - \alpha A^{t})$$
-    $$= (I + A + \alpha A^2 + \alpha^2 A^3 + ...) * (I - \alpha A)$$
-    $$= (I + A + \alpha A^2 + \alpha^2 A^3 + ...) - A - \alpha A^2$$
-    $$- \alpha^2 A^3 - alpha^3 A^4 - \dots$$
-    $$= I$$
-    And $(I - \alpha A^{t})^{-1} = I + A + \alpha A^2 + \alpha^2 A^3 + \dots$
+    [1] The Katz-centrality is defined as
+
+    .. math::
+        c = [(I - \alpha A^{t})^{-1} - I]{\bf 1},
+    
+    where :math:`A` is the adjency matrix of the the (hyper)graph.
+    Since :math:`A^{t} = A` for undirected graphs (our case), we have:
+
+    
+    .. math::
+        &[I + A + \alpha A^2 + \alpha^2 A^3 + \dots](I - \alpha A^{t})
+
+        & = [I + A + \alpha A^2 + \alpha^2 A^3 + \dots](I - \alpha A)
+
+        & = (I + A + \alpha A^2 + \alpha^2 A^3 + \dots) - A - \alpha A^2
+
+        & - \alpha^2 A^3 - \alpha^3 A^4 - \dots
+
+        & = I
+    
+    And :math:`(I - \alpha A^{t})^{-1} = I + A + \alpha A^2 + \alpha^2 A^3 + \dots`
     Thus we can use the power serie to compute the Katz-centrality.
     [2] The Katz-centrality of isolated nodes (no hyperedges contains them) is
     zero. The Katz-centrality of an empty hypergraph is not defined.
