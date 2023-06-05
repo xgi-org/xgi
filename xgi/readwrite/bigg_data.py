@@ -15,6 +15,10 @@ def load_bigg_data(
     is hosted at http://bigg.ucsd.edu/. It contains metabolic
     reaction networks at the genome scale.
 
+    We represent metabolites as nodes and metabolic reactions
+    as directed edges where reactants are the tail of the directed
+    edge and the products are the head of the directed edge.
+
     Parameters
     ----------
     dataset : str, default: None
