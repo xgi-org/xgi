@@ -1,8 +1,10 @@
 """General utilities."""
 
 from collections import defaultdict
+from functools import lru_cache
 from itertools import chain, combinations, count
 
+import requests
 from numpy import infty
 
 from xgi.exception import IDNotFound, XGIError
@@ -13,6 +15,8 @@ __all__ = [
     "powerset",
     "update_uid_counter",
     "find_triangles",
+    "request_json_from_url",
+    "request_json_from_url_cached",
 ]
 
 
@@ -210,3 +214,64 @@ def min_where(dicty, where):
         else:
             pass
     return min_val
+
+
+def request_json_from_url(url):
+    """HTTP request json file and return as dict.
+
+    Parameters
+    ----------
+    url : str
+        The url where the json file is located.
+
+    Returns
+    -------
+    dict
+        A dictionary of the JSON requested.
+
+    Raises
+    ------
+    XGIError
+        If the connection fails or if there is a bad HTTP request.
+    """
+
+    try:
+        r = requests.get(url)
+    except requests.ConnectionError:
+        raise XGIError("Connection Error!")
+
+    if r.ok:
+        return r.json()
+    else:
+        raise XGIError(f"Error: HTTP response {r.status_code}")
+
+
+@lru_cache(maxsize=None)
+def request_json_from_url_cached(url):
+    """HTTP request json file and return as dict.
+
+    Parameters
+    ----------
+    url : str
+        The url where the json file is located.
+
+    Returns
+    -------
+    dict
+        A dictionary of the JSON requested.
+
+    Raises
+    ------
+    XGIError
+        If the connection fails or if there is a bad HTTP request.
+    """
+
+    try:
+        r = requests.get(url)
+    except requests.ConnectionError:
+        raise XGIError("Connection Error!")
+
+    if r.ok:
+        return r.json()
+    else:
+        raise XGIError(f"Error: HTTP response {r.status_code}")
