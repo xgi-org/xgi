@@ -82,6 +82,8 @@ def _bigg_to_dihypergraph(d):
 
     DH = DiHypergraph()
 
+    DH["name"] = d["id"]
+
     for m in d["metabolites"]:
         DH.add_node(m["id"], name=m["name"])
 
@@ -94,6 +96,6 @@ def _bigg_to_dihypergraph(d):
             else:
                 tail.add(m)
 
-        DH.add_edge((tail, head), id=r["id"])
+        DH.add_edge((tail, head), id=r["id"], name=r["name"])
 
     return DH
