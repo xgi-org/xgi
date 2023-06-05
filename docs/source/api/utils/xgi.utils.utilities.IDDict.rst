@@ -1,14 +1,14 @@
-﻿xgi.classes.hypergraph.IDDict
-=============================
+xgi.utils.utilities.IDDict
+==========================
 
-.. currentmodule:: xgi.classes.hypergraph
+.. currentmodule:: xgi.utils.utilities
 
 .. autoclass:: IDDict
    :show-inheritance:
    :members:
 
-
    .. rubric:: Methods
 
    .. autosummary::
       :nosignatures:
+      

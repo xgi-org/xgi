@@ -50,9 +50,16 @@ from scipy.stats import moment as spmoment
 
 from xgi.exception import IDNotFound
 
-from . import edgestats, nodestats
+from . import edgestats, diedgestats, dinodestats, nodestats
 
-__all__ = ["nodestat_func", "edgestat_func", "dispatch_stat", "dispatch_many_stats"]
+__all__ = [
+    "nodestat_func",
+    "edgestat_func",
+    "dinodestat_func",
+    "diedgestat_func",
+    "dispatch_stat",
+    "dispatch_many_stats",
+]
 
 
 class IDStat:
@@ -208,7 +215,27 @@ class NodeStat(IDStat):
     """
 
 
+class DiNodeStat(IDStat):
+    """An arbitrary node-quantity mapping.
+
+    `NodeStat` objects represent a mapping that assigns a value to each node in a
+    network.  For more details, see the `tutorial
+    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+    """
+
+
 class EdgeStat(IDStat):
+    """An arbitrary edge-quantity mapping.
+
+    `EdgeStat` objects represent a mapping that assigns a value to each edge in a
+    network.  For more details, see the `tutorial
+    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+    """
+
+
+class DiEdgeStat(IDStat):
     """An arbitrary edge-quantity mapping.
 
     `EdgeStat` objects represent a mapping that assigns a value to each edge in a
@@ -400,6 +427,18 @@ class MultiNodeStat(MultiIDStat):
     statsmodule = nodestats
 
 
+class MultiDiNodeStat(MultiIDStat):
+    """Multiple node-quantity mappings.
+
+    For more details, see the `tutorial
+    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+    """
+
+    statsclass = DiNodeStat
+    statsmodule = dinodestats
+
+
 class MultiEdgeStat(MultiIDStat):
     """Multiple edge-quantity mappings.
 
@@ -412,16 +451,38 @@ class MultiEdgeStat(MultiIDStat):
     statsmodule = edgestats
 
 
+class MultiDiEdgeStat(MultiIDStat):
+    """Multiple edge-quantity mappings.
+
+    For more details, see the `tutorial
+    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+
+    """
+
+    statsclass = DiEdgeStat
+    statsmodule = diedgestats
+
+
 _dispatch_data = {
     "node": {
         "module": nodestats,
         "statclass": NodeStat,
         "multistatclass": MultiNodeStat,
     },
+    "dinode": {
+        "module": dinodestats,
+        "statclass": DiNodeStat,
+        "multistatclass": MultiDiNodeStat,
+    },
     "edge": {
         "module": edgestats,
         "statclass": EdgeStat,
         "multistatclass": MultiEdgeStat,
+    },
+    "diedge": {
+        "module": diedgestats,
+        "statclass": DiEdgeStat,
+        "multistatclass": MultiDiEdgeStat,
     },
 }
 
@@ -533,6 +594,66 @@ def nodestat_func(func):
     return func
 
 
+def dinodestat_func(func):
+    """Decorator that allows arbitrary functions to behave like :class:`DiNodeStat` objects.
+
+    Works identically to :func:`nodestat`.  For extended documentation, see
+    :func:`nodestat_func`.
+
+    Parameters
+    ----------
+    func : callable
+        Function or callable with signature `func(net, bunch)`, where `net` is the
+        network and `bunch` is an iterable of edges in `net`.  The call `func(net,
+        bunch)` must return a dict with pairs of the form `(edge: value)` where `edge`
+        is in `bunch` and `value` is the value of the statistic at `edge`.
+
+    Returns
+    -------
+    callable
+        The decorated callable unmodified, after registering it in the `stats` framework.
+
+    See Also
+    --------
+    :func:`nodestat_func`
+    :func:`edgestat_func`
+    :func:`diedgestat_func`
+
+    """
+    setattr(dinodestats, func.__name__, func)
+    return func
+
+
+def edgestat_func(func):
+    """Decorator that allows arbitrary functions to behave like :class:`EdgeStat` objects.
+
+    Works identically to :func:`nodestat`.  For extended documentation, see
+    :func:`nodestat_func`.
+
+    Parameters
+    ----------
+    func : callable
+        Function or callable with signature `func(net, bunch)`, where `net` is the
+        network and `bunch` is an iterable of edges in `net`.  The call `func(net,
+        bunch)` must return a dict with pairs of the form `(edge: value)` where `edge`
+        is in `bunch` and `value` is the value of the statistic at `edge`.
+
+    Returns
+    -------
+    callable
+        The decorated callable unmodified, after registering it in the `stats` framework.
+
+    See Also
+    --------
+    :func:`nodestat_func`
+    :func:`edgestat_func`
+    :func:`diedgestat_func`
+
+    """
+    setattr(dinodestats, func.__name__, func)
+    return func
+
+
 def edgestat_func(func):
     """Decorate arbitrary functions to behave like :class:`EdgeStat` objects.
 
@@ -559,4 +680,34 @@ def edgestat_func(func):
 
     """
     setattr(edgestats, func.__name__, func)
+    return func
+
+
+def diedgestat_func(func):
+    """Decorator that allows arbitrary functions to behave like :class:`DiEdgeStat` objects.
+
+    Works identically to :func:`nodestat`.  For extended documentation, see
+    :func:`nodestat_func`.
+
+    Parameters
+    ----------
+    func : callable
+        Function or callable with signature `func(net, bunch)`, where `net` is the
+        network and `bunch` is an iterable of edges in `net`.  The call `func(net,
+        bunch)` must return a dict with pairs of the form `(edge: value)` where `edge`
+        is in `bunch` and `value` is the value of the statistic at `edge`.
+
+    Returns
+    -------
+    callable
+        The decorated callable unmodified, after registering it in the `stats` framework.
+
+    See Also
+    --------
+    :func:`nodestat_func`
+    :func:`dinodestat_func`
+    :func:`diedgestat_func`
+
+    """
+    setattr(diedgestats, func.__name__, func)
     return func

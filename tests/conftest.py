@@ -136,6 +136,11 @@ def bipartite_graph4():
 
 
 @pytest.fixture
+def attr0():
+    return {"color": "brown", "name": "camel"}
+
+
+@pytest.fixture
 def attr1():
     return {"color": "red", "name": "horse"}
 
@@ -211,4 +216,37 @@ def hypergraph2():
     H = xgi.Hypergraph()
     H.add_nodes_from(["b", "c", 0])
     H.add_edges_from({"e1": [0, "b"], "e2": [0, "c"], "e3": [0, "b", "c"]})
+    return H
+
+
+@pytest.fixture
+def diedgelist1():
+    return [({1, 2, 3}, {4}), ({5, 6}, {6, 7, 8})]
+
+
+@pytest.fixture
+def diedgelist2():
+    return [({0, 1}, {2}), ({1, 2}, {4}), ({2, 3, 4}, {4, 5})]
+
+
+@pytest.fixture
+def diedgedict1():
+    return {0: ({1, 2, 3}, {4}), 1: ({5, 6}, {6, 7, 8})}
+
+
+@pytest.fixture
+def dihyperwithattrs(diedgelist2, attr0, attr1, attr2, attr3, attr4, attr5):
+    H = xgi.DiHypergraph()
+    H.add_nodes_from(
+        [
+            (0, attr0),
+            (1, attr1),
+            (2, attr2),
+            (3, attr3),
+            (4, attr4),
+            (5, attr5),
+        ]
+    )
+    H.add_edges_from(diedgelist2)
+    xgi.set_edge_attributes(H, {0: attr3, 1: attr4, 2: attr5})
     return H
