@@ -79,9 +79,7 @@ def test_min_where():
     assert xgi.utils.utilities.min_where(vals, where) == infty
 
 
-
-
-def test_binomial_sequence() :
+def test_binomial_sequence():
 
     # ask for more ones than available characters
     output = xgi.binomial_sequence(3, 2)
@@ -90,15 +88,15 @@ def test_binomial_sequence() :
 
     # ask for an empty string
     output = xgi.binomial_sequence(0, 0)
-    expected_output = {''}
+    expected_output = {""}
     assert output == expected_output
 
     # ask for only zeros
     output = xgi.binomial_sequence(0, 2)
-    expected_output = {'00'}
+    expected_output = {"00"}
     assert output == expected_output
 
     # regular output
     output = xgi.binomial_sequence(2, 4)
-    expected_output = {'1100', '1001', '0011', '1010', '0101', '0110'}
+    expected_output = {"1100", "1001", "0011", "1010", "0101", "0110"}
     assert output == expected_output

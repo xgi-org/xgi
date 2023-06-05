@@ -3,6 +3,7 @@
 
 ## latest
 
+* Added a function to complement an hypergraph (`complement`) [#367](https://github.com/xgi-org/xgi/issues/367) (@acombretrenouard).
 * Added Katz-centrality algorithm (`katz_centrality`) [#366](https://github.com/xgi-org/xgi/issues/366) (@acombretrenouard).
 
 ## v0.6
