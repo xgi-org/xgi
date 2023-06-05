@@ -1,10 +1,5 @@
-"""Load a data set from the xgi-data repository or a local file."""
+"""Load a metabolic network from the BiGG models database."""
 
-from functools import lru_cache
-
-import requests
-
-from ..exception import XGIError
 from ..utils import request_json_from_url, request_json_from_url_cached
 
 __all__ = ["load_bigg_data"]
@@ -14,22 +9,20 @@ def load_bigg_data(
     dataset=None,
     cache=True,
 ):
-    """Load a data set from the xgi-data repository or a local file.
+    """Load a metabolic network from the BiGG models database.
+
+    The Biochemical, Genetic and Genomic (BiGG) knowledge base
+    is hosted at http://bigg.ucsd.edu/. It contains metabolic
+    reaction networks at the genome scale.
 
     Parameters
     ----------
     dataset : str, default: None
-        Dataset name. Valid options are the top-level tags of the
-        index.json file in the xgi-data repository. If None, prints
+        Dataset name. Valid options are the "bigg_id" tags in
+        http://bigg.ucsd.edu/api/v2/models. If None, prints
         the list of available datasets.
     cache : bool, optional
         Whether to cache the input data
-    nodetype : type, optional
-        Type to cast the node ID to
-    edgetype : type, optional
-        Type to cast the edge ID to
-    max_order: int, optional
-        Maximum order of edges to add to the hypergraph
 
     Returns
     -------
@@ -40,14 +33,23 @@ def load_bigg_data(
     ------
     XGIError
        The specified dataset does not exist.
+
+    References
+    ----------
+    Zachary A. King, Justin Lu, Andreas Dräger,
+    Philip Miller, Stephen Federowicz, Joshua A. Lerman,
+    Ali Ebrahim, Bernhard O. Palsson, Nathan E. Lewis
+    Nucleic Acids Research, Volume 44, Issue D1,
+    4 January 2016, Pages D515–D522,
+    https://doi.org/10.1093/nar/gkv1049
     """
 
-    indexurl = "http://bigg.ucsd.edu/api/v2/models"
-    baseurl = "http://bigg.ucsd.edu/static/models/"
+    index_url = "http://bigg.ucsd.edu/api/v2/models"
+    base_url = "http://bigg.ucsd.edu/static/models/"
 
     # If no dataset is specified, print a list of the available datasets.
     if dataset is None:
-        index_data = request_json_from_url(indexurl)
+        index_data = request_json_from_url(index_url)
         ids = []
         for entry in index_data["results"]:
             ids.append(entry["bigg_id"])
@@ -56,9 +58,9 @@ def load_bigg_data(
         return
 
     if cache:
-        data = request_json_from_url_cached(baseurl + dataset + ".json")
+        data = request_json_from_url_cached(base_url + dataset + ".json")
     else:
-        data = request_json_from_url(baseurl + dataset + ".json")
+        data = request_json_from_url(base_url + dataset + ".json")
 
     return _bigg_to_dihypergraph(data)
 
