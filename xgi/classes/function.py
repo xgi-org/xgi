@@ -8,7 +8,8 @@ from warnings import warn
 from scipy.special import comb
 
 from ..exception import IDNotFound, XGIError
-from ..utils.utilities import powerset
+from ..utils.utilities import powerset, binomial_sequence
+from ..linalg.hypergraph_matrix import incidence_matrix
 from .hypergraph import Hypergraph
 
 __all__ = [
@@ -32,6 +33,7 @@ __all__ = [
     "density",
     "incidence_density",
     "subfaces",
+    "complement_hypergraph",
 ]
 
 
@@ -903,3 +905,75 @@ def subfaces(edges, order=None):
 
         faces += faces_to_add
     return faces
+
+
+
+
+
+def complement_hypergraph(H):
+    """Returns the complement of hypergraph H.
+
+    The complement of an hypergraph will have the same nodes (same indexes) and 
+    will contain every possible hyperedge linking these nodes, provided it is 
+    not already present in the hypergraph and it is not larger than its largest 
+    hyperedge.
+    Hyperedges of size one are taken into account.
+    
+
+
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        Hypergraph to complement.
+
+    Returns
+    -------
+    Hc : xgi.Hypergraph
+        Complement of H.
+    """
+
+    from ..generators.classic import empty_hypergraph
+
+    N = len(H.nodes)
+    M = len(H.edges)
+
+    if N == 0:
+        return empty_hypergraph()
+    else:
+        # list the edges in H (as strings such as '001101')
+        I = incidence_matrix(H, sparse=False)
+        edges = set()
+        for row in I.transpose():
+            edge = str()
+            for _01 in row:
+                edge += str(_01)
+            edges.add(edge)
+
+        # list all possible edges of size <= max_edge_size
+        if M == 0:
+            max_edge_size = 0
+        else:  # there is at least one non-empty edge
+            max_edge_size = H.edges.order.max() + 1
+
+        possible_edges = set()
+        for size in range(1, max_edge_size + 1):
+            possible_edges = possible_edges.union(binomial_sequence(size, N))
+
+        # instanciate an hypergraph an add every node (in case a node is in no hyperedge)
+        Hc = Hypergraph()
+        for i in range(N):
+            Hc.add_node(i)
+
+        # add to Hc the edges that are not already in H \
+        # note : as edges and possible_edge are of type set (i.e. hashtables) \
+        # doing set operations (set.difference) is fast
+        for edge in possible_edges.difference(edges):
+            node_set = set()
+            for i in range(N):
+                if edge[i] == "1":
+                    node_set.add(i)
+                else:  # edge[i] == '0'
+                    pass
+            Hc.add_edge(node_set)
+        return Hc
+

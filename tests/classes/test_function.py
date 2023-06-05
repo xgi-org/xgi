@@ -772,3 +772,23 @@ def test_subfaces(edgelist5):
         xgi.subfaces(
             edgelist5, order=4
         )  # order cannot be larger than maximum order in edgelist
+
+
+def test_complement_hypergraph(edgelist1, edgelist2) :
+
+    # empty hypergraph
+    H = xgi.empty_hypergraph()
+    Hc = xgi.complement_hypergraph(H)
+    assert Hc.num_nodes == 0
+
+    # with edgelist1
+    H = xgi.Hypergraph(edgelist1)
+    Hc = xgi.complement_hypergraph(H)
+    assert Hc.edges.size.max() == 3
+    assert Hc.num_edges + H.num_edges == 92 # 92 is equal to choose (8, 1) + choose(8, 2) + choose(8, 3)
+
+    # with edgelist2
+    H = xgi.Hypergraph(edgelist2)
+    Hc = xgi.complement_hypergraph(H)
+    assert Hc.edges.size.max() == 3
+    assert Hc.num_edges + H.num_edges == 41 # 41 is equal to choose(6, 1) + choose(6, 2) + choose(6, 3)
