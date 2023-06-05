@@ -1,13 +1,11 @@
 """Load a data set from the xgi-data repository or a local file."""
 import json
 import os
-from functools import lru_cache
 from warnings import warn
-
-import requests
 
 from .. import convert
 from ..exception import XGIError
+from ..utils import request_json_from_url, request_json_from_url_cached
 
 __all__ = ["load_xgi_data", "download_xgi_data"]
 
@@ -57,7 +55,7 @@ def load_xgi_data(
     # If no dataset is specified, print a list of the available datasets.
     if dataset is None:
         index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
-        index_data = _request_json_from_url(index_url)
+        index_data = request_json_from_url(index_url)
         print("Available datasets are the following:")
         print(*index_data, sep="\n")
         return
@@ -76,10 +74,7 @@ def load_xgi_data(
                 "from the xgi-data repository instead. To download a local "
                 "copy, use `download_xgi_data`."
             )
-    if cache:
-        data = _request_from_xgi_data_cached(dataset)
-    else:
-        data = _request_from_xgi_data(dataset)
+    data = _request_from_xgi_data(dataset, cache=cache)
 
     return convert.dict_to_hypergraph(
         data, nodetype=nodetype, edgetype=edgetype, max_order=max_order
@@ -106,7 +101,7 @@ def download_xgi_data(dataset, path=""):
     jsonfile.close()
 
 
-def _request_from_xgi_data(dataset=None):
+def _request_from_xgi_data(dataset=None, cache=True):
     """Request a dataset from xgi-data.
 
     Parameters
@@ -132,7 +127,7 @@ def _request_from_xgi_data(dataset=None):
     """
 
     index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
-    index_data = _request_json_from_url(index_url)
+    index_data = request_json_from_url(index_url)
 
     key = dataset.lower()
     if key not in index_data:
@@ -140,59 +135,7 @@ def _request_from_xgi_data(dataset=None):
         print(*index_data, sep="\n")
         raise XGIError("Must choose a valid dataset name!")
 
-    return _request_json_from_url(index_data[key]["url"])
-
-
-@lru_cache(maxsize=None)
-def _request_from_xgi_data_cached(dataset):
-    """Request a dataset from xgi-data and cache the result.
-
-    Wraps `_request_from_xgi_data` in an lru_cache decorator.
-
-    Parameters
-    ----------
-    dataset : str
-        Dataset name. Valid options are the top-level tags of the
-        index.json file in the xgi-data repository.
-
-    Returns
-    -------
-    Data
-        The requested data loaded from a json file.
-
-    See also
-    ---------
-    load_xgi_data
-    """
-
-    return _request_from_xgi_data(dataset)
-
-
-def _request_json_from_url(url):
-    """HTTP request json file and return as dict.
-
-    Parameters
-    ----------
-    url : str
-        The url where the json file is located.
-
-    Returns
-    -------
-    dict
-        A dictionary of the JSON requested.
-
-    Raises
-    ------
-    XGIError
-        If the connection fails or if there is a bad HTTP request.
-    """
-
-    try:
-        r = requests.get(url)
-    except requests.ConnectionError:
-        raise XGIError("Connection Error!")
-
-    if r.ok:
-        return r.json()
+    if cache:
+        return request_json_from_url_cached(index_data[key]["url"])
     else:
-        raise XGIError(f"Error: HTTP response {r.status_code}")
+        return request_json_from_url(index_data[key]["url"])
