@@ -23,23 +23,24 @@ def load_xgi_data(
 
     Parameters
     ----------
-    dataset : str, default: None
+    dataset : str, optional
         Dataset name. Valid options are the top-level tags of the
-        index.json file in the xgi-data repository. If None, prints
+        index.json file in the xgi-data repository. If None (default), prints
         the list of available datasets.
     cache : bool, optional
-        Whether to cache the input data
+        Whether to cache the input data, by default True.
     read : bool, optional
         If read==True, search for a local copy of the data set. Use the local
-        copy if it exists, otherwise use the  xgi-data repository.
+        copy if it exists, otherwise use the xgi-data repository.
+        By default, False.
     path : str, optional
         Path to a local copy of the data set
     nodetype : type, optional
-        Type to cast the node ID to
+        Type to cast the node ID to, by default None.
     edgetype : type, optional
-        Type to cast the edge ID to
+        Type to cast the edge ID to, by default None.
     max_order: int, optional
-        Maximum order of edges to add to the hypergraph
+        Maximum order of edges to add to the hypergraph, by default None.
 
     Returns
     -------
@@ -51,10 +52,14 @@ def load_xgi_data(
     XGIError
        The specified dataset does not exist.
     """
+    index_url = (
+        "https://gitlab.com/complexgroupinteractions/"
+        "xgi-data/-/raw/main/index.json?inline=false"
+    )
 
     # If no dataset is specified, print a list of the available datasets.
     if dataset is None:
-        index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
+
         index_data = request_json_from_url(index_url)
         print("Available datasets are the following:")
         print(*index_data, sep="\n")
@@ -106,10 +111,12 @@ def _request_from_xgi_data(dataset=None, cache=True):
 
     Parameters
     ----------
-    dataset : str, default: None
+    dataset : str, optional
         Dataset name. Valid options are the top-level tags of the
         index.json file in the xgi-data repository. If None, prints
         the list of available datasets.
+    cache : bool, optional
+        Whether or not to cache the output
 
     Returns
     -------
@@ -125,8 +132,11 @@ def _request_from_xgi_data(dataset=None, cache=True):
     ---------
     load_xgi_data
     """
+    index_url = (
+        "https://gitlab.com/complexgroupinteractions/"
+        "xgi-data/-/raw/main/index.json?inline=false"
+    )
 
-    index_url = "https://gitlab.com/complexgroupinteractions/xgi-data/-/raw/main/index.json?inline=false"
     index_data = request_json_from_url(index_url)
 
     key = dataset.lower()
