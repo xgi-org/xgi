@@ -25,11 +25,11 @@ class DiHypergraph:
     More formally, a directed hypergraph (dihypergraph) is a pair :math:`(V, E)`,
     where :math:`V` is a set of elements called *nodes* or *vertices*,
     and :math:`E` is the set of directed hyperedges.
-    A directed hyperedge is an ordered pair, $(e^+, e^-)$,
-    where $e^+ \subset V$, the set of senders, is known as the "tail" and
-    $e^-\subset V$, the set of receivers, is known as the "head".
-    The equivalent undirected edge, is $e = e^+ \cap e^-$ and
-    the edge size is defined as $|e|$.
+    A directed hyperedge is an ordered pair, :math:`(e^+, e^-)`,
+    where :math:`e^+ \subset V`, the set of senders, is known as the "tail" and
+    :math:`e^-\subset V`, the set of receivers, is known as the "head".
+    The equivalent undirected edge, is :math:`e = e^+ \cap e^-` and
+    the edge size is defined as :math:`|e|`.
 
     The DiHypergraph class allows any hashable object as a node and can associate
     attributes to each node, edge, or the hypergraph itself, in the form of key/value
