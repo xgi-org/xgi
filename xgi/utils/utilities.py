@@ -23,6 +23,7 @@ __all__ = [
     "subfaces",
     "convert_labels_to_integers",
     "hist",
+    "binomial_sequence",
 ]
 
 
@@ -481,3 +482,41 @@ def hist(vals, bins=10, bin_edges=False, density=False, log_binning=False):
         )
     else:
         return pd.DataFrame.from_dict({"bin_center": x, "value": y})
+
+def binomial_sequence(k, N):
+    """Returns the set of all the distinct strings (order counts) with k ones 
+    and N-k zeros. binomial_sequence(2, 4) will output '1010', '1100', '0011', '0110',
+    '0101' and '1001'.
+
+    Parameters
+    ----------
+    k : int
+        Number of ones in the strings. Must be greater or equal to zero.
+    N : int
+        Length of the strings. Must be positive as well.
+
+    Returns
+    -------
+    res : set
+        Set containing all the strings (they are distinct). The empty set is
+        returned if N = 0 or if k > N.
+    """
+
+    if k < 0 or N < 0:
+        raise ValueError("binomial_sequence must be given positive integers.")
+
+    res = set()
+
+    if k == 0:
+        seq = str()
+        for i in range(N):
+            seq += "0"
+        res.add(seq)
+    elif N == 0:
+        pass
+    else:  # k and N are greater than zero
+        for seq in binomial_sequence(k, N - 1):
+            res.add(seq + "0")
+        for seq in binomial_sequence(k - 1, N - 1):
+            res.add(seq + "1")
+    return res

@@ -434,3 +434,102 @@ def test_incidence_density(edgelist1):
     assert abs(dens_ignore_sing(7) - 1 / 3) < tol
     with pytest.raises(ValueError):
         xgi.incidence_density(H, max_order=8, ignore_singletons=True)
+
+
+def test_subfaces(edgelist5):
+    assert xgi.subfaces(edgelist5) == [
+        (0,),
+        (1,),
+        (2,),
+        (3,),
+        (0, 1),
+        (0, 2),
+        (0, 3),
+        (1, 2),
+        (1, 3),
+        (2, 3),
+        (0, 1, 2),
+        (0, 1, 3),
+        (0, 2, 3),
+        (1, 2, 3),
+        (5,),
+        (6,),
+        (8,),
+        (6,),
+        (7,),
+        (8, 6),
+        (8, 7),
+        (6, 7),
+    ]
+
+    assert xgi.subfaces(edgelist5, order=-1) == [
+        (0, 1, 2),
+        (0, 1, 3),
+        (0, 2, 3),
+        (1, 2, 3),
+        (5,),
+        (6,),
+        (8, 6),
+        (8, 7),
+        (6, 7),
+    ]
+
+    assert xgi.subfaces(edgelist5, order=0) == [
+        (0,),
+        (1,),
+        (2,),
+        (3,),
+        (5,),
+        (6,),
+        (8,),
+        (6,),
+        (7,),
+    ]
+
+    assert xgi.subfaces(edgelist5, order=1) == [
+        (0, 1),
+        (0, 2),
+        (0, 3),
+        (1, 2),
+        (1, 3),
+        (2, 3),
+        (5, 6),
+        (8, 6),
+        (8, 7),
+        (6, 7),
+    ]
+
+    assert xgi.subfaces(edgelist5, order=2) == [
+        (0, 1, 2),
+        (0, 1, 3),
+        (0, 2, 3),
+        (1, 2, 3),
+        (8, 6, 7),
+    ]
+
+    assert xgi.subfaces(edgelist5, order=3) == [(0, 1, 2, 3)]
+
+    with pytest.raises(XGIError):
+        xgi.subfaces(
+            edgelist5, order=4
+        )  # order cannot be larger than maximum order in edgelist
+
+
+def test_complement_hypergraph(edgelist1, edgelist2) :
+
+    # empty hypergraph
+    H = xgi.empty_hypergraph()
+    Hc = xgi.complement_hypergraph(H)
+    assert Hc.num_nodes == 0
+
+    # with edgelist1
+    H = xgi.Hypergraph(edgelist1)
+    Hc = xgi.complement_hypergraph(H)
+    assert Hc.edges.size.max() == 3
+    assert Hc.num_edges + H.num_edges == 92 # 92 is equal to choose (8, 1) + choose(8, 2) + choose(8, 3)
+
+    # with edgelist2
+    H = xgi.Hypergraph(edgelist2)
+    Hc = xgi.complement_hypergraph(H)
+    assert Hc.edges.size.max() == 3
+    assert Hc.num_edges + H.num_edges == 41 # 41 is equal to choose(6, 1) + choose(6, 2) + choose(6, 3)
