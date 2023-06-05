@@ -772,7 +772,7 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
 def incidence_density(H, order=None, max_order=None, ignore_singletons=False):
     r"""Density of the incidence matrix.
 
-    The incidence matrix of a hypergraph contains one row per node nad one column per
+    The incidence matrix of a hypergraph contains one row per node and one column per
     edge.  An entry is non-zero when the corresponding node is a member of the
     corresponding edge.  The density of this matrix is the number of non-zero entries
     divided by the total number of entries.
