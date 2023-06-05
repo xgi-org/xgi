@@ -176,16 +176,16 @@ def node_edge_centrality(
         The hypergraph of interest
     f : lambda function, optional
         The function f as described in Tudisco and Higham.
-        Must accept a numpy array. By default, $x^2$.
+        Must accept a numpy array. By default, :math:`f(x) = x^2`.
     g : lambda function, optional
         The function g as described in Tudisco and Higham.
-        Must accept a numpy array. By default, $\sqrt{x}$.
+        Must accept a numpy array. By default, :math`g(x) = \sqrt{x}`.
     phi : lambda function, optional
         The function phi as described in Tudisco and Higham.
-        Must accept a numpy array. By default $x^2$.
+        Must accept a numpy array. By default :math:`\phi(x) = x^2`.
     psi : lambda function, optional
         The function psi as described in Tudisco and Higham.
-        Must accept a numpy array. By default: $\sqrt{x}$.
+        Must accept a numpy array. By default: :math:`\psi(x) = \sqrt{x}`.
     max_iter : int, optional
         Number of iterations at which the algorithm terminates
         if convergence is not reached. By default, 100.
@@ -317,9 +317,9 @@ def katz_centrality(H, index=False, cutoff=100):
 
     The Katz-centrality measures the relative importance of a node by counting
     how many distinct walks start from it. The longer the walk is the smaller
-    its contribution will be (attenuation factor `alpha`).
+    its contribution will be (attenuation factor :math:`\alpha`).
     Initially defined for graphs, the Katz-centrality is here generalized to
-    hypergraphs using the most basic definition of neighbors : two nodes that
+    hypergraphs using the most basic definition of neighbors: two nodes that
     share an hyperedge.
 
     Parameters

@@ -13,16 +13,15 @@ __all__ = [
 
 
 def clustering_coefficient(H):
-    """Return the clustering coefficients for
+    r"""Return the clustering coefficients for
     each node in a Hypergraph.
 
     This clustering coefficient is defined as the
     clustering coefficient of the unweighted pairwise
-    projection of the hypergraph, i.e., `num / denom`,
-    where `num` equals $A^3_{i,i}$ and `denom` equals
-    $\binom{k}{2}$.  Here $A$ is the adjacency matrix
-    of the network and $k$ is the pairwise
-    degree of $i$.
+    projection of the hypergraph, i.e.,
+    :math:`c = A^3_{i,i}/\binom{k}{2},`    
+    where :math:`A` is the adjacency matrix of the network
+    and :math:`k` is the pairwise degree of :math:`i`.
 
     Parameters
     ----------

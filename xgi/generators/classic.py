@@ -155,7 +155,7 @@ def empty_simplicial_complex(create_using=None, default=None):
 
 
 def trivial_hypergraph(n=1, create_using=None, default=None):
-    """Returns a hypergraph with `n` node and zero edges.
+    """Returns a hypergraph with `n` nodes and zero edges.
 
     Parameters
     ----------
