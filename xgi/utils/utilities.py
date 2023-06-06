@@ -508,10 +508,11 @@ def binomial_sequence(k, N):
     res = set()
 
     if k == 0:
-        seq = str()
-        for i in range(N):
-            seq += "0"
-        res.add(seq)
+        # seq = str()
+        # for i in range(N):
+        #    seq += "0"
+        # res.add(seq)
+        res = {"0" * N}
     elif N == 0:
         pass
     else:  # k and N are greater than zero
