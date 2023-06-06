@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
-import matplotlib.patches as mpatches
+from matplotlib.patches import FancyArrow
 from scipy.spatial import ConvexHull
 from networkx import spring_layout
 
@@ -1646,7 +1646,7 @@ def draw_dihypergraph(
             )  # Calculate the shortened length
             dx = direction_vector[0] * shortened_distance
             dy = direction_vector[1] * shortened_distance
-            arrow = mpatches.FancyArrow(
+            arrow = FancyArrow(
                 x_center,
                 y_center,
                 dx,
