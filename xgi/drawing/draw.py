@@ -28,7 +28,7 @@ __all__ = [
     "draw_hyperedge_labels",
     "draw_hypergraph_hull",
     "draw_multilayer",
-    "draw_dihypergraph"
+    "draw_dihypergraph",
 ]
 
 
@@ -1453,19 +1453,20 @@ def draw_multilayer(
 
     return ax
 
+
 def draw_dihypergraph(
     DH,
     ax=None,
     lines_fc=None,
     lines_lw=1.5,
-    line_head_width = 0.05,
+    line_head_width=0.05,
     node_fc="white",
     node_ec="black",
     node_lw=1,
     node_size=15,
     edge_marker_fc=None,
     edge_marker_ec=None,
-    edge_marker='s',
+    edge_marker="s",
     edge_marker_lw=1,
     edge_marker_size=15,
     max_order=None,
@@ -1546,7 +1547,7 @@ def draw_dihypergraph(
         * edge_fc_cmap
         * edge_marker_fc_cmap
         * edge_marker_ec_cmap
-    
+
     Returns
     -------
     ax : matplotlib.pyplot.axes
@@ -1556,7 +1557,7 @@ def draw_dihypergraph(
     draw
     draw_nodes
     draw_node_labels
-    
+
     """
     if settings is None:
         settings = {
@@ -1581,44 +1582,47 @@ def draw_dihypergraph(
     ax.get_xaxis().set_ticks([])
     ax.get_yaxis().set_ticks([])
     ax.axis("off")
-        
+
     # convert to hypergraph in order to use the augmented projection function
     H_conv = convert.convert_to_hypergraph(DH)
-    
-    
+
     if not max_order:
         max_order = max_edge_order(H_conv)
-        
+
     lines_lw = _scalar_arg_to_dict(
         lines_lw, H_conv.edges, settings["min_lines_lw"], settings["max_lines_lw"]
     )
-    
+
     if lines_fc is None:
         lines_fc = H_conv.edges.size
-    
+
     lines_fc = _color_arg_to_dict(lines_fc, H_conv.edges, settings["lines_fc_cmap"])
 
     if edge_marker_fc is None:
         edge_marker_fc = H_conv.edges.size
-    
-    edge_marker_fc = _color_arg_to_dict(edge_marker_fc, H_conv.edges, settings["edge_marker_fc_cmap"])
+
+    edge_marker_fc = _color_arg_to_dict(
+        edge_marker_fc, H_conv.edges, settings["edge_marker_fc_cmap"]
+    )
 
     if edge_marker_ec is None:
         edge_marker_ec = H_conv.edges.size
-    
-    edge_marker_ec = _color_arg_to_dict(edge_marker_ec, H_conv.edges, settings["edge_marker_ec_cmap"])
+
+    edge_marker_ec = _color_arg_to_dict(
+        edge_marker_ec, H_conv.edges, settings["edge_marker_ec_cmap"]
+    )
 
     node_size = _scalar_arg_to_dict(
         node_size, H_conv.nodes, settings["min_node_size"], settings["max_node_size"]
     )
-    
+
     G_aug = _augmented_projection(H_conv)
     phantom_nodes = [n for n in list(G_aug.nodes) if n not in list(H_conv.nodes)]
     pos = spring_layout(G_aug)
-    
+
     for id, he in DH.edges.members(dtype=dict).items():
         d = len(he) - 1
-        #identify the center of the edge in the augemented projection
+        # identify the center of the edge in the augemented projection
         center = [n for n in phantom_nodes if set(G_aug.neighbors(n)) == he][0]
         x_center, y_center = pos[center]
         for node in DH.edges.dimembers(id)[0]:
@@ -1630,41 +1634,41 @@ def draw_dihypergraph(
                 color=lines_fc[id],
                 lw=lines_lw[id],
                 zorder=max_order - d,
-            
             )
             ax.add_line(line)
         for node in DH.edges.dimembers(id)[1]:
-            dx, dy = pos[node][0]-x_center, pos[node][1]-y_center
+            dx, dy = pos[node][0] - x_center, pos[node][1] - y_center
             # the following to avoid the point of the arrow overlapping the node
             distance = np.hypot(dx, dy)
-            direction_vector = np.array([dx, dy])/distance
-            shortened_distance = distance-node_size[node]*0.003  # Calculate the shortened length
+            direction_vector = np.array([dx, dy]) / distance
+            shortened_distance = (
+                distance - node_size[node] * 0.003
+            )  # Calculate the shortened length
             dx = direction_vector[0] * shortened_distance
             dy = direction_vector[1] * shortened_distance
             arrow = mpatches.FancyArrow(
-                x_center, 
-                y_center, 
-                dx, 
+                x_center,
+                y_center,
+                dx,
                 dy,
                 color=lines_fc[id],
-                width=lines_lw[id]*0.001, 
+                width=lines_lw[id] * 0.001,
                 length_includes_head=True,
                 head_width=line_head_width,
                 zorder=max_order - d,
             )
             ax.add_patch(arrow)
         ax.scatter(
-            x=x_center, 
+            x=x_center,
             y=y_center,
             marker=edge_marker,
-            s=edge_marker_size**2, 
-            c=edge_marker_fc[id], 
-            edgecolors=edge_marker_ec[id], 
-            linewidths=edge_marker_lw, 
-            zorder=max_order
+            s=edge_marker_size**2,
+            c=edge_marker_fc[id],
+            edgecolors=edge_marker_ec[id],
+            linewidths=edge_marker_lw,
+            zorder=max_order,
         )
-        
-        
+
     pos_H = {k: pos[k] for k in list(H_conv.nodes)}
     draw_nodes(
         H_conv,
@@ -1682,6 +1686,5 @@ def draw_dihypergraph(
 
     # compute axis limits
     _update_lims(pos, ax)
-                
+
     return ax
-        

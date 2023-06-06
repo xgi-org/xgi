@@ -222,6 +222,7 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
     assert xgi.max_edge_order(H) * 4 - 1 == len(ax4.collections)
     plt.close()
 
+
 def test_draw_dihypergraph(diedgelist2):
     DH = xgi.DiHypergraph(diedgelist2)
     ax1 = xgi.draw_dihypergraph(DH)
@@ -229,15 +230,14 @@ def test_draw_dihypergraph(diedgelist2):
     # number of elements
     assert len(ax1.lines) == 7  # number of source nodes
     assert len(ax1.patches) == 4  # number of target nodes
-    assert len(ax1.collections) == DH.num_edges + 1 # hyperedges markers + nodes
+    assert len(ax1.collections) == DH.num_edges + 1  # hyperedges markers + nodes
 
     # zorder
-    for line, z in zip(ax1.lines, [1,1,1,1,0,0,0]):  # lines for source nodes
+    for line, z in zip(ax1.lines, [1, 1, 1, 1, 0, 0, 0]):  # lines for source nodes
         assert line.get_zorder() == z
-    for patch, z in zip(ax1.patches, [1,1,0,0]):  # arrows for target nodes
+    for patch, z in zip(ax1.patches, [1, 1, 0, 0]):  # arrows for target nodes
         assert patch.get_zorder() == z
     for collection in ax1.collections:
-        assert collection.get_zorder() == 3 # nodes and hyperedges markers
+        assert collection.get_zorder() == 3  # nodes and hyperedges markers
 
     plt.close()
-
