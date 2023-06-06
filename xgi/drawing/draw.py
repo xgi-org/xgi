@@ -1650,6 +1650,7 @@ def draw_dihypergraph(
                 width=lines_lw[id]*0.001, 
                 length_includes_head=True,
                 head_width=line_head_width,
+                zorder=max_order - d,
             )
             ax.add_patch(arrow)
         ax.scatter(
