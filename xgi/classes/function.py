@@ -942,7 +942,7 @@ def complement(H):
             edges.add(edge)
 
         # list all possible edges of size <= max_edge_size
-        max_edge_size = 0 if M == 0 else H.edges.order.max() + 1
+        max_edge_size = max_edge_order(H) + 1
 
         possible_edges = set()
         for size in range(1, max_edge_size + 1):
