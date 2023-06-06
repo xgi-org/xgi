@@ -910,7 +910,7 @@ def subfaces(edges, order=None):
 def complement(H):
     """Returns the complement of hypergraph H.
 
-    The complement of an hypergraph will have the same nodes (same indexes) and
+    The complement of a hypergraph will have the same nodes (same indexes) and
     will contain every possible hyperedge linking these nodes, provided it is
     not already present in the hypergraph and it is not larger than its largest
     hyperedge.
