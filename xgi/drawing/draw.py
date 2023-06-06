@@ -9,13 +9,15 @@ import numpy as np
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
+import matplotlib.patches as mpatches
 from scipy.spatial import ConvexHull
+from networkx import spring_layout
 
 from .. import convert
 from ..classes import Hypergraph, SimplicialComplex, max_edge_order
 from ..exception import XGIError
 from ..stats import EdgeStat, NodeStat
-from .layout import barycenter_spring_layout
+from .layout import barycenter_spring_layout, _augmented_projection
 
 __all__ = [
     "draw",
@@ -26,6 +28,7 @@ __all__ = [
     "draw_hyperedge_labels",
     "draw_hypergraph_hull",
     "draw_multilayer",
+    "draw_dihypergraph"
 ]
 
 
@@ -1449,3 +1452,235 @@ def draw_multilayer(
     ax.set_axis_off()
 
     return ax
+
+def draw_dihypergraph(
+    DH,
+    ax=None,
+    lines_fc=None,
+    lines_lw=1.5,
+    line_head_width = 0.05,
+    node_fc="white",
+    node_ec="black",
+    node_lw=1,
+    node_size=15,
+    edge_marker_fc=None,
+    edge_marker_ec=None,
+    edge_marker='s',
+    edge_marker_lw=1,
+    edge_marker_size=15,
+    max_order=None,
+    node_labels=False,
+    settings=None,
+    **kwargs,
+):
+    """Draw a directed hypergraph
+
+    Parameters:
+    -----------
+    DH : DirectedHypergraph
+        The directed hypergraph to draw.
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
+    lines_fc : str, dict, iterable, optional
+        Color of the hyperedges (lines). If str, use the same color for all hyperedges.
+        If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
+        assume the colors are specified in the same order as the hyperedges are found
+        in DH.edges. If None (default), use the size of the hyperedges.
+    lines_lw : int, float, dict, iterable, optional
+        Line width of the hyperedges (lines). If int or float, use the same width for
+        all hyperedges. If a dict, must contain (hyperedge_id: width) pairs. If other
+        iterable, assume the widths are specified in the same order as the hyperedges
+        are found in DH.edges. By default, 1.5.
+    line_head_width : float, optional
+        Length of arrows' heads. By default, 0.05
+    node_fc : str, dict, iterable, or NodeStat, optional
+        Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
+        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
+        specified in the same order as the nodes are found in H.nodes. If NodeStat, use
+        the colormap specified with node_fc_cmap. By default, "white".
+    node_ec : str, dict, iterable, or NodeStat, optional
+        Color of node borders.  If str, use the same color for all nodes.  If a dict,
+        must contain (node_id: color_str) pairs.  If other iterable, assume the colors
+        are specified in the same order as the nodes are found in H.nodes. If NodeStat,
+        use the colormap specified with node_ec_cmap. By default, "black".
+    node_lw : int, float, dict, iterable, or NodeStat, optional
+        Line width of the node borders in pixels.  If int or float, use the same width
+        for all node borders.  If a dict, must contain (node_id: width) pairs.  If
+        iterable, assume the widths are specified in the same order as the nodes are
+        found in H.nodes. If NodeStat, use a monotonic linear interpolation defined
+        between min_node_lw and max_node_lw. By default, 1.
+    node_size : int, float, dict, iterable, or NodeStat, optional
+        Radius of the nodes in pixels.  If int or float, use the same radius for all
+        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
+        the radiuses are specified in the same order as the nodes are found in
+        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
+        min_node_size and max_node_size. By default, 15.
+    edge_marker_fc: str, dict, iterable, optional
+        Filling color of the hyperedges (markers). If str, use the same color for all hyperedges.
+        If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
+        assume the colors are specified in the same order as the hyperedges are found
+        in DH.edges. If None (default), use the size of the hyperedges.
+    edge_marker_ec: str, dict, iterable, optional
+        Edge color of the hyperedges (markers). If str, use the same color for all hyperedges.
+        If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
+        assume the colors are specified in the same order as the hyperedges are found
+        in DH.edges. If None (default), use the size of the hyperedges.
+    edge_marker: str, optional
+        Marker used for the hyperedges. By default 's' (square marker).
+    max_order : int, optional
+        Maximum of hyperedges to plot. If None (default), plots all orders.
+    node_labels : bool or dict, optional
+        If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
+        By default, False.
+    **kwargs : optional args
+        Alternate default values. Values that can be overwritten are the following:
+        * min_node_size
+        * max_node_size
+        * min_node_lw
+        * max_node_lw
+        * node_fc_cmap
+        * node_ec_cmap
+        * min_lines_lw
+        * max_lines_lw
+        * lines_fc_cmap
+        * edge_fc_cmap
+        * edge_marker_fc_cmap
+        * edge_marker_ec_cmap
+    
+    Returns
+    -------
+    ax : matplotlib.pyplot.axes
+
+    See Also
+    --------
+    draw
+    draw_nodes
+    draw_node_labels
+    
+    """
+    if settings is None:
+        settings = {
+            "min_node_size": 10.0,
+            "max_node_size": 30.0,
+            "min_node_lw": 1.0,
+            "max_node_lw": 5.0,
+            "node_fc_cmap": cm.Reds,
+            "node_ec_cmap": cm.Greys,
+            "min_lines_lw": 2.0,
+            "max_lines_lw": 10.0,
+            "lines_fc_cmap": cm.Blues,
+            "edge_marker_fc_cmap": cm.Blues,
+            "edge_marker_ec_cmap": cm.Greys,
+        }
+
+    settings.update(kwargs)
+
+    if ax is None:
+        ax = plt.gca()
+
+    ax.get_xaxis().set_ticks([])
+    ax.get_yaxis().set_ticks([])
+    ax.axis("off")
+        
+    # convert to hypergraph in order to use the augmented projection function
+    H_conv = convert.convert_to_hypergraph(DH)
+    
+    
+    if not max_order:
+        max_order = max_edge_order(H_conv)
+        
+    lines_lw = _scalar_arg_to_dict(
+        lines_lw, H_conv.edges, settings["min_lines_lw"], settings["max_lines_lw"]
+    )
+    
+    if lines_fc is None:
+        lines_fc = H_conv.edges.size
+    
+    lines_fc = _color_arg_to_dict(lines_fc, H_conv.edges, settings["lines_fc_cmap"])
+
+    if edge_marker_fc is None:
+        edge_marker_fc = H_conv.edges.size
+    
+    edge_marker_fc = _color_arg_to_dict(edge_marker_fc, H_conv.edges, settings["edge_marker_fc_cmap"])
+
+    if edge_marker_ec is None:
+        edge_marker_ec = H_conv.edges.size
+    
+    edge_marker_ec = _color_arg_to_dict(edge_marker_ec, H_conv.edges, settings["edge_marker_ec_cmap"])
+
+    node_size = _scalar_arg_to_dict(
+        node_size, H_conv.nodes, settings["min_node_size"], settings["max_node_size"]
+    )
+    
+    G_aug = _augmented_projection(H_conv)
+    phantom_nodes = [n for n in list(G_aug.nodes) if n not in list(H_conv.nodes)]
+    pos = spring_layout(G_aug)
+    
+    for id, he in DH.edges.members(dtype=dict).items():
+        d = len(he) - 1
+        #identify the center of the edge in the augemented projection
+        center = [n for n in phantom_nodes if set(G_aug.neighbors(n)) == he][0]
+        x_center, y_center = pos[center]
+        for node in DH.edges.dimembers(id)[0]:
+            x_coords = [pos[node][0], x_center]
+            y_coords = [pos[node][1], y_center]
+            line = plt.Line2D(
+                x_coords,
+                y_coords,
+                color=lines_fc[id],
+                lw=lines_lw[id],
+                zorder=max_order - d,
+            
+            )
+            ax.add_line(line)
+        for node in DH.edges.dimembers(id)[1]:
+            dx, dy = pos[node][0]-x_center, pos[node][1]-y_center
+            # the following to avoid the point of the arrow overlapping the node
+            distance = np.hypot(dx, dy)
+            direction_vector = np.array([dx, dy])/distance
+            shortened_distance = distance-node_size[node]*0.003  # Calculate the shortened length
+            dx = direction_vector[0] * shortened_distance
+            dy = direction_vector[1] * shortened_distance
+            arrow = mpatches.FancyArrow(
+                x_center, 
+                y_center, 
+                dx, 
+                dy,
+                color=lines_fc[id],
+                width=lines_lw[id]*0.001, 
+                length_includes_head=True,
+                head_width=line_head_width,
+            )
+            ax.add_patch(arrow)
+        ax.scatter(
+            x=x_center, 
+            y=y_center,
+            marker=edge_marker,
+            s=edge_marker_size**2, 
+            c=edge_marker_fc[id], 
+            edgecolors=edge_marker_ec[id], 
+            linewidths=edge_marker_lw, 
+            zorder=max_order
+        )
+        
+        
+    pos_H = {k: pos[k] for k in list(H_conv.nodes)}
+    draw_nodes(
+        H_conv,
+        pos_H,
+        ax,
+        node_fc,
+        node_ec,
+        node_lw,
+        node_size,
+        max_order,
+        settings,
+        node_labels,
+        **kwargs,
+    )
+
+    # compute axis limits
+    _update_lims(pos, ax)
+                
+    return ax
+        
