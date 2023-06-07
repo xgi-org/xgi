@@ -14,7 +14,7 @@ from scipy.spatial import ConvexHull
 from networkx import spring_layout
 
 from .. import convert
-from ..classes import Hypergraph, SimplicialComplex, max_edge_order
+from ..classes import Hypergraph, SimplicialComplex, DiHypergraph, max_edge_order
 from ..exception import XGIError
 from ..stats import EdgeStat, NodeStat
 from .layout import barycenter_spring_layout, _augmented_projection
@@ -1464,6 +1464,7 @@ def draw_dihypergraph(
     node_ec="black",
     node_lw=1,
     node_size=15,
+    edge_marker_toggle=True,
     edge_marker_fc=None,
     edge_marker_ec=None,
     edge_marker="s",
@@ -1516,6 +1517,8 @@ def draw_dihypergraph(
         the radiuses are specified in the same order as the nodes are found in
         H.nodes. If NodeStat, use a monotonic linear interpolation defined between
         min_node_size and max_node_size. By default, 15.
+    edge_marker_toggle: bool, optional
+        If True then marker representing the hyperedges are drawn. By default True.
     edge_marker_fc: str, dict, iterable, optional
         Filling color of the hyperedges (markers). If str, use the same color for all hyperedges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
@@ -1552,6 +1555,11 @@ def draw_dihypergraph(
     -------
     ax : matplotlib.pyplot.axes
 
+    Raises
+    ------
+    XGIError
+        If something different than a DiHypergraph is passed.
+
     See Also
     --------
     draw
@@ -1559,6 +1567,9 @@ def draw_dihypergraph(
     draw_node_labels
 
     """
+    if not isinstance(DH, DiHypergraph):
+        raise XGIError("The input must be a DiHypergraph")
+
     if settings is None:
         settings = {
             "min_node_size": 10.0,
@@ -1658,16 +1669,17 @@ def draw_dihypergraph(
                 zorder=max_order - d,
             )
             ax.add_patch(arrow)
-        ax.scatter(
-            x=x_center,
-            y=y_center,
-            marker=edge_marker,
-            s=edge_marker_size**2,
-            c=edge_marker_fc[id],
-            edgecolors=edge_marker_ec[id],
-            linewidths=edge_marker_lw,
-            zorder=max_order,
-        )
+        if edge_marker_toggle:
+            ax.scatter(
+                x=x_center,
+                y=y_center,
+                marker=edge_marker,
+                s=edge_marker_size**2,
+                c=edge_marker_fc[id],
+                edgecolors=edge_marker_ec[id],
+                linewidths=edge_marker_lw,
+                zorder=max_order,
+            )
 
     pos_H = {k: pos[k] for k in list(H_conv.nodes)}
     draw_nodes(
