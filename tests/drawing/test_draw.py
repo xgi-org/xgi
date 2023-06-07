@@ -223,7 +223,7 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
     plt.close()
 
 
-def test_draw_dihypergraph(diedgelist2):
+def test_draw_dihypergraph(diedgelist2, edgelist8):
     DH = xgi.DiHypergraph(diedgelist2)
     ax1 = xgi.draw_dihypergraph(DH)
 
@@ -239,5 +239,18 @@ def test_draw_dihypergraph(diedgelist2):
         assert patch.get_zorder() == z
     for collection in ax1.collections:
         assert collection.get_zorder() == 3  # nodes and hyperedges markers
+    
+    plt.close()
+
+    #test toggle for edges
+    ax2 = xgi.draw_dihypergraph(DH, edge_marker_toggle=False)
+    assert len(ax1.collections) == 1
 
     plt.close()
+
+    #test XGI ERROR raise
+    with pytest.raises(XGIError):
+        H = xgi.Hypergraph(edgelist8)
+        ax3 = xgi.draw_dihypergraph(H)
+        plt.close()
+    
