@@ -1472,6 +1472,7 @@ def draw_dihypergraph(
     edge_marker_size=15,
     max_order=None,
     node_labels=False,
+    hyperedge_labels=False,
     settings=None,
     **kwargs,
 ):
@@ -1536,6 +1537,9 @@ def draw_dihypergraph(
     node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
         By default, False.
+    hyperedge_labels : bool or dict, optional
+        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
+        pairs.  By default, False.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
         * min_node_size
@@ -1680,6 +1684,19 @@ def draw_dihypergraph(
                 linewidths=edge_marker_lw,
                 zorder=max_order,
             )
+
+    if hyperedge_labels:
+        # Get all valid keywords by inspecting the signatures of draw_node_labels
+        valid_label_kwds = signature(draw_hyperedge_labels).parameters.keys()
+        # Remove the arguments of this function (draw_networkx)
+        valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "hyperedge_labels"}
+        if any([k not in valid_label_kwds for k in kwargs]):
+            invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
+            raise ValueError(f"Received invalid argument(s): {invalid_args}")
+        label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
+        if "font_size_edges" not in label_kwds:
+            label_kwds["font_size_edges"] = 6
+        draw_hyperedge_labels(H_conv, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
 
     draw_nodes(
         H_conv,
