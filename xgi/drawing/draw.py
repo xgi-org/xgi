@@ -1681,10 +1681,9 @@ def draw_dihypergraph(
                 zorder=max_order,
             )
 
-    pos_H = {k: pos[k] for k in list(H_conv.nodes)}
     draw_nodes(
         H_conv,
-        pos_H,
+        pos,
         ax,
         node_fc,
         node_ec,
