@@ -1632,6 +1632,10 @@ def draw_dihypergraph(
     )
 
     G_aug = _augmented_projection(H_conv)
+    for dyad in H_conv.edges.filterby("size", 2).members():
+        index = max(G_aug.nodes) + 1
+        G_aug.add_edges_from([[list(dyad)[0], index], [list(dyad)[1], index]])
+
     phantom_nodes = [n for n in list(G_aug.nodes) if n not in list(H_conv.nodes)]
     pos = spring_layout(G_aug)
 
