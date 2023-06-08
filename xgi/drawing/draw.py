@@ -8,16 +8,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
-from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
 from matplotlib.patches import FancyArrow
-from scipy.spatial import ConvexHull
+from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
 from networkx import spring_layout
+from scipy.spatial import ConvexHull
 
 from .. import convert
-from ..classes import Hypergraph, SimplicialComplex, DiHypergraph, max_edge_order
+from ..classes import DiHypergraph, Hypergraph, SimplicialComplex, max_edge_order
 from ..exception import XGIError
 from ..stats import EdgeStat, NodeStat
-from .layout import barycenter_spring_layout, _augmented_projection
+from .layout import _augmented_projection, barycenter_spring_layout
 
 __all__ = [
     "draw",
@@ -1478,8 +1478,8 @@ def draw_dihypergraph(
 ):
     """Draw a directed hypergraph
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     DH : DirectedHypergraph
         The directed hypergraph to draw.
     ax : matplotlib.pyplot.axes, optional
