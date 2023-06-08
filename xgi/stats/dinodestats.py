@@ -18,10 +18,6 @@ Examples
 
 """
 
-import numpy as np
-
-import xgi
-
 __all__ = [
     "attrs",
     "degree",

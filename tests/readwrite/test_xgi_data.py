@@ -10,7 +10,7 @@ from xgi.exception import XGIError
 
 @pytest.mark.webtest
 @pytest.mark.slow
-def test_load_xgi_data():
+def test_load_xgi_data(capfd):
     # test loading the online data
     H1 = load_xgi_data("email-enron", cache=False)
     assert H1.num_nodes == 148
@@ -41,6 +41,12 @@ def test_load_xgi_data():
     download_xgi_data("email-enron", dir)
     H4 = load_xgi_data("email-enron", read=True, path=dir)
     assert H1.edges.members() == H4.edges.members()
+
+    load_xgi_data()
+    out, _ = capfd.readouterr()
+    assert "Available datasets are the following:" in out
+    assert "email-enron" in out
+    assert "congress-bills" in out
 
 
 def test_download_xgi_data():
