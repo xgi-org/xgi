@@ -1,12 +1,19 @@
 # Changelog
 
 
-## latest
-
-* Added Katz-centrality algorithm (`katz_centrality`) [#366](https://github.com/xgi-org/xgi/issues/366) (@acombretrenouard).
+## v0.7
+* Added the functionality to load datasets from the [BiGG database](http://bigg.ucsd.edu/) [#384](https://github.com/xgi-org/xgi/pull/384) (@nwlandry).
+* Added the `draw_dihypergraph()` method to draw directed hypergraphs [#387](https://github.com/xgi-org/xgi/pull/387) (@thomasrobiglio).
+* Changed "an hypergraph" to "a hypergraph" in the docstrings [#386](https://github.com/xgi-org/xgi/pull/386) (@acombretrenouard).
+* Fixed mathematical expressions that were not represented properly in the docstrings part 2 [#382](https://github.com/xgi-org/xgi/pull/382) (@nwlandry).
+* Fixed mathematical expressions that were not represented properly in the docstrings [#381](https://github.com/xgi-org/xgi/pull/381) (@nwlandry).
+* Added the DiHypergraph class, directed view classes, and directed stats classes [#372](https://github.com/xgi-org/xgi/pull/372) (@nwlandry).
+* Added Katz-centrality algorithm [#370](https://github.com/xgi-org/xgi/pull/370) (@acombretrenouard).
+* Added the `draw_multilayer()` drawing function [#369](https://github.com/xgi-org/xgi/pull/369) (@thomasrobiglio).
+* Fixed `members()` and `memberships()` methods so that views are read-only [#371](https://github.com/xgi-org/xgi/pull/371) (@nwlandry).
+* Added shortest path algorithms [#368](https://github.com/xgi-org/xgi/pull/368) (@acombretrenouard).
 
 ## v0.6
-
 * Added new drawing layouts (`circular_layout`, `spiral_layout`, and `barycenter_kamada_kawai_layout`) [#360](https://github.com/xgi-org/xgi/pull/360) (@thomasrobiglio).
 
 ## v0.5.8
