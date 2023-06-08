@@ -7,6 +7,7 @@ readwrite package
 .. autosummary::
    :toctree: readwrite
 
+   ~xgi.readwrite.bigg_data
    ~xgi.readwrite.bipartite
    ~xgi.readwrite.edgelist
    ~xgi.readwrite.incidence
