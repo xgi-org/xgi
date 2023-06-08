@@ -6,7 +6,7 @@ XGI
 
 XGI is a Python package for higher-order networks.
 
-Comple**X** **G**roup **Interactions** (XGI) provides an ecosystem for the
+Comple\ **X** **G**\ roup **I**\ nteractions (XGI) provides an ecosystem for the
 representation, manipulation, and study of the
 structure, dynamics, and functions of
 complex systems with group (higher-order) interactions.

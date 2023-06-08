@@ -32,8 +32,7 @@ project_urls = {
     "GitHub Discussions": "https://github.com/xgi-org/xgi/discussions",
 }
 
-description = """XGI is a Python library for the representation
-and analysis of complex systems with group (higher-order) interactions."""
+description = """XGI is a Python package for higher-order networks."""
 
 with open("long_description.rst") as file:
     long_description = file.read()
