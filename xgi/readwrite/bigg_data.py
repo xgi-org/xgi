@@ -90,8 +90,10 @@ def _bigg_to_dihypergraph(d_index, d_model):
     id = d_model["id"]
 
     DH["name"] = id
+    
     info = next((item for item in d_index["results"] if item["bigg_id"] == id), None)
     DH["organism"] = info["organism"]
+    
     for m in d_model["metabolites"]:
         DH.add_node(m["id"], name=m["name"])
 
