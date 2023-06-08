@@ -23,6 +23,7 @@
 
    Hypergraph class <api/classes/xgi.classes.hypergraph.Hypergraph.rst>
    Simplicial Complex class <api/classes/xgi.classes.simplicialcomplex.SimplicialComplex.rst>
+   Directed Hypergraph class <api/classes/xgi.classes.dihypergraph.DiHypergraph>
 
 .. toctree::
    :maxdepth: 2
