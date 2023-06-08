@@ -19,7 +19,7 @@ def clustering_coefficient(H):
     This clustering coefficient is defined as the
     clustering coefficient of the unweighted pairwise
     projection of the hypergraph, i.e.,
-    :math:`c = A^3_{i,i}/\binom{k}{2},`    
+    :math:`c = A^3_{i,i}/\binom{k}{2},`
     where :math:`A` is the adjacency matrix of the network
     and :math:`k` is the pairwise degree of :math:`i`.
 

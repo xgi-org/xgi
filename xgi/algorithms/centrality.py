@@ -353,11 +353,11 @@ def katz_centrality(H, index=False, cutoff=100):
 
     .. math::
         c = [(I - \alpha A^{t})^{-1} - I]{\bf 1},
-    
+
     where :math:`A` is the adjency matrix of the the (hyper)graph.
     Since :math:`A^{t} = A` for undirected graphs (our case), we have:
 
-    
+
     .. math::
         &[I + A + \alpha A^2 + \alpha^2 A^3 + \dots](I - \alpha A^{t})
 
@@ -368,7 +368,7 @@ def katz_centrality(H, index=False, cutoff=100):
         & - \alpha^2 A^3 - \alpha^3 A^4 - \dots
 
         & = I
-    
+
     And :math:`(I - \alpha A^{t})^{-1} = I + A + \alpha A^2 + \alpha^2 A^3 + \dots`
     Thus we can use the power serie to compute the Katz-centrality.
     [2] The Katz-centrality of isolated nodes (no hyperedges contains them) is
