@@ -230,7 +230,9 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
     # number of elements
     assert len(ax1.lines) == 7  # number of source nodes
     assert len(ax1.patches) == 4  # number of target nodes
-    assert len(ax1.collections) == DH.num_edges + 1  # hyperedges markers + nodes
+    assert len(ax1.collections) == DH.num_edges + 1 - len(
+        DH.edges.filterby("size", 1)
+    )  # hyperedges markers + nodes
 
     # zorder
     for line, z in zip(ax1.lines, [1, 1, 1, 1, 0, 0, 0]):  # lines for source nodes
