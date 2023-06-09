@@ -256,6 +256,7 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
         ax3 = xgi.draw_dihypergraph(H)
         plt.close()
 
+
 def test_draw_dihypergraph_with_str_labels_and_isolated_nodes():
     DH1 = xgi.DiHypergraph()
     DH1.add_edges_from(
