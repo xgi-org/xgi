@@ -1478,8 +1478,8 @@ def draw_dihypergraph(
 ):
     """Draw a directed hypergraph
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     DH : DirectedHypergraph
         The directed hypergraph to draw.
     ax : matplotlib.pyplot.axes, optional
@@ -1634,7 +1634,7 @@ def draw_dihypergraph(
     G_aug = _augmented_projection(H_conv)
     for dyad in H_conv.edges.filterby("size", 2).members():
         try:
-            index = max([n for n in G_aug.nodes if isinstance(n, int)]) + 1
+            index = max(n for n in G_aug.nodes if isinstance(n, int)) + 1
         except ValueError:
             # The list of node-labels has no integers, so I start from 0
             index = 0
