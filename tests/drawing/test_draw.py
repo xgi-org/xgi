@@ -253,3 +253,19 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
         H = xgi.Hypergraph(edgelist8)
         ax3 = xgi.draw_dihypergraph(H)
         plt.close()
+
+    # test for DH with str node labels and isolated nodes
+    DH1 = xgi.DiHypergraph()
+    DH1.add_edges_from(
+        [
+            [{"one"}, {"two", "three"}],
+            [{"two", "three"}, {"four", "five"}],
+            [{"six"}, {}],
+        ]
+    )
+    ax4 = xgi.draw_dihypergraph(DH1)
+    assert len(ax4.lines) == 3
+    assert len(ax4.patches) == 4
+    assert len(ax4.collections) == DH1.num_edges + 1 - len(
+        DH1.edges.filterby("size", 1)
+    )
