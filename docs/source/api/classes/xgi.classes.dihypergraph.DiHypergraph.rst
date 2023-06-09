@@ -4,8 +4,7 @@
 .. currentmodule:: xgi.classes.dihypergraph
 
 .. warning::
-    This is an experimental module. It has been thoroughly tested in development
-    but has not been used in research. It is not yet stable and may change in the future.
+    This is an experimental module. It is not yet stable and may change in the future.
 .. autoclass:: DiHypergraph
    :show-inheritance:
    :members:
