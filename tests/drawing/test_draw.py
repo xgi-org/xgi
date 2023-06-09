@@ -230,7 +230,9 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
     # number of elements
     assert len(ax1.lines) == 7  # number of source nodes
     assert len(ax1.patches) == 4  # number of target nodes
-    assert len(ax1.collections) == DH.num_edges + 1  # hyperedges markers + nodes
+    assert len(ax1.collections) == DH.num_edges + 1 - len(
+        DH.edges.filterby("size", 1)
+    )  # hyperedges markers + nodes
 
     # zorder
     for line, z in zip(ax1.lines, [1, 1, 1, 1, 0, 0, 0]):  # lines for source nodes
@@ -253,3 +255,20 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
         H = xgi.Hypergraph(edgelist8)
         ax3 = xgi.draw_dihypergraph(H)
         plt.close()
+
+
+def test_draw_dihypergraph_with_str_labels_and_isolated_nodes():
+    DH1 = xgi.DiHypergraph()
+    DH1.add_edges_from(
+        [
+            [{"one"}, {"two", "three"}],
+            [{"two", "three"}, {"four", "five"}],
+            [{"six"}, {}],
+        ]
+    )
+    ax4 = xgi.draw_dihypergraph(DH1)
+    assert len(ax4.lines) == 3
+    assert len(ax4.patches) == 4
+    assert len(ax4.collections) == DH1.num_edges + 1 - len(
+        DH1.edges.filterby("size", 1)
+    )
