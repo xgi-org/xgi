@@ -859,13 +859,13 @@ def from_simplex_dict(d, create_using=None):
     d : dict
         A dictionary where the keys are simplex IDs and the values
         are containers of nodes specifying the simplices.
-    create_using : Hypergraph constructor, optional
-        The hypergraph object to add the data to, by default None
+    create_using : SimplicialComplex constructor, optional
+        The simplicial complex object to add the data to, by default None
 
     Returns
     -------
-    Hypergraph object
-        The constructed hypergraph object
+    SimplicialComplex object
+        The constructed simplicial complex object
 
     """
     SC = empty_simplicial_complex(create_using)
