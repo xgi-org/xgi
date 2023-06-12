@@ -46,6 +46,7 @@ class SimplicialComplex(Hypergraph):
         * 2-column Pandas dataframe (bipartite edges)
         * Scipy/Numpy incidence matrix
         * SimplicialComplex object.
+        * Hypergraph object
 
     **attr : dict, optional
         Attributes to add to the simplicial complex as key, value pairs.
