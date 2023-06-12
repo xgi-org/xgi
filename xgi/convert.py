@@ -846,6 +846,7 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
 
     return H
 
+
 def from_simplex_dict(d, create_using=None):
     """Creates a Simplicial Complex from a dictionary of simplices,
     if the subfaces of existing simplices are not given in the dict
