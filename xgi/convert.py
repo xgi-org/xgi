@@ -40,6 +40,7 @@ __all__ = [
     "to_bipartite_graph",
     "dict_to_hypergraph",
     "to_line_graph",
+    "from_simplex_dict",
 ]
 
 
