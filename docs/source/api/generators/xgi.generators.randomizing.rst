@@ -8,3 +8,4 @@ xgi.generators.randomizing
     .. rubric:: Functions
    
     .. autofunction:: shuffle_hyperedges
+    .. autofunction:: node_swap

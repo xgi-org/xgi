@@ -80,7 +80,7 @@ def test_node_swap(edgelist8):
 
     H0 = xgi.Hypergraph(edgelist8)
 
-    H = xgi.node_swap(H0, 2, 5) # all orders
+    H = xgi.node_swap(H0, 2, 5)  # all orders
     edges_new = {
         0: {0, 1},
         1: {0, 1, 5},
@@ -127,8 +127,8 @@ def test_node_swap(edgelist8):
 
     # errors raised
     with pytest.raises(ValueError):
-        H = xgi.node_swap(H0, 7, 5) # 7 not in H
+        H = xgi.node_swap(H0, 7, 5)  # 7 not in H
     with pytest.raises(ValueError):
-        H = xgi.node_swap(H0, 2, 5, order=1) # 2 not in pairwise
+        H = xgi.node_swap(H0, 2, 5, order=1)  # 2 not in pairwise
     with pytest.raises(ValueError):
         H = xgi.node_swap(H0, 7, 5, order=10)

@@ -81,7 +81,7 @@ def shuffle_hyperedges(S, order, p):
 
 
 def node_swap(H, nid1, nid2, id_temp=-1, order=None):
-    """Swap node `nid1` and node `nid2` in all edges of order `order`.
+    """Swap nodes `nid1` and node `nid2` in all edges of order `order`.
 
     Parameters
     ----------
@@ -112,14 +112,16 @@ def node_swap(H, nid1, nid2, id_temp=-1, order=None):
     """
 
     # check that node ids are in hypergraph
-    if not nid1 in H: 
+    if not nid1 in H:
         raise ValueError(f"Node {nid1} is not in hypergraph H")
-    if not nid2 in H: 
+    if not nid2 in H:
         raise ValueError(f"Node {nid2} is not in hypergraph H")
 
     if order is not None:
         if (order + 1) not in xgi.unique_edge_sizes(H):
-            raise ValueError(f"There is no hyperedge of order {order} is this hypergraph.")
+            raise ValueError(
+                f"There is no hyperedge of order {order} is this hypergraph."
+            )
 
     # make sure id_temps does not exist yet
     while id_temp in H.edges:
@@ -128,14 +130,18 @@ def node_swap(H, nid1, nid2, id_temp=-1, order=None):
     # get edges of given order
     if order:
         edge_dict = H.edges.filterby("order", order).members(dtype=dict).copy()
-    else: # includes order 0
+    else:  # includes order 0
         edge_dict = H.edges.members(dtype=dict).copy()
 
     # check that node ids exist in those edges
     if H.nodes.degree(order=order)[nid1] == 0:
-        raise ValueError(f"Node {nid1} is not part of any hyperedge of the specified order")
+        raise ValueError(
+            f"Node {nid1} is not part of any hyperedge of the specified order"
+        )
     if H.nodes.degree(order=order)[nid2] == 0:
-        raise ValueError(f"Node {nid2} is not part of any hyperedge of the specified order")
+        raise ValueError(
+            f"Node {nid2} is not part of any hyperedge of the specified order"
+        )
 
     new_edge_dict = deepcopy(edge_dict)
     HH = H.copy()
