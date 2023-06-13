@@ -13,4 +13,5 @@ generators package
    ~xgi.generators.random
    ~xgi.generators.uniform
    ~xgi.generators.simplicial_complexes
+   ~xgi.generators.randomizing
    

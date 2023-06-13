@@ -1,13 +1,10 @@
-xgi.generators.random
-=====================
+xgi.generators.randomizing
+==========================
 
-.. currentmodule:: xgi.generators.random
+.. currentmodule:: xgi.generators.randomizing
 
-.. automodule:: xgi.generators.random
+.. automodule:: xgi.generators.randomizing
    
     .. rubric:: Functions
    
-    .. autofunction:: chung_lu_hypergraph
-    .. autofunction:: dcsbm_hypergraph
-    .. autofunction:: random_hypergraph
-    .. autofunction:: watts_strogatz_hypergraph
+    .. autofunction:: shuffle_hyperedges
