@@ -27,6 +27,13 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     with pytest.raises(XGIError):
         xgi.SimplicialComplex(1)
 
+    H = xgi.Hypergraph(edgelist5)
+    S_h = xgi.SimplicialComplex(H)
+
+    assert set(S_h.nodes) == set(H.nodes) == set(S_list.nodes)
+    assert set(S_h.edges) == set(S_list.edges)
+    
+
 
 def test_string():
     S1 = xgi.SimplicialComplex()
