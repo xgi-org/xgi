@@ -35,7 +35,8 @@ class Hypergraph:
         * hyperedge dictionary
         * 2-column Pandas dataframe (bipartite edges)
         * Scipy/Numpy incidence matrix
-        * Hypergraph object.
+        * Hypergraph object
+        * SimplicialComplex object
 
     **attr : dict, optional
         Attributes to add to the hypergraph as key, value pairs.

@@ -40,6 +40,7 @@ __all__ = [
     "to_bipartite_graph",
     "dict_to_hypergraph",
     "to_line_graph",
+    "from_simplex_dict",
 ]
 
 
@@ -308,8 +309,9 @@ def convert_to_simplicial_complex(data, create_using=None):
             return convert_to_simplicial_complex(result)
 
     elif isinstance(data, dict):
-        # edge dict in the form we need
-        raise XGIError("Cannot generate SimplicialComplex from simplex dictionary")
+        result = from_simplex_dict(data, create_using)
+        if not isinstance(create_using, SimplicialComplex):
+            return convert_to_simplicial_complex(result)
     elif isinstance(
         data,
         (
@@ -844,3 +846,28 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
         raise XGIError("Failed to import edge attributes.") from e
 
     return H
+
+
+def from_simplex_dict(d, create_using=None):
+    """Creates a Simplicial Complex from a dictionary of simplices,
+    if the subfaces of existing simplices are not given in the dict
+    then the function adds them with integer IDs.
+
+
+    Parameters
+    ----------
+    d : dict
+        A dictionary where the keys are simplex IDs and the values
+        are containers of nodes specifying the simplices.
+    create_using : SimplicialComplex constructor, optional
+        The simplicial complex object to add the data to, by default None
+
+    Returns
+    -------
+    SimplicialComplex object
+        The constructed simplicial complex object
+
+    """
+    SC = empty_simplicial_complex(create_using)
+    SC.add_simplices_from((members, uid) for uid, members in d.items())
+    return SC
