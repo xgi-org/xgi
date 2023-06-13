@@ -12,15 +12,7 @@ name = "xgi"
 
 version = __version__
 
-authors = (
-    "Nicholas Landry, "
-    "Leo Torres, "
-    "Maxime Lucas, "
-    "Iacopo Iacopini, "
-    "Giovanni Petri, "
-    "Alice Patania, "
-    "and Alice Schwarze"
-)
+authors = "XGI Developers"
 
 author_email = "nicholas.landry@uvm.edu"
 

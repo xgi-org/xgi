@@ -9,8 +9,9 @@ The Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/xgi-
 complex systems with group (higher-order) interactions.
 
 - Repository: https://github.com/xgi-org/xgi
-- PyPI: https://pypi.org/project/xgi/
-- Documentation: https://xgi.readthedocs.io/
+- PyPI: `latest release <https://pypi.org/project/xgi/>`_
+- Twitter: `@xginets <https://twitter.com/xginets>`_
+- Contributors: `list <https://github.com/xgi-org/xgi/blob/main/CONTRIBUTORS.md>`_
 
 
 Installation
@@ -60,7 +61,7 @@ If you want to contribute to this project, please make sure to read the
 `code of conduct
 <https://github.com/xgi-org/xgi/blob/main/CODE_OF_CONDUCT.md>`_
 and the `contributing guidelines
-<https://github.com/xgi-org/xgi/blob/main/CONTRIBUTING.md>`_.
+<https://github.com/xgi-org/xgi/blob/main/HOW_TO_CONTRIBUTE.md.md>`_.
 
 The best way to contribute to XGI is by submitting a bug or request a new feature by
 opening a `new issue <https://github.com/xgi-org/xgi/issues/new>`_.
@@ -72,27 +73,6 @@ other doubts you may have while working on your contribution.
 
 If you are interested in the daily goings-on of XGI, you are invited to join our `Zulip
 channel <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_.
-
-
-Contributors
-============
-
-The core XGI team members:
-
-* Nicholas Landry
-* Leo Torres
-* Maxime Lucas
-* Iacopo Iacopini
-* Giovanni Petri
-* Alice Patania
-* Alice Schwarze
-
-Other contributors:
-
-* Martina Contisciani
-* Tim LaRock
-* Sabina Adhikari
-* Marco Nurisso
 
 
 Funding

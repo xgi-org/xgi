@@ -10,14 +10,17 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the rep
 * [**Bug reports**](../../issues)
 * [**GitHub Discussions**](../../discussions)
 * [**Documentation**](https://xgi.readthedocs.io/en/latest/)
+* [**Contributors**](CONTRIBUTORS.md)
 
 Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twitter](https://twitter.com/xginets) or [Mastodon](https://mathstodon.xyz/@xginets)!
 
 ## Table of Contents:
+- [XGI](#xgi)
+  - [Table of Contents:](#table-of-contents)
   - [Installation](#installation)
   - [Getting Started](#getting-started)
-  - [How to Contribute](#contributing)
   - [Corresponding Data](#corresponding-data)
+  - [How to Contribute](#how-to-contribute)
   - [How to Cite](#how-to-cite)
   - [License](#license)
   - [Funding](#funding)
@@ -55,7 +58,7 @@ A number of higher-order datasets are available in the [XGI-DATA repository](htt
 
 ## How to Contribute
 If you want to contribute to this project, please make sure to read the
-[contributing guidelines](CONTRIBUTING.md). We expect respectful and kind interactions by all contributors and users as laid out in our [code of conduct](CODE_OF_CONDUCT.md).
+[contributing guidelines](HOW_TO_CONTRIBUTE.md). We expect respectful and kind interactions by all contributors and users as laid out in our [code of conduct](CODE_OF_CONDUCT.md).
 
 The XGI community always welcomes contributions, no matter how small. We're happy to help troubleshoot XGI issues you run into, assist you if you would like to add functionality or fixes to the codebase, or answer any questions you may have.
 
@@ -82,14 +85,6 @@ a citation in your preferred format, and will also integrate well with citation 
 Released under the 3-Clause BSD license (see [`LICENSE.md`](LICENSE.md))
 
 Copyright (C) 2021-2023 XGI Developers
-
-* Nicholas Landry <nicholas.landry@uvm.edu>
-* Leo Torres <leo@leotrs.com>
-* Iacopo Iacopini <iacopiniiacopo@gmail.com>
-* Maxime Lucas <maxime.lucas@centai.eu>
-* Giovanni Petri <giovanni.petri@centai.eu>
-* Alice Patania <apatania@uvm.edu>
-* Alice Schwarze <alice.c.schwarze@dartmouth.edu>
 
 The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](LICENSE.md)
 
