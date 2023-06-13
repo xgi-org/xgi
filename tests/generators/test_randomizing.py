@@ -74,3 +74,61 @@ def test_shuffle_hyperedges():
         H = xgi.shuffle_hyperedges(S, order=1, p=-0.5)
     with pytest.raises(ValueError):
         H = xgi.shuffle_hyperedges(S, order=10, p=1)
+
+
+def test_node_swap(edgelist8):
+
+    H0 = xgi.Hypergraph(edgelist8)
+
+    H = xgi.node_swap(H0, 2, 5) # all orders
+    edges_new = {
+        0: {0, 1},
+        1: {0, 1, 5},
+        2: {0, 5, 3},
+        3: {0, 1, 5, 3, 4},
+        4: {5, 4, 2},
+        5: {1, 3, 2},
+        6: {0, 3, 4},
+        7: {1, 6},
+        8: {0, 6},
+    }
+
+    assert H._edge == edges_new
+
+    # id temp already exists
+    H = xgi.node_swap(H0, 2, 5, id_temp=1)
+    edges_new = {
+        0: {0, 1},
+        1: {0, 1, 5},
+        2: {0, 5, 3},
+        3: {0, 1, 5, 3, 4},
+        4: {5, 4, 2},
+        5: {1, 3, 2},
+        6: {0, 3, 4},
+        7: {1, 6},
+        8: {0, 6},
+    }
+    assert H._edge == edges_new
+
+    # selected order
+    H = xgi.node_swap(H0, 2, 5, order=2)
+    edges_new = {
+        0: {0, 1},
+        1: {0, 1, 5},
+        2: {0, 5, 3},
+        3: {0, 1, 2, 3, 4},
+        4: {5, 4, 2},
+        5: {1, 3, 2},
+        6: {0, 3, 4},
+        7: {1, 6},
+        8: {0, 6},
+    }
+    assert H._edge == edges_new
+
+    # errors raised
+    with pytest.raises(ValueError):
+        H = xgi.node_swap(H0, 7, 5) # 7 not in H
+    with pytest.raises(ValueError):
+        H = xgi.node_swap(H0, 2, 5, order=1) # 2 not in pairwise
+    with pytest.raises(ValueError):
+        H = xgi.node_swap(H0, 7, 5, order=10)
