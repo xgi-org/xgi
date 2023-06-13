@@ -40,7 +40,7 @@ A number of higher-order datasets are available in the `XGI-DATA repository <htt
 Contributing
 ------------
 If you want to contribute to this project, please make sure to read the
-`contributing guidelines <CONTRIBUTING.md>`_.
+`contributing guidelines <HOW_TO_CONTRIBUTE.md>`_.
 We expect respectful and kind interactions by all contributors and users
 as laid out in our `code of conduct <CODE_OF_CONDUCT.md>`_.
 
@@ -72,17 +72,3 @@ License
 Released under the 3-Clause BSD license (see the `license file <https://github.com/xgi-org/xgi/tree/main/license.md>`_)
 
 Copyright (C) 2021-2023 XGI Developers
-
-Nicholas Landry <nicholas.landry@colorado.edu>
-
-Leo Torres <leo@leotrs.com>
-
-Iacopo Iacopini <iacopiniiacopo@gmail.com>
-
-Maxime Lucas <maxime.lucas@isi.it>
-
-Giovanni Petri <giovanni.petri@isi.it>
-
-Alice Patania <apatania@uvm.edu>
-
-Alice Schwarze <alice.c.schwarze@dartmouth.edu>
