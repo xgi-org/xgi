@@ -66,7 +66,7 @@ def shuffle_hyperedges(S, order, p):
     else:
         H = S.copy()
 
-    nodes = S.nodes
+    nodes = list(S.nodes)
     d_hyperedges = H.edges.filterby("order", order).members(dtype=dict)
 
     for id_, members in d_hyperedges.items():
