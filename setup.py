@@ -12,8 +12,7 @@ name = "xgi"
 
 version = __version__
 
-authors = ("XGI Developers"
-)
+authors = "XGI Developers"
 
 author_email = "nicholas.landry@uvm.edu"
 
