@@ -13,6 +13,7 @@ __all__ = [
     "shuffle_hyperedges",
 ]
 
+
 def shuffle_hyperedges(S, order, p):
     """Shuffle existing hyperdeges of order `order` with probablity `p`.
 
@@ -32,16 +33,16 @@ def shuffle_hyperedges(S, order, p):
 
     Reference
     ---------
-    Zhang, Y., Lucas, M. and Battiston, F., 2023. 
-    "Higher-order interactions shape collective dynamics differently 
-    in hypergraphs and simplicial complexes." 
+    Zhang, Y., Lucas, M. and Battiston, F., 2023.
+    "Higher-order interactions shape collective dynamics differently
+    in hypergraphs and simplicial complexes."
     Nature Communications, 14(1), p.1605.
     https://doi.org/10.1038/s41467-023-37190-9
 
     Example
     -------
 
-    
+
     """
 
     if (order + 1) not in xgi.unique_edge_sizes(S):
@@ -54,7 +55,7 @@ def shuffle_hyperedges(S, order, p):
         H = xgi.Hypergraph()
         H.add_nodes_from(S.nodes)
         H.add_edges_from(S._edge)
-    else: 
+    else:
         H = S.copy()
 
     nodes = S.nodes
