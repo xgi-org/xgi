@@ -67,6 +67,7 @@ mind.
 - Repository: https://github.com/xgi-org/xgi
 - PyPI: `latest release <https://pypi.org/project/xgi/>`_
 - Twitter: `@xginets <https://twitter.com/xginets>`_
+- Contributors: `list <https://github.com/xgi-org/xgi/blob/main/CONTRIBUTORS.md>`_
 
 Sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
 
@@ -105,7 +106,7 @@ Contributing
 ============
 
 If you want to contribute to this project, please make sure to read the
-`contributing guidelines <CONTRIBUTING.md>`_.
+`contributing guidelines <HOW_TO_CONTRIBUTE.md>`_.
 We expect respectful and kind interactions by all contributors and users
 as laid out in our `code of conduct <CODE_OF_CONDUCT.md>`_.
 
