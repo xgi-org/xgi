@@ -32,7 +32,6 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
 
     assert set(S_h.nodes) == set(H.nodes) == set(S_list.nodes)
     assert set(S_h.edges) == set(S_list.edges)
-    
 
 
 def test_string():

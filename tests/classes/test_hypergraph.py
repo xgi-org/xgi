@@ -42,7 +42,7 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
 
     SC = xgi.SimplicialComplex(edgelist5)
     H_sc = xgi.Hypergraph(SC)
-    
+
     assert set(H_sc.nodes) == set(SC.nodes)
     assert set(H_sc.edges) == set(SC.edges)
 

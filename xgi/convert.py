@@ -92,7 +92,7 @@ def convert_to_hypergraph(data, create_using=None):
 
     elif isinstance(data, SimplicialComplex) and create_using is None:
         return from_max_simplices(data)
-    
+
     elif isinstance(data, SimplicialComplex):
         H = empty_hypergraph(create_using)
         H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
