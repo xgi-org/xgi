@@ -14,7 +14,8 @@ def test_shuffle_hyperedges():
     S = xgi.random_simplicial_complex(50, [0.1, 0.01, 0.001], seed=1)
     H = xgi.shuffle_hyperedges(S, order=1, p=1)
     
-    assert isinstance(H, xgi.SimplicialComplex)
+    assert not isinstance(H, xgi.SimplicialComplex)
+    assert isinstance(H, xgi.Hypergraph)
     assert H.num_nodes == S.num_nodes
     for order in [1, 2, 3]: # number of edges is preserved
         assert xgi.num_edges_order(H, order) == xgi.num_edges_order(S, order)
@@ -25,7 +26,8 @@ def test_shuffle_hyperedges():
 
     # p < 1
     H = xgi.shuffle_hyperedges(S, order=1, p=0.5)
-    assert isinstance(H, xgi.SimplicialComplex)
+    assert not isinstance(H, xgi.SimplicialComplex)
+    assert isinstance(H, xgi.Hypergraph)
     assert H.num_nodes == S.num_nodes
     for order in [1, 2, 3]: # number of edges is preserved
         assert xgi.num_edges_order(H, order) == xgi.num_edges_order(S, order)
@@ -36,14 +38,16 @@ def test_shuffle_hyperedges():
 
     # p=0, unchanged
     H = xgi.shuffle_hyperedges(S, order=1, p=0)
-    assert isinstance(H, xgi.SimplicialComplex)
+    assert not isinstance(H, xgi.SimplicialComplex)
+    assert isinstance(H, xgi.Hypergraph)
     assert H.num_nodes == S.num_nodes
     assert H._edge == S._edge
 
     # order 2
     H = xgi.shuffle_hyperedges(S, order=2, p=1)
     
-    assert isinstance(H, xgi.SimplicialComplex)
+    assert not isinstance(H, xgi.SimplicialComplex)
+    assert isinstance(H, xgi.Hypergraph)
     assert H.num_nodes == S.num_nodes
     for order in [1, 2, 3]: # number of edges is preserved
         assert xgi.num_edges_order(H, order) == xgi.num_edges_order(S, order)

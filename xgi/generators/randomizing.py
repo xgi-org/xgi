@@ -5,6 +5,8 @@ hypergraph).
 
 """
 
+import random
+
 import xgi
 
 __all__ = [
@@ -49,7 +51,11 @@ def shuffle_hyperedges(S, order, p):
 
     # convert to Hypergraph to be able to shuffle edges
     if isinstance(S, xgi.Hypergraph):
-        H = xgi.Hypergraph(S)
+        H = xgi.Hypergraph()
+        H.add_nodes_from(S.nodes)
+        H.add_edges_from(S._edge)
+    else: 
+        H = S.copy()
 
     nodes = S.nodes
     d_hyperedges = H.edges.filterby("order", order).members(dtype=dict)
