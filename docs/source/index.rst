@@ -8,6 +8,7 @@
    :hidden:
 
    about
+   contributors
 
 .. toctree::
    :maxdepth: 2
@@ -67,7 +68,7 @@ mind.
 - Repository: https://github.com/xgi-org/xgi
 - PyPI: `latest release <https://pypi.org/project/xgi/>`_
 - Twitter: `@xginets <https://twitter.com/xginets>`_
-- Contributors: `list <https://github.com/xgi-org/xgi/blob/main/CONTRIBUTORS.md>`_
+- Contributors: `list <contributors.html>`_
 
 Sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
 

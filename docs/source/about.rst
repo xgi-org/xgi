@@ -11,7 +11,7 @@ complex systems with group (higher-order) interactions.
 - Repository: https://github.com/xgi-org/xgi
 - PyPI: `latest release <https://pypi.org/project/xgi/>`_
 - Twitter: `@xginets <https://twitter.com/xginets>`_
-- Contributors: `list <https://github.com/xgi-org/xgi/blob/main/CONTRIBUTORS.md>`_
+- Contributors: `list <contributors.html>`_
 
 
 Installation
