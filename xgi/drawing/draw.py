@@ -740,7 +740,30 @@ def _color_arg_to_dict(arg, ids, cmap):
 
     Parameters
     ----------
-    arg : str, dict, iterable, or NodeStat/EdgeStat
+    arg : There are several different valid arguments. They are:
+
+        Single color values
+        
+        * str
+        * 3- or 4-tuple
+        * numpy array
+        
+        Iterable of colors
+
+        * numpy array of color values as described above
+        * list of color values as described above
+        * dict of color values as described above
+
+        Iterable of values
+        
+        * list of floats
+        * dict of floats
+
+        Stats
+
+        * NodeStat
+        * EdgeStat
+
         Attributes for drawing parameter.
     ids : NodeView or EdgeView
         This is the node or edge IDs that attributes get mapped to.
@@ -756,6 +779,11 @@ def _color_arg_to_dict(arg, ids, cmap):
     ------
     TypeError
         If a string, dict, iterable, or NodeStat/EdgeStat is not passed.
+
+    Notes
+    -----
+    For the iterable of values, we do not accept numpy arrays or tuples,
+    because there is the potential for ambiguity.
     """
 
     # single argument. Must be a string or a tuple of floats
