@@ -11,6 +11,7 @@ from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from matplotlib.patches import FancyArrow
 from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
 from networkx import spring_layout
+from numpy import ndarray
 from scipy.spatial import ConvexHull
 
 from .. import convert
@@ -644,7 +645,6 @@ def draw_simplices(
                 color=dyad_color[id],
                 lw=dyad_lw[id],
                 zorder=max_order - 1,
-                cmap=settings["dyad"],
             )
             ax.add_line(line)
         else:
@@ -759,15 +759,21 @@ def _color_arg_to_dict(arg, ids, cmap):
     """
 
     # single argument. Must be a string or a tuple of floats
-    if isinstance(arg, str) or (isinstance(arg, tuple) and isinstance(arg[0], float)):
+    if isinstance(arg, str) or (
+        isinstance(arg, (tuple, ndarray)) and isinstance(arg[0], float)
+    ):
         return {id: arg for id in ids}
 
     # Iterables of colors. The values of these iterables must strings or tuples. As of now,
     # there is not a check to verify that the tuples contain floats.
     if isinstance(arg, Iterable):
-        if isinstance(arg, dict) and isinstance(next(iter(arg.values())), (str, tuple)):
+        if isinstance(arg, dict) and isinstance(
+            next(iter(arg.values())), (str, tuple, ndarray)
+        ):
             return {id: arg[id] for id in arg if id in ids}
-        if isinstance(arg, (list, np.ndarray)) and isinstance(arg[0], (str, tuple)):
+        if isinstance(arg, (list, ndarray)) and isinstance(
+            arg[0], (str, tuple, ndarray)
+        ):
             return {id: arg[idx] for idx, id in enumerate(ids)}
 
     # Stats or iterable of values
@@ -800,7 +806,7 @@ def _color_arg_to_dict(arg, ids, cmap):
                     if id in ids
                 }
 
-            if isinstance(arg, (list, np.ndarray)) and isinstance(arg[0], (int, float)):
+            if isinstance(arg, list) and isinstance(arg[0], (int, float)):
                 vals = np.interp(arg, [np.min(arg), np.max(arg)], [minval, maxval])
             else:
                 raise TypeError("Argument must be an iterable of floats.")
