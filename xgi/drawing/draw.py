@@ -16,7 +16,7 @@ from scipy.spatial import ConvexHull
 from .. import convert
 from ..classes import DiHypergraph, Hypergraph, SimplicialComplex, max_edge_order
 from ..exception import XGIError
-from ..stats import EdgeStat, NodeStat
+from ..stats import IDStat
 from .layout import _augmented_projection, barycenter_spring_layout
 
 __all__ = [
@@ -644,6 +644,7 @@ def draw_simplices(
                 color=dyad_color[id],
                 lw=dyad_lw[id],
                 zorder=max_order - 1,
+                cmap=settings["dyad"],
             )
             ax.add_line(line)
         else:
@@ -722,7 +723,7 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
         return {id: arg[id] for id in arg if id in ids}
     elif type(arg) in [int, float]:
         return {id: arg for id in ids}
-    elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
+    elif isinstance(arg, IDStat):
         vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [min_val, max_val])
         return dict(zip(ids, vals))
     elif isinstance(arg, Iterable):
@@ -756,21 +757,55 @@ def _color_arg_to_dict(arg, ids, cmap):
     TypeError
         If a string, dict, iterable, or NodeStat/EdgeStat is not passed.
     """
-    if isinstance(arg, dict):
-        return {id: arg[id] for id in arg if id in ids}
-    elif isinstance(arg, str):
+
+    # single argument. Must be a string or a tuple of floats
+    if isinstance(arg, str) or (isinstance(arg, tuple) and isinstance(arg[0], float)):
         return {id: arg for id in ids}
-    elif isinstance(arg, (NodeStat, EdgeStat)):
+
+    # Iterables of colors. The values of these iterables must strings or tuples. As of now,
+    # there is not a check to verify that the tuples contain floats.
+    if isinstance(arg, Iterable):
+        if isinstance(arg, dict) and isinstance(next(iter(arg.values())), (str, tuple)):
+            return {id: arg[id] for id in arg if id in ids}
+        if isinstance(arg, (list, np.ndarray)) and isinstance(arg[0], (str, tuple)):
+            return {id: arg[idx] for idx, id in enumerate(ids)}
+
+    # Stats or iterable of values
+    if isinstance(arg, (Iterable, IDStat)):
+        # set max and min of interpolation based on color map
         if isinstance(cmap, ListedColormap):
-            vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [0, cmap.N])
+            minval = 0
+            maxval = cmap.N
         elif isinstance(cmap, LinearSegmentedColormap):
-            vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [0.1, 0.9])
+            minval = 0.1
+            maxval = 0.9
         else:
             raise XGIError("Invalid colormap!")
 
+        # handle the case of IDStat vs iterables
+        if isinstance(arg, IDStat):
+            vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [minval, maxval])
+
+        elif isinstance(arg, Iterable):
+            if isinstance(arg, dict) and isinstance(
+                next(iter(arg.values())), (int, float)
+            ):
+                v = list(arg.values())
+                vals = np.interp(v, [np.min(v), np.max(v)], [minval, maxval])
+                # because we have ids, we can't just assume that the keys of arg correspond to
+                # the ids.
+                return {
+                    id: np.array(cmap(v)).reshape(1, -1)
+                    for v, id in zip(vals, arg.keys())
+                    if id in ids
+                }
+
+            if isinstance(arg, (list, np.ndarray)) and isinstance(arg[0], (int, float)):
+                vals = np.interp(arg, [np.min(arg), np.max(arg)], [minval, maxval])
+            else:
+                raise TypeError("Argument must be an iterable of floats.")
+
         return {id: np.array(cmap(vals[i])).reshape(1, -1) for i, id in enumerate(ids)}
-    elif isinstance(arg, Iterable):
-        return {id: arg[idx] for idx, id in enumerate(ids)}
     else:
         raise TypeError(
             "Argument must be str, dict, iterable, or "
