@@ -44,7 +44,7 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     H_sc = xgi.Hypergraph(SC)
 
     assert set(H_sc.nodes) == set(SC.nodes)
-    assert set(H_sc.edges) == set(SC.edges)
+    assert set(H_sc.edges.members()) == set(SC.edges.members())
 
 
 def test_hypergraph_attrs():
