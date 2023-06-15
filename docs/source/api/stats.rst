@@ -5,6 +5,7 @@ stats package
 .. automodule:: xgi.stats
 
 .. admonition:: Available statistics
+   
    The available statistics are now:
 
    .. rubric:: Statistics of nodes
@@ -12,44 +13,44 @@ stats package
    .. autosummary::
       :nosignatures:
       
-      ~stats.nodestats.average_neighbor_degree
-      ~stats.nodestats.clique_eigenvector_centrality
-      ~stats.nodestats.clustering_coefficient
-      ~stats.nodestats.degree
-      ~stats.nodestats.eigenvector_centrality
-      ~stats.nodestats.ocal_clustering_coefficient
-      ~stats.nodestats.node_edge_centrality
-      ~stats.nodestats.two_nodes_clustering_coefficient
+      ~xgi.stats.nodestats.average_neighbor_degree
+      ~xgi.stats.nodestats.clique_eigenvector_centrality
+      ~xgi.stats.nodestats.clustering_coefficient
+      ~xgi.stats.nodestats.degree
+      ~xgi.stats.nodestats.eigenvector_centrality
+      ~xgi.stats.nodestats.ocal_clustering_coefficient
+      ~xgi.stats.nodestats.node_edge_centrality
+      ~xgi.stats.nodestats.two_nodes_clustering_coefficient
 
    .. rubric:: Statistics of edges
 
    .. autosummary::
       :nosignatures:
 
-      ~stats.edgestats.order
-      ~stats.edgestats.size
-      ~stats.edgestats.node_edge_centrality
+      ~xgi.stats.edgestats.order
+      ~xgi.stats.edgestats.size
+      ~xgi.stats.edgestats.node_edge_centrality
 
    .. rubric:: Statistics of nodes in directed hypergraphs
 
    .. autosummary::
       :nosignatures:
 
-      ~stats.dinodestats.degree
-      ~stats.dinodestats.in_degree
-      ~stats.dinodestats.out_degree
+      ~xgi.stats.dinodestats.degree
+      ~xgi.stats.dinodestats.in_degree
+      ~xgi.stats.dinodestats.out_degree
 
    .. rubric:: Statistics of edges in directed hypergraphs
 
    .. autosummary::
       :nosignatures:
 
-      ~stats.diedgestats.order
-      ~stats.diedgestats.size
-      ~stats.diedgestats.head_order
-      ~stats.diedgestats.head_size
-      ~stats.diedgestats.tail_order
-      ~stats.diedgestats.tail_size
+      ~xgi.stats.diedgestats.order
+      ~xgi.stats.diedgestats.size
+      ~xgi.stats.diedgestats.head_order
+      ~xgi.stats.diedgestats.head_size
+      ~xgi.stats.diedgestats.tail_order
+      ~xgi.stats.diedgestats.tail_size
 
 .. rubric:: Modules
 
