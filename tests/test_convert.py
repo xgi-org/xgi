@@ -24,7 +24,7 @@ def test_convert_simplicial_complex_to_hypergraph():
     H = xgi.convert_to_hypergraph(SC)
     assert isinstance(H, xgi.Hypergraph)
     assert SC.nodes == H.nodes
-    assert SC.edges.maximal().members() == H.edges.members()
+    assert SC.edges.members() == H.edges.members()
 
 
 def test_convert_list_to_hypergraph(edgelist2):

@@ -70,6 +70,10 @@ def convert_to_hypergraph(data, create_using=None):
     Hypergraph object
         A hypergraph constructed from the data
 
+    See Also
+    --------
+    from_max_simplices : Constructs a hypergraph from the maximal simplices of a simplicial complex.
+
     """
     if data is None:
         return empty_hypergraph(create_using)
@@ -92,7 +96,12 @@ def convert_to_hypergraph(data, create_using=None):
             return H
 
     elif isinstance(data, SimplicialComplex):
-        return from_max_simplices(data)
+        H = empty_hypergraph(create_using)
+        H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
+        ee = data.edges
+        H.add_edges_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
+        H._hypergraph = deepcopy(data._hypergraph)
+        return H
 
     elif isinstance(data, list):
         # edge list
