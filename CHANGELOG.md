@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.7.1
+* Fix: Converting from a `SimplicialComplex` to a `Hypergraph` now adds all of its faces to the hypergraph, not just the maximal faces. Added unit tests for converting between `Hypergraph` and `SimplicialComplex` classes [#399](https://github.com/xgi-org/xgi/pull/399) (@thomasrobiglio).
+* Moved the list of contributors from the readthedocs, license, setup, etc. into a dedicated file so that when contributors join or leave, we only update a single file. Renamed `CONTRIBUTING.md` to `HOW_TO_CONTRIBUTE.md`. [#401](https://github.com/xgi-org/xgi/pull/401) (@nwlandry).
+* Added the ability to convert from a simplex dict to a `SimplicialComplex` [#397](https://github.com/xgi-org/xgi/pull/397) (@thomasrobiglio).
+* Updated index.rst to add the `DiHypergraph` class to the quick references [#392](https://github.com/xgi-org/xgi/pull/392) (@thomasrobiglio).
+* Addressed Issue [#393](https://github.com/xgi-org/xgi/issues/393) by adding the ability for `draw_hypergraph()` to handle nodes with non-integer IDs and isolated nodes. [#394](https://github.com/xgi-org/xgi/pull/394) (@thomasrobiglio).
+* Fixed the short description and landing page on PyPI so that it is more readable [#391](https://github.com/xgi-org/xgi/pull/391) (@nwlandry).
 
 ## v0.7
 * Added the functionality to load datasets from the [BiGG database](http://bigg.ucsd.edu/) [#384](https://github.com/xgi-org/xgi/pull/384) (@nwlandry).
