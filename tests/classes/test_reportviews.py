@@ -331,3 +331,16 @@ def test_maximal(edgelist5, edgelist8):
     # try strict=True
     m = H.edges.maximal(strict=True)
     assert set(m) == {5}
+
+
+def test_ids_type(edgelist5):
+    H = xgi.Hypergraph(edgelist5)
+    assert H.edges.ids == {0, 1, 2, 3}
+    assert H.edges([0, 1, 2, 3]).ids == {0, 1, 2, 3}
+    assert H.edges({0, 1, 2, 3}).ids == {0, 1, 2, 3}
+
+
+def test_ids_are_immutable(edgelist5):
+    H = xgi.Hypergraph(edgelist5)
+    H.edges.ids.add(42)
+    assert H.edges.ids == {0, 1, 2, 3}
