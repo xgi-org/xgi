@@ -486,23 +486,22 @@ def test_boundary_matrix(edgelist4):
     facedict1 = {k: v for v, k in facedict1.items()}
     tetdict1 = {k: v for v, k in tetdict1.items()}
 
-    iddict = S1.edges.ids
-    iddict = {simplex: v for v, simplex in iddict.items()}
+    members_to_id = {simplex: v for v, simplex in S1.edges.members(dtype=dict).items()}
 
-    i123 = facedict1[iddict[frozenset([1, 2, 3])]]
-    i2345 = tetdict1[iddict[frozenset([2, 3, 4, 5])]]
-    i345 = facedict1[iddict[frozenset([3, 4, 5])]]
-    i245 = facedict1[iddict[frozenset([2, 4, 5])]]
-    i12 = edgedict1[iddict[frozenset([1, 2])]]
-    i24 = edgedict1[iddict[frozenset([2, 4])]]
-    i34 = edgedict1[iddict[frozenset([3, 4])]]
-    i235 = facedict1[iddict[frozenset([2, 3, 5])]]
-    i23 = edgedict1[iddict[frozenset([2, 3])]]
-    i45 = edgedict1[iddict[frozenset([4, 5])]]
-    i234 = facedict1[iddict[frozenset([2, 3, 4])]]
-    i25 = edgedict1[iddict[frozenset([2, 5])]]
-    i13 = edgedict1[iddict[frozenset([1, 3])]]
-    i35 = edgedict1[iddict[frozenset([3, 5])]]
+    i123 = facedict1[members_to_id[frozenset([1, 2, 3])]]
+    i2345 = tetdict1[members_to_id[frozenset([2, 3, 4, 5])]]
+    i345 = facedict1[members_to_id[frozenset([3, 4, 5])]]
+    i245 = facedict1[members_to_id[frozenset([2, 4, 5])]]
+    i12 = edgedict1[members_to_id[frozenset([1, 2])]]
+    i24 = edgedict1[members_to_id[frozenset([2, 4])]]
+    i34 = edgedict1[members_to_id[frozenset([3, 4])]]
+    i235 = facedict1[members_to_id[frozenset([2, 3, 5])]]
+    i23 = edgedict1[members_to_id[frozenset([2, 3])]]
+    i45 = edgedict1[members_to_id[frozenset([4, 5])]]
+    i234 = facedict1[members_to_id[frozenset([2, 3, 4])]]
+    i25 = edgedict1[members_to_id[frozenset([2, 5])]]
+    i13 = edgedict1[members_to_id[frozenset([1, 3])]]
+    i35 = edgedict1[members_to_id[frozenset([3, 5])]]
 
     assert B1[nodedict1[1], i12] == -1
     assert B1[nodedict1[2], i12] == 1
@@ -546,7 +545,7 @@ def test_boundary_matrix(edgelist4):
     assert np.linalg.norm(B2 @ B3) == 0
 
     # Change the orientation of a face
-    orientations[iddict[frozenset([3, 4, 5])]] = 1
+    orientations[members_to_id[frozenset([3, 4, 5])]] = 1
 
     B1 = xgi.boundary_matrix(S1, order=1, orientations=orientations, index=False)
     B2 = xgi.boundary_matrix(S1, order=2, orientations=orientations, index=False)
