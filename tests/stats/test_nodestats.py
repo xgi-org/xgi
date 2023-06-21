@@ -518,7 +518,7 @@ def test_multi_stats_aspandas(edgelist1, edgelist8):
         ["average_neighbor_degree", "degree", H.nodes.degree(order=2)]
     )
     df = pd.DataFrame(multi.asdict(transpose=True))
-    pd.testing.assert_frame_equal(df, multi.aspandas())
+    pd.testing.assert_frame_equal(df, multi.aspandas(), check_like=True)
 
     H = xgi.Hypergraph(edgelist8)
     multi = H.nodes.multi(

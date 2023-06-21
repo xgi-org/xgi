@@ -111,18 +111,15 @@ class IDView(Mapping, Set):
         always use `x in view`.  The latter is always faster.
 
         """
-        return set(self._id_dict) if self._ids is None else self._ids
+        return set(self._ids)
 
     def __len__(self):
         """The number of IDs."""
-        return len(self._id_dict) if self._ids is None else len(self._ids)
+        return len(self._ids)
 
     def __iter__(self):
         """Returns an iterator over the IDs."""
-        if self._ids is None:
-            return iter({}) if self._id_dict is None else iter(self._id_dict)
-        else:
-            return iter(self._ids)
+        return iter(self._ids)
 
     def __getitem__(self, id):
         """Get the attributes of the ID.
