@@ -743,11 +743,10 @@ def _color_arg_to_dict(arg, ids, cmap):
     arg : There are several different valid arguments. They are:
 
         Single color values
-        
+
         * str
         * 3- or 4-tuple
-        * numpy array
-        
+
         Iterable of colors
 
         * numpy array of color values as described above
@@ -755,9 +754,10 @@ def _color_arg_to_dict(arg, ids, cmap):
         * dict of color values as described above
 
         Iterable of values
-        
+
         * list of floats
         * dict of floats
+        * numpy array of floats
 
         Stats
 
@@ -787,9 +787,7 @@ def _color_arg_to_dict(arg, ids, cmap):
     """
 
     # single argument. Must be a string or a tuple of floats
-    if isinstance(arg, str) or (
-        isinstance(arg, (tuple, ndarray)) and isinstance(arg[0], float)
-    ):
+    if isinstance(arg, str) or (isinstance(arg, tuple) and isinstance(arg[0], float)):
         return {id: arg for id in ids}
 
     # Iterables of colors. The values of these iterables must strings or tuples. As of now,
@@ -834,7 +832,7 @@ def _color_arg_to_dict(arg, ids, cmap):
                     if id in ids
                 }
 
-            if isinstance(arg, list) and isinstance(arg[0], (int, float)):
+            if isinstance(arg, (list, ndarray)) and isinstance(arg[0], (int, float)):
                 vals = np.interp(arg, [np.min(arg), np.max(arg)], [minval, maxval])
             else:
                 raise TypeError("Argument must be an iterable of floats.")

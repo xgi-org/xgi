@@ -64,7 +64,7 @@ def test_color_arg_to_dict(edgelist4):
     # single values
     arg1 = "black"
     arg2 = (0.1, 0.2, 0.3)
-    arg3 = np.array([0.1, 0.2, 0.3, 0.5])
+    arg3 = (0.1, 0.2, 0.3, 0.5)
 
     # test iterables of colors
     arg4 = [(0.1, 0.2, 0.3), (0.1, 0.2, 0.4), (0.1, 0.2, 0.5)]
@@ -76,6 +76,7 @@ def test_color_arg_to_dict(edgelist4):
     # test iterables of values
     arg9 = [0, 0.1, 0.2]
     arg10 = {1: 0, 2: 0.1, 3: 0.2}
+    arg11 = np.array([0, 0.1, 0.2])
 
     # test single values
     d = _color_arg_to_dict(arg1, ids, None)
@@ -115,6 +116,10 @@ def test_color_arg_to_dict(edgelist4):
         assert np.allclose(d[i], cdict[i])
 
     d = _color_arg_to_dict(arg10, ids, cm.Blues)
+    for i in d:
+        assert np.allclose(d[i], cdict[i])
+
+    d = _color_arg_to_dict(arg11, ids, cm.Blues)
     for i in d:
         assert np.allclose(d[i], cdict[i])
 
