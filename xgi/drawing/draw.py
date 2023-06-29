@@ -735,29 +735,29 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
         )
 
 
-def _color_arg_to_dict(arg, ids, cmap):
+def _color_arg_to_dict(color_arg, ids, cmap):
     """Map different types of arguments for drawing style to a dict with color values.
 
     Parameters
     ----------
-    arg : There are several different valid arguments. They are:
+    color_arg : Several formats are accepted:
 
         Single color values
 
         * str
         * 3- or 4-tuple
 
-        Iterable of colors
+        Iterable of colors (each color specified as above)
 
-        * numpy array of color values as described above
-        * list of color values as described above
-        * dict of color values as described above
+        * numpy array
+        * list
+        * dict {id: color} pairs
 
-        Iterable of values
+        Iterable of numerical values (floats or ints)
 
-        * list of floats
-        * dict of floats
-        * numpy array of floats
+        * list
+        * dict
+        * numpy array
 
         Stats
 
@@ -773,7 +773,7 @@ def _color_arg_to_dict(arg, ids, cmap):
     Returns
     -------
     dict
-        An ID: attribute dictionary.
+        An ID: color dictionary.
 
     Raises
     ------
@@ -782,28 +782,30 @@ def _color_arg_to_dict(arg, ids, cmap):
 
     Notes
     -----
-    For the iterable of values, we do not accept numpy arrays or tuples,
+    For the iterable of values, we do not accept tuples,
     because there is the potential for ambiguity.
     """
 
     # single argument. Must be a string or a tuple of floats
-    if isinstance(arg, str) or (isinstance(arg, tuple) and isinstance(arg[0], float)):
-        return {id: arg for id in ids}
+    if isinstance(color_arg, str) or (
+        isinstance(color_arg, tuple) and isinstance(color_arg[0], float)
+    ):
+        return {id: color_arg for id in ids}
 
     # Iterables of colors. The values of these iterables must strings or tuples. As of now,
     # there is not a check to verify that the tuples contain floats.
-    if isinstance(arg, Iterable):
-        if isinstance(arg, dict) and isinstance(
-            next(iter(arg.values())), (str, tuple, ndarray)
+    if isinstance(color_arg, Iterable):
+        if isinstance(color_arg, dict) and isinstance(
+            next(iter(color_arg.values())), (str, tuple, ndarray)
         ):
-            return {id: arg[id] for id in arg if id in ids}
-        if isinstance(arg, (list, ndarray)) and isinstance(
-            arg[0], (str, tuple, ndarray)
+            return {id: color_arg[id] for id in color_arg if id in ids}
+        if isinstance(color_arg, (list, ndarray)) and isinstance(
+            color_arg[0], (str, tuple, ndarray)
         ):
-            return {id: arg[idx] for idx, id in enumerate(ids)}
+            return {id: color_arg[idx] for idx, id in enumerate(ids)}
 
     # Stats or iterable of values
-    if isinstance(arg, (Iterable, IDStat)):
+    if isinstance(color_arg, (Iterable, IDStat)):
         # set max and min of interpolation based on color map
         if isinstance(cmap, ListedColormap):
             minval = 0
@@ -815,33 +817,47 @@ def _color_arg_to_dict(arg, ids, cmap):
             raise XGIError("Invalid colormap!")
 
         # handle the case of IDStat vs iterables
-        if isinstance(arg, IDStat):
-            vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [minval, maxval])
+        if isinstance(color_arg, IDStat):
+            vals = np.interp(
+                color_arg.asnumpy(),
+                [color_arg.min(), color_arg.max()],
+                [minval, maxval],
+            )
+            return {
+                id: np.array(cmap(vals[i])).reshape(1, -1) for i, id in enumerate(ids)
+            }
 
-        elif isinstance(arg, Iterable):
-            if isinstance(arg, dict) and isinstance(
-                next(iter(arg.values())), (int, float)
+        elif isinstance(color_arg, Iterable):
+            if isinstance(color_arg, dict) and isinstance(
+                next(iter(color_arg.values())), (int, float)
             ):
-                v = list(arg.values())
+                v = list(color_arg.values())
                 vals = np.interp(v, [np.min(v), np.max(v)], [minval, maxval])
                 # because we have ids, we can't just assume that the keys of arg correspond to
                 # the ids.
                 return {
                     id: np.array(cmap(v)).reshape(1, -1)
-                    for v, id in zip(vals, arg.keys())
+                    for v, id in zip(vals, color_arg.keys())
                     if id in ids
                 }
 
-            if isinstance(arg, (list, ndarray)) and isinstance(arg[0], (int, float)):
-                vals = np.interp(arg, [np.min(arg), np.max(arg)], [minval, maxval])
+            if isinstance(color_arg, (list, ndarray)) and isinstance(
+                color_arg[0], (int, float)
+            ):
+                vals = np.interp(
+                    color_arg, [np.min(color_arg), np.max(color_arg)], [minval, maxval]
+                )
+                return {
+                    id: np.array(cmap(vals[i])).reshape(1, -1)
+                    for i, id in enumerate(ids)
+                }
             else:
                 raise TypeError("Argument must be an iterable of floats.")
 
-        return {id: np.array(cmap(vals[i])).reshape(1, -1) for i, id in enumerate(ids)}
     else:
         raise TypeError(
             "Argument must be str, dict, iterable, or "
-            f"NodeStat/EdgeStat. Received {type(arg)}"
+            f"NodeStat/EdgeStat. Received {type(color_arg)}"
         )
 
 
