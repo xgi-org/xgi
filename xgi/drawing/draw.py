@@ -721,7 +721,7 @@ def _scalar_arg_to_dict(scalar_arg, ids, min_val, max_val):
         )
 
     # Single argument
-    if type(scalar_arg) in [int, float]:
+    if isinstance(scalar_arg, (int, float)):
         return {id: scalar_arg for id in ids}
 
     # IDStat
@@ -810,7 +810,7 @@ def _color_arg_to_dict(color_arg, ids, cmap):
         isinstance(color_arg, tuple) and isinstance(color_arg[0], float)
     ):
         return {id: color_arg for id in ids}
-    
+
     # Iterables of colors. The values of these iterables must strings or tuples. As of now,
     # there is not a check to verify that the tuples contain floats.
     if isinstance(color_arg, Iterable):
