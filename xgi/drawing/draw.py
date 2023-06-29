@@ -690,12 +690,12 @@ def draw_simplices(
     return ax
 
 
-def _scalar_arg_to_dict(arg, ids, min_val, max_val):
+def _scalar_arg_to_dict(scalar_arg, ids, min_val, max_val):
     """Map different types of arguments for drawing style to a dict with scalar values.
 
     Parameters
     ----------
-    arg : int, float, dict, iterable, or NodeStat/EdgeStat
+    scalar_arg : int, float, dict, iterable, or NodeStat/EdgeStat
         Attributes for drawing parameter.
     ids : NodeView or EdgeView
         This is the node or edge IDs that attributes get mapped to.
@@ -707,32 +707,51 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
     Returns
     -------
     dict
-        An ID: attribute dictionary.
+        An ID: scalar dictionary.
 
     Raises
     ------
     TypeError
         If a int, float, list, dict, or NodeStat/EdgeStat is not passed.
     """
-    if isinstance(arg, str):
+    if isinstance(scalar_arg, str):
         raise TypeError(
             "Argument must be int, float, dict, iterable, "
-            f"or NodeStat/EdgeStat. Received {type(arg)}"
+            f"or NodeStat/EdgeStat. Received {type(scalar_arg)}"
         )
-    elif isinstance(arg, dict):
-        return {id: arg[id] for id in arg if id in ids}
-    elif type(arg) in [int, float]:
-        return {id: arg for id in ids}
-    elif isinstance(arg, IDStat):
-        vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [min_val, max_val])
+
+    # Single argument
+    if type(scalar_arg) in [int, float]:
+        return {id: scalar_arg for id in ids}
+
+    # IDStat
+    if isinstance(scalar_arg, IDStat):
+        vals = np.interp(
+            scalar_arg.asnumpy(),
+            [scalar_arg.min(), scalar_arg.max()],
+            [min_val, max_val],
+        )
         return dict(zip(ids, vals))
-    elif isinstance(arg, Iterable):
-        return {id: arg[idx] for idx, id in enumerate(ids)}
-    else:
-        raise TypeError(
-            "Argument must be int, float, dict, iterable, "
-            f"or NodeStat/EdgeStat. Received {type(arg)}"
-        )
+
+    # Iterables of floats or ints
+    if isinstance(scalar_arg, Iterable):
+        if isinstance(scalar_arg, dict) and isinstance(
+            next(iter(scalar_arg.values())), (int, float)
+        ):
+            return {id: scalar_arg[id] for id in scalar_arg if id in ids}
+        elif isinstance(scalar_arg, (list, ndarray)) and isinstance(
+            scalar_arg[0], (int, float)
+        ):
+            return {id: scalar_arg[idx] for idx, id in enumerate(ids)}
+        else:
+            raise TypeError(
+                "Argument must be an dict, list, or numpy array of floats or ints."
+            )
+
+    raise TypeError(
+        "Argument must be int, float, dict, iterable, "
+        f"or NodeStat/EdgeStat. Received {type(scalar_arg)}"
+    )
 
 
 def _color_arg_to_dict(color_arg, ids, cmap):
@@ -791,7 +810,7 @@ def _color_arg_to_dict(color_arg, ids, cmap):
         isinstance(color_arg, tuple) and isinstance(color_arg[0], float)
     ):
         return {id: color_arg for id in ids}
-
+    
     # Iterables of colors. The values of these iterables must strings or tuples. As of now,
     # there is not a check to verify that the tuples contain floats.
     if isinstance(color_arg, Iterable):
@@ -852,13 +871,14 @@ def _color_arg_to_dict(color_arg, ids, cmap):
                     for i, id in enumerate(ids)
                 }
             else:
-                raise TypeError("Argument must be an iterable of floats.")
+                raise TypeError(
+                    "Argument must be an dict, list, or numpy array of floats."
+                )
 
-    else:
-        raise TypeError(
-            "Argument must be str, dict, iterable, or "
-            f"NodeStat/EdgeStat. Received {type(color_arg)}"
-        )
+    raise TypeError(
+        "Argument must be str, dict, iterable, or "
+        f"NodeStat/EdgeStat. Received {type(color_arg)}"
+    )
 
 
 def _CCW_sort(p):

@@ -57,6 +57,10 @@ def test_scalar_arg_to_dict(edgelist4):
         arg = "2"
         d = _scalar_arg_to_dict(arg, ids, min_val, max_val)
 
+    with pytest.raises(TypeError):
+        arg = (1, 2, 3)
+        d = _scalar_arg_to_dict(arg, ids, min_val, max_val)
+
 
 def test_color_arg_to_dict(edgelist4):
     ids = [1, 2, 3]
