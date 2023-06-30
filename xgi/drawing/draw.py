@@ -735,14 +735,21 @@ def _scalar_arg_to_dict(scalar_arg, ids, min_val, max_val):
 
     # Iterables of floats or ints
     if isinstance(scalar_arg, Iterable):
-        if isinstance(scalar_arg, dict) and isinstance(
-            next(iter(scalar_arg.values())), (int, float)
-        ):
-            return {id: scalar_arg[id] for id in scalar_arg if id in ids}
-        elif isinstance(scalar_arg, (list, ndarray)) and isinstance(
-            scalar_arg[0], (int, float)
-        ):
-            return {id: scalar_arg[idx] for idx, id in enumerate(ids)}
+        if isinstance(scalar_arg, dict):
+            try:
+                return {id: float(scalar_arg[id]) for id in scalar_arg if id in ids}
+            except ValueError as e:
+                raise TypeError(
+                    "The input dict must have values that can be cast to floats."
+                )
+
+        elif isinstance(scalar_arg, (list, ndarray)):
+            try:
+                return {id: float(scalar_arg[idx]) for idx, id in enumerate(ids)}
+            except ValueError as e:
+                raise TypeError(
+                    "The input list or array must have values that can be cast to floats."
+                )
         else:
             raise TypeError(
                 "Argument must be an dict, list, or numpy array of floats or ints."
