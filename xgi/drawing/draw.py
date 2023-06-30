@@ -11,12 +11,13 @@ from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from matplotlib.patches import FancyArrow
 from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
 from networkx import spring_layout
+from numpy import ndarray
 from scipy.spatial import ConvexHull
 
 from .. import convert
 from ..classes import DiHypergraph, Hypergraph, SimplicialComplex, max_edge_order
 from ..exception import XGIError
-from ..stats import EdgeStat, NodeStat
+from ..stats import IDStat
 from .layout import _augmented_projection, barycenter_spring_layout
 
 __all__ = [
@@ -689,12 +690,12 @@ def draw_simplices(
     return ax
 
 
-def _scalar_arg_to_dict(arg, ids, min_val, max_val):
+def _scalar_arg_to_dict(scalar_arg, ids, min_val, max_val):
     """Map different types of arguments for drawing style to a dict with scalar values.
 
     Parameters
     ----------
-    arg : int, float, dict, iterable, or NodeStat/EdgeStat
+    scalar_arg : int, float, dict, iterable, or NodeStat/EdgeStat
         Attributes for drawing parameter.
     ids : NodeView or EdgeView
         This is the node or edge IDs that attributes get mapped to.
@@ -706,40 +707,89 @@ def _scalar_arg_to_dict(arg, ids, min_val, max_val):
     Returns
     -------
     dict
-        An ID: attribute dictionary.
+        An ID: scalar dictionary.
 
     Raises
     ------
     TypeError
         If a int, float, list, dict, or NodeStat/EdgeStat is not passed.
     """
-    if isinstance(arg, str):
+    if isinstance(scalar_arg, str):
         raise TypeError(
             "Argument must be int, float, dict, iterable, "
-            f"or NodeStat/EdgeStat. Received {type(arg)}"
+            f"or NodeStat/EdgeStat. Received {type(scalar_arg)}"
         )
-    elif isinstance(arg, dict):
-        return {id: arg[id] for id in arg if id in ids}
-    elif type(arg) in [int, float]:
-        return {id: arg for id in ids}
-    elif isinstance(arg, NodeStat) or isinstance(arg, EdgeStat):
-        vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [min_val, max_val])
+
+    # Single argument
+    if isinstance(scalar_arg, (int, float)):
+        return {id: scalar_arg for id in ids}
+
+    # IDStat
+    if isinstance(scalar_arg, IDStat):
+        vals = np.interp(
+            scalar_arg.asnumpy(),
+            [scalar_arg.min(), scalar_arg.max()],
+            [min_val, max_val],
+        )
         return dict(zip(ids, vals))
-    elif isinstance(arg, Iterable):
-        return {id: arg[idx] for idx, id in enumerate(ids)}
-    else:
-        raise TypeError(
-            "Argument must be int, float, dict, iterable, "
-            f"or NodeStat/EdgeStat. Received {type(arg)}"
-        )
+
+    # Iterables of floats or ints
+    if isinstance(scalar_arg, Iterable):
+        if isinstance(scalar_arg, dict):
+            try:
+                return {id: float(scalar_arg[id]) for id in scalar_arg if id in ids}
+            except ValueError as e:
+                raise TypeError(
+                    "The input dict must have values that can be cast to floats."
+                )
+
+        elif isinstance(scalar_arg, (list, ndarray)):
+            try:
+                return {id: float(scalar_arg[idx]) for idx, id in enumerate(ids)}
+            except ValueError as e:
+                raise TypeError(
+                    "The input list or array must have values that can be cast to floats."
+                )
+        else:
+            raise TypeError(
+                "Argument must be an dict, list, or numpy array of floats or ints."
+            )
+
+    raise TypeError(
+        "Argument must be int, float, dict, iterable, "
+        f"or NodeStat/EdgeStat. Received {type(scalar_arg)}"
+    )
 
 
-def _color_arg_to_dict(arg, ids, cmap):
+def _color_arg_to_dict(color_arg, ids, cmap):
     """Map different types of arguments for drawing style to a dict with color values.
 
     Parameters
     ----------
-    arg : str, dict, iterable, or NodeStat/EdgeStat
+    color_arg : Several formats are accepted:
+
+        Single color values
+
+        * str
+        * 3- or 4-tuple
+
+        Iterable of colors (each color specified as above)
+
+        * numpy array
+        * list
+        * dict {id: color} pairs
+
+        Iterable of numerical values (floats or ints)
+
+        * list
+        * dict
+        * numpy array
+
+        Stats
+
+        * NodeStat
+        * EdgeStat
+
         Attributes for drawing parameter.
     ids : NodeView or EdgeView
         This is the node or edge IDs that attributes get mapped to.
@@ -749,33 +799,93 @@ def _color_arg_to_dict(arg, ids, cmap):
     Returns
     -------
     dict
-        An ID: attribute dictionary.
+        An ID: color dictionary.
 
     Raises
     ------
     TypeError
         If a string, dict, iterable, or NodeStat/EdgeStat is not passed.
+
+    Notes
+    -----
+    For the iterable of values, we do not accept tuples,
+    because there is the potential for ambiguity.
     """
-    if isinstance(arg, dict):
-        return {id: arg[id] for id in arg if id in ids}
-    elif isinstance(arg, str):
-        return {id: arg for id in ids}
-    elif isinstance(arg, (NodeStat, EdgeStat)):
+
+    # single argument. Must be a string or a tuple of floats
+    if isinstance(color_arg, str) or (
+        isinstance(color_arg, tuple) and isinstance(color_arg[0], float)
+    ):
+        return {id: color_arg for id in ids}
+
+    # Iterables of colors. The values of these iterables must strings or tuples. As of now,
+    # there is not a check to verify that the tuples contain floats.
+    if isinstance(color_arg, Iterable):
+        if isinstance(color_arg, dict) and isinstance(
+            next(iter(color_arg.values())), (str, tuple, ndarray)
+        ):
+            return {id: color_arg[id] for id in color_arg if id in ids}
+        if isinstance(color_arg, (list, ndarray)) and isinstance(
+            color_arg[0], (str, tuple, ndarray)
+        ):
+            return {id: color_arg[idx] for idx, id in enumerate(ids)}
+
+    # Stats or iterable of values
+    if isinstance(color_arg, (Iterable, IDStat)):
+        # set max and min of interpolation based on color map
         if isinstance(cmap, ListedColormap):
-            vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [0, cmap.N])
+            minval = 0
+            maxval = cmap.N
         elif isinstance(cmap, LinearSegmentedColormap):
-            vals = np.interp(arg.asnumpy(), [arg.min(), arg.max()], [0.1, 0.9])
+            minval = 0.1
+            maxval = 0.9
         else:
             raise XGIError("Invalid colormap!")
 
-        return {id: np.array(cmap(vals[i])).reshape(1, -1) for i, id in enumerate(ids)}
-    elif isinstance(arg, Iterable):
-        return {id: arg[idx] for idx, id in enumerate(ids)}
-    else:
-        raise TypeError(
-            "Argument must be str, dict, iterable, or "
-            f"NodeStat/EdgeStat. Received {type(arg)}"
-        )
+        # handle the case of IDStat vs iterables
+        if isinstance(color_arg, IDStat):
+            vals = np.interp(
+                color_arg.asnumpy(),
+                [color_arg.min(), color_arg.max()],
+                [minval, maxval],
+            )
+            return {
+                id: np.array(cmap(vals[i])).reshape(1, -1) for i, id in enumerate(ids)
+            }
+
+        elif isinstance(color_arg, Iterable):
+            if isinstance(color_arg, dict) and isinstance(
+                next(iter(color_arg.values())), (int, float)
+            ):
+                v = list(color_arg.values())
+                vals = np.interp(v, [np.min(v), np.max(v)], [minval, maxval])
+                # because we have ids, we can't just assume that the keys of arg correspond to
+                # the ids.
+                return {
+                    id: np.array(cmap(v)).reshape(1, -1)
+                    for v, id in zip(vals, color_arg.keys())
+                    if id in ids
+                }
+
+            if isinstance(color_arg, (list, ndarray)) and isinstance(
+                color_arg[0], (int, float)
+            ):
+                vals = np.interp(
+                    color_arg, [np.min(color_arg), np.max(color_arg)], [minval, maxval]
+                )
+                return {
+                    id: np.array(cmap(vals[i])).reshape(1, -1)
+                    for i, id in enumerate(ids)
+                }
+            else:
+                raise TypeError(
+                    "Argument must be an dict, list, or numpy array of floats."
+                )
+
+    raise TypeError(
+        "Argument must be str, dict, iterable, or "
+        f"NodeStat/EdgeStat. Received {type(color_arg)}"
+    )
 
 
 def _CCW_sort(p):
