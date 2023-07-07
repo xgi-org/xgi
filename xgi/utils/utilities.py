@@ -89,10 +89,11 @@ def dual_dict(edge_dict):
 
 
 def powerset(
-    iterable, include_empty=False, include_full=False, include_singletons=True
+    iterable, include_empty=False, include_full=False, include_singletons=True, max_size=None
 ):
     """Returns all possible subsets of the elements in iterable, with options
-    to include the empty set and the set containing all elements.
+    to include the empty set and the set containing all elements, and to set 
+    the maximum subset size.
 
     Parameters
     ----------
@@ -104,6 +105,8 @@ def powerset(
         Whether to include singletons
     include_full: bool, default: False
         Whether to include the set containing all elements of iterable
+    max_size: int, default: None
+        Maximum size of the returned subsets.
 
     Returns
     -------
@@ -113,6 +116,8 @@ def powerset(
     -----
     include_empty overrides include_singletons if True: singletons will always
     be included if the empty set is.
+    Likewise, max_size will override other arguments: if set to -1, no subset 
+    will be returned.
 
     Examples
     --------
@@ -125,10 +130,17 @@ def powerset(
 
     start = 1 if include_singletons else 2
     start = 0 if include_empty else start  # overrides include_singletons if True
-    end = 1 if include_full else 0
-
+    
     s = list(iterable)
-    return chain.from_iterable(combinations(s, r) for r in range(start, len(s) + end))
+    
+    if max_size is None :
+        max_size = len(s) if include_full else len(s) - 1
+    else :
+        max_size = min(max_size, len(s))
+
+
+    
+    return chain.from_iterable(combinations(s, r) for r in range(start, max_size + 1))
 
 
 def update_uid_counter(H, new_id):
