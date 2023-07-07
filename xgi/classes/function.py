@@ -8,8 +8,7 @@ from warnings import warn
 from scipy.special import comb
 
 from ..exception import IDNotFound, XGIError
-from ..linalg.hypergraph_matrix import incidence_matrix
-from ..utils.utilities import binomial_sequence, powerset
+from ..utils.utilities import powerset
 from .hypergraph import Hypergraph
 
 __all__ = [
@@ -935,46 +934,41 @@ def complement(H):
         return empty_hypergraph()
     else:
 
-
-
         node_dict = dict(zip(H.nodes, range(N)))
         num_dict = {idx: n for n, idx in node_dict.items()}
 
         # parsing list of edges into set of strings
         edges = set()
-        for st in H.edges.members() :
-            lst = [node_dict[n] for n in st] # we let go node IDs
+        for st in H.edges.members():
+            lst = [node_dict[n] for n in st]  # we let go node IDs
             lst.sort()
             string = ",".join(str(idx) for idx in lst)
             edges.add(string)
-        
+
         # parsing list of possible edges into set of strings
         max_edge_size = max_edge_order(H) + 1
         possible_edges = set()
         iterator = powerset(
-            range(N), 
-            include_empty=False, 
-            include_singletons=True, 
+            range(N),
+            include_empty=False,
+            include_singletons=True,
             max_size=max_edge_size,
-            )
-        for subset in iterator :
+        )
+        for subset in iterator:
             lst = list(subset)
             lst.sort()
             string = ",".join(str(idx) for idx in lst)
             possible_edges.add(string)
-        
+
         # performing set difference
         to_add = possible_edges.difference(edges)
 
         Hc = empty_hypergraph()
         Hc.add_nodes_from(H.nodes)
-        
-        for string in to_add :
-            lst = string.split(',')
+
+        for string in to_add:
+            lst = string.split(",")
             nodes = [num_dict[int(idx)] for idx in lst]
             Hc.add_edge(nodes)
-        
-
-
 
         return Hc
