@@ -934,28 +934,47 @@ def complement(H):
     if N == 0:
         return empty_hypergraph()
     else:
-        # list the edges in H (as strings such as '001101')
-        I, rowdict, _ = incidence_matrix(H, sparse=False, index=True)
+
+
+
+        node_dict = dict(zip(H.nodes, range(N)))
+        num_dict = {idx: n for n, idx in node_dict.items()}
+
+        # parsing list of edges into set of strings
         edges = set()
-        for row in I.transpose():
-            edge = "".join(str(element) for element in row)
-            edges.add(edge)
-
-        # list all possible edges of size <= max_edge_size
+        for st in H.edges.members() :
+            lst = [node_dict[n] for n in st] # we let go node IDs
+            lst.sort()
+            string = ",".join(str(idx) for idx in lst)
+            edges.add(string)
+        
+        # parsing list of possible edges into set of strings
         max_edge_size = max_edge_order(H) + 1
-
         possible_edges = set()
-        for size in range(1, max_edge_size + 1):
-            possible_edges = possible_edges.union(binomial_sequence(size, N))
+        iterator = powerset(
+            range(N), 
+            include_empty=False, 
+            include_singletons=True, 
+            max_size=max_edge_size,
+            )
+        for subset in iterator :
+            lst = list(subset)
+            lst.sort()
+            string = ",".join(str(idx) for idx in lst)
+            possible_edges.add(string)
+        
+        # performing set difference
+        to_add = possible_edges.difference(edges)
 
-        # instanciate a hypergraph and add every node (in case a node is in no hyperedge)
-        Hc = Hypergraph()
+        Hc = empty_hypergraph()
         Hc.add_nodes_from(H.nodes)
+        
+        for string in to_add :
+            lst = string.split(',')
+            nodes = [num_dict[int(idx)] for idx in lst]
+            Hc.add_edge(nodes)
+        
 
-        # add to Hc the edges that are not already in H \
-        # note : as edges and possible_edge are of type set (i.e. hashtables) \
-        # doing set operations (set.difference) is fast
-        for edge in possible_edges.difference(edges):
-            node_set = {rowdict[i] for i in range(N) if edge[i] == "1"}
-            Hc.add_edge(node_set)
+
+
         return Hc

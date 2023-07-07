@@ -23,6 +23,7 @@ def test_powerset():
     PS = xgi.powerset(edge)
     PS1 = xgi.powerset(edge, include_empty=True)
     PS2 = xgi.powerset(edge, include_empty=True, include_full=True)
+    PS3 = xgi.powerset(edge, include_empty=True, include_full=True, max_size=3)
 
     out = [
         (1,),
@@ -44,6 +45,7 @@ def test_powerset():
     assert list(PS) == out
     assert list(PS1) == [()] + out
     assert list(PS2) == [()] + out + [tuple(edge)]
+    assert list(PS3) == [()] + out
 
 
 def test_find_triangles():
