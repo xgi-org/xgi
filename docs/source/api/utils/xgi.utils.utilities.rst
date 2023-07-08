@@ -23,3 +23,4 @@
    .. autofunction:: min_where
    .. autofunction:: request_json_from_url
    .. autofunction:: request_json_from_url_cached
+   .. autofunction:: subfaces

@@ -2,24 +2,14 @@
 
 from collections import Counter
 from copy import deepcopy
-from itertools import combinations
 from warnings import warn
 
 from scipy.special import comb
 
 from ..exception import IDNotFound, XGIError
-from ..utils.utilities import powerset
 from .hypergraph import Hypergraph
 
 __all__ = [
-    "num_edges_order",
-    "max_edge_order",
-    "is_possible_order",
-    "is_uniform",
-    "edge_neighborhood",
-    "degree_counts",
-    "degree_histogram",
-    "unique_edge_sizes",
     "freeze",
     "is_frozen",
     "set_node_attributes",
@@ -27,161 +17,8 @@ __all__ = [
     "set_edge_attributes",
     "get_edge_attributes",
     "convert_labels_to_integers",
-    "density",
-    "incidence_density",
 ]
 
-
-def num_edges_order(H, d=None):
-    """The number of edges of order d.
-
-    Parameters
-    ----------
-    H : Hypergraph
-        The hypergraph of interest.
-
-    d : int, optional
-        The order of edges to count. If None (default), counts
-        for all orders.
-
-    Returns
-    -------
-    int
-        The number of edges of order d
-
-    See Also
-    --------
-    max_edge_order
-    """
-
-    if d is not None:
-        return len(H.edges.filterby("order", d))
-    else:
-        return H.num_edges
-
-
-def max_edge_order(H):
-    """The maximum order of edges in the hypergraph.
-
-    Parameters
-    ----------
-    H : Hypergraph
-        The hypergraph of interest.
-
-    Returns
-    -------
-    int
-        Maximum order of edges in hypergraph.
-
-    See Also
-    --------
-    num_edges_order
-    """
-    if H._edge:
-        d_max = max(len(edge) for edge in H._edge.values()) - 1
-    else:
-        d_max = 0 if H._node else None
-    return d_max
-
-
-def is_possible_order(H, d):
-    """Whether the specified order is between 0 (singletons) and the maximum order.
-
-    Parameters
-    ----------
-    H : Hypergraph
-        The hypergraph of interest.
-    d : int
-        Order for which to check.
-
-    Returns
-    -------
-    bool
-        Whether `d` is a possible order.
-
-    """
-    d_max = max_edge_order(H)
-    return (d >= 0) and (d <= d_max)
-
-
-def is_uniform(H):
-    """Order of uniformity if the hypergraph is uniform, or False.
-
-    A hypergraph is uniform if all its edges have the same order.
-
-    Returns d if the hypergraph is d-uniform, that is if all edges
-    in the hypergraph (excluding singletons) have the same degree d.
-    Returns False if not uniform.
-
-    Returns
-    -------
-    d : int or False
-        If the hypergraph is d-uniform, return d, or False otherwise.
-
-    Examples
-    --------
-    This function can be used as a boolean check:
-
-    >>> import xgi
-    >>> H = xgi.Hypergraph([(0, 1, 2), (1, 2, 3), (2, 3, 4)])
-    >>> xgi.is_uniform(H)
-    2
-    >>> if xgi.is_uniform(H): print('H is uniform!')
-    H is uniform!
-
-    """
-    edge_sizes = unique_edge_sizes(H)
-    if 1 in edge_sizes:
-        edge_sizes.remove(1)  # discard singleton edges
-
-    if not edge_sizes or len(edge_sizes) != 1:
-        return False
-
-    return edge_sizes.pop() - 1  # order of all edges
-
-
-def edge_neighborhood(H, n, include_self=False):
-    """The edge neighborhood of the specified node.
-
-    The edge neighborhood of a node `n` in a hypergraph `H` is an edgelist of all the
-    edges containing `n` and its edges are all the edges in `H` that contain `n`.
-    Usually, the edge neighborhood does not include `n` itself.  This can be controlled
-    with `include_self`.
-
-    Parameters
-    ----------
-    H : Hypergraph
-        THe hypergraph of interest
-    n : node
-        Node whose edge_neighborhood is needed.
-    include_self : bool, optional
-        Whether the edge_neighborhood contains `n`.
-        By default, False.
-    Returns
-    -------
-    list
-        An edgelist of the edge_neighborhood of `n`.
-
-    See Also
-    --------
-    neighbors
-
-    Examples
-    --------
-    >>> import xgi
-    >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5, 6]])
-    >>> H.nodes.neighbors(3)
-    {1, 2, 4}
-    >>> xgi.edge_neighborhood(H, 3)
-    [{1, 2}, {4}]
-    >>> xgi.edge_neighborhood(H, 3, include_self=True)
-    [{1, 2, 3}, {3, 4}]
-
-    """
-    if include_self:
-        return [H.edges.members(e) for e in H.nodes.memberships(n)]
-    else:
-        return [H.edges.members(e) - {n} for e in H.nodes.memberships(n)]
 
 
 def degree_counts(H, order=None):

@@ -15,7 +15,8 @@ from numpy import ndarray
 from scipy.spatial import ConvexHull
 
 from .. import convert
-from ..core import DiHypergraph, Hypergraph, SimplicialComplex, max_edge_order
+from ..algorithms import max_edge_order
+from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..stats import IDStat
 from .layout import _augmented_projection, barycenter_spring_layout
