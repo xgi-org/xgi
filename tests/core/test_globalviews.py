@@ -54,9 +54,7 @@ def test_subhypergraph(edgelist1):
     assert set(new_H.edges) == {1, 2}
     assert set(new_H.nodes.isolates(ignore_singletons=False)) == {1, 2, 3, 7, 8}
 
-    new_H = xgi.core.globalviews.subhypergraph(
-        H, nodes=[1, 2, 3, 4, 5], edges=[1, 2]
-    )
+    new_H = xgi.core.globalviews.subhypergraph(H, nodes=[1, 2, 3, 4, 5], edges=[1, 2])
     assert set(new_H.nodes) == {1, 2, 3, 4, 5}
     assert set(new_H.edges) == {1}
     assert set(new_H.nodes.isolates(ignore_singletons=False)) == {1, 2, 3, 5}

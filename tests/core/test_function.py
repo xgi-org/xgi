@@ -129,39 +129,6 @@ def test_freeze(edgelist1):
     assert xgi.is_frozen(H)
 
 
-def test_create_empty_copy(edgelist1):
-    H = xgi.Hypergraph(edgelist1, name="test", timestamp="Nov. 20")
-    attr_dict = {
-        1: {"name": "Leonie"},
-        2: {"name": "Ilya"},
-        3: {"name": "Alice"},
-        4: {"name": "Giovanni"},
-        5: {"name": "Heather"},
-        6: {"name": "Juan"},
-        7: {"name": "Nicole"},
-        8: {"name": "Sinan"},
-    }
-    xgi.set_node_attributes(H, attr_dict)
-
-    E1 = xgi.create_empty_copy(H, with_data=False)
-    E2 = xgi.create_empty_copy(H)
-
-    assert (E1.num_nodes, E1.num_edges) == (8, 0)
-    for node in E1.nodes:
-        assert len(E1.nodes.memberships(node)) == 0
-    assert E1._hypergraph == {}
-
-    assert (E2.num_nodes, E2.num_edges) == (8, 0)
-    for node in E2.nodes:
-        assert len(E1.nodes.memberships(node)) == 0
-    assert E2["name"] == "test"
-    assert E2["timestamp"] == "Nov. 20"
-    with pytest.raises(XGIError):
-        _ = E2["author"]
-    for n in E2.nodes:
-        assert E2.nodes[n]["name"] == attr_dict[n]["name"]
-
-
 def test_set_node_attributes(edgelist1):
     attr_dict1 = {
         1: {"name": "Leonie"},
@@ -293,16 +260,6 @@ def test_get_edge_attributes(edgelist1):
         id: data["weight"] for id, data in attr_dict.items()
     }
     assert xgi.get_node_attributes(H1, "name") == dict()
-
-
-def test_is_empty():
-    H1 = xgi.Hypergraph()
-    H2 = xgi.Hypergraph()
-    H2.add_nodes_from([0, 1, 2])
-    H3 = xgi.Hypergraph([[0, 1], [1, 2, 3]])
-    assert xgi.is_empty(H1)
-    assert xgi.is_empty(H2)
-    assert not xgi.is_empty(H3)
 
 
 def test_convert_labels_to_integers(hypergraph1, hypergraph2):

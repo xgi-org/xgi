@@ -22,12 +22,10 @@ __all__ = [
     "unique_edge_sizes",
     "freeze",
     "is_frozen",
-    "create_empty_copy",
     "set_node_attributes",
     "get_node_attributes",
     "set_edge_attributes",
     "get_edge_attributes",
-    "is_empty",
     "convert_labels_to_integers",
     "density",
     "incidence_density",
@@ -384,47 +382,6 @@ def is_frozen(H):
         return False
 
 
-def create_empty_copy(H, with_data=True):
-    """Create a new hypergraph with the nodes (and data) of a specified
-    hypergraph.
-
-    Parameters
-    ----------
-    H : Hypergraph object
-        The hypergraph to copy
-    with_data : bool, optional
-        Whether to keep the node and hypergraph data, by default True.
-
-    Returns
-    -------
-    Hypergraph object
-        A hypergraph with the same nodes but without edges
-
-    See Also
-    --------
-    is_empty
-    empty_hypergraph
-
-    Examples
-    --------
-    >>> import xgi
-    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-    >>> H = xgi.Hypergraph(hyperedge_list)
-    >>> H_copy = xgi.create_empty_copy(H)
-    >>> H_copy.nodes
-    NodeView((1, 2, 3, 4))
-    >>> H_copy.edges
-    EdgeView(())
-
-    """
-    H_copy = H.__class__()
-    H_copy.add_nodes_from(H.nodes)
-    if with_data:
-        set_node_attributes(H_copy, dict(H._node_attr))
-        H_copy._hypergraph.update(H._hypergraph)
-    return H_copy
-
-
 def set_node_attributes(H, values, name=None):
     """Sets node attributes from a given value or dictionary of values.
 
@@ -603,35 +560,6 @@ def get_edge_attributes(H, name=None):
         return dict(H._edge_attr)
     else:
         return {e: d[name] for e, d in H._edge_attr.items() if name in d}
-
-
-def is_empty(H):
-    """Returns True if `H` has no edges.
-
-    Parameters
-    ----------
-    H : Hypergraph object
-        Hypergraph of interest
-
-    Returns
-    -------
-    bool
-        True if `H` has no edges, and False otherwise.
-
-    See Also
-    --------
-    create_empty_copy
-    empty_hypergraph
-
-    Examples
-    --------
-    >>> import xgi
-    >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-    >>> H = xgi.Hypergraph(hyperedge_list)
-    >>> xgi.is_empty(H)
-    False
-    """
-    return len(H.edges) == 0
 
 
 def convert_labels_to_integers(H, label_attribute="label"):

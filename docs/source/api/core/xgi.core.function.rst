@@ -8,7 +8,6 @@
    .. rubric:: Functions
 
    .. autofunction:: convert_labels_to_integers
-   .. autofunction:: create_empty_copy
    .. autofunction:: degree_counts
    .. autofunction:: degree_histogram
    .. autofunction:: density
@@ -18,7 +17,6 @@
    .. autofunction:: get_edge_attributes
    .. autofunction:: get_node_attributes
    .. autofunction:: incidence_density
-   .. autofunction:: is_empty
    .. autofunction:: is_frozen
    .. autofunction:: is_possible_order
    .. autofunction:: is_uniform
