@@ -1,7 +1,7 @@
-xgi.classes.direportviews.DiNodeView
-====================================
+xgi.core.direportviews.DiNodeView
+=================================
 
-.. currentmodule:: xgi.classes.direportviews
+.. currentmodule:: xgi.core.direportviews
 
 .. autoclass:: DiNodeView
    :show-inheritance:

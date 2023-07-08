@@ -17,7 +17,7 @@ from scipy.sparse import (
     lil_matrix,
 )
 
-from .classes import DiHypergraph, Hypergraph, SimplicialComplex, set_edge_attributes
+from .core import DiHypergraph, Hypergraph, SimplicialComplex, set_edge_attributes
 from .exception import XGIError
 from .generators import empty_dihypergraph, empty_hypergraph, empty_simplicial_complex
 from .linalg import adjacency_matrix, incidence_matrix

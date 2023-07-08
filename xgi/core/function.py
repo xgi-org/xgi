@@ -294,7 +294,7 @@ def frozen(*args, **kwargs):
     >>> hyperedge_list = [[1, 2], [2, 3, 4]]
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> xgi.freeze(H) # doctest: +ELLIPSIS
-    <xgi.classes.hypergraph.Hypergraph object at 0x...>
+    <xgi.core.hypergraph.Hypergraph object at 0x...>
     >>> H.add_node(5)
     Traceback (most recent call last):
     xgi.exception.XGIError: Frozen hypergraph can't be modified
@@ -328,7 +328,7 @@ def freeze(H):
     >>> hyperedge_list = [[1, 2], [2, 3, 4]]
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> xgi.freeze(H) # doctest: +ELLIPSIS
-    <xgi.classes.hypergraph.Hypergraph object at 0x...>
+    <xgi.core.hypergraph.Hypergraph object at 0x...>
     >>> H.add_node(5)
     Traceback (most recent call last):
     xgi.exception.XGIError: Frozen hypergraph can't be modified
@@ -373,7 +373,7 @@ def is_frozen(H):
     >>> hyperedge_list = [[1, 2], [2, 3, 4]]
     >>> H = xgi.Hypergraph(hyperedge_list)
     >>> xgi.freeze(H) # doctest: +ELLIPSIS
-    <xgi.classes.hypergraph.Hypergraph object at 0x...>
+    <xgi.core.hypergraph.Hypergraph object at 0x...>
     >>> xgi.is_frozen(H)
     True
 
@@ -450,8 +450,8 @@ def set_node_attributes(H, values, name=None):
     --------
     get_node_attributes
     set_edge_attributes
-    ~xgi.classes.hypergraph.Hypergraph.add_node
-    ~xgi.classes.hypergraph.Hypergraph.add_nodes_from
+    ~xgi.core.hypergraph.Hypergraph.add_node
+    ~xgi.core.hypergraph.Hypergraph.add_nodes_from
 
     Notes
     -----
@@ -543,8 +543,8 @@ def set_edge_attributes(H, values, name=None):
     --------
     set_node_attributes
     get_edge_attributes
-    ~xgi.classes.hypergraph.Hypergraph.add_edge
-    ~xgi.classes.hypergraph.Hypergraph.add_edges_from
+    ~xgi.core.hypergraph.Hypergraph.add_edge
+    ~xgi.core.hypergraph.Hypergraph.add_edges_from
 
     Notes
     -----

@@ -1,9 +1,9 @@
-﻿xgi.classes.reportviews
-=======================
+﻿xgi.core.reportviews
+====================
 
-.. currentmodule:: xgi.classes.reportviews
+.. currentmodule:: xgi.core.reportviews
 
-.. automodule:: xgi.classes.reportviews
+.. automodule:: xgi.core.reportviews
 
    .. rubric:: Classes
 

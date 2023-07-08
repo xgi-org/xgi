@@ -5,7 +5,7 @@ from itertools import combinations
 
 import numpy as np
 
-from ..classes import is_uniform, unique_edge_sizes
+from ..core import is_uniform, unique_edge_sizes
 from ..exception import XGIError
 
 __all__ = ["dynamical_assortativity", "degree_assortativity"]

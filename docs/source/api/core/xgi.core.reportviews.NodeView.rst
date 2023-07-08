@@ -1,9 +1,9 @@
-xgi.classes.reportviews.EdgeView
-================================
+xgi.core.reportviews.NodeView
+=============================
 
-.. currentmodule:: xgi.classes.reportviews
+.. currentmodule:: xgi.core.reportviews
 
-.. autoclass:: EdgeView
+.. autoclass:: NodeView
    :show-inheritance:
    :members:
 
@@ -12,7 +12,7 @@ xgi.classes.reportviews.EdgeView
 
    .. autosummary::
 
-      ~EdgeView.ids
+      ~NodeView.ids
 
 
    .. rubric:: Methods
@@ -20,9 +20,8 @@ xgi.classes.reportviews.EdgeView
    .. autosummary::
       :nosignatures:
 
-      ~EdgeView.members
-      ~EdgeView.singletons
-      ~EdgeView.maximal
+      ~NodeView.memberships
+      ~NodeView.isolates
       ~IDView.neighbors
       ~IDView.duplicates
       ~IDView.lookup

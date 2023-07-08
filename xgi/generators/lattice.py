@@ -47,7 +47,7 @@ def ring_lattice(n, d, k, l):
     either side.
 
     """
-    from ..classes import Hypergraph
+    from ..core import Hypergraph
 
     if k < 0:
         raise XGIError("Invalid k value!")

@@ -54,7 +54,7 @@ class SimplicialComplex(Hypergraph):
 
     See Also
     --------
-    ~xgi.classes.hypergraph.Hypergraph
+    ~xgi.core.hypergraph.Hypergraph
 
     Notes
     -----

@@ -1,6 +1,6 @@
 """Algorithms related to connected components of a hypergraph."""
 
-from ..classes.hypergraphviews import subhypergraph
+from ..core.hypergraphviews import subhypergraph
 from ..exception import XGIError
 
 __all__ = [

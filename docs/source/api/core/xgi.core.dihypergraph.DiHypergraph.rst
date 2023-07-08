@@ -1,7 +1,7 @@
-﻿xgi.classes.dihypergraph.DiHypergraph
-=====================================
+﻿xgi.core.dihypergraph.DiHypergraph
+==================================
 
-.. currentmodule:: xgi.classes.dihypergraph
+.. currentmodule:: xgi.core.dihypergraph
 
 .. warning::
     This is an experimental module. It is not yet stable and may change in the future.

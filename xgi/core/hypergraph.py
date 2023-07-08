@@ -125,10 +125,10 @@ class Hypergraph:
         self._edge_attr = self._hyperedge_attr_dict_factory()
 
         self._nodeview = NodeView(self)
-        """A :class:`~xgi.classes.reportviews.NodeView` of the hypergraph."""
+        """A :class:`~xgi.core.reportviews.NodeView` of the hypergraph."""
 
         self._edgeview = EdgeView(self)
-        """An :class:`~xgi.classes.reportviews.EdgeView` of the hypergraph."""
+        """An :class:`~xgi.core.reportviews.EdgeView` of the hypergraph."""
 
         if incoming_data is not None:
             # This import needs to happen when this function is called, not when it is
@@ -355,8 +355,8 @@ class Hypergraph:
         See Also
         --------
         add_nodes_from
-        ~xgi.classes.function.set_node_attributes
-        ~xgi.classes.function.get_node_attributes
+        ~xgi.core.function.set_node_attributes
+        ~xgi.core.function.get_node_attributes
 
         Notes
         -----
@@ -386,8 +386,8 @@ class Hypergraph:
         See Also
         --------
         add_node
-        ~xgi.classes.function.set_node_attributes
-        ~xgi.classes.function.get_node_attributes
+        ~xgi.core.function.set_node_attributes
+        ~xgi.core.function.get_node_attributes
         """
         for n in nodes_for_adding:
             try:
@@ -483,8 +483,8 @@ class Hypergraph:
         See Also
         --------
         add_edges_from : Add a collection of edges.
-        ~xgi.classes.function.set_edge_attributes
-        ~xgi.classes.function.get_edge_attributes
+        ~xgi.core.function.set_edge_attributes
+        ~xgi.core.function.get_edge_attributes
 
         Examples
         --------
@@ -566,8 +566,8 @@ class Hypergraph:
         --------
         add_edge : Add a single edge.
         add_weighted_edges_from : Convenient way to add weighted edges.
-        ~xgi.classes.function.set_edge_attributes
-        ~xgi.classes.function.get_edge_attributes
+        ~xgi.core.function.set_edge_attributes
+        ~xgi.core.function.get_edge_attributes
 
         Notes
         -----

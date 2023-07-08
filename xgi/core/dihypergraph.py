@@ -149,10 +149,10 @@ class DiHypergraph:
         self._edge_attr = self._hyperedge_attr_dict_factory()
 
         self._nodeview = DiNodeView(self)
-        """A :class:`~xgi.classes.direportviews.DiNodeView` of the directed hypergraph."""
+        """A :class:`~xgi.core.direportviews.DiNodeView` of the directed hypergraph."""
 
         self._edgeview = DiEdgeView(self)
-        """An :class:`~xgi.classes.direportviews.DiEdgeView` of the directed hypergraph."""
+        """An :class:`~xgi.core.direportviews.DiEdgeView` of the directed hypergraph."""
 
         if incoming_data is not None:
             # This import needs to happen when this function is called, not when it is

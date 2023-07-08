@@ -1,7 +1,7 @@
-﻿xgi.classes.hypergraph.Hypergraph
-=================================
+﻿xgi.core.hypergraph.Hypergraph
+==============================
 
-.. currentmodule:: xgi.classes.hypergraph
+.. currentmodule:: xgi.core.hypergraph
 
 .. autoclass:: Hypergraph
    :show-inheritance:

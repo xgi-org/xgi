@@ -1,9 +1,9 @@
-﻿xgi.classes.function
-====================
+﻿xgi.core.function
+=================
 
-.. currentmodule:: xgi.classes.function
+.. currentmodule:: xgi.core.function
 
-.. automodule:: xgi.classes.function
+.. automodule:: xgi.core.function
 
    .. rubric:: Functions
 

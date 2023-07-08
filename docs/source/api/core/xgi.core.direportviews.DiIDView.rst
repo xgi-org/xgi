@@ -1,7 +1,7 @@
-xgi.classes.direportviews.DiIDView
-==================================
+xgi.core.direportviews.DiIDView
+===============================
 
-.. currentmodule:: xgi.classes.direportviews
+.. currentmodule:: xgi.core.direportviews
 
 .. autoclass:: DiIDView
    :show-inheritance:

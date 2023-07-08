@@ -102,7 +102,7 @@ def sunflower(l, c, m):
     -------
 
     """
-    from ..classes import Hypergraph
+    from ..core import Hypergraph
 
     if m < c:
         raise XGIError("m cannot be smaller than c.")

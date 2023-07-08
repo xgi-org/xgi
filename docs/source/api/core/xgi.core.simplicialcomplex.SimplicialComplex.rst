@@ -1,7 +1,7 @@
-﻿xgi.classes.simplicialcomplex.SimplicialComplex
-===============================================
+﻿xgi.core.simplicialcomplex.SimplicialComplex
+============================================
 
-.. currentmodule:: xgi.classes.simplicialcomplex
+.. currentmodule:: xgi.core.simplicialcomplex
 
 .. autoclass:: SimplicialComplex
    :show-inheritance:

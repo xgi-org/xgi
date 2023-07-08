@@ -7,7 +7,7 @@ import numpy as np
 from numpy.linalg import inv, svd
 
 from .. import convert
-from ..classes import SimplicialComplex, max_edge_order
+from ..core import SimplicialComplex, max_edge_order
 
 __all__ = [
     "random_layout",

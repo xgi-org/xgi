@@ -22,16 +22,16 @@
    :caption: Quick reference links
    :hidden:
 
-   Hypergraph class <api/classes/xgi.classes.hypergraph.Hypergraph.rst>
-   Simplicial Complex class <api/classes/xgi.classes.simplicialcomplex.SimplicialComplex.rst>
-   Directed Hypergraph class <api/classes/xgi.classes.dihypergraph.DiHypergraph>
+   Hypergraph class <api/core/xgi.core.hypergraph.Hypergraph.rst>
+   Simplicial Complex class <api/core/xgi.core.simplicialcomplex.SimplicialComplex.rst>
+   Directed Hypergraph class <api/core/xgi.core.dihypergraph.DiHypergraph>
 
 .. toctree::
    :maxdepth: 2
    :caption: API Reference
    :hidden:
 
-   Core classes <api/classes.rst>
+   Core functionality <api/core.rst>
    Node and edge statistics <api/stats.rst>
    Algorithms <api/algorithms.rst>
    Generative Models <api/generators.rst>
