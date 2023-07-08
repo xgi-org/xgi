@@ -29,7 +29,6 @@ __all__ = [
     "convert_labels_to_integers",
     "density",
     "incidence_density",
-    "subfaces",
 ]
 
 
@@ -764,70 +763,3 @@ def incidence_density(H, order=None, max_order=None, ignore_singletons=False):
         return float(numer) / float(denom)
     except ZeroDivisionError:
         return 0.0
-
-
-def subfaces(edges, order=None):
-    """Returns the subfaces of a list of hyperedges
-
-    Parameters
-    ---------
-    edges: list of edges
-        Edges to consider, as tuples of nodes
-    order: {None, -1, int}, optional
-        If None, compute subfaces recursively down to nodes.
-        If -1, compute subfaces the order below (e.g. edges for a triangle).
-        If d > 0, compute the subfaces of order d.
-        By default, None.
-
-    Returns
-    -------
-    faces: list of sets
-        List of hyperedges that are subfaces of input hyperedges.
-
-    Raises
-    ------
-    XGIError
-        Raises error when order is larger than the max order of input edges
-
-    Notes
-    -----
-    Hyperedges in the returned list are not unique, they may appear more than once
-    if they are subfaces or more than one edge from the input edges.
-
-    Examples
-    --------
-    >>> import xgi
-    >>> edges = [{1,2,3,4}, {3,4,5}]
-    >>> xgi.subfaces(edges) # doctest: +NORMALIZE_WHITESPACE
-    [(1,), (2,), (3,), (4,), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4), (1, 2, 3),
-     (1, 2, 4), (1, 3, 4), (2, 3, 4), (3,), (4,), (5,), (3, 4), (3, 5), (4, 5)]
-    >>> xgi.subfaces(edges, order=-1)
-    [(1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4), (3, 4), (3, 5), (4, 5)]
-    >>> xgi.subfaces(edges, order=2)
-    [(1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4), (3, 4, 5)]
-
-    """
-
-    max_order = len(max(edges, key=len)) - 1
-    if order and order > max_order:
-        raise XGIError(
-            "order must be less or equal to the maximum "
-            f"order among the edges: {max_order}."
-        )
-
-    faces = []
-    for edge in edges:
-        size = len(edge)
-
-        if size <= 1:  # down from a node is an empty tuple
-            continue
-
-        if order is None:  # add all subfaces down to nodes
-            faces_to_add = list(powerset(edge))
-        elif order == -1:  # add subfaces of order below
-            faces_to_add = list(combinations(edge, size - 1))
-        elif order >= 0:  # add subfaces of order d
-            faces_to_add = list(combinations(edge, order + 1))
-
-        faces += faces_to_add
-    return faces
