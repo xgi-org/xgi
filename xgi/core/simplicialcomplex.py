@@ -11,7 +11,7 @@ from collections.abc import Hashable, Iterable
 from itertools import combinations, count
 from warnings import warn
 
-from ..exception import XGIError
+from ..exception import XGIError, frozen
 from ..utils.utilities import powerset, update_uid_counter
 from .hypergraph import Hypergraph
 from .views import EdgeView, NodeView
@@ -762,3 +762,61 @@ class SimplicialComplex(Hypergraph):
 
         """
         return frozenset(simplex) in self._edge.values()
+
+    def freeze(self):
+        """Method for freezing a simplicial complex
+        which prevents it from being modified
+
+        See Also
+        --------
+        frozen : Method that raises an error when a
+        user tries to modify the simplicial complex
+        is_frozen : Check whether a simplicial complex is frozen
+
+        Examples
+        --------
+        >>> import xgi
+        >>> edges = [[1, 2], [2, 3, 4]]
+        >>> SC = xgi.SimplicialComplex(edges)
+        >>> SC.freeze()
+        >>> SC.add_node(5)
+        Traceback (most recent call last):
+        xgi.exception.XGIError: Frozen higher-order network can't be modified
+        """
+        self.add_node = frozen
+        self.add_nodes_from = frozen
+        self.remove_node = frozen
+        self.remove_nodes_from = frozen
+        self.add_simplex = frozen
+        self.add_simplices_from = frozen
+        self.add_weighted_simplices_from = frozen
+        self.remove_simplex_id = frozen
+        self.remove_simplex_ids_from = frozen
+        self.clear = frozen
+        self.frozen = True
+
+    def is_frozen(self):
+        """Checks whether a simplicial complex is frozen
+
+        Returns
+        -------
+        bool
+            True if simplicial complex is frozen, false if not.
+
+        See Also
+        --------
+        freeze : A method to prevent a simplicial complex from being modified.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> edges = [[1, 2], [2, 3, 4]]
+        >>> SC = xgi.SimplicialComplex(edges)
+        >>> SC.freeze()
+        >>> SC.is_frozen()
+        True
+        """
+        try:
+            return self.frozen
+        except AttributeError:
+            return False

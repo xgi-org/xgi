@@ -13,8 +13,6 @@ about 15 nested views. Often it is easiest to use .copy() to avoid chains.
 
 """
 
-from .function import freeze
-
 __all__ = ["subhypergraph"]
 
 
@@ -72,4 +70,5 @@ def subhypergraph(H, nodes=None, edges=None, keep_isolates=True):
     if not keep_isolates:
         new.remove_nodes_from(new.nodes.isolates())
 
-    return freeze(new)
+    new.freeze()
+    return new

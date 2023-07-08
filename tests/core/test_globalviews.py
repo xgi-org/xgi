@@ -39,8 +39,8 @@ def test_subhypergraph(edgelist1):
     with pytest.raises(XGIError):
         new_H.remove_node_from_edge(0, 1)
 
-    assert xgi.is_frozen(new_H)
-    assert not xgi.is_frozen(H)
+    assert new_H.is_frozen()
+    assert not H.is_frozen()
 
     assert set(H.nodes) == set(new_H.nodes)
     assert set(H.edges) == set(new_H.edges)

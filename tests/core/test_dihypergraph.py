@@ -489,3 +489,33 @@ def test_pickle(diedgelist1):
     assert [H1.edges.members(id) for id in H1.edges] == [
         H2.edges.members(id) for id in H2.edges
     ]
+
+
+def test_freeze(diedgelist1):
+    H = xgi.DiHypergraph(diedgelist1)
+    H.freeze()
+    with pytest.raises(XGIError):
+        H.add_node(10)
+
+    with pytest.raises(XGIError):
+        H.add_nodes_from([8, 9, 10])
+
+    with pytest.raises(XGIError):
+        H.add_edge([1, 5, 7])
+
+    with pytest.raises(XGIError):
+        H.add_edges_from([[1, 7], [7]])
+
+    with pytest.raises(XGIError):
+        H.remove_node(1)
+
+    with pytest.raises(XGIError):
+        H.remove_nodes_from([1, 2, 3])
+
+    with pytest.raises(XGIError):
+        H.remove_edge(1)
+
+    with pytest.raises(XGIError):
+        H.remove_edges_from([0, 1])
+
+    assert H.is_frozen()

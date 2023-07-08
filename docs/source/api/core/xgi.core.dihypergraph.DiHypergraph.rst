@@ -18,7 +18,7 @@
       ~DiHypergraph.nodes
       ~DiHypergraph.num_edges
       ~DiHypergraph.num_nodes
-
+      ~DiHypergraph.is_frozen
 
    .. rubric:: Methods that modify the structure
 
@@ -35,3 +35,4 @@
       ~DiHypergraph.remove_edges_from
       ~DiHypergraph.clear
       ~DiHypergraph.copy
+      ~DiHypergraph.freeze

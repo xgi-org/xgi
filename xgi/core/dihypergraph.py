@@ -9,7 +9,7 @@ from copy import copy, deepcopy
 from itertools import count
 from warnings import warn
 
-from ..exception import XGIError
+from ..exception import XGIError, frozen
 from ..utils import IDDict, update_uid_counter
 from .diviews import DiEdgeView, DiNodeView
 
@@ -834,3 +834,63 @@ class DiHypergraph:
         cp._edge_uid = copy(self._edge_uid)
 
         return cp
+
+    def freeze(self):
+        """Method for freezing a dihypergraph which prevents it from being modified
+
+        See Also
+        --------
+        frozen : Method that raises an error when a user tries to modify the hypergraph
+        is_frozen : Check whether a dihypergraph is frozen
+
+        Examples
+        --------
+        >>> import xgi
+        >>> diedgelist = [([1, 2], [2, 3, 4])]
+        >>> H = xgi.DiHypergraph(diedgelist)
+        >>> H.freeze()
+        >>> H.add_node(5)
+        Traceback (most recent call last):
+        xgi.exception.XGIError: Frozen higher-order network can't be modified
+
+        """
+        self.add_node = frozen
+        self.add_nodes_from = frozen
+        self.remove_node = frozen
+        self.remove_nodes_from = frozen
+        self.add_edge = frozen
+        self.add_edges_from = frozen
+        self.add_weighted_edges_from = frozen
+        self.remove_edge = frozen
+        self.remove_edges_from = frozen
+        self.add_node_to_edge = frozen
+        self.remove_node_from_edge = frozen
+        self.clear = frozen
+        self.frozen = True
+
+    def is_frozen(self):
+        """Checks whether a hypergraph is frozen
+
+        Returns
+        -------
+        bool
+            True if hypergraph is frozen, false if not.
+
+        See Also
+        --------
+        freeze : A method to prevent a hypergraph from being modified.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> edges = [([1, 2], [2, 3, 4])]
+        >>> H = xgi.DiHypergraph(edges)
+        >>> H.freeze()
+        >>> H.is_frozen()
+        True
+
+        """
+        try:
+            return self.frozen
+        except AttributeError:
+            return False

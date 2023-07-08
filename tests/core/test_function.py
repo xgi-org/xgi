@@ -4,42 +4,6 @@ import xgi
 from xgi.exception import XGIError
 
 
-def test_freeze(edgelist1):
-    H = xgi.Hypergraph(edgelist1)
-    xgi.freeze(H)
-    with pytest.raises(XGIError):
-        H.add_node(10)
-
-    with pytest.raises(XGIError):
-        H.add_nodes_from([8, 9, 10])
-
-    with pytest.raises(XGIError):
-        H.add_node_to_edge(0, 10)
-
-    with pytest.raises(XGIError):
-        H.add_edge([1, 5, 7])
-
-    with pytest.raises(XGIError):
-        H.add_edges_from([[1, 7], [7]])
-
-    with pytest.raises(XGIError):
-        H.remove_node(1)
-
-    with pytest.raises(XGIError):
-        H.remove_nodes_from([1, 2, 3])
-
-    with pytest.raises(XGIError):
-        H.remove_edge(1)
-
-    with pytest.raises(XGIError):
-        H.remove_edges_from([0, 1])
-
-    with pytest.raises(XGIError):
-        H.remove_node_from_edge(0, 1)
-
-    assert xgi.is_frozen(H)
-
-
 def test_set_node_attributes(edgelist1):
     attr_dict1 = {
         1: {"name": "Leonie"},

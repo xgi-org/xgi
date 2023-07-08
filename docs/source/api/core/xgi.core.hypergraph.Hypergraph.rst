@@ -16,6 +16,7 @@
       ~Hypergraph.nodes
       ~Hypergraph.num_edges
       ~Hypergraph.num_nodes
+      ~Hypergraph.is_frozen
 
 
    .. rubric:: Methods that modify the structure
@@ -38,6 +39,7 @@
       ~Hypergraph.clear
       ~Hypergraph.clear_edges
       ~Hypergraph.cleanup
+      ~Hypergraph.freeze
 
    .. rubric:: Methods that return other hypergraphs
 
