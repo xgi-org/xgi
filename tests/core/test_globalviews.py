@@ -7,7 +7,7 @@ from xgi.exception import XGIError
 def test_subhypergraph(edgelist1):
     H = xgi.Hypergraph(edgelist1)
 
-    new_H = xgi.core.hypergraphviews.subhypergraph(H)
+    new_H = xgi.core.globalviews.subhypergraph(H)
 
     with pytest.raises(XGIError):
         new_H.add_node(10)
@@ -45,33 +45,33 @@ def test_subhypergraph(edgelist1):
     assert set(H.nodes) == set(new_H.nodes)
     assert set(H.edges) == set(new_H.edges)
 
-    new_H = xgi.core.hypergraphviews.subhypergraph(H, nodes=[1, 2, 3, 4, 5])
+    new_H = xgi.core.globalviews.subhypergraph(H, nodes=[1, 2, 3, 4, 5])
     assert set(new_H.nodes) == {1, 2, 3, 4, 5}
     assert set(new_H.edges) == {0, 1}
 
-    new_H = xgi.core.hypergraphviews.subhypergraph(H, edges=[1, 2])
+    new_H = xgi.core.globalviews.subhypergraph(H, edges=[1, 2])
     assert set(new_H.nodes) == {1, 2, 3, 4, 5, 6, 7, 8}
     assert set(new_H.edges) == {1, 2}
     assert set(new_H.nodes.isolates(ignore_singletons=False)) == {1, 2, 3, 7, 8}
 
-    new_H = xgi.core.hypergraphviews.subhypergraph(
+    new_H = xgi.core.globalviews.subhypergraph(
         H, nodes=[1, 2, 3, 4, 5], edges=[1, 2]
     )
     assert set(new_H.nodes) == {1, 2, 3, 4, 5}
     assert set(new_H.edges) == {1}
     assert set(new_H.nodes.isolates(ignore_singletons=False)) == {1, 2, 3, 5}
 
-    new_H = xgi.core.hypergraphviews.subhypergraph(H, nodes=[4], edges=[0, 1, 2])
+    new_H = xgi.core.globalviews.subhypergraph(H, nodes=[4], edges=[0, 1, 2])
     assert set(new_H.nodes) == {4}
     assert set(new_H.edges) == {1}
 
-    new_H = xgi.core.hypergraphviews.subhypergraph(H, nodes=[3, 4, 5, 6], edges=[2])
+    new_H = xgi.core.globalviews.subhypergraph(H, nodes=[3, 4, 5, 6], edges=[2])
     assert set(new_H.nodes) == {3, 4, 5, 6}
     assert set(new_H.edges) == {2}
     assert set(new_H.nodes.isolates(ignore_singletons=False)) == {3, 4}
 
     # test keep isolates
-    new_H = xgi.core.hypergraphviews.subhypergraph(
+    new_H = xgi.core.globalviews.subhypergraph(
         H, nodes=[3, 4, 5, 6], edges=[2], keep_isolates=False
     )
     assert set(new_H.nodes) == {5, 6}

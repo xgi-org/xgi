@@ -7,7 +7,7 @@ from warnings import warn
 
 from ..exception import IDNotFound, XGIError
 from ..utils import IDDict, update_uid_counter
-from .reportviews import EdgeView, NodeView
+from .views import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
 

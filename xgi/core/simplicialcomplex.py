@@ -14,7 +14,7 @@ from warnings import warn
 from ..exception import XGIError
 from ..utils.utilities import powerset, update_uid_counter
 from .hypergraph import Hypergraph
-from .reportviews import EdgeView, NodeView
+from .views import EdgeView, NodeView
 
 __all__ = ["SimplicialComplex"]
 

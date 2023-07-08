@@ -1,7 +1,7 @@
-xgi.core.reportviews.EdgeView
-=============================
+xgi.core.views.EdgeView
+=======================
 
-.. currentmodule:: xgi.core.reportviews
+.. currentmodule:: xgi.core.views
 
 .. autoclass:: EdgeView
    :show-inheritance:

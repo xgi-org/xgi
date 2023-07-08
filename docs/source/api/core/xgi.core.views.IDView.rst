@@ -1,7 +1,7 @@
-xgi.core.reportviews.IDView
-===========================
+xgi.core.views.IDView
+=====================
 
-.. currentmodule:: xgi.core.reportviews
+.. currentmodule:: xgi.core.views
 
 .. autoclass:: IDView
    :show-inheritance:

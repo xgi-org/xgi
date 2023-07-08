@@ -1,7 +1,7 @@
-xgi.core.reportviews.NodeView
-=============================
+xgi.core.views.NodeView
+=======================
 
-.. currentmodule:: xgi.core.reportviews
+.. currentmodule:: xgi.core.views
 
 .. autoclass:: NodeView
    :show-inheritance:

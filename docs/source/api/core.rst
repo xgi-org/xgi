@@ -10,7 +10,7 @@ core functionality
    ~xgi.core.hypergraph
    ~xgi.core.dihypergraph
    ~xgi.core.simplicialcomplex
-   ~xgi.core.reportviews
-   ~xgi.core.direportviews
-   ~xgi.core.hypergraphviews
+   ~xgi.core.views
+   ~xgi.core.diviews
+   ~xgi.core.globalviews
    ~xgi.core.function

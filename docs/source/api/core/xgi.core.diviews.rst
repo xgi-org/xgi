@@ -1,9 +1,9 @@
-﻿xgi.core.direportviews
-======================
+﻿xgi.core.diviews
+================
 
-.. currentmodule:: xgi.core.direportviews
+.. currentmodule:: xgi.core.diviews
 
-.. automodule:: xgi.core.direportviews
+.. automodule:: xgi.core.diviews
 
    .. rubric:: Classes
 
