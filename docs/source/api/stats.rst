@@ -8,8 +8,7 @@ stats package
    
    The available statistics are:
 
-   Hypergraphs and simplicial complexes
-   ====================================
+   **Hypergraphs and simplicial complexes**
 
    .. rubric:: Statistics of nodes
 
