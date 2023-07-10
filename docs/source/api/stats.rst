@@ -6,7 +6,11 @@ stats package
 
 .. admonition:: Available statistics
    
-   The available statistics are now:
+   The available statistics are:
+
+   ---------------
+   Hypergraphs and simplicial complexes
+   ---------------
 
    .. rubric:: Statistics of nodes
 
@@ -18,7 +22,7 @@ stats package
       ~xgi.stats.nodestats.clustering_coefficient
       ~xgi.stats.nodestats.degree
       ~xgi.stats.nodestats.eigenvector_centrality
-      ~xgi.stats.nodestats.ocal_clustering_coefficient
+      ~xgi.stats.nodestats.local_clustering_coefficient
       ~xgi.stats.nodestats.node_edge_centrality
       ~xgi.stats.nodestats.two_nodes_clustering_coefficient
 
@@ -30,6 +34,34 @@ stats package
       ~xgi.stats.edgestats.order
       ~xgi.stats.edgestats.size
       ~xgi.stats.edgestats.node_edge_centrality
+
+   .. rubric:: Corresponding modules
+
+   .. autosummary::
+      :toctree: stats
+
+      ~xgi.stats.nodestats
+      ~xgi.stats.edgestats
+
+   .. rubric:: Corresponding classes
+
+   .. autosummary::
+      :toctree: stats
+      :nosignatures:
+
+      ~xgi.stats.NodeStat
+      ~xgi.stats.EdgeStat
+      ~xgi.stats.DiNodeStat
+      ~xgi.stats.DiEdgeStat
+      ~xgi.stats.MultiNodeStat
+      ~xgi.stats.MultiEdgeStat
+      ~xgi.stats.MultiDiNodeStat
+      ~xgi.stats.MultiDiEdgeStat
+
+   ---------------
+   Directed hypergraphs
+   ---------------
+   
 
    .. rubric:: Statistics of nodes in directed hypergraphs
 
