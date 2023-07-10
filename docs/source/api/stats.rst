@@ -7,7 +7,6 @@ stats package
 .. admonition:: Available statistics
    
    The available statistics are:
-
    **Hypergraphs and simplicial complexes**
 
    .. rubric:: Statistics of nodes
@@ -49,18 +48,15 @@ stats package
 
       ~xgi.stats.NodeStat
       ~xgi.stats.EdgeStat
-      ~xgi.stats.DiNodeStat
-      ~xgi.stats.DiEdgeStat
       ~xgi.stats.MultiNodeStat
       ~xgi.stats.MultiEdgeStat
       ~xgi.stats.MultiDiNodeStat
       ~xgi.stats.MultiDiEdgeStat
 
-   Directed hypergraphs
-   ====================
+   **Directed hypergraphs
    
 
-   .. rubric:: Statistics of nodes in directed hypergraphs
+   .. rubric:: Statistics of nodes
 
    .. autosummary::
       :nosignatures:
@@ -69,7 +65,7 @@ stats package
       ~xgi.stats.dinodestats.in_degree
       ~xgi.stats.dinodestats.out_degree
 
-   .. rubric:: Statistics of edges in directed hypergraphs
+   .. rubric:: Statistics of edges
 
    .. autosummary::
       :nosignatures:
@@ -81,31 +77,23 @@ stats package
       ~xgi.stats.diedgestats.tail_order
       ~xgi.stats.diedgestats.tail_size
 
-.. rubric:: Modules
+   .. rubric:: Corresponding modules
 
-.. autosummary::
-   :toctree: stats
+   .. autosummary::
+      :toctree: stats
 
-   ~xgi.stats.nodestats
-   ~xgi.stats.edgestats
-   ~xgi.stats.dinodestats
-   ~xgi.stats.diedgestats
+      ~xgi.stats.dinodestats
+      ~xgi.stats.diedgestats
 
 
-.. rubric:: Classes
+   .. rubric:: Corresponding classes
 
-.. autosummary::
-   :toctree: stats
-   :nosignatures:
+   .. autosummary::
+      :toctree: stats
+      :nosignatures:
 
-   ~xgi.stats.NodeStat
-   ~xgi.stats.EdgeStat
-   ~xgi.stats.DiNodeStat
-   ~xgi.stats.DiEdgeStat
-   ~xgi.stats.MultiNodeStat
-   ~xgi.stats.MultiEdgeStat
-   ~xgi.stats.MultiDiNodeStat
-   ~xgi.stats.MultiDiEdgeStat
+      ~xgi.stats.DiNodeStat
+      ~xgi.stats.DiEdgeStat
 
 
 .. rubric:: Decorators
