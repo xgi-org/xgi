@@ -8,9 +8,9 @@ stats package
    
    The available statistics are:
    
-   **Hypergraphs and simplicial complexes**
+   .. rubric:: Hypergraphs and simplicial complexes**
 
-   .. rubric:: Statistics of nodes
+   *Statistics of nodes*
 
    .. autosummary::
       :nosignatures:
@@ -24,7 +24,7 @@ stats package
       ~xgi.stats.nodestats.node_edge_centrality
       ~xgi.stats.nodestats.two_nodes_clustering_coefficient
 
-   .. rubric:: Statistics of edges
+   *Statistics of edges*
 
    .. autosummary::
       :nosignatures:
@@ -33,7 +33,7 @@ stats package
       ~xgi.stats.edgestats.size
       ~xgi.stats.edgestats.node_edge_centrality
 
-   .. rubric:: Corresponding modules
+   *Corresponding modules*
 
    .. autosummary::
       :toctree: stats
@@ -41,7 +41,7 @@ stats package
       ~xgi.stats.nodestats
       ~xgi.stats.edgestats
 
-   .. rubric:: Corresponding classes
+   *Corresponding classes*
 
    .. autosummary::
       :toctree: stats
@@ -54,10 +54,10 @@ stats package
       ~xgi.stats.MultiDiNodeStat
       ~xgi.stats.MultiDiEdgeStat
 
-   **Directed hypergraphs**
+   .. rubric:: Directed hypergraphs
    
 
-   .. rubric:: Statistics of nodes
+   *Statistics of nodes*
 
    .. autosummary::
       :nosignatures:
@@ -66,7 +66,7 @@ stats package
       ~xgi.stats.dinodestats.in_degree
       ~xgi.stats.dinodestats.out_degree
 
-   .. rubric:: Statistics of edges
+   *Statistics of edges*
 
    .. autosummary::
       :nosignatures:
@@ -78,7 +78,7 @@ stats package
       ~xgi.stats.diedgestats.tail_order
       ~xgi.stats.diedgestats.tail_size
 
-   .. rubric:: Corresponding modules
+   *Corresponding modules*
 
    .. autosummary::
       :toctree: stats
@@ -87,7 +87,7 @@ stats package
       ~xgi.stats.diedgestats
 
 
-   .. rubric:: Corresponding classes
+   *Corresponding classes*
 
    .. autosummary::
       :toctree: stats
