@@ -7,6 +7,7 @@ stats package
 .. admonition:: Available statistics
    
    The available statistics are:
+   
    **Hypergraphs and simplicial complexes**
 
    .. rubric:: Statistics of nodes
@@ -53,7 +54,7 @@ stats package
       ~xgi.stats.MultiDiNodeStat
       ~xgi.stats.MultiDiEdgeStat
 
-   **Directed hypergraphs
+   **Directed hypergraphs**
    
 
    .. rubric:: Statistics of nodes
