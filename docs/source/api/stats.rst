@@ -6,9 +6,7 @@ stats package
 
 .. admonition:: Available statistics
    
-   The available statistics are:
-   
-   .. rubric:: Hypergraphs and simplicial complexes**
+   .. rubric:: Hypergraphs and simplicial complexes
 
    *Statistics of nodes*
 
