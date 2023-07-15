@@ -17,7 +17,7 @@ from scipy.sparse import (
     lil_matrix,
 )
 
-from .core import DiHypergraph, Hypergraph, SimplicialComplex, set_edge_attributes
+from .core import DiHypergraph, Hypergraph, SimplicialComplex
 from .exception import XGIError
 from .generators import empty_dihypergraph, empty_hypergraph, empty_simplicial_complex
 from .linalg import adjacency_matrix, incidence_matrix
@@ -850,10 +850,7 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
                 if edgetype(e) in H.edges
             }
 
-        set_edge_attributes(
-            H,
-            edge_data,
-        )
+        H.set_edge_attributes(edge_data)
     except KeyError as e:
         raise XGIError("Failed to import edge attributes.") from e
 

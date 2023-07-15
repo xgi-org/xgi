@@ -80,7 +80,7 @@ def test_degree(diedgelist1, diedgelist2):
 
     # test weights
     attr_dict1 = {0: {"weight": -2}, 1: {"weight": 4.0}, 2: {"weight": 0.3}}
-    xgi.set_edge_attributes(H2, attr_dict1)
+    H2.set_edge_attributes(attr_dict1)
 
     assert H2.nodes.degree(weight="weight").asdict() == {
         0: -2,

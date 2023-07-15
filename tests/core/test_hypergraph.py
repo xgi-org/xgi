@@ -633,3 +633,95 @@ def test_freeze(edgelist1):
         H.remove_node_from_edge(0, 1)
 
     assert H.is_frozen()
+
+
+def test_set_node_attributes(edgelist1):
+    attr_dict1 = {
+        1: {"name": "Leonie"},
+        2: {"name": "Ilya"},
+        3: {"name": "Alice"},
+        4: {"name": "Giovanni"},
+        5: {"name": "Heather"},
+        6: {"name": "Juan"},
+        7: {"name": "Nicole"},
+        8: {"name": "Sinan"},
+    }
+
+    attr_dict2 = {
+        1: "Leonie",
+        2: "Ilya",
+        3: "Alice",
+        4: "Giovanni",
+        5: "Heather",
+        6: "Juan",
+        7: "Nicole",
+        8: "Sinan",
+    }
+
+    H1 = xgi.Hypergraph(edgelist1)
+    H1.set_node_attributes(attr_dict1)
+
+    for n in H1.nodes:
+        assert H1.nodes[n]["name"] == attr_dict1[n]["name"]
+
+    H2 = xgi.Hypergraph(edgelist1)
+    H2.set_node_attributes(attr_dict2, name="name")
+
+    for n in H2.nodes:
+        assert H2.nodes[n]["name"] == attr_dict2[n]
+
+    H3 = xgi.Hypergraph(edgelist1)
+    H3.set_node_attributes(2, name="weight")
+
+    for n in H3.nodes:
+        assert H3.nodes[n]["weight"] == 2
+
+    H4 = xgi.Hypergraph(edgelist1)
+
+    with pytest.raises(XGIError):
+        H4.set_node_attributes(attr_dict2)
+
+    with pytest.raises(XGIError):
+        H4.set_node_attributes(2)
+
+    with pytest.warns(Warning):
+        H4.set_node_attributes({"test": "blue"}, "color")
+
+    with pytest.warns(Warning):
+        H4.set_node_attributes({"test": {"blue": "color"}})
+
+
+def test_set_edge_attributes(edgelist1):
+    H1 = xgi.Hypergraph(edgelist1)
+    attr_dict1 = {
+        0: {"weight": 1},
+        1: {"weight": 2},
+        2: {"weight": 3.0},
+        3: {"weight": -1},
+    }
+
+    attr_dict2 = {0: 1, 1: 2, 2: 3, 3: -1}
+    H1.set_edge_attributes(attr_dict1)
+
+    for e in H1.edges:
+        assert H1.edges[e]["weight"] == attr_dict1[e]["weight"]
+
+    H2 = xgi.Hypergraph(edgelist1)
+    H2.set_edge_attributes("blue", name="color")
+
+    for e in H2.edges:
+        assert H2.edges[e]["color"] == "blue"
+
+    H3 = xgi.Hypergraph(edgelist1)
+
+    with pytest.warns(Warning), pytest.raises(XGIError):
+        H3.set_node_attributes(attr_dict2)
+
+    with pytest.raises(XGIError):
+        H3.set_edge_attributes(2)
+
+    with pytest.warns(Warning):
+        H3.set_edge_attributes({"test": 2}, "weight")
+
+    with pytest.warns(Warning):
+        H3.set_edge_attributes({"test": {2: "weight"}})
