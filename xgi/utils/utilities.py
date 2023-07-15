@@ -1,6 +1,7 @@
 """General utilities."""
 
 from collections import defaultdict
+from copy import deepcopy
 from functools import lru_cache
 from itertools import chain, combinations, count
 
@@ -369,6 +370,8 @@ def convert_labels_to_integers(H, label_attribute="label"):
     Because the old IDs are stored in the "label" attribute for both nodes and edges,
     the old "label" values (if they exist) will be overwritten.
     """
+    from ..core import Hypergraph
+
     node_dict = dict(zip(H.nodes, range(H.num_nodes)))
     edge_dict = dict(zip(H.edges, range(H.num_edges)))
     temp_H = Hypergraph()

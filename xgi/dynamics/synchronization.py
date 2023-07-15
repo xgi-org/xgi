@@ -64,6 +64,7 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
 
     """
     from ..utils import convert_labels_to_integers
+
     H_int = convert_labels_to_integers(H, "label")
 
     links = H_int.edges.filterby("size", 2).members()

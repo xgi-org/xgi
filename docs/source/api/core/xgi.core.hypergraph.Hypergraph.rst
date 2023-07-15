@@ -30,6 +30,8 @@
       ~Hypergraph.add_edges_from
       ~Hypergraph.add_node_to_edge
       ~Hypergraph.add_weighted_edges_from
+      ~Hypergraph.set_node_attributes
+      ~Hypergraph.set_edge_attributes
       ~Hypergraph.update
       ~Hypergraph.remove_node
       ~Hypergraph.remove_edge
