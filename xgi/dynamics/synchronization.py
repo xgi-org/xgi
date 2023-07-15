@@ -63,7 +63,8 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
     >>> theta_time, times = simulate_kuramoto(H, k2=2, k3=3, omega=omega, theta=theta)
 
     """
-    H_int = xgi.convert_labels_to_integers(H, "label")
+    from ..utils import convert_labels_to_integers
+    H_int = convert_labels_to_integers(H, "label")
 
     links = H_int.edges.filterby("size", 2).members()
     triangles = H_int.edges.filterby("size", 3).members()

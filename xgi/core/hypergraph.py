@@ -1377,7 +1377,7 @@ class Hypergraph:
             if not isolates:
                 self.remove_nodes_from(self.nodes.isolates())
             if relabel:
-                from .function import convert_labels_to_integers
+                from ..utils import convert_labels_to_integers
 
                 temp = convert_labels_to_integers(self).copy()
 
@@ -1400,7 +1400,7 @@ class Hypergraph:
             if not isolates:
                 H.remove_nodes_from(H.nodes.isolates())
             if relabel:
-                from .function import convert_labels_to_integers
+                from ..utils import convert_labels_to_integers
 
                 H = convert_labels_to_integers(H)
 

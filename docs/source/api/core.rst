@@ -13,4 +13,3 @@ core functionality
    ~xgi.core.views
    ~xgi.core.diviews
    ~xgi.core.globalviews
-   ~xgi.core.function
