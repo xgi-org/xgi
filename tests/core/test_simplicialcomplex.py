@@ -481,7 +481,6 @@ def test_remove_simplex_ids_from(edgelist6):
     assert set(S.edges.members()) == set(edges)
 
 
-
 def test_freeze(edgelist1):
     SC = xgi.SimplicialComplex(edgelist1)
     SC.freeze()
