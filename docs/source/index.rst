@@ -9,6 +9,7 @@
 
    about
    contributors
+   using-xgi
 
 .. toctree::
    :maxdepth: 2
