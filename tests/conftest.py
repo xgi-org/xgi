@@ -248,5 +248,5 @@ def dihyperwithattrs(diedgelist2, attr0, attr1, attr2, attr3, attr4, attr5):
         ]
     )
     H.add_edges_from(diedgelist2)
-    xgi.set_edge_attributes(H, {0: attr3, 1: attr4, 2: attr5})
+    H.set_edge_attributes({0: attr3, 1: attr4, 2: attr5})
     return H

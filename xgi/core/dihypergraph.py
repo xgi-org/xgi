@@ -9,7 +9,7 @@ from copy import copy, deepcopy
 from itertools import count
 from warnings import warn
 
-from ..exception import XGIError, frozen
+from ..exception import IDNotFound, XGIError, frozen
 from ..utils import IDDict, update_uid_counter
 from .diviews import DiEdgeView, DiNodeView
 
@@ -439,6 +439,69 @@ class DiHypergraph:
                 continue
             self.remove_node(n)
 
+    def set_node_attributes(self, values, name=None):
+        """Sets node attributes from a given value or dictionary of values.
+
+        Parameters
+        ----------
+        values : scalar value, dict-like
+            What the node attribute should be set to.  If `values` is
+            not a dictionary, then it is treated as a single attribute value
+            that is then applied to every node in `H`.  This means that if
+            you provide a mutable object, like a list, updates to that object
+            will be reflected in the node attribute for every node.
+            The attribute name will be `name`.
+
+            If `values` is a dict or a dict of dict, it should be keyed
+            by node to either an attribute value or a dict of attribute key/value
+            pairs used to update the node's attributes.
+        name : string, optional
+            Name of the node attribute to set if values is a scalar, by default None.
+
+        See Also
+        --------
+        set_edge_attributes
+        add_node
+        add_nodes_from
+
+        Notes
+        -----
+        After computing some property of the nodes of a hypergraph, you may
+        want to assign a node attribute to store the value of that property
+        for each node.
+
+        If you provide a list as the second argument, updates to the list
+        will be reflected in the node attribute for each node.
+
+        If you provide a dictionary of dictionaries as the second argument,
+        the outer dictionary is assumed to be keyed by node to an inner
+        dictionary of node attributes for that node.
+
+        Note that if the dictionary contains nodes that are not in `G`, the
+        values are silently ignored.
+
+        """
+        # Set node attributes based on type of `values`
+        if name is not None:  # `values` must not be a dict of dict
+            if isinstance(values, dict):  # `values` is a dict
+                for n, v in values.items():
+                    try:
+                        self._node_attr[n][name] = v
+                    except IDNotFound:
+                        warn(f"Node {n} does not exist!")
+            else:  # `values` is a constant
+                for n in self:
+                    self._node_attr[n][name] = values
+        else:  # `values` must be dict of dict
+            try:
+                for n, d in values.items():
+                    try:
+                        self._node_attr[n].update(d)
+                    except IDNotFound:
+                        warn(f"Node {n} does not exist!")
+            except (TypeError, ValueError, AttributeError):
+                raise XGIError("Must pass a dictionary of dictionaries")
+
     def add_edge(self, members, id=None, **attr):
         """Add one edge with optional attributes.
 
@@ -788,6 +851,61 @@ class DiHypergraph:
             del self._edge_in[id]
             del self._edge_out[id]
             del self._edge_attr[id]
+
+    def set_edge_attributes(self, values, name=None):
+        """Set the edge attributes from a value or a dictionary of values.
+
+        Parameters
+        ----------
+        values : scalar value, dict-like
+            What the edge attribute should be set to.  If `values` is
+            not a dictionary, then it is treated as a single attribute value
+            that is then applied to every edge in `H`.  This means that if
+            you provide a mutable object, like a list, updates to that object
+            will be reflected in the edge attribute for each edge.  The attribute
+            name will be `name`.
+            If `values` is a dict or a dict of dict, it should be keyed
+            by edge ID to either an attribute value or a dict of attribute
+            key/value pairs used to update the edge's attributes.
+        name : string, optional
+            Name of the edge attribute to set if values is a scalar. By default, None.
+
+        See Also
+        --------
+        set_node_attributes
+        add_edge
+        add_edges_from
+
+        Notes
+        -----
+        Note that if the dict contains edge IDs that are not in `H`, they are
+        silently ignored.
+
+        """
+        if name is not None:
+            # `values` does not contain attribute names
+            try:
+                for e, value in values.items():
+                    try:
+                        self._edge_attr[id][name] = value
+                    except IDNotFound:
+                        warn(f"Edge {e} does not exist!")
+            except AttributeError:
+                # treat `values` as a constant
+                for e in self._edge:
+                    self._edge_attr[e][name] = values
+        else:
+            try:
+                for e, d in values.items():
+                    try:
+                        self._edge_attr[e].update(d)
+                    except IDNotFound:
+                        warn(f"Edge {e} does not exist!")
+            except AttributeError:
+                raise XGIError(
+                    "name property has not been set and a "
+                    "dict-of-dicts has not been provided."
+                )
 
     def clear(self, hypergraph_attr=True):
         """Remove all nodes and edges from the graph.
