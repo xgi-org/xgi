@@ -49,8 +49,6 @@ stats package
       ~xgi.stats.EdgeStat
       ~xgi.stats.MultiNodeStat
       ~xgi.stats.MultiEdgeStat
-      ~xgi.stats.MultiDiNodeStat
-      ~xgi.stats.MultiDiEdgeStat
 
    .. rubric:: Directed hypergraphs
    
@@ -93,6 +91,8 @@ stats package
 
       ~xgi.stats.DiNodeStat
       ~xgi.stats.DiEdgeStat
+      ~xgi.stats.MultiDiNodeStat
+      ~xgi.stats.MultiDiEdgeStat
 
 
 .. rubric:: Decorators
