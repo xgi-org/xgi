@@ -50,6 +50,15 @@ stats package
       ~xgi.stats.MultiNodeStat
       ~xgi.stats.MultiEdgeStat
 
+   *Corresponding decorators**
+
+   .. autosummary::
+      :toctree: stats
+      :nosignatures:
+
+      ~xgi.stats.nodestat_func
+      ~xgi.stats.edgestat_func
+
    .. rubric:: Directed hypergraphs
    
 
@@ -94,14 +103,11 @@ stats package
       ~xgi.stats.MultiDiNodeStat
       ~xgi.stats.MultiDiEdgeStat
 
+   *Corresponding decorators*
 
-.. rubric:: Decorators
+   .. autosummary::
+      :toctree: stats
+      :nosignatures:
 
-.. autosummary::
-   :toctree: stats
-   :nosignatures:
-
-   ~xgi.stats.nodestat_func
-   ~xgi.stats.edgestat_func
-   ~xgi.stats.dinodestat_func
-   ~xgi.stats.diedgestat_func
+      ~xgi.stats.dinodestat_func
+      ~xgi.stats.diedgestat_func
