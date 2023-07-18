@@ -31,6 +31,15 @@ stats package
       ~xgi.stats.edgestats.size
       ~xgi.stats.edgestats.node_edge_centrality
 
+   *Corresponding decorators*
+
+   .. autosummary::
+      :toctree: stats
+      :nosignatures:
+
+      ~xgi.stats.nodestat_func
+      ~xgi.stats.edgestat_func
+
    *Corresponding modules*
 
    .. autosummary::
@@ -49,15 +58,6 @@ stats package
       ~xgi.stats.EdgeStat
       ~xgi.stats.MultiNodeStat
       ~xgi.stats.MultiEdgeStat
-
-   *Corresponding decorators**
-
-   .. autosummary::
-      :toctree: stats
-      :nosignatures:
-
-      ~xgi.stats.nodestat_func
-      ~xgi.stats.edgestat_func
 
    .. rubric:: Directed hypergraphs
    
@@ -83,6 +83,15 @@ stats package
       ~xgi.stats.diedgestats.tail_order
       ~xgi.stats.diedgestats.tail_size
 
+   *Corresponding decorators*
+
+   .. autosummary::
+      :toctree: stats
+      :nosignatures:
+
+      ~xgi.stats.dinodestat_func
+      ~xgi.stats.diedgestat_func
+
    *Corresponding modules*
 
    .. autosummary::
@@ -102,12 +111,3 @@ stats package
       ~xgi.stats.DiEdgeStat
       ~xgi.stats.MultiDiNodeStat
       ~xgi.stats.MultiDiEdgeStat
-
-   *Corresponding decorators*
-
-   .. autosummary::
-      :toctree: stats
-      :nosignatures:
-
-      ~xgi.stats.dinodestat_func
-      ~xgi.stats.diedgestat_func
