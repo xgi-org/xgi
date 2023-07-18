@@ -4,6 +4,8 @@ from ..exception import XGIError
 from ..generators import empty_hypergraph
 from ..linalg import incidence_matrix
 
+__all__ = ["from_incidence_matrix", "to_incidence_matrix"]
+
 
 def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None):
     """Create a hypergraph from an incidence matrix

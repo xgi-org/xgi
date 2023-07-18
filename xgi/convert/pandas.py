@@ -6,6 +6,8 @@ from ..classes import SimplicialComplex
 from ..exception import XGIError
 from ..generators import empty_hypergraph
 
+__all__ = ["from_bipartite_pandas_dataframe", "to_bipartite_pandas_dataframe"]
+
 
 def from_bipartite_pandas_dataframe(
     df, create_using=None, node_column=0, edge_column=1

@@ -2,6 +2,8 @@ from ..classes import set_edge_attributes
 from ..exception import XGIError
 from ..generators import empty_hypergraph
 
+__all__ = ["dict_to_hypergraph"]
+
 
 def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
     """

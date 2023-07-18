@@ -1,9 +1,19 @@
-*****************************************
-Converting to and from other data formats
-*****************************************
+***************
+convert package
+***************
 
-.. currentmodule:: xgi
-.. automodule:: xgi.convert
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree: convert
+
+   ~xgi.convert.bipartite_edges
+   ~xgi.convert.bipartite_graph
+   ~xgi.convert.graph
+   ~xgi.convert.higher_order_network
+   ~xgi.convert.hyperedges
+   ~xgi.convert.hypergraph_dict
+   ~xgi.convert.incidence
+   ~xgi.convert.line_graph
+   ~xgi.convert.pandas
+   ~xgi.convert.simplex

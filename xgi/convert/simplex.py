@@ -2,6 +2,8 @@ from ..classes import Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..generators import empty_simplicial_complex
 
+__all__ = ["from_simplex_dict", "from_max_simplices"]
+
 
 def from_simplex_dict(d, create_using=None):
     """Creates a Simplicial Complex from a dictionary of simplices,

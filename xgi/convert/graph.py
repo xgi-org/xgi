@@ -2,6 +2,8 @@ import networkx as nx
 
 from ..linalg import adjacency_matrix
 
+__all__ = ["convert_to_graph"]
+
 
 def convert_to_graph(H):
     """Graph projection (1-skeleton) of the hypergraph H.

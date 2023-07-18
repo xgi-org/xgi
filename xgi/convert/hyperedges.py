@@ -2,6 +2,14 @@ from ..classes import SimplicialComplex
 from ..generators import empty_hypergraph
 
 
+__all__ = [
+    "from_hyperedge_dict",
+    "to_hyperedge_dict",
+    "from_hyperedge_list",
+    "to_hyperedge_list",
+]
+
+
 def from_hyperedge_dict(d, create_using=None):
     """Creates a hypergraph from a dictionary of hyperedges
 

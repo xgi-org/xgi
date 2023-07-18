@@ -21,6 +21,12 @@ from .incidence import from_incidence_matrix
 from .pandas import from_bipartite_pandas_dataframe
 from .simplex import from_simplex_dict
 
+__all__ = [
+    "convert_to_hypergraph",
+    "convert_to_dihypergraph",
+    "convert_to_simplicial_complex",
+]
+
 
 def convert_to_hypergraph(data, create_using=None):
     """Make a hypergraph from a known data structure.

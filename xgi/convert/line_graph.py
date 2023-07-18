@@ -2,6 +2,8 @@ from itertools import combinations
 
 import networkx as nx
 
+__all__ = ["to_line_graph"]
+
 
 def to_line_graph(H, s=1):
     """The s-line graph of the hypergraph.

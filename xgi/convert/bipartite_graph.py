@@ -4,6 +4,8 @@ from networkx import bipartite
 from ..exception import XGIError
 from ..generators import empty_hypergraph
 
+__all__ = ["from_bipartite_graph", "to_bipartite_graph"]
+
 
 def from_bipartite_graph(G, create_using=None, dual=False):
     """
