@@ -45,4 +45,4 @@ def to_bipartite_edgelist(H):
     --------
     from_hyperedge_list
     """
-    return [(n, e) for n, edges in H.edges.members(dtype=dict).items() for e in edges]
+    return [(n, id) for id, e in H.edges.members(dtype=dict).items() for n in e]
