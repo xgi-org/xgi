@@ -892,7 +892,7 @@ class DiHypergraph:
                         warn(f"Edge {e} does not exist!")
             except AttributeError:
                 # treat `values` as a constant
-                for e in self._edge:
+                for e in self._edge_in:
                     self._edge_attr[e][name] = values
         else:
             try:
