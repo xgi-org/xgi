@@ -40,7 +40,7 @@ Iacopo Iacopini, Márton Karsai, and Alain Barrat, "The temporal dynamics of gro
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2306.09967>`
 
-Timothy LaRock and Renaud Lambiotte, "Encapsulation Structure and Dynamics in Hypergraphs", arXiv:2307.04613.
+Timothy LaRock and Renaud Lambiotte, "Encapsulation Structure and Dynamics in Hypergraphs", arXiv:2307.04613 (2023).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2307.04613>`
 :bdg-link-primary-line:`Github <https://github.com/tlarock/encapsulation-dynamics/>`
