@@ -36,7 +36,7 @@ Nicholas W. Landry and Juan Restrepo, "Polarization in hypergraphs with communit
 :bdg-link-primary-line:`Paper <http://arxiv.org/abs/2302.13967>`
 :bdg-link-primary-line:`Github <https://github.com/nwlandry/filtering-higher-order-datasets>`
 
-Iacopo Iacopini, Márton Karsai, and Alain Barrat, "The temporal dynamics of group interactions in higher-order social networks", arXiv:2306.09967.
+Iacopo Iacopini, Márton Karsai, and Alain Barrat, "The temporal dynamics of group interactions in higher-order social networks", arXiv:2306.09967 (2023).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2306.09967>`
 
