@@ -10,7 +10,7 @@ Published work
 2023
 ----
 
-Yuanzhao Zhang, Maxime Lucas, and Federico Battiston, "Higher-order interactions shape collective dynamics differently in hypergraphs and simplicial complexes", Nature Communications **14**, 1605 (2023).
+Yuanzhao Zhang, Maxime Lucas, and Federico Battiston, "Higher-order interactions shape collective dynamics differently in hypergraphs and simplicial complexes", *Nature Communications* **14**, 1605 (2023).
 
 :bdg-link-primary-line:`Paper <http://doi.org/10.1038/s41467-023-37190-9>`
 :bdg-link-primary-line:`Github <https://github.com/maximelucas/HOI_shape_sync_differently>`
