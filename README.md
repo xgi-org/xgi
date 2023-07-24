@@ -1,4 +1,5 @@
-# XGI
+### XGI ###
+
 <img src='logo/logo.svg' width='150px' align="right" style="float:right;margin-left:10pt"></img>
 Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the representation, manipulation, and study of the structure, dynamics, and functions of complex systems with group (higher-order) interactions.
 
@@ -11,20 +12,19 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the rep
 * [**GitHub Discussions**](../../discussions)
 * [**Documentation**](https://xgi.readthedocs.io)
 * [**Contributors**](https://xgi.readthedocs.io/en/stable/contributors.html)
+* [**Projects using XGI**](https://xgi.readthedocs.io/en/stable/using-xgi.html)
 
 Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twitter](https://twitter.com/xginets) or [Mastodon](https://mathstodon.xyz/@xginets)!
 
-## Table of Contents:
-- [XGI](#xgi)
-  - [Table of Contents:](#table-of-contents)
-  - [Installation](#installation)
-  - [Getting Started](#getting-started)
-  - [Corresponding Data](#corresponding-data)
-  - [How to Contribute](#how-to-contribute)
-  - [How to Cite](#how-to-cite)
-  - [License](#license)
-  - [Funding](#funding)
-  - [Other Resources](#other-resources)
+### Table of Contents: ###
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+- [Corresponding Data](#corresponding-data)
+- [How to Contribute](#how-to-contribute)
+- [How to Cite](#how-to-cite)
+- [License](#license)
+- [Funding](#funding)
+- [Other Resources](#other-resources)
 
 
 ## Installation

@@ -5,13 +5,33 @@
 About
 =====
 
-The Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/xgi-org/xgi>`_ library provides data structures and algorithms for modeling and analyzing
-complex systems with group (higher-order) interactions.
+The Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/xgi-org/xgi>`_
+library provides data structures and algorithms for modeling and analyzing complex systems
+with group (higher-order) interactions.
+
+Many datasets can be represented as graphs, where pairs of entities (or nodes) are
+related via links (or edges).  Examples are road networks, energy grids, social
+networks, neural networks, etc.  However, in many other datasets, more than two entities
+can be related at a time.  For example, many scientists (entities) can collaborate on a
+scientific article together (links), and multiple email accounts (entities) can all
+participate on the same email thread (links).  In this latter case, graphs no longer
+present a viable alternative to represent such datasets.  It is for this kind of
+datasets, where the interactions are given among groups of more than two entities (also
+called higher-order interactions), that XGI was designed for.
+
+XGI is implemented in pure Python and is designed to seamlessly interoperate with the
+rest of the Python scientific stack (numpy, scipy, pandas, matplotlib, etc).  XGI is
+designed and developed by network scientists with the needs of network scientists in
+mind.
 
 - Repository: https://github.com/xgi-org/xgi
 - PyPI: `latest release <https://pypi.org/project/xgi/>`_
 - Twitter: `@xginets <https://twitter.com/xginets>`_
 - Contributors: `list <contributors.html>`_
+- Projects using XGI: `list <using-xgi.html>`_
+
+Sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
+
 
 
 Installation
@@ -58,21 +78,23 @@ Contributing
 ============
 
 If you want to contribute to this project, please make sure to read the
-`code of conduct
-<https://github.com/xgi-org/xgi/blob/main/CODE_OF_CONDUCT.md>`_
-and the `contributing guidelines
-<https://github.com/xgi-org/xgi/blob/main/HOW_TO_CONTRIBUTE.md.md>`_.
+`contributing guidelines <HOW_TO_CONTRIBUTE.md>`_.
+We expect respectful and kind interactions by all contributors and users
+as laid out in our `code of conduct <CODE_OF_CONDUCT.md>`_.
 
-The best way to contribute to XGI is by submitting a bug or request a new feature by
-opening a `new issue <https://github.com/xgi-org/xgi/issues/new>`_.
+The XGI community always welcomes contributions, no matter how small.
+We're happy to help troubleshoot XGI issues you run into,
+assist you if you would like to add functionality or fixes to the codebase,
+or answer any questions you may have.
 
-To get more actively involved, you are invited to browse the `issues page
-<https://github.com/xgi-org/xgi/issues>`_ and choose one that you can
-work on.  The core developers will be happy to help you understand the codebase and any
-other doubts you may have while working on your contribution.
+Some concrete ways that you can get involved:
 
-If you are interested in the daily goings-on of XGI, you are invited to join our `Zulip
-channel <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_.
+* **Get XGI updates** by following the XGI `Twitter <https://twitter.com/xginets>`_ account, signing up for our `mailing list <http://eepurl.com/igE6ez>`_, or starring this repository.
+* **Spread the word** when you use XGI by sharing with your colleagues and friends.
+* **Request a new feature or report a bug** by raising a `new issue <https://github.com/xgi-org/xgi/issues/new>`_.
+* **Create a Pull Request (PR)** to address an `open issue <../../issues>`_ or add a feature.
+* **Join our Zulip channel** to be a part of the `daily goings-on of XGI <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_.
+.
 
 
 Funding

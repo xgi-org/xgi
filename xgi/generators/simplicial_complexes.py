@@ -12,7 +12,7 @@ import networkx as nx
 import numpy as np
 from scipy.special import comb
 
-from ..classes import SimplicialComplex
+from ..core import SimplicialComplex
 from ..utils.utilities import find_triangles
 
 __all__ = [
@@ -123,7 +123,7 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     """
     # This import needs to happen when this function is called, not when it is
     # defined.  Otherwise, a circular import error would happen.
-    from ..classes import SimplicialComplex
+    from ..core import SimplicialComplex
 
     if seed is not None:
         random.seed(seed)
@@ -183,7 +183,7 @@ def flag_complex_d2(G, p2=None, seed=None):
     """
     # This import needs to happen when this function is called, not when it is
     # defined.  Otherwise, a circular import error would happen.
-    from ..classes import SimplicialComplex
+    from ..core import SimplicialComplex
 
     if seed is not None:
         random.seed(seed)

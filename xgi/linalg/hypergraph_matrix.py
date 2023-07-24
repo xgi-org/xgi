@@ -146,6 +146,10 @@ def adjacency_matrix(H, order=None, sparse=True, s=1, weighted=False, index=Fals
         Specifies whether the output matrix is a scipy sparse matrix or a numpy matrix
     s: int, default: 1
         Specifies the number of overlapping edges to be considered connected.
+    weighted: bool
+        If True, entry (i, j) [and (j, i)] is the number of edges that connect i and j.
+        If False, entry (i, j) [and (j, i] is 1 if i and j share at least one edge
+        and 0 otherwise. By default, False.
     index: bool, default: False
         Specifies whether to output disctionaries mapping the node IDs to indices
 

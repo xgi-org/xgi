@@ -229,7 +229,7 @@ def test_write_json(edgelist1):
         3: {"name": "Alice"},
         4: {"name": "Giovanni"},
     }
-    xgi.set_node_attributes(H1, node_attr_dict)
+    H1.set_node_attributes(node_attr_dict)
 
     edge_attr_dict = {
         0: {"weight": 1},
@@ -237,7 +237,7 @@ def test_write_json(edgelist1):
         2: {"weight": 3},
         3: {"weight": -1},
     }
-    xgi.set_edge_attributes(H1, edge_attr_dict)
+    H1.set_edge_attributes(edge_attr_dict)
 
     xgi.write_json(H1, filename)
 

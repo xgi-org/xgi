@@ -9,6 +9,7 @@
 
    about
    contributors
+   using-xgi
 
 .. toctree::
    :maxdepth: 2
@@ -22,16 +23,16 @@
    :caption: Quick reference links
    :hidden:
 
-   Hypergraph class <api/classes/xgi.classes.hypergraph.Hypergraph.rst>
-   Simplicial Complex class <api/classes/xgi.classes.simplicialcomplex.SimplicialComplex.rst>
-   Directed Hypergraph class <api/classes/xgi.classes.dihypergraph.DiHypergraph>
+   Hypergraph class <api/core/xgi.core.hypergraph.Hypergraph.rst>
+   Simplicial Complex class <api/core/xgi.core.simplicialcomplex.SimplicialComplex.rst>
+   Directed Hypergraph class <api/core/xgi.core.dihypergraph.DiHypergraph>
 
 .. toctree::
    :maxdepth: 2
    :caption: API Reference
    :hidden:
 
-   Core classes <api/classes.rst>
+   Core functionality <api/core.rst>
    Node and edge statistics <api/stats.rst>
    Algorithms <api/algorithms.rst>
    Generative Models <api/generators.rst>
@@ -69,6 +70,7 @@ mind.
 - PyPI: `latest release <https://pypi.org/project/xgi/>`_
 - Twitter: `@xginets <https://twitter.com/xginets>`_
 - Contributors: `list <contributors.html>`_
+- Projects using XGI: `list <using-xgi.html>`_
 
 Sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
 
@@ -153,29 +155,6 @@ Academic References
   <https://www.nature.com/articles/s41567-019-0459-y>`_, Renaud Lambiotte, Martin
   Rosvall, and Ingo Scholtes.
 
-
-Contributors
-============
-
-The core XGI team members:
-
-* Nicholas Landry
-* Leo Torres
-* Maxime Lucas
-* Iacopo Iacopini
-* Giovanni Petri
-* Alice Patania
-* Alice Schwarze
-
-Other contributors:
-
-* Martina Contisciani
-* Tim LaRock
-* Sabina Adhikari
-* Marco Nurisso
-* Alexis Arnaudon
-* Thomas Robiglio
-* Gonzalo Contreras Aso
 
 Funding
 =======
