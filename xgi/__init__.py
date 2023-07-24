@@ -2,7 +2,7 @@ import pkg_resources
 
 from . import (
     utils,
-    classes,
+    core,
     algorithms,
     convert,
     drawing,
@@ -13,7 +13,7 @@ from . import (
     stats,
 )
 from .utils import *
-from .classes import *
+from .core import *
 from .algorithms import *
 from .convert import *
 from .drawing import *

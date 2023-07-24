@@ -12,3 +12,4 @@ algorithms package
    ~xgi.algorithms.clustering
    ~xgi.algorithms.connected
    ~xgi.algorithms.shortest_path
+   ~xgi.algorithms.properties

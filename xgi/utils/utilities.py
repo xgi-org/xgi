@@ -1,6 +1,7 @@
 """General utilities."""
 
 from collections import defaultdict
+from copy import deepcopy
 from functools import lru_cache
 from itertools import chain, combinations, count
 
@@ -17,6 +18,8 @@ __all__ = [
     "find_triangles",
     "request_json_from_url",
     "request_json_from_url_cached",
+    "subfaces",
+    "convert_labels_to_integers",
 ]
 
 
@@ -275,3 +278,120 @@ def request_json_from_url_cached(url):
         return r.json()
     else:
         raise XGIError(f"Error: HTTP response {r.status_code}")
+
+
+def subfaces(edges, order=None):
+    """Returns the subfaces of a list of hyperedges
+
+    Parameters
+    ---------
+    edges: list of edges
+        Edges to consider, as tuples of nodes
+    order: {None, -1, int}, optional
+        If None, compute subfaces recursively down to nodes.
+        If -1, compute subfaces the order below (e.g. edges for a triangle).
+        If d > 0, compute the subfaces of order d.
+        By default, None.
+
+    Returns
+    -------
+    faces: list of sets
+        List of hyperedges that are subfaces of input hyperedges.
+
+    Raises
+    ------
+    XGIError
+        Raises error when order is larger than the max order of input edges
+
+    Notes
+    -----
+    Hyperedges in the returned list are not unique, they may appear more than once
+    if they are subfaces or more than one edge from the input edges.
+
+    Examples
+    --------
+    >>> import xgi
+    >>> edges = [{1,2,3,4}, {3,4,5}]
+    >>> xgi.subfaces(edges) # doctest: +NORMALIZE_WHITESPACE
+    [(1,), (2,), (3,), (4,), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4), (1, 2, 3),
+     (1, 2, 4), (1, 3, 4), (2, 3, 4), (3,), (4,), (5,), (3, 4), (3, 5), (4, 5)]
+    >>> xgi.subfaces(edges, order=-1)
+    [(1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4), (3, 4), (3, 5), (4, 5)]
+    >>> xgi.subfaces(edges, order=2)
+    [(1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4), (3, 4, 5)]
+
+    """
+
+    max_order = len(max(edges, key=len)) - 1
+    if order and order > max_order:
+        raise XGIError(
+            "order must be less or equal to the maximum "
+            f"order among the edges: {max_order}."
+        )
+
+    faces = []
+    for edge in edges:
+        size = len(edge)
+
+        if size <= 1:  # down from a node is an empty tuple
+            continue
+
+        if order is None:  # add all subfaces down to nodes
+            faces_to_add = list(powerset(edge))
+        elif order == -1:  # add subfaces of order below
+            faces_to_add = list(combinations(edge, size - 1))
+        elif order >= 0:  # add subfaces of order d
+            faces_to_add = list(combinations(edge, order + 1))
+
+        faces += faces_to_add
+    return faces
+
+
+def convert_labels_to_integers(H, label_attribute="label"):
+    """Relabel node and edge IDs to be sequential integers.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest
+
+    label_attribute : string, default: "label"
+        The attribute name that stores the old node and edge labels
+
+    Returns
+    -------
+    Hypergraph
+        A new hypergraph with nodes and edges with sequential IDs starting at 0.
+        The old IDs are stored in the "label" attribute for both nodes and edges.
+
+    Notes
+    -----
+    The "relabeling" will occur even if the node/edge IDs are sequential.
+    Because the old IDs are stored in the "label" attribute for both nodes and edges,
+    the old "label" values (if they exist) will be overwritten.
+    """
+    from ..core import Hypergraph
+
+    node_dict = dict(zip(H.nodes, range(H.num_nodes)))
+    edge_dict = dict(zip(H.edges, range(H.num_edges)))
+    temp_H = Hypergraph()
+    temp_H._hypergraph = deepcopy(H._hypergraph)
+
+    temp_H.add_nodes_from((id, deepcopy(H.nodes[n])) for n, id in node_dict.items())
+    temp_H.set_node_attributes(
+        {n: {label_attribute: id} for id, n in node_dict.items()}
+    )
+
+    temp_H.add_edges_from(
+        (
+            {node_dict[n] for n in e},
+            edge_dict[id],
+            deepcopy(H.edges[id]),
+        )
+        for id, e in H.edges.members(dtype=dict).items()
+    )
+    temp_H.set_edge_attributes(
+        {e: {label_attribute: id} for id, e in edge_dict.items()}
+    )
+
+    return temp_H

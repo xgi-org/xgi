@@ -3,7 +3,7 @@
 This module is part of the stats package, and it defines edge-level statistics.  That
 is, each function defined in this module is assumed to define an edge-quantity mapping.
 Each callable defined here is accessible via a `Network` object, or a
-:class:`~xgi.classes.reportviews.DiEdgeView` object.  For more details, see the `tutorial
+:class:`~xgi.core.reportviews.DiEdgeView` object.  For more details, see the `tutorial
 <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
 
 Examples
