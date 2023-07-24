@@ -1,7 +1,6 @@
 from ..core import SimplicialComplex
 from ..generators import empty_hypergraph
 
-
 __all__ = [
     "from_hyperedge_dict",
     "to_hyperedge_dict",
