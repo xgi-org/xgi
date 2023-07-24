@@ -8,7 +8,7 @@ from numpy.linalg import norm
 from scipy.sparse.linalg import eigsh
 
 from ..classes import convert_labels_to_integers, is_uniform
-from ..convert import to_line_graph
+from ..line_graphs import to_line_graph
 from ..exception import XGIError
 from ..linalg import clique_motif_matrix, incidence_matrix
 
