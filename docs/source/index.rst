@@ -70,7 +70,7 @@ mind.
 - PyPI: `latest release <https://pypi.org/project/xgi/>`_
 - Twitter: `@xginets <https://twitter.com/xginets>`_
 - Contributors: `list <contributors.html>`_
-- Projects using XGI: `list <using-xgi.html`_
+- Projects using XGI: `list <using-xgi.html>`_
 
 Sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
 
