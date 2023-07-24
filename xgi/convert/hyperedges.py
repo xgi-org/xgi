@@ -1,4 +1,4 @@
-from ..classes import SimplicialComplex
+from ..core import SimplicialComplex
 from ..generators import empty_hypergraph
 
 

@@ -2,7 +2,7 @@ from collections import defaultdict
 
 import pandas as pd
 
-from ..classes import SimplicialComplex
+from ..core import SimplicialComplex
 from ..exception import XGIError
 from ..generators import empty_hypergraph
 

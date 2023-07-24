@@ -1,4 +1,3 @@
-from ..classes import set_edge_attributes
 from ..exception import XGIError
 from ..generators import empty_hypergraph
 
@@ -90,10 +89,7 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
                 if edgetype(e) in H.edges
             }
 
-        set_edge_attributes(
-            H,
-            edge_data,
-        )
+        H.set_edge_attributes(edge_data)
     except KeyError as e:
         raise XGIError("Failed to import edge attributes.") from e
 

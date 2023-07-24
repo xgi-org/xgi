@@ -1,4 +1,4 @@
-from ..classes import Hypergraph, SimplicialComplex
+from ..core import Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..generators import empty_simplicial_complex
 
