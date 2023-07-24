@@ -15,7 +15,7 @@ Yuanzhao Zhang, Maxime Lucas, and Federico Battiston, "Higher-order interactions
 :bdg-link-primary-line:`Paper <http://doi.org/10.1038/s41467-023-37190-9>`
 :bdg-link-primary-line:`Github <https://github.com/maximelucas/HOI_shape_sync_differently>`
 
-Nicolo Ruggieri, Martina Contisciani, Federico Battiston, and Caterina de Bacco, "Community detection in large hypergraphs", *Science Advances* **9**, eadg9159 (2023).
+Nicolò Ruggieri, Martina Contisciani, Federico Battiston, and Caterina de Bacco, "Community detection in large hypergraphs", *Science Advances* **9**, eadg9159 (2023).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1126/sciadv.adg9159>`
 :bdg-link-primary-line:`Github <https://github.com/nickruggeri/Hy-MMSBM>`
