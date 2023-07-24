@@ -16,6 +16,7 @@ from .utils import *
 from .classes import *
 from .algorithms import *
 from .convert import *
+from .line_graphs import *
 from .drawing import *
 from .dynamics import *
 from .generators import *
