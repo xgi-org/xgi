@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.7.2
+* Listed the available statistics in the stats module [#405](https://github.com/xgi-org/xgi/pull/405) (@thomasrobiglio).
+* Implemented functions from this [article](https://doi.org/10.1038/s41467-023-37190-9) [#400](https://github.com/xgi-org/xgi/pull/400) (@maximelucas).
+* Reorganized the `convert` module [#423](https://github.com/xgi-org/xgi/pull/423) (@nwlandry).
+* Refactored the core data structures and removed the `function.py` file, moving the functions to other locations [#412](https://github.com/xgi-org/xgi/pull/412) (@nwlandry).
+* Small documentation fixes [#422](https://github.com/xgi-org/xgi/pull/422) (@nwlandry).
+* Added a webpage listing projects and papers that use XGI [#416](https://github.com/xgi-org/xgi/pull/416) (@nwlandry).
+* Added an optinion so that only the text in the Jupyter Notebooks counts towards the line counts [#417](https://github.com/xgi-org/xgi/pull/417) (@nwlandry).
+* Fixed the `_color_arg_to_dict` and `_scalar_arg_to_dict` functions so they are more consistent [#402](https://github.com/xgi-org/xgi/pull/402) (@nwlandry).
+* Fixed the IDView.ids type [#406](https://github.com/xgi-org/xgi/pull/406) (@leotrs).
+
 ## v0.7.1
 * Fix: Converting from a `SimplicialComplex` to a `Hypergraph` now adds all of its faces to the hypergraph, not just the maximal faces. Added unit tests for converting between `Hypergraph` and `SimplicialComplex` classes [#399](https://github.com/xgi-org/xgi/pull/399) (@thomasrobiglio).
 * Moved the list of contributors from the readthedocs, license, setup, etc. into a dedicated file so that when contributors join or leave, we only update a single file. Renamed `CONTRIBUTING.md` to `HOW_TO_CONTRIBUTE.md`. [#401](https://github.com/xgi-org/xgi/pull/401) (@nwlandry).
