@@ -216,6 +216,9 @@ def draw(
     # compute axis limits
     _update_lims(pos, ax)
 
+    if _pos_is_circular(pos):
+        ax.set_aspect("equal")
+
     return ax
 
 
@@ -354,6 +357,9 @@ def draw_nodes(
 
     # compute axis limits
     _update_lims(pos, ax)
+
+    if _pos_is_circular(pos):
+        ax.set_aspect("equal")
 
     return ax
 
@@ -1149,6 +1155,36 @@ def _update_lims(pos, ax):
     corners = (minx - padx, miny - pady), (maxx + padx, maxy + pady)
     ax.update_datalim(corners)
     ax.autoscale_view()
+
+
+def _pos_is_circular(pos):
+    """
+    Returns True if positions in `pos` correspond to the circular layout.
+
+    Parameters
+    ----------
+    pos : dict
+        A dictionary containing the positions of nodes. The keys are node identifiers,
+        and the values are 2D coordinate tuples or arrays.
+
+    Returns
+    -------
+    bool
+
+    """
+    
+    N = len(pos)
+    pos_arr = np.array(list(pos.values()))
+    
+    radii = np.linalg.norm(pos_arr, axis=1)
+    angles = np.arctan2(pos_arr[:,1], pos_arr[:,0])
+    angles_diff = np.diff(angles) % (2*np.pi)
+
+    same_radii = np.allclose(radii, radii[0])
+    same_angles_diff = np.allclose(angles_diff, angles_diff[0])
+    correct_angle = np.allclose(angles_diff, 2 * np.pi / N)
+    
+    return (same_radii and same_angles_diff and correct_angle)
 
 
 def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, zorder, radius):
