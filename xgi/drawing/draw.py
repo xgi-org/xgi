@@ -1,5 +1,6 @@
 """Draw hypergraphs and simplicial complexes with matplotlib."""
 
+from collections import defaultdict
 from collections.abc import Iterable
 from inspect import signature
 from itertools import combinations
@@ -1159,12 +1160,16 @@ def draw_multilayer(
     H,
     pos=None,
     ax=None,
-    node_fc="tab:blue",
+    dyad_color="black",
+    dyad_lw=1.5,
+    edge_fc=None,
+    node_fc="white",
     node_ec="black",
-    node_lw=0.5,
-    node_size=5,
+    node_lw=1,
+    node_size=15,
     max_order=None,
-    palette="jet",
+    node_labels=False,
+    hyperedge_labels=False,
     conn_lines=True,
     conn_lines_style="dotted",
     width=5,
@@ -1172,6 +1177,7 @@ def draw_multilayer(
     h_angle=10,
     v_angle=0,
     sep=1,
+    **kwargs,
 ):
     """Draw a hypergraph or simplicial complex visualized in 3D
     showing hyperedges/simplices of different orders on superimposed layers.
@@ -1216,102 +1222,158 @@ def draw_multilayer(
     ax : matplotlib Axes3DSubplot
         The subplot with the multilayer network visualization.
     """
+    settings = {
+        "min_node_size": 10.0,
+        "max_node_size": 30.0,
+        "min_dyad_lw": 2.0,
+        "max_dyad_lw": 10.0,
+        "min_node_lw": 1.0,
+        "max_node_lw": 5.0,
+        "node_fc_cmap": cm.Reds,
+        "node_ec_cmap": cm.Greys,
+        "edge_fc_cmap": cm.Blues,
+        "dyad_color_cmap": cm.Greys,
+    }
+
+    settings.update(kwargs)
+
+    if edge_fc is None:
+        edge_fc = H.edges.size
 
     if pos is None:
         pos = barycenter_spring_layout(H)
 
     if ax is None:
-        fig, ax = plt.subplots(
+        _, ax = plt.subplots(
             1, 1, figsize=(width, height), dpi=600, subplot_kw={"projection": "3d"}
         )
 
     if max_order is None:
         max_order = max_edge_order(H)
-
-    cmap = cm.get_cmap(palette, max_order)
+    else:
+        max_order = min(max_order, max_edge_order(H))
 
     xs, ys = zip(*pos.values())
 
-    for order in range(1, max_order + 1):
-        zs = [order * sep] * len(xs)
+    dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
+    dyad_lw = _scalar_arg_to_dict(
+        dyad_lw, H.edges, settings["min_dyad_lw"], settings["max_dyad_lw"]
+    )
 
-        # draw lines connecting points on the different planes
-        if conn_lines and order > 1:
-            thru_nodes = H.nodes
-            lines3d_between = [
-                (list(pos[i]) + [order * sep - sep], list(pos[i]) + [order * sep])
-                for i in thru_nodes
-            ]
-            between_lines = Line3DCollection(
-                lines3d_between,
-                zorder=order,
-                color=".5",
-                alpha=0.4,
-                linestyle=conn_lines_style,
-                linewidth=1,
-            )
-            ax.add_collection3d(between_lines)
+    edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
 
-        # draw the edges/simplices of given order
-        edges = H.edges.filterby("order", order).members()
+    node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
+    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_ec_cmap"])
+    node_lw = _scalar_arg_to_dict(
+        node_lw,
+        H.nodes,
+        settings["min_node_lw"],
+        settings["max_node_lw"],
+    )
+    node_size = _scalar_arg_to_dict(
+        node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
+    )
+
+    order_nodes = defaultdict(set)
+    for id, he in H.edges.members(dtype=dict).items():
+        d = len(he) - 1
+        zs = d * sep
+
+        order_nodes[d].update(he)
+
         # dyads
-        if order == 1:
-            lines3d = [
-                (list(pos[i]) + [order * sep], list(pos[j]) + [order * sep])
-                for i, j in edges
-            ]
-            line_collection = Line3DCollection(
-                lines3d,
-                zorder=order - 1,
-                color=cmap(order - 1),
-                alpha=1,
-                linewidth=0.7,
+        if d > max_order:
+            continue
+
+        if d == 1:
+            he = list(he)
+            x1 = [pos[he[0]][0], pos[he[0]][1], zs]
+            x2 = [pos[he[1]][0], pos[he[1]][1], zs]
+            l = Line3DCollection(
+                [(x1, x2)],
+                color=dyad_color[id],
+                linewidth=dyad_lw[id],
             )
-            ax.add_collection3d(line_collection)
+            ax.add_collection3d(l)
         # higher-orders
         else:
             poly = []
-            for e in edges:
-                vertices = np.array([[xs[i - 1], ys[i - 1], zs[i - 1]] for i in e])
-                vertices = _CCW_sort(vertices)
-                poly.append(vertices)
+            vertices = np.array([[pos[i][0], pos[i][1], zs] for i in he])
+            vertices = _CCW_sort(vertices)
+            poly.append(vertices)
             poly = Poly3DCollection(
                 poly,
-                zorder=order - 1,
-                color=cmap(order - 1),
+                zorder=d - 1,
+                color=edge_fc[id],
                 alpha=0.5,
+                edgecolor=None,
             )
             ax.add_collection3d(poly)
+
+    # now draw by order
+    # draw lines connecting points on the different planes
+    for d in range(max_order):
+        thru_nodes = order_nodes[d].intersection(order_nodes[d + 1])
+        lines3d_between = [
+            (list(pos[i]) + [d * sep], list(pos[i]) + [(d + 1) * sep])
+            for i in thru_nodes
+        ]
+        between_lines = Line3DCollection(
+            lines3d_between,
+            zorder=d,
+            color=".5",
+            alpha=0.4,
+            linestyle=conn_lines_style,
+            linewidth=1,
+        )
+        ax.add_collection3d(between_lines)
+
+    for d in range(max_order + 1):
         # draw nodes
-        ax.scatter(
-            xs,
-            ys,
-            zs,
-            c=node_fc,
-            edgecolors=node_ec,
-            linewidths=node_lw,
-            marker="o",
-            alpha=1,
-            zorder=order + 1,
-            s=node_size,
-        )
-        # draw surfaces corresponding to the different orders
-        xdiff = np.max(xs) - np.min(xs)
-        ydiff = np.max(ys) - np.min(ys)
-        ymin = np.min(ys) - ydiff * 0.1
-        ymax = np.max(ys) + ydiff * 0.1
-        xmin = np.min(xs) - xdiff * 0.1 * (width / height)
-        xmax = np.max(xs) + xdiff * 0.1 * (width / height)
-        xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
-        zz = np.zeros(xx.shape) + order * sep
-        ax.plot_surface(
-            xx,
-            yy,
-            zz,
-            color=cmap(order - 1),
-            alpha=0.1,
-            zorder=order,
-        )
+        if order_nodes[d]:
+            (x, y, z, s, c, ec, lw,) = zip(
+                *[
+                    (
+                        pos[i][0],
+                        pos[i][1],
+                        sep * d,
+                        node_size[i] ** 2,
+                        node_fc[i],
+                        node_ec[i],
+                        node_lw[i],
+                    )
+                    for i in order_nodes[d]
+                ]
+            )
+            ax.scatter(
+                x,
+                y,
+                z,
+                s=s,
+                c=c,
+                edgecolors=ec,
+                linewidths=lw,
+                zorder=max_order + 1,
+                alpha=1,
+            )
+
+            # draw surfaces corresponding to the different orders
+            xdiff = np.max(xs) - np.min(xs)
+            ydiff = np.max(ys) - np.min(ys)
+            ymin = np.min(ys) - ydiff * 0.1
+            ymax = np.max(ys) + ydiff * 0.1
+            xmin = np.min(xs) - xdiff * 0.1 * (width / height)
+            xmax = np.max(xs) + xdiff * 0.1 * (width / height)
+            xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
+            zz = np.zeros(xx.shape) + d * sep
+            ax.plot_surface(
+                xx,
+                yy,
+                zz,
+                color="grey",
+                alpha=0.1,
+                zorder=d,
+            )
 
     ax.view_init(h_angle, v_angle)
     ax.set_ylim(np.min(ys) - ydiff * 0.1, np.max(ys) + ydiff * 0.1)
