@@ -34,7 +34,7 @@ class Hypergraph:
         * hyperedge list
         * hyperedge dictionary
         * 2-column Pandas dataframe (bipartite edges)
-        * Scipy/Numpy incidence matrix
+        * Incidence matrix: numpy ndarray or scipy.sparse array
         * Hypergraph object
         * SimplicialComplex object
 
