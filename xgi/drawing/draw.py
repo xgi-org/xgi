@@ -48,6 +48,7 @@ def draw(
     max_order=None,
     node_labels=False,
     hyperedge_labels=False,
+    aspect="equal",
     **kwargs,
 ):
     """Draw hypergraph or simplicial complex.
@@ -110,6 +111,11 @@ def draw(
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
         pairs.  By default, False.
+    aspect : {"auto", "equal"} or float, optional
+        Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed 
+        directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full 
+        description at
+        https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_aspect.html
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
         * min_node_size
@@ -216,8 +222,7 @@ def draw(
     # compute axis limits
     _update_lims(pos, ax)
 
-    if _pos_is_circular(pos):
-        ax.set_aspect("equal")
+    ax.set_aspect(aspect, "datalim")
 
     return ax
 
@@ -357,9 +362,6 @@ def draw_nodes(
 
     # compute axis limits
     _update_lims(pos, ax)
-
-    if _pos_is_circular(pos):
-        ax.set_aspect("equal")
 
     return ax
 
@@ -1157,36 +1159,6 @@ def _update_lims(pos, ax):
     ax.autoscale_view()
 
 
-def _pos_is_circular(pos):
-    """
-    Returns True if positions in `pos` correspond to the circular layout.
-
-    Parameters
-    ----------
-    pos : dict
-        A dictionary containing the positions of nodes. The keys are node identifiers,
-        and the values are 2D coordinate tuples or arrays.
-
-    Returns
-    -------
-    bool
-
-    """
-    
-    N = len(pos)
-    pos_arr = np.array(list(pos.values()))
-    
-    radii = np.linalg.norm(pos_arr, axis=1)
-    angles = np.arctan2(pos_arr[:,1], pos_arr[:,0])
-    angles_diff = np.diff(angles) % (2*np.pi)
-
-    same_radii = np.allclose(radii, radii[0])
-    same_angles_diff = np.allclose(angles_diff, angles_diff[0])
-    correct_angle = np.allclose(angles_diff, 2 * np.pi / N)
-    
-    return (same_radii and same_angles_diff and correct_angle)
-
-
 def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, zorder, radius):
     """Draw a convex hull encompassing the nodes in node_pos
 
@@ -1245,6 +1217,7 @@ def draw_hypergraph_hull(
     node_labels=False,
     hyperedge_labels=False,
     radius=0.05,
+    aspect="equal",
     **kwargs,
 ):
     """Draw hypergraphs displaying the hyperedges of order k>1 as convex hulls
@@ -1309,6 +1282,11 @@ def draw_hypergraph_hull(
         pairs.  By default, False.
     radius : float, optional
         Radius of the convex hull in the vicinity of the nodes, by default 0.05.
+    aspect : {"auto", "equal"} or float, optional
+        Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed 
+        directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full 
+        description at
+        https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_aspect.html
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
         * min_node_size
@@ -1431,6 +1409,8 @@ def draw_hypergraph_hull(
 
     # compute axis limits
     _update_lims(pos, ax)
+
+    ax.set_aspect(aspect, "datalim")
 
     return ax
 
