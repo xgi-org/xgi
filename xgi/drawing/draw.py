@@ -19,8 +19,14 @@ from ..algorithms import max_edge_order
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..stats import IDStat
+from .draw_utils import (
+    _CCW_sort,
+    _color_arg_to_dict,
+    _draw_init,
+    _scalar_arg_to_dict,
+    _update_lims,
+)
 from .layout import _augmented_projection, barycenter_spring_layout
-from .draw_utils import _scalar_arg_to_dict, _color_arg_to_dict, _CCW_sort, _draw_init, _update_lims
 
 __all__ = [
     "draw",
@@ -113,8 +119,8 @@ def draw(
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
         pairs.  By default, False.
     aspect : {"auto", "equal"} or float, optional
-        Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed 
-        directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full 
+        Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed
+        directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full
         description at
         https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_aspect.html
     **kwargs : optional args
@@ -164,7 +170,7 @@ def draw(
     if edge_fc is None:
         edge_fc = H.edges.size
 
-    ax, pos = _draw_init(ax, pos)
+    ax, pos = _draw_init(H, ax, pos)
 
     if not max_order:
         max_order = max_edge_order(H)
@@ -304,7 +310,7 @@ def draw_nodes(
 
     settings.update(kwargs)
 
-    ax, pos = _draw_init(ax, pos)
+    ax, pos = _draw_init(H, ax, pos)
 
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
     node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
@@ -421,7 +427,7 @@ def draw_hyperedges(
 
     """
 
-    ax, pos = _draw_init(ax, pos)
+    ax, pos = _draw_init(H, ax, pos)
 
     if max_order is None:
         max_order = max_edge_order(H)
@@ -581,7 +587,7 @@ def draw_simplices(
     if not max_order:
         max_order = max_edge_order(H_)
 
-    ax, pos = _draw_init(ax, pos)
+    ax, pos = _draw_init(H_, ax, pos)
 
     if edge_fc is None:
         edge_fc = H_.edges.size
@@ -666,9 +672,6 @@ def draw_simplices(
     _update_lims(pos, ax)
 
     return ax
-
-
-
 
 
 def draw_node_labels(
@@ -1028,8 +1031,8 @@ def draw_hypergraph_hull(
     radius : float, optional
         Radius of the convex hull in the vicinity of the nodes, by default 0.05.
     aspect : {"auto", "equal"} or float, optional
-        Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed 
-        directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full 
+        Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed
+        directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full
         description at
         https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_aspect.html
     **kwargs : optional args
@@ -1082,7 +1085,7 @@ def draw_hypergraph_hull(
 
     settings.update(kwargs)
 
-    ax, pos = _draw_init(ax, pos)
+    ax, pos = _draw_init(H, ax, pos)
 
     if not max_order:
         max_order = max_edge_order(H)

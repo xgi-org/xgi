@@ -2,17 +2,19 @@
 
 from collections.abc import Iterable
 
+import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from numpy import ndarray
 
 from ..exception import XGIError
 from ..stats import IDStat
+from .layout import barycenter_spring_layout
 
 
-def _draw_init(ax, pos):
+def _draw_init(H, ax, pos):
 
-	if pos is None:
+    if pos is None:
         pos = barycenter_spring_layout(H)
 
     if ax is None:
