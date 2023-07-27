@@ -44,7 +44,7 @@ class SimplicialComplex(Hypergraph):
         * simplex list
         * simplex dictionary
         * 2-column Pandas dataframe (bipartite edges)
-        * Scipy/Numpy incidence matrix
+        * Incidence matrix: numpy ndarray or scipy.sparse array
         * SimplicialComplex object
         * Hypergraph object
 
