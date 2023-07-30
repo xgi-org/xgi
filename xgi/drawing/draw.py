@@ -1,24 +1,20 @@
 """Draw hypergraphs and simplicial complexes with matplotlib."""
 
-from collections.abc import Iterable
 from inspect import signature
 from itertools import combinations
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
-from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from matplotlib.patches import FancyArrow
 from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
 from networkx import spring_layout
-from numpy import ndarray
 from scipy.spatial import ConvexHull
 
 from .. import convert
-from ..algorithms import max_edge_order
+from ..algorithms import max_edge_order, unique_edge_sizes
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
-from ..stats import IDStat
 from .draw_utils import (
     _CCW_sort,
     _color_arg_to_dict,
@@ -1160,7 +1156,7 @@ def draw_multilayer(
     pos=None,
     ax=None,
     dyad_color="black",
-    dyad_lw=1.5,
+    dyad_lw=0.5,
     edge_fc=None,
     node_fc="white",
     node_ec="black",
@@ -1174,7 +1170,7 @@ def draw_multilayer(
     width=5,
     height=5,
     h_angle=10,
-    v_angle=0,
+    v_angle=20,
     sep=1,
     **kwargs,
 ):
@@ -1247,10 +1243,12 @@ def draw_multilayer(
             1, 1, figsize=(width, height), dpi=600, subplot_kw={"projection": "3d"}
         )
 
+    s = unique_edge_sizes(H)
     if max_order is None:
-        max_order = max_edge_order(H)
+        max_order = max(s) - 1
     else:
-        max_order = min(max_order, max_edge_order(H))
+        max_order = min(max_order, max(s))
+    min_order = min(s) - 1
 
     xs, ys = zip(*pos.values())
 
@@ -1308,9 +1306,10 @@ def draw_multilayer(
 
     # now draw by order
     # draw lines connecting points on the different planes
-    for d in range(max_order):
+    if conn_lines:
         lines3d_between = [
-            (list(pos[i]) + [d * sep], list(pos[i]) + [(d + 1) * sep]) for i in H.nodes
+            (list(pos[i]) + [min_order * sep], list(pos[i]) + [max_order * sep])
+            for i in H.nodes
         ]
         between_lines = Line3DCollection(
             lines3d_between,
@@ -1322,22 +1321,22 @@ def draw_multilayer(
         )
         ax.add_collection3d(between_lines)
 
-    for d in range(max_order + 1):
+    (x, y, s, c, ec, lw,) = zip(
+        *[
+            (
+                pos[i][0],
+                pos[i][1],
+                node_size[i] ** 2,
+                node_fc[i],
+                node_ec[i],
+                node_lw[i],
+            )
+            for i in H.nodes
+        ]
+    )
+    for d in range(min_order, max_order + 1):
         # draw nodes
-        (x, y, z, s, c, ec, lw,) = zip(
-            *[
-                (
-                    pos[i][0],
-                    pos[i][1],
-                    sep * d,
-                    node_size[i] ** 2,
-                    node_fc[i],
-                    node_ec[i],
-                    node_lw[i],
-                )
-                for i in H.nodes
-            ]
-        )
+        z = [sep * d] * H.num_nodes
         ax.scatter(
             x,
             y,
