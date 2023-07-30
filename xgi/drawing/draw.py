@@ -1162,11 +1162,9 @@ def draw_multilayer(
     edge_fc=None,
     node_fc="white",
     node_ec="black",
-    node_lw=1,
-    node_size=15,
+    node_lw=0.5,
+    node_size=5,
     max_order=None,
-    node_labels=False,
-    hyperedge_labels=False,
     conn_lines=True,
     conn_lines_style="dotted",
     width=5,
@@ -1187,18 +1185,48 @@ def draw_multilayer(
         The positions of the nodes in the multilayer network. If None, a default layout will be computed using xgi.barycenter_spring_layout(). Default is None.
     ax : matplotlib Axes3DSubplot or None, optional
         The subplot to draw the visualization on. If None, a new subplot will be created. Default is None.
-    node_fc : color or sequence of colors, optional
-        The face color(s) of the nodes. Default is "tab:blue".
-    node_ec : color or sequence of colors, optional
-        The edge color(s) of the nodes. Default is "black".
-    node_lw : float or sequence of floats, optional
-        The linewidth(s) of the node edges. Default is 0.5.
-    node_size : scalar or array-like, optional
-        The size(s) of the nodes. Default is 5.
-    max_order : int or None, optional
-        The maximum order of hyperedges/simplices to consider for coloring. If None edges up to the maximal order are drawn. Default is None.
-    palette : str, optional
-        The name of the matplotlib color palette to use. Default is 'jet'.
+    dyad_color : str, dict, iterable, or EdgeStat, optional
+        Color of the dyadic links.  If str, use the same color for all edges. If a dict,
+        must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
+        specified in the same order as the edges are found in H.edges. If EdgeStat, use
+        a colormap (specified with dyad_color_cmap) associated to it. By default,
+        "black".
+    dyad_lw : int, float, dict, iterable, or EdgeStat, optional
+        Line width of edges of order 1 (dyadic links).  If int or float, use the same
+        width for all edges.  If a dict, must contain (edge_id: width) pairs.  If
+        iterable, assume the widths are specified in the same order as the edges are
+        found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
+        between min_dyad_lw and max_dyad_lw. By default, 1.5.
+    edge_fc : str, dict, iterable, or EdgeStat, optional
+        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
+        must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
+        are specified in the same order as the hyperedges are found in H.edges. If
+        EdgeStat, use the colormap specified with edge_fc_cmap. If None (default), use
+        the H.edges.size.
+    node_fc : str, dict, iterable, or NodeStat, optional
+        Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
+        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
+        specified in the same order as the nodes are found in H.nodes. If NodeStat, use
+        the colormap specified with node_fc_cmap. By default, "white".
+    node_ec : str, dict, iterable, or NodeStat, optional
+        Color of node borders.  If str, use the same color for all nodes.  If a dict,
+        must contain (node_id: color_str) pairs.  If other iterable, assume the colors
+        are specified in the same order as the nodes are found in H.nodes. If NodeStat,
+        use the colormap specified with node_ec_cmap. By default, "black".
+    node_lw : int, float, dict, iterable, or NodeStat, optional
+        Line width of the node borders in pixels.  If int or float, use the same width
+        for all node borders.  If a dict, must contain (node_id: width) pairs.  If
+        iterable, assume the widths are specified in the same order as the nodes are
+        found in H.nodes. If NodeStat, use a monotonic linear interpolation defined
+        between min_node_lw and max_node_lw. By default, 1.
+    node_size : int, float, dict, iterable, or NodeStat, optional
+        Radius of the nodes in pixels.  If int or float, use the same radius for all
+        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
+        the radiuses are specified in the same order as the nodes are found in
+        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
+        min_node_size and max_node_size. By default, 15.
+    max_order : int, optional
+        Maximum of hyperedges to plot. If None (default), plots all orders.
     conn_lines : bool, optional
         Whether to draw connections between layers. Default is True.
     conn_lines_style : str, optional
@@ -1213,6 +1241,18 @@ def draw_multilayer(
         The rotation angle around the vertical axis in degrees. Default is 0.
     sep : float, optional
         The separation between layers. Default is 1.
+    **kwargs : optional args
+        Alternate default values. Values that can be overwritten are the following:
+        * min_node_size
+        * max_node_size
+        * min_node_lw
+        * max_node_lw
+        * min_dyad_lw
+        * max_dyad_lw
+        * node_fc_cmap
+        * node_ec_cmap
+        * dyad_color_cmap
+        * edge_fc_cmap
 
     Returns
     -------
