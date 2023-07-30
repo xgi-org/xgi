@@ -1,6 +1,5 @@
 """Draw hypergraphs and simplicial complexes with matplotlib."""
 
-from collections import defaultdict
 from collections.abc import Iterable
 from inspect import signature
 from itertools import combinations
@@ -1274,12 +1273,9 @@ def draw_multilayer(
         node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
     )
 
-    order_nodes = defaultdict(set)
     for id, he in H.edges.members(dtype=dict).items():
         d = len(he) - 1
         zs = d * sep
-
-        order_nodes[d].update(he)
 
         # dyads
         if d > max_order:
@@ -1313,10 +1309,8 @@ def draw_multilayer(
     # now draw by order
     # draw lines connecting points on the different planes
     for d in range(max_order):
-        thru_nodes = order_nodes[d].intersection(order_nodes[d + 1])
         lines3d_between = [
-            (list(pos[i]) + [d * sep], list(pos[i]) + [(d + 1) * sep])
-            for i in thru_nodes
+            (list(pos[i]) + [d * sep], list(pos[i]) + [(d + 1) * sep]) for i in H.nodes
         ]
         between_lines = Line3DCollection(
             lines3d_between,
@@ -1330,50 +1324,49 @@ def draw_multilayer(
 
     for d in range(max_order + 1):
         # draw nodes
-        if order_nodes[d]:
-            (x, y, z, s, c, ec, lw,) = zip(
-                *[
-                    (
-                        pos[i][0],
-                        pos[i][1],
-                        sep * d,
-                        node_size[i] ** 2,
-                        node_fc[i],
-                        node_ec[i],
-                        node_lw[i],
-                    )
-                    for i in order_nodes[d]
-                ]
-            )
-            ax.scatter(
-                x,
-                y,
-                z,
-                s=s,
-                c=c,
-                edgecolors=ec,
-                linewidths=lw,
-                zorder=max_order + 1,
-                alpha=1,
-            )
+        (x, y, z, s, c, ec, lw,) = zip(
+            *[
+                (
+                    pos[i][0],
+                    pos[i][1],
+                    sep * d,
+                    node_size[i] ** 2,
+                    node_fc[i],
+                    node_ec[i],
+                    node_lw[i],
+                )
+                for i in H.nodes
+            ]
+        )
+        ax.scatter(
+            x,
+            y,
+            z,
+            s=s,
+            c=c,
+            edgecolors=ec,
+            linewidths=lw,
+            zorder=max_order + 1,
+            alpha=1,
+        )
 
-            # draw surfaces corresponding to the different orders
-            xdiff = np.max(xs) - np.min(xs)
-            ydiff = np.max(ys) - np.min(ys)
-            ymin = np.min(ys) - ydiff * 0.1
-            ymax = np.max(ys) + ydiff * 0.1
-            xmin = np.min(xs) - xdiff * 0.1 * (width / height)
-            xmax = np.max(xs) + xdiff * 0.1 * (width / height)
-            xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
-            zz = np.zeros(xx.shape) + d * sep
-            ax.plot_surface(
-                xx,
-                yy,
-                zz,
-                color="grey",
-                alpha=0.1,
-                zorder=d,
-            )
+        # draw surfaces corresponding to the different orders
+        xdiff = np.max(xs) - np.min(xs)
+        ydiff = np.max(ys) - np.min(ys)
+        ymin = np.min(ys) - ydiff * 0.1
+        ymax = np.max(ys) + ydiff * 0.1
+        xmin = np.min(xs) - xdiff * 0.1 * (width / height)
+        xmax = np.max(xs) + xdiff * 0.1 * (width / height)
+        xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
+        zz = np.zeros(xx.shape) + d * sep
+        ax.plot_surface(
+            xx,
+            yy,
+            zz,
+            color="grey",
+            alpha=0.1,
+            zorder=d,
+        )
 
     ax.view_init(h_angle, v_angle)
     ax.set_ylim(np.min(ys) - ydiff * 0.1, np.max(ys) + ydiff * 0.1)
