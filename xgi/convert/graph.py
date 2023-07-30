@@ -1,3 +1,5 @@
+"""Method for projecting a hypergraph to a graph."""
+
 import networkx as nx
 
 from ..linalg import adjacency_matrix

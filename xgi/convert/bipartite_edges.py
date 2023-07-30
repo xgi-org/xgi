@@ -1,3 +1,5 @@
+"""Methods for converting to and from bipartite edgelists."""
+
 from ..generators import empty_hypergraph
 
 __all__ = ["from_bipartite_edgelist", "to_bipartite_edgelist"]
