@@ -8,6 +8,7 @@ Multi-simplices are not allowed.
 """
 
 from collections.abc import Hashable, Iterable
+from copy import copy, deepcopy
 from itertools import combinations, count
 from warnings import warn
 
@@ -105,8 +106,8 @@ class SimplicialComplex(Hypergraph):
         Examples
         --------
         >>> import xgi
-        >>> H = xgi.SimplicialComplex(name="foo")
-        >>> str(H)
+        >>> S = xgi.SimplicialComplex(name="foo")
+        >>> str(S)
         "SimplicialComplex named 'foo' with 0 nodes and 0 simplices"
 
         """
@@ -754,14 +755,66 @@ class SimplicialComplex(Hypergraph):
         Examples
         --------
         >>> import xgi
-        >>> H = xgi.SimplicialComplex([[1, 2], [2, 3, 4]])
-        >>> H.has_simplex([1, 2])
+        >>> S = xgi.SimplicialComplex([[1, 2], [2, 3, 4]])
+        >>> S.has_simplex([1, 2])
         True
-        >>> H.has_simplex({1, 3})
+        >>> S.has_simplex({1, 3})
         False
 
         """
         return frozenset(simplex) in self._edge.values()
+
+    def copy(self):
+        """A deep copy of the simplicial complex.
+
+        A deep copy of the simplicial complex,
+        including node, edge, and network attributes.
+
+        Returns
+        -------
+        S : SimplicialComplex
+            A copy of the simplicial complex.
+
+        """
+        cp = self.__class__()
+        nn = self.nodes
+        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+        ee = self.edges
+        cp.add_simplices_from(
+            (e, id, deepcopy(self.edges[id]))
+            for id, e in ee.members(dtype=dict).items()
+        )
+        cp._hypergraph = deepcopy(self._hypergraph)
+
+        cp._edge_uid = copy(self._edge_uid)
+
+        return cp
+
+    def cleanup(self, relabel=True, in_place=True):
+        if in_place:
+            if relabel:
+                from ..utils import convert_labels_to_integers
+
+                temp = convert_labels_to_integers(self).copy()
+
+                nn = temp.nodes
+                ee = temp.edges
+
+                self.clear()
+                self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+                self.add_simplices_from(
+                    (e, id, deepcopy(temp.edges[id]))
+                    for id, e in ee.members(dtype=dict).items()
+                )
+                self._hypergraph = deepcopy(temp._hypergraph)
+        else:
+            S = self.copy()
+            if relabel:
+                from ..utils import convert_labels_to_integers
+
+                S = convert_labels_to_integers(S)
+
+            return S
 
     def freeze(self):
         """Method for freezing a simplicial complex
@@ -777,9 +830,9 @@ class SimplicialComplex(Hypergraph):
         --------
         >>> import xgi
         >>> edges = [[1, 2], [2, 3, 4]]
-        >>> SC = xgi.SimplicialComplex(edges)
-        >>> SC.freeze()
-        >>> SC.add_node(5)
+        >>> S = xgi.SimplicialComplex(edges)
+        >>> S.freeze()
+        >>> S.add_node(5)
         Traceback (most recent call last):
         xgi.exception.XGIError: Frozen higher-order network can't be modified
         """
@@ -811,9 +864,9 @@ class SimplicialComplex(Hypergraph):
         --------
         >>> import xgi
         >>> edges = [[1, 2], [2, 3, 4]]
-        >>> SC = xgi.SimplicialComplex(edges)
-        >>> SC.freeze()
-        >>> SC.is_frozen()
+        >>> S = xgi.SimplicialComplex(edges)
+        >>> S.freeze()
+        >>> S.is_frozen()
         True
         """
         try:

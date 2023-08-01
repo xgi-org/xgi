@@ -71,14 +71,14 @@ class DiHypergraph:
     Examples
     --------
     >>> import xgi
-    >>> H = xgi.DiHypergraph([([1, 2, 3], [4]), ([5, 6], [6, 7, 8])])
-    >>> H.nodes
+    >>> DH = xgi.DiHypergraph([([1, 2, 3], [4]), ([5, 6], [6, 7, 8])])
+    >>> DH.nodes
     DiNodeView((1, 2, 3, 4, 5, 6, 7, 8))
-    >>> H.edges
+    >>> DH.edges
     DiEdgeView((0, 1))
-    >>> [[sorted(h), sorted(t)] for h, t in H.edges.dimembers()]
+    >>> [[sorted(h), sorted(t)] for h, t in DH.edges.dimembers()]
     [[[1, 2, 3], [4]], [[5, 6], [6, 7, 8]]]
-    >>> [sorted(e) for e in H.edges.members()]
+    >>> [sorted(e) for e in DH.edges.members()]
     [[1, 2, 3, 4], [5, 6, 7, 8]]
     """
     _node_dict_factory = IDDict
@@ -247,8 +247,8 @@ class DiHypergraph:
             val = stat(*args, **kwargs).asdict()
             return val if node is None else val[node]
 
-        func.__doc__ = f"""Equivalent to H.{word}.{attr}.asdict(). For accepted *args and
-        **kwargs, see documentation of H.{word}.{attr}."""
+        func.__doc__ = f"""Equivalent to DH.{word}.{attr}.asdict(). For accepted *args and
+        **kwargs, see documentation of DH.{word}.{attr}."""
 
         return func
 
@@ -269,8 +269,8 @@ class DiHypergraph:
         --------
         >>> import xgi
         >>> hyperedge_list = [([1, 2], [2, 3, 4])]
-        >>> H = xgi.DiHypergraph(hyperedge_list)
-        >>> H.num_nodes
+        >>> DH = xgi.DiHypergraph(hyperedge_list)
+        >>> DH.num_nodes
         4
 
         """
@@ -293,8 +293,8 @@ class DiHypergraph:
         --------
         >>> import xgi
         >>> hyperedge_list = [([1, 2], [2, 3, 4])]
-        >>> H = xgi.DiHypergraph(hyperedge_list)
-        >>> H.num_edges
+        >>> DH = xgi.DiHypergraph(hyperedge_list)
+        >>> DH.num_edges
         1
         """
         return len(self._edge_in)
@@ -447,7 +447,7 @@ class DiHypergraph:
         values : scalar value, dict-like
             What the node attribute should be set to.  If `values` is
             not a dictionary, then it is treated as a single attribute value
-            that is then applied to every node in `H`.  This means that if
+            that is then applied to every node in `DH`.  This means that if
             you provide a mutable object, like a list, updates to that object
             will be reflected in the node attribute for every node.
             The attribute name will be `name`.
@@ -531,9 +531,9 @@ class DiHypergraph:
         Add edges with or without specifying an edge id.
 
         >>> import xgi
-        >>> H = xgi.DiHypergraph()
-        >>> H.add_edge(([1, 2, 3], [2, 3, 4]))
-        >>> H.add_edge(([3, 4], set()), id='myedge')
+        >>> DH = xgi.DiHypergraph()
+        >>> DH.add_edge(([1, 2, 3], [2, 3, 4]))
+        >>> DH.add_edge(([3, 4], set()), id='myedge')
         """
         if not members:
             raise XGIError("Cannot add an empty edge")
@@ -624,57 +624,57 @@ class DiHypergraph:
         Examples
         --------
         >>> import xgi
-        >>> H = xgi.DiHypergraph()
+        >>> DH = xgi.DiHypergraph()
 
         When specifying edges by their members only, numeric edge IDs will be assigned
         automatically.
 
-        >>> H.add_edges_from([([0, 1], [1, 2]), ([2, 3, 4], [])])
-        >>> H.edges.dimembers(dtype=dict)
+        >>> DH.add_edges_from([([0, 1], [1, 2]), ([2, 3, 4], [])])
+        >>> DH.edges.dimembers(dtype=dict)
         {0: ({0, 1}, {1, 2}), 1: ({2, 3, 4}, set())}
 
         Custom edge ids can be specified using a dict.
 
-        >>> H = xgi.DiHypergraph()
-        >>> H.add_edges_from({'one': ([0, 1], [1, 2]), 'two': ([2, 3, 4], [])})
-        >>> H.edges.dimembers(dtype=dict)
+        >>> DH = xgi.DiHypergraph()
+        >>> DH.add_edges_from({'one': ([0, 1], [1, 2]), 'two': ([2, 3, 4], [])})
+        >>> DH.edges.dimembers(dtype=dict)
         {'one': ({0, 1}, {1, 2}), 'two': ({2, 3, 4}, set())}
 
         You can use the dict format to easily add edges from another hypergraph.
 
-        >>> H2 = xgi.DiHypergraph()
-        >>> H2.add_edges_from(H.edges.dimembers(dtype=dict))
-        >>> H.edges == H2.edges
+        >>> DH2 = xgi.DiHypergraph()
+        >>> DH2.add_edges_from(DH.edges.dimembers(dtype=dict))
+        >>> DH.edges == DH2.edges
         True
 
         Alternatively, edge ids can be specified using an iterable of 2-tuples.
 
-        >>> H = xgi.DiHypergraph()
-        >>> H.add_edges_from([(([0, 1], [1, 2]), 'one'), (([2, 3, 4], []), 'two')])
-        >>> H.edges.dimembers(dtype=dict)
+        >>> DH = xgi.DiHypergraph()
+        >>> DH.add_edges_from([(([0, 1], [1, 2]), 'one'), (([2, 3, 4], []), 'two')])
+        >>> DH.edges.dimembers(dtype=dict)
         {'one': ({0, 1}, {1, 2}), 'two': ({2, 3, 4}, set())}
 
         Attributes for each edge may be specified using a 2-tuple for each edge.
         Numeric IDs will be assigned automatically.
 
-        >>> H = xgi.DiHypergraph()
+        >>> DH = xgi.DiHypergraph()
         >>> edges = [
         ...     (([0, 1], [1, 2]), {'color': 'red'}),
         ...     (([2, 3, 4], []), {'color': 'blue', 'age': 40}),
         ... ]
-        >>> H.add_edges_from(edges)
-        >>> {e: H.edges[e] for e in H.edges}
+        >>> DH.add_edges_from(edges)
+        >>> {e: DH.edges[e] for e in DH.edges}
         {0: {'color': 'red'}, 1: {'color': 'blue', 'age': 40}}
 
         Attributes and custom IDs may be specified using a 3-tuple for each edge.
 
-        >>> H = xgi.DiHypergraph()
+        >>> DH = xgi.DiHypergraph()
         >>> edges = [
         ...     (([0, 1], [1, 2]), 'one', {'color': 'red'}),
         ...     (([2, 3, 4], []), 'two', {'color': 'blue', 'age': 40}),
         ... ]
-        >>> H.add_edges_from(edges)
-        >>> {e: H.edges[e] for e in H.edges}
+        >>> DH.add_edges_from(edges)
+        >>> {e: DH.edges[e] for e in DH.edges}
         {'one': {'color': 'red'}, 'two': {'color': 'blue', 'age': 40}}
 
         """
@@ -860,7 +860,7 @@ class DiHypergraph:
         values : scalar value, dict-like
             What the edge attribute should be set to.  If `values` is
             not a dictionary, then it is treated as a single attribute value
-            that is then applied to every edge in `H`.  This means that if
+            that is then applied to every edge in `DH`.  This means that if
             you provide a mutable object, like a list, updates to that object
             will be reflected in the edge attribute for each edge.  The attribute
             name will be `name`.
@@ -878,7 +878,7 @@ class DiHypergraph:
 
         Notes
         -----
-        Note that if the dict contains edge IDs that are not in `H`, they are
+        Note that if the dict contains edge IDs that are not in `DH`, they are
         silently ignored.
 
         """
@@ -935,7 +935,7 @@ class DiHypergraph:
 
         Returns
         -------
-        H : DiHypergraph
+        DH : DiHypergraph
             A copy of the hypergraph.
 
         """
@@ -953,6 +953,36 @@ class DiHypergraph:
 
         return cp
 
+    def cleanup(self, isolates=False, relabel=True, in_place=True):
+        if in_place:
+            if not isolates:
+                self.remove_nodes_from(self.nodes.isolates())
+            if relabel:
+                from ..utils import convert_labels_to_integers
+
+                temp = convert_labels_to_integers(self).copy()
+
+                nn = temp.nodes
+                ee = temp.edges
+
+                self.clear()
+                self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+                self.add_edges_from(
+                    (e, id, deepcopy(temp.edges[id]))
+                    for id, e in ee.dimembers(dtype=dict).items()
+                )
+                self._hypergraph = deepcopy(temp._hypergraph)
+        else:
+            DH = self.copy()
+            if not isolates:
+                DH.remove_nodes_from(DH.nodes.isolates())
+            if relabel:
+                from ..utils import convert_labels_to_integers
+
+                DH = convert_labels_to_integers(DH)
+
+            return DH
+
     def freeze(self):
         """Method for freezing a dihypergraph which prevents it from being modified
 
@@ -965,9 +995,9 @@ class DiHypergraph:
         --------
         >>> import xgi
         >>> diedgelist = [([1, 2], [2, 3, 4])]
-        >>> H = xgi.DiHypergraph(diedgelist)
-        >>> H.freeze()
-        >>> H.add_node(5)
+        >>> DH = xgi.DiHypergraph(diedgelist)
+        >>> DH.freeze()
+        >>> DH.add_node(5)
         Traceback (most recent call last):
         xgi.exception.XGIError: Frozen higher-order network can't be modified
 
@@ -1002,9 +1032,9 @@ class DiHypergraph:
         --------
         >>> import xgi
         >>> edges = [([1, 2], [2, 3, 4])]
-        >>> H = xgi.DiHypergraph(edges)
-        >>> H.freeze()
-        >>> H.is_frozen()
+        >>> DH = xgi.DiHypergraph(edges)
+        >>> DH.freeze()
+        >>> DH.is_frozen()
         True
 
         """

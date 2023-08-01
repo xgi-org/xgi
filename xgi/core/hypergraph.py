@@ -1348,6 +1348,7 @@ class Hypergraph:
         isolates=False,
         singletons=False,
         multiedges=False,
+        connected=False,
         relabel=True,
         in_place=True,
     ):
@@ -1361,6 +1362,10 @@ class Hypergraph:
             Whether singleton edges are allowed, by default False.
         multiedges : bool, optional
             Whether multiedges are allowed, by default False.
+        connected : bool, optional
+            Whether the returned hypergraph should be connected. If true,
+            returns the hypergraph induced on the largest connected component.
+            By default, False.
         relabel : bool, optional
             Whether to convert all node and edge labels to sequential integers, by
             default True.
@@ -1376,6 +1381,10 @@ class Hypergraph:
                 self.remove_edges_from(self.edges.singletons())
             if not isolates:
                 self.remove_nodes_from(self.nodes.isolates())
+            if connected:
+                from ..algorithms import largest_connected_component
+
+                self.remove_nodes_from(self.nodes - largest_connected_component(self))
             if relabel:
                 from ..utils import convert_labels_to_integers
 
@@ -1399,6 +1408,10 @@ class Hypergraph:
                 H.merge_duplicate_edges()
             if not isolates:
                 H.remove_nodes_from(H.nodes.isolates())
+            if connected:
+                from ..algorithms import largest_connected_component
+
+                self.remove_nodes_from(self.nodes - largest_connected_component(self))
             if relabel:
                 from ..utils import convert_labels_to_integers
 
