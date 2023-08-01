@@ -1,5 +1,3 @@
-from itertools import combinations
-
 from ..exception import XGIError
 
 import networkx as nx
