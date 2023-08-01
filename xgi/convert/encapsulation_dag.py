@@ -8,9 +8,9 @@ def to_encapsulation_dag(H, relations="all"):
     """The encapsulation DAG of the hypergraph.
 
     An encapsulation DAG is a directed line graph
-    where the nodes are hyperedges in H and an edge
-    exists between two hyperedges if the larger is
-    a subset of the smaller.
+    where the nodes are hyperedges in H and a directed edge
+    exists from a larger hyperedge to a smaller hyperedge if
+    the smaller is a subset of the larger.
 
     Parameters
     ----------
@@ -21,9 +21,21 @@ def to_encapsulation_dag(H, relations="all"):
     -------
     LG : networkx.DiGraph
          The line graph associated to the Hypergraph
+    relations : str
+        Type of relations to include. Options are:
+            "all" : all subset relationships
+            "immediate" : only subset relationships between hyperedges of
+                adjacent sizes (i.e., edges from k to k-1)
+            "empirical" : only subset relationships between hyperedges of
+                minimum size difference k and k'. A relaxation of the
+                "immeidate" option. For example, a hyperedge of size 4 may
+                have no immediate encapsulation relationships with hyperedges
+                of size 3, but may encapsulate hyperedegs of size 2.
 
     References
     ----------
+    "Encapsulation Structure and Dynamics in Hypergraphs", by Timothy LaRock
+    & Renaud Lambiotte. https://arxiv.org/abs/2307.04613
 
     """
 
