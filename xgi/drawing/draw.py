@@ -234,8 +234,12 @@ def draw_nodes(
     node_ec="black",
     node_lw=1,
     node_size=15,
+    node_fc_cmap="Reds",
+    vmin=None,
+    vmax=None,
+    node_ec_cmap="Greys",
     zorder=None,
-    settings=None,
+    params=dict(),
     node_labels=False,
     **kwargs,
 ):
@@ -277,7 +281,7 @@ def draw_nodes(
         The layer on which to draw the nodes.
     node_labels : bool or dict
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
-    settings : dict
+    params : dict
         Default parameters. Keys that may be useful to override default settings:
         * min_node_size
         * max_node_size
@@ -298,47 +302,54 @@ def draw_nodes(
 
     """
 
-    if settings is None:
-        settings = {
-            "min_node_size": 10.0,
-            "max_node_size": 30.0,
-            "min_node_lw": 1.0,
-            "max_node_lw": 5.0,
-            "node_fc_cmap": cm.Reds,
-            "node_ec_cmap": cm.Greys,
-        }
+    settings = {
+        "min_node_size": 10.0,
+        "max_node_size": 30.0,
+        "min_node_lw": 1.0,
+        "max_node_lw": 5.0,
+    }
 
+    settings.update(params)
     settings.update(kwargs)
 
     ax, pos = _draw_init(H, ax, pos)
 
     # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
-    node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
-    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_ec_cmap"])
-    node_lw = _scalar_arg_to_dict(
-        node_lw,
-        H.nodes,
-        settings["min_node_lw"],
-        settings["max_node_lw"],
-    )
-    node_size = _scalar_arg_to_dict(
-        node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
-    )
+    try:
+        xy = np.asarray([pos[v] for v in H.nodes])
+    except KeyError as err:
+        raise XGIError(f"Node {err} has no position.") from err
 
-    (x, y, s, c, ec, lw,) = zip(
-        *[
-            (
-                pos[i][0],
-                pos[i][1],
-                node_size[i] ** 2,
-                node_fc[i],
-                node_ec[i],
-                node_lw[i],
-            )
-            for i in H.nodes
-        ]
+    # deal with formats and clip
+    if isinstance(node_size, IDStat):
+        node_size = node_size.asnumpy()
+    node_size = np.clip(node_size, settings["min_node_size"], settings["max_node_size"])
+    print(node_size)
+    node_size = node_size**2
+
+    if isinstance(node_fc, IDStat):
+        node_fc = node_fc.asnumpy()
+
+    if isinstance(node_ec, IDStat):
+        node_ec = node_ec.asnumpy()
+
+    if isinstance(node_lw, IDStat):
+        node_lw = node_lw.asnumpy()
+    node_lw = np.clip(node_lw, settings["min_node_lw"], settings["max_node_lw"])
+
+    # plot
+    sc = ax.scatter(
+        x=xy[:, 0],
+        y=xy[:, 1],
+        s=node_size,
+        c=node_fc,
+        cmap=node_fc_cmap,
+        vmin=vmin,
+        vmax=vmax,
+        edgecolors=node_ec,
+        linewidths=node_lw,
+        zorder=zorder,
     )
-    sc = ax.scatter(x=x, y=y, s=s, c=c, edgecolors=ec, linewidths=lw, zorder=zorder)
 
     if node_labels:
         # Get all valid keywords by inspecting the signatures of draw_node_labels
