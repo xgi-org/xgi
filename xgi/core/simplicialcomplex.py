@@ -167,9 +167,19 @@ class SimplicialComplex(Hypergraph):
         """add_node_to_edge is not implemented in SimplicialComplex."""
         raise XGIError("add_node_to_edge is not implemented in SimplicialComplex.")
 
-    def remove_node(self, n, strong=False):
-        """remove_node is not implemented in SimplicialComplex."""
-        raise XGIError("remove_node is not implemented in SimplicialComplex.")
+    def remove_node(self, n):
+        try:
+            for e in self._node[n]:
+                del self._edge[e]
+                del self._attr[e]
+            del self._node[n]
+            del self._node_attr[n]
+        except KeyError as e:
+            raise XGIError("Invalid node ID!")
+
+    def remove_nodes_from(self, nodes):
+        for n in nodes:
+            self.remove_node(n)
 
     def _add_simplex(self, members, id=None, **attr):
         """Helper function to add a simplex to a simplicial complex, without any
@@ -790,8 +800,14 @@ class SimplicialComplex(Hypergraph):
 
         return cp
 
-    def cleanup(self, relabel=True, in_place=True):
+    def cleanup(self, isolates=False, connected=True, relabel=True, in_place=True):
         if in_place:
+            if not isolates:
+                self.remove_nodes_from(self.nodes.isolates())
+            if connected:
+                from ..algorithms import largest_connected_component
+
+                self.remove_nodes_from(self.nodes - largest_connected_component(self))
             if relabel:
                 from ..utils import convert_labels_to_integers
 
@@ -809,6 +825,12 @@ class SimplicialComplex(Hypergraph):
                 self._hypergraph = deepcopy(temp._hypergraph)
         else:
             S = self.copy()
+            if not isolates:
+                S.remove_nodes_from(S.nodes.isolates())
+            if connected:
+                from ..algorithms import largest_connected_component
+
+                S.remove_nodes_from(S.nodes - largest_connected_component(S))
             if relabel:
                 from ..utils import convert_labels_to_integers
 
