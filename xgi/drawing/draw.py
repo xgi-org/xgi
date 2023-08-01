@@ -204,7 +204,7 @@ def draw(
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
-    draw_nodes(
+    _, im_nodes = draw_nodes(
         H,
         pos,
         ax,
@@ -223,7 +223,7 @@ def draw(
 
     ax.set_aspect(aspect, "datalim")
 
-    return ax
+    return ax, im_nodes
 
 
 def draw_nodes(
@@ -338,7 +338,7 @@ def draw_nodes(
             for i in H.nodes
         ]
     )
-    ax.scatter(x=x, y=y, s=s, c=c, edgecolors=ec, linewidths=lw, zorder=zorder)
+    sc = ax.scatter(x=x, y=y, s=s, c=c, edgecolors=ec, linewidths=lw, zorder=zorder)
 
     if node_labels:
         # Get all valid keywords by inspecting the signatures of draw_node_labels
@@ -354,7 +354,7 @@ def draw_nodes(
     # compute axis limits
     _update_lims(pos, ax)
 
-    return ax
+    return ax, sc
 
 
 def draw_hyperedges(
