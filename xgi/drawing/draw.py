@@ -329,9 +329,6 @@ def draw_nodes(
     if isinstance(node_fc, IDStat):
         node_fc = node_fc.asnumpy()
 
-    if isinstance(node_ec, IDStat):
-        node_ec = node_ec.asnumpy()
-
     if isinstance(node_lw, IDStat):
         node_lw = node_lw.asnumpy()
     node_lw = np.clip(node_lw, settings["min_node_lw"], settings["max_node_lw"])
