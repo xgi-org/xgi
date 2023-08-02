@@ -237,7 +237,6 @@ def draw_nodes(
     node_fc_cmap="Reds",
     vmin=None,
     vmax=None,
-    node_ec_cmap="Greys",
     zorder=None,
     params=dict(),
     node_labels=False,
@@ -255,28 +254,31 @@ def draw_nodes(
         If passed, this dictionary of positions node_id:(x,y) is used for placing the
         0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
         the positions.
-    node_fc : str, dict, iterable, or NodeStat, optional
-        Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
-        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat, use
-        the colormap specified with node_fc_cmap. By default, "white".
+    node_fc : str, iterable, or NodeStat, optional
+        Color of the nodes.  If str, use the same color for all nodes. If other iterable,
+        or NodeStat, assume the colors are specified in the same order as the nodes are 
+        found in H.nodes. By default, "white".
     node_ec : str, dict, iterable, or NodeStat, optional
         Color of node borders.  If str, use the same color for all nodes.  If a dict,
         must contain (node_id: color_str) pairs.  If other iterable, assume the colors
         are specified in the same order as the nodes are found in H.nodes. If NodeStat,
         use the colormap specified with node_ec_cmap. By default, "black".
-    node_lw : int, float, dict, iterable, or EdgeStat, optional
+    node_lw : int, float, iterable, or NodeStat, optional
         Line width of the node borders in pixels.  If int or float, use the same width
-        for all node borders.  If a dict, must contain (node_id: width) pairs.  If
-        iterable, assume the widths are specified in the same order as the nodes are
-        found in H.nodes. If NodeStat, use a monotonic linear interpolation defined
-        between min_node_lw and max_node_lw. By default, 1.
-    node_size : int, float, dict, iterable, or NodeStat, optional
+        for all node borders.  If iterable or NodeStat, assume the widths are specified 
+        in the same order as the nodes are found in H.nodes. Values are clipped below
+        and above by min_node_lw and max_node_lw, respectively. By default, 1.
+    node_size : int, float, iterable, or NodeStat, optional
         Radius of the nodes in pixels.  If int or float, use the same radius for all
-        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
-        the radiuses are specified in the same order as the nodes are found in
-        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
-        min_node_size and max_node_size. By default, 15.
+        nodes. If iterable or NodeStat, assume the radiuses are specified in the same 
+        order as the nodes are found in H.nodes. Values are clipped below
+        and above by min_node_size and max_node_size, respectively. By default, 15.
+    node_fc_cmap : colormap
+        Colormap for mapping node colors. By default, "Reds".
+    vmin : float or None
+        Minimum for the node_fc_cmap scaling. By default, None.
+    vmax : float or None
+        Maximum for the node_fc_cmap scaling. By default, None.
     zorder : int
         The layer on which to draw the nodes.
     node_labels : bool or dict
@@ -287,8 +289,6 @@ def draw_nodes(
         * max_node_size
         * min_node_lw
         * max_node_lw
-        * node_fc_cmap
-        * node_ec_cmap
     kwargs : optional keywords
         See `draw_node_labels` for a description of optional keywords.
 
@@ -303,10 +303,10 @@ def draw_nodes(
     """
 
     settings = {
-        "min_node_size": 10.0,
-        "max_node_size": 30.0,
-        "min_node_lw": 1.0,
-        "max_node_lw": 5.0,
+        "min_node_size": 10,
+        "max_node_size": 30,
+        "min_node_lw": 0,
+        "max_node_lw": 5,
     }
 
     settings.update(params)
@@ -314,17 +314,17 @@ def draw_nodes(
 
     ax, pos = _draw_init(H, ax, pos)
 
-    # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
+    # convert pos to format convenient for scatter
     try:
         xy = np.asarray([pos[v] for v in H.nodes])
     except KeyError as err:
         raise XGIError(f"Node {err} has no position.") from err
 
-    # deal with formats and clip
+    # deal with formats and clip arguments
     if isinstance(node_size, IDStat):
         node_size = node_size.asnumpy()
     node_size = np.clip(node_size, settings["min_node_size"], settings["max_node_size"])
-    print(node_size)
+
     node_size = node_size**2
 
     if isinstance(node_fc, IDStat):
