@@ -258,11 +258,10 @@ def draw_nodes(
         Color of the nodes.  If str, use the same color for all nodes. If other iterable,
         or NodeStat, assume the colors are specified in the same order as the nodes are 
         found in H.nodes. By default, "white".
-    node_ec : str, dict, iterable, or NodeStat, optional
-        Color of node borders.  If str, use the same color for all nodes.  If a dict,
-        must contain (node_id: color_str) pairs.  If other iterable, assume the colors
-        are specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_ec_cmap. By default, "black".
+    node_ec : color or sequence of colors, optional
+        Color of node borders. If color, use the same color for all nodes. If sequence
+        of colors, assume the colors are specified in the same order as the nodes are 
+        found in H.nodes. By default, "black".
     node_lw : int, float, iterable, or NodeStat, optional
         Line width of the node borders in pixels.  If int or float, use the same width
         for all node borders.  If iterable or NodeStat, assume the widths are specified 
