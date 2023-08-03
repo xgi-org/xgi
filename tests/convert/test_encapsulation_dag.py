@@ -3,7 +3,33 @@ from networkx import DiGraph
 import xgi
 
 
-def test_to_encapsulation_dag(edgelist8, hypergraph1, hypergraph2):
+def test_to_encapsulation_dag(edgelist1, edgelist8, hypergraph1, hypergraph2):
+
+    H = xgi.Hypergraph(edgelist1)
+    for relations in ["all", "immediate", "empirical"]:
+        L = xgi.to_encapsulation_dag(H, relations=relations)
+        assert isinstance(L, DiGraph)
+        assert set(L.nodes) == set(list(range(4)))
+        assert len(L.edges) == 0
+
+    H = xgi.Hypergraph(edgelist8)
+    L = xgi.to_encapsulation_dag(H, relations="immediate")
+    assert isinstance(L, DiGraph)
+    assert set(L.nodes) == set(list(range(9)))
+    assert len(L.edges) == 1
+    assert len(L[3]) == 0
+    assert len(list(L.predecessors(0))) == 1
+    assert len(list(L.successors(1))) == 1
+
+
+    L = xgi.to_encapsulation_dag(H, relations="empirical")
+    assert isinstance(L, DiGraph)
+    assert set(L.nodes) == set(list(range(9)))
+    assert len(L.edges) == 4
+    assert len(L[3]) == 3
+    assert len(list(L.predecessors(0))) == 1
+    assert len(list(L.successors(1))) == 1
+
     H = xgi.Hypergraph(edgelist8)
     L = xgi.to_encapsulation_dag(H)
 
