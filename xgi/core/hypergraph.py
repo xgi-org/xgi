@@ -1408,7 +1408,7 @@ class Hypergraph:
             if not multiedges:
                 H.merge_duplicate_edges()
             if not singletons:
-                H.remove_edges_from(self.edges.singletons())
+                H.remove_edges_from(H.edges.singletons())
             if not isolates:
                 H.remove_nodes_from(H.nodes.isolates())
             if connected:

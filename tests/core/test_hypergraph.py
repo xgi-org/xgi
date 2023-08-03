@@ -772,6 +772,7 @@ def test_cleanup():
     assert {0, 1, 2} in edges
     assert {3, 4} in edges
 
+    assert id(cleanH) != id(H)
     ### In-place versions
 
     # test removing isolates
@@ -806,3 +807,5 @@ def test_cleanup():
     edges = cleanH.edges.members()
     assert {0, 1, 2} in edges
     assert {3, 4} in edges
+
+    assert cleanH._edge == xgi.dual_dict(cleanH._node)
