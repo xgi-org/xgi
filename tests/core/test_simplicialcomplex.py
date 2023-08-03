@@ -509,3 +509,55 @@ def test_freeze(edgelist1):
         SC.remove_simplex_ids_from([0, 1])
 
     assert SC.is_frozen()
+
+
+def test_cleanup():
+    SC = xgi.SimplicialComplex()
+    SC.add_simplices_from([["a", "b", "c"], ["e", "f"]])
+    SC.add_nodes_from(["d", "g"])
+
+    assert set(SC.nodes) == {"a", "b", "c", "d", "e", "f", "g"}
+
+    # test removing isolates
+    cleanSC = SC.cleanup(connected=False, relabel=False, in_place=False)
+    assert set(cleanSC.nodes) == {"a", "b", "c", "e", "f"}
+    assert set(cleanSC.edges) == {0, 1, 2, 3, 4}
+    simplices = cleanSC.edges.members()
+    assert frozenset({"a", "b", "c"}) in simplices
+    assert frozenset({"e", "f"}) in simplices
+    assert frozenset({"a", "b"}) in simplices
+    assert frozenset({"a", "c"}) in simplices
+    assert frozenset({"b", "c"}) in simplices
+
+    # test getting giant component
+    cleanSC = SC.cleanup(isolates=True, relabel=False, in_place=False)
+    assert set(cleanSC.nodes) == {"a", "b", "c"}
+    assert cleanSC.num_edges == 4
+
+    # test relabel
+    cleanSC = SC.cleanup(isolates=True, connected=False, in_place=False)
+    assert set(cleanSC.nodes) == {0, 1, 2, 3, 4, 5, 6}
+    assert cleanSC.num_edges == 5
+    simplices = cleanSC.edges.members()
+    assert frozenset({0, 1, 2}) in simplices
+    assert frozenset({3, 4}) in simplices
+    assert frozenset({0, 1}) in simplices
+    assert frozenset({0, 2}) in simplices
+    assert frozenset({1, 2}) in simplices
+
+
+def test_remove_node(edgelist1):
+    S = xgi.SimplicialComplex(edgelist1)
+    assert 1 in S
+    S.remove_node(1)
+    assert 1 not in S
+    assert 0 not in S.edges
+
+
+def test_issue_445(edgelist1):
+    S = xgi.SimplicialComplex(edgelist1)
+    assert 1 in S
+    S.remove_node(1)
+    assert 1 not in S
+    assert 0 not in S.edges
+    assert S._edge == xgi.dual_dict(S._node)

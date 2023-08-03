@@ -223,3 +223,11 @@ def test_bool(diedgelist1):
     assert bool(H.edges) is False
     H = xgi.DiHypergraph(diedgelist1)
     assert bool(H.edges) is True
+
+
+def test_isolates():
+    DH = xgi.DiHypergraph()
+    DH.add_nodes_from([0, 1, 2, 3])
+    assert set(DH.nodes.isolates()) == {0, 1, 2, 3}
+    DH.add_edge([{0}, {1, 2}])
+    assert set(DH.nodes.isolates()) == {3}

@@ -163,6 +163,57 @@ class SimplicialComplex(Hypergraph):
         )
         return self.remove_simplex_ids_from(ebunch)
 
+    def remove_node(self, n):
+        """Remove a single node.
+
+        The removal is strong meaning that all edges containing the
+        node are removed.
+
+        Parameters
+        ----------
+        n : node
+            A node in the simplicial complex
+
+        Raises
+        ------
+        XGIError
+           If n is not in the simplicial complex.
+
+        See Also
+        --------
+        remove_nodes_from
+
+        """
+        edge_neighbors = self._node[n]
+        del self._node[n]
+        del self._node_attr[n]
+
+        for e in edge_neighbors:
+            node_neighbors = self._edge[e]
+            del self._edge[e]
+            del self._edge_attr[e]
+            for node in node_neighbors.difference({n}):
+                self._node[node].remove(e)
+
+    def remove_nodes_from(self, nodes):
+        """Remove multiple nodes.
+
+        Parameters
+        ----------
+        nodes : iterable
+            An iterable of nodes.
+
+        See Also
+        --------
+        remove_node
+
+        """
+        for n in nodes:
+            if n not in self:
+                warn(f"Node {n} not in simplicial complex")
+                continue
+            self.remove_node(n)
+
     def add_node_to_edge(self, edge, node):
         """add_node_to_edge is not implemented in SimplicialComplex."""
         raise XGIError("add_node_to_edge is not implemented in SimplicialComplex.")
@@ -329,7 +380,7 @@ class SimplicialComplex(Hypergraph):
         return [id_ for id_, s in self._edge.items() if simplex < s]
 
     def add_simplices_from(self, ebunch_to_add, max_order=None, **attr):
-        """Add multiple edges with optional attributes.
+        r"""Add multiple edges with optional attributes.
 
         Parameters
         ----------
