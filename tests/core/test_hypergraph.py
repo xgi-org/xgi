@@ -641,7 +641,7 @@ def test_freeze(edgelist1):
     with pytest.raises(XGIError):
         H.remove_node_from_edge(0, 1)
 
-    assert H.is_frozen()
+    assert H.is_frozen
 
 
 def test_set_node_attributes(edgelist1):

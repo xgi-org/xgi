@@ -508,7 +508,7 @@ def test_freeze(edgelist1):
     with pytest.raises(XGIError):
         SC.remove_simplex_ids_from([0, 1])
 
-    assert SC.is_frozen()
+    assert SC.is_frozen
 
 
 def test_cleanup():

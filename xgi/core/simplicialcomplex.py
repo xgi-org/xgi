@@ -907,6 +907,7 @@ class SimplicialComplex(Hypergraph):
         self.clear = frozen
         self.frozen = True
 
+    @property
     def is_frozen(self):
         """Checks whether a simplicial complex is frozen
 
@@ -925,7 +926,7 @@ class SimplicialComplex(Hypergraph):
         >>> edges = [[1, 2], [2, 3, 4]]
         >>> S = xgi.SimplicialComplex(edges)
         >>> S.freeze()
-        >>> S.is_frozen()
+        >>> S.is_frozen
         True
         """
         try:

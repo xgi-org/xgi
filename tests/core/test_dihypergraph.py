@@ -518,7 +518,7 @@ def test_freeze(diedgelist1):
     with pytest.raises(XGIError):
         H.remove_edges_from([0, 1])
 
-    assert H.is_frozen()
+    assert H.is_frozen
 
 
 def test_set_node_attributes(diedgelist1):

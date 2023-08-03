@@ -1016,6 +1016,7 @@ class DiHypergraph:
         self.clear = frozen
         self.frozen = True
 
+    @property
     def is_frozen(self):
         """Checks whether a hypergraph is frozen
 
@@ -1034,7 +1035,7 @@ class DiHypergraph:
         >>> edges = [([1, 2], [2, 3, 4])]
         >>> DH = xgi.DiHypergraph(edges)
         >>> DH.freeze()
-        >>> DH.is_frozen()
+        >>> DH.is_frozen
         True
 
         """
