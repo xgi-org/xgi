@@ -528,6 +528,15 @@ def test_remove_node_strong(edgelist1):
     assert 0 not in H.edges
 
 
+def test_issue_445(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert 1 in H
+    H.remove_node(1, strong=True)
+    assert 1 not in H
+    assert 0 not in H.edges
+    assert H._edge == xgi.dual_dict(H._node)
+
+
 def test_clear_edges(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     H.clear_edges()

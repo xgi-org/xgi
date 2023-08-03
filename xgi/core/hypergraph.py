@@ -432,9 +432,12 @@ class Hypergraph:
         del self._node_attr[n]
 
         if strong:
-            for edge in edge_neighbors:
-                del self._edge[edge]
-                del self._edge_attr[edge]
+            for e in edge_neighbors:
+                node_neighbors = self._edge[e]
+                del self._edge[e]
+                del self._edge_attr[e]
+                for node in node_neighbors.difference({n}):
+                    self._node[node].remove(e)
         else:  # weak removal
             for edge in edge_neighbors:
                 self._edge[edge].remove(n)
