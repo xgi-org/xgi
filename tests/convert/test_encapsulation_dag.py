@@ -6,14 +6,14 @@ import xgi
 def test_to_encapsulation_dag(edgelist1, edgelist8, hypergraph1, hypergraph2):
 
     H = xgi.Hypergraph(edgelist1)
-    for relations in ["all", "immediate", "empirical"]:
-        L = xgi.to_encapsulation_dag(H, relations=relations)
+    for subset_types in ["all", "immediate", "empirical"]:
+        L = xgi.to_encapsulation_dag(H, subset_types=subset_types)
         assert isinstance(L, DiGraph)
         assert set(L.nodes) == set(list(range(4)))
         assert len(L.edges) == 0
 
     H = xgi.Hypergraph(edgelist8)
-    L = xgi.to_encapsulation_dag(H, relations="immediate")
+    L = xgi.to_encapsulation_dag(H, subset_types="immediate")
     assert isinstance(L, DiGraph)
     assert set(L.nodes) == set(list(range(9)))
     assert len(L.edges) == 1
@@ -22,7 +22,7 @@ def test_to_encapsulation_dag(edgelist1, edgelist8, hypergraph1, hypergraph2):
     assert len(list(L.successors(1))) == 1
 
 
-    L = xgi.to_encapsulation_dag(H, relations="empirical")
+    L = xgi.to_encapsulation_dag(H, subset_types="empirical")
     assert isinstance(L, DiGraph)
     assert set(L.nodes) == set(list(range(9)))
     assert len(L.edges) == 4
@@ -39,7 +39,7 @@ def test_to_encapsulation_dag(edgelist1, edgelist8, hypergraph1, hypergraph2):
     assert len(L[3]) == 4
     assert len(list(L.predecessors(0))) == 2
 
-    L = xgi.to_encapsulation_dag(H, relations="immediate")
+    L = xgi.to_encapsulation_dag(H, subset_types="immediate")
     assert isinstance(L, DiGraph)
     assert set(L.nodes) == set(list(range(9)))
     assert len(L.edges) == 1
@@ -48,7 +48,7 @@ def test_to_encapsulation_dag(edgelist1, edgelist8, hypergraph1, hypergraph2):
     assert len(list(L.successors(1))) == 1
 
 
-    L = xgi.to_encapsulation_dag(H, relations="empirical")
+    L = xgi.to_encapsulation_dag(H, subset_types="empirical")
     assert isinstance(L, DiGraph)
     assert set(L.nodes) == set(list(range(9)))
     assert len(L.edges) == 4

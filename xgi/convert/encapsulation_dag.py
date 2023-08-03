@@ -2,9 +2,9 @@ from ..exception import XGIError
 
 import networkx as nx
 
-__all__ = ["to_encapsulation_dag"]
+__all__ = ["to_encapsulation_dag", "empirical_subsets_filter"]
 
-def to_encapsulation_dag(H, relations="all"):
+def to_encapsulation_dag(H, subset_types="all"):
     """The encapsulation DAG of the hypergraph.
 
     An encapsulation DAG is a directed line graph
@@ -16,12 +16,7 @@ def to_encapsulation_dag(H, relations="all"):
     ----------
     H : Hypergraph
         The hypergraph of interest
-
-    Returns
-    -------
-    LG : networkx.DiGraph
-         The line graph associated to the Hypergraph
-    relations : str
+    subset_types : str
         Type of relations to include. Options are:
             "all" : all subset relationships
             "immediate" : only subset relationships between hyperedges of
@@ -31,6 +26,10 @@ def to_encapsulation_dag(H, relations="all"):
                 "immeidate" option. For example, a hyperedge of size 4 may
                 have no immediate encapsulation relationships with hyperedges
                 of size 3, but may encapsulate hyperedegs of size 2.
+    Returns
+    -------
+    LG : networkx.DiGraph
+         The line graph associated to the Hypergraph
 
     References
     ----------
@@ -39,8 +38,8 @@ def to_encapsulation_dag(H, relations="all"):
 
     """
 
-    if not (relations in ["all", "immediate", "empirical"]):
-        raise XGIError(f"{relations} not a valid weights option. Choices are "
+    if not (subset_types in ["all", "immediate", "empirical"]):
+        raise XGIError(f"{subset_types} not a valid subset_types option. Choices are "
                        "'all', 'immediate', and 'empirical'.")
 
     # Construct the dag
@@ -52,7 +51,7 @@ def to_encapsulation_dag(H, relations="all"):
         # Get the hyperedge as a set
         he = H.edges.members(he_idx)
         # Get candidate encapsulation hyperedges
-        candidates = _get_candidates(relations, H, he)
+        candidates = _get_candidates(subset_types, H, he)
         # for each candidate
         candidates_checked = set()
         for cand_idx in candidates:
@@ -66,10 +65,10 @@ def to_encapsulation_dag(H, relations="all"):
                 if _encapsulated(cand, he):
                     dag.add_edge(cand_idx, he_idx)
 
-    # If empirical relations, filter out all edges except those
+    # If empirically closest subsets, filter out all edges except those
     # between k and maximum existing k'<k
-    if relations == "empirical":
-        _empirical_filter(H, dag)
+    if subset_types == "empirical":
+        empirical_subsets_filter(H, dag)
 
     return dag
 
@@ -97,10 +96,28 @@ def _check_candidate(relations, he, cand):
             return True
     return False
 
-def _empirical_filter(H, dag):
+def empirical_subsets_filter(H, dag):
     """
-    Filters encapsulation DAG to only include edges between hyperedges
+    Filters encapsulation DAG of H in place to only include edges between hyperedges
     of size k and the maximum existing k'.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest
+    dag : nx.DiGraph
+        The encapsulation dag of H constructed with to_encapsulation_dag(H, subset_types="all")
+
+    Returns
+    -------
+    dag : networkx.DiGraph
+         The filtered line graph (also modified in place)
+
+    References
+    ----------
+    "Encapsulation Structure and Dynamics in Hypergraphs", by Timothy LaRock
+    & Renaud Lambiotte. https://arxiv.org/abs/2307.04613
+
     """
     # Loop over all edges
     for edge_idx in dag:
@@ -122,3 +139,4 @@ def _empirical_filter(H, dag):
             for cand_idx in outs:
                 if len(H.edges.members(cand_idx)) != max_sub_size:
                     dag.remove_edge(edge_idx, cand_idx)
+    return dag
