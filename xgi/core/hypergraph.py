@@ -1351,7 +1351,7 @@ class Hypergraph:
         isolates=False,
         singletons=False,
         multiedges=False,
-        connected=False,
+        connected=True,
         relabel=True,
         in_place=True,
     ):
@@ -1406,15 +1406,15 @@ class Hypergraph:
         else:
             H = self.copy()
             if not multiedges:
-                H.remove_edges_from(H.edges.duplicates())
-            if not singletons:
                 H.merge_duplicate_edges()
+            if not singletons:
+                H.remove_edges_from(self.edges.singletons())
             if not isolates:
                 H.remove_nodes_from(H.nodes.isolates())
             if connected:
                 from ..algorithms import largest_connected_component
 
-                self.remove_nodes_from(self.nodes - largest_connected_component(self))
+                H.remove_nodes_from(H.nodes - largest_connected_component(H))
             if relabel:
                 from ..utils import convert_labels_to_integers
 

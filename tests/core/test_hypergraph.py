@@ -734,3 +734,75 @@ def test_set_edge_attributes(edgelist1):
 
     with pytest.warns(Warning):
         H3.set_edge_attributes({"test": {2: "weight"}})
+
+
+def test_cleanup():
+    H = xgi.Hypergraph()
+    H.add_edges_from([["a", "b", "c"], ["a", "b", "c"], ["e", "f"]])
+    H.add_nodes_from(["d", "g"])
+
+    assert set(H.nodes) == {"a", "b", "c", "d", "e", "f", "g"}
+
+    # test removing isolates
+    cleanH = H.cleanup(connected=False, multiedges=True, relabel=False, in_place=False)
+    assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
+    assert set(cleanH.edges) == {0, 1, 2}
+    edges = cleanH.edges.members()
+    assert {"a", "b", "c"} in edges
+    assert {"e", "f"} in edges
+
+    # test removing multiedges
+    cleanH = H.cleanup(connected=False, isolates=False, relabel=False, in_place=False)
+    assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
+    assert set(cleanH.edges) == {0, 2}
+    edges = cleanH.edges.members()
+    assert {"a", "b", "c"} in edges
+    assert {"e", "f"} in edges
+
+    # test getting giant component
+    cleanH = H.cleanup(relabel=False, in_place=False)
+    assert set(cleanH.nodes) == {"a", "b", "c"}
+    assert cleanH.num_edges == 1
+
+    # test relabel
+    cleanH = H.cleanup(connected=False, in_place=False)
+    assert set(cleanH.nodes) == {0, 1, 2, 3, 4}
+    assert cleanH.num_edges == 2
+    edges = cleanH.edges.members()
+    assert {0, 1, 2} in edges
+    assert {3, 4} in edges
+
+    ### In-place versions
+
+    # test removing isolates
+    cleanH = H.copy()
+    cleanH.cleanup(connected=False, multiedges=True, relabel=False)
+    assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
+    assert set(cleanH.edges) == {0, 1, 2}
+    edges = cleanH.edges.members()
+    assert {"a", "b", "c"} in edges
+    assert {"e", "f"} in edges
+
+    # test removing multiedges
+    cleanH = H.copy()
+    cleanH.cleanup(connected=False, isolates=False, relabel=False)
+    assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
+    assert set(cleanH.edges) == {0, 2}
+    edges = cleanH.edges.members()
+    assert {"a", "b", "c"} in edges
+    assert {"e", "f"} in edges
+
+    # test getting giant component
+    cleanH = H.copy()
+    cleanH.cleanup(relabel=False)
+    assert set(cleanH.nodes) == {"a", "b", "c"}
+    assert cleanH.num_edges == 1
+
+    # test relabel
+    cleanH = H.copy()
+    cleanH.cleanup(connected=False)
+    assert set(cleanH.nodes) == {0, 1, 2, 3, 4}
+    assert cleanH.num_edges == 2
+    edges = cleanH.edges.members()
+    assert {0, 1, 2} in edges
+    assert {3, 4} in edges

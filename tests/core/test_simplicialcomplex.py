@@ -545,6 +545,38 @@ def test_cleanup():
     assert frozenset({0, 2}) in simplices
     assert frozenset({1, 2}) in simplices
 
+    ### In-place versions
+
+    # test removing isolates
+    cleanSC = SC.copy()
+    cleanSC.cleanup(connected=False, relabel=False)
+    assert set(cleanSC.nodes) == {"a", "b", "c", "e", "f"}
+    assert set(cleanSC.edges) == {0, 1, 2, 3, 4}
+    simplices = cleanSC.edges.members()
+    assert frozenset({"a", "b", "c"}) in simplices
+    assert frozenset({"e", "f"}) in simplices
+    assert frozenset({"a", "b"}) in simplices
+    assert frozenset({"a", "c"}) in simplices
+    assert frozenset({"b", "c"}) in simplices
+
+    # test getting giant component
+    cleanSC = SC.copy()
+    cleanSC.cleanup(isolates=False, relabel=False)
+    assert set(cleanSC.nodes) == {"a", "b", "c"}
+    assert cleanSC.num_edges == 4
+
+    # test relabel
+    cleanSC = SC.copy()
+    cleanSC.cleanup(isolates=False, connected=False)
+    assert set(cleanSC.nodes) == {0, 1, 2, 3, 4, 5, 6}
+    assert cleanSC.num_edges == 5
+    simplices = cleanSC.edges.members()
+    assert frozenset({0, 1, 2}) in simplices
+    assert frozenset({3, 4}) in simplices
+    assert frozenset({0, 1}) in simplices
+    assert frozenset({0, 2}) in simplices
+    assert frozenset({1, 2}) in simplices
+
 
 def test_remove_node(edgelist1):
     S = xgi.SimplicialComplex(edgelist1)
