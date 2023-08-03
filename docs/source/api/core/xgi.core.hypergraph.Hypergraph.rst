@@ -43,6 +43,7 @@
       ~Hypergraph.cleanup
       ~Hypergraph.freeze
 
+
    .. rubric:: Methods that return other hypergraphs
 
    .. autosummary::
