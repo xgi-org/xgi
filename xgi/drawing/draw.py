@@ -1164,6 +1164,7 @@ def draw_multilayer(
     node_ec="black",
     node_lw=0.5,
     node_size=5,
+    plane_color="grey",
     max_order=None,
     conn_lines=True,
     conn_lines_style="dotted",
@@ -1182,9 +1183,12 @@ def draw_multilayer(
     H : Hypergraph or SimplicialComplex.
         Higher-order network to plot.
     pos : dict or None, optional
-        The positions of the nodes in the multilayer network. If None, a default layout will be computed using xgi.barycenter_spring_layout(). Default is None.
+        The positions of the nodes in the multilayer network.
+        If None, a default layout will be computed using
+        xgi.barycenter_spring_layout(). Default is None.
     ax : matplotlib Axes3DSubplot or None, optional
-        The subplot to draw the visualization on. If None, a new subplot will be created. Default is None.
+        The subplot to draw the visualization on.
+        If None, a new subplot will be created. Default is None.
     dyad_color : str, dict, iterable, or EdgeStat, optional
         Color of the dyadic links.  If str, use the same color for all edges. If a dict,
         must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
@@ -1196,7 +1200,7 @@ def draw_multilayer(
         width for all edges.  If a dict, must contain (edge_id: width) pairs.  If
         iterable, assume the widths are specified in the same order as the edges are
         found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
-        between min_dyad_lw and max_dyad_lw. By default, 1.5.
+        between min_dyad_lw and max_dyad_lw. By default, 0.5.
     edge_fc : str, dict, iterable, or EdgeStat, optional
         Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
         must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
@@ -1224,7 +1228,10 @@ def draw_multilayer(
         nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
         the radiuses are specified in the same order as the nodes are found in
         H.nodes. If NodeStat, use a monotonic linear interpolation defined between
-        min_node_size and max_node_size. By default, 15.
+        min_node_size and max_node_size. By default, 5.
+    plane_color : color (str or tuple) or iterable (dict, list, or numpy array), optional
+        Color of each plane. If a dict, must contain (edge size: color) pairs.
+        By default, "grey".
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     conn_lines : bool, optional
@@ -1270,6 +1277,7 @@ def draw_multilayer(
         "node_ec_cmap": cm.Greys,
         "edge_fc_cmap": cm.Blues,
         "dyad_color_cmap": cm.Greys,
+        "plane_color_cmap": cm.Greys,
     }
 
     settings.update(kwargs)
@@ -1311,6 +1319,12 @@ def draw_multilayer(
     )
     node_size = _scalar_arg_to_dict(
         node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
+    )
+
+    plane_color = _color_arg_to_dict(
+        plane_color,
+        [i for i in range(min_order, max_order + 1)],
+        settings["plane_color_cmap"],
     )
 
     for id, he in H.edges.members(dtype=dict).items():
@@ -1404,7 +1418,7 @@ def draw_multilayer(
             xx,
             yy,
             zz,
-            color="grey",
+            color=plane_color[d],
             alpha=0.1,
             zorder=d,
         )
