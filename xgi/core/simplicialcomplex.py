@@ -167,20 +167,6 @@ class SimplicialComplex(Hypergraph):
         """add_node_to_edge is not implemented in SimplicialComplex."""
         raise XGIError("add_node_to_edge is not implemented in SimplicialComplex.")
 
-    def remove_node(self, n):
-        try:
-            for e in self._node[n]:
-                del self._edge[e]
-                del self._attr[e]
-            del self._node[n]
-            del self._node_attr[n]
-        except KeyError as e:
-            raise XGIError("Invalid node ID!")
-
-    def remove_nodes_from(self, nodes):
-        for n in nodes:
-            self.remove_node(n)
-
     def _add_simplex(self, members, id=None, **attr):
         """Helper function to add a simplex to a simplicial complex, without any
         check. Does not automatically update self._edge_uid"""

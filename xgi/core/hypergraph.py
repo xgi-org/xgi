@@ -456,7 +456,7 @@ class Hypergraph:
 
         """
         for n in nodes:
-            if n not in self._node:
+            if n not in self:
                 warn(f"Node {n} not in hypergraph")
                 continue
             self.remove_node(n)
