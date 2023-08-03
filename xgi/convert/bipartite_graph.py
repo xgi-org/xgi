@@ -1,3 +1,5 @@
+"""Methods for converting to and from bipartite graphs."""
+
 import networkx as nx
 from networkx import bipartite
 

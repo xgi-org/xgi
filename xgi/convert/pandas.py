@@ -1,3 +1,5 @@
+"""Methods for converting to and from a Pandas dataframe."""
+
 from collections import defaultdict
 
 import pandas as pd

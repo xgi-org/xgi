@@ -1,3 +1,5 @@
+"""Methods for converting to higher-order network objects."""
+
 from copy import deepcopy
 
 import pandas as pd

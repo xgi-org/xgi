@@ -1,3 +1,5 @@
+"""Methods for converting to and from hyperedge lists."""
+
 from ..core import SimplicialComplex
 from ..generators import empty_hypergraph
 
