@@ -567,8 +567,8 @@ def test_cleanup():
 
     # test relabel
     cleanSC = SC.copy()
-    cleanSC.cleanup(isolates=False, connected=False)
-    assert set(cleanSC.nodes) == {0, 1, 2, 3, 4, 5, 6}
+    cleanSC.cleanup(connected=False)
+    assert set(cleanSC.nodes) == {0, 1, 2, 3, 4}
     assert cleanSC.num_edges == 5
     simplices = cleanSC.edges.members()
     assert frozenset({0, 1, 2}) in simplices
