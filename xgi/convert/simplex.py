@@ -1,3 +1,5 @@
+"""Methods for simplicial complexes."""
+
 from ..core import Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..generators import empty_simplicial_complex

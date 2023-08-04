@@ -1,3 +1,5 @@
+"""Method for converting to a line graph."""
+
 from itertools import combinations
 
 from ..exception import XGIError
