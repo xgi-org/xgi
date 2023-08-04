@@ -23,7 +23,7 @@ def to_encapsulation_dag(H, subset_types="all"):
                 adjacent sizes (i.e., edges from k to k-1)
             "empirical" : only subset relationships between hyperedges of
                 minimum size difference k and k'. A relaxation of the
-                "immeidate" option. For example, a hyperedge of size 4 may
+                "immediate" option. For example, a hyperedge of size 4 may
                 have no immediate encapsulation relationships with hyperedges
                 of size 3, but may encapsulate hyperedegs of size 2.
     Returns
