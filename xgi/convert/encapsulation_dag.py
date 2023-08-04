@@ -16,7 +16,7 @@ def to_encapsulation_dag(H, subset_types="all"):
     ----------
     H : Hypergraph
         The hypergraph of interest
-    subset_types : str
+    subset_types : str, optional
         Type of relations to include. Options are:
             "all" : all subset relationships
             "immediate" : only subset relationships between hyperedges of
