@@ -135,7 +135,7 @@ def _get_candidates(subset_types, H, he):
 
     return candidates
 
-def _check_candidate(relations, he, cand):
+def _check_candidate(subset_types, he, cand):
     """Check whether a hyperedge cand is a candidate to be encapsulated by
         hyperedge he based on subset_types.
 
@@ -154,10 +154,10 @@ def _check_candidate(relations, he, cand):
             otherwise.
     """
     is_candidate = False
-    if relations in ["all", "empirical"]:
+    if subset_types in ["all", "empirical"]:
         if len(he) != len(cand):
             is_candidate = True
-    elif relations == "immediate":
+    elif subset_types == "immediate":
         if len(he) == len(cand)-1 or len(he)-1 == len(cand):
             is_candidate = True
     return is_candidate
