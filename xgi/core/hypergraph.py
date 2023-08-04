@@ -432,9 +432,12 @@ class Hypergraph:
         del self._node_attr[n]
 
         if strong:
-            for edge in edge_neighbors:
-                del self._edge[edge]
-                del self._edge_attr[edge]
+            for e in edge_neighbors:
+                node_neighbors = self._edge[e]
+                del self._edge[e]
+                del self._edge_attr[e]
+                for node in node_neighbors.difference({n}):
+                    self._node[node].remove(e)
         else:  # weak removal
             for edge in edge_neighbors:
                 self._edge[edge].remove(n)
@@ -456,7 +459,7 @@ class Hypergraph:
 
         """
         for n in nodes:
-            if n not in self._node:
+            if n not in self:
                 warn(f"Node {n} not in hypergraph")
                 continue
             self.remove_node(n)
@@ -1348,6 +1351,7 @@ class Hypergraph:
         isolates=False,
         singletons=False,
         multiedges=False,
+        connected=True,
         relabel=True,
         in_place=True,
     ):
@@ -1361,6 +1365,10 @@ class Hypergraph:
             Whether singleton edges are allowed, by default False.
         multiedges : bool, optional
             Whether multiedges are allowed, by default False.
+        connected : bool, optional
+            Whether the returned hypergraph should be connected. If true,
+            returns the hypergraph induced on the largest connected component.
+            By default, False.
         relabel : bool, optional
             Whether to convert all node and edge labels to sequential integers, by
             default True.
@@ -1376,6 +1384,10 @@ class Hypergraph:
                 self.remove_edges_from(self.edges.singletons())
             if not isolates:
                 self.remove_nodes_from(self.nodes.isolates())
+            if connected:
+                from ..algorithms import largest_connected_component
+
+                self.remove_nodes_from(self.nodes - largest_connected_component(self))
             if relabel:
                 from ..utils import convert_labels_to_integers
 
@@ -1394,11 +1406,15 @@ class Hypergraph:
         else:
             H = self.copy()
             if not multiedges:
-                H.remove_edges_from(H.edges.duplicates())
-            if not singletons:
                 H.merge_duplicate_edges()
+            if not singletons:
+                H.remove_edges_from(H.edges.singletons())
             if not isolates:
                 H.remove_nodes_from(H.nodes.isolates())
+            if connected:
+                from ..algorithms import largest_connected_component
+
+                H.remove_nodes_from(H.nodes - largest_connected_component(H))
             if relabel:
                 from ..utils import convert_labels_to_integers
 
@@ -1439,6 +1455,7 @@ class Hypergraph:
         self.clear = frozen
         self.frozen = True
 
+    @property
     def is_frozen(self):
         """Checks whether a dihypergraph is frozen
 
@@ -1457,7 +1474,7 @@ class Hypergraph:
         >>> edges = [[1, 2], [2, 3, 4]]
         >>> H = xgi.Hypergraph(edges)
         >>> H.freeze()
-        >>> H.is_frozen()
+        >>> H.is_frozen
         True
 
         """

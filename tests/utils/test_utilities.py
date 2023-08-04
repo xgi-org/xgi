@@ -195,10 +195,16 @@ def test_subfaces(edgelist5):
         )  # order cannot be larger than maximum order in edgelist
 
 
-def test_convert_labels_to_integers(hypergraph1, hypergraph2):
+def test_convert_labels_to_integers(
+    hypergraph1, hypergraph2, simplicialcomplex1, dihypergraph1
+):
+
+    # test hypergraph stuff
     H1 = xgi.convert_labels_to_integers(hypergraph1)
     H2 = xgi.convert_labels_to_integers(hypergraph2)
     H3 = xgi.convert_labels_to_integers(hypergraph1, "old_ids")
+
+    assert isinstance(H1, xgi.Hypergraph)
 
     assert set(H1.nodes) == {0, 1, 2}
     assert set(H1.edges) == {0, 1, 2}
@@ -240,3 +246,31 @@ def test_convert_labels_to_integers(hypergraph1, hypergraph2):
 
     assert H3.nodes[0]["old_ids"] == "a"
     assert H3.edges[0]["old_ids"] == "e1"
+
+    # test simplicial complex stuff
+    S1 = xgi.convert_labels_to_integers(simplicialcomplex1)
+
+    assert isinstance(S1, xgi.SimplicialComplex)
+    assert set(S1.nodes) == {0, 1, 2}
+    assert set(S1.edges) == {0, 1, 2, 3}
+
+    assert S1.edges.members(0) == {0, 2}
+    assert S1.edges.members(1) == {1, 2}
+    assert S1.edges.members(2) == {0, 1, 2}
+    assert S1.edges.members(3) == {0, 1}
+
+    assert S1.nodes[0]["label"] == "b"
+    assert S1.edges[0]["label"] == "e1"
+
+    # test dihypergraph stuff
+    DH1 = xgi.convert_labels_to_integers(dihypergraph1)
+    assert set(DH1.nodes) == {0, 1, 2, 3}
+    assert set(DH1.edges) == {0, 1, 2}
+
+    assert isinstance(DH1, xgi.DiHypergraph)
+    assert DH1.edges.dimembers(0) == ({0, 1}, {2})
+    assert DH1.edges.dimembers(1) == ({1}, {2, 3})
+    assert DH1.edges.dimembers(2) == ({1}, {2})
+
+    assert DH1.nodes[0]["label"] == "a"
+    assert DH1.edges[0]["label"] == "e1"

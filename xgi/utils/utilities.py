@@ -347,21 +347,21 @@ def subfaces(edges, order=None):
     return faces
 
 
-def convert_labels_to_integers(H, label_attribute="label"):
+def convert_labels_to_integers(net, label_attribute="label"):
     """Relabel node and edge IDs to be sequential integers.
 
     Parameters
     ----------
-    H : Hypergraph
-        The hypergraph of interest
+    net : Hypergraph, DiHypergraph, or SimplicialComplex
+        The higher-order network of interest
 
     label_attribute : string, default: "label"
         The attribute name that stores the old node and edge labels
 
     Returns
     -------
-    Hypergraph
-        A new hypergraph with nodes and edges with sequential IDs starting at 0.
+    Hypergraph, DiHypergraph, or SimplicialComplex
+        A new higher-order network with nodes and edges with sequential IDs starting at 0.
         The old IDs are stored in the "label" attribute for both nodes and edges.
 
     Notes
@@ -370,28 +370,48 @@ def convert_labels_to_integers(H, label_attribute="label"):
     Because the old IDs are stored in the "label" attribute for both nodes and edges,
     the old "label" values (if they exist) will be overwritten.
     """
-    from ..core import Hypergraph
+    from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 
-    node_dict = dict(zip(H.nodes, range(H.num_nodes)))
-    edge_dict = dict(zip(H.edges, range(H.num_edges)))
-    temp_H = Hypergraph()
-    temp_H._hypergraph = deepcopy(H._hypergraph)
+    node_dict = dict(zip(net.nodes, range(net.num_nodes)))
+    edge_dict = dict(zip(net.edges, range(net.num_edges)))
 
-    temp_H.add_nodes_from((id, deepcopy(H.nodes[n])) for n, id in node_dict.items())
-    temp_H.set_node_attributes(
+    temp_net = net.__class__()
+    temp_net._hypergraph = deepcopy(net._hypergraph)
+
+    temp_net.add_nodes_from((id, deepcopy(net.nodes[n])) for n, id in node_dict.items())
+    temp_net.set_node_attributes(
         {n: {label_attribute: id} for id, n in node_dict.items()}
     )
-
-    temp_H.add_edges_from(
-        (
-            {node_dict[n] for n in e},
-            edge_dict[id],
-            deepcopy(H.edges[id]),
+    if isinstance(net, SimplicialComplex):
+        temp_net.add_simplices_from(
+            (
+                {node_dict[n] for n in e},
+                edge_dict[id],
+                deepcopy(net.edges[id]),
+            )
+            for id, e in net.edges.members(dtype=dict).items()
         )
-        for id, e in H.edges.members(dtype=dict).items()
-    )
-    temp_H.set_edge_attributes(
+    elif isinstance(net, Hypergraph):
+        temp_net.add_edges_from(
+            (
+                {node_dict[n] for n in e},
+                edge_dict[id],
+                deepcopy(net.edges[id]),
+            )
+            for id, e in net.edges.members(dtype=dict).items()
+        )
+    elif isinstance(net, DiHypergraph):
+        temp_net.add_edges_from(
+            (
+                [{node_dict[n] for n in tail}, {node_dict[n] for n in head}],
+                edge_dict[id],
+                deepcopy(net.edges[id]),
+            )
+            for id, (tail, head) in net.edges.dimembers(dtype=dict).items()
+        )
+
+    temp_net.set_edge_attributes(
         {e: {label_attribute: id} for id, e in edge_dict.items()}
     )
 
-    return temp_H
+    return temp_net

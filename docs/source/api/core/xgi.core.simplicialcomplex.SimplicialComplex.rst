@@ -31,10 +31,12 @@
       ~SimplicialComplex.add_weighted_simplices_from
       ~SimplicialComplex.remove_simplex_id
       ~SimplicialComplex.remove_simplex_ids_from
+      ~SimplicialComplex.remove_node
+      ~SimplicialComplex.remove_nodes_from
       ~SimplicialComplex.close
       ~SimplicialComplex.has_simplex
+      ~SimplicialComplex.cleanup
       ~SimplicialComplex.freeze
-
 
 
    .. rubric:: Inherited methods that cannot be used

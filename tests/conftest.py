@@ -220,6 +220,26 @@ def hypergraph2():
 
 
 @pytest.fixture
+def simplicialcomplex1():
+    S = xgi.SimplicialComplex()
+    S.add_nodes_from(["b", "c", 0])
+    S.add_edges_from(
+        {"e1": [0, "b"], "e2": [0, "c"], "e3": [0, "b", "c"], "e4": ["b", "c"]}
+    )
+    return S
+
+
+@pytest.fixture
+def dihypergraph1():
+    H = xgi.DiHypergraph()
+    H.add_nodes_from(["a", "b", "c", "d"])
+    H.add_edges_from(
+        {"e1": [{"a", "b"}, {"c"}], "e2": [{"b"}, {"c", "d"}], "e3": [{"b"}, {"c"}]}
+    )
+    return H
+
+
+@pytest.fixture
 def diedgelist1():
     return [({1, 2, 3}, {4}), ({5, 6}, {6, 7, 8})]
 

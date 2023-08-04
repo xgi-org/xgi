@@ -518,7 +518,7 @@ def test_freeze(diedgelist1):
     with pytest.raises(XGIError):
         H.remove_edges_from([0, 1])
 
-    assert H.is_frozen()
+    assert H.is_frozen
 
 
 def test_set_node_attributes(diedgelist1):
@@ -609,3 +609,49 @@ def test_set_edge_attributes(diedgelist1):
 
     with pytest.warns(Warning):
         H3.set_edge_attributes({"test": {2: "weight"}})
+
+
+def test_cleanup(dihypergraph1):
+    # test removing isolates
+    dihypergraph1.add_node("test")
+    assert "test" in dihypergraph1.nodes
+    cleanDH = dihypergraph1.cleanup(relabel=False, in_place=False)
+    assert "test" not in cleanDH
+    assert set(cleanDH.nodes) == {"a", "b", "c", "d"}
+    assert set(cleanDH.edges) == {"e1", "e2", "e3"}
+    edges = cleanDH.edges.dimembers()
+    assert cleanDH.edges.dimembers("e1") == ({"a", "b"}, {"c"})
+    assert cleanDH.edges.dimembers("e2") == ({"b"}, {"c", "d"})
+    assert cleanDH.edges.dimembers("e3") == ({"b"}, {"c"})
+
+    # test relabel
+    cleanDH = dihypergraph1.cleanup(in_place=False)
+    assert set(cleanDH.nodes) == {0, 1, 2, 3}
+    assert cleanDH.num_edges == 3
+    assert cleanDH.edges.dimembers(0) == ({0, 1}, {2})
+    assert cleanDH.edges.dimembers(1) == ({1}, {2, 3})
+    assert cleanDH.edges.dimembers(2) == ({1}, {2})
+
+    assert id(cleanDH) != id(dihypergraph1)
+    ### In-place versions
+
+    # test removing isolates
+    cleanDH = dihypergraph1.copy()
+    cleanDH.cleanup(relabel=False)
+    assert set(cleanDH.nodes) == {"a", "b", "c", "d"}
+    assert set(cleanDH.edges) == {"e1", "e2", "e3"}
+    assert cleanDH.edges.dimembers("e1") == ({"a", "b"}, {"c"})
+    assert cleanDH.edges.dimembers("e2") == ({"b"}, {"c", "d"})
+    assert cleanDH.edges.dimembers("e3") == ({"b"}, {"c"})
+
+    # test relabel
+    cleanDH = dihypergraph1.copy()
+    cleanDH.cleanup()
+    assert set(cleanDH.nodes) == {0, 1, 2, 3}
+    assert cleanDH.num_edges == 3
+    assert cleanDH.edges.dimembers(0) == ({0, 1}, {2})
+    assert cleanDH.edges.dimembers(1) == ({1}, {2, 3})
+    assert cleanDH.edges.dimembers(2) == ({1}, {2})
+
+    assert cleanDH._edge_in == xgi.dual_dict(cleanDH._node_out)
+    assert cleanDH._edge_out == xgi.dual_dict(cleanDH._node_in)

@@ -20,6 +20,7 @@
       ~DiHypergraph.num_nodes
       ~DiHypergraph.is_frozen
 
+
    .. rubric:: Methods that modify the structure
 
    .. autosummary::
@@ -35,4 +36,5 @@
       ~DiHypergraph.remove_edges_from
       ~DiHypergraph.clear
       ~DiHypergraph.copy
+      ~DiHypergraph.cleanup
       ~DiHypergraph.freeze
