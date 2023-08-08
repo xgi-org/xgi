@@ -1,5 +1,7 @@
 """Load a metabolic network from the BiGG models database."""
 
+from warnings import warn
+
 from ..utils import request_json_from_url, request_json_from_url_cached
 
 __all__ = ["load_bigg_data"]
@@ -106,6 +108,9 @@ def _bigg_to_dihypergraph(d_index, d_model):
             else:
                 tail.add(m)
 
+        if not head and not tail:
+            warn(f"{r['id']} is an empty reaction!")
+            continue
         DH.add_edge((tail, head), id=r["id"], name=r["name"])
 
     return DH
