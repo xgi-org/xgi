@@ -2,9 +2,9 @@
 
 from itertools import combinations
 
-from ..exception import XGIError
-
 import networkx as nx
+
+from ..exception import XGIError
 
 __all__ = ["to_line_graph"]
 
@@ -47,8 +47,10 @@ def to_line_graph(H, s=1, weights=None):
 
     """
     if weights not in [None, "absolute", "normalized"]:
-        raise XGIError(f"{weights} not a valid weights option. Choices are "
-                       "None, 'absolute', and 'normalized'.")
+        raise XGIError(
+            f"{weights} not a valid weights option. Choices are "
+            "None, 'absolute', and 'normalized'."
+        )
     LG = nx.Graph()
 
     edge_label_dict = {tuple(edge): index for index, edge in H._edge.items()}
@@ -61,16 +63,19 @@ def to_line_graph(H, s=1, weights=None):
         if intersection_size >= s:
             if not weights:
                 # Add unweighted edge
-                LG.add_edge(edge_label_dict[tuple(edge1)],
-                            edge_label_dict[tuple(edge2)])
+                LG.add_edge(
+                    edge_label_dict[tuple(edge1)], edge_label_dict[tuple(edge2)]
+                )
             else:
                 # Compute the (normalized) weight
                 weight = intersection_size
                 if weights == "normalized":
                     weight /= min([len(edge1), len(edge2)])
                 # Add edge with weight
-                LG.add_edge(edge_label_dict[tuple(edge1)],
-                        edge_label_dict[tuple(edge2)],
-                        weight=weight)
+                LG.add_edge(
+                    edge_label_dict[tuple(edge1)],
+                    edge_label_dict[tuple(edge2)],
+                    weight=weight,
+                )
 
     return LG

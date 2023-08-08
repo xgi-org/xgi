@@ -1,8 +1,9 @@
-from ..exception import XGIError
-
 import networkx as nx
 
+from ..exception import XGIError
+
 __all__ = ["to_encapsulation_dag", "empirical_subsets_filter"]
+
 
 def to_encapsulation_dag(H, subset_types="all"):
     """The encapsulation DAG (Directed Acyclic Graph) of
@@ -57,8 +58,10 @@ def to_encapsulation_dag(H, subset_types="all"):
 
     """
     if not (subset_types in ["all", "immediate", "empirical"]):
-        raise XGIError(f"{subset_types} not a valid subset_types option. Choices are "
-                       "'all', 'immediate', and 'empirical'.")
+        raise XGIError(
+            f"{subset_types} not a valid subset_types option. Choices are "
+            "'all', 'immediate', and 'empirical'."
+        )
 
     # Construct the dag
     dag = nx.DiGraph()
@@ -90,6 +93,7 @@ def to_encapsulation_dag(H, subset_types="all"):
 
     return dag
 
+
 def _encapsulated(larger, smaller):
     """Test if a larger hyperedge encapsulates a smaller hyperedge.
 
@@ -107,6 +111,7 @@ def _encapsulated(larger, smaller):
 
     """
     return len(set(larger).intersection(set(smaller))) == len(smaller)
+
 
 def _get_candidates(subset_types, H, he):
     """Get the candidate hyperedges for encapsulation by he based on the subset type.
@@ -135,32 +140,34 @@ def _get_candidates(subset_types, H, he):
 
     return candidates
 
+
 def _check_candidate(subset_types, he, cand):
     """Check whether a hyperedge cand is a candidate to be encapsulated by
-        hyperedge he based on subset_types.
+    hyperedge he based on subset_types.
 
-        Parameters
-        ----------
-        subset_types : str
-            Type of subset relationships
-        he : Set
-            The hyperedge
-        cand : Set
-            The candidate
-        Returns
-        -------
-        is_candidate : bool
-            True if cand is a valid candidate to be encapsulated by he, False
-            otherwise.
+    Parameters
+    ----------
+    subset_types : str
+        Type of subset relationships
+    he : Set
+        The hyperedge
+    cand : Set
+        The candidate
+    Returns
+    -------
+    is_candidate : bool
+        True if cand is a valid candidate to be encapsulated by he, False
+        otherwise.
     """
     is_candidate = False
     if subset_types in ["all", "empirical"]:
         if len(he) != len(cand):
             is_candidate = True
     elif subset_types == "immediate":
-        if len(he) == len(cand)-1 or len(he)-1 == len(cand):
+        if len(he) == len(cand) - 1 or len(he) - 1 == len(cand):
             is_candidate = True
     return is_candidate
+
 
 def empirical_subsets_filter(H, dag):
     """
@@ -190,8 +197,7 @@ def empirical_subsets_filter(H, dag):
         preds = list(dag.predecessors(edge_idx))
         if len(preds) > 0:
             # Get the minimum superface size
-            min_sup_size = min([len(H.edges.members(cand_idx)) for cand_idx in
-                               preds])
+            min_sup_size = min([len(H.edges.members(cand_idx)) for cand_idx in preds])
             # Keep only the superfaces with that size
             to_remove = []
             for cand_idx in preds:
