@@ -195,7 +195,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
     return H
 
 
-def uniform_HPPM(n, m, rho, k, epsilon, seed=None):
+def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
     """Construct the m-uniform hypergraph planted partition model (m-HPPM)
 
     Parameters
@@ -204,12 +204,12 @@ def uniform_HPPM(n, m, rho, k, epsilon, seed=None):
         Number of nodes
     m : int > 0
         Hyperedge size
-    rho : float between 0 and 1
-        The fraction of nodes in community 1
     k : float > 0
         Mean degree
     epsilon : float > 0
         Imbalance parameter
+    rho : float between 0 and 1, optional
+        The fraction of nodes in community 1, default 0.5
     seed : integer or None (default)
         The seed for the random number generator
 
