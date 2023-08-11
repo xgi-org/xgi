@@ -42,47 +42,46 @@ def test_abs_weighted_line_graph(edgelist1, hypergraph1, hypergraph2):
 
     L = xgi.to_line_graph(H, weights="absolute")
     assert isinstance(L, Graph)
-    assert all(["weight" in dat for u,v,dat in L.edges(data=True)])
+    assert all(["weight" in dat for u, v, dat in L.edges(data=True)])
     assert set(L.nodes) == {0, 1, 2, 3}
     assert [set(e) for e in L.edges] == [{2, 3}]
-    assert L.edges[(2,3)]['weight'] == 1
+    assert L.edges[(2, 3)]["weight"] == 1
 
     L = xgi.to_line_graph(hypergraph1, weights="absolute")
     assert isinstance(L, Graph)
-    assert all(["weight" in dat for u,v,dat in L.edges(data=True)])
+    assert all(["weight" in dat for u, v, dat in L.edges(data=True)])
     assert set(L.nodes) == {"e1", "e2", "e3"}
     assert [set(e) for e in L.edges] == [{"e1", "e2"}, {"e2", "e3"}]
-    assert L.edges[("e1","e2")]['weight'] == 2
-    assert L.edges[("e2","e3")]['weight'] == 1
-    assert sum([dat["weight"] for _,_,dat in L.edges(data=True)]) == 3
-
+    assert L.edges[("e1", "e2")]["weight"] == 2
+    assert L.edges[("e2", "e3")]["weight"] == 1
+    assert sum([dat["weight"] for _, _, dat in L.edges(data=True)]) == 3
 
     L = xgi.to_line_graph(hypergraph1, s=2, weights="absolute")
     assert isinstance(L, Graph)
-    assert all(["weight" in dat for u,v,dat in L.edges(data=True)])
+    assert all(["weight" in dat for u, v, dat in L.edges(data=True)])
     assert set(L.nodes) == {"e1", "e2", "e3"}
     assert [set(e) for e in L.edges] == [{"e1", "e2"}]
-    assert L.edges[("e1","e2")]['weight'] == 2
-    assert sum([dat["weight"] for _,_,dat in L.edges(data=True)]) == 2
+    assert L.edges[("e1", "e2")]["weight"] == 2
+    assert sum([dat["weight"] for _, _, dat in L.edges(data=True)]) == 2
 
     L = xgi.to_line_graph(hypergraph2, weights="absolute")
     assert isinstance(L, Graph)
-    assert all(["weight" in dat for u,v,dat in L.edges(data=True)])
+    assert all(["weight" in dat for u, v, dat in L.edges(data=True)])
     assert set(L.nodes) == {"e1", "e2", "e3"}
     assert [set(e) for e in L.edges] == [{"e1", "e2"}, {"e1", "e3"}, {"e2", "e3"}]
-    assert L.edges[("e1","e2")]['weight'] == 1
-    assert L.edges[("e2","e3")]['weight'] == 2
-    assert L.edges[("e1","e3")]['weight'] == 2
-    assert sum([dat["weight"] for _,_,dat in L.edges(data=True)]) == 5
+    assert L.edges[("e1", "e2")]["weight"] == 1
+    assert L.edges[("e2", "e3")]["weight"] == 2
+    assert L.edges[("e1", "e3")]["weight"] == 2
+    assert sum([dat["weight"] for _, _, dat in L.edges(data=True)]) == 5
 
     L = xgi.to_line_graph(hypergraph2, s=2, weights="absolute")
     assert isinstance(L, Graph)
-    assert all(["weight" in dat for u,v,dat in L.edges(data=True)])
+    assert all(["weight" in dat for u, v, dat in L.edges(data=True)])
     assert set(L.nodes) == {"e1", "e2", "e3"}
     assert [set(e) for e in L.edges] == [{"e1", "e3"}, {"e2", "e3"}]
-    assert L.edges[("e2","e3")]['weight'] == 2
-    assert L.edges[("e1","e3")]['weight'] == 2
-    assert sum([dat["weight"] for _,_,dat in L.edges(data=True)]) == 4
+    assert L.edges[("e2", "e3")]["weight"] == 2
+    assert L.edges[("e1", "e3")]["weight"] == 2
+    assert sum([dat["weight"] for _, _, dat in L.edges(data=True)]) == 4
 
 
 def test_normed_weighted_line_graph(edgelist1, hypergraph1, edgelist2, hypergraph2):
@@ -91,26 +90,26 @@ def test_normed_weighted_line_graph(edgelist1, hypergraph1, edgelist2, hypergrap
 
     L = xgi.to_line_graph(H, weights="normalized")
     assert isinstance(L, Graph)
-    assert all(["weight" in dat for u,v,dat in L.edges(data=True)])
+    assert all(["weight" in dat for u, v, dat in L.edges(data=True)])
     assert set(L.nodes) == {0, 1, 2, 3}
     assert [set(e) for e in L.edges] == [{2, 3}]
-    assert L.edges[(2,3)]['weight'] == 0.5
+    assert L.edges[(2, 3)]["weight"] == 0.5
 
     L = xgi.to_line_graph(hypergraph1, weights="normalized")
     assert isinstance(L, Graph)
-    assert all(["weight" in dat for u,v,dat in L.edges(data=True)])
+    assert all(["weight" in dat for u, v, dat in L.edges(data=True)])
     assert set(L.nodes) == {"e1", "e2", "e3"}
     assert [set(e) for e in L.edges] == [{"e1", "e2"}, {"e2", "e3"}]
-    assert L.edges[("e1","e2")]['weight'] == 1.0
-    assert L.edges[("e2","e3")]['weight'] == 1.0
-    assert sum([dat["weight"] for _,_,dat in L.edges(data=True)]) == 2.0
+    assert L.edges[("e1", "e2")]["weight"] == 1.0
+    assert L.edges[("e2", "e3")]["weight"] == 1.0
+    assert sum([dat["weight"] for _, _, dat in L.edges(data=True)]) == 2.0
 
     L = xgi.to_line_graph(hypergraph2, weights="normalized")
     assert isinstance(L, Graph)
-    assert all(["weight" in dat for u,v,dat in L.edges(data=True)])
+    assert all(["weight" in dat for u, v, dat in L.edges(data=True)])
     assert set(L.nodes) == {"e1", "e2", "e3"}
     assert [set(e) for e in L.edges] == [{"e1", "e2"}, {"e1", "e3"}, {"e2", "e3"}]
-    assert L.edges[("e1","e2")]['weight'] == 0.5
-    assert L.edges[("e2","e3")]['weight'] == 1.0
-    assert L.edges[("e1","e3")]['weight'] == 1.0
-    assert sum([dat["weight"] for _,_,dat in L.edges(data=True)]) == 2.5
+    assert L.edges[("e1", "e2")]["weight"] == 0.5
+    assert L.edges[("e2", "e3")]["weight"] == 1.0
+    assert L.edges[("e1", "e3")]["weight"] == 1.0
+    assert sum([dat["weight"] for _, _, dat in L.edges(data=True)]) == 2.5
