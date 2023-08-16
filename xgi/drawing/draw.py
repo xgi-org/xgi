@@ -234,6 +234,7 @@ def draw_nodes(
     node_ec="black",
     node_lw=1,
     node_size=15,
+    node_shape="o",
     node_fc_cmap="Reds",
     vmin=None,
     vmax=None,
@@ -272,6 +273,9 @@ def draw_nodes(
         nodes. If iterable or NodeStat, assume the radiuses are specified in the same 
         order as the nodes are found in H.nodes. Values are clipped below
         and above by min_node_size and max_node_size, respectively. By default, 15.
+    node_shape :  string, optional
+        The shape of the node. Specification is as matplotlib.scatter
+        marker. Default is "o".
     node_fc_cmap : colormap
         Colormap for mapping node colors. By default, "Reds".
     vmin : float or None
@@ -349,6 +353,7 @@ def draw_nodes(
         x=xy[:, 0],
         y=xy[:, 1],
         s=node_size,
+        marker=node_shape,
         c=node_fc,
         cmap=node_fc_cmap,
         vmin=vmin,
