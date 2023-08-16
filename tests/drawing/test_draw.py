@@ -147,19 +147,21 @@ def test_color_arg_to_dict(edgelist4):
 def test_draw(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 
-    ax = xgi.draw(H)
+    fig, ax = plt.subplots()
+    ax, node_collection = xgi.draw(H, ax=ax)
 
     # number of elements
     assert len(ax.lines) == len(H.edges.filterby("size", 2))  # dyads
     assert len(ax.patches) == len(H.edges.filterby("size", 2, mode="gt"))  # hyperedges
-    assert len(ax.collections[0].get_sizes()) == H.num_nodes  # nodes
+    offsets = node_collection.get_offsets()
+    assert offsets.shape[0] == H.num_nodes  # nodes
 
     # zorder
     for line in ax.lines:  # dyads
         assert line.get_zorder() == 3
     for patch, z in zip(ax.patches, [2, 2, 0, 2, 2]):  # hyperedges
         assert patch.get_zorder() == z
-    assert ax.collections[0].get_zorder() == 4  # nodes
+    assert node_collection.get_zorder() == 4  # nodes
 
     plt.close()
 
@@ -167,12 +169,14 @@ def test_draw(edgelist8):
 def test_draw_nodes(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 
-    ax = xgi.draw_nodes(H)
+    fig, ax = plt.subplots()
+    ax, im = xgi.draw_nodes(H, ax=ax)
 
     # number of elements
     assert len(ax.lines) == 0  # dyads
     assert len(ax.patches) == 0  # hyperedges
-    assert len(ax.collections[0].get_sizes()) == H.num_nodes  # nodes
+    offsets = im.get_offsets()
+    assert offsets.shape[0] == H.num_nodes  # nodes
 
     # zorder
     assert ax.collections[0].get_zorder() == 0  # nodes
@@ -183,7 +187,8 @@ def test_draw_nodes(edgelist8):
 def test_draw_hyperedges(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 
-    ax = xgi.draw_hyperedges(H)
+    fig, ax = plt.subplots()
+    ax = xgi.draw_hyperedges(H, ax=ax)
 
     # number of elements
     assert len(ax.lines) == len(H.edges.filterby("size", 2))  # dyads
@@ -206,7 +211,9 @@ def test_draw_simplices(edgelist8):
         plt.close()
 
     S = xgi.SimplicialComplex(edgelist8)
-    ax = xgi.draw_simplices(S)
+
+    fig, ax = plt.subplots()
+    ax = xgi.draw_simplices(S, ax=ax)
 
     # number of elements
     assert len(ax.lines) == 18  # dyads
@@ -226,16 +233,18 @@ def test_draw_hypergraph_hull(edgelist8):
 
     H = xgi.Hypergraph(edgelist8)
 
-    ax = xgi.draw_hypergraph_hull(H)
+    fig, ax = plt.subplots()
+    ax, node_collection = xgi.draw_hypergraph_hull(H, ax=ax)
 
     # number of elements
     assert len(ax.patches) == len(H.edges.filterby("size", 2, mode="gt"))  # hyperedges
-    assert len(ax.collections[0].get_sizes()) == H.num_nodes  # nodes
-
+    offsets = node_collection.get_offsets()
+    assert offsets.shape[0] == H.num_nodes  # nodes
+    
     # zorder
     for patch, z in zip(ax.patches, [2, 2, 0, 2, 2]):  # hyperedges
         assert patch.get_zorder() == z
-    assert ax.collections[0].get_zorder() == 4  # nodes
+    assert node_collection.get_zorder() == 4  # nodes
 
     plt.close()
 
@@ -243,13 +252,16 @@ def test_draw_hypergraph_hull(edgelist8):
 def test_correct_number_of_collections_draw_multilayer(edgelist8):
     # hypergraph
     H = xgi.Hypergraph(edgelist8)
-    ax1 = xgi.draw_multilayer(H)
+
+    fig, ax = plt.subplots()
+    ax1 = xgi.draw_multilayer(H, ax=ax)
     assert xgi.max_edge_order(H) * 4 - 1 == len(ax1.collections)
     plt.close()
 
     # max_order parameter
     max_order = 2
-    ax2 = xgi.draw_multilayer(H, max_order=max_order)
+    fig, ax = plt.subplots()
+    ax2 = xgi.draw_multilayer(H, max_order=max_order, ax=ax)
     assert max_order * 4 - 1 == len(ax2.collections)
     plt.close()
 
@@ -280,7 +292,9 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
 
 def test_draw_dihypergraph(diedgelist2, edgelist8):
     DH = xgi.DiHypergraph(diedgelist2)
-    ax1 = xgi.draw_dihypergraph(DH)
+
+    fig, ax = plt.subplots()
+    ax1 = xgi.draw_dihypergraph(DH, ax=ax)
 
     # number of elements
     assert len(ax1.lines) == 7  # number of source nodes

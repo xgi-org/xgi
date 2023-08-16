@@ -52,6 +52,7 @@ def draw(
     node_ec="black",
     node_lw=1,
     node_size=15,
+    node_shape="o",
     max_order=None,
     node_labels=False,
     hyperedge_labels=False,
@@ -110,6 +111,9 @@ def draw(
         the radiuses are specified in the same order as the nodes are found in
         H.nodes. If NodeStat, use a monotonic linear interpolation defined between
         min_node_size and max_node_size. By default, 15.
+    node_shape :  string, optional
+        The shape of the node. Specification is as matplotlib.scatter
+        marker. Default is "o".
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     node_labels : bool or dict, optional
@@ -204,17 +208,18 @@ def draw(
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
-    _, im_nodes = draw_nodes(
-        H,
-        pos,
-        ax,
-        node_fc,
-        node_ec,
-        node_lw,
-        node_size,
-        max_order,
-        settings,
-        node_labels,
+    ax, node_collection = draw_nodes(
+        H=H,
+        pos=pos,
+        ax=ax,
+        node_fc=node_fc,
+        node_ec=node_ec,
+        node_lw=node_lw,
+        node_size=node_size,
+        node_shape=node_shape,
+        zorder=max_order,
+        params=settings,
+        node_labels=node_labels,
         **kwargs,
     )
 
@@ -223,7 +228,7 @@ def draw(
 
     ax.set_aspect(aspect, "datalim")
 
-    return ax, im_nodes
+    return ax, node_collection
 
 
 def draw_nodes(
@@ -349,7 +354,7 @@ def draw_nodes(
         raise ValueError("node_lw cannot contain negative values.")
 
     # plot
-    sc = ax.scatter(
+    node_collection = ax.scatter(
         x=xy[:, 0],
         y=xy[:, 1],
         s=node_size,
@@ -377,7 +382,7 @@ def draw_nodes(
     # compute axis limits
     _update_lims(pos, ax)
 
-    return ax, sc
+    return ax, node_collection
 
 
 def draw_hyperedges(
@@ -984,6 +989,7 @@ def draw_hypergraph_hull(
     node_ec="black",
     node_lw=1,
     node_size=7,
+    node_shape="o",
     max_order=None,
     node_labels=False,
     hyperedge_labels=False,
@@ -1043,6 +1049,9 @@ def draw_hypergraph_hull(
         the radiuses are specified in the same order as the nodes are found in
         H.nodes. If NodeStat, use a monotonic linear interpolation defined between
         min_node_size and max_node_size. By default, 7.
+    node_shape :  string, optional
+        The shape of the node. Specification is as matplotlib.scatter
+        marker. Default is "o".
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     node_labels : bool, or dict, optional
@@ -1156,17 +1165,18 @@ def draw_hypergraph_hull(
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
         draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
 
-    draw_nodes(
-        H,
-        pos,
-        ax,
-        node_fc,
-        node_ec,
-        node_lw,
-        node_size,
-        max_order,
-        settings,
-        node_labels,
+    ax, node_collection = draw_nodes(
+        H=H,
+        pos=pos,
+        ax=ax,
+        node_fc=node_fc,
+        node_ec=node_ec,
+        node_lw=node_lw,
+        node_size=node_size,
+        node_shape=node_shape,
+        zorder=max_order,
+        params=settings,
+        node_labels=node_labels,
         **kwargs,
     )
 
@@ -1175,7 +1185,7 @@ def draw_hypergraph_hull(
 
     ax.set_aspect(aspect, "datalim")
 
-    return ax
+    return ax, node_collection
 
 
 def draw_multilayer(
@@ -1598,16 +1608,16 @@ def draw_dihypergraph(
         draw_hyperedge_labels(H_conv, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
 
     draw_nodes(
-        H_conv,
-        pos,
-        ax,
-        node_fc,
-        node_ec,
-        node_lw,
-        node_size,
-        max_order,
-        settings,
-        node_labels,
+        H=H_conv,
+        pos=pos,
+        ax=ax,
+        node_fc=node_fc,
+        node_ec=node_ec,
+        node_lw=node_lw,
+        node_size=node_size,
+        zorder=max_order,
+        params=settings,
+        node_labels=node_labels,
         **kwargs,
     )
 
