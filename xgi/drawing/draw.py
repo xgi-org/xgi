@@ -338,6 +338,12 @@ def draw_nodes(
         node_lw = np.array(list(node_lw.values()))
     node_lw = np.clip(node_lw, settings["min_node_lw"], settings["max_node_lw"])
 
+    # check validity of input values
+    if np.any(node_size < 0):
+        raise ValueError("node_size cannot contain negative values.")
+    if np.any(node_lw < 0):
+        raise ValueError("node_lw cannot contain negative values.")
+
     # plot
     sc = ax.scatter(
         x=xy[:, 0],
