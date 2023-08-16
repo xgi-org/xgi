@@ -300,6 +300,13 @@ def draw_nodes(
     kwargs : optional keywords
         See `draw_node_labels` for a description of optional keywords.
 
+    Returns
+    -------
+    ax : matplotlib Axes
+        Axes plotted on
+    node_collection : matplotlib PathCollection
+        Collection containing the nodes
+
     See Also
     --------
     draw
@@ -307,6 +314,13 @@ def draw_nodes(
     draw_simplices
     draw_node_labels
     draw_hyperedge_labels
+
+    Notes
+    -----
+
+    If nodes are colored with a cmap, the `node_collection` returned 
+    can be used to easily plot a colorbar corresponding to the node
+    colors. Simply do `plt.colorbar(node_collection)`.
 
     """
 
