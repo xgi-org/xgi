@@ -240,7 +240,7 @@ def test_draw_hypergraph_hull(edgelist8):
     assert len(ax.patches) == len(H.edges.filterby("size", 2, mode="gt"))  # hyperedges
     offsets = node_collection.get_offsets()
     assert offsets.shape[0] == H.num_nodes  # nodes
-    
+
     # zorder
     for patch, z in zip(ax.patches, [2, 2, 0, 2, 2]):  # hyperedges
         assert patch.get_zorder() == z
@@ -253,15 +253,13 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
     # hypergraph
     H = xgi.Hypergraph(edgelist8)
 
-    fig, ax = plt.subplots()
-    ax1 = xgi.draw_multilayer(H, ax=ax)
+    ax1 = xgi.draw_multilayer(H)
     assert xgi.max_edge_order(H) * 4 - 1 == len(ax1.collections)
     plt.close()
 
     # max_order parameter
     max_order = 2
-    fig, ax = plt.subplots()
-    ax2 = xgi.draw_multilayer(H, max_order=max_order, ax=ax)
+    ax2 = xgi.draw_multilayer(H, max_order=max_order)
     assert max_order * 4 - 1 == len(ax2.collections)
     plt.close()
 
