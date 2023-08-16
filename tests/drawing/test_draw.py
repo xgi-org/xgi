@@ -217,6 +217,11 @@ def test_draw_nodes(edgelist8):
     assert np.all(node_collection.get_sizes() == np.array([15**2]))
     assert np.all(node_collection2.get_sizes() == np.array([20**2]))
 
+    # negative node_lw or node_size
+    with pytest.raises(ValueError):
+        ax3, node_collection3 = xgi.draw_nodes(H, node_size=-1)
+        plt.close()
+
     plt.close("all")
 
 
