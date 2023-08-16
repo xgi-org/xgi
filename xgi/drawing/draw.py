@@ -262,27 +262,27 @@ def draw_nodes(
         the positions.
     node_fc : str, iterable, or NodeStat, optional
         Color of the nodes.  If str, use the same color for all nodes. If other iterable,
-        or NodeStat, assume the colors are specified in the same order as the nodes are 
+        or NodeStat, assume the colors are specified in the same order as the nodes are
         found in H.nodes. By default, "white".
     node_ec : color or sequence of colors, optional
         Color of node borders. If color, use the same color for all nodes. If sequence
-        of colors, assume the colors are specified in the same order as the nodes are 
+        of colors, assume the colors are specified in the same order as the nodes are
         found in H.nodes. By default, "black".
     node_lw : int, float, iterable, or NodeStat, optional
         Line width of the node borders in pixels.  If int or float, use the same width
-        for all node borders.  If iterable or NodeStat, assume the widths are specified 
+        for all node borders.  If iterable or NodeStat, assume the widths are specified
         in the same order as the nodes are found in H.nodes. Values are clipped below
         and above by min_node_lw and max_node_lw, respectively. By default, 1.
     node_size : int, float, iterable, or NodeStat, optional
         Radius of the nodes in pixels.  If int or float, use the same radius for all
-        nodes. If iterable or NodeStat, assume the radiuses are specified in the same 
+        nodes. If iterable or NodeStat, assume the radiuses are specified in the same
         order as the nodes are found in H.nodes. Values are clipped below
         and above by min_node_size and max_node_size, respectively. By default, 15.
     node_shape :  string, optional
         The shape of the node. Specification is as matplotlib.scatter
         marker. Default is "o".
     node_fc_cmap : colormap
-        Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is 
+        Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is
         a str (single color).
     vmin : float or None
         Minimum for the node_fc_cmap scaling. By default, None.
@@ -319,12 +319,12 @@ def draw_nodes(
     Notes
     -----
 
-    * If nodes are colored with a cmap, the `node_collection` returned 
+    * If nodes are colored with a cmap, the `node_collection` returned
     can be used to easily plot a colorbar corresponding to the node
     colors. Simply do `plt.colorbar(node_collection)`.
 
     * Nodes with nonfinite `node_fc` (i.e. `inf`, `-inf` or `nan` are drawn
-    with the bad colormap color (see `plotnonfinitebool` in `plt.scatter` and 
+    with the bad colormap color (see `plotnonfinitebool` in `plt.scatter` and
     Colormap.set_bad from Matplotlib).
 
     """
@@ -389,7 +389,7 @@ def draw_nodes(
         edgecolors=node_ec,
         linewidths=node_lw,
         zorder=zorder,
-        plotnonfinite=True # plot points with nonfinite color
+        plotnonfinite=True,  # plot points with nonfinite color
     )
 
     if node_labels:
