@@ -170,18 +170,38 @@ def test_draw_nodes(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 
     fig, ax = plt.subplots()
-    ax, im = xgi.draw_nodes(H, ax=ax)
+    ax, node_collection = xgi.draw_nodes(H, ax=ax)
+    fig2, ax2 = plt.subplots()
+    ax2, node_collection2 = xgi.draw_nodes(H, ax=ax2, node_fc="r", node_ec="b", node_lw=2, node_size=20, zorder=10, node_shape="v")
 
     # number of elements
     assert len(ax.lines) == 0  # dyads
     assert len(ax.patches) == 0  # hyperedges
-    offsets = im.get_offsets()
+    offsets = node_collection.get_offsets()
     assert offsets.shape[0] == H.num_nodes  # nodes
 
     # zorder
-    assert ax.collections[0].get_zorder() == 0  # nodes
+    assert node_collection.get_zorder() == 0 
+    assert node_collection2.get_zorder() == 10  
 
-    plt.close()
+    # facecolor
+    assert np.all(node_collection.get_facecolor() == np.array([[1., 1., 1., 1.]])) # white
+    assert np.all(node_collection2.get_facecolor() == np.array([[1., 0., 0., 1.]])) # blue
+
+    # facecolor
+    assert np.all(node_collection.get_edgecolor() == np.array([[0., 0., 0., 1.]])) # black
+    assert np.all(node_collection2.get_edgecolor() == np.array([[0., 0., 1., 1.]])) # red
+
+    # linewidth
+    assert np.all(node_collection.get_linewidth() == np.array([1])) 
+    assert np.all(node_collection2.get_linewidth() == np.array([2]))
+
+    # linewidth
+    assert np.all(node_collection.get_sizes() == np.array([15**2])) 
+    assert np.all(node_collection2.get_sizes() == np.array([20**2]))
+
+
+    plt.close("all")
 
 
 def test_draw_hyperedges(edgelist8):

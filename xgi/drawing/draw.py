@@ -282,7 +282,8 @@ def draw_nodes(
         The shape of the node. Specification is as matplotlib.scatter
         marker. Default is "o".
     node_fc_cmap : colormap
-        Colormap for mapping node colors. By default, "Reds".
+        Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is 
+        a str (single color).
     vmin : float or None
         Minimum for the node_fc_cmap scaling. By default, None.
     vmax : float or None
@@ -318,9 +319,13 @@ def draw_nodes(
     Notes
     -----
 
-    If nodes are colored with a cmap, the `node_collection` returned 
+    * If nodes are colored with a cmap, the `node_collection` returned 
     can be used to easily plot a colorbar corresponding to the node
     colors. Simply do `plt.colorbar(node_collection)`.
+
+    * Nodes with nonfinite `node_fc` (i.e. `inf`, `-inf` or `nan` are drawn
+    with the bad colormap color (see `plotnonfinitebool` in `plt.scatter` and 
+    Colormap.set_bad from Matplotlib).
 
     """
 
@@ -333,6 +338,10 @@ def draw_nodes(
 
     settings.update(params)
     settings.update(kwargs)
+
+    # avoid matplotlib scatter UserWarning "Parameters 'cmap' will be ignored"
+    if isinstance(node_fc, str):
+        node_fc_cmap = None
 
     ax, pos = _draw_init(H, ax, pos)
 
@@ -380,6 +389,7 @@ def draw_nodes(
         edgecolors=node_ec,
         linewidths=node_lw,
         zorder=zorder,
+        plotnonfinite=True # plot points with nonfinite color
     )
 
     if node_labels:
