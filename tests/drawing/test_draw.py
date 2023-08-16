@@ -221,6 +221,9 @@ def test_draw_nodes(edgelist8):
     with pytest.raises(ValueError):
         ax3, node_collection3 = xgi.draw_nodes(H, node_size=-1)
         plt.close()
+    with pytest.raises(ValueError):
+        ax3, node_collection3 = xgi.draw_nodes(H, node_lw=-1)
+        plt.close()
 
     plt.close("all")
 
