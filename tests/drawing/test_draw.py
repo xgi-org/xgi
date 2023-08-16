@@ -189,11 +189,7 @@ def test_draw_nodes(edgelist8):
     offsets = node_collection.get_offsets()
     assert offsets.shape[0] == H.num_nodes  # nodes
 
-    # zorder
-    assert node_collection.get_zorder() == 0
-    assert node_collection2.get_zorder() == 10
-
-    # facecolor
+    # node_fc
     assert np.all(
         node_collection.get_facecolor() == np.array([[1.0, 1.0, 1.0, 1.0]])
     )  # white
@@ -201,7 +197,7 @@ def test_draw_nodes(edgelist8):
         node_collection2.get_facecolor() == np.array([[1.0, 0.0, 0.0, 1.0]])
     )  # blue
 
-    # facecolor
+    # node_ec
     assert np.all(
         node_collection.get_edgecolor() == np.array([[0.0, 0.0, 0.0, 1.0]])
     )  # black
@@ -209,13 +205,17 @@ def test_draw_nodes(edgelist8):
         node_collection2.get_edgecolor() == np.array([[0.0, 0.0, 1.0, 1.0]])
     )  # red
 
-    # linewidth
+    # node_lw
     assert np.all(node_collection.get_linewidth() == np.array([1]))
     assert np.all(node_collection2.get_linewidth() == np.array([2]))
 
-    # linewidth
+    # node_size
     assert np.all(node_collection.get_sizes() == np.array([15**2]))
     assert np.all(node_collection2.get_sizes() == np.array([20**2]))
+
+    # zorder
+    assert node_collection.get_zorder() == 0
+    assert node_collection2.get_zorder() == 10
 
     # negative node_lw or node_size
     with pytest.raises(ValueError):
@@ -226,6 +226,41 @@ def test_draw_nodes(edgelist8):
         plt.close()
 
     plt.close("all")
+
+
+def test_draw_nodes_fc_cmap(edgelist8):
+
+    H = xgi.Hypergraph(edgelist8)
+
+    # unused default when single color
+    fig, ax = plt.subplots()
+    ax, node_collection = xgi.draw_nodes(H, ax=ax, node_fc="r")
+    assert node_collection.get_cmap() == plt.cm.viridis
+    plt.close()
+
+    # default cmap
+    fig, ax = plt.subplots()
+    colors = np.linspace(11, 21, H.num_nodes)
+    ax, node_collection = xgi.draw_nodes(H, ax=ax, node_fc=colors)
+    assert node_collection.get_cmap() == plt.cm.Reds
+    plt.close()
+
+    # set cmap
+    fig, ax = plt.subplots()
+    colors = np.linspace(11, 21, H.num_nodes)
+    ax, node_collection = xgi.draw_nodes(
+        H, ax=ax, node_fc=colors, node_fc_cmap="Greens"
+    )
+    assert node_collection.get_cmap() == plt.cm.Greens
+    assert (colors.min(), colors.max()) == node_collection.get_clim()
+    plt.close()
+
+    # vmin/vmax
+    fig, ax = plt.subplots()
+    colors = np.linspace(11, 21, H.num_nodes)
+    ax, node_collection = xgi.draw_nodes(H, ax=ax, node_fc=colors, vmin=14, vmax=19)
+    assert (14, 19) == node_collection.get_clim()
+    plt.close()
 
 
 def test_draw_hyperedges(edgelist8):

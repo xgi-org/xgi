@@ -359,7 +359,7 @@ def draw_nodes(
     # check validity of input values
     if np.any(node_size < 0):
         raise ValueError("node_size cannot contain negative values.")
-    #clip 
+    # clip
     node_size = np.clip(node_size, settings["min_node_size"], settings["max_node_size"])
     node_size = node_size**2
 
@@ -375,9 +375,8 @@ def draw_nodes(
     # check validity of input values
     if np.any(node_lw < 0):
         raise ValueError("node_lw cannot contain negative values.")
-    # clip 
+    # clip
     node_lw = np.clip(node_lw, settings["min_node_lw"], settings["max_node_lw"])
-
 
     # plot
     node_collection = ax.scatter(
