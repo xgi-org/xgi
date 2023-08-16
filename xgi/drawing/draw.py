@@ -319,18 +319,23 @@ def draw_nodes(
     except KeyError as err:
         raise XGIError(f"Node {err} has no position.") from err
 
-    # deal with formats and clip arguments
+    # convert all formats to ndarray and clip values to min/max
     if isinstance(node_size, IDStat):
         node_size = node_size.asnumpy()
+    elif isinstance(node_size, dict):
+        node_size = np.array(list(node_size.values()))
     node_size = np.clip(node_size, settings["min_node_size"], settings["max_node_size"])
-
     node_size = node_size**2
 
     if isinstance(node_fc, IDStat):
         node_fc = node_fc.asnumpy()
+    elif isinstance(node_fc, dict):
+        node_fc = np.array(list(node_fc.values()))
 
     if isinstance(node_lw, IDStat):
         node_lw = node_lw.asnumpy()
+    elif isinstance(node_lw, dict):
+        node_lw = np.array(list(node_lw.values()))
     node_lw = np.clip(node_lw, settings["min_node_lw"], settings["max_node_lw"])
 
     # plot
