@@ -330,7 +330,7 @@ class IDView(Mapping, Set):
             )
         return type(self).from_view(self, bunch)
 
-    def neighbors(self, id):
+    def neighbors(self, id, s=1):
         """Find the neighbors of an ID.
 
         The neighbors of an ID are those IDs that share at least one bipartite ID.
@@ -339,6 +339,9 @@ class IDView(Mapping, Set):
         ----------
         id : hashable
             ID to find neighbors of.
+        s : int, optional
+            The intersection size s to be considered neighbors.
+            By default, 1.
         Returns
         -------
         set
@@ -359,9 +362,17 @@ class IDView(Mapping, Set):
         {1, 3, 4}
 
         """
-        return {i for n in self._id_dict[id] for i in self._bi_id_dict[n]}.difference(
-            {id}
-        )
+        if s == 1:
+            return {
+                i for n in self._id_dict[id] for i in self._bi_id_dict[n]
+            }.difference({id})
+        else:
+            return {
+                i
+                for n in self._id_dict[id]
+                for i in self._bi_id_dict[n]
+                if len(self._id_dict[id].intersection(self._id_dict[i])) >= s
+            }.difference({id})
 
     def duplicates(self):
         """Find IDs that have a duplicate.
