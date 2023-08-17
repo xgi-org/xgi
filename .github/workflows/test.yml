@@ -45,10 +45,31 @@ jobs:
         # modify each file by adding 'def test_func():' at the top
         sed -i '1s;^;def test_func():\n;' test*.py
 
+    - name: Prepare cookbook
+      run: |
+        # go into cookbook location
+        cd tutorials/cookbook/
+        # convert each notebook into a python file
+        jupyter nbconvert --to script *.ipynb
+        # rename the files so they are found by pytest: add 'test' at the beginning
+        rename 's/(.*)\.py/test $1.py/' *
+        # rename the files so they are found by pytest: change spaces to underscores
+        rename 's/ /_/g' test*
+        # modify each file by adding one level of indentation to each line
+        sed -i 's/^/    /' test*.py
+        # modify each file by adding 'def test_func():' at the top
+        sed -i '1s;^;def test_func():\n;' test*.py
+
     - name: Test tutorial notebooks
       run: |
         # run pytest ONLY on the tutorials
         cd tutorials/
+        pytest --color=yes
+    
+    - name: Test cookbook
+      run: |
+        # run pytest ONLY on the tutorials
+        cd tutorials/cookbook/
         pytest --color=yes
 
   pytest:
