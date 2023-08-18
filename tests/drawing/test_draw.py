@@ -230,7 +230,7 @@ def test_draw_nodes(edgelist8):
 
 
 def test_draw_nodes_fc_cmap(edgelist8):
-    import numpy as np
+
     H = xgi.Hypergraph(edgelist8)
 
     # unused default when single color
@@ -241,24 +241,22 @@ def test_draw_nodes_fc_cmap(edgelist8):
 
     # default cmap
     fig, ax = plt.subplots()
-    colors = np.linspace(11, 21, H.num_nodes)
+    colors = [11, 12, 14, 16, 17, 19, 21.0]
     ax, node_collection = xgi.draw_nodes(H, ax=ax, node_fc=colors)
     assert node_collection.get_cmap() == plt.cm.Reds
     plt.close()
 
     # set cmap
     fig, ax = plt.subplots()
-    colors = np.linspace(11, 21, H.num_nodes)
     ax, node_collection = xgi.draw_nodes(
         H, ax=ax, node_fc=colors, node_fc_cmap="Greens"
     )
     assert node_collection.get_cmap() == plt.cm.Greens
-    assert (colors.min(), colors.max()) == node_collection.get_clim()
+    assert (min(colors), max(colors)) == node_collection.get_clim()
     plt.close()
 
     # vmin/vmax
     fig, ax = plt.subplots()
-    colors = np.linspace(11, 21, H.num_nodes)
     ax, node_collection = xgi.draw_nodes(H, ax=ax, node_fc=colors, vmin=14, vmax=19)
     assert (14, 19) == node_collection.get_clim()
     plt.close()
