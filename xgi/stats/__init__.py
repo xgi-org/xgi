@@ -467,9 +467,7 @@ class MultiIDStat(IDStat):
         Originally from https://github.com/jkbren/networks-and-dataviz
 
         """
-        return [
-            dist(data, bins, density, log_binning) for data in self.asnumpy().T
-        ]
+        return [dist(data, bins, density, log_binning) for data in self.asnumpy().T]
 
 
 class MultiNodeStat(MultiIDStat):

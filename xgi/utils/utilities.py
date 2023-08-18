@@ -4,8 +4,8 @@ from collections import defaultdict
 from copy import deepcopy
 from functools import lru_cache
 from itertools import chain, combinations, count
-import numpy as np
 
+import numpy as np
 import requests
 from numpy import infty
 
