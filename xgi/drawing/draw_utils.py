@@ -28,7 +28,20 @@ def _draw_init(H, ax, pos):
 
 
 def _update_lims(pos, ax):
-    """Update Axis limits based on node positions"""
+    """Update Axis limits based on node positions
+
+    Parameters
+    ----------
+    pos : dict of lists
+        The output of the layout functions.
+    ax : Matplotlib axis
+        The axis on which to plot
+
+    Returns
+    -------
+    None
+    
+    """
 
     # compute axis limits
     pos_arr = np.asarray([[x, y] for n, (x, y) in pos.items()])
