@@ -475,6 +475,28 @@ class DiNodeView(DiIDView):
             else set(self._out_id_dict[n].union(self._in_id_dict[n]))
         )
 
+    def isolates(self):
+        """Nodes that belong to no edges.
+
+        When ignore_singletons is True, a node is considered isolated from the rest of
+        the hypergraph when it is included in no edges of size two or more.  In
+        particular, whether the node is part of any singleton edges is irrelevant to
+        determine whether it is isolated.
+
+        When ignore_singletons is False (default), a node is isolated only when it is a
+        member of exactly zero edges, including singletons.
+
+        Returns
+        -------
+        NodeView containing the isolated nodes.
+
+        See Also
+        --------
+        :meth:`EdgeView.singletons`
+
+        """
+        return self.filterby("degree", 0)
+
 
 class DiEdgeView(DiIDView):
     """An DiIDView that keeps track of edge ids.

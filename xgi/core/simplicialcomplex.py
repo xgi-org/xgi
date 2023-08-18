@@ -8,6 +8,7 @@ Multi-simplices are not allowed.
 """
 
 from collections.abc import Hashable, Iterable
+from copy import copy, deepcopy
 from itertools import combinations, count
 from warnings import warn
 
@@ -105,8 +106,8 @@ class SimplicialComplex(Hypergraph):
         Examples
         --------
         >>> import xgi
-        >>> H = xgi.SimplicialComplex(name="foo")
-        >>> str(H)
+        >>> S = xgi.SimplicialComplex(name="foo")
+        >>> str(S)
         "SimplicialComplex named 'foo' with 0 nodes and 0 simplices"
 
         """
@@ -162,13 +163,60 @@ class SimplicialComplex(Hypergraph):
         )
         return self.remove_simplex_ids_from(ebunch)
 
+    def remove_node(self, n):
+        """Remove a single node.
+
+        The removal is strong meaning that all edges containing the
+        node are removed.
+
+        Parameters
+        ----------
+        n : node
+            A node in the simplicial complex
+
+        Raises
+        ------
+        XGIError
+           If n is not in the simplicial complex.
+
+        See Also
+        --------
+        remove_nodes_from
+
+        """
+        edge_neighbors = self._node[n]
+        del self._node[n]
+        del self._node_attr[n]
+
+        for e in edge_neighbors:
+            node_neighbors = self._edge[e]
+            del self._edge[e]
+            del self._edge_attr[e]
+            for node in node_neighbors.difference({n}):
+                self._node[node].remove(e)
+
+    def remove_nodes_from(self, nodes):
+        """Remove multiple nodes.
+
+        Parameters
+        ----------
+        nodes : iterable
+            An iterable of nodes.
+
+        See Also
+        --------
+        remove_node
+
+        """
+        for n in nodes:
+            if n not in self:
+                warn(f"Node {n} not in simplicial complex")
+                continue
+            self.remove_node(n)
+
     def add_node_to_edge(self, edge, node):
         """add_node_to_edge is not implemented in SimplicialComplex."""
         raise XGIError("add_node_to_edge is not implemented in SimplicialComplex.")
-
-    def remove_node(self, n, strong=False):
-        """remove_node is not implemented in SimplicialComplex."""
-        raise XGIError("remove_node is not implemented in SimplicialComplex.")
 
     def _add_simplex(self, members, id=None, **attr):
         """Helper function to add a simplex to a simplicial complex, without any
@@ -332,7 +380,7 @@ class SimplicialComplex(Hypergraph):
         return [id_ for id_, s in self._edge.items() if simplex < s]
 
     def add_simplices_from(self, ebunch_to_add, max_order=None, **attr):
-        """Add multiple edges with optional attributes.
+        r"""Add multiple edges with optional attributes.
 
         Parameters
         ----------
@@ -754,14 +802,78 @@ class SimplicialComplex(Hypergraph):
         Examples
         --------
         >>> import xgi
-        >>> H = xgi.SimplicialComplex([[1, 2], [2, 3, 4]])
-        >>> H.has_simplex([1, 2])
+        >>> S = xgi.SimplicialComplex([[1, 2], [2, 3, 4]])
+        >>> S.has_simplex([1, 2])
         True
-        >>> H.has_simplex({1, 3})
+        >>> S.has_simplex({1, 3})
         False
 
         """
         return frozenset(simplex) in self._edge.values()
+
+    def copy(self):
+        """A deep copy of the simplicial complex.
+
+        A deep copy of the simplicial complex,
+        including node, edge, and network attributes.
+
+        Returns
+        -------
+        S : SimplicialComplex
+            A copy of the simplicial complex.
+
+        """
+        cp = self.__class__()
+        nn = self.nodes
+        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+        ee = self.edges
+        cp.add_simplices_from(
+            (e, id, deepcopy(self.edges[id]))
+            for id, e in ee.members(dtype=dict).items()
+        )
+        cp._hypergraph = deepcopy(self._hypergraph)
+
+        cp._edge_uid = copy(self._edge_uid)
+
+        return cp
+
+    def cleanup(self, isolates=False, connected=True, relabel=True, in_place=True):
+        if in_place:
+            if not isolates:
+                self.remove_nodes_from(self.nodes.isolates())
+            if connected:
+                from ..algorithms import largest_connected_component
+
+                self.remove_nodes_from(self.nodes - largest_connected_component(self))
+            if relabel:
+                from ..utils import convert_labels_to_integers
+
+                temp = convert_labels_to_integers(self).copy()
+
+                nn = temp.nodes
+                ee = temp.edges
+
+                self.clear()
+                self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+                self.add_simplices_from(
+                    (e, id, deepcopy(temp.edges[id]))
+                    for id, e in ee.members(dtype=dict).items()
+                )
+                self._hypergraph = deepcopy(temp._hypergraph)
+        else:
+            S = self.copy()
+            if not isolates:
+                S.remove_nodes_from(S.nodes.isolates())
+            if connected:
+                from ..algorithms import largest_connected_component
+
+                S.remove_nodes_from(S.nodes - largest_connected_component(S))
+            if relabel:
+                from ..utils import convert_labels_to_integers
+
+                S = convert_labels_to_integers(S)
+
+            return S
 
     def freeze(self):
         """Method for freezing a simplicial complex
@@ -777,9 +889,9 @@ class SimplicialComplex(Hypergraph):
         --------
         >>> import xgi
         >>> edges = [[1, 2], [2, 3, 4]]
-        >>> SC = xgi.SimplicialComplex(edges)
-        >>> SC.freeze()
-        >>> SC.add_node(5)
+        >>> S = xgi.SimplicialComplex(edges)
+        >>> S.freeze()
+        >>> S.add_node(5)
         Traceback (most recent call last):
         xgi.exception.XGIError: Frozen higher-order network can't be modified
         """
@@ -795,6 +907,7 @@ class SimplicialComplex(Hypergraph):
         self.clear = frozen
         self.frozen = True
 
+    @property
     def is_frozen(self):
         """Checks whether a simplicial complex is frozen
 
@@ -811,9 +924,9 @@ class SimplicialComplex(Hypergraph):
         --------
         >>> import xgi
         >>> edges = [[1, 2], [2, 3, 4]]
-        >>> SC = xgi.SimplicialComplex(edges)
-        >>> SC.freeze()
-        >>> SC.is_frozen()
+        >>> S = xgi.SimplicialComplex(edges)
+        >>> S.freeze()
+        >>> S.is_frozen
         True
         """
         try:

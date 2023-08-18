@@ -13,6 +13,24 @@ from .layout import barycenter_spring_layout
 
 
 def _draw_init(H, ax, pos):
+    """Initializes the axis and node positions
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph to draw
+    ax : Matplotlib axis
+        The axis on which to plot
+    pos : dict of lists
+        The output of the layout functions.
+        If None, uses the barycenter spring layout.
+
+    Returns
+    -------
+    ax, pos
+        ax: axis updated with the XGI format
+        pos: dict of lists with the node positions
+    """
 
     if pos is None:
         pos = barycenter_spring_layout(H)

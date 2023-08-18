@@ -528,6 +528,19 @@ def test_remove_node_strong(edgelist1):
     assert 0 not in H.edges
 
 
+def test_issue_445(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert 1 in H
+    H.remove_node(1, strong=True)
+    assert 1 not in H
+    assert 0 not in H.edges
+    assert H._edge == xgi.dual_dict(H._node)
+
+    H = xgi.Hypergraph([[1, 2, 3], [1, 2]])
+    H.remove_node(1, strong=True)
+    assert H._edge == xgi.dual_dict(H._node)
+
+
 def test_clear_edges(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     H.clear_edges()
@@ -632,7 +645,7 @@ def test_freeze(edgelist1):
     with pytest.raises(XGIError):
         H.remove_node_from_edge(0, 1)
 
-    assert H.is_frozen()
+    assert H.is_frozen
 
 
 def test_set_node_attributes(edgelist1):
@@ -725,3 +738,78 @@ def test_set_edge_attributes(edgelist1):
 
     with pytest.warns(Warning):
         H3.set_edge_attributes({"test": {2: "weight"}})
+
+
+def test_cleanup():
+    H = xgi.Hypergraph()
+    H.add_edges_from([["a", "b", "c"], ["a", "b", "c"], ["e", "f"]])
+    H.add_nodes_from(["d", "g"])
+
+    assert set(H.nodes) == {"a", "b", "c", "d", "e", "f", "g"}
+
+    # test removing isolates
+    cleanH = H.cleanup(connected=False, multiedges=True, relabel=False, in_place=False)
+    assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
+    assert set(cleanH.edges) == {0, 1, 2}
+    edges = cleanH.edges.members()
+    assert {"a", "b", "c"} in edges
+    assert {"e", "f"} in edges
+
+    # test removing multiedges
+    cleanH = H.cleanup(connected=False, isolates=False, relabel=False, in_place=False)
+    assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
+    assert set(cleanH.edges) == {0, 2}
+    edges = cleanH.edges.members()
+    assert {"a", "b", "c"} in edges
+    assert {"e", "f"} in edges
+
+    # test getting giant component
+    cleanH = H.cleanup(relabel=False, in_place=False)
+    assert set(cleanH.nodes) == {"a", "b", "c"}
+    assert cleanH.num_edges == 1
+
+    # test relabel
+    cleanH = H.cleanup(connected=False, in_place=False)
+    assert set(cleanH.nodes) == {0, 1, 2, 3, 4}
+    assert cleanH.num_edges == 2
+    edges = cleanH.edges.members()
+    assert {0, 1, 2} in edges
+    assert {3, 4} in edges
+
+    assert id(cleanH) != id(H)
+    ### In-place versions
+
+    # test removing isolates
+    cleanH = H.copy()
+    cleanH.cleanup(connected=False, multiedges=True, relabel=False)
+    assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
+    assert set(cleanH.edges) == {0, 1, 2}
+    edges = cleanH.edges.members()
+    assert {"a", "b", "c"} in edges
+    assert {"e", "f"} in edges
+
+    # test removing multiedges
+    cleanH = H.copy()
+    cleanH.cleanup(connected=False, isolates=False, relabel=False)
+    assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
+    assert set(cleanH.edges) == {0, 2}
+    edges = cleanH.edges.members()
+    assert {"a", "b", "c"} in edges
+    assert {"e", "f"} in edges
+
+    # test getting giant component
+    cleanH = H.copy()
+    cleanH.cleanup(relabel=False)
+    assert set(cleanH.nodes) == {"a", "b", "c"}
+    assert cleanH.num_edges == 1
+
+    # test relabel
+    cleanH = H.copy()
+    cleanH.cleanup(connected=False)
+    assert set(cleanH.nodes) == {0, 1, 2, 3, 4}
+    assert cleanH.num_edges == 2
+    edges = cleanH.edges.members()
+    assert {0, 1, 2} in edges
+    assert {3, 4} in edges
+
+    assert cleanH._edge == xgi.dual_dict(cleanH._node)

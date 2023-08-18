@@ -1,3 +1,5 @@
+"""Method for converting from a standardized dictionary."""
+
 from ..exception import XGIError
 from ..generators import empty_hypergraph
 

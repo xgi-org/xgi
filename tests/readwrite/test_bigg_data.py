@@ -28,3 +28,11 @@ def test_load_bigg_data(capfd):
 
     with pytest.raises(XGIError):
         load_bigg_data("test")
+
+
+def test_411():
+    with pytest.warns(Warning):
+        H = load_bigg_data("iCN718")
+    assert H["name"] == "iCN718"
+    assert H.num_nodes == 888
+    assert H.num_edges == 1014

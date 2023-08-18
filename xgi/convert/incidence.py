@@ -1,3 +1,5 @@
+"""Methods for converting to and from an incidence matrix."""
+
 from scipy.sparse import coo_array
 
 from ..exception import XGIError

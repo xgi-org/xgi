@@ -7,6 +7,7 @@ from . import (
     hypergraph_dict,
     incidence,
     line_graph,
+    encapsulation_dag,
     pandas,
     simplex,
 )
@@ -18,5 +19,6 @@ from .hyperedges import *
 from .hypergraph_dict import *
 from .incidence import *
 from .line_graph import *
+from .encapsulation_dag import *
 from .pandas import *
 from .simplex import *

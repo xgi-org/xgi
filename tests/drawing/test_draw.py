@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
-import numpy as np
 import pytest
-from matplotlib import cm
 
 import xgi
 from xgi.drawing.draw import (
@@ -353,18 +351,48 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 
     ax1 = xgi.draw_multilayer(H)
-    assert xgi.max_edge_order(H) * 4 - 1 == len(ax1.collections)
+    sizes = xgi.unique_edge_sizes(H)
+    num_planes = max(sizes) - min(sizes) + 1
+    num_node_collections = max(sizes) - min(sizes) + 1
+    num_edge_collections = H.num_edges
+    num_thru_lines_collections = 1
+
+    assert (
+        num_planes
+        + num_node_collections
+        + num_edge_collections
+        + num_thru_lines_collections
+        == len(ax1.collections)
+    )
     plt.close()
 
     # max_order parameter
     max_order = 2
     ax2 = xgi.draw_multilayer(H, max_order=max_order)
-    assert max_order * 4 - 1 == len(ax2.collections)
+    sizes = [2, 3]
+    num_planes = max(sizes) - min(sizes) + 1
+    num_node_collections = max(sizes) - min(sizes) + 1
+    num_edge_collections = len(H.edges.filterby("size", [2, 3], "between"))
+    num_thru_lines_collections = 1
+
+    assert (
+        num_planes
+        + num_node_collections
+        + num_edge_collections
+        + num_thru_lines_collections
+        == len(ax2.collections)
+    )
     plt.close()
 
     # conn_lines parameter
     ax3 = xgi.draw_multilayer(H, conn_lines=False)
-    assert xgi.max_edge_order(H) * 3 == len(ax3.collections)
+    sizes = xgi.unique_edge_sizes(H)
+    num_planes = max(sizes) - min(sizes) + 1
+    num_node_collections = max(sizes) - min(sizes) + 1
+    num_edge_collections = H.num_edges
+    assert num_planes + num_node_collections + num_edge_collections == len(
+        ax3.collections
+    )
     plt.close()
 
     # custom parameters
@@ -383,7 +411,19 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
         v_angle=15,
         sep=2,
     )
-    assert xgi.max_edge_order(H) * 4 - 1 == len(ax4.collections)
+    sizes = xgi.unique_edge_sizes(H)
+    num_planes = max(sizes) - min(sizes) + 1
+    num_node_collections = max(sizes) - min(sizes) + 1
+    num_edge_collections = H.num_edges
+    num_thru_lines_collections = 1
+
+    assert (
+        num_planes
+        + num_node_collections
+        + num_edge_collections
+        + num_thru_lines_collections
+        == len(ax4.collections)
+    )
     plt.close()
 
 

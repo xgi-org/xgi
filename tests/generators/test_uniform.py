@@ -93,7 +93,7 @@ def test_uniform_HPPM():
         rho = -0.1
         k = 2
         epsilon = 0.5
-        xgi.uniform_HPPM(n, m, rho, k, epsilon)
+        xgi.uniform_HPPM(n, m, k, epsilon, rho)
 
     # rho > 1
     with pytest.raises(XGIError):
@@ -102,7 +102,7 @@ def test_uniform_HPPM():
         rho = 1.1
         k = 2
         epsilon = 0.5
-        xgi.uniform_HPPM(n, m, rho, k, epsilon)
+        xgi.uniform_HPPM(n, m, k, epsilon, rho)
 
     # k < 0
     with pytest.raises(XGIError):
@@ -111,7 +111,7 @@ def test_uniform_HPPM():
         rho = 0.5
         k = -2
         epsilon = 0.5
-        xgi.uniform_HPPM(n, m, rho, k, epsilon)
+        xgi.uniform_HPPM(n, m, k, epsilon, rho)
 
     # epsilon < 0
     with pytest.raises(XGIError):
@@ -120,7 +120,7 @@ def test_uniform_HPPM():
         rho = 0.5
         k = 2
         epsilon = -0.1
-        xgi.uniform_HPPM(n, m, rho, k, epsilon)
+        xgi.uniform_HPPM(n, m, k, epsilon)
 
     # epsilon < 0
     with pytest.raises(XGIError):
@@ -129,20 +129,20 @@ def test_uniform_HPPM():
         rho = 0.5
         k = 2
         epsilon = 1.1
-        xgi.uniform_HPPM(n, m, rho, k, epsilon)
+        xgi.uniform_HPPM(n, m, k, epsilon)
 
     m = 2
     n = 10
     rho = 0.5
     k = 2
     epsilon = 0.8
-    H1 = xgi.uniform_HPPM(n, m, rho, k, epsilon, seed=0)
+    H1 = xgi.uniform_HPPM(n, m, k, epsilon, seed=0)
 
     assert H1.num_nodes == 10
     assert xgi.unique_edge_sizes(H1) == [2]
 
     # test that the seed works
-    H2 = xgi.uniform_HPPM(n, m, rho, k, epsilon, seed=0)
+    H2 = xgi.uniform_HPPM(n, m, k, epsilon, rho, seed=0)
 
     assert H1.edges.members(dtype=dict) == H2.edges.members(dtype=dict)
 
