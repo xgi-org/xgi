@@ -370,8 +370,8 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
 def test_draw_dihypergraph(diedgelist2, edgelist8):
     DH = xgi.DiHypergraph(diedgelist2)
 
-    fig, ax = plt.subplots()
-    ax1 = xgi.draw_dihypergraph(DH, ax=ax)
+    fig, ax1 = plt.subplots()
+    ax1 = xgi.draw_dihypergraph(DH, ax=ax1)
 
     # number of elements
     assert len(ax1.lines) == 7  # number of source nodes
@@ -391,7 +391,8 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
     plt.close()
 
     # test toggle for edges
-    ax2 = xgi.draw_dihypergraph(DH, edge_marker_toggle=False)
+    fig, ax2 = plt.subplots()
+    ax2 = xgi.draw_dihypergraph(DH, edge_marker_toggle=False, ax=ax2)
     assert len(ax2.collections) == 1
 
     plt.close()
@@ -399,7 +400,8 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
     # test XGI ERROR raise
     with pytest.raises(XGIError):
         H = xgi.Hypergraph(edgelist8)
-        ax3 = xgi.draw_dihypergraph(H)
+        fig, ax3= plt.subplots()
+        ax3 = xgi.draw_dihypergraph(H, ax=ax3)
         plt.close()
 
 
@@ -412,7 +414,9 @@ def test_draw_dihypergraph_with_str_labels_and_isolated_nodes():
             [{"six"}, {}],
         ]
     )
-    ax4 = xgi.draw_dihypergraph(DH1)
+
+    fig, ax4 = plt.subplots()
+    ax4 = xgi.draw_dihypergraph(DH1, ax=ax4)
     assert len(ax4.lines) == 3
     assert len(ax4.patches) == 4
     assert len(ax4.collections) == DH1.num_edges + 1 - len(
