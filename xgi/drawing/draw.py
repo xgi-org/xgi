@@ -158,12 +158,12 @@ def draw(
     """
 
     settings = {
-        "min_node_size": 10.0,
-        "max_node_size": 30.0,
+        "min_node_size": 5,
+        "max_node_size": 30,
         "min_dyad_lw": 2.0,
         "max_dyad_lw": 10.0,
-        "min_node_lw": 1.0,
-        "max_node_lw": 5.0,
+        "min_node_lw": 0,
+        "max_node_lw": 5,
         "node_fc_cmap": cm.Reds,
         "node_ec_cmap": cm.Greys,
         "edge_fc_cmap": cm.Blues,
@@ -247,7 +247,7 @@ def draw_nodes(
     zorder=None,
     params=dict(),
     node_labels=False,
-    rescale_sizes=False,
+    rescale_sizes=True,
     **kwargs,
 ):
     """Draw the nodes of a hypergraph
@@ -298,7 +298,7 @@ def draw_nodes(
         If True, linearly interpolate `node_size` and `node_lw` between min/max values
         (5/30 for size, 0/5 for lw) that can be changed in the other argument `params`.
         If `node_size` (`node_lw`) is a single value, `interpolate_sizes` is ignored
-        for it. By default, False.
+        for it. By default, True.
     params : dict
         Default parameters used if `interpolate_sizes` is True.
         Keys to override default settings:
