@@ -22,6 +22,7 @@ from .draw_utils import (
     _CCW_sort,
     _color_arg_to_dict,
     _draw_init,
+    _draw_arg_to_arr,
     _scalar_arg_to_dict,
     _update_lims,
 )

@@ -56,6 +56,7 @@ def _update_lims(pos, ax):
     corners = (minx - padx, miny - pady), (maxx + padx, maxy + pady)
     ax.update_datalim(corners)
     ax.autoscale_view()
+    
 
 def _draw_arg_to_arr(arg):
     """Map drawing arguments from IDStat and dict to ndarray
@@ -77,7 +78,7 @@ def _draw_arg_to_arr(arg):
         arg = np.array(list(arg.values()))
 
     return arg
-    
+
 
 def _scalar_arg_to_dict(scalar_arg, ids, min_val, max_val):
     """Map different types of arguments for drawing style to a dict with scalar values.
