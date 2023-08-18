@@ -1,17 +1,14 @@
 """Draw hypergraphs and simplicial complexes with matplotlib."""
 
-from collections.abc import Iterable
 from inspect import signature
 from itertools import combinations
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
-from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from matplotlib.patches import FancyArrow
 from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
 from networkx import spring_layout
-from numpy import ndarray
 from scipy.spatial import ConvexHull
 
 from .. import convert
