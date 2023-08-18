@@ -156,8 +156,6 @@ def draw(
 
     """
 
-    from ..stats import IDStat
-
     settings = {
         "min_node_size": 10.0,
         "max_node_size": 30.0,
@@ -353,32 +351,22 @@ def draw_nodes(
     except KeyError as err:
         raise XGIError(f"Node {err} has no position.") from err
 
-    # convert all formats to ndarray and clip values to min/max
-    if isinstance(node_size, IDStat):
-        node_size = node_size.asnumpy()
-    elif isinstance(node_size, dict):
-        node_size = np.array(list(node_size.values()))
+    # convert all formats to ndarray 
+    node_size = _draw_arg_to_arr(node_size)
+    node_fc = _draw_arg_to_arr(node_fc)
+    node_lw = _draw_arg_to_arr(node_lw)
+
     # check validity of input values
     if np.any(node_size < 0):
         raise ValueError("node_size cannot contain negative values.")
-    # clip
-    node_size = np.clip(node_size, settings["min_node_size"], settings["max_node_size"])
-    node_size = node_size**2
-
-    if isinstance(node_fc, IDStat):
-        node_fc = node_fc.asnumpy()
-    elif isinstance(node_fc, dict):
-        node_fc = np.array(list(node_fc.values()))
-
-    if isinstance(node_lw, IDStat):
-        node_lw = node_lw.asnumpy()
-    elif isinstance(node_lw, dict):
-        node_lw = np.array(list(node_lw.values()))
-    # check validity of input values
     if np.any(node_lw < 0):
         raise ValueError("node_lw cannot contain negative values.")
-    # clip
+
+    # interpolate if needed
+    node_size = np.clip(node_size, settings["min_node_size"], settings["max_node_size"])
     node_lw = np.clip(node_lw, settings["min_node_lw"], settings["max_node_lw"])
+
+    node_size = node_size**2
 
     # plot
     node_collection = ax.scatter(

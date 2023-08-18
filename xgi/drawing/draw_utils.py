@@ -40,7 +40,7 @@ def _update_lims(pos, ax):
     Returns
     -------
     None
-    
+
     """
 
     # compute axis limits
@@ -57,6 +57,27 @@ def _update_lims(pos, ax):
     ax.update_datalim(corners)
     ax.autoscale_view()
 
+def _draw_arg_to_arr(arg):
+    """Map drawing arguments from IDStat and dict to ndarray
+
+    Parameters
+    ----------
+    arg: int, float, dict, iterable, or NodeStat/EdgeStat
+        Attributes for drawing parameter. Scalars and arrays
+        are ignored.
+
+    Returns
+    -------
+    arg : ndarray
+        Drawing argument in standard array format
+    """
+    if isinstance(arg, IDStat):
+        arg = arg.asnumpy()
+    elif isinstance(arg, dict):
+        arg = np.array(list(arg.values()))
+
+    return arg
+    
 
 def _scalar_arg_to_dict(scalar_arg, ids, min_val, max_val):
     """Map different types of arguments for drawing style to a dict with scalar values.
