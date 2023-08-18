@@ -202,7 +202,7 @@ class IDStat:
         arr = self.asnumpy()
         return spmoment(arr, moment=order) if center else np.mean(arr**order)
 
-    def dist(self, bins=10, density=False, log_binning=False, base=2):
+    def dist(self, bins=10, density=False, log_binning=False):
         """Return the distribution of a numpy array.
 
         Parameters
@@ -213,6 +213,10 @@ class IDStat:
             The number of bins or the bin edges.
         density : bool
             Whether to normalize the resulting distribution.
+        log_binning : bool
+            Whether to bin the values with log-sized bins.
+            By default, False.
+
 
         Returns
         -------
@@ -226,7 +230,7 @@ class IDStat:
         Originally from https://github.com/jkbren/networks-and-dataviz
 
         """
-        return dist(self.asnumpy(), bins, density, log_binning, base)
+        return dist(self.asnumpy(), bins, density, log_binning)
 
 
 class NodeStat(IDStat):
@@ -435,7 +439,7 @@ class MultiIDStat(IDStat):
         series = [pd.Series(v, name=k) for k, v in result.items()]
         return pd.concat(series, axis=1)
 
-    def dist(self, bins=10, density=False, log_binning=False, base=2):
+    def dist(self, bins=10, density=False, log_binning=False):
         """Return the distributions of a numpy array.
 
         Parameters
@@ -446,6 +450,10 @@ class MultiIDStat(IDStat):
             The number of bins or the bin edges.
         density : bool
             Whether to normalize the resulting distribution.
+        log_binning : bool
+            Whether to bin the values with log-sized bins.
+            By default, False.
+
 
         Returns
         -------
@@ -459,7 +467,9 @@ class MultiIDStat(IDStat):
         Originally from https://github.com/jkbren/networks-and-dataviz
 
         """
-        return [dist(data, bins, density, log_binning, base) for data in self.asnumpy().T]
+        return [
+            dist(data, bins, density, log_binning) for data in self.asnumpy().T
+        ]
 
 
 class MultiNodeStat(MultiIDStat):

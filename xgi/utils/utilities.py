@@ -419,7 +419,7 @@ def convert_labels_to_integers(net, label_attribute="label"):
     return temp_net
 
 
-def dist(vals, bins=10, density=False, log_binning=False, base=2):
+def dist(vals, bins=10, density=False, log_binning=False):
     """Return the distribution of a numpy array.
 
     Parameters
@@ -428,8 +428,13 @@ def dist(vals, bins=10, density=False, log_binning=False, base=2):
         The array of values
     bins : int, list, or Numpy array
         The number of bins or the bin edges.
+        By default, 10.
     density : bool
         Whether to normalize the resulting distribution.
+        By default, False.
+    log_binning : bool
+        Whether to bin the values with log-sized bins.
+        By default, False.
 
     Returns
     -------
@@ -448,19 +453,16 @@ def dist(vals, bins=10, density=False, log_binning=False, base=2):
     upper_bound = np.max(vals)
 
     if log_binning:
-        log = np.log2 if base == 2 else np.log10
-        lower_bound = log(lower_bound) if lower_bound > 0 else 0.0
-        upper_bound = log(upper_bound)
+        lower_bound = np.log10(lower_bound) if lower_bound > 0 else 0.0
+        upper_bound = np.log10(upper_bound)
 
     # And the bins
     if isinstance(bins, int):
         if log_binning:
-            bins = np.logspace(lower_bound, upper_bound, bins, base=2)
+            bins = np.logspace(lower_bound, upper_bound, bins + 1, base=10)
         else:
-            bins = np.linspace(lower_bound, upper_bound, bins)
-    elif isinstance(bins, (list, np.ndarray)) and log_binning:
-        bins = log(bins)
-    else:
+            bins = np.linspace(lower_bound, upper_bound, bins + 1)
+    elif not isinstance(bins, (list, np.ndarray)):
         raise XGIError("Bins must be an integer, a list, or a numpy array.")
 
     # Then we can compute the histogram using numpy
