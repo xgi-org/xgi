@@ -1,6 +1,7 @@
 import networkx as nx
 import pytest
 from numpy import infty
+import numpy as np
 
 import xgi
 from xgi.exception import IDNotFound, XGIError
@@ -274,3 +275,36 @@ def test_convert_labels_to_integers(
 
     assert DH1.nodes[0]["label"] == "a"
     assert DH1.edges[0]["label"] == "e1"
+
+
+def test_dist():
+    vals = [1, 10, 100, 1000]
+    data = xgi.dist(vals)
+    assert len(data) == 2
+    x, y = xgi.dist(vals)
+    assert len(x) == len(y) == 10
+
+    x, y = xgi.dist(vals, bins=3)
+
+    true_x = np.array([167.5, 500.5, 833.5])
+    assert np.allclose(x, true_x)
+
+    true_y = np.array([3, 0, 1])
+    assert np.allclose(y, true_y)
+
+    x, y = xgi.dist(vals, bins=3, density=True)
+    assert np.allclose(x, true_x)
+    true_y = np.array([0.00225225, 0.0, 0.00075075])
+    assert np.allclose(y, true_y)
+
+    x, y = xgi.dist(vals, bins=3, log_binning=True)
+    true_x = np.array([5.5, 55.0, 550.0])
+    assert np.allclose(x, true_x)
+    true_y = np.array([1, 1, 2])
+    assert np.allclose(y, true_y)
+
+    x, y = xgi.dist(vals, bins=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000])
+    true_x = np.array([1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 55.0, 550.0])
+    assert np.allclose(x, true_x)
+    true_y = np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2])
+    assert np.allclose(y, true_y)
