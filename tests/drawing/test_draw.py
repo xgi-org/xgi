@@ -29,7 +29,6 @@ def test_draw(edgelist8):
 
 
 def test_draw_nodes(edgelist8):
-    import numpy as np
 
     H = xgi.Hypergraph(edgelist8)
 

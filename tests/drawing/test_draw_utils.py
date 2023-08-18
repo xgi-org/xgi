@@ -10,6 +10,7 @@ from xgi.drawing.draw import (
     _draw_arg_to_arr,
 )
 
+
 def test_CCW_sort():
     coords = [[0.919, 0.145], [0.037, 0.537], [0.402, 0.56]]
     sorted_coords = _CCW_sort(coords)
