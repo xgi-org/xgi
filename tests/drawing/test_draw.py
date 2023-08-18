@@ -124,6 +124,76 @@ def test_draw_nodes_fc_cmap(edgelist8):
     plt.close()
 
 
+def test_draw_nodes_interp(edgelist8):
+
+    H = xgi.Hypergraph(edgelist8)
+    arg = H.nodes.degree
+    deg_arr = np.array([6, 5, 4, 4, 3, 2, 2])
+    assert np.all(arg.aslist() == deg_arr)
+
+    fig, ax = plt.subplots()
+    ax, node_collection = xgi.draw_nodes(H, ax=ax, node_size=1, node_lw=10)
+    assert np.all(node_collection.get_sizes() == np.array([1]))
+    assert np.all(node_collection.get_linewidth() == np.array([10]))
+    plt.close()
+
+    # rescaling does not affect scalars
+    fig, ax = plt.subplots()
+    ax, node_collection = xgi.draw_nodes(
+        H, ax=ax, node_size=1, node_lw=10, rescale_sizes=True
+    )
+    assert np.all(node_collection.get_sizes() == np.array([1]))
+    assert np.all(node_collection.get_linewidth() == np.array([10]))
+    plt.close()
+
+    # not rescaling IDStat
+    fig, ax = plt.subplots()
+    ax, node_collection = xgi.draw_nodes(
+        H, ax=ax, node_size=arg, node_lw=arg, rescale_sizes=False
+    )
+    assert np.all(node_collection.get_sizes() == deg_arr**2)
+    assert np.all(node_collection.get_linewidth() == deg_arr)
+    plt.close()
+
+    # rescaling IDStat
+    fig, ax = plt.subplots()
+    ax, node_collection = xgi.draw_nodes(
+        H, ax=ax, node_size=arg, node_lw=arg, rescale_sizes=True
+    )
+    assert min(node_collection.get_sizes()) == 5**2
+    assert max(node_collection.get_sizes()) == 30**2
+    assert min(node_collection.get_linewidth()) == 0
+    assert max(node_collection.get_linewidth()) == 5
+    plt.close()
+
+    # rescaling IDStat with manual values
+    fig, ax = plt.subplots()
+    ax, node_collection = xgi.draw_nodes(
+        H,
+        ax=ax,
+        node_size=arg,
+        node_lw=arg,
+        rescale_sizes=True,
+        **{"min_node_size": 1, "max_node_size": 20, "min_node_lw": 1, "max_node_lw": 10}
+    )
+    assert min(node_collection.get_sizes()) == 1**2
+    assert max(node_collection.get_sizes()) == 20**2
+    assert min(node_collection.get_linewidth()) == 1
+    assert max(node_collection.get_linewidth()) == 10
+    plt.close()
+
+    # rescaling ndarray
+    fig, ax = plt.subplots()
+    ax, node_collection = xgi.draw_nodes(
+        H, ax=ax, node_size=arg, node_lw=deg_arr, rescale_sizes=True
+    )
+    assert min(node_collection.get_sizes()) == 5**2
+    assert max(node_collection.get_sizes()) == 30**2
+    assert min(node_collection.get_linewidth()) == 0
+    assert max(node_collection.get_linewidth()) == 5
+    plt.close()
+
+
 def test_draw_hyperedges(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 

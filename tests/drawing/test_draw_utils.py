@@ -6,6 +6,7 @@ import xgi
 from xgi.drawing.draw import (
     _CCW_sort,
     _color_arg_to_dict,
+    _interp_draw_arg,
     _scalar_arg_to_dict,
     _draw_arg_to_arr,
 )
@@ -39,6 +40,21 @@ def test_draw_arg_to_arr(edgelist4):
     arg_dict = {1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
     degree = _draw_arg_to_arr(arg_dict)
     assert np.all(degree == np.array([1, 2, 3, 2, 2]))
+
+
+def test_interp_draw_arg(edgelist4):
+
+    arg = np.linspace(0, 10, num=10)
+    out = _interp_draw_arg(arg, 1, 9)
+    assert np.allclose(out, np.linspace(1, 9, num=10))
+
+    arg = np.linspace(0, 10, num=10)
+    out = _interp_draw_arg(arg, 0, 9)
+    assert np.allclose(out, np.linspace(0, 9, num=10))
+
+    arg = np.linspace(0, 10, num=10)
+    out = _interp_draw_arg(arg, 1, 11)
+    assert np.allclose(out, np.linspace(1, 11, num=10))
 
 
 def test_scalar_arg_to_dict(edgelist4):

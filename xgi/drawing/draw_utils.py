@@ -77,13 +77,12 @@ def _update_lims(pos, ax):
 
 
 def _draw_arg_to_arr(arg):
-    """Map drawing arguments from IDStat and dict to ndarray
+    """Map drawing arguments from IDStat, dict, and list to ndarray
 
     Parameters
     ----------
     arg: int, float, dict, iterable, or NodeStat/EdgeStat
-        Attributes for drawing parameter. Scalars and arrays
-        are ignored.
+        Attributes for drawing parameter. Scalars are ignored.
 
     Returns
     -------
@@ -93,9 +92,31 @@ def _draw_arg_to_arr(arg):
     if isinstance(arg, IDStat):
         arg = arg.asnumpy()
     elif isinstance(arg, dict):
-        arg = np.array(list(arg.values()))
+        values = list(arg.values())
+        arg = np.array(values)
+    elif isinstance(arg, list):
+        arg = np.array(arg)
 
     return arg
+
+
+def _interp_draw_arg(arg, min_val, max_val):
+    """Linearly interpolate drawing arguments between min/max values
+
+    Parameters
+    ----------
+    arg: arr-like
+        Attributes for drawing parameter.
+
+    Returns
+    -------
+    vals : ndarray
+        Drawing argument interpolated
+    """
+
+    vals = np.interp(arg, [min(arg), max(arg)], [min_val, max_val])
+
+    return vals
 
 
 def _scalar_arg_to_dict(scalar_arg, ids, min_val, max_val):

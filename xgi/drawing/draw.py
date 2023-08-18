@@ -20,6 +20,7 @@ from .draw_utils import (
     _color_arg_to_dict,
     _draw_init,
     _draw_arg_to_arr,
+    _interp_draw_arg,
     _scalar_arg_to_dict,
     _update_lims,
 )
@@ -246,6 +247,7 @@ def draw_nodes(
     zorder=None,
     params=dict(),
     node_labels=False,
+    rescale_sizes=False,
     **kwargs,
 ):
     """Draw the nodes of a hypergraph
@@ -292,12 +294,18 @@ def draw_nodes(
         The layer on which to draw the nodes.
     node_labels : bool or dict
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
+    rescale_sizes: bool, optional
+        If True, linearly interpolate `node_size` and `node_lw` between min/max values
+        (5/30 for size, 0/5 for lw) that can be changed in the other argument `params`.
+        If `node_size` (`node_lw`) is a single value, `interpolate_sizes` is ignored
+        for it. By default, False.
     params : dict
-        Default parameters. Keys that may be useful to override default settings:
-        * min_node_size
-        * max_node_size
-        * min_node_lw
-        * max_node_lw
+        Default parameters used if `interpolate_sizes` is True.
+        Keys to override default settings:
+        * "min_node_size" (default: 5)
+        * "max_node_size" (default: 30)
+        * "min_node_lw" (default: 0)
+        * "max_node_lw" (default: 5)
     kwargs : optional keywords
         See `draw_node_labels` for a description of optional keywords.
 
@@ -330,7 +338,7 @@ def draw_nodes(
     """
 
     settings = {
-        "min_node_size": 10,
+        "min_node_size": 5,
         "max_node_size": 30,
         "min_node_lw": 0,
         "max_node_lw": 5,
@@ -363,8 +371,14 @@ def draw_nodes(
         raise ValueError("node_lw cannot contain negative values.")
 
     # interpolate if needed
-    node_size = np.clip(node_size, settings["min_node_size"], settings["max_node_size"])
-    node_lw = np.clip(node_lw, settings["min_node_lw"], settings["max_node_lw"])
+    if rescale_sizes and isinstance(node_size, np.ndarray):
+        node_size = _interp_draw_arg(
+            node_size, settings["min_node_size"], settings["max_node_size"]
+        )
+    if rescale_sizes and isinstance(node_lw, np.ndarray):
+        node_lw = _interp_draw_arg(
+            node_lw, settings["min_node_lw"], settings["max_node_lw"]
+        )
 
     node_size = node_size**2
 
