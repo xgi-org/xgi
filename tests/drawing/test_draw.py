@@ -4,7 +4,12 @@ import pytest
 from matplotlib import cm
 
 import xgi
-from xgi.drawing.draw import _CCW_sort, _color_arg_to_dict, _scalar_arg_to_dict, _draw_arg_to_arr
+from xgi.drawing.draw import (
+    _CCW_sort,
+    _color_arg_to_dict,
+    _scalar_arg_to_dict,
+    _draw_arg_to_arr,
+)
 from xgi.exception import XGIError
 
 
@@ -22,6 +27,7 @@ def test_CCW_sort():
         == np.array([[0.037, 0.537], [0.0, 0.868], [0.791, 0.91], [0.402, 0.56]])
     )
 
+
 def test_draw_arg_to_arr(edgelist4):
 
     H = xgi.Hypergraph(edgelist4)
@@ -35,6 +41,7 @@ def test_draw_arg_to_arr(edgelist4):
     arg_dict = {1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
     degree = _draw_arg_to_arr(arg_dict)
     assert np.all(degree == np.array([1, 2, 3, 2, 2]))
+
 
 def test_scalar_arg_to_dict(edgelist4):
     ids = [1, 2, 3]
@@ -181,6 +188,7 @@ def test_draw(edgelist8):
 
 def test_draw_nodes(edgelist8):
     import numpy as np
+
     H = xgi.Hypergraph(edgelist8)
 
     fig, ax = plt.subplots()
@@ -412,7 +420,7 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
     # test XGI ERROR raise
     with pytest.raises(XGIError):
         H = xgi.Hypergraph(edgelist8)
-        fig, ax3= plt.subplots()
+        fig, ax3 = plt.subplots()
         ax3 = xgi.draw_dihypergraph(H, ax=ax3)
         plt.close()
 

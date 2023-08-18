@@ -349,7 +349,7 @@ def draw_nodes(
     except KeyError as err:
         raise XGIError(f"Node {err} has no position.") from err
 
-    # convert all formats to ndarray 
+    # convert all formats to ndarray
     node_size = _draw_arg_to_arr(node_size)
     node_fc = _draw_arg_to_arr(node_fc)
     node_lw = _draw_arg_to_arr(node_lw)
