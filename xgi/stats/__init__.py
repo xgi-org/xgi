@@ -47,6 +47,7 @@ statistics.  For more details, see the `tutorial
 import numpy as np
 import pandas as pd
 from scipy.stats import moment as spmoment
+from collections.abc import Iterable
 
 from xgi.exception import IDNotFound
 
@@ -158,6 +159,39 @@ class IDStat:
 
         """
         return pd.Series(self._val, name=self.name)
+    
+    def ashist(self, bins=10, log_binning=False, base=2):
+        """Output the stat in numpy histogram format.
+
+        Notes
+        -----
+        Stolen from https://github.com/jkbren/networks-and-dataviz
+
+        """
+        # We need to define the support of our distribution
+        lower_bound = min(self._val)
+        upper_bound = max(self._val)
+
+        
+        # And the bins
+        if isinstance(bins, int):
+            if log_binning and isinstance(bins, int):
+                log = np.log2 if base == 2 else np.log10
+                lower_bound = log(lower_bound) if lower_bound >= 1 else 0.0
+                upper_bound = log(upper_bound)
+                bins = np.logspace(lower_bound, upper_bound, bins, base = base)
+            else:
+                bins = np.linspace(lower_bound, upper_bound, bins)
+        elif not isinstance(bins, Iterable)
+    
+        # Then we can compute the histogram using numpy
+        y, __ = np.histogram(self._val, 
+                            bins = bins,
+                            density=True)
+        # Now, we need to compute for each y the value of x
+        x = bins[1:] - np.diff(bins)/2.0
+            
+        return x, y
 
     def max(self):
         """The maximum value of this stat."""
