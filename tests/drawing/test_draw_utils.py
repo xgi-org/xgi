@@ -3,8 +3,12 @@ import pytest
 from matplotlib import cm
 
 import xgi
-from xgi.drawing.draw import _CCW_sort, _color_arg_to_dict, _scalar_arg_to_dict
-
+from xgi.drawing.draw import (
+    _CCW_sort,
+    _color_arg_to_dict,
+    _scalar_arg_to_dict,
+    _draw_arg_to_arr,
+)
 
 def test_CCW_sort():
     coords = [[0.919, 0.145], [0.037, 0.537], [0.402, 0.56]]
@@ -19,6 +23,21 @@ def test_CCW_sort():
         sorted_coords
         == np.array([[0.037, 0.537], [0.0, 0.868], [0.791, 0.91], [0.402, 0.56]])
     )
+
+
+def test_draw_arg_to_arr(edgelist4):
+
+    H = xgi.Hypergraph(edgelist4)
+
+    # arg stat
+    arg = H.nodes.degree
+    degree = _draw_arg_to_arr(arg)
+    assert np.all(degree == np.array([1, 2, 3, 2, 2]))
+
+    # arg dict
+    arg_dict = {1: 1, 2: 2, 3: 3, 4: 2, 5: 2}
+    degree = _draw_arg_to_arr(arg_dict)
+    assert np.all(degree == np.array([1, 2, 3, 2, 2]))
 
 
 def test_scalar_arg_to_dict(edgelist4):
