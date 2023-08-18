@@ -4,6 +4,7 @@ from collections import defaultdict
 from copy import deepcopy
 from functools import lru_cache
 from itertools import chain, combinations, count
+import numpy as np
 
 import requests
 from numpy import infty
@@ -20,6 +21,7 @@ __all__ = [
     "request_json_from_url_cached",
     "subfaces",
     "convert_labels_to_integers",
+    "dist",
 ]
 
 
@@ -415,3 +417,55 @@ def convert_labels_to_integers(net, label_attribute="label"):
     )
 
     return temp_net
+
+
+def dist(vals, bins=10, density=False, log_binning=False, base=2):
+    """Return the distribution of a numpy array.
+
+    Parameters
+    ----------
+    vals : Numpy array
+        The array of values
+    bins : int, list, or Numpy array
+        The number of bins or the bin edges.
+    density : bool
+        Whether to normalize the resulting distribution.
+
+    Returns
+    -------
+    x : Numpy array
+        The bin centers
+    y : Numpy array
+        The number or fraction of values falling within each bin
+
+    Notes
+    -----
+    Originally from https://github.com/jkbren/networks-and-dataviz
+
+    """
+    # We need to define the support of our distribution
+    lower_bound = np.min(vals)
+    upper_bound = np.max(vals)
+
+    if log_binning:
+        log = np.log2 if base == 2 else np.log10
+        lower_bound = log(lower_bound) if lower_bound > 0 else 0.0
+        upper_bound = log(upper_bound)
+
+    # And the bins
+    if isinstance(bins, int):
+        if log_binning:
+            bins = np.logspace(lower_bound, upper_bound, bins, base=2)
+        else:
+            bins = np.linspace(lower_bound, upper_bound, bins)
+    elif isinstance(bins, (list, np.ndarray)) and log_binning:
+        bins = log(bins)
+    else:
+        raise XGIError("Bins must be an integer, a list, or a numpy array.")
+
+    # Then we can compute the histogram using numpy
+    y, __ = np.histogram(vals, bins=bins, density=density)
+    # Now, we need to compute for each y the bin centers
+    x = bins[1:] - np.diff(bins) / 2.0
+
+    return x, y

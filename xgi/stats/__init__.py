@@ -47,9 +47,9 @@ statistics.  For more details, see the `tutorial
 import numpy as np
 import pandas as pd
 from scipy.stats import moment as spmoment
-from collections.abc import Iterable
 
-from xgi.exception import IDNotFound
+from ..exception import IDNotFound, XGIError
+from ..utils import dist
 
 from . import edgestats, diedgestats, dinodestats, nodestats
 
@@ -159,39 +159,6 @@ class IDStat:
 
         """
         return pd.Series(self._val, name=self.name)
-    
-    def ashist(self, bins=10, log_binning=False, base=2):
-        """Output the stat in numpy histogram format.
-
-        Notes
-        -----
-        Stolen from https://github.com/jkbren/networks-and-dataviz
-
-        """
-        # We need to define the support of our distribution
-        lower_bound = min(self._val)
-        upper_bound = max(self._val)
-
-        
-        # And the bins
-        if isinstance(bins, int):
-            if log_binning and isinstance(bins, int):
-                log = np.log2 if base == 2 else np.log10
-                lower_bound = log(lower_bound) if lower_bound >= 1 else 0.0
-                upper_bound = log(upper_bound)
-                bins = np.logspace(lower_bound, upper_bound, bins, base = base)
-            else:
-                bins = np.linspace(lower_bound, upper_bound, bins)
-        elif not isinstance(bins, Iterable)
-    
-        # Then we can compute the histogram using numpy
-        y, __ = np.histogram(self._val, 
-                            bins = bins,
-                            density=True)
-        # Now, we need to compute for each y the value of x
-        x = bins[1:] - np.diff(bins)/2.0
-            
-        return x, y
 
     def max(self):
         """The maximum value of this stat."""
@@ -235,8 +202,31 @@ class IDStat:
         arr = self.asnumpy()
         return spmoment(arr, moment=order) if center else np.mean(arr**order)
 
-    def dist(self):
-        return np.histogram(self.asnumpy(), density=True)
+    def dist(self, bins=10, density=False, log_binning=False, base=2):
+        """Return the distribution of a numpy array.
+
+        Parameters
+        ----------
+        vals : Numpy array
+            The array of values
+        bins : int, list, or Numpy array
+            The number of bins or the bin edges.
+        density : bool
+            Whether to normalize the resulting distribution.
+
+        Returns
+        -------
+        x : Numpy array
+            The bin centers
+        y : Numpy array
+            The number or fraction of values falling within each bin
+
+        Notes
+        -----
+        Originally from https://github.com/jkbren/networks-and-dataviz
+
+        """
+        return dist(self.asnumpy(), bins, density, log_binning, base)
 
 
 class NodeStat(IDStat):
@@ -445,8 +435,31 @@ class MultiIDStat(IDStat):
         series = [pd.Series(v, name=k) for k, v in result.items()]
         return pd.concat(series, axis=1)
 
-    def dist(self):
-        return [np.histogram(data, density=True) for data in self.asnumpy().T]
+    def dist(self, bins=10, density=False, log_binning=False, base=2):
+        """Return the distributions of a numpy array.
+
+        Parameters
+        ----------
+        vals : Numpy array
+            The array of values
+        bins : int, list, or Numpy array
+            The number of bins or the bin edges.
+        density : bool
+            Whether to normalize the resulting distribution.
+
+        Returns
+        -------
+        x : Numpy array
+            The bin centers
+        y : Numpy array
+            The number or fraction of values falling within each bin
+
+        Notes
+        -----
+        Originally from https://github.com/jkbren/networks-and-dataviz
+
+        """
+        return [dist(data, bins, density, log_binning, base) for data in self.asnumpy().T]
 
 
 class MultiNodeStat(MultiIDStat):
