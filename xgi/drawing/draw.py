@@ -18,7 +18,6 @@ from .. import convert
 from ..algorithms import max_edge_order
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
-from ..stats import IDStat
 from .draw_utils import (
     _CCW_sort,
     _color_arg_to_dict,
@@ -156,6 +155,9 @@ def draw(
     draw_hyperedge_labels
 
     """
+
+    from ..stats import IDStat
+
     settings = {
         "min_node_size": 10.0,
         "max_node_size": 30.0,
