@@ -77,7 +77,10 @@ def _update_lims(pos, ax):
 
 
 def _draw_arg_to_arr(arg):
-    """Map drawing arguments from IDStat, dict, and list to ndarray
+    """Convert drawing arguments to a matplotlib-compliant format. 
+
+    IDStat, dict, and list are converted to ndarray. 
+    Scalar values are untouched. 
 
     Parameters
     ----------
@@ -87,7 +90,7 @@ def _draw_arg_to_arr(arg):
     Returns
     -------
     arg : ndarray
-        Drawing argument in standard array format
+        Drawing argument in matplotlib-comliant form (scalar or array)
     """
     if isinstance(arg, IDStat):
         arg = arg.asnumpy()
