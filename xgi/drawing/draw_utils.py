@@ -46,7 +46,20 @@ def _draw_init(H, ax, pos):
 
 
 def _update_lims(pos, ax):
-    """Update Axis limits based on node positions"""
+    """Update Axis limits based on node positions
+
+    Parameters
+    ----------
+    pos : dict of lists
+        The output of the layout functions.
+    ax : Matplotlib axis
+        The axis on which to plot
+
+    Returns
+    -------
+    None
+
+    """
 
     # compute axis limits
     pos_arr = np.asarray([[x, y] for n, (x, y) in pos.items()])
@@ -61,6 +74,52 @@ def _update_lims(pos, ax):
     corners = (minx - padx, miny - pady), (maxx + padx, maxy + pady)
     ax.update_datalim(corners)
     ax.autoscale_view()
+
+
+def _draw_arg_to_arr(arg):
+    """Convert drawing arguments to a matplotlib-compliant format. 
+
+    IDStat, dict, and list are converted to ndarray. 
+    Scalar values are untouched. 
+
+    Parameters
+    ----------
+    arg: int, float, dict, iterable, or NodeStat/EdgeStat
+        Attributes for drawing parameter. Scalars are ignored.
+
+    Returns
+    -------
+    arg : ndarray
+        Drawing argument in matplotlib-comliant form (scalar or array)
+    """
+    if isinstance(arg, IDStat):
+        arg = arg.asnumpy()
+    elif isinstance(arg, dict):
+        values = list(arg.values())
+        arg = np.array(values)
+    elif isinstance(arg, list):
+        arg = np.array(arg)
+
+    return arg
+
+
+def _interp_draw_arg(arg, min_val, max_val):
+    """Linearly interpolate drawing arguments between min/max values
+
+    Parameters
+    ----------
+    arg: arr-like
+        Attributes for drawing parameter.
+
+    Returns
+    -------
+    vals : ndarray
+        Drawing argument interpolated
+    """
+
+    vals = np.interp(arg, [min(arg), max(arg)], [min_val, max_val])
+
+    return vals
 
 
 def _scalar_arg_to_dict(scalar_arg, ids, min_val, max_val):

@@ -19,6 +19,8 @@ from .draw_utils import (
     _CCW_sort,
     _color_arg_to_dict,
     _draw_init,
+    _draw_arg_to_arr,
+    _interp_draw_arg,
     _scalar_arg_to_dict,
     _update_lims,
 )
@@ -48,6 +50,7 @@ def draw(
     node_ec="black",
     node_lw=1,
     node_size=15,
+    node_shape="o",
     max_order=None,
     node_labels=False,
     hyperedge_labels=False,
@@ -106,6 +109,9 @@ def draw(
         the radiuses are specified in the same order as the nodes are found in
         H.nodes. If NodeStat, use a monotonic linear interpolation defined between
         min_node_size and max_node_size. By default, 15.
+    node_shape :  string, optional
+        The shape of the node. Specification is as matplotlib.scatter
+        marker. Default is "o".
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     node_labels : bool or dict, optional
@@ -150,13 +156,14 @@ def draw(
     draw_hyperedge_labels
 
     """
+
     settings = {
-        "min_node_size": 10.0,
-        "max_node_size": 30.0,
+        "min_node_size": 5,
+        "max_node_size": 30,
         "min_dyad_lw": 2.0,
         "max_dyad_lw": 10.0,
-        "min_node_lw": 1.0,
-        "max_node_lw": 5.0,
+        "min_node_lw": 0,
+        "max_node_lw": 5,
         "node_fc_cmap": cm.Reds,
         "node_ec_cmap": cm.Greys,
         "edge_fc_cmap": cm.Blues,
@@ -202,17 +209,18 @@ def draw(
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
 
-    draw_nodes(
-        H,
-        pos,
-        ax,
-        node_fc,
-        node_ec,
-        node_lw,
-        node_size,
-        max_order,
-        settings,
-        node_labels,
+    ax, node_collection = draw_nodes(
+        H=H,
+        pos=pos,
+        ax=ax,
+        node_fc=node_fc,
+        node_ec=node_ec,
+        node_lw=node_lw,
+        node_size=node_size,
+        node_shape=node_shape,
+        zorder=max_order,
+        params=settings,
+        node_labels=node_labels,
         **kwargs,
     )
 
@@ -221,7 +229,7 @@ def draw(
 
     ax.set_aspect(aspect, "datalim")
 
-    return ax
+    return ax, node_collection
 
 
 def draw_nodes(
@@ -232,9 +240,14 @@ def draw_nodes(
     node_ec="black",
     node_lw=1,
     node_size=15,
+    node_shape="o",
+    node_fc_cmap="Reds",
+    vmin=None,
+    vmax=None,
     zorder=None,
-    settings=None,
+    params=dict(),
     node_labels=False,
+    rescale_sizes=True,
     **kwargs,
 ):
     """Draw the nodes of a hypergraph
@@ -249,42 +262,59 @@ def draw_nodes(
         If passed, this dictionary of positions node_id:(x,y) is used for placing the
         0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
         the positions.
-    node_fc : str, dict, iterable, or NodeStat, optional
-        Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
-        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat, use
-        the colormap specified with node_fc_cmap. By default, "white".
-    node_ec : str, dict, iterable, or NodeStat, optional
-        Color of node borders.  If str, use the same color for all nodes.  If a dict,
-        must contain (node_id: color_str) pairs.  If other iterable, assume the colors
-        are specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_ec_cmap. By default, "black".
-    node_lw : int, float, dict, iterable, or EdgeStat, optional
+    node_fc : str, iterable, or NodeStat, optional
+        Color of the nodes.  If str, use the same color for all nodes. If other iterable,
+        or NodeStat, assume the colors are specified in the same order as the nodes are
+        found in H.nodes. By default, "white".
+    node_ec : color or sequence of colors, optional
+        Color of node borders. If color, use the same color for all nodes. If sequence
+        of colors, assume the colors are specified in the same order as the nodes are
+        found in H.nodes. By default, "black".
+    node_lw : int, float, iterable, or NodeStat, optional
         Line width of the node borders in pixels.  If int or float, use the same width
-        for all node borders.  If a dict, must contain (node_id: width) pairs.  If
-        iterable, assume the widths are specified in the same order as the nodes are
-        found in H.nodes. If NodeStat, use a monotonic linear interpolation defined
-        between min_node_lw and max_node_lw. By default, 1.
-    node_size : int, float, dict, iterable, or NodeStat, optional
+        for all node borders.  If iterable or NodeStat, assume the widths are specified
+        in the same order as the nodes are found in H.nodes. Values are clipped below
+        and above by min_node_lw and max_node_lw, respectively. By default, 1.
+    node_size : int, float, iterable, or NodeStat, optional
         Radius of the nodes in pixels.  If int or float, use the same radius for all
-        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
-        the radiuses are specified in the same order as the nodes are found in
-        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
-        min_node_size and max_node_size. By default, 15.
+        nodes. If iterable or NodeStat, assume the radiuses are specified in the same
+        order as the nodes are found in H.nodes. Values are clipped below
+        and above by min_node_size and max_node_size, respectively. By default, 15.
+    node_shape :  string, optional
+        The shape of the node. Specification is as matplotlib.scatter
+        marker. Default is "o".
+    node_fc_cmap : colormap
+        Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is
+        a str (single color).
+    vmin : float or None
+        Minimum for the node_fc_cmap scaling. By default, None.
+    vmax : float or None
+        Maximum for the node_fc_cmap scaling. By default, None.
     zorder : int
         The layer on which to draw the nodes.
     node_labels : bool or dict
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
-    settings : dict
-        Default parameters. Keys that may be useful to override default settings:
-        * min_node_size
-        * max_node_size
-        * min_node_lw
-        * max_node_lw
-        * node_fc_cmap
-        * node_ec_cmap
+    rescale_sizes: bool, optional
+        If True, linearly interpolate `node_size` and `node_lw` between min/max values
+        (5/30 for size, 0/5 for lw) that can be changed in the other argument `params`.
+        If `node_size` (`node_lw`) is a single value, `interpolate_sizes` is ignored
+        for it. By default, True.
+    params : dict
+        Default parameters used if `interpolate_sizes` is True.
+        Keys to override default settings:
+        * "min_node_size" (default: 5)
+        * "max_node_size" (default: 30)
+        * "min_node_lw" (default: 0)
+        * "max_node_lw" (default: 5)
     kwargs : optional keywords
         See `draw_node_labels` for a description of optional keywords.
+
+    Returns
+    -------
+    ax : matplotlib Axes
+        Axes plotted on
+    node_collection : matplotlib PathCollection
+        Collection containing the nodes
 
     See Also
     --------
@@ -294,49 +324,79 @@ def draw_nodes(
     draw_node_labels
     draw_hyperedge_labels
 
+    Notes
+    -----
+
+    * If nodes are colored with a cmap, the `node_collection` returned
+    can be used to easily plot a colorbar corresponding to the node
+    colors. Simply do `plt.colorbar(node_collection)`.
+
+    * Nodes with nonfinite `node_fc` (i.e. `inf`, `-inf` or `nan` are drawn
+    with the bad colormap color (see `plotnonfinitebool` in `plt.scatter` and
+    Colormap.set_bad from Matplotlib).
+
     """
 
-    if settings is None:
-        settings = {
-            "min_node_size": 10.0,
-            "max_node_size": 30.0,
-            "min_node_lw": 1.0,
-            "max_node_lw": 5.0,
-            "node_fc_cmap": cm.Reds,
-            "node_ec_cmap": cm.Greys,
-        }
+    settings = {
+        "min_node_size": 5,
+        "max_node_size": 30,
+        "min_node_lw": 0,
+        "max_node_lw": 5,
+    }
 
+    settings.update(params)
     settings.update(kwargs)
+
+    # avoid matplotlib scatter UserWarning "Parameters 'cmap' will be ignored"
+    if isinstance(node_fc, str):
+        node_fc_cmap = None
 
     ax, pos = _draw_init(H, ax, pos)
 
-    # Note Iterable covers lists, tuples, ranges, generators, np.ndarrays, etc
-    node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
-    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_ec_cmap"])
-    node_lw = _scalar_arg_to_dict(
-        node_lw,
-        H.nodes,
-        settings["min_node_lw"],
-        settings["max_node_lw"],
-    )
-    node_size = _scalar_arg_to_dict(
-        node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
-    )
+    # convert pos to format convenient for scatter
+    try:
+        xy = np.asarray([pos[v] for v in H.nodes])
+    except KeyError as err:
+        raise XGIError(f"Node {err} has no position.") from err
 
-    (x, y, s, c, ec, lw,) = zip(
-        *[
-            (
-                pos[i][0],
-                pos[i][1],
-                node_size[i] ** 2,
-                node_fc[i],
-                node_ec[i],
-                node_lw[i],
-            )
-            for i in H.nodes
-        ]
+    # convert all formats to ndarray
+    node_size = _draw_arg_to_arr(node_size)
+    node_fc = _draw_arg_to_arr(node_fc)
+    node_lw = _draw_arg_to_arr(node_lw)
+
+    # check validity of input values
+    if np.any(node_size < 0):
+        raise ValueError("node_size cannot contain negative values.")
+    if np.any(node_lw < 0):
+        raise ValueError("node_lw cannot contain negative values.")
+
+    # interpolate if needed
+    if rescale_sizes and isinstance(node_size, np.ndarray):
+        node_size = _interp_draw_arg(
+            node_size, settings["min_node_size"], settings["max_node_size"]
+        )
+    if rescale_sizes and isinstance(node_lw, np.ndarray):
+        node_lw = _interp_draw_arg(
+            node_lw, settings["min_node_lw"], settings["max_node_lw"]
+        )
+
+    node_size = node_size**2
+
+    # plot
+    node_collection = ax.scatter(
+        x=xy[:, 0],
+        y=xy[:, 1],
+        s=node_size,
+        marker=node_shape,
+        c=node_fc,
+        cmap=node_fc_cmap,
+        vmin=vmin,
+        vmax=vmax,
+        edgecolors=node_ec,
+        linewidths=node_lw,
+        zorder=zorder,
+        plotnonfinite=True,  # plot points with nonfinite color
     )
-    ax.scatter(x=x, y=y, s=s, c=c, edgecolors=ec, linewidths=lw, zorder=zorder)
 
     if node_labels:
         # Get all valid keywords by inspecting the signatures of draw_node_labels
@@ -352,7 +412,7 @@ def draw_nodes(
     # compute axis limits
     _update_lims(pos, ax)
 
-    return ax
+    return ax, node_collection
 
 
 def draw_hyperedges(
@@ -959,6 +1019,7 @@ def draw_hypergraph_hull(
     node_ec="black",
     node_lw=1,
     node_size=7,
+    node_shape="o",
     max_order=None,
     node_labels=False,
     hyperedge_labels=False,
@@ -1018,6 +1079,9 @@ def draw_hypergraph_hull(
         the radiuses are specified in the same order as the nodes are found in
         H.nodes. If NodeStat, use a monotonic linear interpolation defined between
         min_node_size and max_node_size. By default, 7.
+    node_shape :  string, optional
+        The shape of the node. Specification is as matplotlib.scatter
+        marker. Default is "o".
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     node_labels : bool, or dict, optional
@@ -1131,17 +1195,18 @@ def draw_hypergraph_hull(
         label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
         draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
 
-    draw_nodes(
-        H,
-        pos,
-        ax,
-        node_fc,
-        node_ec,
-        node_lw,
-        node_size,
-        max_order,
-        settings,
-        node_labels,
+    ax, node_collection = draw_nodes(
+        H=H,
+        pos=pos,
+        ax=ax,
+        node_fc=node_fc,
+        node_ec=node_ec,
+        node_lw=node_lw,
+        node_size=node_size,
+        node_shape=node_shape,
+        zorder=max_order,
+        params=settings,
+        node_labels=node_labels,
         **kwargs,
     )
 
@@ -1150,7 +1215,7 @@ def draw_hypergraph_hull(
 
     ax.set_aspect(aspect, "datalim")
 
-    return ax
+    return ax, node_collection
 
 
 def draw_multilayer(
@@ -1685,16 +1750,16 @@ def draw_dihypergraph(
         draw_hyperedge_labels(H_conv, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
 
     draw_nodes(
-        H_conv,
-        pos,
-        ax,
-        node_fc,
-        node_ec,
-        node_lw,
-        node_size,
-        max_order,
-        settings,
-        node_labels,
+        H=H_conv,
+        pos=pos,
+        ax=ax,
+        node_fc=node_fc,
+        node_ec=node_ec,
+        node_lw=node_lw,
+        node_size=node_size,
+        zorder=max_order,
+        params=settings,
+        node_labels=node_labels,
         **kwargs,
     )
 
