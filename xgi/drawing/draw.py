@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 from matplotlib.patches import FancyArrow
-from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
+from mpl_toolkits.mplot3d.art3d import Line3DCollection, LineCollection, PatchCollection, Poly3DCollection
 from networkx import spring_layout
 from scipy.spatial import ConvexHull
 
@@ -421,10 +421,18 @@ def draw_hyperedges(
     ax=None,
     dyad_color="black",
     dyad_lw=1.5,
+    dyad_style="solid",
+    dyad_color_cmap="Greys",
+    dyad_vmin=None,
+    dyad_vmax=None,
     edge_fc=None,
+    edge_fc_cmap="Blues",
+    edge_vmin=None,
+    edge_vmax=None,
     max_order=None,
-    settings=None,
+    params=dict(),
     hyperedge_labels=False,
+    rescale_sizes=True,
     **kwargs,
 ):
     """Draw hyperedges.
@@ -485,36 +493,42 @@ def draw_hyperedges(
 
     """
 
-    ax, pos = _draw_init(H, ax, pos)
+    settings = {
+        "min_dyad_lw": 2.0,
+        "max_dyad_lw": 10.0,
+    }
 
-    if max_order is None:
-        max_order = max_edge_order(H)
-
-    if edge_fc is None:
-        edge_fc = H.edges.size
-
-    if settings is None:
-        settings = {
-            "min_dyad_lw": 2.0,
-            "max_dyad_lw": 10.0,
-            "edge_fc_cmap": cm.Blues,
-            "dyad_color_cmap": cm.Greys,
-        }
-
+    settings.update(params)
     settings.update(kwargs)
 
-    dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
-    dyad_lw = _scalar_arg_to_dict(
-        dyad_lw, H.edges, settings["min_dyad_lw"], settings["max_dyad_lw"]
-    )
+    ax, pos = _draw_init(H, ax, pos)
 
-    edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
-
+    # filter edge sizes
+    if max_order is None:
+        max_order = max_edge_order(H)
     dyads = H.edges.filterby("order", 1)
     edges = H.edges.filterby("order", (2, max_order), "between")
 
-    # convert pos to format convenient for scatter
-    dyad_pos = np.asarray([(pos[e[0]], pos[e[1]]) for e in dyads])
+    if edge_fc is None: # color is proportional to size
+        edge_fc = edges.size
+
+    # convert all formats to ndarray
+    dyad_color = _draw_arg_to_arr(dyad_color)
+    dyad_lw = _draw_arg_to_arr(dyad_lw)
+    edge_fc = _draw_arg_to_arr(edge_fc)
+
+    # check validity of input values
+    if np.any(dyad_lw < 0):
+        raise ValueError("dyad_lw cannot contain negative values.")
+
+    # interpolate if needed
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
+        )
+
+    # convert dyad pos to format convenient for scatter
+    dyad_pos = np.asarray([(pos[list(e)[0]], pos[list(e)[1]]) for e in dyads.members()])
 
     # plot dyads 
     dyad_collection = LineCollection(
@@ -532,17 +546,18 @@ def draw_hyperedges(
 
     # plot other hyperedges
     patches = []
-    for he in edges:
+    for he in edges.members():
         d = len(he) - 1
+        he = list(he)
         coordinates = [[pos[n][0], pos[n][1]] for n in he]
         # Sorting the points counterclockwise (needed to have the correct filling)
         sorted_coordinates = _CCW_sort(coordinates)
         patch = plt.Polygon(sorted_coordinates, zorder=max_order - d)
         patches.append(patch)
 
-    p = PatchCollection(patches, alpha=0.4, facecolors=edge_fc, cmap=edge_fc_cmap)
-    p.set_clim(edge_vmin, edge_vmax)
-    ax.add_collection(p)
+    edge_collection = PatchCollection(patches, alpha=0.4, facecolors=edge_fc, cmap=edge_fc_cmap)
+    edge_collection.set_clim(edge_vmin, edge_vmax)
+    ax.add_collection(edge_collection)
 
     if hyperedge_labels:
         # Get all valid keywords by inspecting the signatures of draw_node_labels
