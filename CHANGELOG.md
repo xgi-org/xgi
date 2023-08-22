@@ -5,7 +5,7 @@
 * Feature: return the node collections to allow a colorbar corresponding to node colors [#441](https://github.com/xgi-org/xgi/pull/441) (@maximelucas).
 * Added tutorials: XGI in X minutes [#415](https://github.com/xgi-org/xgi/pull/415) (@thomasrobiglio).
 * Fixed an empty edge error when loading BiGG data [#447](https://github.com/xgi-org/xgi/pull/447) (@nwlandry).
-* Changed rho to an optional arg in the HPPM method [#446](https://github.com/xgi-org/xgi/pull/446)
+* Changed rho to an optional arg in the HPPM method [#446](https://github.com/xgi-org/xgi/pull/446) (@nwlandry).
 * Added a `cleanup()` method to `DiHypergraph` and `SimplicialComplex` and added a `connected` argument to the `Hypergraph` method [#440](https://github.com/xgi-org/xgi/pull/440) (@nwlandry).
 * Added encapsulation DAG functionality [#444](https://github.com/xgi-org/xgi/pull/444) (@tlarock).
 * Refactored the multilayer drawing function to be more standard and added headers to convert module [#434](https://github.com/xgi-org/xgi/pull/434) (@nwlandry).
