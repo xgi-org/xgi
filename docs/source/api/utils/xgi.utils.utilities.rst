@@ -25,3 +25,4 @@
    .. autofunction:: request_json_from_url_cached
    .. autofunction:: subfaces
    .. autofunction:: convert_labels_to_integers
+   .. autofunction:: hist
