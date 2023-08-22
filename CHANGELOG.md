@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.7.3
+* Added the `ashist()` method to the stats module[#452](https://github.com/xgi-org/xgi/pull/452) (@nwlandry).
+* Feature: return the node collections to allow a colorbar corresponding to node colors [#441](https://github.com/xgi-org/xgi/pull/441) (@maximelucas).
+* Added tutorials: XGI in X minutes [#415](https://github.com/xgi-org/xgi/pull/415) (@thomasrobiglio).
+* Fixed an empty edge error when loading BiGG data [#447](https://github.com/xgi-org/xgi/pull/447) (@nwlandry).
+* Changed rho to an optional arg in the HPPM method [#446](https://github.com/xgi-org/xgi/pull/446)
+* Added a `cleanup()` method to `DiHypergraph` and `SimplicialComplex` and added a `connected` argument to the `Hypergraph` method [#440](https://github.com/xgi-org/xgi/pull/440) (@nwlandry).
+* Added encapsulation DAG functionality [#444](https://github.com/xgi-org/xgi/pull/444) (@tlarock).
+* Refactored the multilayer drawing function to be more standard and added headers to convert module [#434](https://github.com/xgi-org/xgi/pull/434) (@nwlandry).
+* Added the `weights` option to `to_line_graph()` function. [#427](https://github.com/xgi-org/xgi/pull/427) (@tlarock).
+* Added the ability for users to access the optional arguments of NetworkX layout functions. [#439](https://github.com/xgi-org/xgi/pull/439) (@nwlandry).
+* Fixed Issue #331 [#438](https://github.com/xgi-org/xgi/pull/438) (@maximelucas).
+* Refactored the draw module [#435](https://github.com/xgi-org/xgi/pull/435) (@maximelucas).
+* Feature: added the `aspect` keyword for drawing, addressing Issue #430 [#432](https://github.com/xgi-org/xgi/pull/432) (@maximelucas).
+
 ## v0.7.2
 * Listed the available statistics in the stats module [#405](https://github.com/xgi-org/xgi/pull/405) (@thomasrobiglio).
 * Implemented functions from this [article](https://doi.org/10.1038/s41467-023-37190-9) [#400](https://github.com/xgi-org/xgi/pull/400) (@maximelucas).
