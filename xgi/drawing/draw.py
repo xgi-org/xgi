@@ -510,38 +510,39 @@ def draw_hyperedges(
 
     edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
 
-    # Looping over the hyperedges of different order (reversed) -- nodes will be plotted
-    # separately
-    for id, he in H.edges.members(dtype=dict).items():
+    dyads = H.edges.filterby("order", 1)
+    edges = H.edges.filterby("order", (2, max_order), "between")
+
+    # convert pos to format convenient for scatter
+    dyad_pos = np.asarray([(pos[e[0]], pos[e[1]]) for e in dyads])
+
+    # plot dyads 
+    dyad_collection = LineCollection(
+            dyad_pos,
+            colors=dyad_color,
+            linewidths=dyad_lw,
+            antialiaseds=(1,),
+            linestyle=dyad_style,
+        )
+
+    dyad_collection.set_cmap(dyad_color_cmap)
+    dyad_collection.set_clim(dyad_vmin, dyad_vmax)
+    dyad_collection.set_zorder(max_order - 1)  # edges go behind nodes
+    ax.add_collection(dyad_collection)
+
+    # plot other hyperedges
+    patches = []
+    for he in edges:
         d = len(he) - 1
-        if d > max_order:
-            continue
-        if d == 1:
-            # Drawing the edges
-            he = list(he)
-            x_coords = [pos[he[0]][0], pos[he[1]][0]]
-            y_coords = [pos[he[0]][1], pos[he[1]][1]]
-            line = plt.Line2D(
-                x_coords,
-                y_coords,
-                color=dyad_color[id],
-                lw=dyad_lw[id],
-                zorder=max_order - 1,
-            )
-            ax.add_line(line)
-        else:
-            # Hyperedges of order d (d=2: triangles, etc.)
-            # Filling the polygon
-            coordinates = [[pos[n][0], pos[n][1]] for n in he]
-            # Sorting the points counterclockwise (needed to have the correct filling)
-            sorted_coordinates = _CCW_sort(coordinates)
-            obj = plt.Polygon(
-                sorted_coordinates,
-                facecolor=edge_fc[id],
-                alpha=0.4,
-                zorder=max_order - d,
-            )
-            ax.add_patch(obj)
+        coordinates = [[pos[n][0], pos[n][1]] for n in he]
+        # Sorting the points counterclockwise (needed to have the correct filling)
+        sorted_coordinates = _CCW_sort(coordinates)
+        patch = plt.Polygon(sorted_coordinates, zorder=max_order - d)
+        patches.append(patch)
+
+    p = PatchCollection(patches, alpha=0.4, facecolors=edge_fc, cmap=edge_fc_cmap)
+    p.set_clim(edge_vmin, edge_vmax)
+    ax.add_collection(p)
 
     if hyperedge_labels:
         # Get all valid keywords by inspecting the signatures of draw_node_labels
