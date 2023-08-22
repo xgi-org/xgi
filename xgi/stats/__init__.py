@@ -464,10 +464,12 @@ class MultiIDStat(IDStat):
 
         Returns
         -------
-        x : Numpy array
-            The bin centers
-        y : Numpy array
-            The number or fraction of values falling within each bin
+        list of Pandas DataFrames
+            Each entry of the list is a two-column table with "bin_center"
+            and "value" columns, where "value" is a count or a probability.
+            If `bin_edges` is True, outputs two additional columns,
+            `bin_lo` and `bin_hi`, which outputs the left and right
+            bin edges respectively.
 
         Notes
         -----
