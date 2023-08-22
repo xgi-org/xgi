@@ -1,7 +1,9 @@
 """Draw hypergraphs and simplicial complexes with matplotlib."""
 
 from collections.abc import Iterable
+from numbers import Number
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
@@ -76,6 +78,34 @@ def _update_lims(pos, ax):
     ax.autoscale_view()
 
 
+def _parse_color_arg(colors, cmap, vmin, vmax):
+
+    # Check if edge_color is an array of floats and map to edge_cmap.
+    # This is the only case handled differently from matplotlib
+
+    if isinstance(colors, IDStat):
+        colors = colors.asnumpy()
+    elif isinstance(colors, dict):
+        values = list(colors.values())
+        colors = np.array(values)
+
+    is_arr_float = (np.iterable(colors) and np.alltrue([isinstance(c, Number) for c in colors]))
+
+    if is_arr_float:
+        if cmap is not None:
+            if not isinstance(cmap, mpl.colors.Colormap):
+                cmap = plt.get_cmap(cmap) # get cmap object from str name
+        else:
+            cmap = plt.get_cmap()
+        if vmin is None:
+            vmin = min(colors)
+        if vmax is None:
+            vmax = max(colors)
+        normalize_color = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
+        colors = [cmap(normalize_color(c)) for c in colors]
+    return colors
+
+
 def _draw_arg_to_arr(arg):
     """Convert drawing arguments to a matplotlib-compliant format. 
 
@@ -90,7 +120,7 @@ def _draw_arg_to_arr(arg):
     Returns
     -------
     arg : ndarray
-        Drawing argument in matplotlib-comliant form (scalar or array)
+        Drawing argument in matplotlib-compliant form (scalar or array)
     """
     if isinstance(arg, IDStat):
         arg = arg.asnumpy()

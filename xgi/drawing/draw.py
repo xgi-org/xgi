@@ -19,6 +19,7 @@ from .draw_utils import (
     _CCW_sort,
     _color_arg_to_dict,
     _draw_init,
+    _parse_color_arg,
     _draw_arg_to_arr,
     _interp_draw_arg,
     _scalar_arg_to_dict,
@@ -513,9 +514,12 @@ def draw_hyperedges(
         edge_fc = edges.size
 
     # convert all formats to ndarray
-    dyad_color = _draw_arg_to_arr(dyad_color)
     dyad_lw = _draw_arg_to_arr(dyad_lw)
     edge_fc = _draw_arg_to_arr(edge_fc)
+
+    # parse colors 
+    dyad_color = _parse_color_arg(dyad_color, dyad_color_cmap, dyad_vmin, dyad_vmax)
+    edge_fc = _parse_color_arg(edge_fc, edge_fc_cmap, edge_vmin, edge_vmax)
 
     # check validity of input values
     if np.any(dyad_lw < 0):
@@ -555,7 +559,8 @@ def draw_hyperedges(
         patch = plt.Polygon(sorted_coordinates, zorder=max_order - d)
         patches.append(patch)
 
-    edge_collection = PatchCollection(patches, alpha=0.4, facecolors=edge_fc, cmap=edge_fc_cmap)
+    edge_collection = PatchCollection(patches, alpha=0.4, facecolors=edge_fc)
+    edge_collection.set_cmap(edge_fc_cmap)
     edge_collection.set_clim(edge_vmin, edge_vmax)
     ax.add_collection(edge_collection)
 
@@ -573,7 +578,7 @@ def draw_hyperedges(
     # compute axis limits
     _update_lims(pos, ax)
 
-    return ax
+    return ax, dyad_collection, edge_collection
 
 
 def draw_simplices(
