@@ -25,3 +25,4 @@
       ~MultiEdgeStat.aslist
       ~MultiEdgeStat.asnumpy
       ~MultiEdgeStat.aspandas
+      ~MultiEdgeStat.ashist

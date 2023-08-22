@@ -24,6 +24,7 @@
       ~DiNodeStat.aslist
       ~DiNodeStat.asnumpy
       ~DiNodeStat.aspandas
+      ~DiNodeStat.ashist
       ~DiNodeStat.max
       ~DiNodeStat.mean
       ~DiNodeStat.median

@@ -25,6 +25,7 @@
       ~EdgeStat.aslist
       ~EdgeStat.asnumpy
       ~EdgeStat.aspandas
+      ~EdgeStat.ashist
       ~EdgeStat.max
       ~EdgeStat.mean
       ~EdgeStat.median

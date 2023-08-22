@@ -25,3 +25,4 @@
       ~MultiDiNodeStat.aslist
       ~MultiDiNodeStat.asnumpy
       ~MultiDiNodeStat.aspandas
+      ~MultiDiNodeStat.ashist

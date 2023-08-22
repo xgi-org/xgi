@@ -309,3 +309,9 @@ def test_hist():
     assert np.allclose(df["value"], true_y)
     assert np.allclose(df["bin_lo"], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100])
     assert np.allclose(df["bin_hi"], [2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000])
+
+    with pytest.raises(XGIError):
+        xgi.hist(vals, bins=(0, 1, 2))
+
+    with pytest.raises(XGIError):
+        xgi.hist(vals, bins="ten")
