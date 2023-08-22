@@ -77,10 +77,10 @@ def _update_lims(pos, ax):
 
 
 def _draw_arg_to_arr(arg):
-    """Convert drawing arguments to a matplotlib-compliant format. 
+    """Convert drawing arguments to a matplotlib-compliant format.
 
-    IDStat, dict, and list are converted to ndarray. 
-    Scalar values are untouched. 
+    IDStat, dict, and list are converted to ndarray.
+    Scalar values are untouched.
 
     Parameters
     ----------

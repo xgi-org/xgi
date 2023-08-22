@@ -6,9 +6,9 @@ import xgi
 from xgi.drawing.draw import (
     _CCW_sort,
     _color_arg_to_dict,
+    _draw_arg_to_arr,
     _interp_draw_arg,
     _scalar_arg_to_dict,
-    _draw_arg_to_arr,
 )
 
 
