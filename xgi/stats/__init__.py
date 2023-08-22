@@ -48,8 +48,8 @@ import numpy as np
 import pandas as pd
 from scipy.stats import moment as spmoment
 
-from ..exception import IDNotFound, XGIError
-from ..utils import dist
+from ..exception import IDNotFound
+from ..utils import hist
 
 from . import edgestats, diedgestats, dinodestats, nodestats
 
@@ -160,6 +160,40 @@ class IDStat:
         """
         return pd.Series(self._val, name=self.name)
 
+    def ashist(self, bins=10, bin_edges=False, density=False, log_binning=False):
+        """Return the distribution of a numpy array.
+
+        Parameters
+        ----------
+        vals : Numpy array
+            The array of values
+        bins : int, list, or Numpy array
+            The number of bins or the bin edges.
+        bin_edges : bool
+            Whether to also output the min and max of each bin,
+            by default, False.
+        density : bool
+            Whether to normalize the resulting distribution.
+        log_binning : bool
+            Whether to bin the values with log-sized bins.
+            By default, False.
+
+
+        Returns
+        -------
+        Pandas DataFrame
+            A two-column table with "bin_center" and "value" columns,
+            where "value" is a count or a probability. If `bin_edges`
+            is True, outputs two additional columns, `bin_lo` and `bin_hi`,
+            which outputs the left and right bin edges respectively.
+
+        Notes
+        -----
+        Originally from https://github.com/jkbren/networks-and-dataviz
+
+        """
+        return hist(self.asnumpy(), bins, bin_edges, density, log_binning)
+
     def max(self):
         """The maximum value of this stat."""
         return self.asnumpy().max(axis=0)
@@ -201,36 +235,6 @@ class IDStat:
         """
         arr = self.asnumpy()
         return spmoment(arr, moment=order) if center else np.mean(arr**order)
-
-    def dist(self, bins=10, density=False, log_binning=False):
-        """Return the distribution of a numpy array.
-
-        Parameters
-        ----------
-        vals : Numpy array
-            The array of values
-        bins : int, list, or Numpy array
-            The number of bins or the bin edges.
-        density : bool
-            Whether to normalize the resulting distribution.
-        log_binning : bool
-            Whether to bin the values with log-sized bins.
-            By default, False.
-
-
-        Returns
-        -------
-        x : Numpy array
-            The bin centers
-        y : Numpy array
-            The number or fraction of values falling within each bin
-
-        Notes
-        -----
-        Originally from https://github.com/jkbren/networks-and-dataviz
-
-        """
-        return dist(self.asnumpy(), bins, density, log_binning)
 
 
 class NodeStat(IDStat):
@@ -439,7 +443,7 @@ class MultiIDStat(IDStat):
         series = [pd.Series(v, name=k) for k, v in result.items()]
         return pd.concat(series, axis=1)
 
-    def dist(self, bins=10, density=False, log_binning=False):
+    def ashist(self, bins=10, bin_edges=False, density=False, log_binning=False):
         """Return the distributions of a numpy array.
 
         Parameters
@@ -448,6 +452,9 @@ class MultiIDStat(IDStat):
             The array of values
         bins : int, list, or Numpy array
             The number of bins or the bin edges.
+        bin_edges : bool
+            Whether to also output the min and max of each bin,
+            by default, False.
         density : bool
             Whether to normalize the resulting distribution.
         log_binning : bool
@@ -467,7 +474,10 @@ class MultiIDStat(IDStat):
         Originally from https://github.com/jkbren/networks-and-dataviz
 
         """
-        return [dist(data, bins, density, log_binning) for data in self.asnumpy().T]
+        return [
+            hist(data, bins, bin_edges, density, log_binning)
+            for data in self.asnumpy().T
+        ]
 
 
 class MultiNodeStat(MultiIDStat):

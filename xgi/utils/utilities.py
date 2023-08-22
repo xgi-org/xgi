@@ -6,6 +6,7 @@ from functools import lru_cache
 from itertools import chain, combinations, count
 
 import numpy as np
+import pandas as pd
 import requests
 from numpy import infty
 
@@ -21,7 +22,7 @@ __all__ = [
     "request_json_from_url_cached",
     "subfaces",
     "convert_labels_to_integers",
-    "dist",
+    "hist",
 ]
 
 
@@ -419,7 +420,7 @@ def convert_labels_to_integers(net, label_attribute="label"):
     return temp_net
 
 
-def dist(vals, bins=10, density=False, log_binning=False):
+def hist(vals, bins=10, bin_edges=False, density=False, log_binning=False):
     """Return the distribution of a numpy array.
 
     Parameters
@@ -429,6 +430,9 @@ def dist(vals, bins=10, density=False, log_binning=False):
     bins : int, list, or Numpy array
         The number of bins or the bin edges.
         By default, 10.
+    bin_edges : bool
+        Whether to also output the min and max of each bin,
+        by default, False.
     density : bool
         Whether to normalize the resulting distribution.
         By default, False.
@@ -438,10 +442,11 @@ def dist(vals, bins=10, density=False, log_binning=False):
 
     Returns
     -------
-    x : Numpy array
-        The bin centers
-    y : Numpy array
-        The number or fraction of values falling within each bin
+    Pandas DataFrame
+        A two-column table with "bin_center" and "value" columns,
+        where "value" is a count or a probability. If `bin_edges`
+        is True, outputs two additional columns, `bin_lo` and `bin_hi`,
+        which outputs the left and right bin edges respectively.
 
     Notes
     -----
@@ -470,4 +475,9 @@ def dist(vals, bins=10, density=False, log_binning=False):
     # Now, we need to compute for each y the bin centers
     x = bins[1:] - np.diff(bins) / 2.0
 
-    return x, y
+    if bin_edges:
+        return pd.DataFrame.from_dict(
+            {"bin_center": x, "value": y, "bin_lo": bins[:-1], "bin_hi": bins[1:]}
+        )
+    else:
+        return pd.DataFrame.from_dict({"bin_center": x, "value": y})
