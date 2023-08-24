@@ -49,17 +49,26 @@ def draw(
     H,
     pos=None,
     ax=None,
-    dyad_color="black",
-    dyad_lw=1.5,
-    edge_fc=None,
     node_fc="white",
     node_ec="black",
     node_lw=1,
     node_size=15,
     node_shape="o",
     max_order=None,
+    dyad_color="black",
+    dyad_lw=1.5,
+    dyad_style="solid",
+    dyad_color_cmap="Greys",
+    dyad_vmin=None,
+    dyad_vmax=None,
+    edge_fc=None,
+    edge_fc_cmap="Blues",
+    edge_vmin=None,
+    edge_vmax=None,
+    alpha=0.4,
     node_labels=False,
     hyperedge_labels=False,
+    rescale_sizes=True,
     aspect="equal",
     **kwargs,
 ):
@@ -75,24 +84,6 @@ def draw(
         the positions.
     ax : matplotlib.pyplot.axes, optional
         Axis to draw on. If None (default), get the current axes.
-    dyad_color : str, dict, iterable, or EdgeStat, optional
-        Color of the dyadic links.  If str, use the same color for all edges. If a dict,
-        must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use
-        a colormap (specified with dyad_color_cmap) associated to it. By default,
-        "black".
-    dyad_lw : int, float, dict, iterable, or EdgeStat, optional
-        Line width of edges of order 1 (dyadic links).  If int or float, use the same
-        width for all edges.  If a dict, must contain (edge_id: width) pairs.  If
-        iterable, assume the widths are specified in the same order as the edges are
-        found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
-        between min_dyad_lw and max_dyad_lw. By default, 1.5.
-    edge_fc : str, dict, iterable, or EdgeStat, optional
-        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
-        must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
-        are specified in the same order as the hyperedges are found in H.edges. If
-        EdgeStat, use the colormap specified with edge_fc_cmap. If None (default), use
-        the H.edges.size.
     node_fc : str, dict, iterable, or NodeStat, optional
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
@@ -120,6 +111,24 @@ def draw(
         marker. Default is "o".
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
+    dyad_color : str, dict, iterable, or EdgeStat, optional
+        Color of the dyadic links.  If str, use the same color for all edges. If a dict,
+        must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
+        specified in the same order as the edges are found in H.edges. If EdgeStat, use
+        a colormap (specified with dyad_color_cmap) associated to it. By default,
+        "black".
+    dyad_lw : int, float, dict, iterable, or EdgeStat, optional
+        Line width of edges of order 1 (dyadic links).  If int or float, use the same
+        width for all edges.  If a dict, must contain (edge_id: width) pairs.  If
+        iterable, assume the widths are specified in the same order as the edges are
+        found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
+        between min_dyad_lw and max_dyad_lw. By default, 1.5.
+    edge_fc : str, dict, iterable, or EdgeStat, optional
+        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
+        must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
+        are specified in the same order as the hyperedges are found in H.edges. If
+        EdgeStat, use the colormap specified with edge_fc_cmap. If None (default), use
+        the H.edges.size.
     node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
         By default, False.
@@ -166,20 +175,13 @@ def draw(
     settings = {
         "min_node_size": 5,
         "max_node_size": 30,
-        "min_dyad_lw": 2.0,
-        "max_dyad_lw": 10.0,
+        "min_dyad_lw": 1,
+        "max_dyad_lw": 10,
         "min_node_lw": 0,
         "max_node_lw": 5,
-        "node_fc_cmap": cm.Reds,
-        "node_ec_cmap": cm.Greys,
-        "edge_fc_cmap": cm.Blues,
-        "dyad_color_cmap": cm.Greys,
     }
 
     settings.update(kwargs)
-
-    if edge_fc is None:
-        edge_fc = H.edges.size
 
     ax, pos = _draw_init(H, ax, pos)
 
@@ -200,16 +202,25 @@ def draw(
             **kwargs,
         )
     elif isinstance(H, Hypergraph):
-        draw_hyperedges(
-            H,
-            pos,
-            ax,
-            dyad_color,
-            dyad_lw,
-            edge_fc,
-            max_order,
-            settings,
-            hyperedge_labels,
+
+        ax, (dyad_collection, edge_collection) = draw_hyperedges(
+            H=H,
+            pos=pos,
+            ax=ax,
+            dyad_color=dyad_color,
+            dyad_lw=dyad_lw,
+            dyad_style=dyad_style,
+            dyad_color_cmap=dyad_color_cmap,
+            dyad_vmin=dyad_vmin,
+            dyad_vmax=dyad_vmax,
+            alpha=alpha,
+            edge_fc=edge_fc,
+            edge_fc_cmap=edge_fc_cmap,
+            edge_vmin=edge_vmin,
+            edge_vmax=edge_vmax,
+            max_order=max_order,
+            hyperedge_labels=hyperedge_labels,
+            rescale_sizes=rescale_sizes,
             **kwargs,
         )
     else:
@@ -235,7 +246,7 @@ def draw(
 
     ax.set_aspect(aspect, "datalim")
 
-    return ax, node_collection
+    return ax, (node_collection, dyad_collection, edge_collection)
 
 
 def draw_nodes(
@@ -262,12 +273,12 @@ def draw_nodes(
     ----------
     H : Hypergraph or SimplicialComplex
         Higher-order network to plot.
-    ax : matplotlib.pyplot.axes, optional
-        Axis to draw on. If None (default), get the current axes.
     pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the
         0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
         the positions.
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
     node_fc : str, iterable, or NodeStat, optional
         Color of the nodes.  If str, use the same color for all nodes. If other iterable,
         or NodeStat, assume the colors are specified in the same order as the nodes are
@@ -306,7 +317,7 @@ def draw_nodes(
         If `node_size` (`node_lw`) is a single value, `interpolate_sizes` is ignored
         for it. By default, True.
     params : dict
-        Default parameters used if `interpolate_sizes` is True.
+        Default parameters used if `rescale_sizes` is True.
         Keys to override default settings:
         * "min_node_size" (default: 5)
         * "max_node_size" (default: 30)
@@ -447,12 +458,13 @@ def draw_hyperedges(
     Parameters
     ----------
     H : Hypergraph
-    ax : matplotlib.pyplot.axes, optional
-        Axis to draw on. If None (default), get the current axes.
+        Hypergraph to plot
     pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the
         0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
         the positions.
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
     dyad_color : str, dict, iterable, or EdgeStat, optional
         Color of the dyadic links.  If str, use the same color for all edges. If a dict,
         must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
@@ -499,8 +511,8 @@ def draw_hyperedges(
     """
 
     settings = {
-        "min_dyad_lw": 2.0,
-        "max_dyad_lw": 10.0,
+        "min_dyad_lw": 1,
+        "max_dyad_lw": 10,
     }
 
     settings.update(params)
@@ -519,7 +531,6 @@ def draw_hyperedges(
 
     # convert all formats to ndarray
     dyad_lw = _draw_arg_to_arr(dyad_lw)
-    edge_fc = _draw_arg_to_arr(edge_fc)
 
     # parse colors
     dyad_color, dyad_c_mapped = _parse_color_arg(
@@ -609,7 +620,7 @@ def draw_hyperedges(
     # compute axis limits
     _update_lims(pos, ax)
 
-    return ax, dyad_collection, edge_collection
+    return ax, (dyad_collection, edge_collection)
 
 
 def draw_simplices(

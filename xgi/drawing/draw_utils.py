@@ -88,11 +88,10 @@ def _parse_color_arg(colors, cmap, ids, id_kind="edges"):
     # Check if edge_color is an array of floats and map to edge_cmap.
     # This is the only case handled differently from matplotlib
 
-    if id_kind=="edges" and isinstance(colors, NodeStat):
+    if id_kind == "edges" and isinstance(colors, NodeStat):
         raise TypeError("The color argument for edges cannot be a NodeStat")
-    elif id_kind=="nodes" and isinstance(colors, Edgestat):
+    elif id_kind == "nodes" and isinstance(colors, Edgestat):
         raise TypeError("The color argument for nodes cannot be an EdgeStat")
-
 
     # When drawing hyperedges we need to separate dyads and other hyperedges.
     # But the user can input and IDstat or dict that represent all hyperedges.
