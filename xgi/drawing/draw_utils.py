@@ -6,11 +6,16 @@ from numbers import Number
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+from matplotlib.colors import (
+    LinearSegmentedColormap,
+    ListedColormap,
+    is_color_like,
+    to_rgba_array,
+)
 from numpy import ndarray
 
 from ..exception import XGIError
-from ..stats import IDStat
+from ..stats import EdgeStat, IDStat, NodeStat
 from .layout import barycenter_spring_layout
 
 
@@ -78,39 +83,53 @@ def _update_lims(pos, ax):
     ax.autoscale_view()
 
 
-def _parse_color_arg(colors, cmap, vmin, vmax):
+def _parse_color_arg(colors, cmap, ids, id_kind="edges"):
 
     # Check if edge_color is an array of floats and map to edge_cmap.
     # This is the only case handled differently from matplotlib
 
+    if id_kind=="edges" and isinstance(colors, NodeStat):
+        raise TypeError("The color argument for edges cannot be a NodeStat")
+    elif id_kind=="nodes" and isinstance(colors, Edgestat):
+        raise TypeError("The color argument for nodes cannot be an EdgeStat")
+
+
+    # When drawing hyperedges we need to separate dyads and other hyperedges.
+    # But the user can input and IDstat or dict that represent all hyperedges.
+    # So we need to filter these cases.
+    xsize = len(ids)
+
     if isinstance(colors, IDStat):
-        colors = colors.asnumpy()
-    elif isinstance(colors, dict):
+        colors = colors.asdict()
+    if isinstance(colors, dict):
+        if ids is not None:  # filter if needed
+            colors = {key: val for key, val in colors.items() if key in ids}
         values = list(colors.values())
         colors = np.array(values)
 
-    is_arr_float = (np.iterable(colors) and np.alltrue([isinstance(c, Number) for c in colors]))
+    try:  # see if the input format is compatible with PatchCollection's facecolor
+        colors = to_rgba_array(colors)
+        colors_are_mapped = False
+    except:
+        try:  # in case of array of floats (can be fed to PatchCollection with some care)
+            colors = np.asanyarray(colors, dtype=float)
+            colors_are_mapped = True
+        except:
+            raise ValueError("Invalud input format for colors.")
 
-    if is_arr_float:
-        if cmap is not None:
-            if not isinstance(cmap, mpl.colors.Colormap):
-                cmap = plt.get_cmap(cmap) # get cmap object from str name
-        else:
-            cmap = plt.get_cmap()
-        if vmin is None:
-            vmin = min(colors)
-        if vmax is None:
-            vmax = max(colors)
-        normalize_color = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
-        colors = [cmap(normalize_color(c)) for c in colors]
-    return colors
+    if not is_color_like(colors) and len(colors) != xsize:
+        raise ValueError(
+            f"The input color argument must be a single color or its length must match the number of plotted elements ({xsize})."
+        )
+
+    return colors, colors_are_mapped
 
 
 def _draw_arg_to_arr(arg):
-    """Convert drawing arguments to a matplotlib-compliant format. 
+    """Convert drawing arguments to a matplotlib-compliant format.
 
-    IDStat, dict, and list are converted to ndarray. 
-    Scalar values are untouched. 
+    IDStat, dict, and list are converted to ndarray.
+    Scalar values are untouched.
 
     Parameters
     ----------
