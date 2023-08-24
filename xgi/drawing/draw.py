@@ -430,6 +430,7 @@ def draw_hyperedges(
     edge_fc_cmap="Blues",
     edge_vmin=None,
     edge_vmax=None,
+    alpha=0.4,
     max_order=None,
     params=dict(),
     hyperedge_labels=False,
@@ -470,12 +471,10 @@ def draw_hyperedges(
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
         pairs.  By default, None.
-    settings : dict
+    params : dict
         Default parameters. Keys that may be useful to override default settings:
         * min_dyad_lw
         * max_dyad_lw
-        * dyad_color_cmap
-        * edge_fc_cmap
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
 
@@ -559,7 +558,7 @@ def draw_hyperedges(
         patch = plt.Polygon(sorted_coordinates, zorder=max_order - d)
         patches.append(patch)
 
-    edge_collection = PatchCollection(patches, alpha=0.4, facecolors=edge_fc)
+    edge_collection = PatchCollection(patches, alpha=alpha, facecolors=edge_fc)
     edge_collection.set_cmap(edge_fc_cmap)
     edge_collection.set_clim(edge_vmin, edge_vmax)
     ax.add_collection(edge_collection)
