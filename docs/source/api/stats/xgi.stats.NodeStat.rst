@@ -24,6 +24,7 @@
       ~NodeStat.aslist
       ~NodeStat.asnumpy
       ~NodeStat.aspandas
+      ~NodeStat.ashist
       ~NodeStat.max
       ~NodeStat.mean
       ~NodeStat.median

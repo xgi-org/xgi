@@ -25,6 +25,7 @@
       ~DiEdgeStat.aslist
       ~DiEdgeStat.asnumpy
       ~DiEdgeStat.aspandas
+      ~DiEdgeStat.ashist
       ~DiEdgeStat.max
       ~DiEdgeStat.mean
       ~DiEdgeStat.median
