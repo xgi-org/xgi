@@ -33,7 +33,7 @@ jobs:
     - name: Prepare tutorial notebooks
       run: |
         # go into tutorial location
-        cd tutorials/
+        cd docs/source/tutorials/ 
         # convert each notebook into a python file
         jupyter nbconvert --to script *.ipynb
         # rename the files so they are found by pytest: add 'test' at the beginning
@@ -48,7 +48,7 @@ jobs:
     - name: Test tutorial notebooks
       run: |
         # run pytest ONLY on the tutorials
-        cd tutorials/
+        cd cd docs/source/tutorials/ 
         pytest --color=yes
 
   pytest:
