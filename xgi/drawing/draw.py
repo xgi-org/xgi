@@ -123,12 +123,32 @@ def draw(
         iterable, assume the widths are specified in the same order as the edges are
         found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
         between min_dyad_lw and max_dyad_lw. By default, 1.5.
-    edge_fc : str, dict, iterable, or EdgeStat, optional
-        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
-        must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
-        are specified in the same order as the hyperedges are found in H.edges. If
-        EdgeStat, use the colormap specified with edge_fc_cmap. If None (default), use
-        the H.edges.size.
+    dyad_style : str or list of strings, optional
+        Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
+        See matplotlib's documentation for all accepted values. By default, "solid".
+    dyad_color_cmap: matplotlib colormap
+        Colormap used to map the dyad colors. By default, "Greys".
+    dyad_vmin, dyad_vmax : float, optional
+        Minimum and maximum for dyad colormap scaling. By default, None.
+    edge_fc : color or list of colors or array-like or dict or EdgeStat, optional
+        Color of the hyperedges.  The accepted formats are the same as
+        matplotlib's scatter, with the addition of dict and IDStat.
+        Those with colors:
+        * single color as a string
+        * single color as 3- or 4-tuple
+        * list of colors of length len(ids)
+        * dict of colors containing the `ids` as keys
+        Those with numerical values (will be mapped to colors):
+        * array of floats
+        * dict of floats containing the `ids` as keys
+        * IDStat containing the `ids` as keys
+        If None (default), color by edge size.
+    edge_fc_cmap: matplotlib colormap
+        Colormap used to map the edge colors. By default, "Blues".
+    edge_vmin, edge_vmax : float, optional
+        Minimum and maximum for edge colormap scaling. By default, None.
+    alpha : float, optional
+        The edge transparency. By default, 0.4.
     node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
         By default, False.
@@ -142,18 +162,19 @@ def draw(
         directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full
         description at
         https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_aspect.html
+    rescale_sizes: bool, optional
+        If True, linearly interpolate `node_size`, `node_lw` and `dyad_lw`
+        between min/max values that can be changed in the other argument `params`.
+        If those are single values, `interpolate_sizes` is ignored
+        for it. By default, True.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
-        * min_node_size
-        * max_node_size
-        * min_node_lw
-        * max_node_lw
-        * min_dyad_lw
-        * max_dyad_lw
-        * node_fc_cmap
-        * node_ec_cmap
-        * dyad_color_cmap
-        * edge_fc_cmap
+        * "min_node_size" (default: 5)
+        * "max_node_size" (default: 30)
+        * "min_node_lw" (default: 0)
+        * "max_node_lw" (default: 5)
+        * "min_dyad_lw" (default: 1)
+        * "max_dyad_lw" (default: 10)
 
     Examples
     --------
@@ -238,6 +259,7 @@ def draw(
         zorder=max_order,
         params=settings,
         node_labels=node_labels,
+        rescale_sizes=rescale_sizes,
         **kwargs,
     )
 
@@ -477,21 +499,46 @@ def draw_hyperedges(
         iterable, assume the widths are specified in the same order as the edges are
         found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
         between min_dyad_lw and max_dyad_lw. By default, 1.5.
-    edge_fc : str, dict, iterable, or EdgeStat, optional
-        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
-        must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
-        are specified in the same order as the hyperedges are found in H.edges. If
-        EdgeStat, use the colormap specified with edge_fc_cmap. If None (default), color
-        by edge size.
+    dyad_style : str or list of strings, optional
+        Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
+        See matplotlib's documentation for all accepted values. By default, "solid".
+    dyad_color_cmap: matplotlib colormap
+        Colormap used to map the dyad colors. By default, "Greys".
+    dyad_vmin, dyad_vmax : float, optional
+        Minimum and maximum for dyad colormap scaling. By default, None.
+    edge_fc : color or list of colors or array-like or dict or EdgeStat, optional
+        Color of the hyperedges.  The accepted formats are the same as
+        matplotlib's scatter, with the addition of dict and IDStat.
+        Those with colors:
+        * single color as a string
+        * single color as 3- or 4-tuple
+        * list of colors of length len(ids)
+        * dict of colors containing the `ids` as keys
+        Those with numerical values (will be mapped to colors):
+        * array of floats
+        * dict of floats containing the `ids` as keys
+        * IDStat containing the `ids` as keys
+        If None (default), color by edge size.
+    edge_fc_cmap: matplotlib colormap
+        Colormap used to map the edge colors. By default, "Blues".
+    edge_vmin, edge_vmax : float, optional
+        Minimum and maximum for edge colormap scaling. By default, None.
+    alpha : float, optional
+        The edge transparency. By default, 0.4.
     max_order : int, optional
         Maximum of hyperedges to plot. By default, None.
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
         pairs.  By default, None.
+    rescale_sizes: bool, optional
+        If True, linearly interpolate `dyad_lw` and between min/max values
+        (1/10) that can be changed in the other argument `params`.
+        If `dyad_lw` is a single value, `interpolate_sizes` is ignored
+        for it. By default, True.
     params : dict
         Default parameters. Keys that may be useful to override default settings:
-        * min_dyad_lw
-        * max_dyad_lw
+        * "min_dyad_lw" (default: 1)
+        * "max_dyad_lw" (default: 10)
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
 
