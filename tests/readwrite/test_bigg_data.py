@@ -36,3 +36,9 @@ def test_411():
     assert H["name"] == "iCN718"
     assert H.num_nodes == 888
     assert H.num_edges == 1014
+
+
+def test_458():
+    H = load_bigg_data("e_coli_core")
+    assert H.edges.dimembers("FORt") == ({"for_c"}, {"for_e"})
+    assert H.edges.dimembers("PFK") == ({"atp_c", "f6p_c"}, {"adp_c", "fdp_c", "h_c"})

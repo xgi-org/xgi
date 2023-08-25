@@ -100,13 +100,7 @@ def _bigg_to_dihypergraph(d_index, d_model):
         DH.add_node(m["id"], name=m["name"])
 
     for r in d_model["reactions"]:
-        head = set()
-        tail = set()
-        for m, val in r["metabolites"].items():
-            if val > 0:
-                head.add(m)
-            else:
-                tail.add(m)
+        tail, head = construct_edge(r)
 
         if not head and not tail:
             warn(f"{r['id']} is an empty reaction!")
@@ -114,3 +108,41 @@ def _bigg_to_dihypergraph(d_index, d_model):
         DH.add_edge((tail, head), id=r["id"], name=r["name"])
 
     return DH
+
+
+def construct_edge(reaction, verbose=False):
+    """Constructs a directed hyperedge from a metabolic reaction.
+
+    Parameters
+    ----------
+    reaction : dict
+        A metabolic reaction from a dataset in the BiGG repository
+    verbose : bool, optional
+        Whether to state that the reaction has been reordered, by default False
+
+    Returns
+    -------
+    (tail, head) : a tuple of sets
+        the tail and head of the hyperedge
+
+    Notes
+    -----
+    Code is rewritten from a function by @pietrotraversa.
+    """
+
+    tail = set()
+    head = set()
+
+    for m, val in reaction["metabolites"].items():
+        if val > 0:
+            head.add(m)
+        else:
+            tail.add(m)
+    if (
+        reaction["lower_bound"] < 0 and reaction["upper_bound"] <= 0
+    ):  # so the direction is <---
+        if verbose:
+            print(reaction["id"], "has been reordered")
+        return head, tail
+    else:
+        return tail, head
