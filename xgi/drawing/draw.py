@@ -200,6 +200,8 @@ def draw(
         "max_dyad_lw": 10,
         "min_node_lw": 0,
         "max_node_lw": 5,
+        "edge_fc_cmap": cm.Blues,  # for compatibility with simplices until update
+        "dyad_color_cmap": cm.Greys,  # for compatibility with simplices until update
     }
 
     settings.update(kwargs)
@@ -210,18 +212,20 @@ def draw(
         max_order = max_edge_order(H)
 
     if isinstance(H, SimplicialComplex):
-        draw_simplices(
-            H,
-            pos,
-            ax,
-            dyad_color,
-            dyad_lw,
-            edge_fc,
-            max_order,
-            settings,
-            hyperedge_labels,
+        ax = draw_simplices(
+            SC=H,
+            pos=pos,
+            ax=ax,
+            dyad_color=dyad_color,
+            dyad_lw=dyad_lw,
+            edge_fc=edge_fc,
+            max_order=max_order,
+            settings=settings,
+            hyperedge_labels=hyperedge_labels,
             **kwargs,
         )
+        dyad_collection = None  # for compatibility with simplices until update
+        edge_collection = None  # for compatibility with simplices until update
     elif isinstance(H, Hypergraph):
 
         ax, (dyad_collection, edge_collection) = draw_hyperedges(

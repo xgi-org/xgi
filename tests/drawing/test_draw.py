@@ -20,8 +20,8 @@ def test_draw(edgelist8):
     offsets = node_collection.get_offsets()
     assert offsets.shape[0] == H.num_nodes  # nodes
     assert len(ax.collections) == 3
-    assert len(dyad_collection.get_paths()) == 3 # dyads
-    assert len(edge_collection.get_paths()) == 6 # other hyperedges
+    assert len(dyad_collection.get_paths()) == 3  # dyads
+    assert len(edge_collection.get_paths()) == 6  # other hyperedges
 
     # zorder
     for line in ax.lines:  # dyads
@@ -208,11 +208,11 @@ def test_draw_hyperedges(edgelist8):
     (dyad_collection, edge_collection) = collections
 
     # number of elements
-    assert len(ax.lines) == 0 
+    assert len(ax.lines) == 0
     assert len(ax.patches) == 0
     assert len(ax.collections) == 2
-    assert len(dyad_collection.get_paths()) == 3 # dyads
-    assert len(edge_collection.get_paths()) == 6 # other hyperedges
+    assert len(dyad_collection.get_paths()) == 3  # dyads
+    assert len(edge_collection.get_paths()) == 6  # other hyperedges
 
     # zorder
     for line in ax.lines:  # dyads
