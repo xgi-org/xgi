@@ -15,8 +15,9 @@
    :maxdepth: 2
    :caption: Tutorials
    :hidden:
-
-   See on GitHub <https://github.com/xgi-org/xgi/tree/main/tutorials>
+   
+   Tutorials <api/tutorials.rst>
+   
 
 .. toctree::
    :maxdepth: 2
