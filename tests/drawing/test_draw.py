@@ -10,13 +10,18 @@ def test_draw(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 
     fig, ax = plt.subplots()
-    ax, node_collection = xgi.draw(H, ax=ax)
+    ax, collections = xgi.draw(H, ax=ax)
+
+    (node_collection, dyad_collection, edge_collection) = collections
 
     # number of elements
-    assert len(ax.lines) == len(H.edges.filterby("size", 2))  # dyads
-    assert len(ax.patches) == len(H.edges.filterby("size", 2, mode="gt"))  # hyperedges
+    assert len(ax.lines) == 0
+    assert len(ax.patches) == 0
     offsets = node_collection.get_offsets()
     assert offsets.shape[0] == H.num_nodes  # nodes
+    assert len(ax.collections) == 3
+    assert len(dyad_collection.get_paths()) == 3 # dyads
+    assert len(edge_collection.get_paths()) == 6 # other hyperedges
 
     # zorder
     for line in ax.lines:  # dyads
@@ -198,12 +203,16 @@ def test_draw_hyperedges(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 
     fig, ax = plt.subplots()
-    ax = xgi.draw_hyperedges(H, ax=ax)
+    ax, collections = xgi.draw_hyperedges(H, ax=ax)
+
+    (dyad_collection, edge_collection) = collections
 
     # number of elements
-    assert len(ax.lines) == len(H.edges.filterby("size", 2))  # dyads
-    assert len(ax.patches) == len(H.edges.filterby("size", 2, mode="gt"))  # hyperedges
-    assert len(ax.collections) == 0  # nodes
+    assert len(ax.lines) == 0 
+    assert len(ax.patches) == 0
+    assert len(ax.collections) == 2
+    assert len(dyad_collection.get_paths()) == 3 # dyads
+    assert len(edge_collection.get_paths()) == 6 # other hyperedges
 
     # zorder
     for line in ax.lines:  # dyads
