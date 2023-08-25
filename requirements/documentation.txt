@@ -6,3 +6,4 @@ pillow>=8.2
 matplotlib>=3.3
 sphinx-design
 nbsphinx
+nbsphinx_link
