@@ -273,11 +273,12 @@ class Hypergraph:
         [{1, 2}, {2, 3}, {1, 3, 4}]
         """
         tempH = Hypergraph()
-        tempH.add_edges_from(zip(self._edge.values(), self._edge_attr.values()))
-        tempH.add_nodes_from(zip(self._node.keys(), self._node_attr.values()))
 
-        tempH.add_edges_from(zip(H2._edge.values(), H2._edge_attr.values()))
+        tempH.add_nodes_from(zip(self._node.keys(), self._node_attr.values()))
         tempH.add_nodes_from(zip(H2._node.keys(), H2._node_attr.values()))
+
+        tempH.add_edges_from(zip(self._edge.values(), self._edge_attr.values()))
+        tempH.add_edges_from(zip(H2._edge.values(), H2._edge_attr.values()))
 
         tempH._hypergraph = deepcopy(self._hypergraph)
         tempH._hypergraph.update(deepcopy(H2._hypergraph))
