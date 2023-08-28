@@ -72,7 +72,9 @@ def test_lshift(edgelist1, edgelist2, hyperwithattrs):
     H2 = xgi.Hypergraph(edgelist2)
     H3 = hyperwithattrs
     H = H1 << H2
-    assert set(H.nodes) == {1, 2, 3, 4, 5, 6, 7, 8}
+    nodes1 = list(H1.nodes)
+    assert nodes1 == [1, 2, 3, 4, 5, 6, 8, 7]
+    assert list(H.nodes) == nodes1
     assert H.num_edges == 7
     assert H.edges.members(0) == {1, 2, 3}
 
