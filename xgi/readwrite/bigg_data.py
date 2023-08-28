@@ -84,6 +84,11 @@ def _bigg_to_dihypergraph(d_index, d_model):
     -------
     DiHypergraph
         The dihypergraph from the selected BIGG model.
+
+    Notes
+    -----
+    The code for parsing a metabolic reaction is rewritten
+    from a function by @pietrotraversa.
     """
     from .. import DiHypergraph
 
@@ -100,49 +105,93 @@ def _bigg_to_dihypergraph(d_index, d_model):
         DH.add_node(m["id"], name=m["name"])
 
     for r in d_model["reactions"]:
-        tail, head = construct_edge(r)
+        l = r["lower_bound"]
+        u = r["upper_bound"]
 
-        if not head and not tail:
-            warn(f"{r['id']} is an empty reaction!")
-            continue
-        DH.add_edge((tail, head), id=r["id"], name=r["name"])
+        reactants = set()
+        products = set()
+
+        # forward direction
+        if l >= 0 and u > 0:
+            for m, val in r["metabolites"].items():
+                if val > 0:
+                    products.add(m)
+                elif val <= 0:
+                    reactants.add(m)
+
+            if not reactants or not products:
+                warn(f"{r['id']} is an empty reaction!")
+                continue
+            DH.add_edge((reactants, products), id=r["id"], name=r["name"])
+
+        # reverse direction
+        if l < 0 and u <= 0:
+            for m, val in r["metabolites"].items():
+                if val >= 0:
+                    reactants.add(m)
+                elif val < 0:
+                    products.add(m)
+
+            if not reactants or not products:
+                warn(f"{r['id']} is an empty reaction!")
+                continue
+            DH.add_edge((reactants, products), id=r["id"], name=r["name"])
+
+        # reversible
+        if l < 0 and u > 0:
+            for m, val in r["metabolites"].items():
+                if val > 0:
+                    products.add(m)
+                elif val < 0:
+                    reactants.add(m)
+
+            if not reactants or not products:
+                warn(f"{r['id']} is an empty reaction!")
+                continue
+            # add forward reaction
+            DH.add_edge((reactants, products), id=r["id"], name=r["name"])
+            # add reverse reaction
+            DH.add_edge(
+                (products, reactants), id=str(r["id"]) + "_reverse", name=r["name"]
+            )
 
     return DH
 
 
-def construct_edge(reaction, verbose=False):
-    """Constructs a directed hyperedge from a metabolic reaction.
+# def _construct_edge(reaction, verbose=False):
+#     """Constructs a directed hyperedge from a metabolic reaction.
 
-    Parameters
-    ----------
-    reaction : dict
-        A metabolic reaction from a dataset in the BiGG repository
-    verbose : bool, optional
-        Whether to state that the reaction has been reordered, by default False
+#     Parameters
+#     ----------
+#     reaction : dict
+#         A metabolic reaction from a dataset in the BiGG repository
+#     verbose : bool, optional
+#         Whether to state that the reaction has been reordered, by default False
 
-    Returns
-    -------
-    (tail, head) : a tuple of sets
-        the tail and head of the hyperedge
+#     Returns
+#     -------
+#     (tail, head) : a tuple of sets
+#         the tail and head of the hyperedge
 
-    Notes
-    -----
-    Code is rewritten from a function by @pietrotraversa.
-    """
+#     Notes
+#     -----
+#     Code is rewritten from a function by @pietrotraversa.
+#     """
 
-    tail = set()
-    head = set()
+#     reactants = set()
+#     products = set()
 
-    for m, val in reaction["metabolites"].items():
-        if val > 0:
-            head.add(m)
-        else:
-            tail.add(m)
-    if (
-        reaction["lower_bound"] < 0 and reaction["upper_bound"] <= 0
-    ):  # so the direction is <---
-        if verbose:
-            print(reaction["id"], "has been reordered")
-        return head, tail
-    else:
-        return tail, head
+#     for m, val in reaction["metabolites"].items():
+#         if val > 0:
+#             head.add(m)
+#         else:
+#             reactants.add(m)
+#     l = reaction["lower_bound"]
+#     u = reaction["upper_bound"]
+#     if l==0 and u >
+#     if l < 0 and u <= 0:  # so the direction is <---
+#         if verbose:
+#             print(reaction["id"], "has been reordered")
+#         return head, tail
+#     else:
+#         return tail, head
