@@ -10,7 +10,7 @@ def test_load_bigg_data(capfd):
     # test loading the online data
     H1 = load_bigg_data("iAF1260", cache=False)
     assert H1.num_nodes == 1668
-    assert H1.num_edges == 2627
+    assert H1.num_edges == 2953
     assert H1["name"] == "iAF1260"
     assert H1["organism"] == "Escherichia coli str. K-12 substr. MG1655"
     assert H1.nodes["2agpg161_c"] == {
@@ -35,7 +35,7 @@ def test_411():
         H = load_bigg_data("iCN718")
     assert H["name"] == "iCN718"
     assert H.num_nodes == 888
-    assert H.num_edges == 1189
+    assert H.num_edges == 1436
 
 
 def test_458():
