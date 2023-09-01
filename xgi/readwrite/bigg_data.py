@@ -89,6 +89,10 @@ def _bigg_to_dihypergraph(d_index, d_model):
     -----
     The code for parsing a metabolic reaction is rewritten
     from a function by @pietrotraversa.
+
+    We use the `lower_bound` and `upper_bound` variables to
+    determine whether a reaction is a forward, reverse,
+    or reversible reaction.
     """
     from .. import DiHypergraph
 
