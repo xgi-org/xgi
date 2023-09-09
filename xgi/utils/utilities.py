@@ -23,6 +23,7 @@ __all__ = [
     "subfaces",
     "convert_labels_to_integers",
     "hist",
+    "binomial_sequence",
 ]
 
 
@@ -88,10 +89,15 @@ def dual_dict(edge_dict):
 
 
 def powerset(
-    iterable, include_empty=False, include_full=False, include_singletons=True
+    iterable,
+    include_empty=False,
+    include_full=False,
+    include_singletons=True,
+    max_size=None,
 ):
     """Returns all possible subsets of the elements in iterable, with options
-    to include the empty set and the set containing all elements.
+    to include the empty set and the set containing all elements, and to set
+    the maximum subset size.
 
     Parameters
     ----------
@@ -103,6 +109,8 @@ def powerset(
         Whether to include singletons
     include_full: bool, default: False
         Whether to include the set containing all elements of iterable
+    max_size: int, default: None
+        Maximum size of the returned subsets.
 
     Returns
     -------
@@ -112,6 +120,8 @@ def powerset(
     -----
     include_empty overrides include_singletons if True: singletons will always
     be included if the empty set is.
+    Likewise, max_size will override other arguments: if set to -1, no subset
+    will be returned.
 
     Examples
     --------
@@ -124,10 +134,15 @@ def powerset(
 
     start = 1 if include_singletons else 2
     start = 0 if include_empty else start  # overrides include_singletons if True
-    end = 1 if include_full else 0
 
     s = list(iterable)
-    return chain.from_iterable(combinations(s, r) for r in range(start, len(s) + end))
+
+    if max_size is None:
+        max_size = len(s) if include_full else len(s) - 1
+    else:
+        max_size = min(max_size, len(s))
+
+    return chain.from_iterable(combinations(s, r) for r in range(start, max_size + 1))
 
 
 def update_uid_counter(H, new_id):
@@ -481,3 +496,43 @@ def hist(vals, bins=10, bin_edges=False, density=False, log_binning=False):
         )
     else:
         return pd.DataFrame.from_dict({"bin_center": x, "value": y})
+
+
+def binomial_sequence(k, N):
+    """Returns the set of all the distinct strings (order counts) with k ones
+    and N-k zeros. binomial_sequence(2, 4) will output '1010', '1100', '0011', '0110',
+    '0101' and '1001'.
+
+    Parameters
+    ----------
+    k : int
+        Number of ones in the strings. Must be greater or equal to zero.
+    N : int
+        Length of the strings. Must be positive as well.
+
+    Returns
+    -------
+    res : set
+        Set containing all the strings (they are distinct). The empty set is
+        returned if N = 0 or if k > N.
+    """
+
+    if k < 0 or N < 0:
+        raise ValueError("binomial_sequence must be given positive integers.")
+
+    res = set()
+
+    if k == 0:
+        # seq = str()
+        # for i in range(N):
+        #    seq += "0"
+        # res.add(seq)
+        res = {"0" * N}
+    elif N == 0:
+        pass
+    else:  # k and N are greater than zero
+        for seq in binomial_sequence(k, N - 1):
+            res.add(seq + "0")
+        for seq in binomial_sequence(k - 1, N - 1):
+            res.add(seq + "1")
+    return res

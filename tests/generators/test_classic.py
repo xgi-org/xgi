@@ -77,3 +77,38 @@ def test_complete_hypergraph():
 
     with pytest.raises(ValueError):
         H1 = xgi.complete_hypergraph(N=N, order=None, max_order=None)
+
+
+def test_complement(edgelist1, edgelist2):
+
+    # empty hypergraph
+    H = xgi.empty_hypergraph()
+    Hc = xgi.complement(H)
+    assert Hc.num_nodes == 0
+
+    # with edgelist1
+    H = xgi.Hypergraph(edgelist1)
+    Hc = xgi.complement(H)
+    assert Hc.edges.size.max() == 3
+    assert (
+        Hc.num_edges + H.num_edges == 92
+    )  # 92 is equal to choose (8, 1) + choose(8, 2) + choose(8, 3)
+
+    # with edgelist2
+    H = xgi.Hypergraph(edgelist2)
+    Hc = xgi.complement(H)
+    assert Hc.edges.size.max() == 3
+    assert Hc.num_edges + H.num_edges == 41  # 41 = comb(6, 1) + comb(6, 2) + comb(6, 3)
+
+    H = xgi.empty_hypergraph()
+    H.add_edges_from(
+        [
+            ["a", "b"],
+            ["b", "c"],
+            ["c", "d", "e"],
+            ["e", "a"],
+        ]
+    )
+    Hc = xgi.complement(H)
+    assert set(Hc.nodes) == set(H.nodes)
+    assert Hc.num_edges + H.num_edges == 25
