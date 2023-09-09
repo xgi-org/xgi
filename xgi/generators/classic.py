@@ -7,7 +7,6 @@ hypergraph).
 
 from itertools import chain, combinations
 
-from ..algorithms import max_edge_order
 from ..utils import powerset
 
 __all__ = [
@@ -290,6 +289,8 @@ def complement(H):
     Hc : xgi.Hypergraph
         Complement of H.
     """
+
+    from ..algorithms import max_edge_order
 
     N = len(H.nodes)
     M = len(H.edges)
