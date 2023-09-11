@@ -81,8 +81,22 @@ demonstrate the value of XGI, we ask that you cite XGI in your work.
 Currently, the best way to cite XGI is to go to our
 [repository page](../../) (if you haven't already) and
 click the "cite this repository" button on the right sidebar. This will generate
-a citation in your preferred format, and will also integrate well with citation managers.
-
+a citation in your preferred format, and will also integrate well with citation managers. Alternatively, copy the text below:
+```
+@article{Landry_XGI_2023,
+    author = {Landry, Nicholas W. and Lucas, Maxime and Iacopini, Iacopo and Petri, Giovanni and Schwarze, Alice and Patania, Alice and Torres, Leo},
+    title = {{XGI: A Python package for higher-order interaction networks}},
+    doi = {10.21105/joss.05162},
+    journal = {Journal of Open Source Software},
+    publisher = {The Open Journal},
+    year = {2023},
+    month = may,
+    volume = {8},
+    number = {85},
+    pages = {5162},
+    url = {https://joss.theoj.org/papers/10.21105/joss.05162},
+}
+```
 
 ## License
 Released under the 3-Clause BSD license (see [`LICENSE.md`](LICENSE.md))
