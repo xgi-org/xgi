@@ -17,6 +17,13 @@
    :hidden:
    
    Tutorials <api/tutorials.rst>
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Recipes
+   :hidden:
+   
+   Recipes <api/recipes.rst>
    
 
 .. toctree::
