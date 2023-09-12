@@ -48,7 +48,7 @@ jobs:
     - name: Test tutorial notebooks
       run: |
         # run pytest ONLY on the tutorials
-        cd docs/source/api/tutorials/ 
+        cd cd docs/source/api/tutorials/ 
         pytest --color=yes
 
   pytest:
