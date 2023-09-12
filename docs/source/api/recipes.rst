@@ -1,5 +1,9 @@
+##################
+Recipes
+##################
+
 .. toctree::
    :maxdepth: 1
-   :caption: Recipes
+   :caption:
 
    recipes/recipes
