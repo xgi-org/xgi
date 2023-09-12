@@ -16,7 +16,7 @@
    :caption: Tutorials
    :hidden:
    
-   Tutorials <api/tutorials/tutorials.rst>
+   Tutorials <api/tutorials.rst>
    
 
 .. toctree::
