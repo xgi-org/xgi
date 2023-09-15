@@ -13,19 +13,12 @@
 
 .. toctree::
    :maxdepth: 2
-   :caption: Tutorials
+   :caption: Practical guides
    :hidden:
    
    Tutorials <api/tutorials.rst>
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Recipes
-   :hidden:
-   
    Recipes <api/recipes.rst>
    
-
 .. toctree::
    :maxdepth: 2
    :caption: Quick reference links
