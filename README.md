@@ -1,7 +1,4 @@
-### XGI ###
-
-<img src='logo/logo.svg' width='150px' align="right" style="float:right;margin-left:10pt"></img>
-Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the representation, manipulation, and study of the structure, dynamics, and functions of complex systems with group (higher-order) interactions.
+<img src='logo/logo.svg' alt="XGI" width='50%'></img>
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Supports Python versions 3.8 and above.](https://img.shields.io/badge/Python%20versions%20supported-3.8%2B-forest
@@ -20,6 +17,7 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for the rep
 Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twitter](https://twitter.com/xginets) or [Mastodon](https://mathstodon.xyz/@xginets)!
 
 ### Table of Contents: ###
+- [What is XGI?](#what-is-xgi)
 - [Installation](#installation)
 - [Getting Started](#getting-started)
 - [Corresponding Data](#corresponding-data)
@@ -29,6 +27,17 @@ Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twit
 - [Funding](#funding)
 - [Other Resources](#other-resources)
 
+## What is XGI?
+
+Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for higher-order networks (If you want more information on what higher-order networks are, see our [brief introduction](https://xgi.readthedocs.io/en/stable/higher-order.html)).
+
+**XGI is a software designed to streamline working with higher-order networks from start to finish**. XGI can
+* Create synthetic datasets from many **generative models**
+* **Read and write** higher-order datasets in a user-friendly way
+* Represent **hypergraphs, directed hypergraphs, and simplicial complexes** with efficient and flexible data structures
+* Analyze higher-order networks with **measures and algorithms**
+* **Manipulate node and edge statistics** in a flexible and customizable way.
+* Draw higher-order networks in a variety of **visually striking ways** (See our [gallery](https://xgi.readthedocs.io/en/stable/gallery.html) for several examples.)
 
 ## Installation
 XGI runs on Python 3.8 or higher.
