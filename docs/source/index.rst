@@ -9,6 +9,8 @@
 
    about
    contributors
+   higher-order
+   gallery
    using-xgi
 
 .. toctree::
@@ -49,7 +51,8 @@ About
 
 The Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/xgi-org/xgi>`_
 library provides data structures and algorithms for modeling and analyzing complex systems
-with group (higher-order) interactions.
+with group (higher-order) interactions. For more information about what higher-order
+interactions are, see a `brief overview <higher-order.html>`_.
 
 Many datasets can be represented as graphs, where pairs of entities (or nodes) are
 related via links (or edges).  Examples are road networks, energy grids, social
