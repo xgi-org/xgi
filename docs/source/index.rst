@@ -134,10 +134,25 @@ How to Cite
 We acknowledge the importance of good software to support research, and we note
 that research becomes more valuable when it is communicated effectively. To
 demonstrate the value of XGI, we ask that you cite XGI in your work.
-Currently, the best way to cite XGI is to go to our
+You can cite XGI either by going to our repository page
 `repository page <https://github.com/xgi-org/xgi>`_ and
-click the "cite this repository" button on the right sidebar. This will generate
-a citation in your preferred format, and will also integrate well with citation managers.
+clicking the "cite this repository" button on the right sidebar (which will generate
+a citation in your preferred format) or by copying the following BibTeX entry:
+```
+@article{Landry_XGI_2023,
+    author = {Landry, Nicholas W. and Lucas, Maxime and Iacopini, Iacopo and Petri, Giovanni and Schwarze, Alice and Patania, Alice and Torres, Leo},
+    title = {{XGI: A Python package for higher-order interaction networks}},
+    doi = {10.21105/joss.05162},
+    journal = {Journal of Open Source Software},
+    publisher = {The Open Journal},
+    year = {2023},
+    month = may,
+    volume = {8},
+    number = {85},
+    pages = {5162},
+    url = {https://joss.theoj.org/papers/10.21105/joss.05162},
+}
+```
 
 Academic References
 ===================

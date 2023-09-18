@@ -84,13 +84,7 @@ Some concrete ways that you can get involved:
 
 
 ## How to Cite
-We acknowledge the importance of good software to support research, and we note
-that research becomes more valuable when it is communicated effectively. To
-demonstrate the value of XGI, we ask that you cite XGI in your work.
-Currently, the best way to cite XGI is to go to our
-[repository page](../../) (if you haven't already) and
-click the "cite this repository" button on the right sidebar. This will generate
-a citation in your preferred format, and will also integrate well with citation managers. Alternatively, copy the text below:
+We acknowledge the importance of good software to support research, and we note that research becomes more valuable when it is communicated effectively. To demonstrate the value of XGI, we ask that you cite XGI in your work. You can cite XGI either by going to our repository page [repository page](../../) (if you haven't already) and clicking the "cite this repository" button on the right sidebar (which will generate a citation in your preferred format) or by copying the following BibTeX entry:
 ```
 @article{Landry_XGI_2023,
     author = {Landry, Nicholas W. and Lucas, Maxime and Iacopini, Iacopo and Petri, Giovanni and Schwarze, Alice and Patania, Alice and Torres, Leo},
