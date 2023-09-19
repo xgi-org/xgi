@@ -190,8 +190,13 @@ class IDStat:
         Notes
         -----
         Originally from https://github.com/jkbren/networks-and-dataviz
-
         """
+
+        # if there is one unique value and more than one bin is specified,
+        # sets the number of bins to 1.
+        if isinstance(bins, int) and len(set(self.aslist())) == 1:
+            bins = 1
+
         return hist(self.asnumpy(), bins, bin_edges, density, log_binning)
 
     def max(self):
