@@ -3,9 +3,9 @@
 ## v0.7.4
 * Response to PyOpenSci review, fixing Issue [#453](https://github.com/xgi-org/xgi/issues/453) among other things [#470](https://github.com/xgi-org/xgi/pull/470) (@nwlandry).
 * Fixed issues created from merging PR #380 [#471](https://github.com/xgi-org/xgi/pull/471) (@nwlandry).
-- Added the capability to generate the complement of a hypergraph [#380](https://github.com/xgi-org/xgi/pull/380) (@acombretrenouard).
-- Fixed the directionality of BiGG reactions (See Issue [#458](https://github.com/xgi-org/xgi/issues/458)) [#459](https://github.com/xgi-org/xgi/pull/459) (@pietrotraversa, @nwlandry).
-- Fixed Issue [#461](https://github.com/xgi-org/xgi/issues/461) [#462](https://github.com/xgi-org/xgi/pull/462) (@maximelucas).
+* Added the capability to generate the complement of a hypergraph [#380](https://github.com/xgi-org/xgi/pull/380) (@acombretrenouard).
+* Fixed the directionality of BiGG reactions (See Issue [#458](https://github.com/xgi-org/xgi/issues/458)) [#459](https://github.com/xgi-org/xgi/pull/459) (@pietrotraversa, @nwlandry).
+* Fixed Issue [#461](https://github.com/xgi-org/xgi/issues/461) [#462](https://github.com/xgi-org/xgi/pull/462) (@maximelucas).
 
 ## v0.7.3
 * Added the `ashist()` method to the stats module[#452](https://github.com/xgi-org/xgi/pull/452) (@nwlandry).
