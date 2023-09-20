@@ -26,19 +26,24 @@ Preprints
 2023
 ----
 
+Iacopo Iacopini, Márton Karsai, and Alain Barrat, "The temporal dynamics of group interactions in higher-order social networks", arXiv:2306.09967 (2023).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2306.09967>`
+
+Nicholas W. Landry, Jean-Gabriel Young, and Nicole Eikmeier, "The simpliciality of higher-order networks", arXiv:2308.13918 (2023).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.48550/arXiv.2308.13918>`
+:bdg-link-primary-line:`Github <https://github.com/nwlandry/the-simpliciality-of-higher-order-networks>`
+
 Nicholas W. Landry, Ilya Amburg, Mirah Shi, and Sinan Aksoy, "Filtering higher-order datasets", arXiv:2305.06910 (2023).
 
 :bdg-link-primary-line:`Paper <http://arxiv.org/abs/2305.06910>`
 :bdg-link-primary-line:`Github <https://github.com/nwlandry/filtering-higher-order-datasets>`
 
-Nicholas W. Landry and Juan Restrepo, "Polarization in hypergraphs with community structure", arXiv:2302.13967 (2023).
+Nicholas W. Landry and Juan Restrepo, "Opinion disparity in hypergraphs with community structure", arXiv:2302.13967 (2023).
 
 :bdg-link-primary-line:`Paper <http://arxiv.org/abs/2302.13967>`
-:bdg-link-primary-line:`Github <https://github.com/nwlandry/filtering-higher-order-datasets>`
-
-Iacopo Iacopini, Márton Karsai, and Alain Barrat, "The temporal dynamics of group interactions in higher-order social networks", arXiv:2306.09967 (2023).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2306.09967>`
+:bdg-link-primary-line:`Github <https://github.com/nwlandry/opinion-disparity-in-hypergraphs>`
 
 Timothy LaRock and Renaud Lambiotte, "Encapsulation Structure and Dynamics in Hypergraphs", arXiv:2307.04613 (2023).
 
