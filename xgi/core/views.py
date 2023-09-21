@@ -340,8 +340,9 @@ class IDView(Mapping, Set):
         id : hashable
             ID to find neighbors of.
         s : int, optional
-            The intersection size s to be considered neighbors.
+            The intersection size s for two edges or nodes to be considered neighbors.
             By default, 1.
+
         Returns
         -------
         set
