@@ -651,6 +651,7 @@ def draw_hyperedges(
         array=edge_fc_arr,
         cmap=edge_fc_cmap,
         alpha=alpha,
+        zorder=max_order - 2 # below dyads
     )
     # edge_collection.set_cmap(edge_fc_cmap)
     if edge_c_mapped:
