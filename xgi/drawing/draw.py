@@ -62,7 +62,7 @@ def draw(
     dyad_vmin=None,
     dyad_vmax=None,
     edge_fc=None,
-    edge_fc_cmap="Blues",
+    edge_fc_cmap="crest_r",
     edge_vmin=None,
     edge_vmax=None,
     alpha=0.4,
@@ -144,7 +144,7 @@ def draw(
         * IDStat containing the `ids` as keys
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap
-        Colormap used to map the edge colors. By default, "Blues".
+        Colormap used to map the edge colors. By default, "cres_r".
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
     alpha : float, optional
@@ -200,7 +200,7 @@ def draw(
         "max_dyad_lw": 10,
         "min_node_lw": 0,
         "max_node_lw": 5,
-        "edge_fc_cmap": cm.Blues,  # for compatibility with simplices until update
+        "edge_fc_cmap": "crest_r",  # for compatibility with simplices until update
         "dyad_color_cmap": cm.Greys,  # for compatibility with simplices until update
     }
 
@@ -469,7 +469,7 @@ def draw_hyperedges(
     dyad_vmin=None,
     dyad_vmax=None,
     edge_fc=None,
-    edge_fc_cmap="Blues",
+    edge_fc_cmap="crest_r",
     edge_vmin=None,
     edge_vmax=None,
     alpha=0.4,
@@ -524,7 +524,7 @@ def draw_hyperedges(
         * IDStat containing the `ids` as keys
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap
-        Colormap used to map the edge colors. By default, "Blues".
+        Colormap used to map the edge colors. By default, "crest_r".
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
     alpha : float, optional
@@ -627,16 +627,19 @@ def draw_hyperedges(
     # dyad_collection.set_zorder(max_order - 1)  # edges go behind nodes
     ax.add_collection(dyad_collection)
 
+    # reorder to plot larger hyperedges first
+    ids_sorted = np.argsort(edges.size.aslist())[::-1]
+
     # plot other hyperedges
     if edge_c_mapped:
-        edge_fc_arr = edge_fc
+        edge_fc_arr = edge_fc[ids_sorted]
         edge_fc_colors = None
     else:
         edge_fc_arr = None
-        edge_fc_colors = edge_fc
+        edge_fc_colors = edge_fc[ids_sorted] if len(edge_fc) > 1 else edge_fc
 
     patches = []
-    for he in edges.members():
+    for he in np.array(edges.members())[ids_sorted]:
         d = len(he) - 1
         he = list(he)
         coordinates = [[pos[n][0], pos[n][1]] for n in he]
