@@ -84,6 +84,15 @@ def _bigg_to_dihypergraph(d_index, d_model):
     -------
     DiHypergraph
         The dihypergraph from the selected BIGG model.
+
+    Notes
+    -----
+    The code for parsing a metabolic reaction is rewritten
+    from a function by @pietrotraversa.
+
+    We use the `lower_bound` and `upper_bound` variables to
+    determine whether a reaction is a forward, reverse,
+    or reversible reaction.
     """
     from .. import DiHypergraph
 
@@ -100,17 +109,54 @@ def _bigg_to_dihypergraph(d_index, d_model):
         DH.add_node(m["id"], name=m["name"])
 
     for r in d_model["reactions"]:
-        head = set()
-        tail = set()
-        for m, val in r["metabolites"].items():
-            if val > 0:
-                head.add(m)
-            else:
-                tail.add(m)
+        l = r["lower_bound"]
+        u = r["upper_bound"]
 
-        if not head and not tail:
-            warn(f"{r['id']} is an empty reaction!")
-            continue
-        DH.add_edge((tail, head), id=r["id"], name=r["name"])
+        reactants = set()
+        products = set()
+
+        # forward direction
+        if l >= 0 and u > 0:
+            for m, val in r["metabolites"].items():
+                if val > 0:
+                    products.add(m)
+                elif val <= 0:
+                    reactants.add(m)
+
+            if not reactants and not products:
+                warn(f"{r['id']} is an empty reaction!")
+                continue
+            DH.add_edge((reactants, products), id=r["id"], name=r["name"])
+
+        # reverse direction
+        if l < 0 and u <= 0:
+            for m, val in r["metabolites"].items():
+                if val >= 0:
+                    reactants.add(m)
+                elif val < 0:
+                    products.add(m)
+
+            if not reactants and not products:
+                warn(f"{r['id']} is an empty reaction!")
+                continue
+            DH.add_edge((reactants, products), id=r["id"], name=r["name"])
+
+        # reversible
+        if l < 0 and u > 0:
+            for m, val in r["metabolites"].items():
+                if val > 0:
+                    products.add(m)
+                elif val < 0:
+                    reactants.add(m)
+
+            if not reactants and not products:
+                warn(f"{r['id']} is an empty reaction!")
+                continue
+            # add forward reaction
+            DH.add_edge((reactants, products), id=r["id"], name=r["name"])
+            # add reverse reaction
+            DH.add_edge(
+                (products, reactants), id=str(r["id"]) + "_reverse", name=r["name"]
+            )
 
     return DH
