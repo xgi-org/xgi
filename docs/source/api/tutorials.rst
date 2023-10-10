@@ -3,7 +3,7 @@ Tutorials
 ##################
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 0
    :caption: Getting started
 
    tutorials/XGI in 1 minute
@@ -12,7 +12,7 @@ Tutorials
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 0
    :caption: Focus tutorials
 
    tutorials/Tutorial 1 - Basic Hypergraph Functionality
@@ -25,13 +25,13 @@ Tutorials
    tutorials/Tutorial 8 - Directed Hypergraphs
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 0
    :caption: In depth tutorials
 
    tutorials/In Depth 1 - Drawing nodes
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 0
    :caption: Case studies
 
    tutorials/case_study_zhang2022
