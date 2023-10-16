@@ -232,12 +232,16 @@ def test_draw_simplices(edgelist8):
     S = xgi.SimplicialComplex(edgelist8)
 
     fig, ax = plt.subplots()
-    ax = xgi.draw_simplices(S, ax=ax)
+    ax, collections = xgi.draw_simplices(S, ax=ax)
+    (dyad_collection, edge_collection) = collections
 
     # number of elements
-    assert len(ax.lines) == 18  # dyads
-    assert len(ax.patches) == 3  # hyperedges
-    assert len(ax.collections) == 0  # nodes
+    assert len(ax.lines) == 0 
+    assert len(ax.patches) == 0 
+    assert len(ax.collections) == 2 
+
+    assert len(dyad_collection.get_paths()) == 16  # dyads
+    assert len(edge_collection.get_paths()) == 3  # other hyperedges
 
     # zorder
     for line in ax.lines:  # dyads
