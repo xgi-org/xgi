@@ -136,7 +136,7 @@ def _parse_color_arg(colors, cmap, ids, id_kind="edges"):
 
     if id_kind == "edges" and isinstance(colors, NodeStat):
         raise TypeError("The color argument for edges cannot be a NodeStat")
-    elif id_kind == "nodes" and isinstance(colors, Edgestat):
+    elif id_kind == "nodes" and isinstance(colors, EdgeStat):
         raise TypeError("The color argument for nodes cannot be an EdgeStat")
 
     xsize = len(ids)
