@@ -7,12 +7,15 @@ hypergraph).
 
 from itertools import chain, combinations
 
+from ..utils import powerset
+
 __all__ = [
     "empty_hypergraph",
     "empty_dihypergraph",
     "empty_simplicial_complex",
     "trivial_hypergraph",
     "complete_hypergraph",
+    "complement",
 ]
 
 
@@ -266,3 +269,71 @@ def complete_hypergraph(N, order=None, max_order=None, include_singletons=False)
     H.add_edges_from(edges)
 
     return H
+
+
+def complement(H):
+    """Returns the complement of hypergraph H.
+
+    The complement Hc of a hypergraph H has the same nodes (same indexes) as H and
+    contains every possible hyperedge linking these nodes, except those present in H.
+    Also, the maximum hyperedge size in Hc is the same as in H.
+    Hyperedges of size one are taken into account.
+
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        Hypergraph to complement.
+
+    Returns
+    -------
+    Hc : xgi.Hypergraph
+        Complement of H.
+    """
+
+    from ..algorithms import max_edge_order
+
+    N = len(H.nodes)
+    M = len(H.edges)
+
+    if N == 0:
+        return empty_hypergraph()
+    else:
+
+        node_dict = dict(zip(H.nodes, range(N)))
+        num_dict = {idx: n for n, idx in node_dict.items()}
+
+        # parsing list of edges into set of strings
+        edges = set()
+        for st in H.edges.members():
+            lst = [node_dict[n] for n in st]  # we let go node IDs
+            lst.sort()
+            string = ",".join(str(idx) for idx in lst)
+            edges.add(string)
+
+        # parsing list of possible edges into set of strings
+        max_edge_size = max_edge_order(H) + 1
+        possible_edges = set()
+        iterator = powerset(
+            range(N),
+            include_empty=False,
+            include_singletons=True,
+            max_size=max_edge_size,
+        )
+        for subset in iterator:
+            lst = list(subset)
+            lst.sort()
+            string = ",".join(str(idx) for idx in lst)
+            possible_edges.add(string)
+
+        # performing set difference
+        to_add = possible_edges.difference(edges)
+
+        Hc = empty_hypergraph()
+        Hc.add_nodes_from(H.nodes)
+
+        for string in to_add:
+            lst = string.split(",")
+            nodes = [num_dict[int(idx)] for idx in lst]
+            Hc.add_edge(nodes)
+
+        return Hc

@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 
 import xgi
@@ -126,3 +127,9 @@ def test_view_val(edgelist1, edgelist2):
     H = xgi.Hypergraph(edgelist2)
     assert H.edges.order._val == {0: 1, 1: 1, 2: 2}
     assert H.edges([1, 2]).order._val == {1: 1, 2: 2}
+
+
+def test_issue_468():
+    H = xgi.sunflower(3, 1, 20)
+    df = pd.DataFrame([[20.0, 3]], columns=["bin_center", "value"])
+    assert H.edges.size.ashist().equals(df)
