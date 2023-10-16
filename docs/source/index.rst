@@ -15,11 +15,12 @@
 
 .. toctree::
    :maxdepth: 2
-   :caption: Tutorials
+   :caption: Practical guides
    :hidden:
-
-   See on GitHub <https://github.com/xgi-org/xgi/tree/main/tutorials>
-
+   
+   Tutorials <api/tutorials.rst>
+   Recipes <api/recipes.rst>
+   
 .. toctree::
    :maxdepth: 2
    :caption: Quick reference links
