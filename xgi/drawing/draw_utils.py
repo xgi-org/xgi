@@ -6,7 +6,7 @@ from numbers import Number
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sb # for cmap "crest"
+import seaborn as sb  # for cmap "crest"
 from matplotlib.colors import (
     LinearSegmentedColormap,
     ListedColormap,

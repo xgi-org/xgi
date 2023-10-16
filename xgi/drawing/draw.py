@@ -5,7 +5,7 @@ from itertools import combinations
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sb # for cmap "crest"
+import seaborn as sb  # for cmap "crest"
 from matplotlib import cm
 from matplotlib.patches import FancyArrow
 from mpl_toolkits.mplot3d.art3d import (
@@ -234,7 +234,7 @@ def draw(
             rescale_sizes=rescale_sizes,
             **kwargs,
         )
-    
+
     elif isinstance(H, Hypergraph):
 
         ax, (dyad_collection, edge_collection) = draw_hyperedges(
@@ -663,7 +663,7 @@ def draw_hyperedges(
         array=edge_fc_arr,
         cmap=edge_fc_cmap,
         alpha=alpha,
-        zorder=max_order - 2 # below dyads
+        zorder=max_order - 2,  # below dyads
     )
     # edge_collection.set_cmap(edge_fc_cmap)
     if edge_c_mapped:
@@ -800,7 +800,14 @@ def draw_simplices(
     # add the projected pairwise interactions
     dyads = subfaces(H_.edges.members(), order=1)
     H_.add_edges_from(dyads)
-    H_.cleanup(multiedges=False, isolates=True, connected=False, relabel=False, in_place=True, singletons=True) # remove multi-dyads
+    H_.cleanup(
+        multiedges=False,
+        isolates=True,
+        connected=False,
+        relabel=False,
+        in_place=True,
+        singletons=True,
+    )  # remove multi-dyads
 
     if not max_order:
         max_order = max_edge_order(H_)
