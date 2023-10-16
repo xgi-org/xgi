@@ -714,12 +714,12 @@ def draw_simplices(
     ----------
     SC : SimplicialComplex
         Simplicial complex to draw
-    ax : matplotlib.pyplot.axes, optional
-        Axis to draw on. If None (default), get the current axes.
     pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the
         0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
         the positions.
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
     dyad_color : str, dict, iterable, or EdgeStat, optional
         Color of the dyadic links.  If str, use the same color for all edges. If a dict,
         must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
@@ -732,29 +732,48 @@ def draw_simplices(
         iterable, assume the widths are specified in the same order as the edges are
         found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
         between min_dyad_lw and max_dyad_lw. By default, 1.5.
-    edge_fc : str, dict, iterable, or EdgeStat, optional
-        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
-        must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
-        are specified in the same order as the hyperedges are found in H.edges. If
-        EdgeStat, use the colormap specified with edge_fc_cmap. If None (default), color
-        by simplex size.
+    dyad_style : str or list of strings, optional
+        Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
+        See matplotlib's documentation for all accepted values. By default, "solid".
+    dyad_color_cmap: matplotlib colormap
+        Colormap used to map the dyad colors. By default, "Greys".
+    dyad_vmin, dyad_vmax : float, optional
+        Minimum and maximum for dyad colormap scaling. By default, None.
+    edge_fc : color or list of colors or array-like or dict or EdgeStat, optional
+        Color of the hyperedges.  The accepted formats are the same as
+        matplotlib's scatter, with the addition of dict and IDStat.
+        Those with colors:
+        * single color as a string
+        * single color as 3- or 4-tuple
+        * list of colors of length len(ids)
+        * dict of colors containing the `ids` as keys
+        Those with numerical values (will be mapped to colors):
+        * array of floats
+        * dict of floats containing the `ids` as keys
+        * IDStat containing the `ids` as keys
+        If None (default), color by edge size.
+    edge_fc_cmap: matplotlib colormap
+        Colormap used to map the edge colors. By default, "crest_r".
+    edge_vmin, edge_vmax : float, optional
+        Minimum and maximum for edge colormap scaling. By default, None.
+    alpha : float, optional
+        The edge transparency. By default, 0.4.
     max_order : int, optional
         Maximum of hyperedges to plot. By default, None.
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
-        pairs.  Note, we plot only the maximal simplices so if you pass a dict be
-        careful to match its keys with the new edge ids in the converted
-        SimplicialComplex. These may differ from the edge ids in the given SC. By
-        default, False.
-    settings : dict
+        pairs.  By default, None.
+    rescale_sizes: bool, optional
+        If True, linearly interpolate `dyad_lw` and between min/max values
+        (1/10) that can be changed in the other argument `params`.
+        If `dyad_lw` is a single value, `interpolate_sizes` is ignored
+        for it. By default, True.
+    params : dict
         Default parameters. Keys that may be useful to override default settings:
-        * min_dyad_lw
-        * max_dyad_lw
-        * dyad_color_cmap
-        * edge_fc_cmap
+        * "min_dyad_lw" (default: 1)
+        * "max_dyad_lw" (default: 10)
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
-
 
     Raises
     ------
