@@ -432,7 +432,7 @@ def draw_nodes(
             node_lw, settings["min_node_lw"], settings["max_node_lw"]
         )
 
-    node_size = node_size**2
+    node_size = np.array(node_size) ** 2
 
     # plot
     node_collection = ax.scatter(
@@ -593,10 +593,8 @@ def draw_hyperedges(
     dyad_lw = _draw_arg_to_arr(dyad_lw)
 
     # parse colors
-    dyad_color, dyad_c_mapped = _parse_color_arg(
-        dyad_color, dyad_color_cmap, list(dyads)
-    )
-    edge_fc, edge_c_mapped = _parse_color_arg(edge_fc, edge_fc_cmap, list(edges))
+    dyad_color, dyad_c_mapped = _parse_color_arg(dyad_color, list(dyads))
+    edge_fc, edge_c_mapped = _parse_color_arg(edge_fc, list(edges))
 
     # check validity of input values
     if np.any(dyad_lw < 0):

@@ -84,7 +84,7 @@ def _update_lims(pos, ax):
     ax.autoscale_view()
 
 
-def _parse_color_arg(colors, cmap, ids, id_kind="edges"):
+def _parse_color_arg(colors, ids, id_kind="edges"):
     """
     Parse and process color arguments for plotting.
 
@@ -106,8 +106,6 @@ def _parse_color_arg(colors, cmap, ids, id_kind="edges"):
         * array of floats
         * dict of floats containing the `ids` as keys
         * IDStat containing the `ids` as keys
-    cmap : matplotlib colormap or None
-        The colormap to use for mapping numerical values to colors.
     ids : array-like or None
         The IDs of the elements being plotted.
     id_kind : str, optional
