@@ -461,8 +461,12 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
 def test_draw_dihypergraph(diedgelist2, edgelist8):
     DH = xgi.DiHypergraph(diedgelist2)
 
-    fig, ax1 = plt.subplots()
+    fig1, ax1 = plt.subplots()
     ax1 = xgi.draw_dihypergraph(DH, ax=ax1)
+    fig2, ax2 = plt.subplots()
+    ax2 = xgi.draw_dihypergraph(
+        DH, ax=ax2, node_fc="red", node_ec="blue", node_lw=2, node_size=20
+    )
 
     # number of elements
     assert len(ax1.lines) == 7  # number of source nodes
@@ -470,6 +474,30 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
     assert len(ax1.collections) == DH.num_edges + 1 - len(
         DH.edges.filterby("size", 1)
     )  # hyperedges markers + nodes
+
+    # node face colors
+    assert np.all(
+        ax1.collections[-1].get_facecolor() == np.array([[1, 1, 1, 1]])
+    )  # white
+    assert np.all(
+        ax2.collections[-1].get_facecolor() == np.array([[1, 0, 0, 1]])
+    )  # red
+
+    # node edge colors
+    assert np.all(
+        ax1.collections[-1].get_edgecolor() == np.array([[0, 0, 0, 1]])
+    )  # black
+    assert np.all(
+        ax2.collections[-1].get_edgecolor() == np.array([[0, 0, 1, 1]])
+    )  # blue
+
+    # node_lw
+    assert np.all(ax1.collections[-1].get_linewidth() == np.array([1]))
+    assert np.all(ax2.collections[-1].get_linewidth() == np.array([2]))
+
+    # node_size
+    assert np.all(ax1.collections[-1].get_sizes() == np.array([15**2]))
+    assert np.all(ax2.collections[-1].get_sizes() == np.array([20**2]))
 
     # zorder
     for line, z in zip(ax1.lines, [1, 1, 1, 1, 0, 0, 0]):  # lines for source nodes
@@ -479,7 +507,7 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
     for collection in ax1.collections:
         assert collection.get_zorder() == 3  # nodes and hyperedges markers
 
-    plt.close()
+    plt.close("all")
 
     # test toggle for edges
     fig, ax2 = plt.subplots()
