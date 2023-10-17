@@ -202,8 +202,6 @@ def draw(
         "max_dyad_lw": 10,
         "min_node_lw": 0,
         "max_node_lw": 5,
-        "edge_fc_cmap": "crest_r",  # for compatibility with simplices until update
-        "dyad_color_cmap": cm.Greys,  # for compatibility with simplices until update
     }
 
     settings.update(kwargs)
