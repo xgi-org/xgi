@@ -8,6 +8,7 @@ from numpy.linalg import inv, svd
 
 from .. import convert
 from ..core import SimplicialComplex
+from ..convert import to_bipartite_graph
 
 __all__ = [
     "random_layout",
@@ -186,6 +187,70 @@ def _augmented_projection(H, weighted=False):
                 G.add_edge(phantom_node_id, n)
         phantom_node_id += 1
     return G
+
+
+def bipartite_spring_layout(H, seed=None, k=None, **kwargs):
+    """
+    Position the nodes using Fruchterman-Reingold force-directed
+    algorithm using an augmented version of the the graph projection
+    of the hypergraph (or simplicial complex), where phantom nodes
+    (barycenters) are created for each edge composed by more than two nodes.
+    If a simplicial complex is provided the results will be based on the
+    hypergraph constructed from its maximal simplices.
+
+    Parameters
+    ----------
+    H : xgi Hypergraph or SimplicialComplex
+        A position will be assigned to every node in H.
+    seed : int, RandomState instance or None  optional (default=None)
+        Set the random state for deterministic node layouts.
+        If int, `seed` is the seed used by the random number generator,
+        If None (default), random numbers are sampled from the
+        numpy random number generator without initialization.
+    k : float
+        The spring constant of the links. When k=None (default),
+        k = 1/sqrt(N). For more information, see the documentation
+        for the NetworkX spring_layout() function.
+    kwargs :
+        Optional arguments for the NetworkX spring_layout() function.
+        See https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html
+
+
+    Returns
+    -------
+    pos : dict
+        A dictionary of positions keyed by node
+
+    See Also
+    --------
+    random_layout
+    pairwise_spring_layout
+    weighted_barycenter_spring_layout
+
+    Examples
+    --------
+    >>> import xgi
+    >>> N = 50
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_hypergraph(N, ps)
+    >>> pos = xgi.barycenter_spring_layout(H)
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    if isinstance(H, SimplicialComplex):
+        H = convert.from_max_simplices(H)
+
+    G, nodedict, edgedict = to_bipartite_graph(H, index=True)
+
+    # Creating a dictionary for the position of the nodes with the standard spring
+    # layout
+    pos = nx.spring_layout(G, seed=seed, k=k, **kwargs)
+
+    node_pos = {nodedict[i]: pos[i] for i in nodedict}
+    edge_pos = {edgedict[i]: pos[i] for i in edgedict}
+
+    return node_pos, edge_pos
 
 
 def barycenter_spring_layout(
