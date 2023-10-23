@@ -92,6 +92,9 @@ class IDStat:
         out += ")"
         return out
 
+    def __len__(self):
+        return len(self.view)
+
     @property
     def name(self):
         """Name of this stat.
