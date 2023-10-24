@@ -1686,7 +1686,7 @@ def draw_dihypergraph(
     arrowstyle : str, optional
         By default: '-\|>'. See `matplotlib.patches.ArrowStyle` for more options.
     arrowsize : int (default=10)
-        Size of the arrow head's length and width. See `matplotlib.patches.FancyArrowPatch` 
+        Size of the arrow head's length and width. See `matplotlib.patches.FancyArrowPatch`
         for attribute `mutation_scale` for more info.
     connectionstyle : string (default="arc3")
         Pass the connectionstyle parameter to create curved arc of rounding
@@ -1755,7 +1755,7 @@ def draw_dihypergraph(
         "max_lines_lw": 50,
         "lines_fc_cmap": plt.cm.Blues,
         "min_source_margin": 0,
-        "min_target_margin" : 0,
+        "min_target_margin": 0,
     }
 
     settings.update(kwargs)
@@ -1805,7 +1805,7 @@ def draw_dihypergraph(
 
     phantom_nodes = [n for n in list(G_aug.nodes) if n not in list(H_conv.nodes)]
 
-    if pos is None: # compute positions, first based on original nodes
+    if pos is None:  # compute positions, first based on original nodes
         pos_nodes = barycenter_spring_layout(H_conv)
         # then compute the barycenter positions for the "edge" phantom nodes
 
@@ -1836,7 +1836,7 @@ def draw_dihypergraph(
         node_size=node_size,
         node_fc_cmap=node_fc_cmap,
         node_shape=node_shape,
-        zorder=max_order,
+        zorder=4,
         params=settings,
         node_labels=node_labels,
         rescale_sizes=rescale_sizes,
@@ -1858,7 +1858,7 @@ def draw_dihypergraph(
             node_size=edge_marker_size,
             node_shape=edge_marker,
             node_fc_cmap=edge_marker_fc_cmap,
-            zorder=max_order,
+            zorder=2,
             params=settings,
             rescale_sizes=rescale_sizes,
         )
@@ -1871,7 +1871,7 @@ def draw_dihypergraph(
                 node_labels=labels,
                 ax_nodes=ax,
                 font_color_nodes="white",
-                zorder=10
+                zorder=3,
             )
 
     for dyad in H_conv.edges.filterby("size", 2).members():
@@ -1886,8 +1886,8 @@ def draw_dihypergraph(
     dyads = DH.edges.filterby("size", 2)
     edges = DH.edges.filterby("size", 2, "geq")
 
-    nodes_id = list(DH.nodes) # in original order, to find index for arrays
-    edges_id = list(DH.edges) # in original order, to find index for arrays
+    nodes_id = list(DH.nodes)  # in original order, to find index for arrays
+    edges_id = list(DH.edges)  # in original order, to find index for arrays
 
     def _arrow_shrink(source="node", target="edge"):
         """Compute the shrink factor for the arrows based on node sizes."""
@@ -1921,11 +1921,11 @@ def draw_dihypergraph(
         if shrink_target < settings["min_target_margin"]:
             shrink_target = settings["min_target_margin"]
 
-        if source=="node" and target=="edge": 
+        if source == "node" and target == "edge":
             return shrink_source, shrink_target
-        elif source=="edge" and target=="node": 
+        elif source == "edge" and target == "node":
             return shrink_target, shrink_source
-        else: 
+        else:
             raise ValueError("Wrong input arguments.")
 
     # We are using single patches rather than a PatchCollection of arrows

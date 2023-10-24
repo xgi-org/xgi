@@ -165,13 +165,6 @@ def _augmented_projection(H, weighted=False):
     # Adding real nodes
     G.add_nodes_from(list(H.nodes), bipartite="node")
 
-    ## Adding links (edges composed by two nodes only, for which we don't use phantom nodes
-    # for i, j in H.edges.filterby("order", 1).members():
-    #    if weighted == True:
-    #        G.add_edge(i, j, weight=1)
-    #    else:
-    #        G.add_edge(i, j)
-
     # Adding phantom nodes and connections therein
     # I will start from the first int node-label available
     try:
@@ -181,8 +174,7 @@ def _augmented_projection(H, weighted=False):
         phantom_node_id = 0
 
     edges = H.edges.filterby("order", 1, "geq")
-    # Looping over the hyperedges of different order (from triples up)
-    # Hyperedges of order d (d=2: triplets, etc.)
+    # Looping over the hyperedges of different order
     for he_id, members in edges.members(dtype=dict).items():
         d = len(members) - 1
         # Adding one phantom node for each hyperedge
