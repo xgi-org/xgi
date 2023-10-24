@@ -742,6 +742,18 @@ def test_set_edge_attributes(edgelist1):
         H3.set_edge_attributes({"test": {2: "weight"}})
 
 
+def test_480(edgelist1):
+    H1 = xgi.Hypergraph(edgelist1)
+    attr_dict1 = {
+        0: 1,
+        1: 2,
+        2: 3,
+        3: -1,
+    }
+    H1.set_edge_attributes(attr_dict1, "weight")
+    assert H1.edges.attrs("weight").asdict() == attr_dict1
+
+
 def test_cleanup():
     H = xgi.Hypergraph()
     H.add_edges_from([["a", "b", "c"], ["a", "b", "c"], ["e", "f"]])
