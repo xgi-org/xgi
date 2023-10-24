@@ -163,14 +163,14 @@ def _augmented_projection(H, weighted=False):
     G = nx.Graph()
 
     # Adding real nodes
-    G.add_nodes_from(list(H.nodes))
+    G.add_nodes_from(list(H.nodes), bipartite="node")
 
-    # Adding links (edges composed by two nodes only, for which we don't use phantom nodes
-    for i, j in H.edges.filterby("order", 1).members():
-        if weighted == True:
-            G.add_edge(i, j, weight=1)
-        else:
-            G.add_edge(i, j)
+    ## Adding links (edges composed by two nodes only, for which we don't use phantom nodes
+    # for i, j in H.edges.filterby("order", 1).members():
+    #    if weighted == True:
+    #        G.add_edge(i, j, weight=1)
+    #    else:
+    #        G.add_edge(i, j)
 
     # Adding phantom nodes and connections therein
     # I will start from the first int node-label available
@@ -180,18 +180,20 @@ def _augmented_projection(H, weighted=False):
         # The list of node-labels has no integers, so I start from 0
         phantom_node_id = 0
 
+    edges = H.edges.filterby("order", 1, "geq")
     # Looping over the hyperedges of different order (from triples up)
-    for d in range(2, max_edge_order(H) + 1):
-        # Hyperedges of order d (d=2: triplets, etc.)
-        for he_id, members in H.edges.filterby("order", d).members(dtype=dict).items():
-            # Adding one phantom node for each hyperedge and linking it to the nodes of
-            # the hyperedge
-            for n in members:
-                if weighted == True:
-                    G.add_edge(phantom_node_id, n, weight=d)
-                else:
-                    G.add_edge(phantom_node_id, n)
-            phantom_node_id += 1
+    # Hyperedges of order d (d=2: triplets, etc.)
+    for he_id, members in edges.members(dtype=dict).items():
+        d = len(members) - 1
+        # Adding one phantom node for each hyperedge
+        G.add_node(phantom_node_id, bipartite="hyperedge")
+        # and linking it to the nodes of the hyperedge
+        for n in members:
+            if weighted == True:
+                G.add_edge(phantom_node_id, n, weight=d)
+            else:
+                G.add_edge(phantom_node_id, n)
+        phantom_node_id += 1
     return G
 
 

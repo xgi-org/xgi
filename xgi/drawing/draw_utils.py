@@ -155,7 +155,7 @@ def _parse_color_arg(colors, ids, id_kind="edges"):
             colors = np.asanyarray(colors, dtype=float)
             colors_are_mapped = True
         except:
-            raise ValueError("Invalud input format for colors.")
+            raise ValueError("Invalid input format for colors.")
 
     if not is_color_like(colors) and len(colors) != xsize:
         raise ValueError(
