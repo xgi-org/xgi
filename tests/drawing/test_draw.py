@@ -526,11 +526,11 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
 
 def test_draw_dihypergraph_with_str_labels_and_isolated_nodes():
     DH1 = xgi.DiHypergraph()
+    DH1.add_nodes_from(["one", "two", "three", "four", "five", "six"])
     DH1.add_edges_from(
         [
             [{"one"}, {"two", "three"}],
             [{"two", "three"}, {"four", "five"}],
-            [{"six"}, {}],
         ]
     )
 
@@ -538,5 +538,5 @@ def test_draw_dihypergraph_with_str_labels_and_isolated_nodes():
     ax4, collections4 = xgi.draw_dihypergraph(DH1, ax=ax4)
     node_coll4, phantom_node_coll4 = collections4
     assert len(node_coll4.get_offsets()) == 6  # number of original nodes
-    assert len(phantom_node_coll4.get_offsets()) == 3  # number of original edges
-    assert len(ax4.patches4) == 11 # number of lines
+    assert len(phantom_node_coll4.get_offsets()) == 2  # number of original edges
+    assert len(ax4.patches) == 7 # number of lines

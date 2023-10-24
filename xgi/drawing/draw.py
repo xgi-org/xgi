@@ -1803,8 +1803,6 @@ def draw_dihypergraph(
         m = cm.ScalarMappable(norm=norm, cmap=edge_marker_fc_cmap)
         lines_fc = m.to_rgba(lines_fc)
 
-    print(lines_fc, lines_c_mapped)
-
     # compute the augmented projection
     # this is a networkx Graph as a bipartite representation of H_conv
     # nodes and hyperedges > 2 are represented by nodes
@@ -1818,7 +1816,6 @@ def draw_dihypergraph(
 
         centers = {}
         for idx, members in DH.edges.members(dtype=dict).items():
-
             center = np.zeros((2,))
             edge_bi_id = phantom_nodes[idx]
             for node in members:
@@ -1946,7 +1943,6 @@ def draw_dihypergraph(
 
     patches = []
     for idx, dimembers in edges.dimembers(dtype=dict).items():
-        # d = len(he) - 1
         d = len(dimembers[0]) + len(dimembers[1]) - 1
 
         edge_bi_id = phantom_nodes[idx]
@@ -1961,8 +1957,6 @@ def draw_dihypergraph(
                 lines_color = lines_fc[idx]
             else:
                 lines_color = lines_fc
-
-            print("color", lines_color)
 
             patch = FancyArrowPatch(
                 xy_source,
