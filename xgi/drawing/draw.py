@@ -3,6 +3,7 @@
 from inspect import signature
 from itertools import combinations
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb  # for cmap "crest"
@@ -1753,7 +1754,6 @@ def draw_dihypergraph(
         "max_node_lw": 5,
         "min_lines_lw": 0,
         "max_lines_lw": 50,
-        "lines_fc_cmap": plt.cm.Blues,
         "min_source_margin": 0,
         "min_target_margin": 0,
     }
@@ -1796,6 +1796,13 @@ def draw_dihypergraph(
 
     # parse colors
     lines_fc, lines_c_mapped = _parse_color_arg(lines_fc, H_conv.edges)
+
+    # convert numbers to colors for FancyArrowPatch
+    if lines_c_mapped: 
+        norm = mpl.colors.Normalize()
+        m = cm.ScalarMappable(norm=norm, cmap=edge_marker_fc_cmap)
+        lines_fc = m.to_rgba(lines_fc)
+
     print(lines_fc, lines_c_mapped)
 
     # compute the augmented projection
@@ -1874,6 +1881,9 @@ def draw_dihypergraph(
                 zorder=3,
             )
 
+    else:
+        phantom_node_collection = None
+
     for dyad in H_conv.edges.filterby("size", 2).members():
         try:
             index = max(n for n in G_aug.nodes if isinstance(n, int)) + 1
@@ -1941,7 +1951,7 @@ def draw_dihypergraph(
 
         edge_bi_id = phantom_nodes[idx]
 
-        for node in dimembers[0]:
+        for node in dimembers[0]: # lines going towards the center
 
             xy_source = pos[node]
             xy_target = pos[edge_bi_id]
@@ -1952,7 +1962,7 @@ def draw_dihypergraph(
             else:
                 lines_color = lines_fc
 
-            print(lines_color)
+            print("color", lines_color)
 
             patch = FancyArrowPatch(
                 xy_source,
@@ -1962,7 +1972,7 @@ def draw_dihypergraph(
                 shrinkB=shrink_target,
                 mutation_scale=arrowsize,
                 linewidth=lines_lw,
-                zorder=5,
+                zorder=0,
                 color=lines_color,
                 connectionstyle=connectionstyle,
             )  # arrows go behind nodes
@@ -1970,7 +1980,7 @@ def draw_dihypergraph(
             patches.append(patch)
             ax.add_patch(patch)
 
-        for node in dimembers[1]:
+        for node in dimembers[1]: # lines going out from the center
 
             xy_source = pos[edge_bi_id]
             xy_target = pos[node]
@@ -1989,8 +1999,8 @@ def draw_dihypergraph(
                 shrinkB=shrink_target,
                 mutation_scale=arrowsize,
                 linewidth=lines_lw,
-                zorder=5,
-                color=lines_fc,
+                zorder=0,
+                color=lines_color,
                 connectionstyle=connectionstyle,
             )  # arrows go behind nodes
 
