@@ -1798,7 +1798,7 @@ def draw_dihypergraph(
     lines_fc, lines_c_mapped = _parse_color_arg(lines_fc, H_conv.edges)
 
     # convert numbers to colors for FancyArrowPatch
-    if lines_c_mapped: 
+    if lines_c_mapped:
         norm = mpl.colors.Normalize()
         m = cm.ScalarMappable(norm=norm, cmap=edge_marker_fc_cmap)
         lines_fc = m.to_rgba(lines_fc)
@@ -1947,7 +1947,7 @@ def draw_dihypergraph(
 
         edge_bi_id = phantom_nodes[idx]
 
-        for node in dimembers[0]: # lines going towards the center
+        for node in dimembers[0]:  # lines going towards the center
 
             xy_source = pos[node]
             xy_target = pos[edge_bi_id]
@@ -1974,7 +1974,7 @@ def draw_dihypergraph(
             patches.append(patch)
             ax.add_patch(patch)
 
-        for node in dimembers[1]: # lines going out from the center
+        for node in dimembers[1]:  # lines going out from the center
 
             xy_source = pos[edge_bi_id]
             xy_target = pos[node]
