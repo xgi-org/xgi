@@ -1639,6 +1639,7 @@ def draw_dihypergraph(
     hyperedge_labels=False,
     settings=None,
     rescale_sizes=True,
+    iterations=50,
     **kwargs,
 ):
     """Draw a directed hypergraph
@@ -1716,6 +1717,17 @@ def draw_dihypergraph(
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
         pairs.  By default, False.
+    rescale_sizes: bool, optional
+        If True, linearly interpolate `node_size` and between min/max values
+        that can be changed in the other argument `params`.
+        If `node_size` is a single value, this is ignored. By default, True.
+    iterations : int, optional
+        Maximum number of iterations taken to recompute the layout.
+        An original partial layout is computed solely based on the original nodes.
+        A full initial layout is then computed by simply adding the "edge" nodes 
+        at the barycenters. This initial layout may suffer from overlap between edge-nodes.
+        After that, a spring layout is ran starting from the
+        initial layout, and each iteration makes all of the nodes overlap less.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
         * "min_node_size" (default: 5)
@@ -1825,8 +1837,8 @@ def draw_dihypergraph(
         pos_nodes.update(centers)
         pos = pos_nodes
 
-    # recompute positions but keep nodes fixed
-    pos_nodes = spring_layout(G_aug, pos=pos)
+        # recompute positions from the original positions
+        pos = spring_layout(G_aug, pos=pos, iterations=iterations)
 
     # draw "node" nodes
     ax, node_collection = draw_nodes(
