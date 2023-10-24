@@ -1718,15 +1718,14 @@ def draw_dihypergraph(
         pairs.  By default, False.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
-        * min_node_size
-        * max_node_size
-        * min_node_lw
-        * max_node_lw
-        * min_lines_lw
-        * max_lines_lw
-        * lines_fc_cmap
-        * edge_fc_cmap
-        * edge_marker_fc_cmap
+        * "min_node_size" (default: 5)
+        * "max_node_size" (default: 30)
+        * "min_node_lw" (default: 0)
+        * "max_node_lw" (default: 5)
+        * "min_lines_lw" (default: 0)
+        * "max_lines_lw" (default: 50)
+        * "min_source_margin" (default: 0)
+        * "min_target_margin" (default: 0)
 
     Returns
     -------
