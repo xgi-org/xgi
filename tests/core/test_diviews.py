@@ -198,6 +198,8 @@ def test_bunch_view(diedgelist2):
     assert bunch_view.members(dtype=dict) == {1: {1, 2, 4}, 2: {2, 3, 4, 5}}
     with pytest.raises(IDNotFound):
         bunch_view.members(0)
+    # test ID order
+    assert list(bunch_view) == [1, 2]
 
 
 def test_call_wrong_bunch():

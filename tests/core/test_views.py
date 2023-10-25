@@ -218,6 +218,8 @@ def test_bunch_view(edgelist1):
     with pytest.raises(IDNotFound):
         bunch_view.members(0)
 
+    assert list(bunch_view) == [1, 2]
+
 
 def test_call_wrong_bunch():
     H = xgi.Hypergraph()
