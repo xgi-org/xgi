@@ -862,7 +862,7 @@ class Hypergraph:
             try:
                 for e, value in values.items():
                     try:
-                        self._edge_attr[id][name] = value
+                        self._edge_attr[e][name] = value
                     except IDNotFound:
                         warn(f"Edge {e} does not exist!")
             except AttributeError:
