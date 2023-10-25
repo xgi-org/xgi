@@ -1,9 +1,7 @@
 """Draw hypergraphs and simplicial complexes with matplotlib."""
 
 from collections.abc import Iterable
-from numbers import Number
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb  # for cmap "crest"

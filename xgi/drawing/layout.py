@@ -7,7 +7,6 @@ import numpy as np
 from numpy.linalg import inv, svd
 
 from .. import convert
-from ..algorithms import max_edge_order
 from ..core import SimplicialComplex
 
 __all__ = [
@@ -181,7 +180,7 @@ def _augmented_projection(H, weighted=False):
         G.add_node(phantom_node_id, bipartite="hyperedge")
         # and linking it to the nodes of the hyperedge
         for n in members:
-            if weighted == True:
+            if weighted:
                 G.add_edge(phantom_node_id, n, weight=d)
             else:
                 G.add_edge(phantom_node_id, n)
