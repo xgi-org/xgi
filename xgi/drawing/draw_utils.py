@@ -1,9 +1,7 @@
 """Draw hypergraphs and simplicial complexes with matplotlib."""
 
 from collections.abc import Iterable
-from numbers import Number
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb  # for cmap "crest"
@@ -84,7 +82,7 @@ def _update_lims(pos, ax):
     ax.autoscale_view()
 
 
-def _parse_color_arg(colors, cmap, ids, id_kind="edges"):
+def _parse_color_arg(colors, ids, id_kind="edges"):
     """
     Parse and process color arguments for plotting.
 
@@ -106,8 +104,6 @@ def _parse_color_arg(colors, cmap, ids, id_kind="edges"):
         * array of floats
         * dict of floats containing the `ids` as keys
         * IDStat containing the `ids` as keys
-    cmap : matplotlib colormap or None
-        The colormap to use for mapping numerical values to colors.
     ids : array-like or None
         The IDs of the elements being plotted.
     id_kind : str, optional
@@ -157,7 +153,7 @@ def _parse_color_arg(colors, cmap, ids, id_kind="edges"):
             colors = np.asanyarray(colors, dtype=float)
             colors_are_mapped = True
         except:
-            raise ValueError("Invalud input format for colors.")
+            raise ValueError("Invalid input format for colors.")
 
     if not is_color_like(colors) and len(colors) != xsize:
         raise ValueError(
