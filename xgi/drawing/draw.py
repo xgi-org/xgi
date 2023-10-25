@@ -885,7 +885,8 @@ def draw_node_labels(
         Turn on clipping of node labels at axis boundaries.
         By default, True.
     zorder : int, optional
-        The layer on which to draw the nodes.
+        The vertical order on which to draw the labels. By default, None, 
+        in which case it is plotted above the last plotted object.
 
     Returns
     -------

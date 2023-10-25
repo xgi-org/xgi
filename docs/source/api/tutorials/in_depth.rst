@@ -1,5 +1,5 @@
 ##################
-In depth tutorials
+In Depth tutorials
 ##################
 
 .. toctree::
