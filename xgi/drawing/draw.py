@@ -1331,13 +1331,17 @@ def draw_multilayer(
     H,
     pos=None,
     ax=None,
+    node_fc="white",
+    node_ec="black",
+    node_lw=1,
+    node_size=5,
+    node_shape="o",
+    node_fc_cmap="Reds",
+    vmin=None,
+    vmax=None,
     dyad_color="black",
     dyad_lw=0.5,
     edge_fc=None,
-    node_fc="white",
-    node_ec="black",
-    node_lw=0.5,
-    node_size=5,
     plane_color="grey",
     max_order=None,
     conn_lines=True,
@@ -1347,6 +1351,7 @@ def draw_multilayer(
     h_angle=10,
     v_angle=20,
     sep=1,
+    rescale_sizes=True,
     **kwargs,
 ):
     """Draw a hypergraph or simplicial complex visualized in 3D
@@ -1470,9 +1475,7 @@ def draw_multilayer(
         pos = barycenter_spring_layout(H)
 
     if ax is None:
-        _, ax = plt.subplots(
-            1, 1, figsize=(width, height), dpi=600, subplot_kw={"projection": "3d"}
-        )
+        _, ax = plt.subplots(figsize=(width, height), subplot_kw={"projection": "3d"})
 
     s = unique_edge_sizes(H)
     if max_order is None:
@@ -1489,18 +1492,6 @@ def draw_multilayer(
     )
 
     edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
-
-    node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
-    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_ec_cmap"])
-    node_lw = _scalar_arg_to_dict(
-        node_lw,
-        H.nodes,
-        settings["min_node_lw"],
-        settings["max_node_lw"],
-    )
-    node_size = _scalar_arg_to_dict(
-        node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
-    )
 
     plane_color = _color_arg_to_dict(
         plane_color,
@@ -1558,31 +1549,54 @@ def draw_multilayer(
         )
         ax.add_collection3d(between_lines)
 
-    (x, y, s, c, ec, lw,) = zip(
-        *[
-            (
-                pos[i][0],
-                pos[i][1],
-                node_size[i] ** 2,
-                node_fc[i],
-                node_ec[i],
-                node_lw[i],
-            )
-            for i in H.nodes
-        ]
-    )
+    # convert pos to format convenient for scatter
+    try:
+        xy = np.asarray([pos[v] for v in H.nodes])
+    except KeyError as err:
+        raise XGIError(f"Node {err} has no position.") from err
+
+    # convert all formats to ndarray
+    node_size = _draw_arg_to_arr(node_size)
+    node_fc = _draw_arg_to_arr(node_fc)
+    node_lw = _draw_arg_to_arr(node_lw)
+
+    # check validity of input values
+    if np.any(node_size < 0):
+        raise ValueError("node_size cannot contain negative values.")
+    if np.any(node_lw < 0):
+        raise ValueError("node_lw cannot contain negative values.")
+
+    # interpolate if needed
+    if rescale_sizes and isinstance(node_size, np.ndarray):
+        node_size = _interp_draw_arg(
+            node_size, settings["min_node_size"], settings["max_node_size"]
+        )
+    if rescale_sizes and isinstance(node_lw, np.ndarray):
+        node_lw = _interp_draw_arg(
+            node_lw, settings["min_node_lw"], settings["max_node_lw"]
+        )
+
+    node_size = np.array(node_size) ** 2
+
+    # plot
     for d in range(min_order, max_order + 1):
-        # draw nodes
+
         z = [sep * d] * H.num_nodes
-        ax.scatter(
-            x,
-            y,
-            z,
-            s=s,
-            c=c,
-            edgecolors=ec,
-            linewidths=lw,
+
+        node_collection = ax.scatter(
+            xs=xy[:, 0],
+            ys=xy[:, 1],
+            zs=z,
+            s=node_size,
+            marker=node_shape,
+            c=node_fc,
+            cmap=node_fc_cmap,
+            vmin=vmin,
+            vmax=vmax,
+            edgecolors=node_ec,
+            linewidths=node_lw,
             zorder=max_order + 1,
+            plotnonfinite=True,  # plot points with nonfinite color
             alpha=1,
         )
 
@@ -1609,7 +1623,7 @@ def draw_multilayer(
     ax.set_xlim(np.min(xs) - xdiff * 0.1, np.max(xs) + xdiff * 0.1)
     ax.set_axis_off()
 
-    return ax
+    return ax, (node_collection, )
 
 
 def draw_dihypergraph(
