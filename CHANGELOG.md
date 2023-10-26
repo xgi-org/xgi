@@ -1,7 +1,7 @@
 # Changelog
 
 ## v0.8
-* Make `IDViews` respect edge insertion order in the `from_view` method [#482](https://github.com/xgi-org/xgi/pull/482) (@nwlandry).
+* Made `IDViews` respect edge insertion order in the `from_view` method [#482](https://github.com/xgi-org/xgi/pull/482) (@nwlandry).
 * Fixed issues in drawing functions [#476](https://github.com/xgi-org/xgi/pull/476) (@maximelucas).
 * Fixed Issue [#480](https://github.com/xgi-org/xgi/issues/480) which raised an error when users attempted to set edge properties with an id:value dictionary with an attribute name [#481](https://github.com/xgi-org/xgi/pull/481) (@nwlandry).
 * Made minor changes and corrections to the tutorials in the documentation [#479](https://github.com/xgi-org/xgi/pull/479) (@thomasrobiglio).
