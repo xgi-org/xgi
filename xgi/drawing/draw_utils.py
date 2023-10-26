@@ -4,7 +4,6 @@ from collections.abc import Iterable
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sb  # for cmap "crest"
 from matplotlib.colors import (
     LinearSegmentedColormap,
     ListedColormap,

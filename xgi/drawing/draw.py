@@ -885,7 +885,7 @@ def draw_node_labels(
         Turn on clipping of node labels at axis boundaries.
         By default, True.
     zorder : int, optional
-        The vertical order on which to draw the labels. By default, None, 
+        The vertical order on which to draw the labels. By default, None,
         in which case it is plotted above the last plotted object.
 
     Returns
@@ -1724,7 +1724,7 @@ def draw_dihypergraph(
     iterations : int, optional
         Maximum number of iterations taken to recompute the layout.
         An original partial layout is computed solely based on the original nodes.
-        A full initial layout is then computed by simply adding the "edge" nodes 
+        A full initial layout is then computed by simply adding the "edge" nodes
         at the barycenters. This initial layout may suffer from overlap between edge-nodes.
         After that, a spring layout is ran starting from the
         initial layout, and each iteration makes all of the nodes overlap less.
