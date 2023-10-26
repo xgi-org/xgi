@@ -210,13 +210,15 @@ def test_view_len(edgelist2):
 
 def test_bunch_view(edgelist1):
     H = xgi.Hypergraph(edgelist1)
-    bunch_view = H.edges.from_view(H.edges, bunch=[1, 2])
+    bunch_view = H.edges.from_view(H.edges, bunch=[2, 1])
     assert len(bunch_view) == 2
     assert (1 in bunch_view) and (2 in bunch_view)
     assert 0 not in bunch_view
     assert bunch_view.members(dtype=dict) == {1: {4}, 2: {5, 6}}
     with pytest.raises(IDNotFound):
         bunch_view.members(0)
+
+    assert list(bunch_view) == [1, 2]
 
 
 def test_call_wrong_bunch():

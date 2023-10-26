@@ -365,7 +365,7 @@ class DiIDView(Mapping, Set):
             wrong = bunch - all_ids
             if wrong:
                 raise IDNotFound(f"IDs {wrong} not in the hypergraph")
-            newview._ids = bunch
+            newview._ids = [i for i in view._in_id_dict if i in bunch]
         return newview
 
     def _from_iterable(self, it):
