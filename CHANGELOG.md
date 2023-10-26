@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.8
+* Make `IDViews` respect edge insertion order in the `from_view` method [#482](https://github.com/xgi-org/xgi/pull/482) (@nwlandry).
+* Fixed issues in drawing functions [#476](https://github.com/xgi-org/xgi/pull/476) (@maximelucas).
+* Fixed Issue [#480](https://github.com/xgi-org/xgi/issues/480) which raised an error when users attempted to set edge properties with an id:value dictionary with an attribute name [#481](https://github.com/xgi-org/xgi/pull/481) (@nwlandry).
+* Made minor changes and corrections to the tutorials in the documentation [#479](https://github.com/xgi-org/xgi/pull/479) (@thomasrobiglio).
+* Rewrote the `draw_hyperedges()` function to utilize native matplotlib functionality and be more consistent [#456](https://github.com/xgi-org/xgi/pull/456) (@maximelucas).
+* Integrated the tutorials into the documentation [#457](https://github.com/xgi-org/xgi/pull/457) (@thomasrobiglio).
+* Added an `s` parameter to the `neighbors` method for edge overlap [#450](https://github.com/xgi-org/xgi/pull/450) (@nwlandry).
+* Fixed Issue [#468](https://github.com/xgi-org/xgi/issues/468) so that the `ashist` method doesn't try to create multiple bins for stats with a single unique value [#473](https://github.com/xgi-org/xgi/pull/473) (@nwlandry).
+
 ## v0.7.4
 * Response to PyOpenSci review, fixing Issue [#453](https://github.com/xgi-org/xgi/issues/453) among other things [#470](https://github.com/xgi-org/xgi/pull/470) (@nwlandry).
 * Fixed issues created from merging PR #380 [#471](https://github.com/xgi-org/xgi/pull/471) (@nwlandry).
