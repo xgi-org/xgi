@@ -17,7 +17,7 @@ authors = "XGI Developers"
 author_email = "nicholas.landry@uvm.edu"
 
 project_urls = {
-    "Documentation": "https://xgi.readthedocs.io/en/latest/",
+    "Documentation": "https://xgi.readthedocs.io/en/stable/",
     "Bug Reports": "https://github.com/xgi-org/xgi/issues",
     "Source": "https://github.com/xgi-org/xgi",
     "PyPI": "https://pypi.org/project/xgi/",
