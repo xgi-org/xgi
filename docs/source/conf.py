@@ -21,7 +21,7 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 # -- Project information -----------------------------------------------------
 project = "XGI"
 copyright = "Copyright (C) 2021-2023 XGI Developers"
-release = "0.7.4"
+release = "0.8"
 
 # -- General configuration ---------------------------------------------------
 
