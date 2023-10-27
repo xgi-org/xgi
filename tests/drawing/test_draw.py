@@ -381,60 +381,78 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
     # hypergraph
     H = xgi.Hypergraph(edgelist8)
 
-    ax1 = xgi.draw_multilayer(H)
+    ax1, (node_coll, edge_coll) = xgi.draw_multilayer(H)
     sizes = xgi.unique_edge_sizes(H)
-    num_planes = max(sizes) - min(sizes) + 1
+    num_layers = max(sizes) - min(sizes) + 1
     num_node_collections = max(sizes) - min(sizes) + 1
-    num_edge_collections = H.num_edges
-    num_thru_lines_collections = 1
+    num_edge_collections = 1
+    num_dyad_collections = 1
+    num_interlayer_collections = 1
 
     assert (
-        num_planes
+        num_layers
         + num_node_collections
         + num_edge_collections
-        + num_thru_lines_collections
+        + num_interlayer_collections
+        + num_dyad_collections
         == len(ax1.collections)
     )
+
+    offsets = node_coll.get_offsets()
+    assert offsets.shape[0] == H.num_nodes  # nodes
+
     plt.close()
 
     # max_order parameter
     max_order = 2
-    ax2 = xgi.draw_multilayer(H, max_order=max_order)
+    ax2, (node_coll2, edge_coll2) = xgi.draw_multilayer(H, max_order=max_order)
     sizes = [2, 3]
-    num_planes = max(sizes) - min(sizes) + 1
+    num_layers = max(sizes) - min(sizes) + 1
     num_node_collections = max(sizes) - min(sizes) + 1
-    num_edge_collections = len(H.edges.filterby("size", [2, 3], "between"))
-    num_thru_lines_collections = 1
+    num_edge_collections = 1
+    num_dyad_collections = 1
+    num_interlayer_collections = 1
 
     assert (
-        num_planes
+        num_layers
         + num_node_collections
         + num_edge_collections
-        + num_thru_lines_collections
+        + num_interlayer_collections
+        + num_dyad_collections
         == len(ax2.collections)
     )
+
+    offsets = node_coll2.get_offsets()
+    assert offsets.shape[0] == H.num_nodes  # nodes
     plt.close()
 
     # conn_lines parameter
-    ax3 = xgi.draw_multilayer(H, conn_lines=False)
+    ax3, (node_coll3, edge_coll3) = xgi.draw_multilayer(H, conn_lines=False)
     sizes = xgi.unique_edge_sizes(H)
-    num_planes = max(sizes) - min(sizes) + 1
+    num_layers = max(sizes) - min(sizes) + 1
     num_node_collections = max(sizes) - min(sizes) + 1
-    num_edge_collections = H.num_edges
-    assert num_planes + num_node_collections + num_edge_collections == len(
-        ax3.collections
+    num_edge_collections = 1
+    num_dyad_collections = 1
+    num_interlayer_collections = 0
+
+    assert (
+        num_layers
+        + num_node_collections
+        + num_edge_collections
+        + num_interlayer_collections
+        + num_dyad_collections
+        == len(ax3.collections)
     )
     plt.close()
 
     # custom parameters
     pos = xgi.circular_layout(H)
-    ax4 = xgi.draw_multilayer(
+    ax4, (node_coll4, edge_coll4) = xgi.draw_multilayer(
         H,
         pos=pos,
         node_fc="red",
         node_ec="blue",
         node_size=10,
-        palette="rainbow",
         conn_lines_style="dashed",
         width=8,
         height=6,
@@ -443,16 +461,18 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
         sep=2,
     )
     sizes = xgi.unique_edge_sizes(H)
-    num_planes = max(sizes) - min(sizes) + 1
+    nnum_layers = max(sizes) - min(sizes) + 1
     num_node_collections = max(sizes) - min(sizes) + 1
-    num_edge_collections = H.num_edges
-    num_thru_lines_collections = 1
+    num_edge_collections = 1
+    num_dyad_collections = 1
+    num_interlayer_collections = 1
 
     assert (
-        num_planes
+        num_layers
         + num_node_collections
         + num_edge_collections
-        + num_thru_lines_collections
+        + num_interlayer_collections
+        + num_dyad_collections
         == len(ax4.collections)
     )
     plt.close()
