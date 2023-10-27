@@ -1431,6 +1431,8 @@ def draw_multilayer(
         Colormap used to map the edge colors. By default, "crest_r".
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
+    alpha : float, optional
+        The edge transparency. By default, 0.4.
     layer_color : color or list of colors, optional
         Color of layers. By default, "grey".
     layer_cmap : colormap, optional

@@ -8,7 +8,6 @@ from xgi.drawing.draw import (
     _color_arg_to_dict,
     _draw_arg_to_arr,
     _interp_draw_arg,
-    _scalar_arg_to_dict,
 )
 
 
@@ -55,45 +54,6 @@ def test_interp_draw_arg(edgelist4):
     arg = np.linspace(0, 10, num=10)
     out = _interp_draw_arg(arg, 1, 11)
     assert np.allclose(out, np.linspace(1, 11, num=10))
-
-
-def test_scalar_arg_to_dict(edgelist4):
-    ids = [1, 2, 3]
-    min_val = 1
-    max_val = 5
-
-    arg = 1
-    d = _scalar_arg_to_dict(arg, ids, min_val, max_val)
-    assert d == {1: 1, 2: 1, 3: 1}
-
-    arg = 0.3
-    d = _scalar_arg_to_dict(arg, ids, min_val, max_val)
-    assert d == {1: 0.3, 2: 0.3, 3: 0.3}
-
-    arg = [0.2, 3, 4]
-    d = _scalar_arg_to_dict(arg, ids, min_val, max_val)
-    assert d == {1: 0.2, 2: 3, 3: 4}
-
-    arg = np.array([0.2, 3, 4])
-    d = _scalar_arg_to_dict(arg, ids, min_val, max_val)
-    assert d == {1: 0.2, 2: 3, 3: 4}
-
-    arg = {1: 0.2, 2: 3, 3: 4}
-    d = _scalar_arg_to_dict(arg, ids, min_val, max_val)
-    assert d == {1: 0.2, 2: 3, 3: 4}
-
-    H = xgi.Hypergraph(edgelist4)
-    arg = H.nodes.degree
-    d = _scalar_arg_to_dict(arg, ids, min_val, max_val)
-    assert d == {1: 1.0, 2: 3.0, 3: 5.0}
-
-    with pytest.raises(TypeError):
-        arg = "2"
-        d = _scalar_arg_to_dict(arg, ids, min_val, max_val)
-
-    with pytest.raises(TypeError):
-        arg = (1, 2, 3)
-        d = _scalar_arg_to_dict(arg, ids, min_val, max_val)
 
 
 def test_color_arg_to_dict(edgelist4):
