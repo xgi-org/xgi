@@ -157,9 +157,9 @@ class DiHypergraph:
         if incoming_data is not None:
             # This import needs to happen when this function is called, not when it is
             # defined.  Otherwise, a circular import error would happen.
-            from ..convert import convert_to_dihypergraph
+            from ..convert import to_dihypergraph
 
-            convert_to_dihypergraph(incoming_data, create_using=self)
+            to_dihypergraph(incoming_data, create_using=self)
         self._hypergraph.update(attr)  # must be after convert
 
     def __str__(self):

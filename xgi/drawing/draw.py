@@ -1780,7 +1780,7 @@ def draw_dihypergraph(
     settings.update(kwargs)
 
     # convert to hypergraph in order to use the augmented projection function
-    H_conv = convert.convert_to_hypergraph(DH)
+    H_conv = convert.to_hypergraph(DH)
 
     ax, _ = _draw_init(H_conv, ax, True)
 
