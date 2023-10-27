@@ -1355,7 +1355,7 @@ def draw_multilayer(
     height=5,
     h_angle=10,
     v_angle=20,
-    sep=1,
+    sep=0.4,
     rescale_sizes=True,
     **kwargs,
 ):
@@ -1456,12 +1456,12 @@ def draw_multilayer(
         The separation between layers. Default is 1.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
-        * min_node_size
-        * max_node_size
-        * min_node_lw
-        * max_node_lw
-        * min_dyad_lw
-        * max_dyad_lw
+        * "min_node_size" (default: 10)
+        * "max_node_size" (default: 30)
+        * "min_node_lw" (default: 2)
+        * "max_node_lw" (default: 10)
+        * "min_dyad_lw" (default: 1)
+        * "max_dyad_lw" (default: 5)
 
     Returns
     -------
@@ -1553,19 +1553,21 @@ def draw_multilayer(
 
     node_size = np.array(node_size) ** 2
 
+    # compute ax limits
+    xdiff = np.max(xs) - np.min(xs)
+    ydiff = np.max(ys) - np.min(ys)
+    ymin = np.min(ys) - ydiff * 0.1
+    ymax = np.max(ys) + ydiff * 0.1
+    xmin = np.min(xs) - xdiff * 0.1 * (width / height)
+    xmax = np.max(xs) + xdiff * 0.1 * (width / height)
+    xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
+
     # plot layers
     for jj, d in enumerate(orders):
 
         z = [sep * d] * H.num_nodes
 
         # draw surfaces corresponding to the different orders
-        xdiff = np.max(xs) - np.min(xs)
-        ydiff = np.max(ys) - np.min(ys)
-        ymin = np.min(ys) - ydiff * 0.1
-        ymax = np.max(ys) + ydiff * 0.1
-        xmin = np.min(xs) - xdiff * 0.1 * (width / height)
-        xmax = np.max(xs) + xdiff * 0.1 * (width / height)
-        xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
         zz = np.zeros(xx.shape) + d * sep
 
         if layer_c_mapped:
@@ -1580,8 +1582,8 @@ def draw_multilayer(
             zz,
             color=layer_c,
             cmap=layer_cmap,
-            vmin=min_order,
-            vmax=max_order,
+            vmin=min_order * sep,
+            vmax=max_order * sep,
             alpha=0.1,
             zorder=0,
         )
@@ -1686,6 +1688,7 @@ def draw_multilayer(
     ax.set_ylim(np.min(ys) - ydiff * 0.1, np.max(ys) + ydiff * 0.1)
     ax.set_xlim(np.min(xs) - xdiff * 0.1, np.max(xs) + xdiff * 0.1)
     ax.set_axis_off()
+    ax.set_aspect("equal")
 
     return ax, (node_collection, edge_collection)
 
