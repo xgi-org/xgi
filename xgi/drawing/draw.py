@@ -647,24 +647,37 @@ def draw_hyperedges(
     for he in np.array(edges.members())[ids_sorted]:
         d = len(he) - 1
         he = list(he)
-        coordinates = [[pos[n][0], pos[n][1]] for n in he]
+        zs = d * sep
+        coordinates = [[pos[n][0], pos[n][1], zs] for n in he]
         # Sorting the points counterclockwise (needed to have the correct filling)
         sorted_coordinates = _CCW_sort(coordinates)
-        patch = plt.Polygon(sorted_coordinates, zorder=max_order - d)
-        patches.append(patch)
+        #patch = plt.Polygon(sorted_coordinates, zorder=max_order - d)
+        #patches.append(patch)
 
-    edge_collection = PatchCollection(
-        patches,
-        facecolors=edge_fc_colors,
-        array=edge_fc_arr,
-        cmap=edge_fc_cmap,
-        alpha=alpha,
-        zorder=max_order - 2,  # below dyads
-    )
+        #vertices = np.array([[pos[i][0], pos[i][1], zs] for i in he])
+        #vertices = _CCW_sort(vertices)
+        #poly.append(vertices)
+        poly = Poly3DCollection(
+            sorted_coordinates,
+            zorder=d - 1,
+            color="b",
+            alpha=0.5,
+            edgecolor=None,
+        )
+        ax.add_collection3d(poly)
+
+    #edge_collection = PatchCollection(
+    #    patches,
+    #    facecolors=edge_fc_colors,
+    #    array=edge_fc_arr,
+    #    cmap=edge_fc_cmap,
+    #    alpha=alpha,
+    #    zorder=max_order - 2,  # below dyads
+    #)
     # edge_collection.set_cmap(edge_fc_cmap)
-    if edge_c_mapped:
-        edge_collection.set_clim(edge_vmin, edge_vmax)
-    ax.add_collection(edge_collection)
+    #if edge_c_mapped:
+    #    edge_collection.set_clim(edge_vmin, edge_vmax)
+    #ax.add_collection(edge_collection)
 
     if hyperedge_labels:
         # Get all valid keywords by inspecting the signatures of draw_node_labels
@@ -1340,8 +1353,15 @@ def draw_multilayer(
     vmin=None,
     vmax=None,
     dyad_color="black",
-    dyad_lw=0.5,
+    dyad_lw=1.5,
+    dyad_style="solid",
+    dyad_vmin=None,
+    dyad_vmax=None,
     edge_fc=None,
+    edge_fc_cmap="crest_r",
+    edge_vmin=None,
+    edge_vmax=None,
+    alpha=0.4, 
     plane_color="grey",
     max_order=None,
     conn_lines=True,
@@ -1459,23 +1479,19 @@ def draw_multilayer(
         "max_dyad_lw": 10.0,
         "min_node_lw": 1.0,
         "max_node_lw": 5.0,
-        "node_fc_cmap": cm.Reds,
-        "node_ec_cmap": cm.Greys,
-        "edge_fc_cmap": cm.Blues,
-        "dyad_color_cmap": cm.Greys,
         "plane_color_cmap": cm.Greys,
     }
 
     settings.update(kwargs)
 
-    if edge_fc is None:
-        edge_fc = H.edges.size
+    if ax is None:
+        _, ax = plt.subplots(figsize=(width, height), subplot_kw={"projection": "3d"})
 
     if pos is None:
         pos = barycenter_spring_layout(H)
 
-    if ax is None:
-        _, ax = plt.subplots(figsize=(width, height), subplot_kw={"projection": "3d"})
+    if edge_fc is None:
+        edge_fc = H.edges.size
 
     s = unique_edge_sizes(H)
     if max_order is None:
@@ -1486,51 +1502,105 @@ def draw_multilayer(
 
     xs, ys = zip(*pos.values())
 
-    dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
-    dyad_lw = _scalar_arg_to_dict(
-        dyad_lw, H.edges, settings["min_dyad_lw"], settings["max_dyad_lw"]
+    dyads = H.edges.filterby("order", 1)
+    edges = H.edges.filterby("order", (2, max_order), "between")
+
+    if edge_fc is None:  # color is proportional to size
+        edge_fc = edges.size
+
+    # convert all formats to ndarray
+    dyad_lw = _draw_arg_to_arr(dyad_lw)
+
+    # parse colors
+    dyad_color, dyad_c_mapped = _parse_color_arg(dyad_color, list(dyads))
+    edge_fc, edge_c_mapped = _parse_color_arg(edge_fc, list(edges))
+
+    # check validity of input values
+    if np.any(dyad_lw < 0):
+        raise ValueError("dyad_lw cannot contain negative values.")
+
+    # interpolate if needed
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
+        )
+
+    # convert dyad pos to format convenient for scatter
+    dyad_pos = np.asarray([(pos[list(e)[0]], pos[list(e)[1]], 0) for e in dyads.members()])
+
+    # plot dyads
+    if dyad_c_mapped:
+        dyad_c_arr = dyad_color
+        dyad_colors = None
+    else:
+        dyad_c_arr = None
+        dyad_colors = dyad_color
+
+    dyad_collection = Line3DCollection(
+        dyad_pos,
+        colors=dyad_colors,
+        array=dyad_c_arr,  # colors if mapped, ie arr of floats
+        linewidths=dyad_lw,
+        antialiaseds=(1,),
+        linestyle=dyad_style,
+        zorder=max_order - 1,
     )
 
-    edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
+    # dyad_collection.set_cmap(dyad_color_cmap)
+    #if dyad_c_mapped:
+    #    dyad_collection.set_clim(dyad_vmin, dyad_vmax)
+    # dyad_collection.set_zorder(max_order - 1)  # edges go behind nodes
+    ax.add_collection3d(dyad_collection)
+
+
+    #edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
+    
+    # reorder to plot larger hyperedges first
+    ids_sorted = np.argsort(edges.size.aslist())[::-1]
+
+    # plot other hyperedges
+    if edge_c_mapped:
+        edge_fc_arr = edge_fc[ids_sorted]
+        edge_fc_colors = None
+    else:
+        edge_fc_arr = None
+        edge_fc_colors = edge_fc[ids_sorted] if len(edge_fc) > 1 else edge_fc
+
+    patches = []
+    zs = []
+    for he in np.array(edges.members())[ids_sorted]:
+        d = len(he) - 1
+        if d > 2:
+            continue
+        zs.append(d * sep)
+        he = list(he)
+        coordinates = [[pos[n][0], pos[n][1], d * sep] for n in he]
+        # Sorting the points counterclockwise (needed to have the correct filling)
+        sorted_coordinates = _CCW_sort(coordinates)
+        #patch = plt.Polygon(sorted_coordinates)
+        patches.append(sorted_coordinates)
+
+    print(sorted_coordinates)
+    print(patches[0].shape, patches[-1].shape, len(patches))
+
+    edge_collection = Poly3DCollection(
+        patches,
+        #facecolors=edge_fc_colors,
+        #array=edge_fc_arr,
+        #cmap=edge_fc_cmap,
+        alpha=alpha,
+        #zorder=max_order - 2,  # below dyads
+    )
+    # edge_collection.set_cmap(edge_fc_cmap)
+    #if edge_c_mapped:
+    #    edge_collection.set_clim(edge_vmin, edge_vmax)
+    ax.add_collection3d(edge_collection)
 
     plane_color = _color_arg_to_dict(
         plane_color,
         [i for i in range(min_order, max_order + 1)],
         settings["plane_color_cmap"],
     )
-
-    for id, he in H.edges.members(dtype=dict).items():
-        d = len(he) - 1
-        zs = d * sep
-
-        # dyads
-        if d > max_order:
-            continue
-
-        if d == 1:
-            he = list(he)
-            x1 = [pos[he[0]][0], pos[he[0]][1], zs]
-            x2 = [pos[he[1]][0], pos[he[1]][1], zs]
-            l = Line3DCollection(
-                [(x1, x2)],
-                color=dyad_color[id],
-                linewidth=dyad_lw[id],
-            )
-            ax.add_collection3d(l)
-        # higher-orders
-        else:
-            poly = []
-            vertices = np.array([[pos[i][0], pos[i][1], zs] for i in he])
-            vertices = _CCW_sort(vertices)
-            poly.append(vertices)
-            poly = Poly3DCollection(
-                poly,
-                zorder=d - 1,
-                color=edge_fc[id],
-                alpha=0.5,
-                edgecolor=None,
-            )
-            ax.add_collection3d(poly)
 
     # now draw by order
     # draw lines connecting points on the different planes
