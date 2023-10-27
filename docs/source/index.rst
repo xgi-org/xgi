@@ -139,21 +139,23 @@ You can cite XGI either by going to our repository page
 `repository page <https://github.com/xgi-org/xgi>`_ and
 clicking the "cite this repository" button on the right sidebar (which will generate
 a citation in your preferred format) or by copying the following BibTeX entry:
-```
-@article{Landry_XGI_2023,
-author = {Landry, Nicholas W. and Lucas, Maxime and Iacopini, Iacopo and Petri, Giovanni and Schwarze, Alice and Patania, Alice and Torres, Leo},
-title = {{XGI: A Python package for higher-order interaction networks}},
-doi = {10.21105/joss.05162},
-journal = {Journal of Open Source Software},
-publisher = {The Open Journal},
-year = {2023},
-month = may,
-volume = {8},
-number = {85},
-pages = {5162},
-url = {https://joss.theoj.org/papers/10.21105/joss.05162},
-}
-```
+
+.. code:: text
+
+  @article{Landry_XGI_2023,
+  author = {Landry, Nicholas W. and Lucas, Maxime and Iacopini, Iacopo and Petri, Giovanni and Schwarze, Alice and Patania, Alice and Torres, Leo},
+  title = {{XGI: A Python package for higher-order interaction networks}},
+  doi = {10.21105/joss.05162},
+  journal = {Journal of Open Source Software},
+  publisher = {The Open Journal},
+  year = {2023},
+  month = may,
+  volume = {8},
+  number = {85},
+  pages = {5162},
+  url = {https://joss.theoj.org/papers/10.21105/joss.05162},
+  }
+
 
 Academic References
 ===================
