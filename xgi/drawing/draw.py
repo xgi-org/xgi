@@ -1345,7 +1345,7 @@ def draw_multilayer(
     edge_fc_cmap="crest_r",
     edge_vmin=None,
     edge_vmax=None,
-    alpha=0.4, 
+    alpha=0.4,
     layer_color="grey",
     layer_cmap="crest_r",
     max_order=None,
@@ -1402,8 +1402,8 @@ def draw_multilayer(
     vmax : float or None
         Maximum for the node_fc_cmap scaling. By default, None.
     dyad_color : color or list of colors
-        Color of the dyadic links.  If str, use the same color for all edges. If iterable, 
-        assume the colors are specified in the same order as the edges are found in H.edges. 
+        Color of the dyadic links.  If str, use the same color for all edges. If iterable,
+        assume the colors are specified in the same order as the edges are found in H.edges.
         By default, "black".
     dyad_lw : int, float, dict, iterable, or EdgeStat, optional
         Line width of edges of order 1 (dyadic links).  If int or float, use the same
@@ -1585,11 +1585,16 @@ def draw_multilayer(
         )
 
     # convert dyad pos to format convenient for scatter
-    dyad_pos = [(np.append(pos[list(e)[0]], sep), np.append(pos[list(e)[1]], sep)) for e in dyads.members()]
+    dyad_pos = [
+        (np.append(pos[list(e)[0]], sep), np.append(pos[list(e)[1]], sep))
+        for e in dyads.members()
+    ]
 
     # plot dyads
     if dyad_c_mapped:
-        raise ValueError("dyad_color needs to be a color or list of colors, not numerical values.")
+        raise ValueError(
+            "dyad_color needs to be a color or list of colors, not numerical values."
+        )
 
     dyad_collection = Line3DCollection(
         dyad_pos,
@@ -1597,11 +1602,11 @@ def draw_multilayer(
         linewidths=dyad_lw,
         antialiaseds=(1,),
         linestyle=dyad_style,
-        zorder=1, # above layer
+        zorder=1,  # above layer
     )
 
     ax.add_collection3d(dyad_collection)
-    
+
     # reorder to plot larger hyperedges first
     ids_sorted = np.argsort(edges.size.aslist())[::-1]
 
@@ -1634,7 +1639,7 @@ def draw_multilayer(
     )
     edge_collection.set_cmap(edge_fc_cmap)
     if edge_c_mapped:
-       edge_collection.set_clim(edge_vmin, edge_vmax)
+        edge_collection.set_clim(edge_vmin, edge_vmax)
     ax.add_collection3d(edge_collection)
 
     # draw inter-layer links between nodes
