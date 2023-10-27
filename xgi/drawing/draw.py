@@ -77,7 +77,7 @@ def draw(
     """Draw hypergraph or simplicial complex.
 
     Parameters
-    ----
+    ----------
     H : Hypergraph or SimplicialComplex.
         Hypergraph to draw
     pos : dict, optional
@@ -140,10 +140,12 @@ def draw(
         * single color as 3- or 4-tuple
         * list of colors of length len(ids)
         * dict of colors containing the `ids` as keys
+
         Those with numerical values (will be mapped to colors):
         * array of floats
         * dict of floats containing the `ids` as keys
         * IDStat containing the `ids` as keys
+
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap
         Colormap used to map the edge colors. By default, "cres_r".
@@ -356,6 +358,7 @@ def draw_nodes(
         * "max_node_size" (default: 30)
         * "min_node_lw" (default: 0)
         * "max_node_lw" (default: 5)
+    
     kwargs : optional keywords
         See `draw_node_labels` for a description of optional keywords.
 
@@ -376,12 +379,11 @@ def draw_nodes(
 
     Notes
     -----
-
-    * If nodes are colored with a cmap, the `node_collection` returned
+    If nodes are colored with a cmap, the `node_collection` returned
     can be used to easily plot a colorbar corresponding to the node
     colors. Simply do `plt.colorbar(node_collection)`.
 
-    * Nodes with nonfinite `node_fc` (i.e. `inf`, `-inf` or `nan` are drawn
+    Nodes with nonfinite `node_fc` (i.e. `inf`, `-inf` or `nan` are drawn
     with the bad colormap color (see `plotnonfinitebool` in `plt.scatter` and
     Colormap.set_bad from Matplotlib).
 
@@ -525,10 +527,12 @@ def draw_hyperedges(
         * single color as 3- or 4-tuple
         * list of colors of length len(ids)
         * dict of colors containing the `ids` as keys
+
         Those with numerical values (will be mapped to colors):
         * array of floats
         * dict of floats containing the `ids` as keys
         * IDStat containing the `ids` as keys
+
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap
         Colormap used to map the edge colors. By default, "crest_r".
@@ -550,6 +554,7 @@ def draw_hyperedges(
         Default parameters. Keys that may be useful to override default settings:
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
+    
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
 
@@ -743,10 +748,12 @@ def draw_simplices(
         * single color as 3- or 4-tuple
         * list of colors of length len(ids)
         * dict of colors containing the `ids` as keys
+
         Those with numerical values (will be mapped to colors):
         * array of floats
         * dict of floats containing the `ids` as keys
         * IDStat containing the `ids` as keys
+
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap
         Colormap used to map the edge colors. By default, "crest_r".
@@ -768,6 +775,7 @@ def draw_simplices(
         Default parameters. Keys that may be useful to override default settings:
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
+    
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
 

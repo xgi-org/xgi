@@ -94,7 +94,6 @@ Some concrete ways that you can get involved:
 * **Request a new feature or report a bug** by raising a `new issue <https://github.com/xgi-org/xgi/issues/new>`_.
 * **Create a Pull Request (PR)** to address an `open issue <../../issues>`_ or add a feature.
 * **Join our Zulip channel** to be a part of the `daily goings-on of XGI <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_.
-.
 
 
 Funding

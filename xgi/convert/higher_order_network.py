@@ -24,13 +24,13 @@ from .pandas import from_bipartite_pandas_dataframe
 from .simplex import from_simplex_dict
 
 __all__ = [
-    "convert_to_hypergraph",
-    "convert_to_dihypergraph",
-    "convert_to_simplicial_complex",
+    "to_hypergraph",
+    "to_dihypergraph",
+    "to_simplicial_complex",
 ]
 
 
-def convert_to_hypergraph(data, create_using=None):
+def to_hypergraph(data, create_using=None):
     """Make a hypergraph from a known data structure.
 
     The preferred way to call this is automatically from the class constructor.
@@ -127,7 +127,7 @@ def convert_to_hypergraph(data, create_using=None):
         raise XGIError("Input data has unsupported type.")
 
 
-def convert_to_dihypergraph(data, create_using=None):
+def to_dihypergraph(data, create_using=None):
     """Make a dihypergraph from a known data structure.
 
     The preferred way to call this is automatically from the class constructor.
@@ -184,7 +184,7 @@ def convert_to_dihypergraph(data, create_using=None):
 from ..generators import empty_simplicial_complex
 
 
-def convert_to_simplicial_complex(data, create_using=None):
+def to_simplicial_complex(data, create_using=None):
     """Make a hypergraph from a known data structure.
     The preferred way to call this is automatically
     from the class constructor.
@@ -238,17 +238,17 @@ def convert_to_simplicial_complex(data, create_using=None):
         # edge list
         result = from_hyperedge_list(data, create_using)
         if not isinstance(create_using, SimplicialComplex):
-            return convert_to_simplicial_complex(result)
+            return to_simplicial_complex(result)
 
     elif isinstance(data, pd.DataFrame):
         result = from_bipartite_pandas_dataframe(data, create_using)
         if not isinstance(create_using, SimplicialComplex):
-            return convert_to_simplicial_complex(result)
+            return to_simplicial_complex(result)
 
     elif isinstance(data, dict):
         result = from_simplex_dict(data, create_using)
         if not isinstance(create_using, SimplicialComplex):
-            return convert_to_simplicial_complex(result)
+            return to_simplicial_complex(result)
     elif isinstance(
         data,
         (
