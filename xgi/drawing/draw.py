@@ -1374,52 +1374,69 @@ def draw_multilayer(
     ax : matplotlib Axes3DSubplot or None, optional
         The subplot to draw the visualization on.
         If None, a new subplot will be created. Default is None.
-    node_fc : str, dict, iterable, or NodeStat, optional
-        Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
-        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat, use
-        the colormap specified with node_fc_cmap. By default, "white".
-    node_ec : str, dict, iterable, or NodeStat, optional
-        Color of node borders.  If str, use the same color for all nodes.  If a dict,
-        must contain (node_id: color_str) pairs.  If other iterable, assume the colors
-        are specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_ec_cmap. By default, "black".
-    node_lw : int, float, dict, iterable, or NodeStat, optional
+    node_fc : str, iterable, or NodeStat, optional
+        Color of the nodes.  If str, use the same color for all nodes. If other iterable,
+        or NodeStat, assume the colors are specified in the same order as the nodes are
+        found in H.nodes. By default, "white".
+    node_ec : color or sequence of colors, optional
+        Color of node borders. If color, use the same color for all nodes. If sequence
+        of colors, assume the colors are specified in the same order as the nodes are
+        found in H.nodes. By default, "black".
+    node_lw : int, float, iterable, or NodeStat, optional
         Line width of the node borders in pixels.  If int or float, use the same width
-        for all node borders.  If a dict, must contain (node_id: width) pairs.  If
-        iterable, assume the widths are specified in the same order as the nodes are
-        found in H.nodes. If NodeStat, use a monotonic linear interpolation defined
-        between min_node_lw and max_node_lw. By default, 1.
-    node_size : int, float, dict, iterable, or NodeStat, optional
+        for all node borders.  If iterable or NodeStat, assume the widths are specified
+        in the same order as the nodes are found in H.nodes. Values are clipped below
+        and above by min_node_lw and max_node_lw, respectively. By default, 1.
+    node_size : int, float, iterable, or NodeStat, optional
         Radius of the nodes in pixels.  If int or float, use the same radius for all
-        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
-        the radiuses are specified in the same order as the nodes are found in
-        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
-        min_node_size and max_node_size. By default, 5.
-    dyad_color : str, dict, iterable, or EdgeStat, optional
-        Color of the dyadic links.  If str, use the same color for all edges. If a dict,
-        must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use
-        a colormap (specified with dyad_color_cmap) associated to it. By default,
-        "black".
+        nodes. If iterable or NodeStat, assume the radiuses are specified in the same
+        order as the nodes are found in H.nodes. Values are clipped below
+        and above by min_node_size and max_node_size, respectively. By default, 5.
+    node_shape :  string, optional
+        The shape of the node. Specification is as matplotlib.scatter
+        marker. Default is "o".
+    node_fc_cmap : colormap
+        Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is
+        a str (single color).
+    vmin : float or None
+        Minimum for the node_fc_cmap scaling. By default, None.
+    vmax : float or None
+        Maximum for the node_fc_cmap scaling. By default, None.
+    dyad_color : color or list of colors
+        Color of the dyadic links.  If str, use the same color for all edges. If iterable, 
+        assume the colors are specified in the same order as the edges are found in H.edges. 
+        By default, "black".
     dyad_lw : int, float, dict, iterable, or EdgeStat, optional
         Line width of edges of order 1 (dyadic links).  If int or float, use the same
         width for all edges.  If a dict, must contain (edge_id: width) pairs.  If
         iterable, assume the widths are specified in the same order as the edges are
         found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
-        between min_dyad_lw and max_dyad_lw. By default, 0.5.
-    edge_fc : str, dict, iterable, or EdgeStat, optional
-        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
-        must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
-        are specified in the same order as the hyperedges are found in H.edges. If
-        EdgeStat, use the colormap specified with edge_fc_cmap. If None (default), use
-        the H.edges.size.
-    layer_color : color (str or tuple) or iterable (dict, list, or numpy array), optional
-        Color of each plane. If a dict, must contain (edge size: color) pairs.
-        By default, "grey".
-    layer_cmap : colormap
+        between min_dyad_lw and max_dyad_lw. By default, 1.5.
+    dyad_style : str or list of strings, optional
+        Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
+        See matplotlib's documentation for all accepted values. By default, "solid".
+    edge_fc : color or list of colors or array-like or dict or EdgeStat, optional
+        Color of the hyperedges.  The accepted formats are the same as
+        matplotlib's scatter, with the addition of dict and IDStat.
+        Those with colors:
+        * single color as a string
+        * single color as 3- or 4-tuple
+        * list of colors of length len(ids)
+        * dict of colors containing the `ids` as keys
+        Those with numerical values (will be mapped to colors):
+        * array of floats
+        * dict of floats containing the `ids` as keys
+        * IDStat containing the `ids` as keys
+        If None (default), color by edge size.
+    edge_fc_cmap: matplotlib colormap, optional
+        Colormap used to map the edge colors. By default, "crest_r".
+    edge_vmin, edge_vmax : float, optional
+        Minimum and maximum for edge colormap scaling. By default, None.
+    layer_color : color or list of colors, optional
+        Color of layers. By default, "grey".
+    layer_cmap : colormap, optional
         Colormap to use in case of numerical values in layer_color. Ignored if layer_color
-        does not contain numerical values to be mapped.
+        does not contain numerical values to be mapped. By default, "crest_r", but ignored.
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     conn_lines : bool, optional
@@ -1444,10 +1461,6 @@ def draw_multilayer(
         * max_node_lw
         * min_dyad_lw
         * max_dyad_lw
-        * node_fc_cmap
-        * node_ec_cmap
-        * dyad_color_cmap
-        * edge_fc_cmap
 
     Returns
     -------
@@ -1462,13 +1475,12 @@ def draw_multilayer(
     effect will be seen.
     """
     settings = {
-        "min_node_size": 10.0,
-        "max_node_size": 30.0,
-        "min_dyad_lw": 2.0,
-        "max_dyad_lw": 10.0,
-        "min_node_lw": 1.0,
-        "max_node_lw": 5.0,
-        "plane_color_cmap": cm.Greys,
+        "min_node_size": 10,
+        "max_node_size": 30,
+        "min_dyad_lw": 2,
+        "max_dyad_lw": 10,
+        "min_node_lw": 1,
+        "max_node_lw": 5,
     }
 
     settings.update(kwargs)
@@ -1578,26 +1590,17 @@ def draw_multilayer(
 
     # plot dyads
     if dyad_c_mapped:
-        dyad_c_arr = dyad_color
-        dyad_colors = None
-    else:
-        dyad_c_arr = None
-        dyad_colors = dyad_color
+        raise ValueError("dyad_color needs to be a color or list of colors, not numerical values.")
 
     dyad_collection = Line3DCollection(
         dyad_pos,
-        colors=dyad_colors,
-        array=dyad_c_arr,  # colors if mapped, ie arr of floats
+        colors=dyad_color,
         linewidths=dyad_lw,
         antialiaseds=(1,),
         linestyle=dyad_style,
         zorder=1, # above layer
     )
 
-    #dyad_collection.set_cmap(dyad_color_cmap)
-    #if dyad_c_mapped:
-    #   dyad_collection.set_clim(dyad_vmin, dyad_vmax)
-    #dyad_collection.set_zorder(max_order - 1)  # edges go behind nodes
     ax.add_collection3d(dyad_collection)
     
     # reorder to plot larger hyperedges first
@@ -1651,7 +1654,6 @@ def draw_multilayer(
         )
         ax.add_collection3d(between_lines)
 
-
     # draw nodes (last)
     for d in orders:
 
@@ -1679,7 +1681,7 @@ def draw_multilayer(
     ax.set_xlim(np.min(xs) - xdiff * 0.1, np.max(xs) + xdiff * 0.1)
     ax.set_axis_off()
 
-    return ax, (node_collection, )
+    return ax, (node_collection, edge_collection)
 
 
 def draw_dihypergraph(
