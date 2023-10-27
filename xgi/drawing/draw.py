@@ -29,7 +29,6 @@ from .draw_utils import (
     _draw_init,
     _interp_draw_arg,
     _parse_color_arg,
-    _scalar_arg_to_dict,
     _update_lims,
 )
 from .layout import _augmented_projection, barycenter_spring_layout
