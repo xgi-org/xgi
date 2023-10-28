@@ -377,7 +377,7 @@ def test_draw_hypergraph_hull(edgelist8):
     plt.close()
 
 
-def test_correct_number_of_collections_draw_multilayer(edgelist8):
+def test_draw_multilayer(edgelist8):
     # hypergraph
     H = xgi.Hypergraph(edgelist8)
 
@@ -391,15 +391,39 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
 
     assert (
         num_layers
-        + num_node_collections
+        + num_dyad_collections
         + num_edge_collections
         + num_interlayer_collections
-        + num_dyad_collections
+        + num_node_collections
         == len(ax1.collections)
     )
 
+    # number of elements
+    assert len(ax1.lines) == 0
+    assert len(ax1.patches) == 0
     offsets = node_coll.get_offsets()
     assert offsets.shape[0] == H.num_nodes  # nodes
+    assert len(ax1.collections) == 11
+
+    # zorder
+    assert node_coll.get_zorder() == 5  # nodes
+    assert edge_coll.get_zorder() == 2  # edges
+
+    # node_fc
+    assert np.all(
+        node_coll.get_facecolor() == np.array([[1, 1, 1, 1]])
+    )  # white
+
+    # node_ec
+    assert np.all(
+        node_coll.get_edgecolor() == np.array([[0, 0, 0, 1]])
+    )  # black
+
+    # node_lw
+    assert np.all(node_coll.get_linewidth() == np.array([1]))
+
+    # node_size
+    assert np.all(node_coll.get_sizes() == np.array([5**2]))
 
     plt.close()
 
@@ -454,8 +478,6 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
         node_ec="blue",
         node_size=10,
         conn_lines_style="dashed",
-        width=8,
-        height=6,
         h_angle=30,
         v_angle=15,
         sep=2,
@@ -475,6 +497,24 @@ def test_correct_number_of_collections_draw_multilayer(edgelist8):
         + num_dyad_collections
         == len(ax4.collections)
     )
+
+    # node_fc
+    assert np.all(
+        node_coll4.get_facecolor() == np.array([[1, 0, 0, 1]])
+    )  # red
+
+    # node_ec
+    assert np.all(
+        node_coll4.get_edgecolor() == np.array([[0, 0, 1, 1]])
+    )  # blue
+
+    # node_lw
+    assert np.all(node_coll4.get_linewidth() == np.array([1]))
+
+    # node_size
+    assert np.all(node_coll4.get_sizes() == np.array([10**2]))
+
+
     plt.close()
 
 
