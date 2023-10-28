@@ -177,6 +177,18 @@ def draw(
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
 
+    Returns
+    -------
+    ax : matplotlib Axes
+        Axes plotted on
+    collections : a tuple of 3 collections:
+        * node_collection : matplotlib PathCollection
+            Collection containing the nodes
+        * dyad_collection : matplotlib LineCollection
+            Collection containing the dyads
+        * edge_collection : matplotlib PathCollection
+            Collection containing the edges
+
     Examples
     --------
     >>> import xgi
@@ -552,6 +564,16 @@ def draw_hyperedges(
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
 
+    Returns
+    -------
+    ax : matplotlib Axes
+        Axes plotted on
+    collections : a tuple of 2 collections:
+        * dyad_collection : matplotlib LineCollection
+            Collection containing the dyads
+        * edge_collection : matplotlib PathCollection
+            Collection containing the edges
+
     Raises
     ------
     XGIError
@@ -769,6 +791,14 @@ def draw_simplices(
         * "max_dyad_lw" (default: 10)
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
+
+    Returns
+    -------
+    collections : a tuple of 2 collections:
+        * dyad_collection : matplotlib LineCollection
+            Collection containing the dyads
+        * edge_collection : matplotlib PathCollection
+            Collection containing the edges
 
     Raises
     ------
@@ -1461,7 +1491,11 @@ def draw_multilayer(
     -------
     ax : matplotlib Axes3DSubplot
         The subplot with the multilayer network visualization.
-
+    collections : a tuple of 2 collections:
+        * node_collection : matplotlib PathCollection
+            Collection containing the nodes one the top layer
+        * edge_collection : matplotlib PathCollection
+            Collection containing the edges of size > 2
     """
     settings = {
         "min_node_size": 10,
@@ -1810,7 +1844,13 @@ def draw_dihypergraph(
 
     Returns
     -------
-    ax : matplotlib.pyplot.axes
+    ax : matplotlib Axes
+        Axes plotted on
+    collections : a tuple of 3 collections:
+        * node_collection : matplotlib PathCollection
+            Collection containing the nodes
+        * phantom_node_collection : matplotlib PathCollection
+            Collection containing the nodes representing edges
 
     Raises
     ------
