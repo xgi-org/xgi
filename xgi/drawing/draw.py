@@ -1351,8 +1351,6 @@ def draw_multilayer(
     max_order=None,
     conn_lines=True,
     conn_lines_style="dotted",
-    width=5,
-    height=5,
     h_angle=10,
     v_angle=20,
     sep=0.4,
@@ -1444,16 +1442,12 @@ def draw_multilayer(
         Whether to draw connections between layers. Default is True.
     conn_lines_style : str, optional
         The linestyle of the connections between layers. Default is 'dotted'.
-    width : float, optional
-        The width of the figure in inches. Default is 5.
-    height : float, optional
-        The height of the figure in inches. Default is 5.
     h_angle : float, optional
         The rotation angle around the horizontal axis in degrees. Default is 10.
     v_angle : float, optional
         The rotation angle around the vertical axis in degrees. Default is 0.
     sep : float, optional
-        The separation between layers. Default is 1.
+        The separation between layers. Default is 0.4.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
         * "min_node_size" (default: 10)
@@ -1468,12 +1462,6 @@ def draw_multilayer(
     ax : matplotlib Axes3DSubplot
         The subplot with the multilayer network visualization.
 
-
-    Notes
-    -----
-    The effect of the `sep` parameter is limited by the `height` of the figure.
-    If `sep` is larger than a certain value depending on `height`, no additional
-    effect will be seen.
     """
     settings = {
         "min_node_size": 10,
@@ -1487,7 +1475,7 @@ def draw_multilayer(
     settings.update(kwargs)
 
     if ax is None:
-        _, ax = plt.subplots(figsize=(width, height), subplot_kw={"projection": "3d"})
+        _, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
     if pos is None:
         pos = barycenter_spring_layout(H)
@@ -1558,8 +1546,8 @@ def draw_multilayer(
     ydiff = np.max(ys) - np.min(ys)
     ymin = np.min(ys) - ydiff * 0.1
     ymax = np.max(ys) + ydiff * 0.1
-    xmin = np.min(xs) - xdiff * 0.1 * (width / height)
-    xmax = np.max(xs) + xdiff * 0.1 * (width / height)
+    xmin = np.min(xs) - xdiff * 0.1 #* (width / height)
+    xmax = np.max(xs) + xdiff * 0.1 #* (width / height)
     xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
 
     # plot layers
