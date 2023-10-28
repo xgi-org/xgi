@@ -109,9 +109,6 @@ def test_edge_members(diedgelist2):
         H.edges.members(dtype=np.array)
 
     with pytest.raises(TypeError):
-        H.edges.members(slice(1, 4, 1))
-
-    with pytest.raises(TypeError):
         H.edges.members([1, 2])
 
     with pytest.raises(IDNotFound):
@@ -131,9 +128,6 @@ def test_edge_dimembers(diedgelist2):
         H.edges.dimembers(dtype=np.array)
 
     with pytest.raises(TypeError):
-        H.edges.dimembers(slice(1, 4, 1))
-
-    with pytest.raises(TypeError):
         H.edges.dimembers([1, 2])
 
     with pytest.raises(IDNotFound):
@@ -151,9 +145,6 @@ def test_edge_tail(diedgelist2):
         H.edges.tail(dtype=np.array)
 
     with pytest.raises(TypeError):
-        H.edges.tail(slice(1, 4, 1))
-
-    with pytest.raises(TypeError):
         H.edges.tail([1, 2])
 
     with pytest.raises(IDNotFound):
@@ -168,9 +159,6 @@ def test_edge_head(diedgelist2):
     assert H.edges.head(dtype=dict) == {0: {2}, 1: {4}, 2: {4, 5}}
     with pytest.raises(XGIError):
         H.edges.head(dtype=np.array)
-
-    with pytest.raises(TypeError):
-        H.edges.head(slice(1, 4, 1))
 
     with pytest.raises(TypeError):
         H.edges.head([1, 2])

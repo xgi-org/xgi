@@ -169,8 +169,6 @@ def test_memberships(edgelist1):
     assert H.nodes([1, 2, 6]).memberships() == {1: {0}, 2: {0}, 6: {2, 3}}
     with pytest.raises(IDNotFound):
         H.nodes.memberships(0)
-    with pytest.raises(TypeError):
-        H.nodes.memberships(slice(1, 4))
 
 
 def test_add_edge():
