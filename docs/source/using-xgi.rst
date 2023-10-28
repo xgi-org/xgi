@@ -51,7 +51,7 @@ Timothy LaRock and Renaud Lambiotte, "Encapsulation Structure and Dynamics in Hy
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2307.04613>`
 :bdg-link-primary-line:`Github <https://github.com/tlarock/encapsulation-dynamics>`
 
-Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, Maxime Lucas, "Encapsulation Structure and Dynamics in Hypergraphs", arXiv:2309.16581 (2023).
+Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, Maxime Lucas, "Deeper but smaller: Higher-order interactions increase linear stability but shrink basins", arXiv:2309.16581 (2023).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2309.16581>`
 :bdg-link-primary-line:`Github <https://github.com/maximelucas/basins_and_triangles>`
