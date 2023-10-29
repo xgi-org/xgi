@@ -29,7 +29,6 @@ from .draw_utils import (
     _draw_init,
     _interp_draw_arg,
     _parse_color_arg,
-    _scalar_arg_to_dict,
     _update_lims,
 )
 from .layout import _augmented_projection, barycenter_spring_layout
@@ -177,6 +176,18 @@ def draw(
         * "max_node_lw" (default: 5)
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
+
+    Returns
+    -------
+    ax : matplotlib Axes
+        Axes plotted on
+    collections : a tuple of 3 collections:
+        * node_collection : matplotlib PathCollection
+            Collection containing the nodes
+        * dyad_collection : matplotlib LineCollection
+            Collection containing the dyads
+        * edge_collection : matplotlib PathCollection
+            Collection containing the edges
 
     Examples
     --------
@@ -553,6 +564,16 @@ def draw_hyperedges(
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
 
+    Returns
+    -------
+    ax : matplotlib Axes
+        Axes plotted on
+    collections : a tuple of 2 collections:
+        * dyad_collection : matplotlib LineCollection
+            Collection containing the dyads
+        * edge_collection : matplotlib PathCollection
+            Collection containing the edges
+
     Raises
     ------
     XGIError
@@ -770,6 +791,14 @@ def draw_simplices(
         * "max_dyad_lw" (default: 10)
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
+
+    Returns
+    -------
+    collections : a tuple of 2 collections:
+        * dyad_collection : matplotlib LineCollection
+            Collection containing the dyads
+        * edge_collection : matplotlib PathCollection
+            Collection containing the edges
 
     Raises
     ------
@@ -1331,22 +1360,31 @@ def draw_multilayer(
     H,
     pos=None,
     ax=None,
-    dyad_color="black",
-    dyad_lw=0.5,
-    edge_fc=None,
     node_fc="white",
     node_ec="black",
-    node_lw=0.5,
+    node_lw=1,
     node_size=5,
-    plane_color="grey",
+    node_shape="o",
+    node_fc_cmap="Reds",
+    vmin=None,
+    vmax=None,
+    dyad_color="grey",
+    dyad_lw=1.5,
+    dyad_style="solid",
+    edge_fc=None,
+    edge_fc_cmap="crest_r",
+    edge_vmin=None,
+    edge_vmax=None,
+    alpha=0.4,
+    layer_color="grey",
+    layer_cmap="crest_r",
     max_order=None,
     conn_lines=True,
     conn_lines_style="dotted",
-    width=5,
-    height=5,
     h_angle=10,
     v_angle=20,
-    sep=1,
+    sep=0.4,
+    rescale_sizes=True,
     **kwargs,
 ):
     """Draw a hypergraph or simplicial complex visualized in 3D
@@ -1363,116 +1401,118 @@ def draw_multilayer(
     ax : matplotlib Axes3DSubplot or None, optional
         The subplot to draw the visualization on.
         If None, a new subplot will be created. Default is None.
-    dyad_color : str, dict, iterable, or EdgeStat, optional
-        Color of the dyadic links.  If str, use the same color for all edges. If a dict,
-        must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use
-        a colormap (specified with dyad_color_cmap) associated to it. By default,
-        "black".
+    node_fc : str, iterable, or NodeStat, optional
+        Color of the nodes.  If str, use the same color for all nodes. If other iterable,
+        or NodeStat, assume the colors are specified in the same order as the nodes are
+        found in H.nodes. By default, "white".
+    node_ec : color or sequence of colors, optional
+        Color of node borders. If color, use the same color for all nodes. If sequence
+        of colors, assume the colors are specified in the same order as the nodes are
+        found in H.nodes. By default, "black".
+    node_lw : int, float, iterable, or NodeStat, optional
+        Line width of the node borders in pixels.  If int or float, use the same width
+        for all node borders.  If iterable or NodeStat, assume the widths are specified
+        in the same order as the nodes are found in H.nodes. Values are clipped below
+        and above by min_node_lw and max_node_lw, respectively. By default, 1.
+    node_size : int, float, iterable, or NodeStat, optional
+        Radius of the nodes in pixels.  If int or float, use the same radius for all
+        nodes. If iterable or NodeStat, assume the radiuses are specified in the same
+        order as the nodes are found in H.nodes. Values are clipped below
+        and above by min_node_size and max_node_size, respectively. By default, 5.
+    node_shape :  string, optional
+        The shape of the node. Specification is as matplotlib.scatter
+        marker. Default is "o".
+    node_fc_cmap : colormap
+        Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is
+        a str (single color).
+    vmin : float or None
+        Minimum for the node_fc_cmap scaling. By default, None.
+    vmax : float or None
+        Maximum for the node_fc_cmap scaling. By default, None.
+    dyad_color : color or list of colors
+        Color of the dyadic links.  If str, use the same color for all edges. If iterable,
+        assume the colors are specified in the same order as the edges are found in H.edges.
+        By default, "black".
     dyad_lw : int, float, dict, iterable, or EdgeStat, optional
         Line width of edges of order 1 (dyadic links).  If int or float, use the same
         width for all edges.  If a dict, must contain (edge_id: width) pairs.  If
         iterable, assume the widths are specified in the same order as the edges are
         found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
-        between min_dyad_lw and max_dyad_lw. By default, 0.5.
-    edge_fc : str, dict, iterable, or EdgeStat, optional
-        Color of the hyperedges.  If str, use the same color for all nodes.  If a dict,
-        must contain (edge_id: color_str) pairs.  If other iterable, assume the colors
-        are specified in the same order as the hyperedges are found in H.edges. If
-        EdgeStat, use the colormap specified with edge_fc_cmap. If None (default), use
-        the H.edges.size.
-    node_fc : str, dict, iterable, or NodeStat, optional
-        Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
-        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat, use
-        the colormap specified with node_fc_cmap. By default, "white".
-    node_ec : str, dict, iterable, or NodeStat, optional
-        Color of node borders.  If str, use the same color for all nodes.  If a dict,
-        must contain (node_id: color_str) pairs.  If other iterable, assume the colors
-        are specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_ec_cmap. By default, "black".
-    node_lw : int, float, dict, iterable, or NodeStat, optional
-        Line width of the node borders in pixels.  If int or float, use the same width
-        for all node borders.  If a dict, must contain (node_id: width) pairs.  If
-        iterable, assume the widths are specified in the same order as the nodes are
-        found in H.nodes. If NodeStat, use a monotonic linear interpolation defined
-        between min_node_lw and max_node_lw. By default, 1.
-    node_size : int, float, dict, iterable, or NodeStat, optional
-        Radius of the nodes in pixels.  If int or float, use the same radius for all
-        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
-        the radiuses are specified in the same order as the nodes are found in
-        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
-        min_node_size and max_node_size. By default, 5.
-    plane_color : color (str or tuple) or iterable (dict, list, or numpy array), optional
-        Color of each plane. If a dict, must contain (edge size: color) pairs.
-        By default, "grey".
+        between min_dyad_lw and max_dyad_lw. By default, 1.5.
+    dyad_style : str or list of strings, optional
+        Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
+        See matplotlib's documentation for all accepted values. By default, "solid".
+    edge_fc : color or list of colors or array-like or dict or EdgeStat, optional
+        Color of the hyperedges.  The accepted formats are the same as
+        matplotlib's scatter, with the addition of dict and IDStat.
+        Those with colors:
+        * single color as a string
+        * single color as 3- or 4-tuple
+        * list of colors of length len(ids)
+        * dict of colors containing the `ids` as keys
+        Those with numerical values (will be mapped to colors):
+        * array of floats
+        * dict of floats containing the `ids` as keys
+        * IDStat containing the `ids` as keys
+        If None (default), color by edge size.
+    edge_fc_cmap: matplotlib colormap, optional
+        Colormap used to map the edge colors. By default, "crest_r".
+    edge_vmin, edge_vmax : float, optional
+        Minimum and maximum for edge colormap scaling. By default, None.
+    alpha : float, optional
+        The edge transparency. By default, 0.4.
+    layer_color : color or list of colors, optional
+        Color of layers. By default, "grey".
+    layer_cmap : colormap, optional
+        Colormap to use in case of numerical values in layer_color. Ignored if layer_color
+        does not contain numerical values to be mapped. By default, "crest_r", but ignored.
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     conn_lines : bool, optional
         Whether to draw connections between layers. Default is True.
     conn_lines_style : str, optional
         The linestyle of the connections between layers. Default is 'dotted'.
-    width : float, optional
-        The width of the figure in inches. Default is 5.
-    height : float, optional
-        The height of the figure in inches. Default is 5.
     h_angle : float, optional
         The rotation angle around the horizontal axis in degrees. Default is 10.
     v_angle : float, optional
         The rotation angle around the vertical axis in degrees. Default is 0.
     sep : float, optional
-        The separation between layers. Default is 1.
+        The separation between layers. Default is 0.4.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
-        * min_node_size
-        * max_node_size
-        * min_node_lw
-        * max_node_lw
-        * min_dyad_lw
-        * max_dyad_lw
-        * node_fc_cmap
-        * node_ec_cmap
-        * dyad_color_cmap
-        * edge_fc_cmap
+        * "min_node_size" (default: 10)
+        * "max_node_size" (default: 30)
+        * "min_node_lw" (default: 2)
+        * "max_node_lw" (default: 10)
+        * "min_dyad_lw" (default: 1)
+        * "max_dyad_lw" (default: 5)
 
     Returns
     -------
     ax : matplotlib Axes3DSubplot
         The subplot with the multilayer network visualization.
-
-
-    Notes
-    -----
-    The effect of the `sep` parameter is limited by the `height` of the figure.
-    If `sep` is larger than a certain value depending on `height`, no additional
-    effect will be seen.
+    collections : a tuple of 2 collections:
+        * node_collection : matplotlib PathCollection
+            Collection containing the nodes one the top layer
+        * edge_collection : matplotlib PathCollection
+            Collection containing the edges of size > 2
     """
     settings = {
-        "min_node_size": 10.0,
-        "max_node_size": 30.0,
-        "min_dyad_lw": 2.0,
-        "max_dyad_lw": 10.0,
-        "min_node_lw": 1.0,
-        "max_node_lw": 5.0,
-        "node_fc_cmap": cm.Reds,
-        "node_ec_cmap": cm.Greys,
-        "edge_fc_cmap": cm.Blues,
-        "dyad_color_cmap": cm.Greys,
-        "plane_color_cmap": cm.Greys,
+        "min_node_size": 10,
+        "max_node_size": 30,
+        "min_dyad_lw": 2,
+        "max_dyad_lw": 10,
+        "min_node_lw": 1,
+        "max_node_lw": 5,
     }
 
     settings.update(kwargs)
 
-    if edge_fc is None:
-        edge_fc = H.edges.size
+    if ax is None:
+        _, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
     if pos is None:
         pos = barycenter_spring_layout(H)
-
-    if ax is None:
-        _, ax = plt.subplots(
-            1, 1, figsize=(width, height), dpi=600, subplot_kw={"projection": "3d"}
-        )
 
     s = unique_edge_sizes(H)
     if max_order is None:
@@ -1481,68 +1521,154 @@ def draw_multilayer(
         max_order = min(max_order, max(s) - 1)
     min_order = min(s) - 1
 
+    orders = list(range(min_order, max_order + 1))
+
     xs, ys = zip(*pos.values())
 
-    dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
-    dyad_lw = _scalar_arg_to_dict(
-        dyad_lw, H.edges, settings["min_dyad_lw"], settings["max_dyad_lw"]
-    )
+    dyads = H.edges.filterby("order", 1)
+    edges = H.edges.filterby("order", (2, max_order), "between")
 
-    edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
+    if edge_fc is None:  # color is proportional to size
+        edge_fc = edges.size
 
-    node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
-    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_ec_cmap"])
-    node_lw = _scalar_arg_to_dict(
-        node_lw,
-        H.nodes,
-        settings["min_node_lw"],
-        settings["max_node_lw"],
-    )
-    node_size = _scalar_arg_to_dict(
-        node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
-    )
+    # convert pos to format convenient for scatter
+    try:
+        xy = np.asarray([pos[v] for v in H.nodes])
+    except KeyError as err:
+        raise XGIError(f"Node {err} has no position.") from err
 
-    plane_color = _color_arg_to_dict(
-        plane_color,
-        [i for i in range(min_order, max_order + 1)],
-        settings["plane_color_cmap"],
-    )
+    # convert all formats to ndarray
+    node_size = _draw_arg_to_arr(node_size)
+    node_fc = _draw_arg_to_arr(node_fc)
+    node_lw = _draw_arg_to_arr(node_lw)
+    dyad_lw = _draw_arg_to_arr(dyad_lw)
+    layer_color = _draw_arg_to_arr(layer_color)
 
-    for id, he in H.edges.members(dtype=dict).items():
-        d = len(he) - 1
-        zs = d * sep
+    # check validity of input values
+    if np.any(node_size < 0):
+        raise ValueError("node_size cannot contain negative values.")
+    if np.any(node_lw < 0):
+        raise ValueError("node_lw cannot contain negative values.")
 
-        # dyads
-        if d > max_order:
-            continue
+    # interpolate if needed
+    if rescale_sizes and isinstance(node_size, np.ndarray):
+        node_size = _interp_draw_arg(
+            node_size, settings["min_node_size"], settings["max_node_size"]
+        )
+    if rescale_sizes and isinstance(node_lw, np.ndarray):
+        node_lw = _interp_draw_arg(
+            node_lw, settings["min_node_lw"], settings["max_node_lw"]
+        )
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
+        )
 
-        if d == 1:
-            he = list(he)
-            x1 = [pos[he[0]][0], pos[he[0]][1], zs]
-            x2 = [pos[he[1]][0], pos[he[1]][1], zs]
-            l = Line3DCollection(
-                [(x1, x2)],
-                color=dyad_color[id],
-                linewidth=dyad_lw[id],
-            )
-            ax.add_collection3d(l)
-        # higher-orders
+    # check validity of input values
+    if np.any(dyad_lw < 0):
+        raise ValueError("dyad_lw cannot contain negative values.")
+
+    # parse colors
+    dyad_color, dyad_c_mapped = _parse_color_arg(dyad_color, list(dyads))
+    edge_fc, edge_c_mapped = _parse_color_arg(edge_fc, list(edges))
+    layer_color, layer_c_mapped = _parse_color_arg(layer_color, orders)
+
+    node_size = np.array(node_size) ** 2
+
+    # compute ax limits
+    xdiff = np.max(xs) - np.min(xs)
+    ydiff = np.max(ys) - np.min(ys)
+    ymin = np.min(ys) - ydiff * 0.1
+    ymax = np.max(ys) + ydiff * 0.1
+    xmin = np.min(xs) - xdiff * 0.1 #* (width / height)
+    xmax = np.max(xs) + xdiff * 0.1 #* (width / height)
+    xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
+
+    # plot layers
+    for jj, d in enumerate(orders):
+
+        z = [sep * d] * H.num_nodes
+
+        # draw surfaces corresponding to the different orders
+        zz = np.zeros(xx.shape) + d * sep
+
+        if layer_c_mapped:
+            layer_c = None
         else:
-            poly = []
-            vertices = np.array([[pos[i][0], pos[i][1], zs] for i in he])
-            vertices = _CCW_sort(vertices)
-            poly.append(vertices)
-            poly = Poly3DCollection(
-                poly,
-                zorder=d - 1,
-                color=edge_fc[id],
-                alpha=0.5,
-                edgecolor=None,
-            )
-            ax.add_collection3d(poly)
+            layer_c = layer_color[jj] if len(layer_color) > 1 else layer_color
+            layer_cmap = None
 
-    # now draw by order
-    # draw lines connecting points on the different planes
+        ax.plot_surface(
+            xx,
+            yy,
+            zz,
+            color=layer_c,
+            cmap=layer_cmap,
+            vmin=min_order * sep,
+            vmax=max_order * sep,
+            alpha=0.1,
+            zorder=0,
+        )
+
+    # convert dyad pos to format convenient for scatter
+    dyad_pos = [
+        (np.append(pos[list(e)[0]], sep), np.append(pos[list(e)[1]], sep))
+        for e in dyads.members()
+    ]
+
+    # plot dyads
+    if dyad_c_mapped:
+        raise ValueError(
+            "dyad_color needs to be a color or list of colors, not numerical values."
+        )
+
+    dyad_collection = Line3DCollection(
+        dyad_pos,
+        colors=dyad_color,
+        linewidths=dyad_lw,
+        antialiaseds=(1,),
+        linestyle=dyad_style,
+        zorder=1,  # above layer
+    )
+
+    ax.add_collection3d(dyad_collection)
+
+    # reorder to plot larger hyperedges first
+    ids_sorted = np.argsort(edges.size.aslist())[::-1]
+
+    # plot other hyperedges
+    if edge_c_mapped:
+        edge_fc_arr = edge_fc[ids_sorted]
+        edge_fc_colors = None
+    else:
+        edge_fc_arr = None
+        edge_fc_colors = edge_fc[ids_sorted] if len(edge_fc) > 1 else edge_fc
+
+    patches = []
+    zs = []
+    for he in np.array(edges.members())[ids_sorted]:
+        d = len(he) - 1
+        zs.append(d * sep)
+        he = list(he)
+        coordinates = [[pos[n][0], pos[n][1], d * sep] for n in he]
+        # Sorting the points counterclockwise (needed to have the correct filling)
+        sorted_coordinates = _CCW_sort(coordinates)
+        patches.append(sorted_coordinates)
+
+    edge_collection = Poly3DCollection(
+        patches,
+        facecolors=edge_fc_colors,
+        array=edge_fc_arr,
+        cmap=edge_fc_cmap,
+        alpha=alpha,
+        zorder=max_order - 2,  # below dyads
+    )
+    edge_collection.set_cmap(edge_fc_cmap)
+    if edge_c_mapped:
+        edge_collection.set_clim(edge_vmin, edge_vmax)
+    ax.add_collection3d(edge_collection)
+
+    # draw inter-layer links between nodes
     if conn_lines:
         lines3d_between = [
             (list(pos[i]) + [min_order * sep], list(pos[i]) + [max_order * sep])
@@ -1550,7 +1676,7 @@ def draw_multilayer(
         ]
         between_lines = Line3DCollection(
             lines3d_between,
-            zorder=d,
+            zorder=5,
             color=".5",
             alpha=0.4,
             linestyle=conn_lines_style,
@@ -1558,58 +1684,35 @@ def draw_multilayer(
         )
         ax.add_collection3d(between_lines)
 
-    (x, y, s, c, ec, lw,) = zip(
-        *[
-            (
-                pos[i][0],
-                pos[i][1],
-                node_size[i] ** 2,
-                node_fc[i],
-                node_ec[i],
-                node_lw[i],
-            )
-            for i in H.nodes
-        ]
-    )
-    for d in range(min_order, max_order + 1):
-        # draw nodes
-        z = [sep * d] * H.num_nodes
-        ax.scatter(
-            x,
-            y,
-            z,
-            s=s,
-            c=c,
-            edgecolors=ec,
-            linewidths=lw,
-            zorder=max_order + 1,
-            alpha=1,
-        )
+    # draw nodes (last)
+    for d in orders:
 
-        # draw surfaces corresponding to the different orders
-        xdiff = np.max(xs) - np.min(xs)
-        ydiff = np.max(ys) - np.min(ys)
-        ymin = np.min(ys) - ydiff * 0.1
-        ymax = np.max(ys) + ydiff * 0.1
-        xmin = np.min(xs) - xdiff * 0.1 * (width / height)
-        xmax = np.max(xs) + xdiff * 0.1 * (width / height)
-        xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
-        zz = np.zeros(xx.shape) + d * sep
-        ax.plot_surface(
-            xx,
-            yy,
-            zz,
-            color=plane_color[d],
-            alpha=0.1,
-            zorder=d,
+        z = [sep * d] * H.num_nodes
+
+        node_collection = ax.scatter(
+            xs=xy[:, 0],
+            ys=xy[:, 1],
+            zs=z,
+            s=node_size,
+            marker=node_shape,
+            c=node_fc,
+            cmap=node_fc_cmap,
+            vmin=vmin,
+            vmax=vmax,
+            edgecolors=node_ec,
+            linewidths=node_lw,
+            zorder=max_order + 1,
+            plotnonfinite=True,  # plot points with nonfinite color
+            alpha=1,
         )
 
     ax.view_init(h_angle, v_angle)
     ax.set_ylim(np.min(ys) - ydiff * 0.1, np.max(ys) + ydiff * 0.1)
     ax.set_xlim(np.min(xs) - xdiff * 0.1, np.max(xs) + xdiff * 0.1)
     ax.set_axis_off()
+    ax.set_aspect("equal")
 
-    return ax
+    return ax, (node_collection, edge_collection)
 
 
 def draw_dihypergraph(
@@ -1741,7 +1844,13 @@ def draw_dihypergraph(
 
     Returns
     -------
-    ax : matplotlib.pyplot.axes
+    ax : matplotlib Axes
+        Axes plotted on
+    collections : a tuple of 3 collections:
+        * node_collection : matplotlib PathCollection
+            Collection containing the nodes
+        * phantom_node_collection : matplotlib PathCollection
+            Collection containing the nodes representing edges
 
     Raises
     ------
