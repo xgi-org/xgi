@@ -10,7 +10,7 @@ Published work
 2023
 ----
 
-Nicholas W. Landry and Juan Restrepo, "Opinion disparity in hypergraphs with community structure", Physical Review E 108, 034311 (2023).
+Nicholas W. Landry and Juan Restrepo, "Opinion disparity in hypergraphs with community structure", *Physical Review E* **108**, 034311 (2023).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1103/PhysRevE.108.034311>`
 :bdg-link-primary-line:`Github <https://github.com/nwlandry/opinion-disparity-in-hypergraphs>`
