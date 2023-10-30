@@ -62,7 +62,7 @@ class DiHypergraph:
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `DiHypergraph` class.  For more details, see the
     `tutorial
-    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     References
     ----------

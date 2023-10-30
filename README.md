@@ -62,7 +62,7 @@ pip install -e .\[all\]
 
 
 ## Getting Started
-To get started, take a look at the [tutorials](/tutorials/) illustrating the library's basic functionality.
+To get started, take a look at the [tutorials](https://xgi.readthedocs.io/en/stable/api/tutorials.html) illustrating the library's basic functionality.
 
 
 ## Corresponding Data
