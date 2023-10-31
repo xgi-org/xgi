@@ -495,6 +495,7 @@ def draw_hyperedges(
     params=dict(),
     hyperedge_labels=False,
     rescale_sizes=True,
+    hull=False,
     **kwargs,
 ):
     """Draw hyperedges.
@@ -671,7 +672,23 @@ def draw_hyperedges(
         coordinates = [[pos[n][0], pos[n][1]] for n in he]
         # Sorting the points counterclockwise (needed to have the correct filling)
         sorted_coordinates = _CCW_sort(coordinates)
-        patch = plt.Polygon(sorted_coordinates, zorder=max_order - d)
+        if hull:
+            radius = 0.05
+            thetas = np.linspace(0, 2 * np.pi, num=100, endpoint=False)
+            offsets = radius * np.array([np.cos(thetas), np.sin(thetas)]).T
+            points = np.vstack([p + offsets for p in sorted_coordinates])
+            points = np.vstack([sorted_coordinates, points])
+
+            hull = ConvexHull(points)
+
+            center = np.mean(points, axis=0)
+            pts = points[hull.vertices]
+
+            k = 1.1
+            patch = plt.Polygon(k*(pts - center) + center, closed=True, capstyle='round')
+
+        else:
+            patch = plt.Polygon(sorted_coordinates)
         patches.append(patch)
 
     edge_collection = PatchCollection(
@@ -1274,8 +1291,6 @@ def draw_hypergraph_hull(
 
     settings.update(kwargs)
 
-    alpha = settings["alpha"]
-
     if edge_fc is None:
         edge_fc = H.edges.size
 
@@ -1323,6 +1338,35 @@ def draw_hypergraph_hull(
 
     dyads = H.edges.filterby("order", 1)
     edges = H.edges.filterby("order", (2, max_order), "between")
+
+    # draw dyads
+    # convert dyad pos to format convenient for scatter
+    dyad_pos = np.asarray([(pos[list(e)[0]], pos[list(e)[1]]) for e in dyads.members()])
+
+    # plot dyads
+    if dyad_c_mapped:
+        dyad_c_arr = dyad_color
+        dyad_colors = None
+    else:
+        dyad_c_arr = None
+        dyad_colors = dyad_color
+
+    dyad_collection = LineCollection(
+        dyad_pos,
+        colors=dyad_colors,
+        array=dyad_c_arr,  # colors if mapped, ie arr of floats
+        linewidths=dyad_lw,
+        antialiaseds=(1,),
+        linestyle=dyad_style,
+        cmap=dyad_color_cmap,
+        zorder=max_order - 1,
+    )
+
+    # dyad_collection.set_cmap(dyad_color_cmap)
+    if dyad_c_mapped:
+        dyad_collection.set_clim(dyad_vmin, dyad_vmax)
+    # dyad_collection.set_zorder(max_order - 1)  # edges go behind nodes
+    ax.add_collection(dyad_collection)
 
     for id, he in H._edge.items():
         d = len(he) - 1
