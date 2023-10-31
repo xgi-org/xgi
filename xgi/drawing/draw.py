@@ -1150,18 +1150,23 @@ def draw_hypergraph_hull(
     H,
     pos=None,
     ax=None,
-    dyad_color="black",
-    edge_fc=None,
-    edge_ec=None,
-    node_fc="tab:blue",
+    node_fc="b",
     node_ec="black",
     node_lw=1,
     node_size=7,
     node_shape="o",
+    node_fc_cmap="Reds",
+    vmin=None,
+    vmax=None,
+    dyad_color="black",
+    edge_fc=None,
+    edge_ec=None,
+    radius=0.05,
+    alpha=0.3,
     max_order=None,
     node_labels=False,
     hyperedge_labels=False,
-    radius=0.05,
+    rescale_sizes=True,
     aspect="equal",
     **kwargs,
 ):
@@ -1263,34 +1268,61 @@ def draw_hypergraph_hull(
         "max_node_size": 30.0,
         "min_node_lw": 1.0,
         "max_node_lw": 5.0,
-        "node_fc_cmap": cm.Reds,
-        "node_ec_cmap": cm.Greys,
         "dyad_color_cmap": cm.Greys,
         "edge_fc_cmap": cm.Blues,
-        "edge_ec_cmap": cm.Greys,
-        "alpha": 0.4,
     }
+
+    settings.update(kwargs)
 
     alpha = settings["alpha"]
 
     if edge_fc is None:
         edge_fc = H.edges.size
 
-    edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
-
-    if edge_ec is None:
-        edge_ec = H.edges.size
-
-    edge_ec = _color_arg_to_dict(edge_ec, H.edges, settings["edge_ec_cmap"])
-
-    settings.update(kwargs)
-
-    ax, pos = _draw_init(H, ax, pos)
-
     if not max_order:
         max_order = max_edge_order(H)
 
-    dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
+    ax, pos = _draw_init(H, ax, pos)
+
+    # convert all formats to ndarray
+    node_size = _draw_arg_to_arr(node_size)
+    node_fc = _draw_arg_to_arr(node_fc)
+    node_lw = _draw_arg_to_arr(node_lw)
+    dyad_lw = _draw_arg_to_arr(dyad_lw)
+
+    # check validity of input values
+    if np.any(node_size < 0):
+        raise ValueError("node_size cannot contain negative values.")
+    if np.any(node_lw < 0):
+        raise ValueError("node_lw cannot contain negative values.")
+
+    # interpolate if needed
+    if rescale_sizes and isinstance(node_size, np.ndarray):
+        node_size = _interp_draw_arg(
+            node_size, settings["min_node_size"], settings["max_node_size"]
+        )
+    if rescale_sizes and isinstance(node_lw, np.ndarray):
+        node_lw = _interp_draw_arg(
+            node_lw, settings["min_node_lw"], settings["max_node_lw"]
+        )
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
+        )
+
+    # check validity of input values
+    if np.any(dyad_lw < 0):
+        raise ValueError("dyad_lw cannot contain negative values.")
+
+    # edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
+    # dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
+
+    # parse colors
+    dyad_color, dyad_c_mapped = _parse_color_arg(dyad_color, list(dyads))
+    edge_fc, edge_c_mapped = _parse_color_arg(edge_fc, list(edges))
+
+    dyads = H.edges.filterby("order", 1)
+    edges = H.edges.filterby("order", (2, max_order), "between")
 
     for id, he in H._edge.items():
         d = len(he) - 1
