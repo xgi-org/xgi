@@ -680,12 +680,9 @@ def draw_hyperedges(
             points = np.vstack([sorted_coordinates, points])
 
             hull = ConvexHull(points)
-
-            center = np.mean(points, axis=0)
             pts = points[hull.vertices]
 
-            k = 1.1
-            patch = plt.Polygon(k*(pts - center) + center, closed=True, capstyle='round')
+            patch = plt.Polygon(pts, closed=True, capstyle='round')
 
         else:
             patch = plt.Polygon(sorted_coordinates)
