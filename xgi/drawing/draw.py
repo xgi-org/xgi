@@ -24,7 +24,6 @@ from ..exception import XGIError
 from ..utils import subfaces
 from .draw_utils import (
     _CCW_sort,
-    _color_arg_to_dict,
     _draw_arg_to_arr,
     _draw_init,
     _interp_draw_arg,
