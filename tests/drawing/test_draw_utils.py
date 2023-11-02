@@ -53,4 +53,3 @@ def test_interp_draw_arg(edgelist4):
     arg = np.linspace(0, 10, num=10)
     out = _interp_draw_arg(arg, 1, 11)
     assert np.allclose(out, np.linspace(1, 11, num=10))
-
