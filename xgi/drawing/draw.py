@@ -67,6 +67,8 @@ def draw(
     edge_vmin=None,
     edge_vmax=None,
     alpha=0.4,
+    hull=False,
+    radius=0.05,
     node_labels=False,
     hyperedge_labels=False,
     rescale_sizes=True,
@@ -150,6 +152,11 @@ def draw(
         Minimum and maximum for edge colormap scaling. By default, None.
     alpha : float, optional
         The edge transparency. By default, 0.4.
+    hull : bool, optional
+        Wether to draw hyperedes as convex hulls. By default, False.
+    radius: float, optional
+        Radius margin around the nodes when drawing convex hulls. Ignored if
+        `hull is False`. Default is 0.05.
     node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
         By default, False.
@@ -263,6 +270,8 @@ def draw(
             edge_vmax=edge_vmax,
             max_order=max_order,
             hyperedge_labels=hyperedge_labels,
+            hull=hull,
+            radius=radius,
             rescale_sizes=rescale_sizes,
             **kwargs,
         )
@@ -494,8 +503,9 @@ def draw_hyperedges(
     max_order=None,
     params=dict(),
     hyperedge_labels=False,
-    rescale_sizes=True,
     hull=False,
+    radius=0.05,
+    rescale_sizes=True,
     **kwargs,
 ):
     """Draw hyperedges.
@@ -553,6 +563,11 @@ def draw_hyperedges(
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
         pairs.  By default, None.
+    hull : bool, optional
+        Wether to draw hyperedes as convex hulls. By default, False.
+    radius: float, optional
+        Radius margin around the nodes when drawing convex hulls. Ignored if
+        `hull is False`. Default is 0.05.
     rescale_sizes: bool, optional
         If True, linearly interpolate `dyad_lw` and between min/max values
         (1/10) that can be changed in the other argument `params`.
@@ -673,7 +688,7 @@ def draw_hyperedges(
         # Sorting the points counterclockwise (needed to have the correct filling)
         sorted_coordinates = _CCW_sort(coordinates)
         if hull:
-            radius = 0.05
+            # add points in circle with radius around each node
             thetas = np.linspace(0, 2 * np.pi, num=100, endpoint=False)
             offsets = radius * np.array([np.cos(thetas), np.sin(thetas)]).T
             points = np.vstack([p + offsets for p in sorted_coordinates])
@@ -682,7 +697,7 @@ def draw_hyperedges(
             hull = ConvexHull(points)
             pts = points[hull.vertices]
 
-            patch = plt.Polygon(pts, closed=True, capstyle='round')
+            patch = plt.Polygon(pts, capstyle="round")
 
         else:
             patch = plt.Polygon(sorted_coordinates)
@@ -1653,8 +1668,8 @@ def draw_multilayer(
     ydiff = np.max(ys) - np.min(ys)
     ymin = np.min(ys) - ydiff * 0.1
     ymax = np.max(ys) + ydiff * 0.1
-    xmin = np.min(xs) - xdiff * 0.1 #* (width / height)
-    xmax = np.max(xs) + xdiff * 0.1 #* (width / height)
+    xmin = np.min(xs) - xdiff * 0.1  # * (width / height)
+    xmax = np.max(xs) + xdiff * 0.1  # * (width / height)
     xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
 
     # plot layers

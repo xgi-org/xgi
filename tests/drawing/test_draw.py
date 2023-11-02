@@ -410,14 +410,10 @@ def test_draw_multilayer(edgelist8):
     assert edge_coll.get_zorder() == 2  # edges
 
     # node_fc
-    assert np.all(
-        node_coll.get_facecolor() == np.array([[1, 1, 1, 1]])
-    )  # white
+    assert np.all(node_coll.get_facecolor() == np.array([[1, 1, 1, 1]]))  # white
 
     # node_ec
-    assert np.all(
-        node_coll.get_edgecolor() == np.array([[0, 0, 0, 1]])
-    )  # black
+    assert np.all(node_coll.get_edgecolor() == np.array([[0, 0, 0, 1]]))  # black
 
     # node_lw
     assert np.all(node_coll.get_linewidth() == np.array([1]))
@@ -499,21 +495,16 @@ def test_draw_multilayer(edgelist8):
     )
 
     # node_fc
-    assert np.all(
-        node_coll4.get_facecolor() == np.array([[1, 0, 0, 1]])
-    )  # red
+    assert np.all(node_coll4.get_facecolor() == np.array([[1, 0, 0, 1]]))  # red
 
     # node_ec
-    assert np.all(
-        node_coll4.get_edgecolor() == np.array([[0, 0, 1, 1]])
-    )  # blue
+    assert np.all(node_coll4.get_edgecolor() == np.array([[0, 0, 1, 1]]))  # blue
 
     # node_lw
     assert np.all(node_coll4.get_linewidth() == np.array([1]))
 
     # node_size
     assert np.all(node_coll4.get_sizes() == np.array([10**2]))
-
 
     plt.close()
 
