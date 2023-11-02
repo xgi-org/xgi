@@ -62,7 +62,7 @@ class DiHypergraph:
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `DiHypergraph` class.  For more details, see the
     `tutorial
-    <https://github.com/ComplexGroupInteractions/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     References
     ----------
@@ -157,9 +157,9 @@ class DiHypergraph:
         if incoming_data is not None:
             # This import needs to happen when this function is called, not when it is
             # defined.  Otherwise, a circular import error would happen.
-            from ..convert import convert_to_dihypergraph
+            from ..convert import to_dihypergraph
 
-            convert_to_dihypergraph(incoming_data, create_using=self)
+            to_dihypergraph(incoming_data, create_using=self)
         self._hypergraph.update(attr)  # must be after convert
 
     def __str__(self):

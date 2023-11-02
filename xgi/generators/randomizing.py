@@ -2,7 +2,6 @@
 
 All the functions in this module return a Hypergraph class (i.e. a simple, undirected
 hypergraph).
-
 """
 
 import random

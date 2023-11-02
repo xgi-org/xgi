@@ -134,7 +134,7 @@ def pairwise_spring_layout(H, seed=None, k=None, **kwargs):
 
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
-    G = convert.convert_to_graph(H)
+    G = convert.to_graph(H)
     pos = nx.spring_layout(G, seed=seed, k=k, **kwargs)
     return pos
 

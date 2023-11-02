@@ -53,7 +53,7 @@ class Hypergraph:
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `Hypergraph` class.  For more details, see the
     `tutorial
-    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     Examples
     --------
@@ -133,9 +133,9 @@ class Hypergraph:
         if incoming_data is not None:
             # This import needs to happen when this function is called, not when it is
             # defined.  Otherwise, a circular import error would happen.
-            from ..convert import convert_to_hypergraph
+            from ..convert import to_hypergraph
 
-            convert_to_hypergraph(incoming_data, create_using=self)
+            to_hypergraph(incoming_data, create_using=self)
         self._hypergraph.update(attr)  # must be after convert
 
     def __str__(self):

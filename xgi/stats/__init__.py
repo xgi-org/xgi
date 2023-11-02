@@ -40,7 +40,7 @@ NodeView((1, 4))
 
 Many other features are available, including edge-statistics, and user-defined
 statistics.  For more details, see the `tutorial
-<https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+<https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
 """
 
@@ -250,7 +250,7 @@ class NodeStat(IDStat):
 
     `NodeStat` objects represent a mapping that assigns a value to each node in a
     network.  For more details, see the `tutorial
-    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     """
 
@@ -260,7 +260,7 @@ class DiNodeStat(IDStat):
 
     `NodeStat` objects represent a mapping that assigns a value to each node in a
     network.  For more details, see the `tutorial
-    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     """
 
@@ -270,7 +270,7 @@ class EdgeStat(IDStat):
 
     `EdgeStat` objects represent a mapping that assigns a value to each edge in a
     network.  For more details, see the `tutorial
-    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     """
 
@@ -280,7 +280,7 @@ class DiEdgeStat(IDStat):
 
     `EdgeStat` objects represent a mapping that assigns a value to each edge in a
     network.  For more details, see the `tutorial
-    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     """
 
@@ -494,8 +494,7 @@ class MultiNodeStat(MultiIDStat):
     """Multiple node-quantity mappings.
 
     For more details, see the `tutorial
-    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
-
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
     """
 
     statsclass = NodeStat
@@ -506,7 +505,7 @@ class MultiDiNodeStat(MultiIDStat):
     """Multiple node-quantity mappings.
 
     For more details, see the `tutorial
-    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     """
 
@@ -518,7 +517,7 @@ class MultiEdgeStat(MultiIDStat):
     """Multiple edge-quantity mappings.
 
     For more details, see the `tutorial
-    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     """
 
@@ -530,7 +529,7 @@ class MultiDiEdgeStat(MultiIDStat):
     """Multiple edge-quantity mappings.
 
     For more details, see the `tutorial
-    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     """
 

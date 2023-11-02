@@ -198,7 +198,7 @@ class IDView(Mapping, Set):
         See Also
         --------
         IDView.filterby_attr : For more details, see the `tutorial
-        <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+        <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
         Examples
         --------
@@ -282,7 +282,7 @@ class IDView(Mapping, Set):
         See Also
         --------
         IDView.filterby : Identical method.  For more details, see the `tutorial
-        <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+        <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
         Notes
         -----
@@ -543,7 +543,7 @@ class NodeView(IDView):
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `NodeView` class.  For more details, see the
     `tutorial
-    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     """
 
@@ -640,7 +640,7 @@ class EdgeView(IDView):
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `EdgeView` class.  For more details, see the
     `tutorial
-    <https://github.com/xgi-org/xgi/blob/main/tutorials/Tutorial%206%20-%20Statistics.ipynb>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
 
     """
 

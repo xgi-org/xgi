@@ -90,9 +90,9 @@ class SimplicialComplex(Hypergraph):
         self._edgeview = EdgeView(self)
 
         if incoming_data is not None:
-            from ..convert import convert_to_simplicial_complex
+            from ..convert import to_simplicial_complex
 
-            convert_to_simplicial_complex(incoming_data, create_using=self)
+            to_simplicial_complex(incoming_data, create_using=self)
         self._hypergraph.update(attr)  # must be after convert
 
     def __str__(self):

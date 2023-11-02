@@ -7,6 +7,6 @@ xgi.convert.higher_order_network
    
    .. rubric:: Functions
    
-   .. autofunction:: convert_to_hypergraph
-   .. autofunction:: convert_to_dihypergraph
-   .. autofunction:: convert_to_simplicial_complex
+   .. autofunction:: to_hypergraph
+   .. autofunction:: to_dihypergraph
+   .. autofunction:: to_simplicial_complex

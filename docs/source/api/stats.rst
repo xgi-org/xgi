@@ -17,10 +17,10 @@ stats package
       ~xgi.stats.nodestats.clique_eigenvector_centrality
       ~xgi.stats.nodestats.clustering_coefficient
       ~xgi.stats.nodestats.degree
-      ~xgi.stats.nodestats.eigenvector_centrality
+      ~xgi.stats.nodestats.h_eigenvector_centrality
       ~xgi.stats.nodestats.local_clustering_coefficient
       ~xgi.stats.nodestats.node_edge_centrality
-      ~xgi.stats.nodestats.two_nodes_clustering_coefficient
+      ~xgi.stats.nodestats.two_node_clustering_coefficient
 
    *Statistics of edges*
 

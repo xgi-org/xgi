@@ -30,7 +30,7 @@ To install this package locally:
 
 Getting Started
 ---------------
-To get started, take a look at the `tutorials <https://github.com/xgi-org/xgi/tree/main/tutorials>`_
+To get started, take a look at the `tutorials <https://xgi.readthedocs.io/en/stable/api/tutorials.html>`_
 illustrating the library's basic functionality.
 
 Corresponding Data
