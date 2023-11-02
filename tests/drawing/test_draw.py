@@ -568,7 +568,7 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
     assert np.all(phantom_node_coll2.get_linewidth() == np.array([2]))
 
     # edge_size
-    assert np.all(phantom_node_coll.get_sizes() == np.array([15**2]))
+    assert np.all(phantom_node_coll.get_sizes() == np.array([7**2]))
     assert np.all(phantom_node_coll2.get_sizes() == np.array([20**2]))
 
     # line lw

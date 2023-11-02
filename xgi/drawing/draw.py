@@ -1507,7 +1507,7 @@ def draw_dihypergraph(
     edge_marker_ec="black",
     edge_marker="s",
     edge_marker_lw=1,
-    edge_marker_size=15,
+    edge_marker_size=7,
     edge_marker_fc_cmap="crest_r",
     max_order=None,
     node_labels=False,
