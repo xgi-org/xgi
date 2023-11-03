@@ -53,6 +53,9 @@ def draw(
     node_lw=1,
     node_size=7,
     node_shape="o",
+    node_fc_cmap="Reds",
+    vmin=None,
+    vmax=None,
     max_order=None,
     dyad_color="black",
     dyad_lw=1.5,
@@ -110,6 +113,13 @@ def draw(
     node_shape :  string, optional
         The shape of the node. Specification is as matplotlib.scatter
         marker. Default is "o".
+    node_fc_cmap : colormap
+        Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is
+        a str (single color).
+    vmin : float or None
+        Minimum for the node_fc_cmap scaling. By default, None.
+    vmax : float or None
+        Maximum for the node_fc_cmap scaling. By default, None.
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     dyad_color : str, dict, iterable, or EdgeStat, optional
@@ -285,6 +295,9 @@ def draw(
         node_lw=node_lw,
         node_size=node_size,
         node_shape=node_shape,
+        node_fc_cmap=node_fc_cmap,
+        vmin=vmin,
+        vmax=vmax,
         zorder=max_order,
         params=settings,
         node_labels=node_labels,
