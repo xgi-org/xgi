@@ -19,6 +19,7 @@ from scipy.spatial import ConvexHull
 
 from .. import convert
 from ..algorithms import max_edge_order, unique_edge_sizes
+from ..convert import to_bipartite_edgelist
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..utils import subfaces
@@ -45,6 +46,7 @@ __all__ = [
     "draw_hyperedge_labels",
     "draw_multilayer",
     "draw_dihypergraph",
+    "draw_bipartite",
 ]
 
 
@@ -396,7 +398,7 @@ def draw_nodes(
         * "max_node_size" (default: 30)
         * "min_node_lw" (default: 0)
         * "max_node_lw" (default: 5)
-    
+
     kwargs : optional keywords
         See `draw_node_labels` for a description of optional keywords.
 
@@ -599,7 +601,7 @@ def draw_hyperedges(
         Default parameters. Keys that may be useful to override default settings:
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
-    
+
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
 
@@ -843,7 +845,7 @@ def draw_simplices(
         Default parameters. Keys that may be useful to override default settings:
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
-    
+
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
 
@@ -1927,20 +1929,20 @@ def draw_bipartite(
     node_pos=None,
     edge_pos=None,
     ax=None,
-    dyad_color="black",
-    dyad_lw=1,
     node_fc="white",
     node_ec="black",
-    node_marker="o",
+    node_shape="o",
     node_lw=1,
     node_size=10,
-    edge_marker_fc="lightblue",
+    edge_marker_fc="blue",
     edge_marker_ec="black",
-    edge_marker="s",
+    edge_marker_shape="s",
     edge_marker_lw=1,
     edge_marker_size=10,
+    dyad_color="black",
+    dyad_lw=1,
     max_order=None,
-    settings=None,
+    rescale_sizes=True,
     **kwargs,
 ):
     """Draw a hypergraph as a bipartite network.
@@ -2013,14 +2015,18 @@ def draw_bipartite(
         * max_node_size
         * min_node_lw
         * max_node_lw
+        * min_edge_marker_size
+        * max_edge_marker_size
+        * min_edge_marker_lw
+        * max_edge_marker_lw
         * node_fc_cmap
         * node_ec_cmap
-        * min_lines_lw
-        * max_lines_lw
-        * lines_fc_cmap
-        * edge_fc_cmap
         * edge_marker_fc_cmap
         * edge_marker_ec_cmap
+        * min_dyad_lw
+        * max_dyad_lw
+        * dyad_color_cmap
+
 
     Returns
     -------
@@ -2041,153 +2047,106 @@ def draw_bipartite(
     if not isinstance(H, Hypergraph):
         raise XGIError("The input must be a Hypergraph")
 
-    if settings is None:
-        settings = {
-            "min_node_size": 10.0,
-            "max_node_size": 30.0,
-            "min_edge_marker_size": 10.0,
-            "max_edge_marker_size": 30.0,
-            "min_node_lw": 10.0,
-            "max_node_lw": 30.0,
-            "min_edge_marker_lw": 10.0,
-            "max_edge_marker_lw": 30.0,
-            "min_dyad_lw": 1.0,
-            "max_dyad_lw": 5.0,
-            "node_fc_cmap": cm.Reds,
-            "node_ec_cmap": cm.RdBu,
-            "dyad_fc_cmap": cm.Blues,
-            "edge_marker_fc_cmap": cm.Blues,
-            "edge_marker_ec_cmap": cm.Greys,
-        }
+    settings = {
+        "min_node_lw": 10.0,
+        "max_node_lw": 30.0,
+        "min_node_size": 10.0,
+        "max_node_size": 30.0,
+        "min_edge_marker_lw": 10.0,
+        "max_edge_marker_lw": 30.0,
+        "min_edge_marker_size": 10.0,
+        "max_edge_marker_size": 30.0,
+        "min_dyad_lw": 1.0,
+        "max_dyad_lw": 5.0,
+        "node_fc_cmap": cm.Reds,
+        "node_ec_cmap": cm.RdBu,
+        "dyad_color_cmap": cm.Blues,
+        "edge_marker_fc_cmap": cm.Greys,
+        "edge_marker_ec_cmap": cm.Blues,
+    }
 
     settings.update(kwargs)
 
-    if ax is None:
-        ax = plt.gca()
+    node_settings = {
+        "min_node_lw": settings["min_node_lw"],
+        "max_node_lw": settings["max_node_lw"],
+        "min_node_size": settings["min_node_size"],
+        "max_node_size": settings["max_node_size"],
+        "node_fc_cmap": settings["node_fc_cmap"],
+        "node_ec_cmap": settings["node_ec_cmap"],
+    }
 
-    ax.get_xaxis().set_ticks([])
-    ax.get_yaxis().set_ticks([])
-    ax.axis("off")
-
-    if not max_order:
-        max_order = max_edge_order(H)
+    edge_marker_settings = {
+        "min_node_lw": settings["min_edge_marker_lw"],
+        "max_node_lw": settings["max_edge_marker_lw"],
+        "min_node_size": settings["min_edge_marker_size"],
+        "max_node_size": settings["max_edge_marker_size"],
+        "node_fc_cmap": settings["edge_marker_fc_cmap"],
+        "node_ec_cmap": settings["edge_marker_ec_cmap"],
+    }
 
     if not node_pos or not edge_pos:
         node_pos, edge_pos = bipartite_spring_layout(H)
 
-    dyad_lw = _scalar_arg_to_dict(
-        dyad_lw, H.edges, settings["min_dyad_lw"], settings["max_dyad_lw"]
+    if ax is None:
+        ax = plt.gca()
+
+    ax, node_collection = draw_nodes(
+        H=H,
+        pos=node_pos,
+        ax=ax,
+        node_fc=node_fc,
+        node_ec=node_ec,
+        node_lw=node_lw,
+        node_size=node_size,
+        node_shape=node_shape,
+        zorder=2,
+        params=node_settings,
+        node_labels=None,
+        rescale_sizes=rescale_sizes,
+        **kwargs,
     )
 
-    if dyad_color is None:
-        dyad_color = H.edges.size
-
-    dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_fc_cmap"])
-
-    if edge_marker_fc is None:
-        edge_marker_fc = H.edges.size
-
-    edge_marker_fc = _color_arg_to_dict(
-        edge_marker_fc, H.edges, settings["edge_marker_fc_cmap"]
+    ax, edge_marker_collection = draw_nodes(
+        H=H.dual(),
+        pos=edge_pos,
+        ax=ax,
+        node_fc=edge_marker_fc,
+        node_ec=edge_marker_ec,
+        node_lw=edge_marker_lw,
+        node_size=edge_marker_size,
+        node_shape=edge_marker_shape,
+        zorder=1,
+        params=edge_marker_settings,
+        node_labels=None,
+        rescale_sizes=rescale_sizes,
+        **kwargs,
     )
 
-    if edge_marker_ec is None:
-        edge_marker_ec = H.edges.size
+    dyads = to_bipartite_edgelist(H)
+    dyad_lw = _draw_arg_to_arr(dyad_lw)
+    # dyad_color, dyad_c_mapped = _parse_color_arg(dyad_color, list(dyads)
+    # check validity of input values
+    if np.any(dyad_lw < 0):
+        raise ValueError("dyad_lw cannot contain negative values.")
 
-    edge_marker_ec = _color_arg_to_dict(
-        edge_marker_ec, H.edges, settings["edge_marker_ec_cmap"]
+    # interpolate if needed
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
+        )
+
+    dyad_pos = np.asarray([(node_pos[list(e)[0]], edge_pos[list(e)[1]]) for e in dyads])
+
+    dyad_collection = LineCollection(
+        dyad_pos,
+        colors=dyad_color,
+        linewidths=dyad_lw,
+        antialiaseds=(1,),
+        cmap=settings["dyad_color_cmap"],
+        zorder=0,
     )
 
-    edge_marker_lw = _scalar_arg_to_dict(
-        edge_marker_lw,
-        H.edges,
-        settings["min_edge_marker_lw"],
-        settings["max_edge_marker_lw"],
-    )
+    ax.add_collection(dyad_collection)
 
-    edge_marker_size = _scalar_arg_to_dict(
-        edge_marker_size,
-        H.edges,
-        settings["min_edge_marker_size"],
-        settings["max_edge_marker_size"],
-    )
-
-    node_size = _scalar_arg_to_dict(
-        node_size, H.nodes, settings["min_node_size"], settings["max_node_size"]
-    )
-    node_fc = _color_arg_to_dict(node_fc, H.nodes, settings["node_fc_cmap"])
-    node_ec = _color_arg_to_dict(node_ec, H.nodes, settings["node_ec_cmap"])
-    node_lw = _scalar_arg_to_dict(
-        node_lw,
-        H.nodes,
-        settings["min_node_lw"],
-        settings["max_node_lw"],
-    )
-
-    for id, e in H.edges.members(dtype=dict).items():
-        d = len(e) - 1
-        if d > 0:
-            x_edge, y_edge = edge_pos[id]
-            for n in e:
-                x_node, y_node = node_pos[n]
-                line = plt.Line2D(
-                    [x_node, x_edge],
-                    [y_node, y_edge],
-                    color=dyad_color[id],
-                    lw=dyad_lw[id],
-                    zorder=max_order - d,
-                )
-                ax.add_line(line)
-
-    (xs, ys, s, c, ec, lw,) = zip(
-        *[
-            (
-                node_pos[i][0],
-                node_pos[i][1],
-                node_size[i],
-                node_fc[i],
-                node_ec[i],
-                node_lw[i],
-            )
-            for i in H.nodes
-        ]
-    )
-    ax.scatter(
-        x=xs,
-        y=ys,
-        marker=node_marker,
-        s=s,
-        c=c,
-        edgecolors=ec,
-        linewidths=lw,
-        zorder=max_order,
-    )
-
-    (xs, ys, s, c, ec, lw,) = zip(
-        *[
-            (
-                edge_pos[i][0],
-                edge_pos[i][1],
-                edge_marker_size[i],
-                edge_marker_fc[i],
-                edge_marker_ec[i],
-                edge_marker_lw[i],
-            )
-            for i in H.edges
-        ]
-    )
-    ax.scatter(
-        x=xs,
-        y=ys,
-        marker=edge_marker,
-        s=s,
-        c=c,
-        edgecolors=ec,
-        linewidths=lw,
-        zorder=max_order,
-    )
-
-    # compute axis limits
-    _update_lims(node_pos, ax)
-
-    return ax
+    return ax, (node_collection, edge_marker_collection, dyad_collection)

@@ -7,8 +7,8 @@ import numpy as np
 from numpy.linalg import inv, svd
 
 from .. import convert
-from ..core import SimplicialComplex
 from ..convert import to_bipartite_graph
+from ..core import SimplicialComplex
 
 __all__ = [
     "random_layout",
@@ -19,6 +19,7 @@ __all__ = [
     "circular_layout",
     "spiral_layout",
     "barycenter_kamada_kawai_layout",
+    "bipartite_spring_layout",
 ]
 
 
