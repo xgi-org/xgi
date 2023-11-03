@@ -167,7 +167,7 @@ def draw(
         `hull is False`. Default is 0.05.
     node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
-        By default, False. The default node_size (7) is too small to display the default 
+        By default, False. The default node_size (7) is too small to display the default
         labels well. The user may need to set it to a size of a least 15.
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
