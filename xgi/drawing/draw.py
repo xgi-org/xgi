@@ -5,7 +5,6 @@ from inspect import signature
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sb  # for cmap "crest"
 from matplotlib import cm
 from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d.art3d import (
