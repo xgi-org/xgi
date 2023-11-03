@@ -24,7 +24,6 @@ from ..exception import XGIError
 from ..utils import subfaces
 from .draw_utils import (
     _CCW_sort,
-    _color_arg_to_dict,
     _draw_arg_to_arr,
     _draw_init,
     _interp_draw_arg,
@@ -40,7 +39,6 @@ __all__ = [
     "draw_simplices",
     "draw_node_labels",
     "draw_hyperedge_labels",
-    "draw_hypergraph_hull",
     "draw_multilayer",
     "draw_dihypergraph",
 ]
@@ -53,8 +51,11 @@ def draw(
     node_fc="white",
     node_ec="black",
     node_lw=1,
-    node_size=15,
+    node_size=7,
     node_shape="o",
+    node_fc_cmap="Reds",
+    vmin=None,
+    vmax=None,
     max_order=None,
     dyad_color="black",
     dyad_lw=1.5,
@@ -67,6 +68,8 @@ def draw(
     edge_vmin=None,
     edge_vmax=None,
     alpha=0.4,
+    hull=False,
+    radius=0.05,
     node_labels=False,
     hyperedge_labels=False,
     rescale_sizes=True,
@@ -110,6 +113,13 @@ def draw(
     node_shape :  string, optional
         The shape of the node. Specification is as matplotlib.scatter
         marker. Default is "o".
+    node_fc_cmap : colormap
+        Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is
+        a str (single color).
+    vmin : float or None
+        Minimum for the node_fc_cmap scaling. By default, None.
+    vmax : float or None
+        Maximum for the node_fc_cmap scaling. By default, None.
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     dyad_color : str, dict, iterable, or EdgeStat, optional
@@ -152,9 +162,15 @@ def draw(
         Minimum and maximum for edge colormap scaling. By default, None.
     alpha : float, optional
         The edge transparency. By default, 0.4.
+    hull : bool, optional
+        Wether to draw hyperedes as convex hulls. By default, False.
+    radius: float, optional
+        Radius margin around the nodes when drawing convex hulls. Ignored if
+        `hull is False`. Default is 0.05.
     node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
-        By default, False.
+        By default, False. The default node_size (7) is too small to display the default
+        labels well. The user may need to set it to a size of a least 15.
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
         pairs.  By default, False.
@@ -265,6 +281,8 @@ def draw(
             edge_vmax=edge_vmax,
             max_order=max_order,
             hyperedge_labels=hyperedge_labels,
+            hull=hull,
+            radius=radius,
             rescale_sizes=rescale_sizes,
             **kwargs,
         )
@@ -280,6 +298,9 @@ def draw(
         node_lw=node_lw,
         node_size=node_size,
         node_shape=node_shape,
+        node_fc_cmap=node_fc_cmap,
+        vmin=vmin,
+        vmax=vmax,
         zorder=max_order,
         params=settings,
         node_labels=node_labels,
@@ -302,7 +323,7 @@ def draw_nodes(
     node_fc="white",
     node_ec="black",
     node_lw=1,
-    node_size=15,
+    node_size=7,
     node_shape="o",
     node_fc_cmap="Reds",
     vmin=None,
@@ -357,6 +378,8 @@ def draw_nodes(
         The layer on which to draw the nodes.
     node_labels : bool or dict
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
+        The default node_size (7) is too small to display the default labels well.
+        The user may need to set it to a size of a least 15.
     rescale_sizes: bool, optional
         If True, linearly interpolate `node_size` and `node_lw` between min/max values
         (5/30 for size, 0/5 for lw) that can be changed in the other argument `params`.
@@ -496,6 +519,8 @@ def draw_hyperedges(
     max_order=None,
     params=dict(),
     hyperedge_labels=False,
+    hull=False,
+    radius=0.05,
     rescale_sizes=True,
     **kwargs,
 ):
@@ -556,6 +581,11 @@ def draw_hyperedges(
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
         pairs.  By default, None.
+    hull : bool, optional
+        Wether to draw hyperedes as convex hulls. By default, False.
+    radius: float, optional
+        Radius margin around the nodes when drawing convex hulls. Ignored if
+        `hull is False`. Default is 0.05.
     rescale_sizes: bool, optional
         If True, linearly interpolate `dyad_lw` and between min/max values
         (1/10) that can be changed in the other argument `params`.
@@ -676,7 +706,20 @@ def draw_hyperedges(
         coordinates = [[pos[n][0], pos[n][1]] for n in he]
         # Sorting the points counterclockwise (needed to have the correct filling)
         sorted_coordinates = _CCW_sort(coordinates)
-        patch = plt.Polygon(sorted_coordinates, zorder=max_order - d)
+        if hull:
+            # add points in circle with radius around each node
+            thetas = np.linspace(0, 2 * np.pi, num=100, endpoint=False)
+            offsets = radius * np.array([np.cos(thetas), np.sin(thetas)]).T
+            points = np.vstack([p + offsets for p in sorted_coordinates])
+            points = np.vstack([sorted_coordinates, points])
+
+            hull = ConvexHull(points)
+            pts = points[hull.vertices]
+
+            patch = plt.Polygon(pts, capstyle="round")
+
+        else:
+            patch = plt.Polygon(sorted_coordinates)
         patches.append(patch)
 
     edge_collection = PatchCollection(
@@ -1108,262 +1151,6 @@ def draw_hyperedge_labels(
     return text_items
 
 
-def _draw_hull(node_pos, ax, edges_ec, facecolor, alpha, zorder, radius):
-    """Draw a convex hull encompassing the nodes in node_pos
-
-    Parameters
-    ----------
-    node_pos : np.array
-        Array of dimension (n, 2) containing node positions
-    ax : matplotlib.pyplot.axes
-        Axis to plot on
-    edges_ec : str
-        Color of the border of the convex hull
-    facecolor : str
-        Filling color of the convex hull
-    alpha : float
-        Transparency of the convex hull
-    zorder : float
-        Vertical order on which to plot
-    radius : float
-        Radius of the convex hull in the vicinity of the nodes.
-
-    Returns
-    -------
-    ax : matplotlib.pyplot.axes
-
-    """
-
-    thetas = np.linspace(0, 2 * np.pi, num=100, endpoint=False)
-    offsets = radius * np.array([np.cos(thetas), np.sin(thetas)]).T
-    points = np.vstack([p + offsets for p in node_pos])
-    points = np.vstack([node_pos, points])
-
-    hull = ConvexHull(points)
-
-    for simplex in hull.simplices:
-        ax.plot(points[simplex, 0], points[simplex, 1], color=edges_ec, zorder=zorder)
-    ax.fill(
-        points[hull.vertices, 0],
-        points[hull.vertices, 1],
-        color=facecolor,
-        alpha=alpha,
-        zorder=zorder,
-    )
-
-    return ax
-
-
-def draw_hypergraph_hull(
-    H,
-    pos=None,
-    ax=None,
-    dyad_color="black",
-    edge_fc=None,
-    edge_ec=None,
-    node_fc="tab:blue",
-    node_ec="black",
-    node_lw=1,
-    node_size=7,
-    node_shape="o",
-    max_order=None,
-    node_labels=False,
-    hyperedge_labels=False,
-    radius=0.05,
-    aspect="equal",
-    **kwargs,
-):
-    """Draw hypergraphs displaying the hyperedges of order k>1 as convex hulls
-
-
-    Parameters
-    ----------
-    H : Hypergraph
-    pos : dict, optional
-        If passed, this dictionary of positions node_id:(x,y) is used for placing the
-        nodes.  If None (default), use the `barycenter_spring_layout` to compute the
-        positions.
-    ax : matplotlib.pyplot.axes, optional
-        Axis to draw on. If None (default), get the current axes.
-    dyad_color : str, dict, iterable, or EdgeStat, optional
-        Color of the dyadic links.  If str, use the same color for all edges. If a dict,
-        must contain (edge_id: color_str) pairs.  If iterable, assume the colors are
-        specified in the same order as the edges are found in H.edges. If EdgeStat, use
-        a colormap (specified with dyad_color_cmap) associated to it. By default,
-        "black".
-    edge_fc : str, dict, iterable, or EdgeStat, optional
-        Color of the hyperedges of order k>1.  If str, use the same color for all
-        hyperedges of order k>1.  If a dict, must contain (edge_id: color_str) pairs.
-        If other iterable, assume the colors are specified in the same order as the
-        hyperedges are found in H.edges. If EdgeStat, use the colormap specified with
-        edge_fc_cmap. If None (default), use the H.edges.size.
-    edge_ec : str, dict, iterable, or EdgeStat, optional
-        Color of the borders of the hyperdges of order k>1.  If str, use the same color
-        for all edges. If a dict, must contain (edge_id: color_str) pairs.  If iterable,
-        assume the colors are specified in the same order as the edges are found in
-        H.edges. If EdgeStat, use a colormap (specified with edge_ec_cmap) associated to
-        it. If None (default), use the H.edges.size.
-    node_fc : node_fc : str, dict, iterable, or NodeStat, optional
-        Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
-        contain (node_id: color_str) pairs.  If other iterable, assume the colors are
-        specified in the same order as the nodes are found in H.nodes. If NodeStat, use
-        the colormap specified with node_fc_cmap. By default, "tab:blue".
-    node_ec : str, dict, iterable, or NodeStat, optional
-        Color of node borders.  If str, use the same color for all nodes.  If a dict,
-        must contain (node_id: color_str) pairs.  If other iterable, assume the colors
-        are specified in the same order as the nodes are found in H.nodes. If NodeStat,
-        use the colormap specified with node_ec_cmap. By default, "black".
-    node_lw : int, float, dict, iterable, or EdgeStat, optional
-        Line width of the node borders in pixels.  If int or float, use the same width
-        for all node borders.  If a dict, must contain (node_id: width) pairs.  If
-        iterable, assume the widths are specified in the same order as the nodes are
-        found in H.nodes. If NodeStat, use a monotonic linear interpolation defined
-        between min_node_lw and max_node_lw. By default, 1.
-    node_size : int, float, dict, iterable, or NodeStat, optional
-        Radius of the nodes in pixels.  If int or float, use the same radius for all
-        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
-        the radiuses are specified in the same order as the nodes are found in
-        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
-        min_node_size and max_node_size. By default, 7.
-    node_shape :  string, optional
-        The shape of the node. Specification is as matplotlib.scatter
-        marker. Default is "o".
-    max_order : int, optional
-        Maximum of hyperedges to plot. If None (default), plots all orders.
-    node_labels : bool, or dict, optional
-        If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
-        By default, False
-    hyperedge_labels : bool, or dict, optional
-        If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
-        pairs.  By default, False.
-    radius : float, optional
-        Radius of the convex hull in the vicinity of the nodes, by default 0.05.
-    aspect : {"auto", "equal"} or float, optional
-        Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed
-        directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full
-        description at
-        https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_aspect.html
-    **kwargs : optional args
-        Alternate default values. Values that can be overwritten are the following:
-        * min_node_size
-        * max_node_size
-        * min_node_lw
-        * max_node_lw
-        * node_fc_cmap
-        * node_ec_cmap
-        * dyad_color_cmap
-        * edge_fc_cmap
-        * edge_ec_cmap
-        * alpha
-
-    Returns
-    -------
-    ax : matplotlib.pyplot.axes
-
-    See Also
-    --------
-    draw
-
-    """
-
-    settings = {
-        "min_node_size": 5.0,
-        "max_node_size": 30.0,
-        "min_node_lw": 1.0,
-        "max_node_lw": 5.0,
-        "node_fc_cmap": cm.Reds,
-        "node_ec_cmap": cm.Greys,
-        "dyad_color_cmap": cm.Greys,
-        "edge_fc_cmap": cm.Blues,
-        "edge_ec_cmap": cm.Greys,
-        "alpha": 0.4,
-    }
-
-    alpha = settings["alpha"]
-
-    if edge_fc is None:
-        edge_fc = H.edges.size
-
-    edge_fc = _color_arg_to_dict(edge_fc, H.edges, settings["edge_fc_cmap"])
-
-    if edge_ec is None:
-        edge_ec = H.edges.size
-
-    edge_ec = _color_arg_to_dict(edge_ec, H.edges, settings["edge_ec_cmap"])
-
-    settings.update(kwargs)
-
-    ax, pos = _draw_init(H, ax, pos)
-
-    if not max_order:
-        max_order = max_edge_order(H)
-
-    dyad_color = _color_arg_to_dict(dyad_color, H.edges, settings["dyad_color_cmap"])
-
-    for id, he in H._edge.items():
-        d = len(he) - 1
-        if d > max_order:
-            continue
-        if d == 1:
-            # Drawing the edges
-            he = list(he)
-            x_coords = [pos[he[0]][0], pos[he[1]][0]]
-            y_coords = [pos[he[0]][1], pos[he[1]][1]]
-            line = plt.Line2D(
-                x_coords,
-                y_coords,
-                color=dyad_color[id],
-                zorder=max_order - 1,
-                alpha=1,
-            )
-            ax.add_line(line)
-
-        else:
-            coordinates = [[pos[n][0], pos[n][1]] for n in he]
-            _draw_hull(
-                node_pos=np.array(coordinates),
-                ax=ax,
-                edges_ec=edge_ec[id],
-                facecolor=edge_fc[id],
-                alpha=alpha,
-                zorder=max_order - d,
-                radius=radius,
-            )
-
-    if hyperedge_labels:
-        # Get all valid keywords by inspecting the signatures of draw_node_labels
-        valid_label_kwds = signature(draw_hyperedge_labels).parameters.keys()
-        # Remove the arguments of this function (draw_networkx)
-        valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "hyperedge_labels"}
-        if any([k not in valid_label_kwds for k in kwargs]):
-            invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
-            raise ValueError(f"Received invalid argument(s): {invalid_args}")
-        label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
-        draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
-
-    ax, node_collection = draw_nodes(
-        H=H,
-        pos=pos,
-        ax=ax,
-        node_fc=node_fc,
-        node_ec=node_ec,
-        node_lw=node_lw,
-        node_size=node_size,
-        node_shape=node_shape,
-        zorder=max_order,
-        params=settings,
-        node_labels=node_labels,
-        **kwargs,
-    )
-
-    # compute axis limits
-    _update_lims(pos, ax)
-
-    ax.set_aspect(aspect, "datalim")
-
-    return ax, node_collection
-
-
 def draw_multilayer(
     H,
     pos=None,
@@ -1588,8 +1375,8 @@ def draw_multilayer(
     ydiff = np.max(ys) - np.min(ys)
     ymin = np.min(ys) - ydiff * 0.1
     ymax = np.max(ys) + ydiff * 0.1
-    xmin = np.min(xs) - xdiff * 0.1 #* (width / height)
-    xmax = np.max(xs) + xdiff * 0.1 #* (width / height)
+    xmin = np.min(xs) - xdiff * 0.1  # * (width / height)
+    xmax = np.max(xs) + xdiff * 0.1  # * (width / height)
     xx, yy = np.meshgrid([xmin, xmax], [ymin, ymax])
 
     # plot layers
@@ -1730,7 +1517,7 @@ def draw_dihypergraph(
     node_fc="white",
     node_ec="black",
     node_lw=1,
-    node_size=15,
+    node_size=7,
     node_shape="o",
     node_fc_cmap="Reds",
     lines_fc=None,
@@ -1743,7 +1530,7 @@ def draw_dihypergraph(
     edge_marker_ec="black",
     edge_marker="s",
     edge_marker_lw=1,
-    edge_marker_size=15,
+    edge_marker_size=7,
     edge_marker_fc_cmap="crest_r",
     max_order=None,
     node_labels=False,

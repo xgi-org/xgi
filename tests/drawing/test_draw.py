@@ -104,7 +104,7 @@ def test_draw_nodes(edgelist8):
     assert np.all(node_collection2.get_linewidth() == np.array([2]))
 
     # node_size
-    assert np.all(node_collection.get_sizes() == np.array([15**2]))
+    assert np.all(node_collection.get_sizes() == np.array([7**2]))
     assert np.all(node_collection2.get_sizes() == np.array([20**2]))
 
     # zorder
@@ -362,14 +362,22 @@ def test_draw_hypergraph_hull(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 
     fig, ax = plt.subplots()
-    ax, node_collection = xgi.draw_hypergraph_hull(H, ax=ax)
+    ax, collections = xgi.draw(H, ax=ax, hull=True)
+
+    (node_collection, dyad_collection, edge_collection) = collections
 
     # number of elements
-    assert len(ax.patches) == len(H.edges.filterby("size", 2, mode="gt"))  # hyperedges
+    assert len(ax.lines) == 0
+    assert len(ax.patches) == 0
     offsets = node_collection.get_offsets()
     assert offsets.shape[0] == H.num_nodes  # nodes
+    assert len(ax.collections) == 3
+    assert len(dyad_collection.get_paths()) == 3  # dyads
+    assert len(edge_collection.get_paths()) == 6  # other hyperedges
 
     # zorder
+    for line in ax.lines:  # dyads
+        assert line.get_zorder() == 3
     for patch, z in zip(ax.patches, [2, 2, 0, 2, 2]):  # hyperedges
         assert patch.get_zorder() == z
     assert node_collection.get_zorder() == 4  # nodes
@@ -410,14 +418,10 @@ def test_draw_multilayer(edgelist8):
     assert edge_coll.get_zorder() == 2  # edges
 
     # node_fc
-    assert np.all(
-        node_coll.get_facecolor() == np.array([[1, 1, 1, 1]])
-    )  # white
+    assert np.all(node_coll.get_facecolor() == np.array([[1, 1, 1, 1]]))  # white
 
     # node_ec
-    assert np.all(
-        node_coll.get_edgecolor() == np.array([[0, 0, 0, 1]])
-    )  # black
+    assert np.all(node_coll.get_edgecolor() == np.array([[0, 0, 0, 1]]))  # black
 
     # node_lw
     assert np.all(node_coll.get_linewidth() == np.array([1]))
@@ -499,21 +503,16 @@ def test_draw_multilayer(edgelist8):
     )
 
     # node_fc
-    assert np.all(
-        node_coll4.get_facecolor() == np.array([[1, 0, 0, 1]])
-    )  # red
+    assert np.all(node_coll4.get_facecolor() == np.array([[1, 0, 0, 1]]))  # red
 
     # node_ec
-    assert np.all(
-        node_coll4.get_edgecolor() == np.array([[0, 0, 1, 1]])
-    )  # blue
+    assert np.all(node_coll4.get_edgecolor() == np.array([[0, 0, 1, 1]]))  # blue
 
     # node_lw
     assert np.all(node_coll4.get_linewidth() == np.array([1]))
 
     # node_size
     assert np.all(node_coll4.get_sizes() == np.array([10**2]))
-
 
     plt.close()
 
@@ -558,7 +557,7 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
     assert np.all(node_coll2.get_linewidth() == np.array([2]))
 
     # node_size
-    assert np.all(node_coll.get_sizes() == np.array([15**2]))
+    assert np.all(node_coll.get_sizes() == np.array([7**2]))
     assert np.all(node_coll2.get_sizes() == np.array([20**2]))
 
     # edge face colors
@@ -569,7 +568,7 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
     assert np.all(phantom_node_coll2.get_linewidth() == np.array([2]))
 
     # edge_size
-    assert np.all(phantom_node_coll.get_sizes() == np.array([15**2]))
+    assert np.all(phantom_node_coll.get_sizes() == np.array([7**2]))
     assert np.all(phantom_node_coll2.get_sizes() == np.array([20**2]))
 
     # line lw
