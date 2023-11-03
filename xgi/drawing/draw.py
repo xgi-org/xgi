@@ -167,7 +167,8 @@ def draw(
         `hull is False`. Default is 0.05.
     node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
-        By default, False.
+        By default, False. The default node_size (7) is too small to display the default 
+        labels well. The user may need to set it to a size of a least 15.
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
         pairs.  By default, False.
@@ -375,6 +376,8 @@ def draw_nodes(
         The layer on which to draw the nodes.
     node_labels : bool or dict
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
+        The default node_size (7) is too small to display the default labels well.
+        The user may need to set it to a size of a least 15.
     rescale_sizes: bool, optional
         If True, linearly interpolate `node_size` and `node_lw` between min/max values
         (5/30 for size, 0/5 for lw) that can be changed in the other argument `params`.
