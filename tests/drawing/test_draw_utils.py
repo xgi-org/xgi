@@ -3,11 +3,7 @@ import pytest
 from matplotlib import cm
 
 import xgi
-from xgi.drawing.draw import (
-    _CCW_sort,
-    _draw_arg_to_arr,
-    _interp_draw_arg,
-)
+from xgi.drawing.draw import _CCW_sort, _draw_arg_to_arr, _interp_draw_arg
 
 
 def test_CCW_sort():

@@ -392,7 +392,7 @@ def draw_nodes(
         * "max_node_size" (default: 30)
         * "min_node_lw" (default: 0)
         * "max_node_lw" (default: 5)
-    
+
     kwargs : optional keywords
         See `draw_node_labels` for a description of optional keywords.
 
@@ -595,7 +595,7 @@ def draw_hyperedges(
         Default parameters. Keys that may be useful to override default settings:
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
-    
+
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
 
@@ -839,7 +839,7 @@ def draw_simplices(
         Default parameters. Keys that may be useful to override default settings:
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
-    
+
     kwargs : optional keywords
         See `draw_hyperedge_labels` for a description of optional keywords.
 
