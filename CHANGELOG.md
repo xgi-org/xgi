@@ -3,7 +3,7 @@
 ## v0.8.1
 * Added the ability to draw a convex hull as an option in `draw_hyperedges` [#491](https://github.com/xgi-org/xgi/pull/491) (@maximelucas).
 * Fixed sphinx documentation errors [#487](https://github.com/xgi-org/xgi/pull/487) (@nwlandry).
-* Rewrote the multilayer drawing function [#486](https://github.com/xgi-org/xgi/pull/486) (@maximelucas).
+* Rewrote the `draw_multilayer` function [#486](https://github.com/xgi-org/xgi/pull/486) (@maximelucas).
 * Updated the "Projects Using XGI" page [#489](https://github.com/xgi-org/xgi/pull/489) (@nwlandry).
 * Added support for Python 3.12 [#488](https://github.com/xgi-org/xgi/pull/488) (@nwlandry).
 
