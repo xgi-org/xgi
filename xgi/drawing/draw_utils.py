@@ -1,18 +1,9 @@
 """Draw hypergraphs and simplicial complexes with matplotlib."""
 
-from collections.abc import Iterable
-
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.colors import (
-    LinearSegmentedColormap,
-    ListedColormap,
-    is_color_like,
-    to_rgba_array,
-)
-from numpy import ndarray
+from matplotlib.colors import is_color_like, to_rgba_array
 
-from ..exception import XGIError
 from ..stats import EdgeStat, IDStat, NodeStat
 from .layout import barycenter_spring_layout
 
