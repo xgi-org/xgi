@@ -17,6 +17,11 @@ Nicholas W. Landry and Juan Restrepo, "Opinion disparity in hypergraphs with com
 :bdg-link-primary-line:`Paper <https://doi.org/10.1103/PhysRevE.108.034311>`
 :bdg-link-primary-line:`Github <https://github.com/nwlandry/opinion-disparity-in-hypergraphs>`
 
+Timothy LaRock and Renaud Lambiotte, "Encapsulation Structure and Dynamics in Hypergraphs", Journal of Physics: Complexity, In Press (2023).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1088/2632-072X/ad0b39>`
+:bdg-link-primary-line:`Github <https://github.com/tlarock/encapsulation-dynamics>`
+
 Nicolò Ruggieri, Martina Contisciani, Federico Battiston, and Caterina de Bacco, "Community detection in large hypergraphs", *Science Advances* **9**, eadg9159 (2023).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1126/sciadv.adg9159>`
@@ -48,11 +53,6 @@ Nicholas W. Landry, Jean-Gabriel Young, and Nicole Eikmeier, "The simpliciality 
 :bdg-link-primary-line:`Paper <https://doi.org/10.48550/arXiv.2308.13918>`
 :bdg-link-primary-line:`Github <https://github.com/nwlandry/the-simpliciality-of-higher-order-networks>`
 
-Timothy LaRock and Renaud Lambiotte, "Encapsulation Structure and Dynamics in Hypergraphs", arXiv:2307.04613 (2023).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2307.04613>`
-:bdg-link-primary-line:`Github <https://github.com/tlarock/encapsulation-dynamics>`
-
 Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, Maxime Lucas, "Deeper but smaller: Higher-order interactions increase linear stability but shrink basins", arXiv:2309.16581 (2023).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2309.16581>`
@@ -61,6 +61,10 @@ Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, Maxim
 
 Theses
 ======
+
+Leonie Neuhäuser, "Modelling the effect of groups on network structure and dynamics", (2023).
+
+:bdg-link-primary-line:`Thesis <https://doi.org/10.18154/RWTH-2023-08686>`
 
 Thomas Robiglio, "Higher-order structures in face-to-face interaction networks", (2023).
 
