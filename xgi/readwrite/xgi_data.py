@@ -52,14 +52,10 @@ def load_xgi_data(
     XGIError
        The specified dataset does not exist.
     """
-    index_url = (
-        "https://gitlab.com/complexgroupinteractions/"
-        "xgi-data/-/raw/main/index.json?inline=false"
-    )
+    index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
 
     # If no dataset is specified, print a list of the available datasets.
     if dataset is None:
-
         index_data = request_json_from_url(index_url)
         print("Available datasets are the following:")
         print(*index_data, sep="\n")
@@ -79,7 +75,7 @@ def load_xgi_data(
                 "from the xgi-data repository instead. To download a local "
                 "copy, use `download_xgi_data`."
             )
-    data = _request_from_xgi_data(dataset, cache=cache)
+    data = _request_from_xgi_data(index_url, dataset, cache=cache)
 
     return convert.dict_to_hypergraph(
         data, nodetype=nodetype, edgetype=edgetype, max_order=max_order
@@ -99,14 +95,14 @@ def download_xgi_data(dataset, path=""):
         Path to where the local copy should be saved. If none is given, save
         file to local directory.
     """
-
-    jsondata = _request_from_xgi_data(dataset)
+    index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
+    jsondata = _request_from_xgi_data(index_url, dataset)
     jsonfile = open(os.path.join(path, dataset + ".json"), "w")
     json.dump(jsondata, jsonfile)
     jsonfile.close()
 
 
-def _request_from_xgi_data(dataset=None, cache=True):
+def _request_from_xgi_data(index_url, dataset=None, cache=True):
     """Request a dataset from xgi-data.
 
     Parameters
@@ -132,11 +128,6 @@ def _request_from_xgi_data(dataset=None, cache=True):
     ---------
     load_xgi_data
     """
-    index_url = (
-        "https://gitlab.com/complexgroupinteractions/"
-        "xgi-data/-/raw/main/index.json?inline=false"
-    )
-
     index_data = request_json_from_url(index_url)
 
     key = dataset.lower()
