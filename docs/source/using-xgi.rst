@@ -44,7 +44,7 @@ Preprints
 2023
 ----
 
-Gonzalo Contreras-Aso, Cristian Pérez-Corral, and Miguel Romance, "Uplifting edges in higher order networks: spectral centralities for non-uniform hypergraphs", 	arXiv:2310.20335 (2023).
+Gonzalo Contreras-Aso, Cristian Pérez-Corral, and Miguel Romance, "Uplifting edges in higher order networks: spectral centralities for non-uniform hypergraphs", arXiv:2310.20335 (2023).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2310.20335>`
 :bdg-link-primary-line:`Code <https://github.com/LaComarca-Lab/non-uniform-hypergraphs>`
