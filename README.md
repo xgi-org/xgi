@@ -66,7 +66,7 @@ To get started, take a look at the [tutorials](https://xgi.readthedocs.io/en/sta
 
 
 ## Corresponding Data
-A number of higher-order datasets are available in the [XGI-DATA repository](https://gitlab.com/complexgroupinteractions/xgi-data) and can be easily accessed with the `load_xgi_data()` function.
+A number of higher-order datasets are available in the [XGI-DATA repository](https://github.com/xgi-org/xgi-data) and can be easily accessed with the `load_xgi_data()` function.
 
 
 ## How to Contribute

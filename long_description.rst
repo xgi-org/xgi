@@ -35,7 +35,7 @@ illustrating the library's basic functionality.
 
 Corresponding Data
 ------------------
-A number of higher-order datasets are available in the `XGI-DATA repository <https://gitlab.com/complexgroupinteractions/xgi-data>`_ and can be easily accessed with the ``load_xgi_data()`` function.
+A number of higher-order datasets are available in the `XGI-DATA repository <https://github.com/xgi-org/xgi-data>`_ and can be easily accessed with the ``load_xgi_data()`` function.
 
 Contributing
 ------------
