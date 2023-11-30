@@ -6,6 +6,10 @@ Network Statistics
 ------------------
 
 .. raw:: html
+
+   <style>
+   
+   </style>
    
    <script type="text/javascript">
       display_table()
