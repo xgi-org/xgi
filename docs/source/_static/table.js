@@ -22,7 +22,9 @@ async function fetch_JSON_file(url) {
 
     // Create header row
     const header_row = document.createElement('tr');
-    headers = ["Dataset Name", "Num. nodes", "Num. edges", "Min edge size", "Max edge size", "Num. components"]
+    const headers = ["Dataset", "|V|", "|E|"]
+    const header_attrs = ["num-nodes", "num-edges"]
+
     for (const i in headers) {
         const h = document.createElement('th');
         h.textContent = headers[i];
@@ -40,55 +42,17 @@ async function fetch_JSON_file(url) {
         td_name.innerHTML = '<a href=' + url + '>' + key + '</a>';
         data_row.appendChild(td_name);
 
-        // number of nodes
-        const td_num_nodes = document.createElement('td');
-        if (json_data[key]["num-nodes"]) {
-            td_num_nodes.textContent = json_data[key]["num-nodes"];
+        for (const i in header_attrs){
+            const td = document.createElement('td');
+            const attr = header_attrs[i]
+            if (json_data[key][attr]) {
+                td.textContent = json_data[key][attr];
+            }
+            else {
+                td.textContent = "N/A"
+            }
+            data_row.appendChild(td);
         }
-        else {
-            td_num_nodes.textContent = "N/A"
-        }
-        data_row.appendChild(td_num_nodes);
-
-        // number of edges
-        const td_num_edges = document.createElement('td');
-        if (json_data[key]["num-edges"]) {
-            td_num_edges.textContent = json_data[key]["num-edges"];
-        }
-        else {
-            td_num_edges.textContent = "N/A"
-        }
-        data_row.appendChild(td_num_edges);
-
-        // min edge size
-        const td_min_edge_size = document.createElement('td');
-        if (json_data[key]["min-edge-size"]) {
-            td_min_edge_size.textContent = json_data[key]["min-edge-size"];
-        }
-        else {
-            td_min_edge_size.textContent = "N/A"
-        }
-        data_row.appendChild(td_min_edge_size);
-
-        // max edge size
-        const td_max_edge_size = document.createElement('td');
-        if (json_data[key]["max-edge-size"]) {
-            td_max_edge_size.textContent = json_data[key]["max-edge-size"];
-        }
-        else {
-            td_max_edge_size.textContent = "N/A"
-        }
-        data_row.appendChild(td_max_edge_size);
-
-        // number of components
-        const td_num_components = document.createElement('td');
-        if (json_data[key]["num-components"]) {
-            td_num_components.textContent = json_data[key]["num-components"];
-        }
-        else {
-            td_num_components.textContent = "N/A"
-        }
-        data_row.appendChild(td_num_components);
         table_body.appendChild(data_row);
     }
     table.appendChild(table_header)
