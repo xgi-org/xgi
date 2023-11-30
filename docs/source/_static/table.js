@@ -22,12 +22,12 @@ async function fetch_JSON_file(url) {
 
     // Create header row
     const header_row = document.createElement('tr');
-    const headers = ["Dataset", "|V|", "|E|"]
-    const header_attrs = ["num-nodes", "num-edges"]
+    const headers = ["Dataset", "|V|", "|E|", "|E<sub>unique</sub>|", "s<sub>max</sub>"]
+    const header_attrs = ["num-nodes", "num-edges", "num-unique-edges", "max-edge-size"]
 
     for (const i in headers) {
         const h = document.createElement('th');
-        h.textContent = headers[i];
+        h.innerHTML = headers[i];
         header_row.appendChild(h)
     }
     table_header.appendChild(header_row)
