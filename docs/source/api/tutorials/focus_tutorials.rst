@@ -12,5 +12,4 @@
     Tutorial 4 - Generative_Models
     Tutorial 5 - Plotting
     Tutorial 6 - Statistics
-    Tutorial 7 - Convex hulls hypergraph plotting
-    Tutorial 8 - Directed Hypergraphs
+    Tutorial 7 - Directed Hypergraphs
