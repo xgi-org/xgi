@@ -36,7 +36,8 @@ async function fetch_JSON_file(url) {
 
         // dataset name
         const td_name = document.createElement('td');
-        td_name.innerHTML = '<a href=' + json_data[key]["url"] + '>key</a>';
+        const url = json_data[key]["url"].split("/files")[0]
+        td_name.innerHTML = '<a href=' + url + '>' + key + '</a>';
         data_row.appendChild(td_name);
 
         // number of nodes
