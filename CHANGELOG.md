@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.8.2
+* Added an XGI-DATA page to ReadTheDocs with network statistics [#496](https://github.com/xgi-org/xgi/pull/496) (@nwlandry).
+* Added syntax highlighting in the tutorials [#497](https://github.com/xgi-org/xgi/pull/497) (@thomasrobiglio).
+* Changed the xgi-data index location to Github to support the move to Zenodo-hosted datasets [#494](https://github.com/xgi-org/xgi/pull/494) (@nwlandry)
+* Update the list of publications using XGI [#493](https://github.com/xgi-org/xgi/pull/493) (@nwlandry).
+
 ## v0.8.1
 * Added the ability to draw a convex hull as an option in `draw_hyperedges` [#491](https://github.com/xgi-org/xgi/pull/491) (@maximelucas).
 * Fixed sphinx documentation errors [#487](https://github.com/xgi-org/xgi/pull/487) (@nwlandry).
