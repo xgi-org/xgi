@@ -50,4 +50,4 @@ Network Statistics
       display_table()
    </script>
 
-   <p>More details on individual datasets are available at the <a href="https://github.com/xgi-org/xgi-data">XGI-DATA page</a>
+   <p>More details on individual datasets are available at the <a href="https://github.com/xgi-org/xgi-data">XGI-DATA page</a>.</p>
