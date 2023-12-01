@@ -62,6 +62,7 @@ exclude_patterns = []
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
+html_js_files = ["table.js"]
 
 # If your documentation needs a minimal Sphinx version, state it here.
 needs_sphinx = "1.3"

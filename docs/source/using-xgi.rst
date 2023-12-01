@@ -22,7 +22,7 @@ Nicholas W. Landry and Juan Restrepo, "Opinion disparity in hypergraphs with com
 :bdg-link-primary-line:`Paper <https://doi.org/10.1103/PhysRevE.108.034311>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/opinion-disparity-in-hypergraphs>`
 
-Timothy LaRock and Renaud Lambiotte, "Encapsulation Structure and Dynamics in Hypergraphs", Journal of Physics: Complexity, In Press (2023).
+Timothy LaRock and Renaud Lambiotte, "Encapsulation Structure and Dynamics in Hypergraphs", *Journal of Physics: Complexity* **4**, 045007 (2023).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1088/2632-072X/ad0b39>`
 :bdg-link-primary-line:`Code <https://github.com/tlarock/encapsulation-dynamics>`

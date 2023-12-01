@@ -10,6 +10,7 @@
    about
    contributors
    higher-order
+   xgi-data
    gallery
    using-xgi
 
