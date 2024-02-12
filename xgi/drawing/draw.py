@@ -2185,14 +2185,19 @@ def draw_bipartite(
     try:
         dyad_collection = _draw_directed_edges(
             ax,
-            DH,
+            H,
+            settings,
             node_pos,
             edge_pos,
-            node_size,
-            node_shape,
-            edge_marker_size,
-            edge_marker_shape,
-            settings,
+            dyad_lw=dyad_lw,
+            dyad_color=dyad_color,
+            arrowsize=arrowsize,
+            arrowstyle=arrowstyle,
+            connectionstyle=connectionstyle,
+            node_size=5,
+            node_shape="o",
+            edge_marker_size=5,
+            edge_marker_shape="s",
         )
     except UnboundLocalError as e:
         dyad_collection = LineCollection(
@@ -2222,13 +2227,18 @@ def draw_bipartite(
 def _draw_directed_edges(
     ax,
     H,
+    settings,
     node_pos,
     edge_pos,
-    node_size,
-    node_shape,
-    edge_marker_size,
-    edge_marker_shape,
-    settings,
+    dyad_lw=1,
+    dyad_color=None,
+    arrowsize=10,
+    arrowstyle="-|>",
+    connectionstyle="arc3",
+    node_size=5,
+    node_shape="o",
+    edge_marker_size=5,
+    edge_marker_shape="s",
 ):
     """Helper functions"""
 
@@ -2273,7 +2283,7 @@ def _draw_directed_edges(
     edges = H.edges.filterby("size", 2, "geq")
 
     patches = []
-    for e, (head, tail) in edges.dimembers(dtype=dict).items():
+    for e, (tail, head) in edges.dimembers(dtype=dict).items():
         for n in tail:  # lines going towards the center
 
             xy_source = node_pos[n]
@@ -2297,9 +2307,9 @@ def _draw_directed_edges(
                 shrinkA=shrink_source,
                 shrinkB=shrink_target,
                 # mutation_scale=arrowsize,
-                # linewidth=lines_lw,
+                # linewidth=dyad_lw,
                 zorder=0,
-                # color=lines_color,
+                # color=dyad_color,
                 # connectionstyle=connectionstyle,
             )  # arrows go behind nodes
 
@@ -2328,12 +2338,12 @@ def _draw_directed_edges(
                 shrinkA=shrink_source,
                 shrinkB=shrink_target,
                 # mutation_scale=arrowsize,
-                # linewidth=lines_lw,
+                # linewidth=dyad_lw,
                 zorder=0,
-                # color=lines_color,
+                # color=dyad_color,
                 # connectionstyle=connectionstyle,
             )  # arrows go behind nodes
 
             patches.append(patch)
             ax.add_patch(patch)
-        return patches
+    return patches
