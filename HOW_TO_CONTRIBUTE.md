@@ -12,7 +12,7 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 4. [Optional, but STRONGLY preferred] Include any new method/function in the corresponding docs file.
 5. Run `pytest` to verify all unit tests pass.
 6. [Optional, but STRONGLY preferred] Run `pylint xgi/ --disable all --enable W0611` and remove any unnecessary dependencies.
-7. [Optional, but STRONGLY preferred] Run `isort .` to sort any new import statements in the source code and run `nbqa isort docs/source/api/tutorials/*.ipynb` sort any new import statements in the tutorials.
+7. [Optional, but STRONGLY preferred] Run `isort .` and `nbqa isort .` to sort any new import statements in the source code and tutorials.
 8. [Optional, but STRONGLY preferred] Run `black .` for consistent styling.
 9. Update the "Current Version" section of CHANGELOG.md with overview of changes to the interface and add the usernames of all contributors.
 10. Submit Pull Request with a list of changes, links to issues that it addresses (if applicable)
