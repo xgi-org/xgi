@@ -2049,21 +2049,23 @@ def draw_bipartite(
         edge_ids = list(H.edges.filterby("order", max_order, "leq"))
 
     settings = {
-        "min_node_lw": 10.0,
-        "max_node_lw": 30.0,
-        "min_node_size": 10.0,
-        "max_node_size": 30.0,
-        "min_edge_marker_lw": 10.0,
-        "max_edge_marker_lw": 30.0,
-        "min_edge_marker_size": 10.0,
-        "max_edge_marker_size": 30.0,
-        "min_dyad_lw": 1.0,
-        "max_dyad_lw": 5.0,
+        "min_node_lw": 0,
+        "max_node_lw": 5,
+        "min_node_size": 5,
+        "max_node_size": 30,
+        "min_edge_marker_lw": 0,
+        "max_edge_marker_lw": 5,
+        "min_edge_marker_size": 0,
+        "max_edge_marker_size": 5,
+        "min_dyad_lw": 1,
+        "max_dyad_lw": 5,
         "node_fc_cmap": cm.Reds,
         "node_ec_cmap": cm.RdBu,
         "dyad_color_cmap": cm.Blues,
         "edge_marker_fc_cmap": cm.Greys,
         "edge_marker_ec_cmap": cm.Blues,
+        "min_source_margin": 0,
+        "min_target_margin": 0,
     }
 
     settings.update(kwargs)
@@ -2165,7 +2167,7 @@ def draw_bipartite(
     )
 
     dyads = to_bipartite_edgelist(H)
-    
+
     # check validity of input values
     if np.any(dyad_lw < 0):
         raise ValueError("dyad_lw cannot contain negative values.")
@@ -2180,16 +2182,29 @@ def draw_bipartite(
         [(node_pos[e[0]], edge_pos[e[1]]) for e in dyads if e[1] in edge_ids]
     )
 
-    dyad_collection = LineCollection(
-        dyad_pos,
-        colors=dyad_color,
-        linewidths=dyad_lw,
-        antialiaseds=(1,),
-        cmap=settings["dyad_color_cmap"],
-        zorder=0,
-    )
+    try:
+        dyad_collection = _draw_directed_edges(
+            ax,
+            DH,
+            node_pos,
+            edge_pos,
+            node_size,
+            node_shape,
+            edge_marker_size,
+            edge_marker_shape,
+            settings,
+        )
+    except UnboundLocalError as e:
+        dyad_collection = LineCollection(
+            dyad_pos,
+            colors=dyad_color,
+            linewidths=dyad_lw,
+            antialiaseds=(1,),
+            cmap=settings["dyad_color_cmap"],
+            zorder=0,
+        )
 
-    ax.add_collection(dyad_collection)
+        ax.add_collection(dyad_collection)
 
     pos = {}
     for i, n in enumerate(node_pos):
@@ -2202,3 +2217,123 @@ def draw_bipartite(
     _update_lims(pos, ax)
 
     return ax, (node_collection, edge_marker_collection, dyad_collection)
+
+
+def _draw_directed_edges(
+    ax,
+    H,
+    node_pos,
+    edge_pos,
+    node_size,
+    node_shape,
+    edge_marker_size,
+    edge_marker_shape,
+    settings,
+):
+    """Helper functions"""
+
+    def _arrow_shrink(
+        source="node", target="edge", node_size=None, edge_marker_size=None
+    ):
+        """Compute the shrink factor for the arrows based on node sizes."""
+
+        def to_marker_edge(marker_size, marker):
+            # from networkx
+            # https://networkx.org/documentation/stable/_modules/networkx/drawing/nx_pylab.html#draw_networkx_edges
+            if marker in "s^>v<d":  # `large` markers need extra space
+                return marker_size / 1.6
+            else:
+                return marker_size / 2
+
+        shrink_source = to_marker_edge(
+            node_size, node_shape
+        )  # space from source to tail
+        shrink_target = to_marker_edge(
+            edge_marker_size, edge_marker_shape
+        )  # space from  head to target
+
+        if shrink_source < settings["min_source_margin"]:
+            shrink_source = settings["min_source_margin"]
+
+        if shrink_target < settings["min_target_margin"]:
+            shrink_target = settings["min_target_margin"]
+
+        if source == "node" and target == "edge":
+            return shrink_source, shrink_target
+        elif source == "edge" and target == "node":
+            return shrink_target, shrink_source
+        else:
+            raise ValueError("Wrong input arguments.")
+
+    # We are using single patches rather than a PatchCollection of arrows
+    # because Matplotlib has an old bug: FancyArrowPatch has incompatibilities
+    # with PatchCollection (https://github.com/matplotlib/matplotlib/issues/2341)
+    # We are thus following the approach used by NetworkX
+    # https://github.com/networkx/networkx/pull/2760
+    edges = H.edges.filterby("size", 2, "geq")
+
+    patches = []
+    for e, (head, tail) in edges.dimembers(dtype=dict).items():
+        for n in tail:  # lines going towards the center
+
+            xy_source = node_pos[n]
+            xy_target = edge_pos[e]
+
+            shrink_source, shrink_target = _arrow_shrink(
+                source="node",
+                target="edge",
+                node_size=node_size,
+                edge_marker_size=edge_marker_size,
+            )
+            # if lines_c_mapped:
+            #     lines_color = lines_fc[idx]
+            # else:
+            #     lines_color = lines_fc
+
+            patch = FancyArrowPatch(
+                xy_source,
+                xy_target,
+                # arrowstyle=arrowstyle,
+                shrinkA=shrink_source,
+                shrinkB=shrink_target,
+                # mutation_scale=arrowsize,
+                # linewidth=lines_lw,
+                zorder=0,
+                # color=lines_color,
+                # connectionstyle=connectionstyle,
+            )  # arrows go behind nodes
+
+            patches.append(patch)
+            ax.add_patch(patch)
+
+        for n in head:  # lines going out from the center
+            xy_source = edge_pos[e]
+            xy_target = node_pos[n]
+
+            shrink_source, shrink_target = _arrow_shrink(
+                source="edge",
+                target="node",
+                node_size=node_size,
+                edge_marker_size=edge_marker_size,
+            )
+            # if lines_c_mapped:
+            #     lines_color = lines_fc[e]
+            # else:
+            #     lines_color = lines_fc
+
+            patch = FancyArrowPatch(
+                xy_source,
+                xy_target,
+                # arrowstyle=arrowstyle,
+                shrinkA=shrink_source,
+                shrinkB=shrink_target,
+                # mutation_scale=arrowsize,
+                # linewidth=lines_lw,
+                zorder=0,
+                # color=lines_color,
+                # connectionstyle=connectionstyle,
+            )  # arrows go behind nodes
+
+            patches.append(patch)
+            ax.add_patch(patch)
+        return patches
