@@ -1957,7 +1957,7 @@ def _draw_directed_edges(
                 ems = edge_marker_size[edge_to_idx[e]]
             else:
                 ems = edge_marker_size
-            
+
             for n in tail:  # lines going towards the center
 
                 xy_source = node_pos[n]
