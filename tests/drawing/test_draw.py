@@ -590,7 +590,7 @@ def test_draw_bipartite(diedgelist2, edgelist8):
     plt.close("all")
 
 
-def test_draw_dihypergraph_with_str_labels_and_isolated_nodes():
+def test_draw_bipartite_with_str_labels_and_isolated_nodes():
     DH1 = xgi.DiHypergraph()
     DH1.add_nodes_from(["one", "two", "three", "four", "five", "six"])
     DH1.add_edges_from(

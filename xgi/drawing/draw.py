@@ -1946,21 +1946,33 @@ def _draw_directed_edges(
     # We are thus following the approach used by NetworkX
     # https://github.com/networkx/networkx/pull/2760
     edges = H.edges
+    nodes = H.nodes
     edge_to_idx = dict(zip(edges, range(len(edges))))
+    node_to_idx = dict(zip(nodes, range(len(nodes))))
 
     patches = []
     for e, (tail, head) in edges.dimembers(dtype=dict).items():
         if e in edge_ids:
+            if isinstance(edge_marker_size, np.ndarray):  # many node sizes
+                ems = edge_marker_size[edge_to_idx[e]]
+            else:
+                ems = edge_marker_size
+            
             for n in tail:  # lines going towards the center
 
                 xy_source = node_pos[n]
                 xy_target = edge_pos[e]
 
+                if isinstance(node_size, np.ndarray):  # many node sizes
+                    ns = node_size[node_to_idx[n]]
+                else:
+                    ns = node_size
+
                 shrink_source, shrink_target = _arrow_shrink(
                     source="node",
                     target="edge",
-                    node_size=node_size,
-                    edge_marker_size=edge_marker_size,
+                    node_size=ns,
+                    edge_marker_size=ems,
                 )
                 if dyads_c_mapped:
                     d_color = dyad_color[edge_to_idx[e]]
@@ -1987,11 +1999,16 @@ def _draw_directed_edges(
                 xy_source = edge_pos[e]
                 xy_target = node_pos[n]
 
+                if isinstance(node_size, np.ndarray):  # many node sizes
+                    ns = node_size[node_to_idx[n]]
+                else:
+                    ns = node_size
+
                 shrink_source, shrink_target = _arrow_shrink(
                     source="edge",
                     target="node",
-                    node_size=node_size,
-                    edge_marker_size=edge_marker_size,
+                    node_size=ns,
+                    edge_marker_size=ems,
                 )
                 if dyads_c_mapped:
                     d_color = dyad_color[edge_to_idx[e]]

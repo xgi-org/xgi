@@ -8,7 +8,6 @@ xgi.drawing.draw
    .. rubric:: Functions
    
    .. autofunction:: draw
-   .. autofunction:: draw_dihypergraph
    .. autofunction:: draw_multilayer
    .. autofunction:: draw_nodes
    .. autofunction:: draw_hyperedges
