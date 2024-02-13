@@ -21,7 +21,7 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 # -- Project information -----------------------------------------------------
 project = "XGI"
 copyright = "Copyright (C) 2021-2023 XGI Developers"
-release = "0.8"
+release = "0.8.2"
 
 # -- General configuration ---------------------------------------------------
 
@@ -62,6 +62,7 @@ exclude_patterns = []
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
+html_js_files = ["table.js"]
 
 # If your documentation needs a minimal Sphinx version, state it here.
 needs_sphinx = "1.3"

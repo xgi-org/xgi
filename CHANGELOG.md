@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.8.2
+* Added an XGI-DATA page to ReadTheDocs with network statistics [#496](https://github.com/xgi-org/xgi/pull/496) (@nwlandry).
+* Added syntax highlighting in the tutorials [#497](https://github.com/xgi-org/xgi/pull/497) (@thomasrobiglio).
+* Changed the xgi-data index location to Github to support the move to Zenodo-hosted datasets [#494](https://github.com/xgi-org/xgi/pull/494) (@nwlandry)
+* Update the list of publications using XGI [#493](https://github.com/xgi-org/xgi/pull/493) (@nwlandry).
+
+## v0.8.1
+* Added the ability to draw a convex hull as an option in `draw_hyperedges` [#491](https://github.com/xgi-org/xgi/pull/491) (@maximelucas).
+* Fixed sphinx documentation errors [#487](https://github.com/xgi-org/xgi/pull/487) (@nwlandry).
+* Rewrote the `draw_multilayer` function [#486](https://github.com/xgi-org/xgi/pull/486) (@maximelucas).
+* Updated the "Projects Using XGI" page [#489](https://github.com/xgi-org/xgi/pull/489) (@nwlandry).
+* Added support for Python 3.12 [#488](https://github.com/xgi-org/xgi/pull/488) (@nwlandry).
+
 ## v0.8
 * Made `IDViews` respect edge insertion order in the `from_view` method [#482](https://github.com/xgi-org/xgi/pull/482) (@nwlandry).
 * Fixed issues in drawing functions [#476](https://github.com/xgi-org/xgi/pull/476) (@maximelucas).

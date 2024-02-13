@@ -35,7 +35,7 @@ illustrating the library's basic functionality.
 
 Corresponding Data
 ------------------
-A number of higher-order datasets are available in the `XGI-DATA repository <https://gitlab.com/complexgroupinteractions/xgi-data>`_ and can be easily accessed with the ``load_xgi_data()`` function.
+A number of higher-order datasets are available in the `XGI-DATA repository <https://github.com/xgi-org/xgi-data>`_ and can be easily accessed with the ``load_xgi_data()`` function.
 
 Contributing
 ------------
@@ -69,6 +69,6 @@ a citation in your preferred format, and will also integrate well with citation 
 
 License
 -------
-Released under the 3-Clause BSD license (see the `license file <https://github.com/xgi-org/xgi/tree/main/license.md>`_)
+Released under the 3-Clause BSD license (see the `license file <https://github.com/xgi-org/xgi/blob/main/LICENSE.md>`_)
 
 Copyright (C) 2021-2023 XGI Developers
