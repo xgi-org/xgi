@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sb  # for cmap "crest"
 from matplotlib import cm
+from matplotlib.colors import is_color_like
 from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d.art3d import (
     Line3DCollection,
@@ -433,10 +434,6 @@ def draw_nodes(
     settings.update(params)
     settings.update(kwargs)
 
-    # avoid matplotlib scatter UserWarning "Parameters 'cmap' will be ignored"
-    if isinstance(node_fc, str):
-        node_fc_cmap = None
-
     ax, pos = _draw_init(H, ax, pos)
 
     # convert pos to format convenient for scatter
@@ -449,6 +446,12 @@ def draw_nodes(
     node_size = _draw_arg_to_arr(node_size)
     node_fc = _draw_arg_to_arr(node_fc)
     node_lw = _draw_arg_to_arr(node_lw)
+
+    # avoid matplotlib scatter UserWarning "Parameters 'cmap' will be ignored"
+    if isinstance(node_fc, str) or (
+        isinstance(node_fc, np.ndarray) and is_color_like(node_fc[0])
+    ):
+        node_fc_cmap = None
 
     # check validity of input values
     if np.any(node_size < 0):
