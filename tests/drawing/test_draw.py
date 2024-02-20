@@ -1,3 +1,5 @@
+import warnings
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -627,11 +629,13 @@ def test_issue_499(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 
     fig, ax = plt.subplots()
-    with pytest.warns(None) as record:
-        ax, collections = xgi.draw(H, ax=ax, node_fc="black")
-    assert len(record) == 0
 
-    with pytest.warns(None) as record:
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        ax, collections = xgi.draw(H, ax=ax, node_fc="black")
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
         ax, collections = xgi.draw(H, ax=ax, node_fc=["black"] * H.num_nodes)
-    assert len(record) == 0
+
     plt.close("all")
