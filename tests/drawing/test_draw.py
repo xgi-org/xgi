@@ -1,3 +1,5 @@
+import warnings
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
@@ -514,7 +516,7 @@ def test_draw_multilayer(edgelist8):
     # node_size
     assert np.all(node_coll4.get_sizes() == np.array([10**2]))
 
-    plt.close()
+    plt.close("all")
 
 
 def test_draw_bipartite(diedgelist2, edgelist8):
@@ -641,6 +643,8 @@ def test_draw_bipartite(diedgelist2, edgelist8):
     # # edge_size
     assert np.all(edge_marker_coll3.get_sizes() == np.array([7**2]))
     assert np.all(edge_marker_coll4.get_sizes() == np.array([20**2]))
+    
+    plt.close("all")
 
 
 def test_draw_bipartite_with_str_labels_and_isolated_nodes():
@@ -659,3 +663,20 @@ def test_draw_bipartite_with_str_labels_and_isolated_nodes():
     assert len(node_coll4.get_offsets()) == 6  # number of original nodes
     assert len(edge_marker_coll4.get_offsets()) == 2  # number of original edges
     assert len(ax4.patches) == 7  # number of lines
+    plt.close()
+
+
+def test_issue_499(edgelist8):
+    H = xgi.Hypergraph(edgelist8)
+
+    fig, ax = plt.subplots()
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        ax, collections = xgi.draw(H, ax=ax, node_fc="black")
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        ax, collections = xgi.draw(H, ax=ax, node_fc=["black"] * H.num_nodes)
+
+    plt.close("all")
