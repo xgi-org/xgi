@@ -225,3 +225,20 @@ def test_barycenter_kamada_kawai_layout(hypergraph1):
     S = xgi.random_flag_complex_d2(10, 0.2)
     pos = xgi.barycenter_kamada_kawai_layout(H)
     assert len(pos) == S.num_nodes
+
+
+def test_bipartite_spring_layout(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+
+    pos1 = xgi.bipartite_spring_layout(H, seed=0)
+    assert len(pos1) == 2
+    assert len(pos1[0]) == H.num_nodes
+    assert len(pos1[1]) == H.num_edges
+
+    pos2 = xgi.bipartite_spring_layout(H, seed=0)
+
+    for n in pos1[0]:
+        assert np.allclose(pos1[0][n], pos2[0][n])
+
+    for e in pos1[1]:
+        assert np.allclose(pos1[1][e], pos2[1][e])

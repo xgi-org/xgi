@@ -589,6 +589,59 @@ def test_draw_bipartite(diedgelist2, edgelist8):
 
     plt.close("all")
 
+    H = xgi.Hypergraph(edgelist8)
+
+    fig3, ax3 = plt.subplots()
+    ax3, collections3 = xgi.draw_bipartite(H, ax=ax3)
+    node_coll3, edge_marker_coll3, dyad_coll3 = collections3
+    fig4, ax4 = plt.subplots()
+    ax4, collections4 = xgi.draw_bipartite(
+        H,
+        ax=ax4,
+        node_fc="red",
+        node_ec="blue",
+        node_lw=2,
+        node_size=20,
+        dyad_color="blue",
+        dyad_lw=2,
+        edge_marker_fc="red",
+        edge_marker_lw=2,
+        edge_marker_size=20,
+    )
+    node_coll4, edge_marker_coll4, dyad_coll4 = collections4
+
+    # number of elements
+    assert len(node_coll3.get_offsets()) == 7  # number of original nodes
+    assert len(edge_marker_coll3.get_offsets()) == 9  # number of original edges
+    assert len(dyad_coll3._paths) == 26  # number of lines
+
+    # # node face colors
+    assert np.all(node_coll3.get_facecolor() == np.array([[1, 1, 1, 1]]))  # white
+    assert np.all(node_coll4.get_facecolor() == np.array([[1, 0, 0, 1]]))  # red
+
+    # node edge colors
+    assert np.all(node_coll3.get_edgecolor() == np.array([[0, 0, 0, 1]]))  # black
+    assert np.all(node_coll4.get_edgecolor() == np.array([[0, 0, 1, 1]]))  # blue
+
+    # # node_lw
+    assert np.all(node_coll3.get_linewidth() == np.array([1]))
+    assert np.all(node_coll4.get_linewidth() == np.array([2]))
+
+    # # node_size
+    assert np.all(node_coll3.get_sizes() == np.array([7**2]))
+    assert np.all(node_coll4.get_sizes() == np.array([20**2]))
+
+    # # edge face colors
+    assert np.all(edge_marker_coll4.get_facecolor() == np.array([[1, 0, 0, 1]]))  # red
+
+    # # edge _lw
+    assert np.all(edge_marker_coll3.get_linewidth() == np.array([1]))
+    assert np.all(edge_marker_coll4.get_linewidth() == np.array([2]))
+
+    # # edge_size
+    assert np.all(edge_marker_coll3.get_sizes() == np.array([7**2]))
+    assert np.all(edge_marker_coll4.get_sizes() == np.array([20**2]))
+
 
 def test_draw_bipartite_with_str_labels_and_isolated_nodes():
     DH1 = xgi.DiHypergraph()
