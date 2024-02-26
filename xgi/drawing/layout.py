@@ -192,17 +192,13 @@ def _augmented_projection(H, weighted=False):
 
 def bipartite_spring_layout(H, seed=None, k=None, **kwargs):
     """
-    Position the nodes using Fruchterman-Reingold force-directed
-    algorithm using an augmented version of the the graph projection
-    of the hypergraph (or simplicial complex), where phantom nodes
-    (barycenters) are created for each edge composed by more than two nodes.
-    If a simplicial complex is provided the results will be based on the
-    hypergraph constructed from its maximal simplices.
+    Position the nodes and edges using Fruchterman-Reingold force-directed
+    algorithm using the hypergraph converted to a bipartite network.
 
     Parameters
     ----------
-    H : xgi Hypergraph or SimplicialComplex
-        A position will be assigned to every node in H.
+    H : Hypergraph
+        A position will be assigned to every node and edge in H.
     seed : int, RandomState instance or None  optional (default=None)
         Set the random state for deterministic node layouts.
         If int, `seed` is the seed used by the random number generator,
@@ -219,8 +215,10 @@ def bipartite_spring_layout(H, seed=None, k=None, **kwargs):
 
     Returns
     -------
-    pos : dict
-        A dictionary of positions keyed by node
+    pos : tuple of dicts
+        A tuple of two dictionaries:
+        the first is a dictionary of positions keyed by node
+        the second is a dictionary of positions keyed by edge
 
     See Also
     --------
@@ -234,13 +232,10 @@ def bipartite_spring_layout(H, seed=None, k=None, **kwargs):
     >>> N = 50
     >>> ps = [0.1, 0.01]
     >>> H = xgi.random_hypergraph(N, ps)
-    >>> pos = xgi.barycenter_spring_layout(H)
+    >>> pos = xgi.bipartite_spring_layout(H)
     """
     if seed is not None:
         random.seed(seed)
-
-    if isinstance(H, SimplicialComplex):
-        H = convert.from_max_simplices(H)
 
     G, nodedict, edgedict = to_bipartite_graph(H, index=True)
 

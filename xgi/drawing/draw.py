@@ -30,10 +30,7 @@ from .draw_utils import (
     _parse_color_arg,
     _update_lims,
 )
-from .layout import (
-    barycenter_spring_layout,
-    bipartite_spring_layout,
-)
+from .layout import barycenter_spring_layout, bipartite_spring_layout
 
 __all__ = [
     "draw",
@@ -848,6 +845,7 @@ def draw_simplices(
 
     Returns
     -------
+    ax
     collections : a tuple of 2 collections:
         * dyad_collection : matplotlib LineCollection
             Collection containing the dyads
@@ -1516,8 +1514,7 @@ def draw_multilayer(
 def draw_bipartite(
     H,
     ax=None,
-    node_pos=None,
-    edge_pos=None,
+    pos=None,
     node_fc="white",
     node_ec="black",
     node_shape="o",
@@ -1549,14 +1546,11 @@ def draw_bipartite(
         The hypergraph to draw.
     ax : matplotlib.pyplot.axes, optional
         Axis to draw on. If None (default), get the current axes.
-    node_pos : dict, optional
-        If passed, this dictionary of positions node_id:(x,y) is used for placing the
-        node markers.  If None (default), use the `bipartite_spring_layout` to compute
-        the positions.
-    edge_pos : dict, optional
-        If passed, this dictionary of positions edge_id:(x,y) is used for placing the
-        edge markers.  If None (default), use the `bipartite_spring_layout` to compute
-        the positions.
+    pos : tuple of two dicts, optional
+        The tuple should contains a (1) dictionary of positions node_id:(x,y) for
+        placing node markers, and (2) a dictionary of positions edge_id:(x,y) for
+        placing the edge markers.  If None (default), use the
+        `bipartite_spring_layout` to compute the positions.
     node_fc : str, dict, iterable, or NodeStat, optional
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
@@ -1595,7 +1589,8 @@ def draw_bipartite(
         assume the colors are specified in the same order as the hyperedges are found
         in DH.edges. If None (default), use the size of the hyperedges.
     edge_marker_shape: str, optional
-        Marker used for the hyperedges. By default 's' (square marker).
+        Marker used for the hyperedges. By default 's' (square marker). If "", no marker is
+        displayed.
     edge_marker_lw : int, float, dict, iterable, or EdgeStat, optional
         Line width of the edge marker borders in pixels.  If int or float, use the same width
         for all edge marker borders.  If a dict, must contain (edge_id: width) pairs.  If
@@ -1609,8 +1604,8 @@ def draw_bipartite(
         H.edges. If EdgeStat, use a monotonic linear interpolation defined between
         min_edge_marker_size and max_edge_marker_size. By default, 7.
     edge_marker_fc_cmap : colormap
-        Colormap for mapping edge marker colors. By default, "Reds". Ignored, if `edge_marker_fc` is
-        a str (single color).
+        Colormap for mapping edge marker colors. By default, "Reds".
+        Ignored, if `edge_marker_fc` is a str (single color) or an iterable of colors.
     dyad_color : str, dict, iterable, optional
         Color of the bipartite edges. If str, use the same color for all edges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
@@ -1665,6 +1660,15 @@ def draw_bipartite(
     Returns
     -------
     ax : matplotlib.pyplot.axes
+        The axes corresponding the visualization
+    collections : a tuple of 3 collections:
+        * node_collection : matplotlib PathCollection
+            Collection containing the nodes
+        * edge_marker_collection : matplotlib PathCollection
+            Collection containing the edge markers
+        * dyad_collection : matplotlib LineCollection if undirected,
+                            list of FancyArrowPatches if not
+            Collection containing the edges
 
     Raises
     ------
@@ -1674,8 +1678,7 @@ def draw_bipartite(
     See Also
     --------
     draw
-    draw_nodes
-    draw_node_labels
+    draw_multilayer
 
     """
     if isinstance(H, DiHypergraph):
@@ -1732,8 +1735,11 @@ def draw_bipartite(
         "node_ec_cmap": settings["edge_marker_ec_cmap"],
     }
 
-    if not node_pos or not edge_pos:
-        node_pos, edge_pos = bipartite_spring_layout(H)
+    if not pos:
+        pos = bipartite_spring_layout(H)
+
+    node_pos = pos[0]
+    edge_pos = pos[1]
 
     if ax is None:
         ax = plt.gca()
