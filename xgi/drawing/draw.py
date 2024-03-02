@@ -1797,19 +1797,10 @@ def draw_bipartite(
         node_fc_cmap=node_fc_cmap,
         zorder=2,
         params=node_settings,
-        node_labels=None,
+        node_labels=node_labels,
         rescale_sizes=rescale_sizes,
         **kwargs,
     )
-
-    if node_labels is not None:
-        draw_node_labels(
-            H,
-            pos=node_pos,
-            node_labels=node_labels,
-            ax_nodes=ax,
-            zorder=3,
-        )
 
     ax, edge_marker_collection = draw_nodes(
         H=H.dual(),
@@ -1823,19 +1814,10 @@ def draw_bipartite(
         node_fc_cmap=edge_marker_fc_cmap,
         zorder=1,
         params=edge_marker_settings,
-        node_labels=None,
+        node_labels=hyperedge_labels,
         rescale_sizes=rescale_sizes,
         **kwargs,
     )
-
-    if hyperedge_labels is not None:
-        draw_node_labels(
-            H.dual(),
-            pos=edge_pos,
-            node_labels=hyperedge_labels,
-            ax_nodes=ax,
-            zorder=3,
-        )
 
     # check validity of input values
     if np.any(dyad_lw < 0):

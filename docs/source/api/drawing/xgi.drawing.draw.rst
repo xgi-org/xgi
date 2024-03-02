@@ -9,6 +9,7 @@ xgi.drawing.draw
    
    .. autofunction:: draw
    .. autofunction:: draw_multilayer
+   .. autofunction:: draw_bipartite
    .. autofunction:: draw_nodes
    .. autofunction:: draw_hyperedges
    .. autofunction:: draw_simplices
