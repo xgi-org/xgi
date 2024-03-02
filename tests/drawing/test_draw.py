@@ -643,7 +643,7 @@ def test_draw_bipartite(diedgelist2, edgelist8):
     # # edge_size
     assert np.all(edge_marker_coll3.get_sizes() == np.array([7**2]))
     assert np.all(edge_marker_coll4.get_sizes() == np.array([20**2]))
-    
+
     plt.close("all")
 
 
