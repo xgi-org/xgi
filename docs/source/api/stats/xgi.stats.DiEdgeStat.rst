@@ -33,3 +33,5 @@
       ~DiEdgeStat.std
       ~DiEdgeStat.var
       ~DiEdgeStat.moment
+      ~DiEdgeStat.argmin
+      ~DiEdgeStat.argmax

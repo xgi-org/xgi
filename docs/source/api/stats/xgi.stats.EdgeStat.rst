@@ -33,3 +33,5 @@
       ~EdgeStat.std
       ~EdgeStat.var
       ~EdgeStat.moment
+      ~EdgeStat.argmin
+      ~EdgeStat.argmax
