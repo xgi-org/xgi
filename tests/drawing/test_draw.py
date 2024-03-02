@@ -639,3 +639,17 @@ def test_issue_499(edgelist8):
         ax, collections = xgi.draw(H, ax=ax, node_fc=["black"] * H.num_nodes)
 
     plt.close("all")
+
+
+def test_issue_515(edgelist8):
+    H = xgi.Hypergraph(edgelist8)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        ax, (node_coll, edge_coll) = xgi.draw_multilayer(H, node_fc="black")
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        ax, (node_coll, edge_coll) = xgi.draw_multilayer(H, node_fc=["black"] * H.num_nodes)
+
+    plt.close("all")
