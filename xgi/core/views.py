@@ -255,8 +255,6 @@ class IDView(Mapping, Set):
             bunch = [idx for idx in self if values[idx] >= val]
         elif mode == "between":
             bunch = [idx for idx in self if val[0] <= values[idx] <= val[1]]
-        elif "function" in str(type(mode)):
-            bunch = [idx for idx in self if mode(values[idx], val)]
         else:
             raise ValueError(
                 f"Unrecognized mode {mode}. mode must be one of "
@@ -324,12 +322,6 @@ class IDView(Mapping, Set):
                 idx
                 for idx in self
                 if values[idx] is not None and val[0] <= values[idx] <= val[1]
-            ]
-        elif "function" in str(type(mode)):
-            bunch = [
-                idx
-                for idx in self
-                if values[idx] is not None and mode(values[idx], val)
             ]
         else:
             raise ValueError(
