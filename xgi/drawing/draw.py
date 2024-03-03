@@ -1342,6 +1342,12 @@ def draw_multilayer(
     dyad_lw = _draw_arg_to_arr(dyad_lw)
     layer_color = _draw_arg_to_arr(layer_color)
 
+    # avoid matplotlib scatter UserWarning "Parameters 'cmap' will be ignored"
+    if isinstance(node_fc, str) or (
+        isinstance(node_fc, np.ndarray) and is_color_like(node_fc[0])
+    ):
+        node_fc_cmap = None
+
     # check validity of input values
     if np.any(node_size < 0):
         raise ValueError("node_size cannot contain negative values.")
