@@ -247,8 +247,8 @@ class IDStat:
     def argmin(self):
         """The ID corresponding to the minimum of the stat
 
-        When the maximal value is not unique, returns first
-        ID corresponding to the maximal value.
+        When the minimum value is not unique, returns first
+        ID corresponding to the minimum value.
 
         Returns
         -------
@@ -261,8 +261,8 @@ class IDStat:
     def argmax(self):
         """The ID corresponding to the maximum of the stat
 
-        When the minimum value is not unique, returns first
-        ID corresponding to the minimum value.
+        When the maximal value is not unique, returns first
+        ID corresponding to the maximal value.
 
         Returns
         -------
