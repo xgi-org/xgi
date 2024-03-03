@@ -32,3 +32,5 @@
       ~DiNodeStat.std
       ~DiNodeStat.var
       ~DiNodeStat.moment
+      ~DiNodeStat.argmin
+      ~DiNodeStat.argmax

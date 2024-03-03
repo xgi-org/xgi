@@ -232,6 +232,8 @@ def test_aggregates(edgelist1, edgelist2, edgelist8):
     H = xgi.Hypergraph(edgelist1)
     assert H.nodes.degree.max() == 2
     assert H.nodes.degree.min() == 1
+    assert H.nodes.degree.argmax() == 6
+    assert H.nodes.degree.argmin() == 1
     assert H.nodes.degree.sum() == 9
     assert round(H.nodes.degree.mean(), 3) == 1.125
     assert round(H.nodes.degree.std(), 3) == 0.331
@@ -240,6 +242,8 @@ def test_aggregates(edgelist1, edgelist2, edgelist8):
     H = xgi.Hypergraph(edgelist2)
     assert H.nodes.degree.max() == 2
     assert H.nodes.degree.min() == 1
+    assert H.nodes.degree.argmax() == 4
+    assert H.nodes.degree.argmin() == 1
     assert H.nodes.degree.sum() == 7
     assert round(H.nodes.degree.mean(), 3) == 1.167
     assert round(H.nodes.degree.std(), 3) == 0.373
@@ -248,6 +252,8 @@ def test_aggregates(edgelist1, edgelist2, edgelist8):
     H = xgi.Hypergraph(edgelist8)
     assert H.nodes.degree.max() == 6
     assert H.nodes.degree.min() == 2
+    assert H.nodes.degree.argmax() == 0
+    assert H.nodes.degree.argmin() == 5
     assert H.nodes.degree.sum() == 26
     assert round(H.nodes.degree.mean(), 3) == 3.714
     assert round(H.nodes.degree.std(), 3) == 1.385
