@@ -34,3 +34,4 @@
       ~NodeStat.moment
       ~NodeStat.argmin
       ~NodeStat.argmax
+      ~NodeStat.argsort
