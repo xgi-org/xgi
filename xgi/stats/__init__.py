@@ -271,6 +271,25 @@ class IDStat:
         """
         d = self.asdict()
         return max(d, key=d.get)
+    
+    def argsort(self, reverse=False):
+        """Get the list of IDs sorted by stat value.
+
+        When values are not unique, the order of the IDs
+        is preserved.
+
+        Parameters
+        ----------
+        reverse : bool
+            Whether the sorting should be ascending or descending.
+
+        Returns
+        -------
+        list
+            The IDs sorted in ascending or descending order.
+        """
+        d = self.asdict()
+        return sorted(d, key=d.get, reverse=reverse)
 
 
 class NodeStat(IDStat):
