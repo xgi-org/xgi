@@ -271,7 +271,7 @@ class IDStat:
         """
         d = self.asdict()
         return max(d, key=d.get)
-    
+
     def argsort(self, reverse=False):
         """Get the list of IDs sorted by stat value.
 
