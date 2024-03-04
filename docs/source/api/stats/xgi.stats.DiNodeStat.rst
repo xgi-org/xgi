@@ -34,3 +34,4 @@
       ~DiNodeStat.moment
       ~DiNodeStat.argmin
       ~DiNodeStat.argmax
+      ~DiNodeStat.argsort

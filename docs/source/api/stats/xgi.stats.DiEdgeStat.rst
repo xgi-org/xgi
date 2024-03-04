@@ -35,3 +35,4 @@
       ~DiEdgeStat.moment
       ~DiEdgeStat.argmin
       ~DiEdgeStat.argmax
+      ~DiEdgeStat.argsort

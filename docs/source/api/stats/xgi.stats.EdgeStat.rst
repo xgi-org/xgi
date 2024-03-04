@@ -35,3 +35,4 @@
       ~EdgeStat.moment
       ~EdgeStat.argmin
       ~EdgeStat.argmax
+      ~EdgeStat.argsort
