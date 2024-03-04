@@ -650,6 +650,8 @@ def test_issue_515(edgelist8):
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        ax, (node_coll, edge_coll) = xgi.draw_multilayer(H, node_fc=["black"] * H.num_nodes)
+        ax, (node_coll, edge_coll) = xgi.draw_multilayer(
+            H, node_fc=["black"] * H.num_nodes
+        )
 
     plt.close("all")

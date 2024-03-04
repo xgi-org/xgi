@@ -234,6 +234,12 @@ def test_aggregates(edgelist1, edgelist2, edgelist8):
     assert H.nodes.degree.min() == 1
     assert H.nodes.degree.argmax() == 6
     assert H.nodes.degree.argmin() == 1
+    assert H.nodes.degree.argsort() == list(H.nodes.filterby("degree", 1)) + list(
+        H.nodes.filterby("degree", 2)
+    )
+    assert H.nodes.degree.argsort(reverse=True) == list(
+        H.nodes.filterby("degree", 2)
+    ) + list(H.nodes.filterby("degree", 1))
     assert H.nodes.degree.sum() == 9
     assert round(H.nodes.degree.mean(), 3) == 1.125
     assert round(H.nodes.degree.std(), 3) == 0.331
@@ -244,6 +250,9 @@ def test_aggregates(edgelist1, edgelist2, edgelist8):
     assert H.nodes.degree.min() == 1
     assert H.nodes.degree.argmax() == 4
     assert H.nodes.degree.argmin() == 1
+    assert H.nodes.degree.argsort() == list(H.nodes.filterby("degree", 1)) + list(
+        H.nodes.filterby("degree", 2)
+    )
     assert H.nodes.degree.sum() == 7
     assert round(H.nodes.degree.mean(), 3) == 1.167
     assert round(H.nodes.degree.std(), 3) == 0.373
@@ -254,6 +263,13 @@ def test_aggregates(edgelist1, edgelist2, edgelist8):
     assert H.nodes.degree.min() == 2
     assert H.nodes.degree.argmax() == 0
     assert H.nodes.degree.argmin() == 5
+    assert H.nodes.degree.argsort() == list(H.nodes.filterby("degree", 2)) + list(
+        H.nodes.filterby("degree", 3)
+    ) + list(H.nodes.filterby("degree", 4)) + list(
+        H.nodes.filterby("degree", 5)
+    ) + list(
+        H.nodes.filterby("degree", 6)
+    )
     assert H.nodes.degree.sum() == 26
     assert round(H.nodes.degree.mean(), 3) == 3.714
     assert round(H.nodes.degree.std(), 3) == 1.385
