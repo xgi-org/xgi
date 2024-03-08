@@ -32,3 +32,6 @@
       ~NodeStat.std
       ~NodeStat.var
       ~NodeStat.moment
+      ~NodeStat.argmin
+      ~NodeStat.argmax
+      ~NodeStat.argsort

@@ -254,7 +254,7 @@ class IDView(Mapping, Set):
         elif mode == "geq":
             bunch = [idx for idx in self if values[idx] >= val]
         elif mode == "between":
-            bunch = [node for node in self if val[0] <= values[node] <= val[1]]
+            bunch = [idx for idx in self if val[0] <= values[idx] <= val[1]]
         else:
             raise ValueError(
                 f"Unrecognized mode {mode}. mode must be one of "

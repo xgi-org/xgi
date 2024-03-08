@@ -244,6 +244,53 @@ class IDStat:
         arr = self.asnumpy()
         return spmoment(arr, moment=order) if center else np.mean(arr**order)
 
+    def argmin(self):
+        """The ID corresponding to the minimum of the stat
+
+        When the minimum value is not unique, returns first
+        ID corresponding to the minimum value.
+
+        Returns
+        -------
+        hashable
+            The ID to which the minimum value corresponds.
+        """
+        d = self.asdict()
+        return min(d, key=d.get)
+
+    def argmax(self):
+        """The ID corresponding to the maximum of the stat
+
+        When the maximal value is not unique, returns first
+        ID corresponding to the maximal value.
+
+        Returns
+        -------
+        hashable
+            The ID to which the maximum value corresponds.
+        """
+        d = self.asdict()
+        return max(d, key=d.get)
+
+    def argsort(self, reverse=False):
+        """Get the list of IDs sorted by stat value.
+
+        When values are not unique, the order of the IDs
+        is preserved.
+
+        Parameters
+        ----------
+        reverse : bool
+            Whether the sorting should be ascending or descending.
+
+        Returns
+        -------
+        list
+            The IDs sorted in ascending or descending order.
+        """
+        d = self.asdict()
+        return sorted(d, key=d.get, reverse=reverse)
+
 
 class NodeStat(IDStat):
     """An arbitrary node-quantity mapping.

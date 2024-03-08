@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.8.3
+* Fixed the drawing warning (Issue [#499](https://github.com/xgi-org/xgi/issues/499)) that occurs when specifying colors for each node [#512](https://github.com/xgi-org/xgi/pull/512) (@nwlandry).
+* Formatted the tutorial notebooks with isort [#502](https://github.com/xgi-org/xgi/pull/502) (@nwlandry).
+* Fixed a missing link [#503](https://github.com/xgi-org/xgi/pull/503) (@maximelucas).
+* Added a workflow to check all the urls in the documentation work [#498](https://github.com/xgi-org/xgi/pull/498) (@nwlandry).
+
 ## v0.8.2
 * Added an XGI-DATA page to ReadTheDocs with network statistics [#496](https://github.com/xgi-org/xgi/pull/496) (@nwlandry).
 * Added syntax highlighting in the tutorials [#497](https://github.com/xgi-org/xgi/pull/497) (@thomasrobiglio).
