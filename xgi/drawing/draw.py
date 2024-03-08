@@ -1,6 +1,7 @@
 """Draw hypergraphs and simplicial complexes with matplotlib."""
 
 from inspect import signature
+from itertools import chain
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -16,6 +17,8 @@ from mpl_toolkits.mplot3d.art3d import (
     Poly3DCollection,
 )
 from scipy.spatial import ConvexHull
+
+chaini = chain.from_iterable
 
 from .. import convert
 from ..algorithms import max_edge_order, unique_edge_sizes
@@ -1708,11 +1711,14 @@ def draw_bipartite(
     draw_multilayer
 
     """
+
+    is_directed = False
     if isinstance(H, DiHypergraph):
         from ..convert import to_hypergraph
 
         DH = H.copy()
         H = to_hypergraph(DH)
+        is_directed = True
 
     if not isinstance(H, Hypergraph):
         raise XGIError("The input must be a Hypergraph")
@@ -1759,23 +1765,6 @@ def draw_bipartite(
     if not max_order:
         max_order = max_edge_order(H)
 
-    if edge_marker_fc is None:
-        edge_marker_fc = H.edges.size
-
-    # convert all formats to ndarray
-    node_size = _draw_arg_to_arr(node_size)
-    edge_marker_size = _draw_arg_to_arr(edge_marker_size)
-
-    # interpolate if needed
-    if rescale_sizes and isinstance(node_size, np.ndarray):
-        node_size = _interp_draw_arg(
-            node_size, settings["min_node_size"], settings["max_node_size"]
-        )
-    if rescale_sizes and isinstance(edge_marker_size, np.ndarray):
-        edge_marker_size = _interp_draw_arg(
-            edge_marker_size, settings["min_node_size"], settings["max_node_size"]
-        )
-
     ax, node_collection = draw_nodes(
         H=H,
         pos=node_pos,
@@ -1810,8 +1799,8 @@ def draw_bipartite(
         **kwargs,
     )
 
-    try:
-        dyad_collection = draw_directed_dyads(
+    if is_directed:
+        ax, dyad_collection = draw_directed_dyads(
             DH,
             pos=pos,
             ax=ax,
@@ -1830,8 +1819,8 @@ def draw_bipartite(
             edge_marker_shape=edge_marker_shape,
             **kwargs,
         )
-    except UnboundLocalError as e:
-        dyad_collection = draw_undirected_dyads(
+    else:
+        ax, dyad_collection = draw_undirected_dyads(
             H,
             pos=pos,
             ax=ax,
@@ -1947,6 +1936,13 @@ def draw_undirected_dyads(
     else:
         edge_ids = list(H.edges.filterby("order", max_order, "leq"))
 
+    node_pos, edge_pos = pos
+
+    dyads = to_bipartite_edgelist(H)
+    dyad_pos = np.asarray(
+        [(node_pos[e[0]], edge_pos[e[1]]) for e in dyads if e[1] in edge_ids]
+    )
+
     dyad_lw = _draw_arg_to_arr(dyad_lw)
 
     if rescale_sizes and isinstance(dyad_lw, np.ndarray):
@@ -1954,17 +1950,29 @@ def draw_undirected_dyads(
             dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
         )
 
-    # set default colors
-    if dyad_color is None:
-        dyad_color = H.edges.size
-
     # parse colors
     dyad_color, dyads_c_mapped = _parse_color_arg(dyad_color, H.edges)
+
+    if isinstance(dyad_lw, np.ndarray):
+        dyad_lw = np.array(
+            list(
+                chaini([lw] * int(s) for s, lw in zip(H.edges.size.aslist(), dyad_lw)),
+                dtype=float,
+            )
+        )
+
+    if isinstance(dyad_color, np.ndarray):
+        dyad_color = np.array(
+            list(
+                chaini(
+                    [dc] * int(s) for s, dc in zip(H.edges.size.aslist(), dyad_color)
+                ),
+            )
+        )
 
     # convert numbers to colors for FancyArrowPatch
     if dyads_c_mapped:
         norm = mpl.colors.Normalize()
-        print(dyad_color_cmap)
         m = cm.ScalarMappable(norm=norm, cmap=dyad_color_cmap)
         dyad_color = m.to_rgba(dyad_color)
 
@@ -1978,13 +1986,7 @@ def draw_undirected_dyads(
             dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
         )
 
-    node_pos, edge_pos = pos
-
-    dyads = to_bipartite_edgelist(H)
-    dyad_pos = np.asarray(
-        [(node_pos[e[0]], edge_pos[e[1]]) for e in dyads if e[1] in edge_ids]
-    )
-
+    print(len(dyad_pos), len(dyad_color))
     dyad_collection = LineCollection(
         dyad_pos,
         colors=dyad_color,
@@ -1996,7 +1998,7 @@ def draw_undirected_dyads(
     )
 
     ax.add_collection(dyad_collection)
-    return dyad_collection
+    return ax, dyad_collection
 
 
 def draw_directed_dyads(
@@ -2092,7 +2094,7 @@ def draw_directed_dyads(
     -------
     ax : matplotlib.pyplot.axes
         The axes corresponding the visualization
-    * dyad_collection : list of FancyArrowPatches
+    dyad_collection : list of FancyArrowPatches
         representing directed bipartite edges
 
     Raises
@@ -2115,10 +2117,16 @@ def draw_directed_dyads(
     settings.update(kwargs)
 
     if not pos:
-        pos = bipartite_spring_layout(H)
+        from ..convert import to_hypergraph
+
+        pos = bipartite_spring_layout(to_hypergraph(H))
+
+    if ax is None:
+        ax = plt.gca()
 
     if not max_order:
         edge_ids = list(H.edges)
+        max_order = H.edges.order.max()
     else:
         edge_ids = list(H.edges.filterby("order", max_order, "leq"))
 
@@ -2128,10 +2136,6 @@ def draw_directed_dyads(
         dyad_lw = _interp_draw_arg(
             dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
         )
-
-    # set default colors
-    if dyad_color is None:
-        dyad_color = H.edges.size
 
     # parse colors
     dyad_color, dyads_c_mapped = _parse_color_arg(dyad_color, H.edges)
@@ -2202,6 +2206,16 @@ def draw_directed_dyads(
     patches = []
     for e, (tail, head) in edges.dimembers(dtype=dict).items():
         if e in edge_ids:
+            if isinstance(dyad_lw, np.ndarray):  # many node sizes
+                dlw = dyad_lw[edge_to_idx[n]]
+            else:
+                dlw = dyad_lw
+
+            if dyads_c_mapped:
+                d_color = dyad_color[edge_to_idx[e]]
+            else:
+                d_color = dyad_color
+
             if isinstance(edge_marker_size, np.ndarray):  # many node sizes
                 ems = edge_marker_size[edge_to_idx[e]]
             else:
@@ -2223,10 +2237,6 @@ def draw_directed_dyads(
                     node_size=ns,
                     edge_marker_size=ems,
                 )
-                if dyads_c_mapped:
-                    d_color = dyad_color[edge_to_idx[e]]
-                else:
-                    d_color = dyad_color
 
                 patch = FancyArrowPatch(
                     xy_source,
@@ -2235,7 +2245,7 @@ def draw_directed_dyads(
                     shrinkA=shrink_source,
                     shrinkB=shrink_target,
                     mutation_scale=arrowsize,
-                    linewidth=dyad_lw,
+                    linewidth=dlw,
                     linestyle=dyad_style,
                     zorder=0,
                     color=d_color,
@@ -2260,10 +2270,6 @@ def draw_directed_dyads(
                     node_size=ns,
                     edge_marker_size=ems,
                 )
-                if dyads_c_mapped:
-                    d_color = dyad_color[edge_to_idx[e]]
-                else:
-                    d_color = dyad_color
 
                 patch = FancyArrowPatch(
                     xy_source,
@@ -2272,7 +2278,8 @@ def draw_directed_dyads(
                     shrinkA=shrink_source,
                     shrinkB=shrink_target,
                     mutation_scale=arrowsize,
-                    linewidth=dyad_lw,
+                    linewidth=dlw,
+                    linestyle=dyad_style,
                     zorder=0,
                     color=d_color,
                     connectionstyle=connectionstyle,
@@ -2280,4 +2287,4 @@ def draw_directed_dyads(
 
                 patches.append(patch)
                 ax.add_patch(patch)
-    return patches
+    return ax, patches

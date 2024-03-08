@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 import seaborn as sb
+from matplotlib.patches import FancyArrowPatch
 
 import xgi
 from xgi.exception import XGIError
@@ -646,6 +647,15 @@ def test_draw_bipartite(diedgelist2, edgelist8):
 
     plt.close("all")
 
+    # test type
+    with pytest.raises(XGIError):
+        xgi.draw_bipartite([0, 1, 2])
+
+    # test gca
+    fig3, ax = plt.subplots()
+    ax_gca, collections3 = xgi.draw_bipartite(H)
+    assert ax == ax_gca
+
 
 def test_draw_bipartite_with_str_labels_and_isolated_nodes():
     DH1 = xgi.DiHypergraph()
@@ -663,7 +673,46 @@ def test_draw_bipartite_with_str_labels_and_isolated_nodes():
     assert len(node_coll4.get_offsets()) == 6  # number of original nodes
     assert len(edge_marker_coll4.get_offsets()) == 2  # number of original edges
     assert len(ax4.patches) == 7  # number of lines
-    plt.close()
+    plt.close("all")
+
+
+# 1922, 1925, 1928-1929, 1936, 1942, 1949-1952, 1956, 1960, 2101, 2104, 2111, 2117, 2124-2126, 2130, 2134, 2163, 2166, 2173, 2189, 2199, 2210, 2236, 2247
+def test_draw_undirected_dyads(edgelist8):
+    H = xgi.Hypergraph(edgelist8)
+
+    fig, ax = plt.subplots()
+    ax, dyad_collection = xgi.draw_undirected_dyads(H)
+    assert len(dyad_collection._paths) == 26  # number of lines
+
+    with pytest.raises(ValueError):
+        fig, ax = plt.subplots()
+        ax, dyad_collection = xgi.draw_undirected_dyads(H, dyad_lw=-1)
+
+    fig, ax = plt.subplots()
+    ax, dyad_collection = xgi.draw_undirected_dyads(
+        H, dyad_color=np.random.random(H.num_edges)
+    )
+    assert len(np.unique(dyad_collection.get_color())) == 9
+    plt.close("all")
+
+
+def test_draw_directed_dyads(diedgelist1):
+    H = xgi.DiHypergraph(diedgelist1)
+
+    fig, ax = plt.subplots()
+    ax, dyad_collection = xgi.draw_directed_dyads(H)
+    assert len(dyad_collection) == 9  # number of lines
+    assert isinstance(dyad_collection[0], FancyArrowPatch)
+
+    with pytest.raises(ValueError):
+        fig, ax = plt.subplots()
+        ax, dyad_collection = xgi.draw_directed_dyads(H, dyad_lw=-1)
+
+    fig, ax = plt.subplots()
+    ax, dyad_collection = xgi.draw_directed_dyads(
+        H, dyad_color=np.random.random(H.num_edges)
+    )
+    plt.close("all")
 
 
 def test_issue_499(edgelist8):
