@@ -2131,6 +2131,8 @@ def draw_directed_dyads(
         edge_ids = list(H.edges.filterby("order", max_order, "leq"))
 
     dyad_lw = _draw_arg_to_arr(dyad_lw)
+    node_size = _draw_arg_to_arr(node_size)
+    edge_marker_size = _draw_arg_to_arr(edge_marker_size)
 
     if rescale_sizes and isinstance(dyad_lw, np.ndarray):
         dyad_lw = _interp_draw_arg(
