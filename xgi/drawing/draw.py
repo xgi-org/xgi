@@ -1809,11 +1809,11 @@ def draw_bipartite(
             DH,
             pos=pos,
             ax=ax,
+            max_order=max_order,
             dyad_color=dyad_color,
             dyad_lw=dyad_lw,
             dyad_style=dyad_style,
             dyad_color_cmap=dyad_color_cmap,
-            max_order=max_order,
             rescale_sizes=rescale_sizes,
             arrowsize=arrowsize,
             arrowstyle=arrowstyle,
@@ -1825,16 +1825,15 @@ def draw_bipartite(
             **kwargs,
         )
     except UnboundLocalError as e:
-        print(dyad_color)
         dyad_collection = draw_undirected_dyads(
             H,
             pos=pos,
             ax=ax,
+            max_order=max_order,
             dyad_color=dyad_color,
             dyad_lw=dyad_lw,
             dyad_style=dyad_style,
             dyad_color_cmap=dyad_color_cmap,
-            max_order=max_order,
             rescale_sizes=rescale_sizes,
             **kwargs,
         )
@@ -1860,7 +1859,7 @@ def draw_undirected_dyads(
     ax=None,
     max_order=None,
     dyad_color="black",
-    dyad_lw=1.5,
+    dyad_lw=1,
     dyad_style="solid",
     dyad_color_cmap="Greys",
     rescale_sizes=True,
@@ -1959,6 +1958,7 @@ def draw_undirected_dyads(
     # convert numbers to colors for FancyArrowPatch
     if dyads_c_mapped:
         norm = mpl.colors.Normalize()
+        print(dyad_color_cmap)
         m = cm.ScalarMappable(norm=norm, cmap=dyad_color_cmap)
         dyad_color = m.to_rgba(dyad_color)
 
@@ -1985,7 +1985,7 @@ def draw_undirected_dyads(
         linewidths=dyad_lw,
         antialiaseds=(1,),
         linestyle=dyad_style,
-        cmap=settings["dyad_color_cmap"],
+        cmap=dyad_color_cmap,
         zorder=0,
     )
 
@@ -1999,7 +1999,7 @@ def draw_directed_dyads(
     ax=None,
     max_order=None,
     dyad_color="black",
-    dyad_lw=1.5,
+    dyad_lw=1,
     dyad_style="solid",
     dyad_color_cmap="Greys",
     arrowsize=10,
