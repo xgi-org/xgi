@@ -42,6 +42,8 @@ __all__ = [
     "draw_hyperedge_labels",
     "draw_multilayer",
     "draw_bipartite",
+    "draw_undirected_dyads",
+    "draw_directed_dyads",
 ]
 
 
@@ -1516,29 +1518,32 @@ def draw_multilayer(
 
 def draw_bipartite(
     H,
-    ax=None,
     pos=None,
+    ax=None,
     node_fc="white",
     node_ec="black",
-    node_shape="o",
     node_lw=1,
     node_size=7,
+    node_shape="o",
     node_fc_cmap="Reds",
-    edge_marker_fc=None,
+    edge_marker_fc="blue",
     edge_marker_ec="black",
-    edge_marker_shape="s",
     edge_marker_lw=1,
     edge_marker_size=7,
-    edge_marker_fc_cmap="crest_r",
-    dyad_color=None,
+    edge_marker_shape="s",
+    edge_marker_fc_cmap="Blues",
+    max_order=None,
+    dyad_color="black",
     dyad_lw=1,
+    dyad_style="solid",
+    dyad_color_cmap="Greens",
     node_labels=None,
     hyperedge_labels=None,
-    max_order=None,
     arrowsize=10,
-    arrowstyle="-|>",
+    arrowstyle="->",
     connectionstyle="arc3",
     rescale_sizes=True,
+    aspect="equal",
     **kwargs,
 ):
     """Draw a hypergraph as a bipartite network.
@@ -1547,13 +1552,13 @@ def draw_bipartite(
     ----------
     H : Hypergraph or DiHypergraph
         The hypergraph to draw.
-    ax : matplotlib.pyplot.axes, optional
-        Axis to draw on. If None (default), get the current axes.
     pos : tuple of two dicts, optional
         The tuple should contains a (1) dictionary of positions node_id:(x,y) for
         placing node markers, and (2) a dictionary of positions edge_id:(x,y) for
         placing the edge markers.  If None (default), use the
         `bipartite_spring_layout` to compute the positions.
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
     node_fc : str, dict, iterable, or NodeStat, optional
         Color of the nodes.  If str, use the same color for all nodes.  If a dict, must
         contain (node_id: color_str) pairs.  If other iterable, assume the colors are
@@ -1609,6 +1614,8 @@ def draw_bipartite(
     edge_marker_fc_cmap : colormap
         Colormap for mapping edge marker colors. By default, "Reds".
         Ignored, if `edge_marker_fc` is a str (single color) or an iterable of colors.
+    max_order : int, optional
+        Maximum of hyperedges to plot. If None (default), plots all orders.
     dyad_color : str, dict, iterable, optional
         Color of the bipartite edges. If str, use the same color for all edges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
@@ -1625,8 +1632,6 @@ def draw_bipartite(
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
         pairs.  By default, False.
-    max_order : int, optional
-        Maximum of hyperedges to plot. If None (default), plots all orders.
     arrowsize : int (default=10)
         Size of the arrow head's length and width. See `matplotlib.patches.FancyArrowPatch`
         for attribute `mutation_scale` for more info.
@@ -1693,11 +1698,6 @@ def draw_bipartite(
     if not isinstance(H, Hypergraph):
         raise XGIError("The input must be a Hypergraph")
 
-    if not max_order:
-        edge_ids = list(H.edges)
-    else:
-        edge_ids = list(H.edges.filterby("order", max_order, "leq"))
-
     settings = {
         "min_node_lw": 0,
         "max_node_lw": 5,
@@ -1741,8 +1741,7 @@ def draw_bipartite(
     if not pos:
         pos = bipartite_spring_layout(H)
 
-    node_pos = pos[0]
-    edge_pos = pos[1]
+    node_pos, edge_pos = pos
 
     if ax is None:
         ax = plt.gca()
@@ -1750,17 +1749,12 @@ def draw_bipartite(
     if not max_order:
         max_order = max_edge_order(H)
 
-    # set default colors
-    if dyad_color is None:
-        dyad_color = H.edges.size
-
     if edge_marker_fc is None:
         edge_marker_fc = H.edges.size
 
     # convert all formats to ndarray
     node_size = _draw_arg_to_arr(node_size)
     edge_marker_size = _draw_arg_to_arr(edge_marker_size)
-    dyad_lw = _draw_arg_to_arr(dyad_lw)
 
     # interpolate if needed
     if rescale_sizes and isinstance(node_size, np.ndarray):
@@ -1771,19 +1765,6 @@ def draw_bipartite(
         edge_marker_size = _interp_draw_arg(
             edge_marker_size, settings["min_node_size"], settings["max_node_size"]
         )
-    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
-        dyad_lw = _interp_draw_arg(
-            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
-        )
-
-    # parse colors
-    dyad_color, dyads_c_mapped = _parse_color_arg(dyad_color, H.edges)
-
-    # convert numbers to colors for FancyArrowPatch
-    if dyads_c_mapped:
-        norm = mpl.colors.Normalize()
-        m = cm.ScalarMappable(norm=norm, cmap=edge_marker_fc_cmap)
-        dyad_color = m.to_rgba(dyad_color)
 
     ax, node_collection = draw_nodes(
         H=H,
@@ -1819,51 +1800,40 @@ def draw_bipartite(
         **kwargs,
     )
 
-    # check validity of input values
-    if np.any(dyad_lw < 0):
-        raise ValueError("dyad_lw cannot contain negative values.")
-
-    # interpolate if needed
-    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
-        dyad_lw = _interp_draw_arg(
-            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
-        )
-
     try:
-        dyad_collection = _draw_directed_edges(
-            edge_ids,
-            ax,
+        dyad_collection = draw_directed_dyads(
             DH,
-            settings,
-            node_pos,
-            edge_pos,
-            dyads_c_mapped,
-            dyad_lw=dyad_lw,
+            pos=pos,
+            ax=ax,
             dyad_color=dyad_color,
+            dyad_lw=dyad_lw,
+            dyad_style=dyad_style,
+            dyad_color_cmap=dyad_color_cmap,
+            max_order=max_order,
+            rescale_sizes=rescale_sizes,
             arrowsize=arrowsize,
             arrowstyle=arrowstyle,
             connectionstyle=connectionstyle,
             node_size=node_size,
             node_shape=node_shape,
             edge_marker_size=edge_marker_size,
-            edge_marker_shape="s",
+            edge_marker_shape=edge_marker_shape,
+            **kwargs,
         )
     except UnboundLocalError as e:
-        dyads = to_bipartite_edgelist(H)
-        dyad_pos = np.asarray(
-            [(node_pos[e[0]], edge_pos[e[1]]) for e in dyads if e[1] in edge_ids]
+        print(dyad_color)
+        dyad_collection = draw_undirected_dyads(
+            H,
+            pos=pos,
+            ax=ax,
+            dyad_color=dyad_color,
+            dyad_lw=dyad_lw,
+            dyad_style=dyad_style,
+            dyad_color_cmap=dyad_color_cmap,
+            max_order=max_order,
+            rescale_sizes=rescale_sizes,
+            **kwargs,
         )
-
-        dyad_collection = LineCollection(
-            dyad_pos,
-            colors=dyad_color,
-            linewidths=dyad_lw,
-            antialiaseds=(1,),
-            cmap=settings["dyad_color_cmap"],
-            zorder=0,
-        )
-
-        ax.add_collection(dyad_collection)
 
     pos = {}
     for i, n in enumerate(node_pos):
@@ -1875,27 +1845,161 @@ def draw_bipartite(
     # compute axis limits
     _update_lims(pos, ax)
 
+    ax.set_aspect(aspect, "datalim")
+
     return ax, (node_collection, edge_marker_collection, dyad_collection)
 
 
-def _draw_directed_edges(
-    edge_ids,
-    ax,
+def draw_undirected_dyads(
     H,
-    settings,
-    node_pos,
-    edge_pos,
-    dyads_c_mapped,
-    dyad_lw=1,
-    dyad_color=None,
+    pos=None,
+    ax=None,
+    dyad_color="black",
+    dyad_lw=1.5,
+    dyad_style="solid",
+    dyad_color_cmap="Greys",
+    max_order=None,
+    rescale_sizes=True,
+    **kwargs,
+):
+    settings = {
+        "min_dyad_lw": 1,
+        "max_dyad_lw": 5,
+        "dyad_color_cmap": cm.Blues,
+    }
+    settings.update(kwargs)
+
+    if not pos:
+        pos = bipartite_spring_layout(H)
+
+    if ax is None:
+        ax = plt.gca()
+
+    if not max_order:
+        edge_ids = list(H.edges)
+        max_order = max_edge_order(H)
+    else:
+        edge_ids = list(H.edges.filterby("order", max_order, "leq"))
+
+    dyad_lw = _draw_arg_to_arr(dyad_lw)
+
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
+        )
+
+    # set default colors
+    if dyad_color is None:
+        dyad_color = H.edges.size
+
+    # parse colors
+    dyad_color, dyads_c_mapped = _parse_color_arg(dyad_color, H.edges)
+
+    # convert numbers to colors for FancyArrowPatch
+    if dyads_c_mapped:
+        norm = mpl.colors.Normalize()
+        m = cm.ScalarMappable(norm=norm, cmap=dyad_color_cmap)
+        dyad_color = m.to_rgba(dyad_color)
+
+    # check validity of input values
+    if np.any(dyad_lw < 0):
+        raise ValueError("dyad_lw cannot contain negative values.")
+
+    # interpolate if needed
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
+        )
+
+    node_pos, edge_pos = pos
+
+    dyads = to_bipartite_edgelist(H)
+    dyad_pos = np.asarray(
+        [(node_pos[e[0]], edge_pos[e[1]]) for e in dyads if e[1] in edge_ids]
+    )
+
+    dyad_collection = LineCollection(
+        dyad_pos,
+        colors=dyad_color,
+        linewidths=dyad_lw,
+        antialiaseds=(1,),
+        linestyle=dyad_style,
+        cmap=settings["dyad_color_cmap"],
+        zorder=0,
+    )
+
+    ax.add_collection(dyad_collection)
+    return dyad_collection
+
+
+def draw_directed_dyads(
+    H,
+    pos=None,
+    ax=None,
+    dyad_color="black",
+    dyad_lw=1.5,
+    dyad_style="solid",
+    dyad_color_cmap="Greys",
+    max_order=None,
+    rescale_sizes=True,
     arrowsize=10,
-    arrowstyle="-|>",
+    arrowstyle="->",
     connectionstyle="arc3",
     node_size=5,
     node_shape="o",
     edge_marker_size=5,
     edge_marker_shape="s",
+    **kwargs,
 ):
+    settings = {
+        "min_dyad_lw": 1,
+        "max_dyad_lw": 5,
+        "dyad_color_cmap": cm.Blues,
+        "min_source_margin": 0,
+        "min_target_margin": 0,
+    }
+    settings.update(kwargs)
+
+    if not pos:
+        pos = bipartite_spring_layout(H)
+
+    if not max_order:
+        edge_ids = list(H.edges)
+    else:
+        edge_ids = list(H.edges.filterby("order", max_order, "leq"))
+
+    dyad_lw = _draw_arg_to_arr(dyad_lw)
+
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
+        )
+
+    # set default colors
+    if dyad_color is None:
+        dyad_color = H.edges.size
+
+    # parse colors
+    dyad_color, dyads_c_mapped = _parse_color_arg(dyad_color, H.edges)
+
+    # convert numbers to colors for FancyArrowPatch
+    if dyads_c_mapped:
+        norm = mpl.colors.Normalize()
+        m = cm.ScalarMappable(norm=norm, cmap=dyad_color_cmap)
+        dyad_color = m.to_rgba(dyad_color)
+
+    # check validity of input values
+    if np.any(dyad_lw < 0):
+        raise ValueError("dyad_lw cannot contain negative values.")
+
+    # interpolate if needed
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
+        )
+
+    node_pos, edge_pos = pos
+
     """Helper functions"""
 
     def _arrow_shrink(
@@ -1978,6 +2082,7 @@ def _draw_directed_edges(
                     shrinkB=shrink_target,
                     mutation_scale=arrowsize,
                     linewidth=dyad_lw,
+                    linestyle=dyad_style,
                     zorder=0,
                     color=d_color,
                     connectionstyle=connectionstyle,
