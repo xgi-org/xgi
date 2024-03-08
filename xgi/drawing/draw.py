@@ -1526,7 +1526,7 @@ def draw_bipartite(
     node_size=7,
     node_shape="o",
     node_fc_cmap="Reds",
-    edge_marker_fc="blue",
+    edge_marker_fc="cornflowerblue",
     edge_marker_ec="black",
     edge_marker_lw=1,
     edge_marker_size=7,
@@ -1536,7 +1536,7 @@ def draw_bipartite(
     dyad_color="black",
     dyad_lw=1,
     dyad_style="solid",
-    dyad_color_cmap="Greens",
+    dyad_color_cmap="Greys",
     node_labels=None,
     hyperedge_labels=None,
     arrowsize=10,
@@ -1555,8 +1555,8 @@ def draw_bipartite(
     pos : tuple of two dicts, optional
         The tuple should contains a (1) dictionary of positions node_id:(x,y) for
         placing node markers, and (2) a dictionary of positions edge_id:(x,y) for
-        placing the edge markers.  If None (default), use the
-        `bipartite_spring_layout` to compute the positions.
+        placing the edge markers.  If None (default), use the `bipartite_spring_layout`
+        to compute the positions.
     ax : matplotlib.pyplot.axes, optional
         Axis to draw on. If None (default), get the current axes.
     node_fc : str, dict, iterable, or NodeStat, optional
@@ -1569,8 +1569,6 @@ def draw_bipartite(
         must contain (node_id: color_str) pairs.  If other iterable, assume the colors
         are specified in the same order as the nodes are found in H.nodes. If NodeStat,
         use the colormap specified with node_ec_cmap. By default, "black".
-    node_shape : str, optional
-        Marker used for the nodes. By default 'o' (circle marker).
     node_lw : int, float, dict, iterable, or NodeStat, optional
         Line width of the node borders in pixels.  If int or float, use the same width
         for all node borders.  If a dict, must contain (node_id: width) pairs.  If
@@ -1583,6 +1581,8 @@ def draw_bipartite(
         the radiuses are specified in the same order as the nodes are found in
         H.nodes. If NodeStat, use a monotonic linear interpolation defined between
         min_node_size and max_node_size. By default, 7.
+    node_shape : str, optional
+        Marker used for the nodes. By default 'o' (circle marker).
     node_fc_cmap : colormap
         Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is
         a str (single color).
@@ -1590,15 +1590,12 @@ def draw_bipartite(
         Filling color of the hyperedges (markers). If str, use the same color for all hyperedges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
         assume the colors are specified in the same order as the hyperedges are found
-        in DH.edges. If None (default), use the size of the hyperedges.
+        in DH.edges. By default, "cornflowerblue".
     edge_marker_ec: str, dict, iterable, optional
         Edge color of the hyperedges (markers). If str, use the same color for all hyperedges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
         assume the colors are specified in the same order as the hyperedges are found
-        in DH.edges. If None (default), use the size of the hyperedges.
-    edge_marker_shape: str, optional
-        Marker used for the hyperedges. By default 's' (square marker). If "", no marker is
-        displayed.
+        in DH.edges. By default, "black".
     edge_marker_lw : int, float, dict, iterable, or EdgeStat, optional
         Line width of the edge marker borders in pixels.  If int or float, use the same width
         for all edge marker borders.  If a dict, must contain (edge_id: width) pairs.  If
@@ -1611,8 +1608,11 @@ def draw_bipartite(
         the radii are specified in the same order as the edges are found in
         H.edges. If EdgeStat, use a monotonic linear interpolation defined between
         min_edge_marker_size and max_edge_marker_size. By default, 7.
+    edge_marker_shape: str, optional
+        Marker used for the hyperedges. By default 's' (square marker). If "", no marker is
+        displayed.
     edge_marker_fc_cmap : colormap
-        Colormap for mapping edge marker colors. By default, "Reds".
+        Colormap for mapping edge marker colors. By default, "Blues".
         Ignored, if `edge_marker_fc` is a str (single color) or an iterable of colors.
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
@@ -1620,12 +1620,18 @@ def draw_bipartite(
         Color of the bipartite edges. If str, use the same color for all edges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
         assume the colors are specified in the same order as the hyperedges are found
-        in DH.edges. If None (default), use the size of the hyperedges.
+        in DH.edges. By default, "black".
     dyad_lw : int, float, dict, iterable, optional
         Line width of the bipartite edges. If int or float, use the same width for
         all hyperedges. If a dict, must contain (hyperedge_id: width) pairs. If other
         iterable, assume the widths are specified in the same order as the hyperedges
         are found in DH.edges. By default, 1.
+    dyad_style : str or list of strings, optional
+        Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
+        See matplotlib's documentation for all accepted values. By default, "solid".
+    dyad_color_cmap : colormap
+        Colormap for mapping bipartite edge colors. By default, "Greys".
+        Ignored, if `dyad_color` is a str (single color) or an iterable of colors.
     node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
         By default, False.
@@ -1634,35 +1640,42 @@ def draw_bipartite(
         pairs.  By default, False.
     arrowsize : int (default=10)
         Size of the arrow head's length and width. See `matplotlib.patches.FancyArrowPatch`
-        for attribute `mutation_scale` for more info.
+        for attribute `mutation_scale` for more info. Only used if the higher-order network
+        is a `DiHypergraph`.
     arrowstyle : str, optional
-        By default: '-\|>'. See `matplotlib.patches.ArrowStyle` for more options.
+        By default: '->'. See `matplotlib.patches.ArrowStyle` for more options.
+        Only used if the higher-order network is a `DiHypergraph`.
     connectionstyle : string (default="arc3")
         Pass the connectionstyle parameter to create curved arc of rounding
         radius rad. For example, connectionstyle='arc3,rad=0.2'.
         See `matplotlib.patches.ConnectionStyle` and
         `matplotlib.patches.FancyArrowPatch` for more info.
+        Only used if the higher-order network is a `DiHypergraph`.
     rescale_sizes: bool, optional
         If True, linearly interpolate `node_size` and between min/max values
         that can be changed in the other argument `params`.
         If `node_size` is a single value, this is ignored. By default, True.
+    aspect : {"auto", "equal"} or float, optional
+        Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed
+        directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full
+        Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed
+        directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full
+        description at
+        https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_aspect.html
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
-        * min_node_size
-        * max_node_size
-        * min_node_lw
-        * max_node_lw
-        * min_edge_marker_size
-        * max_edge_marker_size
-        * min_edge_marker_lw
-        * max_edge_marker_lw
-        * node_fc_cmap
-        * node_ec_cmap
-        * edge_marker_fc_cmap
-        * edge_marker_ec_cmap
-        * min_dyad_lw
-        * max_dyad_lw
-        * dyad_color_cmap
+        * min_node_size (default: 5)
+        * max_node_size (default: 30)
+        * min_node_lw (default: 0)
+        * max_node_lw (default: 5)
+        * min_edge_marker_size (default: 5)
+        * max_edge_marker_size (default: 30)
+        * min_edge_marker_lw (default: 0)
+        * max_edge_marker_lw (default: 5)
+        * min_dyad_lw (default: 1)
+        * max_dyad_lw (default: 10)
+        * min_source_margin (default: 0)
+        * min_target_margin (default: 0)
 
 
     Returns
@@ -1708,12 +1721,7 @@ def draw_bipartite(
         "min_edge_marker_size": 0,
         "max_edge_marker_size": 5,
         "min_dyad_lw": 1,
-        "max_dyad_lw": 5,
-        "node_fc_cmap": cm.Reds,
-        "node_ec_cmap": cm.RdBu,
-        "dyad_color_cmap": cm.Blues,
-        "edge_marker_fc_cmap": cm.Greys,
-        "edge_marker_ec_cmap": cm.Blues,
+        "max_dyad_lw": 10,
         "min_source_margin": 0,
         "min_target_margin": 0,
     }
@@ -1725,8 +1733,6 @@ def draw_bipartite(
         "max_node_lw": settings["max_node_lw"],
         "min_node_size": settings["min_node_size"],
         "max_node_size": settings["max_node_size"],
-        "node_fc_cmap": settings["node_fc_cmap"],
-        "node_ec_cmap": settings["node_ec_cmap"],
     }
 
     edge_marker_settings = {
@@ -1734,8 +1740,6 @@ def draw_bipartite(
         "max_node_lw": settings["max_edge_marker_lw"],
         "min_node_size": settings["min_edge_marker_size"],
         "max_node_size": settings["max_edge_marker_size"],
-        "node_fc_cmap": settings["edge_marker_fc_cmap"],
-        "node_ec_cmap": settings["edge_marker_ec_cmap"],
     }
 
     if not pos:
@@ -1854,18 +1858,75 @@ def draw_undirected_dyads(
     H,
     pos=None,
     ax=None,
+    max_order=None,
     dyad_color="black",
     dyad_lw=1.5,
     dyad_style="solid",
     dyad_color_cmap="Greys",
-    max_order=None,
     rescale_sizes=True,
     **kwargs,
 ):
+    """Draw the bipartite edges of an undirected hypergraph.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph to draw.
+    pos : tuple of two dicts, optional
+        The tuple should contains a (1) dictionary of positions node_id:(x,y) for
+        placing node markers, and (2) a dictionary of positions edge_id:(x,y) for
+        placing the edge markers.  If None (default), use the `bipartite_spring_layout`
+        to compute the positions.
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
+    max_order : int, optional
+        Maximum of hyperedges to plot. If None (default), plots all orders.
+    dyad_color : str, dict, iterable, optional
+        Color of the bipartite edges. If str, use the same color for all edges.
+        If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
+        assume the colors are specified in the same order as the hyperedges are found
+        in DH.edges. By default, "black".
+    dyad_lw : int, float, dict, iterable, optional
+        Line width of the bipartite edges. If int or float, use the same width for
+        all hyperedges. If a dict, must contain (hyperedge_id: width) pairs. If other
+        iterable, assume the widths are specified in the same order as the hyperedges
+        are found in DH.edges. By default, 1.
+    dyad_style : str or list of strings, optional
+        Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
+        See matplotlib's documentation for all accepted values. By default, "solid".
+    dyad_color_cmap : colormap
+        Colormap for mapping bipartite edge colors. By default, "Greys".
+        Ignored, if `dyad_color` is a str (single color) or an iterable of colors.
+    rescale_sizes: bool, optional
+        If True, linearly interpolate `node_size` and between min/max values
+        that can be changed in the other argument `params`.
+        If `node_size` is a single value, this is ignored. By default, True.
+    **kwargs : optional args
+        Alternate default values. Values that can be overwritten are the following:
+        * min_dyad_lw (default: 1)
+        * max_dyad_lw (default: 10)
+
+    Returns
+    -------
+    ax : matplotlib.pyplot.axes
+        The axes corresponding the visualization
+    * dyad_collection : matplotlib LineCollection
+        of bipartite edges
+
+    Raises
+    ------
+    XGIError
+        If something different than a DiHypergraph is passed.
+
+    See Also
+    --------
+    draw_bipartite
+    draw_directed_dyads
+
+    """
     settings = {
         "min_dyad_lw": 1,
-        "max_dyad_lw": 5,
-        "dyad_color_cmap": cm.Blues,
+        "max_dyad_lw": 10,
     }
     settings.update(kwargs)
 
@@ -1936,12 +1997,11 @@ def draw_directed_dyads(
     H,
     pos=None,
     ax=None,
+    max_order=None,
     dyad_color="black",
     dyad_lw=1.5,
     dyad_style="solid",
     dyad_color_cmap="Greys",
-    max_order=None,
-    rescale_sizes=True,
     arrowsize=10,
     arrowstyle="->",
     connectionstyle="arc3",
@@ -1949,12 +2009,100 @@ def draw_directed_dyads(
     node_shape="o",
     edge_marker_size=5,
     edge_marker_shape="s",
+    rescale_sizes=True,
     **kwargs,
 ):
+    """Draw the bipartite edges of a directed hypergraph.
+
+    Parameters
+    ----------
+    H : DiHypergraph
+        The hypergraph to draw.
+    pos : tuple of two dicts, optional
+        The tuple should contains a (1) dictionary of positions node_id:(x,y) for
+        placing node markers, and (2) a dictionary of positions edge_id:(x,y) for
+        placing the edge markers.  If None (default), use the `bipartite_spring_layout`
+        to compute the positions.
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
+    max_order : int, optional
+        Maximum of hyperedges to plot. If None (default), plots all orders.
+    dyad_color : str, dict, iterable, optional
+        Color of the bipartite edges. If str, use the same color for all edges.
+        If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
+        assume the colors are specified in the same order as the hyperedges are found
+        in DH.edges. By default, "black".
+    dyad_lw : int, float, dict, iterable, optional
+        Line width of the bipartite edges. If int or float, use the same width for
+        all hyperedges. If a dict, must contain (hyperedge_id: width) pairs. If other
+        iterable, assume the widths are specified in the same order as the hyperedges
+        are found in DH.edges. By default, 1.
+    dyad_style : str or list of strings, optional
+        Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
+        See matplotlib's documentation for all accepted values. By default, "solid".
+    dyad_color_cmap : colormap
+        Colormap for mapping bipartite edge colors. By default, "Greys".
+        Ignored, if `dyad_color` is a str (single color) or an iterable of colors.
+    arrowsize : int (default=10)
+        Size of the arrow head's length and width. See `matplotlib.patches.FancyArrowPatch`
+        for attribute `mutation_scale` for more info. Only used if the higher-order network
+        is a `DiHypergraph`.
+    arrowstyle : str, optional
+        By default: '->'. See `matplotlib.patches.ArrowStyle` for more options.
+        Only used if the higher-order network is a `DiHypergraph`.
+    connectionstyle : string (default="arc3")
+        Pass the connectionstyle parameter to create curved arc of rounding
+        radius rad. For example, connectionstyle='arc3,rad=0.2'.
+        See `matplotlib.patches.ConnectionStyle` and
+        `matplotlib.patches.FancyArrowPatch` for more info.
+        Only used if the higher-order network is a `DiHypergraph`.
+    rescale_sizes: bool, optional
+        If True, linearly interpolate `node_size` and between min/max values
+        that can be changed in the other argument `params`.
+        If `node_size` is a single value, this is ignored. By default, True.
+    node_size : int, float, dict, iterable, or NodeStat, optional
+        Radius of the nodes in pixels.  If int or float, use the same radius for all
+        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
+        the radiuses are specified in the same order as the nodes are found in
+        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
+        min_node_size and max_node_size. Used for arrow spacing. By default, 7.
+    node_shape : str, optional
+        Marker used for the nodes. Used for arrow spacing. By default 'o' (circle marker).
+    edge_marker_size : int, float, dict, iterable, or EdgeStat, optional
+        Radius of the edge markers in pixels.  If int or float, use the same radius for all
+        edge markers.  If a dict, must contain (edge_id: radius) pairs.  If iterable, assume
+        the radii are specified in the same order as the edges are found in
+        H.edges. If EdgeStat, use a monotonic linear interpolation defined between
+        min_edge_marker_size and max_edge_marker_size. Used for arrow spacing. By default, 7.
+    edge_marker_shape: str, optional
+        Marker used for the hyperedges. If "", no marker is
+        displayed. Used for arrow spacing. By default 's' (square marker).
+    **kwargs : optional args
+        Alternate default values. Values that can be overwritten are the following:
+        * min_dyad_lw (default: 1)
+        * max_dyad_lw (default: 10)
+
+    Returns
+    -------
+    ax : matplotlib.pyplot.axes
+        The axes corresponding the visualization
+    * dyad_collection : list of FancyArrowPatches
+        representing directed bipartite edges
+
+    Raises
+    ------
+    XGIError
+        If something different than a DiHypergraph is passed.
+
+    See Also
+    --------
+    draw_bipartite
+    draw_directed_dyads
+
+    """
     settings = {
         "min_dyad_lw": 1,
-        "max_dyad_lw": 5,
-        "dyad_color_cmap": cm.Blues,
+        "max_dyad_lw": 10,
         "min_source_margin": 0,
         "min_target_margin": 0,
     }
