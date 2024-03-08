@@ -201,7 +201,7 @@ class DiIDView(Mapping, Set):
             * 'geq': Return IDs whose value is greater than or equal to `val`.
             * 'between': In this mode, `val` must be a tuple `(val1, val2)`.  Return IDs
               whose value `v` satisfies `val1 <= v <= val2`.
-            * function, must be able to call `mode(attribute, val)` and have it map to a bool.
+            * function, must be able to call `mode(statistic, val)` and have it map to a bool.
 
         See Also
         --------
