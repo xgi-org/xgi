@@ -221,3 +221,15 @@ def test_isolates():
     assert set(DH.nodes.isolates()) == {0, 1, 2, 3}
     DH.add_edge([{0}, {1, 2}])
     assert set(DH.nodes.isolates()) == {3}
+
+
+def test_diview_custom_filterby(diedgelist2):
+    H = xgi.DiHypergraph(diedgelist2)
+
+    f = lambda val, arg: val % arg == 0
+    assert set(H.edges.filterby("tail_size", 2, mode=f)) == {0, 1}
+
+
+def test_diview_custom_filterby_attr(dihyperwithattrs):
+    f = lambda val, arg: arg in val
+    assert set(dihyperwithattrs.nodes.filterby_attr("color", "l", mode=f)) == {2, 3, 5}
