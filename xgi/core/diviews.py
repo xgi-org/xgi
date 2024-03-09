@@ -190,7 +190,7 @@ class DiIDView(Mapping, Set):
         val : Any
             Value of the statistic.  Usually a single numeric value.  When mode is
             'between', must be a tuple of exactly two values.
-        mode : str, optional
+        mode : str or function, optional
             How to compare each value to `val`.  Can be one of the following.
 
             * 'eq' (default): Return IDs whose value is exactly equal to `val`.
@@ -201,6 +201,7 @@ class DiIDView(Mapping, Set):
             * 'geq': Return IDs whose value is greater than or equal to `val`.
             * 'between': In this mode, `val` must be a tuple `(val1, val2)`.  Return IDs
               whose value `v` satisfies `val1 <= v <= val2`.
+            * function, must be able to call `mode(statistic, val)` and have it map to a bool.
 
         See Also
         --------
@@ -256,6 +257,8 @@ class DiIDView(Mapping, Set):
             bunch = [idx for idx in self if values[idx] >= val]
         elif mode == "between":
             bunch = [node for node in self if val[0] <= values[node] <= val[1]]
+        elif callable(mode):
+            bunch = [idx for idx in self if mode(values[idx], val)]
         else:
             raise ValueError(
                 f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
@@ -271,9 +274,10 @@ class DiIDView(Mapping, Set):
             The name of the attribute
         val : Any
             A single value or, in the case of 'between', a list of length 2
-        mode : str, optional
+        mode : str or function, optional
             Comparison mode. Valid options are 'eq' (default), 'neq', 'lt', 'gt',
-            'leq', 'geq', or 'between'.
+            'leq', 'geq', or 'between'. If a function, must be able to call
+            `mode(attribute, val)` and have it map to a bool.
         missing : Any, optional
             The default value if the attribute is missing. If None (default),
             ignores those IDs.
@@ -323,9 +327,15 @@ class DiIDView(Mapping, Set):
                 for idx in self
                 if values[idx] is not None and val[0] <= values[idx] <= val[1]
             ]
+        elif callable(mode):
+            bunch = [
+                idx
+                for idx in self
+                if values[idx] is not None and mode(values[idx], val)
+            ]
         else:
             raise ValueError(
-                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', or 'between'."
+                f"Unrecognized mode {mode}. mode must be one of 'eq', 'neq', 'lt', 'gt', 'leq', 'geq', 'between', or a callable function."
             )
         return type(self).from_view(self, bunch)
 
