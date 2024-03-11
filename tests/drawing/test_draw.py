@@ -676,7 +676,6 @@ def test_draw_bipartite_with_str_labels_and_isolated_nodes():
     plt.close("all")
 
 
-# 1922, 1925, 1928-1929, 1936, 1942, 1949-1952, 1956, 1960, 2101, 2104, 2111, 2117, 2124-2126, 2130, 2134, 2163, 2166, 2173, 2189, 2199, 2210, 2236, 2247
 def test_draw_undirected_dyads(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 

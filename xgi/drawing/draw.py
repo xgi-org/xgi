@@ -1986,7 +1986,6 @@ def draw_undirected_dyads(
             dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
         )
 
-    print(len(dyad_pos), len(dyad_color))
     dyad_collection = LineCollection(
         dyad_pos,
         colors=dyad_color,
