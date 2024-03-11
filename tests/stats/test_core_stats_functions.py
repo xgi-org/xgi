@@ -93,7 +93,7 @@ def test_dihypergraph_view_val(diedgelist1, diedgelist2):
     assert H.edges([1, 2]).order._val == {1: 2, 2: 3}
 
 
-def test_stats_are_views(edgelist1):
+def test_hypergraph_stats_are_views(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     ns = H.nodes.degree
     assert ns.asdict() == {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
@@ -107,6 +107,20 @@ def test_stats_are_views(edgelist1):
     assert es.asdict() == {0: 2, 1: 0, 2: 1, 3: 2}
     H.add_edge([3, 4, 5])
     assert es.asdict() == {0: 2, 1: 0, 2: 1, 3: 2, 4: 2}
+
+
+def test_dihypergraph_stats_are_views(diedgelist2):
+    H = xgi.DiHypergraph(diedgelist2)
+    es = H.edges.order
+    assert es.asdict() == {0: 2, 1: 2, 2: 3}
+    H.add_edge(([3, 4, 5], [6]))
+    assert es.asdict() == {0: 2, 1: 2, 2: 3, 3: 3}
+
+    H = xgi.DiHypergraph(diedgelist2)
+    ns = H.nodes.degree
+    assert ns.asdict() == {0: 1, 1: 2, 2: 3, 4: 2, 3: 1, 5: 1}
+    H.add_node(10)
+    assert ns.asdict() == {0: 1, 1: 2, 2: 3, 4: 2, 3: 1, 5: 1, 10: 0}
 
 
 def test_hypergraph_user_defined(edgelist1):
@@ -233,7 +247,7 @@ def test_dihypergraph_stats_items(diedgelist2):
 ### Numerical statistics
 
 
-def test_filterby(edgelist1, edgelist8):
+def test_hypergraph_filterby(edgelist1, edgelist8):
     H = xgi.Hypergraph(edgelist1)
     assert H.nodes.filterby("degree", 2).average_neighbor_degree.asdict() == {6: 1.0}
     assert H.nodes.filterby("average_neighbor_degree", 1.0).degree.asdict() == {
@@ -250,6 +264,47 @@ def test_filterby(edgelist1, edgelist8):
     assert H.nodes.filterby("average_neighbor_degree", 4.2).degree.asdict() == {4: 3}
     assert H.edges.filterby("order", 2).size.asdict() == {1: 3, 2: 3, 4: 3, 5: 3, 6: 3}
     assert H.edges.filterby("size", 2).order.asdict() == {0: 1, 8: 1, 7: 1}
+
+
+def test_dihypergraph_filterby(diedgelist1, diedgelist2):
+    H = xgi.DiHypergraph(diedgelist2)
+    assert H.nodes.filterby("degree", 2).in_degree.asdict() == {1: 2, 4: 1}
+    assert H.nodes.filterby("degree", 2).out_degree.asdict() == {1: 0, 4: 2}
+    assert H.nodes.filterby("in_degree", 1).degree.asdict() == {0: 1, 3: 1, 4: 2}
+    assert H.nodes.filterby("out_degree", 1).degree.asdict() == {2: 3, 5: 1}
+
+    assert H.edges.filterby("order", 2).size.asdict() == {0: 3, 1: 3}
+    assert H.edges.filterby("size", 4).order.asdict() == {2: 3}
+
+    H = xgi.DiHypergraph(diedgelist1)
+    assert H.nodes.filterby("degree", 1).in_degree.asdict() == {
+        1: 1,
+        2: 1,
+        3: 1,
+        4: 0,
+        5: 1,
+        6: 1,
+        7: 0,
+        8: 0,
+    }
+    assert H.nodes.filterby("degree", 1).out_degree.asdict() == {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 1,
+        5: 0,
+        6: 1,
+        7: 1,
+        8: 1,
+    }
+    assert H.nodes.filterby("in_degree", 1).degree.asdict() == {
+        1: 1,
+        2: 1,
+        3: 1,
+        5: 1,
+        6: 1,
+    }
+    assert H.nodes.filterby("out_degree", 1).degree.asdict() == {8: 1, 4: 1, 6: 1, 7: 1}
 
 
 def test_filterby_modes(edgelist1, edgelist8):
@@ -274,7 +329,19 @@ def test_filterby_modes(edgelist1, edgelist8):
     assert set(H.nodes.filterby("degree", (2, 3), "between")) == {4, 5, 6}
 
 
-def test_call_filterby(edgelist1, edgelist8):
+def test_dihypergraph_filterby_modes(diedgelist2):
+    H = xgi.DiHypergraph(diedgelist2)
+    assert list(H.nodes.filterby("degree", 2)) == [1, 4]
+    assert list(H.nodes.filterby("degree", 2, "eq")) == [1, 4]
+    assert list(H.nodes.filterby("degree", 1, "neq")) == [1, 2, 4]
+    assert list(H.nodes.filterby("degree", 3, "geq")) == [2]
+    assert list(H.nodes.filterby("degree", 3, "gt")) == []
+    assert list(H.nodes.filterby("degree", 0, "leq")) == []
+    assert list(H.nodes.filterby("degree", 1, "lt")) == []
+    assert set(H.nodes.filterby("degree", (1, 3), "between")) == set(H.nodes)
+
+
+def test_hypergraph_call_filterby(edgelist1, edgelist8):
     H = xgi.Hypergraph(edgelist1)
 
     filtered = H.nodes([5, 6, 7, 8]).filterby("average_neighbor_degree", 2.0).degree
@@ -299,12 +366,52 @@ def test_call_filterby(edgelist1, edgelist8):
     assert filtered.asdict() == {5: 3, 6: 3}
 
 
-def test_filterby_with_nodestat(edgelist4, edgelist8):
+def test_dihypergraph_call_filterby(diedgelist1, diedgelist2):
+    H = xgi.DiHypergraph(diedgelist1)
+
+    filtered = H.nodes([4, 5, 6]).filterby("in_degree", 1).degree
+    assert filtered.asdict() == {5: 1, 6: 1}
+
+    H = xgi.DiHypergraph(diedgelist2)
+    assert set(H.nodes([1, 2, 3]).filterby("degree", 2)) == {1}
+    assert H.edges([1, 2]).filterby("order", 2).size.asdict() == {1: 3}
+
+
+def test_hypergraph_after_call_with_args(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    degs = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
+    assert H.nodes.degree.asdict() == degs
+
+    # check when calling without arguments AFTER calling WITH arguments
+    H.nodes.degree(order=2).asdict()
+    assert H.nodes.degree.asdict() == degs
+
+
+def test_dihypergraph_after_call_with_args(diedgelist2):
+    H = xgi.DiHypergraph(diedgelist2)
+    degs = {0: 1, 1: 2, 2: 3, 4: 2, 3: 1, 5: 1}
+    assert H.nodes.degree.asdict() == degs
+
+    # check when calling without arguments AFTER calling WITH arguments
+    H.nodes.degree(order=2).asdict()
+    assert H.nodes.degree.asdict() == degs
+
+
+def test_hypergraph_filterby_with_nodestat(edgelist4, edgelist8):
     H = xgi.Hypergraph(edgelist4)
     assert list(H.nodes.filterby(H.nodes.degree(order=2), 2)) == [3]
 
     H = xgi.Hypergraph(edgelist8)
     assert list(H.nodes.filterby(H.nodes.degree(order=2), 2)) == [1, 4, 5]
+
+
+def test_dihypergraph_filterby_with_nodestat(diedgelist1, diedgelist2):
+    H = xgi.DiHypergraph(diedgelist1)
+    assert list(H.edges.filterby(H.edges.order(degree=1), 3)) == [0, 1]
+
+    H = xgi.DiHypergraph(diedgelist2)
+    assert list(H.edges.filterby(H.edges.order(degree=2), 1)) == [1]
+    assert list(H.nodes.filterby(H.nodes.degree(order=2), 1)) == [0, 4]
 
 
 def test_filterby_edgestat_with_nodestat(edgelist4, edgelist8):
@@ -315,7 +422,7 @@ def test_filterby_edgestat_with_nodestat(edgelist4, edgelist8):
     assert list(H.edges.filterby(H.edges.order(degree=4), 1)) == [2, 3]
 
 
-def test_aggregates(edgelist1, edgelist2, edgelist8):
+def test_hypergraph_aggregates(edgelist1, edgelist2, edgelist8):
     H = xgi.Hypergraph(edgelist1)
     assert H.nodes.degree.max() == 2
     assert H.nodes.degree.min() == 1
@@ -384,7 +491,32 @@ def test_aggregates(edgelist1, edgelist2, edgelist8):
     assert round(H.edges.order.var(), 3) == 0.765
 
 
-def test_moment(edgelist1, edgelist6):
+def test_dihypergraph_aggregates(diedgelist1, diedgelist2):
+    H = xgi.DiHypergraph(diedgelist1)
+    assert H.edges.order.max() == 3
+    assert H.edges.order.min() == 3
+    assert H.edges.order.sum() == 6
+    assert round(H.edges.order.mean(), 3) == 3
+    assert round(H.edges.order.std(), 3) == 0
+    assert round(H.edges.order.var(), 3) == 0
+
+    H = xgi.DiHypergraph(diedgelist2)
+    assert H.nodes.degree.max() == 3
+    assert H.nodes.degree.min() == 1
+    assert H.nodes.degree.sum() == 10
+    assert round(H.nodes.degree.mean(), 3) == 1.667
+    assert round(H.nodes.degree.std(), 3) == 0.745
+    assert round(H.nodes.degree.var(), 3) == 0.556
+
+    assert H.edges.order.max() == 3
+    assert H.edges.order.min() == 2
+    assert H.edges.order.sum() == 7
+    assert round(H.edges.order.mean(), 3) == 2.333
+    assert round(H.edges.order.std(), 3) == 0.471
+    assert round(H.edges.order.var(), 3) == 0.222
+
+
+def test_hypergraph_moment(edgelist1, edgelist6):
     H = xgi.Hypergraph(edgelist1)
     deg = H.nodes.degree
     assert round(deg.moment(), 3) == 1.375
@@ -400,6 +532,16 @@ def test_moment(edgelist1, edgelist6):
     assert round(deg.moment(2, center=True), 3) == 0.0
     assert round(deg.moment(3, center=False), 3) == 27.0
     assert round(deg.moment(3, center=True), 3) == 0.0
+
+
+def test_dihypergraph_moment(diedgelist2):
+    H = xgi.DiHypergraph(diedgelist2)
+    deg = H.nodes.degree
+    assert round(deg.moment(), 3) == 3.333
+    assert round(deg.moment(2, center=False), 3) == 3.333
+    assert round(deg.moment(2, center=True), 3) == 0.556
+    assert round(deg.moment(3, center=False), 3) == 7.667
+    assert round(deg.moment(3, center=True), 3) == 0.259
 
 
 def test_hypergraph_single_id(edgelist1):
@@ -550,16 +692,6 @@ def test_missing_attrs(hyperwithattrs):
         5: "blue",
         10: "missingval",
     }
-
-
-def test_after_call_with_args(edgelist1):
-    H = xgi.Hypergraph(edgelist1)
-    degs = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
-    assert H.nodes.degree.asdict() == degs
-
-    # check when calling without arguments AFTER calling WITH arguments
-    H.nodes.degree(order=2).asdict()
-    assert H.nodes.degree.asdict() == degs
 
 
 ### Test multiple stats
@@ -822,29 +954,3 @@ def test_multi_with_attrs(hyperwithattrs):
         4: [2, "red"],
         5: [2, "blue"],
     }
-
-
-def test_aggregates(edgelist1, edgelist2, edgelist8):
-    H = xgi.Hypergraph(edgelist1)
-    assert H.edges.order.max() == 2
-    assert H.edges.order.min() == 0
-    assert H.edges.order.sum() == 5
-    assert round(H.edges.order.mean(), 3) == 1.25
-    assert round(H.edges.order.std(), 3) == 0.829
-    assert round(H.edges.order.var(), 3) == 0.688
-
-    H = xgi.Hypergraph(edgelist2)
-    assert H.edges.order.max() == 2
-    assert H.edges.order.min() == 1
-    assert H.edges.order.sum() == 4
-    assert round(H.edges.order.mean(), 3) == 1.333
-    assert round(H.edges.order.std(), 3) == 0.471
-    assert round(H.edges.order.var(), 3) == 0.222
-
-    H = xgi.Hypergraph(edgelist8)
-    assert H.edges.order.max() == 4
-    assert H.edges.order.min() == 1
-    assert H.edges.order.sum() == 17
-    assert round(H.edges.order.mean(), 3) == 1.889
-    assert round(H.edges.order.std(), 3) == 0.875
-    assert round(H.edges.order.var(), 3) == 0.765
