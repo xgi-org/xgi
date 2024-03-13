@@ -58,7 +58,7 @@ def _update_lims(pos, ax):
     """
 
     # compute axis limits
-    pos_arr = np.asarray([[x, y] for n, (x, y) in pos.items()])
+    pos_arr = np.asarray([[x, y] for _, (x, y) in pos.items()])
 
     maxx, maxy = np.max(pos_arr, axis=0)
     minx, miny = np.min(pos_arr, axis=0)
