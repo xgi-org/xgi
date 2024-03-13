@@ -346,3 +346,15 @@ def test_ids_are_immutable(edgelist5):
     H = xgi.Hypergraph(edgelist5)
     H.edges.ids.add(42)
     assert H.edges.ids == {0, 1, 2, 3}
+
+
+def test_view_custom_filterby(edgelist8):
+    H = xgi.Hypergraph(edgelist8)
+
+    f = lambda val, arg: val <= arg**2
+    assert set(H.nodes.filterby("degree", 2, mode=f)) == {2, 3, 4, 5, 6}
+
+
+def test_view_custom_filterby_attr(hyperwithattrs):
+    f = lambda val, arg: arg in val
+    assert set(hyperwithattrs.nodes.filterby_attr("color", "l", mode=f)) == {2, 3, 5}
