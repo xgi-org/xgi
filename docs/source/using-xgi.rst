@@ -17,6 +17,11 @@ Nicholas W. Landry, Ilya Amburg, Mirah Shi, and Sinan Aksoy, "Filtering higher-o
 :bdg-link-primary-line:`Paper <https://doi.org/10.1088/2632-072X/ad253a>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/filtering-higher-order-datasets>`
 
+Nicholas W. Landry, Jean-Gabriel Young, and Nicole Eikmeier, "The simpliciality of higher-order networks", *EPJ Data Science* **13**, 17 (2024).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1140/epjds/s13688-024-00458-1>`
+:bdg-link-primary-line:`Code <https://github.com/nwlandry/the-simpliciality-of-higher-order-networks>`
+
 2023
 ----
 
@@ -61,16 +66,10 @@ Iacopo Iacopini, Márton Karsai, and Alain Barrat, "The temporal dynamics of gro
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2306.09967>`
 
-Nicholas W. Landry, Jean-Gabriel Young, and Nicole Eikmeier, "The simpliciality of higher-order networks", arXiv:2308.13918 (2023).
-
-:bdg-link-primary-line:`Paper <https://doi.org/10.48550/arXiv.2308.13918>`
-:bdg-link-primary-line:`Code <https://github.com/nwlandry/the-simpliciality-of-higher-order-networks>`
-
 Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, Maxime Lucas, "Deeper but smaller: Higher-order interactions increase linear stability but shrink basins", arXiv:2309.16581 (2023).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2309.16581>`
 :bdg-link-primary-line:`Code <https://github.com/maximelucas/basins_and_triangles>`
-
 
 Theses
 ======
@@ -87,8 +86,8 @@ Thomas Robiglio, "Higher-order structures in face-to-face interaction networks",
 Software packages
 =================
 
-- `simplicial-kuramoto <https://arnaudon.github.io/simplicial-kuramoto>`_
 - `hypercontagion <https://hypercontagion.readthedocs.io/en/latest>`_
+- `hyperspec <https://github.com/yaml-programming/hyperspec>`_
 - `pynetflow <https://github.com/anthbapt/pynetflow>`_
 - `segram <https://github.com/sztal/segram>`_
-- `hyperspec <https://github.com/yaml-programming/hyperspec>`_
+- `simplicial-kuramoto <https://arnaudon.github.io/simplicial-kuramoto>`_

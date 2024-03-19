@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.8.4
+* Added the ability to supply user-defined functions to `filterby` and `filterby_attr` [#524](https://github.com/xgi-org/xgi/pull/524) (@nwlandry).
+* Reorganized the stats tests [#525](https://github.com/xgi-org/xgi/pull/525) (@nwlandry).
+* Added a recipe for finding the maximal indices based on statistics [#522](https://github.com/xgi-org/xgi/pull/522) (@nwlandry).
+* Added the ability to argsort stats [#521](https://github.com/xgi-org/xgi/pull/521) (@nwlandry).
+* Added recipes for flagged triangular lattices and avg. shortest path length [#513](https://github.com/xgi-org/xgi/pull/513) (@thomasrobiglio).
+* Add `argmax` and `argmin` to the stats interface [#518](https://github.com/xgi-org/xgi/pull/518) (@nwlandry).
+* Updated the list of projects using XGI [#519](https://github.com/xgi-org/xgi/pull/519) (@nwlandry).
+* Fixed the multilayer warning (Issue [#515](https://github.com/xgi-org/xgi/issues/515)) that occurs when specifying colors for each node [#517](https://github.com/xgi-org/xgi/pull/517) (@nwlandry).
+
 ## v0.8.3
 * Fixed the drawing warning (Issue [#499](https://github.com/xgi-org/xgi/issues/499)) that occurs when specifying colors for each node [#512](https://github.com/xgi-org/xgi/pull/512) (@nwlandry).
 * Formatted the tutorial notebooks with isort [#502](https://github.com/xgi-org/xgi/pull/502) (@nwlandry).
