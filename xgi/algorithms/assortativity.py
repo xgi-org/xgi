@@ -1,7 +1,7 @@
 """Algorithms for finding the degree assortativity of a hypergraph."""
 
 import random
-from itertools import combinations
+from itertools import combinations, permutations
 
 import numpy as np
 
@@ -54,15 +54,12 @@ def dynamical_assortativity(H):
         raise XGIError("No singleton edges!")
 
     d = H.nodes.degree
-    degs = d.asdict()
+    members = H.edges.members(dtype=dict)
+    k = d.asdict()
     k1 = d.mean()
     k2 = d.moment(2)
     kk1 = np.mean(
-        [
-            degs[n1] * degs[n2]
-            for e in H.edges
-            for n1, n2 in combinations(H.edges.members(e), 2)
-        ]
+        [k[n1] * k[n2] for e in H.edges for n1, n2 in combinations(members[e], 2)]
     )
 
     return kk1 * k1**2 / k2**2 - 1
@@ -112,17 +109,39 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     elif H.num_edges == 0:
         raise XGIError("Hypergraph must contain edges!")
 
-    degs = H.degree()
+    k = H.degree()
+    members = H.edges.members(dtype=dict)
     if exact:
-        k1k2 = [
-            _choose_degrees(H.edges.members(e), degs, kind)
-            for e in H.edges
-            if len(H.edges.members(e)) > 1
-        ]
+        if kind == "uniform":
+            k1k2 = [
+                [k[n1], k[n2]]
+                for e in H.edges
+                for n1, n2 in permutations(members[e], 2)
+                if n1 != n2 and len(members[e]) > 1
+                # permutations is so that k1 and k2 have the same variance
+            ]
+        elif kind == "top-2":
+            k1k2 = [
+                d
+                for e in H.edges
+                if len(members[e]) > 1
+                for d in permutations(_choose_degrees(members[e], k, "top-2"), 2)
+                # permutations is so that k1 and k2 have the same variance
+            ]
+        elif kind == "top-bottom":
+            k1k2 = [
+                d
+                for e in H.edges
+                if len(members[e]) > 1
+                for d in permutations(_choose_degrees(members[e], k, "top-bottom"), 2)
+                # permutations is so that k1 and k2 have the same variance
+            ]
     else:
         edges = [e for e in H.edges if len(H.edges.members(e)) > 1]
         k1k2 = [
-            _choose_degrees(H.edges.members(random.choice(edges)), degs, kind)
+            np.random.permutation(
+                _choose_degrees(members[random.choice(edges)], k, kind)
+            )
             for _ in range(num_samples)
         ]
 
@@ -176,15 +195,11 @@ def _choose_degrees(e, k, kind="uniform"):
             return (k[e[i]], k[e[j]])
 
         elif kind == "top-2":
-            degs = sorted([k[i] for i in e])[-2:]
-            random.shuffle(degs)
-            return degs
+            return sorted([k[i] for i in e])[-2:]
 
         elif kind == "top-bottom":
             # this selects the largest and smallest degrees in one line
-            degs = sorted([k[i] for i in e])[:: len(e) - 1]
-            random.shuffle(degs)
-            return degs
+            return sorted([k[i] for i in e])[:: len(e) - 1]
 
         else:
             raise XGIError("Invalid choice function!")
