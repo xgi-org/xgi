@@ -1953,6 +1953,9 @@ def draw_undirected_dyads(
     # parse colors
     dyad_color, dyads_c_mapped = _parse_color_arg(dyad_color, H.edges)
 
+    # The following two list comprehensions map colors assigned to a hyperedge to
+    # all of the bipartite edges, so that users need not specify colors for every
+    # node-edge incidence.
     if isinstance(dyad_lw, np.ndarray):
         dyad_lw = np.array(
             list(
