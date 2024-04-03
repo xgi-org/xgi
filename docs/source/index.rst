@@ -135,7 +135,8 @@ How to Cite
 ===========
 We acknowledge the importance of good software to support research, and we note
 that research becomes more valuable when it is communicated effectively. To
-demonstrate the value of XGI, we ask that you cite XGI in your work.
+demonstrate the value of XGI, we ask that you cite the XGI
+`paper <https://doi.org/10.21105/joss.05162>`_ in your work.
 You can cite XGI either by going to our repository page
 `repository page <https://github.com/xgi-org/xgi>`_ and
 clicking the "cite this repository" button on the right sidebar (which will generate
