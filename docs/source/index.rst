@@ -154,7 +154,7 @@ a citation in your preferred format) or by copying the following BibTeX entry:
   volume = {8},
   number = {85},
   pages = {5162},
-  url = {https://joss.theoj.org/papers/10.21105/joss.05162},
+  url = {https://doi.org/10.21105/joss.05162},
   }
 
 

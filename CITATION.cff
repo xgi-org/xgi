@@ -65,6 +65,6 @@ preferred-citation:
   start: 5162
   title: "XGI: A Python package for higher-order interaction networks"
   type: article
-  url: "https://joss.theoj.org/papers/10.21105/joss.05162"
+  url: "https://doi.org/10.21105/joss.05162"
   volume: 8
 title: "XGI: A Python package for higher-order interaction networks"
