@@ -32,6 +32,7 @@ __all__ = [
     "clique_eigenvector_centrality",
     "h_eigenvector_centrality",
     "node_edge_centrality",
+    "katz_centrality",
 ]
 
 
@@ -431,4 +432,64 @@ def node_edge_centrality(
     https://doi.org/10.1038/s42005-021-00704-2
     """
     c, _ = xgi.node_edge_centrality(net, f, g, phi, psi, max_iter, tol)
+    return {n: c[n] for n in c if n in bunch}
+
+
+def katz_centrality(net, bunch, cutoff=100):
+    """Compute the H-eigenvector centrality of a hypergraph.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The hypergraph of interest.
+    bunch : Iterable
+        Nodes in `net`.
+    cutoff : int
+        Power at which to stop the series :math:`A + \alpha A^2 + \alpha^2 A^3 + \dots`
+        Default value is 100.
+
+    Returns
+    -------
+    dict
+        node IDs are keys and centrality values
+        are values. The centralities are 1-normalized.
+
+    Raises
+    ------
+    XGIError
+        If the hypergraph is empty.
+
+    Notes
+    -----
+    [1] The Katz-centrality is defined as
+
+    .. math::
+        c = [(I - \alpha A^{t})^{-1} - I]{\bf 1},
+
+    where :math:`A` is the adjacency matrix of the the (hyper)graph.
+    Since :math:`A^{t} = A` for undirected graphs (our case), we have:
+
+
+    .. math::
+        &[I + A + \alpha A^2 + \alpha^2 A^3 + \dots](I - \alpha A^{t})
+
+        & = [I + A + \alpha A^2 + \alpha^2 A^3 + \dots](I - \alpha A)
+
+        & = (I + A + \alpha A^2 + \alpha^2 A^3 + \dots) - A - \alpha A^2
+
+        & - \alpha^2 A^3 - \alpha^3 A^4 - \dots
+
+        & = I
+
+    And :math:`(I - \alpha A^{t})^{-1} = I + A + \alpha A^2 + \alpha^2 A^3 + \dots`
+    Thus we can use the power series to compute the Katz-centrality.
+    [2] The Katz-centrality of isolated nodes (no hyperedges contains them) is
+    zero. The Katz-centrality of an empty hypergraph is not defined.
+
+    References
+    ----------
+    See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited
+    May 20 2023) for a clear definition of Katz centrality.
+    """
+    c = xgi.katz_centrality(net, cutoff=cutoff)
     return {n: c[n] for n in c if n in bunch}
