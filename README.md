@@ -28,6 +28,9 @@ Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twit
 - [License](#license)
 - [Funding](#funding)
 - [Other Resources](#other-resources)
+  - [Julia](#julia)
+  - [Python](#python)
+  - [R](#r)
 
 ## What is XGI?
 
@@ -115,11 +118,20 @@ The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergr
 
 ## Other Resources
 This library may not meet your needs and if this is this case, consider checking out these other resources:
-* [HyperNetX](https://pnnl.github.io/HyperNetX): A Python package for representing, analyzing, and visualizing hypergraphs.
-* [Hypergraph Analysis Toolbox (HAT)](https://hypergraph-analysis-toolbox.readthedocs.io): A Python/Matlab package for hypergraph construction, visualization, and analysis (Especially for Pore-C data).
-* [halp](http://murali-group.github.io/halp): A Python package with directed and undirected hypergraph implementations and several algorithms.
-* [Reticula](https://docs.reticula.network): A Python package wrapping C++ functions for representing, analyzing, and visualizing temporal and static graphs and hypergraphs.
-* [SimpleHypergraphs.jl](https://pszufe.github.io/SimpleHypergraphs.jl/v0.1): A Julia package for representing, analyzing, and generating hypergraphs.
+
+### Julia
 * [HyperGraphs.jl](https://github.com/lpmdiaz/HyperGraphs.jl): A Julia package for representing, analyzing, and generating hypergraphs which may be oriented and weighted.
-* [hyperG](https://cran.r-project.org/package=HyperG): An R package for storing and analyzing hypergraphs
+* [SimpleHypergraphs.jl](https://pszufe.github.io/SimpleHypergraphs.jl/v0.1): A Julia package for representing, analyzing, and generating hypergraphs.
+
+### Python
+* [EasyGraph](https://easy-graph.github.io/): A Python package for analyzing undirected and directed networks as well as hypergraphs.
+* [halp](http://murali-group.github.io/halp): A Python package with directed and undirected hypergraph implementations and several algorithms.
+* [Hypergraph Analysis Toolbox (HAT)](https://hypergraph-analysis-toolbox.readthedocs.io): A Python/Matlab package for hypergraph construction, visualization, and analysis (Especially for Pore-C data).
+* [Hypergraphx](https://hypergraphx.readthedocs.io): A Python for representing, analyzing, and visualizing hypergraphs.
+* [HyperNetX](https://pnnl.github.io/HyperNetX): A Python package for representing, analyzing, and visualizing hypergraphs.
 * [NetworkX](https://networkx.org): A Python package for representing, analyzing, and visualizing networks.
+* [Reticula](https://docs.reticula.network): A Python package wrapping C++ functions for representing, analyzing, and visualizing temporal and static graphs and hypergraphs.
+
+
+### R
+* [hyperG](https://cran.r-project.org/package=HyperG): An R package for storing and analyzing hypergraphs
