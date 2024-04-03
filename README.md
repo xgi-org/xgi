@@ -6,6 +6,7 @@
 [![Test Status](https://github.com/xgi-org/xgi/workflows/test/badge.svg?branch=main)](https://github.com/xgi-org/xgi/actions?query=workflow%3A%22test%22)
 [![codecov](https://codecov.io/gh/xgi-org/xgi/branch/main/graph/badge.svg?token=BI6TX2WDSG)](https://codecov.io/gh/xgi-org/xgi)
 [![Good First Issue](https://img.shields.io/badge/contribute-Good%20First%20Issue-forest)](https://github.com/xgi-org/xgi/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
+[![DOI](https://doi.org/10.21105/joss.05162/status.svg)](https://doi.org/10.21105/joss.05162)
 [![pyOpenSci](https://tinyurl.com/y22nb8up)](https://github.com/pyOpenSci/software-review/issues/115)
 
 * [**Source**](../../)
@@ -98,7 +99,7 @@ We acknowledge the importance of good software to support research, and we note 
     volume = {8},
     number = {85},
     pages = {5162},
-    url = {https://joss.theoj.org/papers/10.21105/joss.05162},
+    url = {https://doi.org/10.21105/joss.05162},
 }
 ```
 
