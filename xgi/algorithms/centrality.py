@@ -374,15 +374,15 @@ def katz_centrality(H, cutoff=100):
     See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited
     May 20 2023) for a clear definition of Katz centrality.
     """
-    A = clique_motif_matrix(H)
+    n = H.num_nodes
+    m = H.num_edges
 
-    n = len(H.nodes)
-    m = len(H.edges)
     if n == 0:  # no nodes
         raise XGIError("The Katz-centrality of an empty hypergraph is not defined.")
     elif m == 0:
         c = np.zeros(n)
     else:  # there is at least one edge, both N and M are non-zero
+        A = clique_motif_matrix(H)
         alpha = 1 / 2**n
         mat = A
         for power in range(1, cutoff):
