@@ -478,6 +478,61 @@ def test_double_edge_swap(edgelist1):
         H.double_edge_swap(6, 7, 2, 3)
 
 
+def test_random_edge_shuffle(edgelist4):
+    # trivial hypergraph
+    H0 = xgi.trivial_hypergraph()
+    with pytest.raises(ValueError):
+        H0.random_edge_shuffle()
+
+    # hypergraph with only two edges
+    S = xgi.Hypergraph([[0, 1, 2, 3], [2, 3, 5, 6, 8]])
+    H = S.copy()
+    H.random_edge_shuffle()
+
+    # the intersection of the two edges is preserved
+    assert {2, 3}.issubset(H._edge[0])
+    assert {2, 3}.issubset(H._edge[1])
+
+    # edge sizes are preserved
+    assert len(H._edge[0]) == len(S._edge[0])
+    assert len(H._edge[1]) == len(S._edge[1])
+
+    # hypergraph with more than two edges
+    S = xgi.Hypergraph(edgelist4)
+    H = S.copy()
+
+    # specify edges to shuffle
+    H.random_edge_shuffle(e_id1=0, e_id2=1)
+
+    # not shuffled edges are preserved
+    assert H._edge[2] == S._edge[2]
+
+    # the intersection of the two edges is preserved
+    assert {2, 3}.issubset(H._edge[0])
+    assert {2, 3}.issubset(H._edge[1])
+
+    # edge sizes are preserved
+    for edge_id in H._edge:
+        assert len(H._edge[edge_id]) == len(S._edge[edge_id])
+
+    # random hypergraph
+    S = xgi.random_hypergraph(50, [0.1, 0.01, 0.001], seed=1)
+    H = S.copy()
+    H.random_edge_shuffle()
+
+    # number of nodes and edges are preserved
+    assert H.num_nodes == S.num_nodes
+    assert H.num_edges == S.num_edges
+
+    # all edge sizes are preserved
+    for edge_id in H._edge:
+        assert len(H._edge[edge_id]) == len(S._edge[edge_id])
+
+    # all node degrees are preserved
+    for node_id in H._node:
+        assert len(H._node[node_id]) == len(S._node[node_id])
+
+
 def test_duplicate_edges(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     assert list(H.edges.duplicates()) == []
