@@ -313,7 +313,7 @@ def line_vector_centrality(H):
     return vc
 
 
-def katz_centrality(H, index=False, cutoff=100):
+def katz_centrality(H, cutoff=100):
     r"""Returns the Katz-centrality vector of a non-empty hypergraph H.
 
     The Katz-centrality measures the relative importance of a node by counting
@@ -327,21 +327,15 @@ def katz_centrality(H, index=False, cutoff=100):
     ----------
     H : xgi.Hypergraph
         Hypergraph on which to compute the Katz-centralities.
-    index : bool
-        If set to `True`, will return a dictionary mapping each vector index to a
-        node. Default value is `False`.
     cutoff : int
         Power at which to stop the series :math:`A + \alpha A^2 + \alpha^2 A^3 + \dots`
         Default value is 100.
 
     Returns
     -------
-    c : np.ndarray
-        Vector of the node centralities, sorted by the node indexes.
-    nodedict : dict
-        If index is set to True, nodedict will contain the nodes ids, keyed by
-        their indice in vector `c`.
-        Thus, `c[key]` will be the centrality of node `nodedict[key]`.
+    c : dict
+        `c` is a dictionary with node IDs as keys and centrality values
+        as values. The centralities are 1-normalized.
 
     Raises
     ------
@@ -355,7 +349,7 @@ def katz_centrality(H, index=False, cutoff=100):
     .. math::
         c = [(I - \alpha A^{t})^{-1} - I]{\bf 1},
 
-    where :math:`A` is the adjency matrix of the the (hyper)graph.
+    where :math:`A` is the adjacency matrix of the the (hyper)graph.
     Since :math:`A^{t} = A` for undirected graphs (our case), we have:
 
 
@@ -371,7 +365,7 @@ def katz_centrality(H, index=False, cutoff=100):
         & = I
 
     And :math:`(I - \alpha A^{t})^{-1} = I + A + \alpha A^2 + \alpha^2 A^3 + \dots`
-    Thus we can use the power serie to compute the Katz-centrality.
+    Thus we can use the power series to compute the Katz-centrality.
     [2] The Katz-centrality of isolated nodes (no hyperedges contains them) is
     zero. The Katz-centrality of an empty hypergraph is not defined.
 
@@ -380,27 +374,21 @@ def katz_centrality(H, index=False, cutoff=100):
     See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited
     May 20 2023) for a clear definition of Katz centrality.
     """
+    n = H.num_nodes
+    m = H.num_edges
 
-    if index:
-        A, nodedict = clique_motif_matrix(H, index=True)
-    else:
-        A = clique_motif_matrix(H, index=False)
-
-    N = len(H.nodes)
-    M = len(H.edges)
-    if N == 0:  # no nodes
+    if n == 0:  # no nodes
         raise XGIError("The Katz-centrality of an empty hypergraph is not defined.")
-    elif M == 0:
-        c = np.zeros(N)
+    elif m == 0:
+        c = np.zeros(n)
     else:  # there is at least one edge, both N and M are non-zero
-        alpha = 1 / 2**N
+        A = clique_motif_matrix(H)
+        alpha = 1 / 2**n
         mat = A
         for power in range(1, cutoff):
             mat = alpha * mat.dot(A) + A
-        u = 1 / N * np.ones(N)
+        u = 1 / n * np.ones(n)
         c = mat.dot(u)
-
-    if index:
-        return c, nodedict
-    else:
-        return c
+        c *= 1 / norm(c, 1)
+    nodedict = dict(zip(range(n), H.nodes))
+    return {nodedict[idx]: c[idx] for idx in nodedict}

@@ -158,36 +158,39 @@ def ratio(r, m, kind="CEC"):
         return r ** (1.0 / m)
 
 
-def test_katz_centrality(edgelist1, edgelist3):
-
+def test_katz_centrality(edgelist1, edgelist8):
     # test hypergraph with no edge
     H = xgi.Hypergraph()
     H.add_nodes_from([1, 2, 3])
-    c, nodedict = xgi.katz_centrality(H, index=True)
-    expected_c = np.zeros(3)
-    assert np.allclose(c, expected_c)
+    c = xgi.katz_centrality(H)
+    expected_c = {1: 0, 2: 0, 3: 0}
+    assert c == expected_c
 
     # test numerical values
     H = xgi.Hypergraph(edgelist1)
-    c, nodedict = xgi.katz_centrality(H, index=True)
-    expected_c = np.array(
-        [
-            0.2519685,
-            0.2519685,
-            0.2519685,
-            0.0,
-            0.12647448,
-            0.37746639,
-            0.25246065,
-            0.25246065,
-        ]
-    )
-    assert np.allclose(c, expected_c)
+    c = xgi.katz_centrality(H)
+    expected_c = {
+        1: 0.1427771519858862,
+        2: 0.1427771519858862,
+        3: 0.1427771519858862,
+        4: 0.0,
+        5: 0.07166636106392883,
+        6: 0.21389013015822952,
+        8: 0.14305602641009146,
+        7: 0.14305602641009146,
+    }
+    assert c == expected_c
 
-    # test with no index
-    H = xgi.Hypergraph(edgelist3)
-    c = xgi.katz_centrality(H, index=False)
-    expected_c = np.array(
-        [0.34686161, 0.34686161, 0.51894799, 0.51894799, 0.34686161, 0.34686161]
-    )
-    assert np.allclose(c, expected_c)
+    # test with difference cutoff
+    H = xgi.Hypergraph(edgelist8)
+    c = xgi.katz_centrality(H, cutoff=5)
+    expected_c = {
+        0: 0.21358389796604274,
+        1: 0.1779789506060754,
+        2: 0.17880254869172216,
+        3: 0.17880254869172216,
+        4: 0.14321435302156882,
+        5: 0.07147345362079142,
+        6: 0.03614424740207708,
+    }
+    assert c == expected_c
