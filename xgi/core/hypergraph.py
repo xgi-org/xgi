@@ -1006,38 +1006,38 @@ class Hypergraph:
         if e_id1 is None or e_id2 is None:
             e_id1, e_id2 = random.sample(list(self._edge), 2)
 
-        # get nodes in those edges
-        nodes_e1 = self._edge[e_id1]
-        nodes_e2 = self._edge[e_id2]
+        # extract edges (lists of nodes)
+        e1 = self._edge[e_id1]
+        e2 = self._edge[e_id2]
 
         # nodes in both edges should not be shuffled
-        nodes_both = nodes_e1 & nodes_e2
-        nodes_e1 -= nodes_both
-        nodes_e2 -= nodes_both
+        nodes_both = e1 & e2
+        e1 -= nodes_both
+        e2 -= nodes_both
 
         # put all nodes in a single bucket
-        nodes = nodes_e1 | nodes_e2
+        nodes = e1 | e2
 
         # randomly redistribute nodes between the two edges
-        nodes_e1_new = set(random.sample(list(nodes), len(nodes_e1)))
-        nodes_e2_new = nodes - nodes_e1_new
+        e1_new = set(random.sample(list(nodes), len(e1)))
+        e2_new = nodes - e1_new
 
         # update edge memberships
-        for n_id in nodes_e1_new & nodes_e2:
+        for n_id in e1_new & e2:
             self._node[n_id].remove(e_id2)
             self._node[n_id].add(e_id1)
 
-        for n_id in nodes_e2_new & nodes_e1:
+        for n_id in e2_new & e1:
             self._node[n_id].remove(e_id1)
             self._node[n_id].add(e_id2)
 
         # add nodes in both edges back
-        nodes_e1_new |= nodes_both
-        nodes_e2_new |= nodes_both
+        e1_new |= nodes_both
+        e2_new |= nodes_both
 
         # update hypergraph
-        self._edge[e_id1] = nodes_e1_new
-        self._edge[e_id2] = nodes_e2_new
+        self._edge[e_id1] = e1_new
+        self._edge[e_id2] = e2_new
 
     def add_node_to_edge(self, edge, node):
         """Add one node to an existing edge.
