@@ -46,7 +46,7 @@ async function fetch_JSON_file(url) {
             const td = document.createElement('td');
             const attr = header_attrs[i]
             if (json_data[key][attr]) {
-                td.textContent = json_data[key][attr];
+                td.textContent = json_data[key][attr].toLocaleString();
             }
             else {
                 td.textContent = "N/A"
