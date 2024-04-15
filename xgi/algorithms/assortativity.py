@@ -136,6 +136,8 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
                 for d in permutations(_choose_degrees(members[e], k, "top-bottom"), 2)
                 # permutations is so that k1 and k2 have the same variance
             ]
+        else:
+            raise XGIError("Invalid type of degree assortativity!")
     else:
         edges = [e for e in H.edges if len(H.edges.members(e)) > 1]
         k1k2 = [
@@ -202,6 +204,6 @@ def _choose_degrees(e, k, kind="uniform"):
             return sorted([k[i] for i in e])[:: len(e) - 1]
 
         else:
-            raise XGIError("Invalid choice function!")
+            raise XGIError("Invalid type of degree assortativity!")
     else:
         raise XGIError("Edge must have more than one member!")
