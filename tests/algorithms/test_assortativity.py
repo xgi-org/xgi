@@ -71,6 +71,12 @@ def test_degree_assortativity(edgelist1, edgelist5):
     with pytest.raises(XGIError):
         xgi.degree_assortativity(H)
 
+    # test wrong kind
+    with pytest.raises(XGIError):
+        xgi.degree_assortativity(H1, kind="no-idea")
+    with pytest.raises(XGIError):
+        xgi.degree_assortativity(H1, kind="no-idea", exact=True)
+
 
 def test_choose_degrees(edgelist1, edgelist6):
     H1 = xgi.Hypergraph(edgelist1)
