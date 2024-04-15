@@ -57,10 +57,15 @@ Preprints
 2024
 ----
 
-Gonzalo Contreras-Aso, Regino Criado, Miguel Romance, "Beyond directed hypergraphs: heterogeneous hypergraphs and spectral centralities", arXiv:2403.11825 (2024).
+Gonzalo Contreras-Aso, Regino Criado, and Miguel Romance, "Beyond directed hypergraphs: heterogeneous hypergraphs and spectral centralities", arXiv:2403.11825 (2024).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2403.11825>`
 :bdg-link-primary-line:`Code <https://github.com/goznalo-git/DirectedHyperCentrality>`
+
+Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Domenico, "Functional reducibility of higher-order networks", arXiv:2404.08547 (2024).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2404.08547>`
+:bdg-link-primary-line:`Code <https://github.com/maximelucas/hypergraph_reducibility>`
 
 2023
 ----
