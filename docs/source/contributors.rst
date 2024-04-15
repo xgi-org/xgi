@@ -90,10 +90,31 @@ Contributors
     </p>
 
     <p>
+        <img src="https://github.com/aleable.png"
+            width="50" height="50" hspace="5"
+            style="border-radius: 50%; vertical-align: middle;"/>
+        <a href="https://github.com/aleable">@aleable</a>
+    </p>
+
+    <p>
         <img src="https://github.com/arnaudon.png"
                 width="50" height="50" hspace="5"
                 style="border-radius: 50%; vertical-align: middle;"/>
         <a href="https://github.com/arnaudon">@arnaudon</a>
+    </p>
+
+    <p>
+        <img src="https://github.com/colltoaction.png"
+            width="50" height="50" hspace="5"
+            style="border-radius: 50%; vertical-align: middle;"/>
+        <a href="https://github.com/colltoaction">@colltoaction</a>
+    </p>
+
+    <p>
+        <img src="https://github.com/doabell.png"
+            width="50" height="50" hspace="5"
+            style="border-radius: 50%; vertical-align: middle;"/>
+        <a href="https://github.com/doabell">@doabell</a>
     </p>
 
     <p>

@@ -54,6 +54,19 @@ Yuanzhao Zhang, Maxime Lucas, and Federico Battiston, "Higher-order interactions
 Preprints
 =========
 
+2024
+----
+
+Gonzalo Contreras-Aso, Regino Criado, and Miguel Romance, "Beyond directed hypergraphs: heterogeneous hypergraphs and spectral centralities", arXiv:2403.11825 (2024).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2403.11825>`
+:bdg-link-primary-line:`Code <https://github.com/goznalo-git/DirectedHyperCentrality>`
+
+Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Domenico, "Functional reducibility of higher-order networks", arXiv:2404.08547 (2024).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2404.08547>`
+:bdg-link-primary-line:`Code <https://github.com/maximelucas/hypergraph_reducibility>`
+
 2023
 ----
 
@@ -65,6 +78,7 @@ Gonzalo Contreras-Aso, Cristian Pérez-Corral, and Miguel Romance, "Uplifting ed
 Iacopo Iacopini, Márton Karsai, and Alain Barrat, "The temporal dynamics of group interactions in higher-order social networks", arXiv:2306.09967 (2023).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2306.09967>`
+:bdg-link-primary-line:`Code <https://github.com/iaciac/temporal-group-interactions>`
 
 Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, Maxime Lucas, "Deeper but smaller: Higher-order interactions increase linear stability but shrink basins", arXiv:2309.16581 (2023).
 

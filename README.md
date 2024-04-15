@@ -6,6 +6,7 @@
 [![Test Status](https://github.com/xgi-org/xgi/workflows/test/badge.svg?branch=main)](https://github.com/xgi-org/xgi/actions?query=workflow%3A%22test%22)
 [![codecov](https://codecov.io/gh/xgi-org/xgi/branch/main/graph/badge.svg?token=BI6TX2WDSG)](https://codecov.io/gh/xgi-org/xgi)
 [![Good First Issue](https://img.shields.io/badge/contribute-Good%20First%20Issue-forest)](https://github.com/xgi-org/xgi/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.05162/status.svg)](https://doi.org/10.21105/joss.03968)
 [![pyOpenSci](https://tinyurl.com/y22nb8up)](https://github.com/pyOpenSci/software-review/issues/115)
 
 * [**Source**](../../)
@@ -85,7 +86,7 @@ Some concrete ways that you can get involved:
 
 
 ## How to Cite
-We acknowledge the importance of good software to support research, and we note that research becomes more valuable when it is communicated effectively. To demonstrate the value of XGI, we ask that you cite XGI in your work. You can cite XGI either by going to our repository page [repository page](../../) (if you haven't already) and clicking the "cite this repository" button on the right sidebar (which will generate a citation in your preferred format) or by copying the following BibTeX entry:
+We acknowledge the importance of good software to support research, and we note that research becomes more valuable when it is communicated effectively. To demonstrate the value of XGI, we ask that you cite the XGI [paper](https://doi.org/10.21105/joss.05162) in your work. You can cite XGI either by going to our repository page [repository page](../../) (if you haven't already) and clicking the "cite this repository" button on the right sidebar (which will generate a citation in your preferred format) or by copying the following BibTeX entry:
 ```
 @article{Landry_XGI_2023,
     author = {Landry, Nicholas W. and Lucas, Maxime and Iacopini, Iacopo and Petri, Giovanni and Schwarze, Alice and Patania, Alice and Torres, Leo},
@@ -98,7 +99,7 @@ We acknowledge the importance of good software to support research, and we note 
     volume = {8},
     number = {85},
     pages = {5162},
-    url = {https://joss.theoj.org/papers/10.21105/joss.05162},
+    url = {https://doi.org/10.21105/joss.05162},
 }
 ```
 
@@ -114,11 +115,20 @@ The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergr
 
 ## Other Resources
 This library may not meet your needs and if this is this case, consider checking out these other resources:
-* [HyperNetX](https://pnnl.github.io/HyperNetX): A Python package for representing, analyzing, and visualizing hypergraphs.
-* [Hypergraph Analysis Toolbox (HAT)](https://hypergraph-analysis-toolbox.readthedocs.io): A Python/Matlab package for hypergraph construction, visualization, and analysis (Especially for Pore-C data).
-* [halp](http://murali-group.github.io/halp): A Python package with directed and undirected hypergraph implementations and several algorithms.
-* [Reticula](https://docs.reticula.network): A Python package wrapping C++ functions for representing, analyzing, and visualizing temporal and static graphs and hypergraphs.
-* [SimpleHypergraphs.jl](https://pszufe.github.io/SimpleHypergraphs.jl/v0.1): A Julia package for representing, analyzing, and generating hypergraphs.
+
+**Julia**
 * [HyperGraphs.jl](https://github.com/lpmdiaz/HyperGraphs.jl): A Julia package for representing, analyzing, and generating hypergraphs which may be oriented and weighted.
-* [hyperG](https://cran.r-project.org/package=HyperG): An R package for storing and analyzing hypergraphs
+* [SimpleHypergraphs.jl](https://pszufe.github.io/SimpleHypergraphs.jl/v0.1): A Julia package for representing, analyzing, and generating hypergraphs.
+
+**Python**
+* [EasyGraph](https://easy-graph.github.io/): A Python package for analyzing undirected and directed networks as well as hypergraphs.
+* [halp](http://murali-group.github.io/halp): A Python package with directed and undirected hypergraph implementations and several algorithms.
+* [Hypergraph Analysis Toolbox (HAT)](https://hypergraph-analysis-toolbox.readthedocs.io): A Python/Matlab package for hypergraph construction, visualization, and analysis (Especially for Pore-C data).
+* [Hypergraphx](https://hypergraphx.readthedocs.io): A Python for representing, analyzing, and visualizing hypergraphs.
+* [HyperNetX](https://pnnl.github.io/HyperNetX): A Python package for representing, analyzing, and visualizing hypergraphs.
 * [NetworkX](https://networkx.org): A Python package for representing, analyzing, and visualizing networks.
+* [Reticula](https://docs.reticula.network): A Python package wrapping C++ functions for representing, analyzing, and visualizing temporal and static graphs and hypergraphs.
+
+
+**R**
+* [hyperG](https://cran.r-project.org/package=HyperG): An R package for storing and analyzing hypergraphs
