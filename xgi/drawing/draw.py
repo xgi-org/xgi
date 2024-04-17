@@ -1562,7 +1562,7 @@ def draw_bipartite(
     H : Hypergraph or DiHypergraph
         The hypergraph to draw.
     pos : tuple of two dicts, optional
-        The tuple should contains a (1) dictionary of positions node_id:(x,y) for
+        The tuple should contain a (1) dictionary of positions node_id:(x,y) for
         placing node markers, and (2) a dictionary of positions edge_id:(x,y) for
         placing the edge markers.  If None (default), use the `bipartite_spring_layout`
         to compute the positions.
