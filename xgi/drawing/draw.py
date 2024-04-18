@@ -1908,7 +1908,7 @@ def draw_undirected_dyads(
     Raises
     ------
     XGIError
-        If something different than a DiHypergraph is passed.
+        If DiHypergraph is passed.
 
     See Also
     --------
