@@ -525,7 +525,7 @@ def test_draw_bipartite(diedgelist2, edgelist8):
 
     fig1, ax1 = plt.subplots()
     ax1, collections1 = xgi.draw_bipartite(DH, ax=ax1)
-    node_coll1, edge_marker_coll1, dyad_coll1 = collections1
+    node_coll1, edge_marker_coll1 = collections1
     fig2, ax2 = plt.subplots()
     ax2, collections2 = xgi.draw_bipartite(
         DH,
@@ -540,7 +540,7 @@ def test_draw_bipartite(diedgelist2, edgelist8):
         edge_marker_lw=2,
         edge_marker_size=20,
     )
-    node_coll2, edge_marker_coll2, dyad_coll2 = collections2
+    node_coll2, edge_marker_coll2 = collections2
 
     # number of elements
     assert len(node_coll1.get_offsets()) == 6  # number of original nodes
@@ -669,7 +669,7 @@ def test_draw_bipartite_with_str_labels_and_isolated_nodes():
 
     fig, ax4 = plt.subplots()
     ax4, collections4 = xgi.draw_bipartite(DH1, ax=ax4)
-    node_coll4, edge_marker_coll4, dyad_coll4 = collections4
+    node_coll4, edge_marker_coll4 = collections4
     assert len(node_coll4.get_offsets()) == 6  # number of original nodes
     assert len(edge_marker_coll4.get_offsets()) == 2  # number of original edges
     assert len(ax4.patches) == 7  # number of lines
@@ -691,7 +691,7 @@ def test_draw_undirected_dyads(edgelist8):
     ax, dyad_collection = xgi.draw_undirected_dyads(
         H, dyad_color=np.random.random(H.num_edges)
     )
-    assert len(np.unique(dyad_collection.get_color())) == 9
+    assert len(np.unique(dyad_collection.get_color())) == 28
     plt.close("all")
 
 
@@ -699,18 +699,14 @@ def test_draw_directed_dyads(diedgelist1):
     H = xgi.DiHypergraph(diedgelist1)
 
     fig, ax = plt.subplots()
-    ax, dyad_collection = xgi.draw_directed_dyads(H)
-    assert len(dyad_collection) == 9  # number of lines
-    assert isinstance(dyad_collection[0], FancyArrowPatch)
+    ax = xgi.draw_directed_dyads(H)
 
     with pytest.raises(ValueError):
         fig, ax = plt.subplots()
-        ax, dyad_collection = xgi.draw_directed_dyads(H, dyad_lw=-1)
+        ax = xgi.draw_directed_dyads(H, dyad_lw=-1)
 
     fig, ax = plt.subplots()
-    ax, dyad_collection = xgi.draw_directed_dyads(
-        H, dyad_color=np.random.random(H.num_edges)
-    )
+    ax = xgi.draw_directed_dyads(H, dyad_color=np.random.random(H.num_edges))
     plt.close("all")
 
 
@@ -721,11 +717,11 @@ def test_issue_499(edgelist8):
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        ax, collections = xgi.draw(H, ax=ax, node_fc="black")
+        xgi.draw(H, ax=ax, node_fc="black")
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        ax, collections = xgi.draw(H, ax=ax, node_fc=["black"] * H.num_nodes)
+        xgi.draw(H, ax=ax, node_fc=["black"] * H.num_nodes)
 
     plt.close("all")
 
@@ -735,12 +731,10 @@ def test_issue_515(edgelist8):
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        ax, (node_coll, edge_coll) = xgi.draw_multilayer(H, node_fc="black")
+        xgi.draw_multilayer(H, node_fc="black")
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        ax, (node_coll, edge_coll) = xgi.draw_multilayer(
-            H, node_fc=["black"] * H.num_nodes
-        )
+        xgi.draw_multilayer(H, node_fc=["black"] * H.num_nodes)
 
     plt.close("all")

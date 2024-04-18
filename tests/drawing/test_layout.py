@@ -242,3 +242,16 @@ def test_bipartite_spring_layout(edgelist1):
 
     for e in pos1[1]:
         assert np.allclose(pos1[1][e], pos2[1][e])
+
+
+def test_edge_positions_from_barycenters(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    pos = np.random.random([H.num_nodes, 2])
+
+    node_pos = {n: pos[i] for i, n in enumerate(H.nodes)}
+    edge_pos = xgi.edge_positions_from_barycenters(H, node_pos)
+
+    assert len(edge_pos) == H.num_edges
+    for id, e in H.edges.members(dtype=dict).items():
+        mean_pos = np.mean([node_pos[n] for n in e], axis=0)
+        assert np.allclose(edge_pos[id], mean_pos)
