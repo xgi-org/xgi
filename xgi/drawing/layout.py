@@ -8,7 +8,7 @@ from numpy.linalg import inv, svd
 
 from .. import convert
 from ..convert import to_bipartite_graph
-from ..core import SimplicialComplex
+from ..core import DiHypergraph, SimplicialComplex
 
 __all__ = [
     "random_layout",
@@ -20,6 +20,7 @@ __all__ = [
     "spiral_layout",
     "barycenter_kamada_kawai_layout",
     "bipartite_spring_layout",
+    "edge_positions_from_barycenters",
 ]
 
 
@@ -247,6 +248,49 @@ def bipartite_spring_layout(H, seed=None, k=None, **kwargs):
     edge_pos = {edgedict[i]: pos[i] for i in edgedict}
 
     return node_pos, edge_pos
+
+
+def edge_positions_from_barycenters(H, node_pos):
+    """
+    Given a higher-order network and node positions, assigns
+    edge marker positions to be the barycenters of its
+    member nodes.
+
+    Parameters
+    ----------
+    H : Hypergraph, SimplicialComplex, or DiHypergraph
+        A position will be assigned to every node and edge in H.
+    node_pos : dict
+        Nodal positions where keys are node ids and values are
+        Numpy arrays of the positions.
+
+    Returns
+    -------
+    edge_pos : dict
+        a dictionary of positions keyed by edge
+
+    See Also
+    --------
+    bipartite_spring_layout
+
+    Examples
+    --------
+    >>> import xgi
+    >>> N = 50
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_hypergraph(N, ps)
+    >>> node_pos = xgi.pairwise_spring_layout(H)
+    >>> edge_pos = xgi.edge_positions_from_barycenters(H, node_pos)
+    """
+    if isinstance(H, DiHypergraph):
+        from ..convert import to_hypergraph
+
+        H = to_hypergraph(H)
+    edge_pos = {}
+    for id, e in H.edges.members(dtype=dict).items():
+        edge_pos[id] = np.mean([node_pos[n] for n in e], axis=0)
+
+    return edge_pos
 
 
 def barycenter_spring_layout(

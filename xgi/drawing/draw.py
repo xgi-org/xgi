@@ -1542,10 +1542,10 @@ def draw_bipartite(
     edge_marker_shape="s",
     edge_marker_fc_cmap="Blues",
     max_order=None,
-    dyad_color="black",
+    dyad_color=None,
     dyad_lw=1,
     dyad_style="solid",
-    dyad_color_cmap="Greys",
+    dyad_color_cmap="crest_r",
     node_labels=None,
     hyperedge_labels=None,
     arrowsize=10,
@@ -1701,13 +1701,12 @@ def draw_bipartite(
     Raises
     ------
     XGIError
-        If something different than a DiHypergraph is passed.
+        If the network is not a Hypergraph, SimplicialComplex or a DiHypergraph.
 
     See Also
     --------
     draw
     draw_multilayer
-
     """
 
     is_directed = False
@@ -1754,6 +1753,8 @@ def draw_bipartite(
 
     if not pos:
         pos = bipartite_spring_layout(H)
+    elif not (isinstance(pos[0], dict) and isinstance(pos[1], dict)):
+        raise XGIError("Position must be a 2-tuple of dictionaries!")
 
     node_pos, edge_pos = pos
 
@@ -1798,7 +1799,7 @@ def draw_bipartite(
     )
 
     if is_directed:
-        ax, dyad_collection = draw_directed_dyads(
+        ax = draw_directed_dyads(
             DH,
             pos=pos,
             ax=ax,
@@ -1843,7 +1844,10 @@ def draw_bipartite(
 
     ax.set_aspect(aspect, "datalim")
 
-    return ax, (node_collection, edge_marker_collection, dyad_collection)
+    if is_directed:
+        return ax, (node_collection, edge_marker_collection)
+    else:
+        return ax, (node_collection, edge_marker_collection, dyad_collection)
 
 
 def draw_undirected_dyads(
@@ -1851,10 +1855,10 @@ def draw_undirected_dyads(
     pos=None,
     ax=None,
     max_order=None,
-    dyad_color="black",
+    dyad_color=None,
     dyad_lw=1,
     dyad_style="solid",
-    dyad_color_cmap="Greys",
+    dyad_color_cmap="crest_r",
     rescale_sizes=True,
     **kwargs,
 ):
@@ -1922,11 +1926,17 @@ def draw_undirected_dyads(
     }
     settings.update(kwargs)
 
+    if not isinstance(H, Hypergraph):
+        raise XGIError("The input must be a Hypergraph")
+
     if not pos:
         pos = bipartite_spring_layout(H)
 
     if ax is None:
         ax = plt.gca()
+
+    if dyad_color is None:  # color is proportional to size
+        dyad_color = H.edges.size
 
     if not max_order:
         edge_ids = list(H.edges)
@@ -2006,10 +2016,10 @@ def draw_directed_dyads(
     pos=None,
     ax=None,
     max_order=None,
-    dyad_color="black",
+    dyad_color=None,
     dyad_lw=1,
     dyad_style="solid",
-    dyad_color_cmap="Greys",
+    dyad_color_cmap="crest_r",
     arrowsize=10,
     arrowstyle="->",
     connectionstyle="arc3",
@@ -2116,6 +2126,9 @@ def draw_directed_dyads(
     }
     settings.update(kwargs)
 
+    if not isinstance(H, DiHypergraph):
+        raise XGIError("Input must be a DiHypergraph")
+
     if not pos:
         from ..convert import to_hypergraph
 
@@ -2123,6 +2136,9 @@ def draw_directed_dyads(
 
     if ax is None:
         ax = plt.gca()
+
+    if dyad_color is None:  # color is proportional to size
+        dyad_color = H.edges.size
 
     if not max_order:
         edge_ids = list(H.edges)
@@ -2289,4 +2305,4 @@ def draw_directed_dyads(
 
                 patches.append(patch)
                 ax.add_patch(patch)
-    return ax, patches
+    return ax
