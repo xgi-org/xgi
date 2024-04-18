@@ -1667,8 +1667,6 @@ def draw_bipartite(
     aspect : {"auto", "equal"} or float, optional
         Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed
         directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full
-        Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed
-        directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full
         description at
         https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_aspect.html
     **kwargs : optional args
