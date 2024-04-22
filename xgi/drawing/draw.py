@@ -1764,8 +1764,9 @@ def draw_bipartite(
     if not max_order:
         max_order = max_edge_order(H)
 
+    D = H.dual()
     if edge_marker_fc is None:
-        edge_marker_fc = H.edges.size
+        edge_marker_fc = D.nodes.degree
 
     ax, node_collection = draw_nodes(
         H=H,
@@ -1785,7 +1786,7 @@ def draw_bipartite(
     )
 
     ax, edge_marker_collection = draw_nodes(
-        H=H.dual(),
+        H=D,
         pos=edge_pos,
         ax=ax,
         node_fc=edge_marker_fc,
