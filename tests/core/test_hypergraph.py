@@ -537,7 +537,7 @@ def test_random_edge_shuffle(edgelist4):
     # all node degrees are preserved
     for node_id in H._node:
         assert len(H._node[node_id]) == len(S._node[node_id])
-    
+
     # verify dual of edge dict is nodes dict
     assert xgi.utilities.dual_dict(H._edge) == H._node
 
