@@ -1,7 +1,7 @@
 # Changelog
 
 ## v0.8.5
-* Added the ability to draw hypergraphs and dihypergraphs as bipartite graphs, added a bipartite spring layout and the ability to place edge markers at the barycenters of the positions of their member nodes with the `edge_positions_from _barycenters` function [#492](https://github.com/xgi-org/xgi/pull/492) (@nwlandry).
+* Added the ability to draw hypergraphs and dihypergraphs as bipartite graphs, added a bipartite spring layout, and added the ability to place edge markers at the barycenters of the positions of their member nodes with the `edge_positions_from _barycenters` function [#492](https://github.com/xgi-org/xgi/pull/492) (@nwlandry).
 * Updated the documentation to include (1) new relevant software packages organized by language, (2) documentation for the encapsulation DAG, (3) new gallery examples, (4) new projects using XGI, and (5) links to the XGI JOSS paper [#529](https://github.com/xgi-org/xgi/pull/529) (@nwlandry).
 * More intelligible warning for unknown type of degree assortativity [#533](https://github.com/xgi-org/xgi/pull/533) (@doabell).
 * Formatted the numbers in the XGI-DATA [table](https://xgi.readthedocs.io/en/stable/xgi-data.html) by locale [#532](https://github.com/xgi-org/xgi/pull/532) (@doabell).
