@@ -1,11 +1,12 @@
 """Draw hypergraphs and simplicial complexes with matplotlib."""
 
 from inspect import signature
+from itertools import chain
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sb  # for cmap "crest"
+import seaborn as sb  # This cannot be removed because it is used for cmap "crest"
 from matplotlib import cm
 from matplotlib.colors import is_color_like
 from matplotlib.patches import FancyArrowPatch
@@ -15,11 +16,13 @@ from mpl_toolkits.mplot3d.art3d import (
     PatchCollection,
     Poly3DCollection,
 )
-from networkx import spring_layout
 from scipy.spatial import ConvexHull
+
+chaini = chain.from_iterable
 
 from .. import convert
 from ..algorithms import max_edge_order, unique_edge_sizes
+from ..convert import to_bipartite_edgelist
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..utils import subfaces
@@ -31,7 +34,7 @@ from .draw_utils import (
     _parse_color_arg,
     _update_lims,
 )
-from .layout import _augmented_projection, barycenter_spring_layout
+from .layout import barycenter_spring_layout, bipartite_spring_layout
 
 __all__ = [
     "draw",
@@ -41,7 +44,9 @@ __all__ = [
     "draw_node_labels",
     "draw_hyperedge_labels",
     "draw_multilayer",
-    "draw_dihypergraph",
+    "draw_bipartite",
+    "draw_undirected_dyads",
+    "draw_directed_dyads",
 ]
 
 
@@ -848,6 +853,7 @@ def draw_simplices(
 
     Returns
     -------
+    ax
     collections : a tuple of 2 collections:
         * dyad_collection : matplotlib LineCollection
             Collection containing the dyads
@@ -1519,42 +1525,47 @@ def draw_multilayer(
     return ax, (node_collection, edge_collection)
 
 
-def draw_dihypergraph(
-    DH,
-    ax=None,
+def draw_bipartite(
+    H,
     pos=None,
+    ax=None,
     node_fc="white",
     node_ec="black",
     node_lw=1,
     node_size=7,
     node_shape="o",
     node_fc_cmap="Reds",
-    lines_fc=None,
-    lines_lw=1.5,
-    arrowsize=10,
-    arrowstyle="-|>",
-    connectionstyle="arc3",
-    edge_marker_toggle=True,
     edge_marker_fc=None,
     edge_marker_ec="black",
-    edge_marker="s",
     edge_marker_lw=1,
     edge_marker_size=7,
+    edge_marker_shape="s",
     edge_marker_fc_cmap="crest_r",
     max_order=None,
-    node_labels=False,
-    hyperedge_labels=False,
-    settings=None,
+    dyad_color=None,
+    dyad_lw=1,
+    dyad_style="solid",
+    dyad_color_cmap="crest_r",
+    node_labels=None,
+    hyperedge_labels=None,
+    arrowsize=10,
+    arrowstyle="->",
+    connectionstyle="arc3",
     rescale_sizes=True,
-    iterations=50,
+    aspect="equal",
     **kwargs,
 ):
-    """Draw a directed hypergraph
+    """Draw a hypergraph as a bipartite network.
 
     Parameters
     ----------
-    DH : DirectedHypergraph
-        The directed hypergraph to draw.
+    H : Hypergraph or DiHypergraph
+        The hypergraph to draw.
+    pos : tuple of two dicts, optional
+        The tuple should contain a (1) dictionary of positions node_id:(x,y) for
+        placing node markers, and (2) a dictionary of positions edge_id:(x,y) for
+        placing the edge markers.  If None (default), use the `bipartite_spring_layout`
+        to compute the positions.
     ax : matplotlib.pyplot.axes, optional
         Axis to draw on. If None (default), get the current axes.
     node_fc : str, dict, iterable, or NodeStat, optional
@@ -1578,83 +1589,527 @@ def draw_dihypergraph(
         nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
         the radiuses are specified in the same order as the nodes are found in
         H.nodes. If NodeStat, use a monotonic linear interpolation defined between
-        min_node_size and max_node_size. By default, 15.
+        min_node_size and max_node_size. By default, 7.
+    node_shape : str, optional
+        Marker used for the nodes. By default 'o' (circle marker).
     node_fc_cmap : colormap
         Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is
         a str (single color).
-    lines_fc : str, dict, iterable, optional
-        Color of the hyperedges (lines). If str, use the same color for all hyperedges.
-        If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
-        assume the colors are specified in the same order as the hyperedges are found
-        in DH.edges. If None (default), use the size of the hyperedges.
-    lines_lw : int, float, dict, iterable, optional
-        Line width of the hyperedges (lines). If int or float, use the same width for
-        all hyperedges. If a dict, must contain (hyperedge_id: width) pairs. If other
-        iterable, assume the widths are specified in the same order as the hyperedges
-        are found in DH.edges. By default, 1.5.
-    arrowstyle : str, optional
-        By default: '-\|>'. See `matplotlib.patches.ArrowStyle` for more options.
-    arrowsize : int (default=10)
-        Size of the arrow head's length and width. See `matplotlib.patches.FancyArrowPatch`
-        for attribute `mutation_scale` for more info.
-    connectionstyle : string (default="arc3")
-        Pass the connectionstyle parameter to create curved arc of rounding
-        radius rad. For example, connectionstyle='arc3,rad=0.2'.
-        See `matplotlib.patches.ConnectionStyle` and
-        `matplotlib.patches.FancyArrowPatch` for more info.
-    edge_marker_toggle: bool, optional
-        If True then marker representing the hyperedges are drawn. By default True.
     edge_marker_fc: str, dict, iterable, optional
         Filling color of the hyperedges (markers). If str, use the same color for all hyperedges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
         assume the colors are specified in the same order as the hyperedges are found
-        in DH.edges. If None (default), use the size of the hyperedges.
+        in H.edges. If None, colors markers by edge size. By default, None.
     edge_marker_ec: str, dict, iterable, optional
         Edge color of the hyperedges (markers). If str, use the same color for all hyperedges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
         assume the colors are specified in the same order as the hyperedges are found
-        in DH.edges. If None (default), use the size of the hyperedges.
-    edge_marker: str, optional
-        Marker used for the hyperedges. By default 's' (square marker).
+        in H.edges. By default, "black".
+    edge_marker_lw : int, float, dict, iterable, or EdgeStat, optional
+        Line width of the edge marker borders in pixels.  If int or float, use the same width
+        for all edge marker borders.  If a dict, must contain (edge_id: width) pairs.  If
+        iterable, assume the widths are specified in the same order as the nodes are
+        found in H.edges. If EdgeStat, use a monotonic linear interpolation defined
+        between min_edge_marker_lw and max_edge_marker_lw. By default, 1.
+    edge_marker_size : int, float, dict, iterable, or EdgeStat, optional
+        Radius of the edge markers in pixels.  If int or float, use the same radius for all
+        edge markers.  If a dict, must contain (edge_id: radius) pairs.  If iterable, assume
+        the radii are specified in the same order as the edges are found in
+        H.edges. If EdgeStat, use a monotonic linear interpolation defined between
+        min_edge_marker_size and max_edge_marker_size. By default, 7.
+    edge_marker_shape: str, optional
+        Marker used for the hyperedges. By default 's' (square marker). If "", no marker is
+        displayed.
+    edge_marker_fc_cmap : colormap
+        Colormap for mapping edge marker colors. By default, "Blues".
+        Ignored, if `edge_marker_fc` is a str (single color) or an iterable of colors.
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
+    dyad_color : str, dict, iterable, optional
+        Color of the bipartite edges. If str, use the same color for all edges.
+        If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
+        assume the colors are specified in the same order as the hyperedges are found
+        in H.edges. By default, "black".
+    dyad_lw : int, float, dict, iterable, optional
+        Line width of the bipartite edges. If int or float, use the same width for
+        all hyperedges. If a dict, must contain (hyperedge_id: width) pairs. If other
+        iterable, assume the widths are specified in the same order as the hyperedges
+        are found in H.edges. By default, 1.
+    dyad_style : str or list of strings, optional
+        Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
+        See matplotlib's documentation for all accepted values. By default, "solid".
+    dyad_color_cmap : colormap
+        Colormap for mapping bipartite edge colors. By default, "Greys".
+        Ignored, if `dyad_color` is a str (single color) or an iterable of colors.
     node_labels : bool or dict, optional
         If True, draw ids on the nodes. If a dict, must contain (node_id: label) pairs.
         By default, False.
     hyperedge_labels : bool or dict, optional
         If True, draw ids on the hyperedges. If a dict, must contain (edge_id: label)
         pairs.  By default, False.
+    arrowsize : int (default=10)
+        Size of the arrow head's length and width. See `matplotlib.patches.FancyArrowPatch`
+        for attribute `mutation_scale` for more info. Only used if the higher-order network
+        is a `DiHypergraph`.
+    arrowstyle : str, optional
+        By default: '->'. See `matplotlib.patches.ArrowStyle` for more options.
+        Only used if the higher-order network is a `DiHypergraph`.
+    connectionstyle : string (default="arc3")
+        Pass the connectionstyle parameter to create curved arc of rounding
+        radius rad. For example, connectionstyle='arc3,rad=0.2'.
+        See `matplotlib.patches.ConnectionStyle` and
+        `matplotlib.patches.FancyArrowPatch` for more info.
+        Only used if the higher-order network is a `DiHypergraph`.
     rescale_sizes: bool, optional
         If True, linearly interpolate `node_size` and between min/max values
         that can be changed in the other argument `params`.
         If `node_size` is a single value, this is ignored. By default, True.
-    iterations : int, optional
-        Maximum number of iterations taken to recompute the layout.
-        An original partial layout is computed solely based on the original nodes.
-        A full initial layout is then computed by simply adding the "edge" nodes
-        at the barycenters. This initial layout may suffer from overlap between edge-nodes.
-        After that, a spring layout is ran starting from the
-        initial layout, and each iteration makes all of the nodes overlap less.
+    aspect : {"auto", "equal"} or float, optional
+        Set the aspect ratio of the axes scaling, i.e. y/x-scale. `aspect` is passed
+        directly to matplotlib's `ax.set_aspect()`. Default is `equal`. See full
+        description at
+        https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_aspect.html
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
-        * "min_node_size" (default: 5)
-        * "max_node_size" (default: 30)
-        * "min_node_lw" (default: 0)
-        * "max_node_lw" (default: 5)
-        * "min_lines_lw" (default: 0)
-        * "max_lines_lw" (default: 50)
-        * "min_source_margin" (default: 0)
-        * "min_target_margin" (default: 0)
+        * min_node_size (default: 5)
+        * max_node_size (default: 30)
+        * min_node_lw (default: 0)
+        * max_node_lw (default: 5)
+        * min_edge_marker_size (default: 5)
+        * max_edge_marker_size (default: 30)
+        * min_edge_marker_lw (default: 0)
+        * max_edge_marker_lw (default: 5)
+        * min_dyad_lw (default: 1)
+        * max_dyad_lw (default: 10)
+        * min_source_margin (default: 0)
+        * min_target_margin (default: 0)
+
 
     Returns
     -------
-    ax : matplotlib Axes
-        Axes plotted on
+    ax : matplotlib.pyplot.axes
+        The axes corresponding the visualization
     collections : a tuple of 3 collections:
         * node_collection : matplotlib PathCollection
             Collection containing the nodes
-        * phantom_node_collection : matplotlib PathCollection
-            Collection containing the nodes representing edges
+        * edge_marker_collection : matplotlib PathCollection
+            Collection containing the edge markers
+        * dyad_collection : matplotlib LineCollection if undirected,
+                            list of FancyArrowPatches if not
+            Collection containing the edges
+
+    Raises
+    ------
+    XGIError
+        If the network is not a Hypergraph, SimplicialComplex or a DiHypergraph.
+
+    See Also
+    --------
+    draw
+    draw_multilayer
+    """
+
+    is_directed = False
+    if isinstance(H, DiHypergraph):
+        from ..convert import to_hypergraph
+
+        DH = H.copy()
+        H = to_hypergraph(DH)
+        is_directed = True
+
+    if not isinstance(H, Hypergraph):
+        raise XGIError("The input must be a Hypergraph")
+
+    settings = {
+        "min_node_lw": 0,
+        "max_node_lw": 5,
+        "min_node_size": 5,
+        "max_node_size": 30,
+        "min_edge_marker_lw": 0,
+        "max_edge_marker_lw": 5,
+        "min_edge_marker_size": 0,
+        "max_edge_marker_size": 5,
+        "min_dyad_lw": 1,
+        "max_dyad_lw": 10,
+        "min_source_margin": 0,
+        "min_target_margin": 0,
+    }
+
+    settings.update(kwargs)
+
+    node_settings = {
+        "min_node_lw": settings["min_node_lw"],
+        "max_node_lw": settings["max_node_lw"],
+        "min_node_size": settings["min_node_size"],
+        "max_node_size": settings["max_node_size"],
+    }
+
+    edge_marker_settings = {
+        "min_node_lw": settings["min_edge_marker_lw"],
+        "max_node_lw": settings["max_edge_marker_lw"],
+        "min_node_size": settings["min_edge_marker_size"],
+        "max_node_size": settings["max_edge_marker_size"],
+    }
+
+    if not pos:
+        pos = bipartite_spring_layout(H)
+    elif not (isinstance(pos[0], dict) and isinstance(pos[1], dict)):
+        raise XGIError("Position must be a 2-tuple of dictionaries!")
+
+    node_pos, edge_pos = pos
+
+    if ax is None:
+        ax = plt.gca()
+
+    if not max_order:
+        max_order = max_edge_order(H)
+
+    D = H.dual()
+    if edge_marker_fc is None:
+        edge_marker_fc = D.nodes.degree
+
+    ax, node_collection = draw_nodes(
+        H=H,
+        pos=node_pos,
+        ax=ax,
+        node_fc=node_fc,
+        node_ec=node_ec,
+        node_lw=node_lw,
+        node_size=node_size,
+        node_shape=node_shape,
+        node_fc_cmap=node_fc_cmap,
+        zorder=2,
+        params=node_settings,
+        node_labels=node_labels,
+        rescale_sizes=rescale_sizes,
+        **kwargs,
+    )
+
+    ax, edge_marker_collection = draw_nodes(
+        H=D,
+        pos=edge_pos,
+        ax=ax,
+        node_fc=edge_marker_fc,
+        node_ec=edge_marker_ec,
+        node_lw=edge_marker_lw,
+        node_size=edge_marker_size,
+        node_shape=edge_marker_shape,
+        node_fc_cmap=edge_marker_fc_cmap,
+        zorder=1,
+        params=edge_marker_settings,
+        node_labels=hyperedge_labels,
+        rescale_sizes=rescale_sizes,
+        **kwargs,
+    )
+
+    if is_directed:
+        ax = draw_directed_dyads(
+            DH,
+            pos=pos,
+            ax=ax,
+            max_order=max_order,
+            dyad_color=dyad_color,
+            dyad_lw=dyad_lw,
+            dyad_style=dyad_style,
+            dyad_color_cmap=dyad_color_cmap,
+            rescale_sizes=rescale_sizes,
+            arrowsize=arrowsize,
+            arrowstyle=arrowstyle,
+            connectionstyle=connectionstyle,
+            node_size=node_size,
+            node_shape=node_shape,
+            edge_marker_size=edge_marker_size,
+            edge_marker_shape=edge_marker_shape,
+            **kwargs,
+        )
+    else:
+        ax, dyad_collection = draw_undirected_dyads(
+            H,
+            pos=pos,
+            ax=ax,
+            max_order=max_order,
+            dyad_color=dyad_color,
+            dyad_lw=dyad_lw,
+            dyad_style=dyad_style,
+            dyad_color_cmap=dyad_color_cmap,
+            rescale_sizes=rescale_sizes,
+            **kwargs,
+        )
+
+    pos = {}
+    for i, n in enumerate(node_pos):
+        pos[i] = node_pos[n]
+    n = H.num_nodes
+    for i, e in enumerate(edge_pos):
+        pos[i + n] = edge_pos[e]
+
+    # compute axis limits
+    _update_lims(pos, ax)
+
+    ax.set_aspect(aspect, "datalim")
+
+    if is_directed:
+        return ax, (node_collection, edge_marker_collection)
+    else:
+        return ax, (node_collection, edge_marker_collection, dyad_collection)
+
+
+def draw_undirected_dyads(
+    H,
+    pos=None,
+    ax=None,
+    max_order=None,
+    dyad_color=None,
+    dyad_lw=1,
+    dyad_style="solid",
+    dyad_color_cmap="crest_r",
+    rescale_sizes=True,
+    **kwargs,
+):
+    """Draw the bipartite edges of an undirected hypergraph.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph to draw.
+    pos : tuple of two dicts, optional
+        The tuple should contains a (1) dictionary of positions node_id:(x,y) for
+        placing node markers, and (2) a dictionary of positions edge_id:(x,y) for
+        placing the edge markers.  If None (default), use the `bipartite_spring_layout`
+        to compute the positions.
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
+    max_order : int, optional
+        Maximum of hyperedges to plot. If None (default), plots all orders.
+    dyad_color : str, dict, iterable, optional
+        Color of the bipartite edges. If str, use the same color for all edges.
+        If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
+        assume the colors are specified in the same order as the hyperedges are found
+        in H.edges. By default, "black".
+    dyad_lw : int, float, dict, iterable, optional
+        Line width of the bipartite edges. If int or float, use the same width for
+        all hyperedges. If a dict, must contain (hyperedge_id: width) pairs. If other
+        iterable, assume the widths are specified in the same order as the hyperedges
+        are found in H.edges. By default, 1.
+    dyad_style : str or list of strings, optional
+        Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
+        See matplotlib's documentation for all accepted values. By default, "solid".
+    dyad_color_cmap : colormap
+        Colormap for mapping bipartite edge colors. By default, "Greys".
+        Ignored, if `dyad_color` is a str (single color) or an iterable of colors.
+    rescale_sizes: bool, optional
+        If True, linearly interpolate `node_size` and between min/max values
+        that can be changed in the other argument `params`.
+        If `node_size` is a single value, this is ignored. By default, True.
+    **kwargs : optional args
+        Alternate default values. Values that can be overwritten are the following:
+        * min_dyad_lw (default: 1)
+        * max_dyad_lw (default: 10)
+
+    Returns
+    -------
+    ax : matplotlib.pyplot.axes
+        The axes corresponding the visualization
+    * dyad_collection : matplotlib LineCollection
+        of bipartite edges
+
+    Raises
+    ------
+    XGIError
+        If DiHypergraph is passed.
+
+    See Also
+    --------
+    draw_bipartite
+    draw_directed_dyads
+
+    """
+    settings = {
+        "min_dyad_lw": 1,
+        "max_dyad_lw": 10,
+    }
+    settings.update(kwargs)
+
+    if not isinstance(H, Hypergraph):
+        raise XGIError("The input must be a Hypergraph")
+
+    if not pos:
+        pos = bipartite_spring_layout(H)
+
+    if ax is None:
+        ax = plt.gca()
+
+    if dyad_color is None:  # color is proportional to size
+        dyad_color = H.edges.size
+
+    if not max_order:
+        edge_ids = list(H.edges)
+        max_order = max_edge_order(H)
+    else:
+        edge_ids = list(H.edges.filterby("order", max_order, "leq"))
+
+    node_pos, edge_pos = pos
+
+    dyads = to_bipartite_edgelist(H)
+    dyad_pos = np.asarray(
+        [(node_pos[e[0]], edge_pos[e[1]]) for e in dyads if e[1] in edge_ids]
+    )
+
+    dyad_lw = _draw_arg_to_arr(dyad_lw)
+
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
+        )
+
+    # parse colors
+    dyad_color, dyads_c_mapped = _parse_color_arg(dyad_color, H.edges)
+
+    # The following two list comprehensions map colors assigned to a hyperedge to
+    # all of the bipartite edges, so that users need not specify colors for every
+    # node-edge incidence.
+    if isinstance(dyad_lw, np.ndarray):
+        dyad_lw = np.array(
+            list(
+                chaini([lw] * int(s) for s, lw in zip(H.edges.size.aslist(), dyad_lw)),
+                dtype=float,
+            )
+        )
+
+    if isinstance(dyad_color, np.ndarray):
+        dyad_color = np.array(
+            list(
+                chaini(
+                    [dc] * int(s) for s, dc in zip(H.edges.size.aslist(), dyad_color)
+                ),
+            )
+        )
+
+    # convert numbers to colors for FancyArrowPatch
+    if dyads_c_mapped:
+        norm = mpl.colors.Normalize()
+        m = cm.ScalarMappable(norm=norm, cmap=dyad_color_cmap)
+        dyad_color = m.to_rgba(dyad_color)
+
+    # check validity of input values
+    if np.any(dyad_lw < 0):
+        raise ValueError("dyad_lw cannot contain negative values.")
+
+    # interpolate if needed
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
+        )
+
+    dyad_collection = LineCollection(
+        dyad_pos,
+        colors=dyad_color,
+        linewidths=dyad_lw,
+        antialiaseds=(1,),
+        linestyle=dyad_style,
+        cmap=dyad_color_cmap,
+        zorder=0,
+    )
+
+    ax.add_collection(dyad_collection)
+    return ax, dyad_collection
+
+
+def draw_directed_dyads(
+    H,
+    pos=None,
+    ax=None,
+    max_order=None,
+    dyad_color=None,
+    dyad_lw=1,
+    dyad_style="solid",
+    dyad_color_cmap="crest_r",
+    arrowsize=10,
+    arrowstyle="->",
+    connectionstyle="arc3",
+    node_size=5,
+    node_shape="o",
+    edge_marker_size=5,
+    edge_marker_shape="s",
+    rescale_sizes=True,
+    **kwargs,
+):
+    """Draw the bipartite edges of a directed hypergraph.
+
+    Parameters
+    ----------
+    H : DiHypergraph
+        The hypergraph to draw.
+    pos : tuple of two dicts, optional
+        The tuple should contains a (1) dictionary of positions node_id:(x,y) for
+        placing node markers, and (2) a dictionary of positions edge_id:(x,y) for
+        placing the edge markers.  If None (default), use the `bipartite_spring_layout`
+        to compute the positions.
+    ax : matplotlib.pyplot.axes, optional
+        Axis to draw on. If None (default), get the current axes.
+    max_order : int, optional
+        Maximum of hyperedges to plot. If None (default), plots all orders.
+    dyad_color : str, dict, iterable, optional
+        Color of the bipartite edges. If str, use the same color for all edges.
+        If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
+        assume the colors are specified in the same order as the hyperedges are found
+        in H.edges. By default, "black".
+    dyad_lw : int, float, dict, iterable, optional
+        Line width of the bipartite edges. If int or float, use the same width for
+        all hyperedges. If a dict, must contain (hyperedge_id: width) pairs. If other
+        iterable, assume the widths are specified in the same order as the hyperedges
+        are found in H.edges. By default, 1.
+    dyad_style : str or list of strings, optional
+        Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
+        See matplotlib's documentation for all accepted values. By default, "solid".
+    dyad_color_cmap : colormap
+        Colormap for mapping bipartite edge colors. By default, "Greys".
+        Ignored, if `dyad_color` is a str (single color) or an iterable of colors.
+    arrowsize : int (default=10)
+        Size of the arrow head's length and width. See `matplotlib.patches.FancyArrowPatch`
+        for attribute `mutation_scale` for more info. Only used if the higher-order network
+        is a `DiHypergraph`.
+    arrowstyle : str, optional
+        By default: '->'. See `matplotlib.patches.ArrowStyle` for more options.
+        Only used if the higher-order network is a `DiHypergraph`.
+    connectionstyle : string (default="arc3")
+        Pass the connectionstyle parameter to create curved arc of rounding
+        radius rad. For example, connectionstyle='arc3,rad=0.2'.
+        See `matplotlib.patches.ConnectionStyle` and
+        `matplotlib.patches.FancyArrowPatch` for more info.
+        Only used if the higher-order network is a `DiHypergraph`.
+    rescale_sizes: bool, optional
+        If True, linearly interpolate `node_size` and between min/max values
+        that can be changed in the other argument `params`.
+        If `node_size` is a single value, this is ignored. By default, True.
+    node_size : int, float, dict, iterable, or NodeStat, optional
+        Radius of the nodes in pixels.  If int or float, use the same radius for all
+        nodes.  If a dict, must contain (node_id: radius) pairs.  If iterable, assume
+        the radiuses are specified in the same order as the nodes are found in
+        H.nodes. If NodeStat, use a monotonic linear interpolation defined between
+        min_node_size and max_node_size. Used for arrow spacing. By default, 7.
+    node_shape : str, optional
+        Marker used for the nodes. Used for arrow spacing. By default 'o' (circle marker).
+    edge_marker_size : int, float, dict, iterable, or EdgeStat, optional
+        Radius of the edge markers in pixels.  If int or float, use the same radius for all
+        edge markers.  If a dict, must contain (edge_id: radius) pairs.  If iterable, assume
+        the radii are specified in the same order as the edges are found in
+        H.edges. If EdgeStat, use a monotonic linear interpolation defined between
+        min_edge_marker_size and max_edge_marker_size. Used for arrow spacing. By default, 7.
+    edge_marker_shape: str, optional
+        Marker used for the hyperedges. If "", no marker is
+        displayed. Used for arrow spacing. By default 's' (square marker).
+    **kwargs : optional args
+        Alternate default values. Values that can be overwritten are the following:
+        * min_dyad_lw (default: 1)
+        * max_dyad_lw (default: 10)
+
+    Returns
+    -------
+    ax : matplotlib.pyplot.axes
+        The axes corresponding the visualization
+    dyad_collection : list of FancyArrowPatches
+        representing directed bipartite edges
 
     Raises
     ------
@@ -1663,161 +2118,73 @@ def draw_dihypergraph(
 
     See Also
     --------
-    draw
-    draw_nodes
-    draw_node_labels
+    draw_bipartite
+    draw_directed_dyads
 
     """
-    if not isinstance(DH, DiHypergraph):
-        raise XGIError("The input must be a DiHypergraph")
-
     settings = {
-        "min_node_size": 5,
-        "max_node_size": 30,
-        "min_node_lw": 0,
-        "max_node_lw": 5,
-        "min_lines_lw": 0,
-        "max_lines_lw": 50,
+        "min_dyad_lw": 1,
+        "max_dyad_lw": 10,
         "min_source_margin": 0,
         "min_target_margin": 0,
     }
-
     settings.update(kwargs)
 
-    # convert to hypergraph in order to use the augmented projection function
-    H_conv = convert.to_hypergraph(DH)
+    if not isinstance(H, DiHypergraph):
+        raise XGIError("Input must be a DiHypergraph")
 
-    ax, _ = _draw_init(H_conv, ax, True)
+    if not pos:
+        from ..convert import to_hypergraph
+
+        pos = bipartite_spring_layout(to_hypergraph(H))
+
+    if ax is None:
+        ax = plt.gca()
+
+    if dyad_color is None:  # color is proportional to size
+        dyad_color = H.edges.size
 
     if not max_order:
-        max_order = max_edge_order(H_conv)
+        edge_ids = list(H.edges)
+        max_order = H.edges.order.max()
+    else:
+        edge_ids = list(H.edges.filterby("order", max_order, "leq"))
 
-    # set default colors
-    if lines_fc is None:
-        lines_fc = H_conv.edges.size
-
-    if edge_marker_fc is None:
-        edge_marker_fc = H_conv.edges.size
-
-    # convert all formats to ndarray
+    dyad_lw = _draw_arg_to_arr(dyad_lw)
     node_size = _draw_arg_to_arr(node_size)
     edge_marker_size = _draw_arg_to_arr(edge_marker_size)
-    lines_lw = _draw_arg_to_arr(lines_lw)
 
-    # interpolate if needed
-    if rescale_sizes and isinstance(node_size, np.ndarray):
-        node_size = _interp_draw_arg(
-            node_size, settings["min_node_size"], settings["max_node_size"]
-        )
-    if rescale_sizes and isinstance(edge_marker_size, np.ndarray):
-        edge_marker_size = _interp_draw_arg(
-            edge_marker_size, settings["min_node_size"], settings["max_node_size"]
-        )
-    if rescale_sizes and isinstance(lines_lw, np.ndarray):
-        lines_lw = _interp_draw_arg(
-            lines_lw, settings["min_lines_lw"], settings["max_lines_lw"]
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
         )
 
     # parse colors
-    lines_fc, lines_c_mapped = _parse_color_arg(lines_fc, H_conv.edges)
+    dyad_color, dyads_c_mapped = _parse_color_arg(dyad_color, H.edges)
 
     # convert numbers to colors for FancyArrowPatch
-    if lines_c_mapped:
+    if dyads_c_mapped:
         norm = mpl.colors.Normalize()
-        m = cm.ScalarMappable(norm=norm, cmap=edge_marker_fc_cmap)
-        lines_fc = m.to_rgba(lines_fc)
+        m = cm.ScalarMappable(norm=norm, cmap=dyad_color_cmap)
+        dyad_color = m.to_rgba(dyad_color)
 
-    # compute the augmented projection
-    # this is a networkx Graph as a bipartite representation of H_conv
-    # nodes and hyperedges > 2 are represented by nodes
-    G_aug = _augmented_projection(H_conv)
+    # check validity of input values
+    if np.any(dyad_lw < 0):
+        raise ValueError("dyad_lw cannot contain negative values.")
 
-    phantom_nodes = [n for n in list(G_aug.nodes) if n not in list(H_conv.nodes)]
-
-    if pos is None:  # compute positions, first based on original nodes
-        pos_nodes = barycenter_spring_layout(H_conv)
-        # then compute the barycenter positions for the "edge" phantom nodes
-
-        centers = {}
-        for idx, members in DH.edges.members(dtype=dict).items():
-            center = np.zeros((2,))
-            edge_bi_id = phantom_nodes[idx]
-            for node in members:
-                center += pos_nodes[node]
-            centers[edge_bi_id] = center / len(members)
-
-        # merge both pos dictionaries
-        pos_nodes.update(centers)
-        pos = pos_nodes
-
-        # recompute positions from the original positions
-        pos = spring_layout(G_aug, pos=pos, iterations=iterations)
-
-    # draw "node" nodes
-    ax, node_collection = draw_nodes(
-        H=H_conv,
-        pos=pos,
-        ax=ax,
-        node_fc=node_fc,
-        node_ec=node_ec,
-        node_lw=node_lw,
-        node_size=node_size,
-        node_fc_cmap=node_fc_cmap,
-        node_shape=node_shape,
-        zorder=4,
-        params=settings,
-        node_labels=node_labels,
-        rescale_sizes=rescale_sizes,
-    )
-
-    # draw "edge" phantom nodes
-    if edge_marker_toggle:
-
-        HG_phantom = Hypergraph()
-        HG_phantom.add_nodes_from(phantom_nodes)  # dummy HG
-
-        ax, phantom_node_collection = draw_nodes(
-            H=HG_phantom,
-            pos=pos,
-            ax=ax,
-            node_fc=edge_marker_fc,
-            node_ec=edge_marker_ec,
-            node_lw=edge_marker_lw,
-            node_size=edge_marker_size,
-            node_shape=edge_marker,
-            node_fc_cmap=edge_marker_fc_cmap,
-            zorder=2,
-            params=settings,
-            rescale_sizes=rescale_sizes,
+    # interpolate if needed
+    if rescale_sizes and isinstance(dyad_lw, np.ndarray):
+        dyad_lw = _interp_draw_arg(
+            dyad_lw, settings["min_dyad_lw"], settings["max_dyad_lw"]
         )
 
-        if hyperedge_labels:
-            labels = {i: ii for i, ii in zip(phantom_nodes, H_conv.edges)}
-            draw_node_labels(
-                HG_phantom,
-                pos=pos,
-                node_labels=labels,
-                ax_nodes=ax,
-                font_color_nodes="white",
-                zorder=3,
-            )
+    node_pos, edge_pos = pos
 
-    else:
-        phantom_node_collection = None
+    """Helper functions"""
 
-    for dyad in H_conv.edges.filterby("size", 2).members():
-        try:
-            index = max(n for n in G_aug.nodes if isinstance(n, int)) + 1
-        except ValueError:
-            # The list of node-labels has no integers, so I start from 0
-            index = 0
-        G_aug.add_edges_from([[list(dyad)[0], index], [list(dyad)[1], index]])
-
-    edges = DH.edges.filterby("size", 2, "geq")
-
-    nodes_id = list(DH.nodes)  # in original order, to find index for arrays
-
-    def _arrow_shrink(source="node", target="edge"):
+    def _arrow_shrink(
+        source="node", target="edge", node_size=None, edge_marker_size=None
+    ):
         """Compute the shrink factor for the arrows based on node sizes."""
 
         def to_marker_edge(marker_size, marker):
@@ -1828,20 +2195,12 @@ def draw_dihypergraph(
             else:
                 return marker_size / 2
 
-        shrink_source = 0  # space from source to tail
-        shrink_target = 0  # space from  head to target
-
-        if isinstance(node_size, np.ndarray):  # many node sizes
-            source_node_size = node_size[nodes_id.index(node)]
-            shrink_source = to_marker_edge(source_node_size, node_shape)
-        else:
-            shrink_source = to_marker_edge(node_size, node_shape)
-
-        if isinstance(edge_marker_size, np.ndarray):
-            target_node_size = edge_marker_size[idx]
-            shrink_target = to_marker_edge(target_node_size, edge_marker)
-        else:
-            shrink_target = to_marker_edge(edge_marker_size, edge_marker)
+        shrink_source = to_marker_edge(
+            node_size, node_shape
+        )  # space from source to tail
+        shrink_target = to_marker_edge(
+            edge_marker_size, edge_marker_shape
+        )  # space from  head to target
 
         if shrink_source < settings["min_source_margin"]:
             shrink_source = settings["min_source_margin"]
@@ -1859,69 +2218,95 @@ def draw_dihypergraph(
     # We are using single patches rather than a PatchCollection of arrows
     # because Matplotlib has an old bug: FancyArrowPatch has incompatibilities
     # with PatchCollection (https://github.com/matplotlib/matplotlib/issues/2341)
-    # We are thus following the approach used by Netoworkx
+    # We are thus following the approach used by NetworkX
     # https://github.com/networkx/networkx/pull/2760
+    edges = H.edges
+    nodes = H.nodes
+    edge_to_idx = dict(zip(edges, range(len(edges))))
+    node_to_idx = dict(zip(nodes, range(len(nodes))))
 
     patches = []
-    for idx, dimembers in edges.dimembers(dtype=dict).items():
-
-        edge_bi_id = phantom_nodes[idx]
-
-        for node in dimembers[0]:  # lines going towards the center
-
-            xy_source = pos[node]
-            xy_target = pos[edge_bi_id]
-
-            shrink_source, shrink_target = _arrow_shrink(source="node", target="edge")
-            if lines_c_mapped:
-                lines_color = lines_fc[idx]
+    for e, (tail, head) in edges.dimembers(dtype=dict).items():
+        if e in edge_ids:
+            if isinstance(dyad_lw, np.ndarray):  # many node sizes
+                dlw = dyad_lw[edge_to_idx[n]]
             else:
-                lines_color = lines_fc
+                dlw = dyad_lw
 
-            patch = FancyArrowPatch(
-                xy_source,
-                xy_target,
-                arrowstyle=arrowstyle,
-                shrinkA=shrink_source,
-                shrinkB=shrink_target,
-                mutation_scale=arrowsize,
-                linewidth=lines_lw,
-                zorder=0,
-                color=lines_color,
-                connectionstyle=connectionstyle,
-            )  # arrows go behind nodes
-
-            patches.append(patch)
-            ax.add_patch(patch)
-
-        for node in dimembers[1]:  # lines going out from the center
-
-            xy_source = pos[edge_bi_id]
-            xy_target = pos[node]
-
-            shrink_source, shrink_target = _arrow_shrink(source="edge", target="node")
-            if lines_c_mapped:
-                lines_color = lines_fc[idx]
+            if dyads_c_mapped:
+                d_color = dyad_color[edge_to_idx[e]]
             else:
-                lines_color = lines_fc
+                d_color = dyad_color
 
-            patch = FancyArrowPatch(
-                xy_source,
-                xy_target,
-                arrowstyle=arrowstyle,
-                shrinkA=shrink_source,
-                shrinkB=shrink_target,
-                mutation_scale=arrowsize,
-                linewidth=lines_lw,
-                zorder=0,
-                color=lines_color,
-                connectionstyle=connectionstyle,
-            )  # arrows go behind nodes
+            if isinstance(edge_marker_size, np.ndarray):  # many node sizes
+                ems = edge_marker_size[edge_to_idx[e]]
+            else:
+                ems = edge_marker_size
 
-            patches.append(patch)
-            ax.add_patch(patch)
+            for n in tail:  # lines going towards the center
 
-    # compute axis limits
-    _update_lims(pos_nodes, ax)
+                xy_source = node_pos[n]
+                xy_target = edge_pos[e]
 
-    return ax, (node_collection, phantom_node_collection)
+                if isinstance(node_size, np.ndarray):  # many node sizes
+                    ns = node_size[node_to_idx[n]]
+                else:
+                    ns = node_size
+
+                shrink_source, shrink_target = _arrow_shrink(
+                    source="node",
+                    target="edge",
+                    node_size=ns,
+                    edge_marker_size=ems,
+                )
+
+                patch = FancyArrowPatch(
+                    xy_source,
+                    xy_target,
+                    arrowstyle=arrowstyle,
+                    shrinkA=shrink_source,
+                    shrinkB=shrink_target,
+                    mutation_scale=arrowsize,
+                    linewidth=dlw,
+                    linestyle=dyad_style,
+                    zorder=0,
+                    color=d_color,
+                    connectionstyle=connectionstyle,
+                )  # arrows go behind nodes
+
+                patches.append(patch)
+                ax.add_patch(patch)
+
+            for n in head:  # lines going out from the center
+                xy_source = edge_pos[e]
+                xy_target = node_pos[n]
+
+                if isinstance(node_size, np.ndarray):  # many node sizes
+                    ns = node_size[node_to_idx[n]]
+                else:
+                    ns = node_size
+
+                shrink_source, shrink_target = _arrow_shrink(
+                    source="edge",
+                    target="node",
+                    node_size=ns,
+                    edge_marker_size=ems,
+                )
+
+                patch = FancyArrowPatch(
+                    xy_source,
+                    xy_target,
+                    arrowstyle=arrowstyle,
+                    shrinkA=shrink_source,
+                    shrinkB=shrink_target,
+                    mutation_scale=arrowsize,
+                    linewidth=dlw,
+                    linestyle=dyad_style,
+                    zorder=0,
+                    color=d_color,
+                    connectionstyle=connectionstyle,
+                )  # arrows go behind nodes
+
+                patches.append(patch)
+                ax.add_patch(patch)
+    return ax

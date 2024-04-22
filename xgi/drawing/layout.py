@@ -7,7 +7,8 @@ import numpy as np
 from numpy.linalg import inv, svd
 
 from .. import convert
-from ..core import SimplicialComplex
+from ..convert import to_bipartite_graph
+from ..core import DiHypergraph, SimplicialComplex
 
 __all__ = [
     "random_layout",
@@ -18,6 +19,8 @@ __all__ = [
     "circular_layout",
     "spiral_layout",
     "barycenter_kamada_kawai_layout",
+    "bipartite_spring_layout",
+    "edge_positions_from_barycenters",
 ]
 
 
@@ -186,6 +189,108 @@ def _augmented_projection(H, weighted=False):
                 G.add_edge(phantom_node_id, n)
         phantom_node_id += 1
     return G
+
+
+def bipartite_spring_layout(H, seed=None, k=None, **kwargs):
+    """
+    Position the nodes and edges using Fruchterman-Reingold force-directed
+    algorithm using the hypergraph converted to a bipartite network.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        A position will be assigned to every node and edge in H.
+    seed : int, RandomState instance or None  optional (default=None)
+        Set the random state for deterministic node layouts.
+        If int, `seed` is the seed used by the random number generator,
+        If None (default), random numbers are sampled from the
+        numpy random number generator without initialization.
+    k : float
+        The spring constant of the links. When k=None (default),
+        k = 1/sqrt(N). For more information, see the documentation
+        for the NetworkX spring_layout() function.
+    kwargs :
+        Optional arguments for the NetworkX spring_layout() function.
+        See https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout.spring_layout.html
+
+
+    Returns
+    -------
+    pos : tuple of dicts
+        A tuple of two dictionaries:
+        the first is a dictionary of positions keyed by node
+        the second is a dictionary of positions keyed by edge
+
+    See Also
+    --------
+    random_layout
+    pairwise_spring_layout
+    weighted_barycenter_spring_layout
+
+    Examples
+    --------
+    >>> import xgi
+    >>> N = 50
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_hypergraph(N, ps)
+    >>> pos = xgi.bipartite_spring_layout(H)
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    G, nodedict, edgedict = to_bipartite_graph(H, index=True)
+
+    # Creating a dictionary for the position of the nodes with the standard spring
+    # layout
+    pos = nx.spring_layout(G, seed=seed, k=k, **kwargs)
+
+    node_pos = {nodedict[i]: pos[i] for i in nodedict}
+    edge_pos = {edgedict[i]: pos[i] for i in edgedict}
+
+    return node_pos, edge_pos
+
+
+def edge_positions_from_barycenters(H, node_pos):
+    """
+    Given a higher-order network and node positions, assigns
+    edge marker positions to be the barycenters of its
+    member nodes.
+
+    Parameters
+    ----------
+    H : Hypergraph, SimplicialComplex, or DiHypergraph
+        A position will be assigned to every node and edge in H.
+    node_pos : dict
+        Nodal positions where keys are node ids and values are
+        Numpy arrays of the positions.
+
+    Returns
+    -------
+    edge_pos : dict
+        a dictionary of positions keyed by edge
+
+    See Also
+    --------
+    bipartite_spring_layout
+
+    Examples
+    --------
+    >>> import xgi
+    >>> N = 50
+    >>> ps = [0.1, 0.01]
+    >>> H = xgi.random_hypergraph(N, ps)
+    >>> node_pos = xgi.pairwise_spring_layout(H)
+    >>> edge_pos = xgi.edge_positions_from_barycenters(H, node_pos)
+    """
+    if isinstance(H, DiHypergraph):
+        from ..convert import to_hypergraph
+
+        H = to_hypergraph(H)
+    edge_pos = {}
+    for id, e in H.edges.members(dtype=dict).items():
+        edge_pos[id] = np.mean([node_pos[n] for n in e], axis=0)
+
+    return edge_pos
 
 
 def barycenter_spring_layout(
