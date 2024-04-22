@@ -13,8 +13,7 @@ async function fetch_JSON_file(url) {
     }
  }
 
- function create_table(json_data) {
-    const body = document.body;
+function create_table(json_data) {
     const section = document.getElementById("network-statistics")
     const table = document.createElement('table');
     const table_header = document.createElement('thead')
@@ -22,7 +21,7 @@ async function fetch_JSON_file(url) {
 
     // Create header row
     const header_row = document.createElement('tr');
-    const headers = ["Dataset", "|V|", "|E|", "|E<sub>unique</sub>|", "s<sub>max</sub>"]
+    const headers = ["Dataset", "|V|", "|E|", "|E<sup>*</sup>|", "s<sub>max</sub>"]
     const header_attrs = ["num-nodes", "num-edges", "num-unique-edges", "max-edge-size"]
 
     for (const i in headers) {
@@ -46,7 +45,7 @@ async function fetch_JSON_file(url) {
             const td = document.createElement('td');
             const attr = header_attrs[i]
             if (json_data[key][attr]) {
-                td.textContent = json_data[key][attr];
+                td.textContent = json_data[key][attr].toLocaleString();
             }
             else {
                 td.textContent = "N/A"

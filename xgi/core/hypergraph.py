@@ -1,4 +1,5 @@
 """Base class for undirected hypergraphs."""
+import random
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
 from copy import copy, deepcopy
@@ -957,6 +958,86 @@ class Hypergraph:
 
         self._edge[e_id1] = temp_members1
         self._edge[e_id2] = temp_members2
+
+    def random_edge_shuffle(self, e_id1=None, e_id2=None):
+        """Randomly redistributes nodes between two hyperedges.
+
+        The process is as follows:
+
+        1. randomly select two hyperedges
+        2. place all their nodes into a single bucket
+        3. randomly redistribute the nodes between those two hyperedges
+
+        Parameters
+        ----------
+        e_id1 : node ID, optional
+            ID of first edge to shuffle.
+        e_id2 : node ID, optional
+            ID of second edge to shuffle.
+
+        Note
+        ----
+        After shuffling, the sizes of the two hyperedges are unchanged.
+        Edge IDs and attributes are also unchanged.
+        If the same node appears in both hyperedges, then this is still true after reshuffling.
+        If either `e_id1` or `e_id2` is not provided, then two random edges are selected.
+
+        Reference
+        ---------
+        Philip S C., 2020.
+        "Configuration models of random hypergraphs."
+        Journal of Complex Networks, 8(3).
+        https://doi.org/10.1093/comnet/cnaa018
+
+        Example
+        -------
+        >>> import xgi
+        >>> random.seed(42)
+        >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5]])
+        >>> H.random_edge_shuffle()
+        >>> H.edges.members()
+        [{2, 4, 5}, {3, 4}, {1, 3}]
+
+        """
+        if len(self._edge) < 2:
+            raise ValueError("Hypergraph must have at least two edges.")
+
+        # select two random edges
+        if e_id1 is None or e_id2 is None:
+            e_id1, e_id2 = random.sample(list(self._edge), 2)
+
+        # extract edges (lists of nodes)
+        e1 = self._edge[e_id1]
+        e2 = self._edge[e_id2]
+
+        # nodes in both edges should not be shuffled
+        nodes_both = e1 & e2
+        e1 -= nodes_both
+        e2 -= nodes_both
+
+        # put all nodes in a single bucket
+        nodes = e1 | e2
+
+        # randomly redistribute nodes between the two edges
+        e1_new = set(random.sample(list(nodes), len(e1)))
+        e2_new = nodes - e1_new
+
+        # update edge memberships
+        for n_id in e1_new & e2:
+            self._node[n_id].remove(e_id2)
+            self._node[n_id].add(e_id1)
+
+        for n_id in e2_new & e1:
+            self._node[n_id].remove(e_id1)
+            self._node[n_id].add(e_id2)
+
+        # add nodes in both edges back
+        e1_new |= nodes_both
+        e2_new |= nodes_both
+
+        # update hypergraph
+        self._edge[e_id1] = e1_new
+        self._edge[e_id2] = e2_new
 
     def add_node_to_edge(self, edge, node):
         """Add one node to an existing edge.

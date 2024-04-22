@@ -49,6 +49,19 @@ def test_degree_assortativity(edgelist1, edgelist5):
     assert -1 <= xgi.degree_assortativity(H1, kind="top-2", exact=True) <= 1
     assert -1 <= xgi.degree_assortativity(H1, kind="top-bottom", exact=True) <= 1
 
+    # check that exact returns the same
+    rho1 = xgi.degree_assortativity(H1, kind="uniform", exact=True)
+    rho2 = xgi.degree_assortativity(H1, kind="uniform", exact=True)
+    assert rho1 == rho2
+
+    rho1 = xgi.degree_assortativity(H1, kind="top-2", exact=True)
+    rho2 = xgi.degree_assortativity(H1, kind="top-2", exact=True)
+    assert rho1 == rho2
+
+    rho1 = xgi.degree_assortativity(H1, kind="top-bottom", exact=True)
+    rho2 = xgi.degree_assortativity(H1, kind="top-bottom", exact=True)
+    assert rho1 == rho2
+
     # test empty
     H = xgi.Hypergraph()
     with pytest.raises(XGIError):
@@ -57,6 +70,12 @@ def test_degree_assortativity(edgelist1, edgelist5):
     H.add_nodes_from([0, 1, 2])
     with pytest.raises(XGIError):
         xgi.degree_assortativity(H)
+
+    # test wrong kind
+    with pytest.raises(XGIError):
+        xgi.degree_assortativity(H1, kind="no-idea")
+    with pytest.raises(XGIError):
+        xgi.degree_assortativity(H1, kind="no-idea", exact=True)
 
 
 def test_choose_degrees(edgelist1, edgelist6):

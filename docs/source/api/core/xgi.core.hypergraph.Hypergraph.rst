@@ -40,8 +40,11 @@
       ~Hypergraph.remove_node_from_edge
       ~Hypergraph.clear
       ~Hypergraph.clear_edges
+      ~Hypergraph.merge_duplicate_edges
       ~Hypergraph.cleanup
       ~Hypergraph.freeze
+      ~Hypergraph.double_edge_swap
+      ~Hypergraph.random_edge_shuffle
 
 
    .. rubric:: Methods that return other hypergraphs
