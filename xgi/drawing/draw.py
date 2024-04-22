@@ -1535,12 +1535,12 @@ def draw_bipartite(
     node_size=7,
     node_shape="o",
     node_fc_cmap="Reds",
-    edge_marker_fc="cornflowerblue",
+    edge_marker_fc=None,
     edge_marker_ec="black",
     edge_marker_lw=1,
     edge_marker_size=7,
     edge_marker_shape="s",
-    edge_marker_fc_cmap="Blues",
+    edge_marker_fc_cmap="crest_r",
     max_order=None,
     dyad_color=None,
     dyad_lw=1,
@@ -1599,12 +1599,12 @@ def draw_bipartite(
         Filling color of the hyperedges (markers). If str, use the same color for all hyperedges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
         assume the colors are specified in the same order as the hyperedges are found
-        in DH.edges. By default, "cornflowerblue".
+        in H.edges. If None, colors markers by edge size. By default, None.
     edge_marker_ec: str, dict, iterable, optional
         Edge color of the hyperedges (markers). If str, use the same color for all hyperedges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
         assume the colors are specified in the same order as the hyperedges are found
-        in DH.edges. By default, "black".
+        in H.edges. By default, "black".
     edge_marker_lw : int, float, dict, iterable, or EdgeStat, optional
         Line width of the edge marker borders in pixels.  If int or float, use the same width
         for all edge marker borders.  If a dict, must contain (edge_id: width) pairs.  If
@@ -1629,12 +1629,12 @@ def draw_bipartite(
         Color of the bipartite edges. If str, use the same color for all edges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
         assume the colors are specified in the same order as the hyperedges are found
-        in DH.edges. By default, "black".
+        in H.edges. By default, "black".
     dyad_lw : int, float, dict, iterable, optional
         Line width of the bipartite edges. If int or float, use the same width for
         all hyperedges. If a dict, must contain (hyperedge_id: width) pairs. If other
         iterable, assume the widths are specified in the same order as the hyperedges
-        are found in DH.edges. By default, 1.
+        are found in H.edges. By default, 1.
     dyad_style : str or list of strings, optional
         Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
         See matplotlib's documentation for all accepted values. By default, "solid".
@@ -1764,6 +1764,9 @@ def draw_bipartite(
     if not max_order:
         max_order = max_edge_order(H)
 
+    if edge_marker_fc is None:
+        edge_marker_fc = H.edges.size
+
     ax, node_collection = draw_nodes(
         H=H,
         pos=node_pos,
@@ -1881,12 +1884,12 @@ def draw_undirected_dyads(
         Color of the bipartite edges. If str, use the same color for all edges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
         assume the colors are specified in the same order as the hyperedges are found
-        in DH.edges. By default, "black".
+        in H.edges. By default, "black".
     dyad_lw : int, float, dict, iterable, optional
         Line width of the bipartite edges. If int or float, use the same width for
         all hyperedges. If a dict, must contain (hyperedge_id: width) pairs. If other
         iterable, assume the widths are specified in the same order as the hyperedges
-        are found in DH.edges. By default, 1.
+        are found in H.edges. By default, 1.
     dyad_style : str or list of strings, optional
         Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
         See matplotlib's documentation for all accepted values. By default, "solid".
@@ -2049,12 +2052,12 @@ def draw_directed_dyads(
         Color of the bipartite edges. If str, use the same color for all edges.
         If a dict, must contain (hyperedge_id: color_str) pairs. If other iterable,
         assume the colors are specified in the same order as the hyperedges are found
-        in DH.edges. By default, "black".
+        in H.edges. By default, "black".
     dyad_lw : int, float, dict, iterable, optional
         Line width of the bipartite edges. If int or float, use the same width for
         all hyperedges. If a dict, must contain (hyperedge_id: width) pairs. If other
         iterable, assume the widths are specified in the same order as the hyperedges
-        are found in DH.edges. By default, 1.
+        are found in H.edges. By default, 1.
     dyad_style : str or list of strings, optional
         Line style of the dyads, e.g. ‘-’, ‘–’, ‘-.’, ‘:’ or words like ‘solid’ or ‘dashed’.
         See matplotlib's documentation for all accepted values. By default, "solid".

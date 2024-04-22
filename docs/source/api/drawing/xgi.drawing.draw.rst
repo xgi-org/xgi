@@ -8,8 +8,8 @@ xgi.drawing.draw
    .. rubric:: Functions
    
    .. autofunction:: draw
-   .. autofunction:: draw_multilayer
    .. autofunction:: draw_bipartite
+   .. autofunction:: draw_multilayer
    .. autofunction:: draw_nodes
    .. autofunction:: draw_hyperedges
    .. autofunction:: draw_undirected_dyads
