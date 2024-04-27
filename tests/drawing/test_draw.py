@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 import seaborn as sb
+from matplotlib.patches import FancyArrowPatch
 
 import xgi
 from xgi.exception import XGIError
@@ -519,63 +520,63 @@ def test_draw_multilayer(edgelist8):
     plt.close("all")
 
 
-def test_draw_dihypergraph(diedgelist2, edgelist8):
+def test_draw_bipartite(diedgelist2, edgelist8):
     DH = xgi.DiHypergraph(diedgelist2)
 
     fig1, ax1 = plt.subplots()
-    ax1, collections = xgi.draw_dihypergraph(DH, ax=ax1)
-    node_coll, phantom_node_coll = collections
+    ax1, collections1 = xgi.draw_bipartite(DH, ax=ax1)
+    node_coll1, edge_marker_coll1 = collections1
     fig2, ax2 = plt.subplots()
-    ax2, collections2 = xgi.draw_dihypergraph(
+    ax2, collections2 = xgi.draw_bipartite(
         DH,
         ax=ax2,
         node_fc="red",
         node_ec="blue",
         node_lw=2,
         node_size=20,
-        lines_fc="blue",
-        lines_lw=2,
+        dyad_color="blue",
+        dyad_lw=2,
         edge_marker_fc="red",
         edge_marker_lw=2,
         edge_marker_size=20,
     )
-    node_coll2, phantom_node_coll2 = collections2
+    node_coll2, edge_marker_coll2 = collections2
 
     # number of elements
-    assert len(node_coll.get_offsets()) == 6  # number of original nodes
-    assert len(phantom_node_coll.get_offsets()) == 3  # number of original edges
+    assert len(node_coll1.get_offsets()) == 6  # number of original nodes
+    assert len(edge_marker_coll1.get_offsets()) == 3  # number of original edges
     assert len(ax1.patches) == 11  # number of lines
 
     # node face colors
-    assert np.all(node_coll.get_facecolor() == np.array([[1, 1, 1, 1]]))  # white
+    assert np.all(node_coll1.get_facecolor() == np.array([[1, 1, 1, 1]]))  # white
     assert np.all(node_coll2.get_facecolor() == np.array([[1, 0, 0, 1]]))  # red
 
     # node edge colors
-    assert np.all(node_coll.get_edgecolor() == np.array([[0, 0, 0, 1]]))  # black
+    assert np.all(node_coll1.get_edgecolor() == np.array([[0, 0, 0, 1]]))  # black
     assert np.all(node_coll2.get_edgecolor() == np.array([[0, 0, 1, 1]]))  # blue
 
     # node_lw
-    assert np.all(node_coll.get_linewidth() == np.array([1]))
+    assert np.all(node_coll1.get_linewidth() == np.array([1]))
     assert np.all(node_coll2.get_linewidth() == np.array([2]))
 
     # node_size
-    assert np.all(node_coll.get_sizes() == np.array([7**2]))
+    assert np.all(node_coll1.get_sizes() == np.array([7**2]))
     assert np.all(node_coll2.get_sizes() == np.array([20**2]))
 
     # edge face colors
-    assert np.all(phantom_node_coll2.get_facecolor() == np.array([[1, 0, 0, 1]]))  # red
+    assert np.all(edge_marker_coll2.get_facecolor() == np.array([[1, 0, 0, 1]]))  # red
 
     # edge _lw
-    assert np.all(phantom_node_coll.get_linewidth() == np.array([1]))
-    assert np.all(phantom_node_coll2.get_linewidth() == np.array([2]))
+    assert np.all(edge_marker_coll1.get_linewidth() == np.array([1]))
+    assert np.all(edge_marker_coll2.get_linewidth() == np.array([2]))
 
     # edge_size
-    assert np.all(phantom_node_coll.get_sizes() == np.array([7**2]))
-    assert np.all(phantom_node_coll2.get_sizes() == np.array([20**2]))
+    assert np.all(edge_marker_coll1.get_sizes() == np.array([7**2]))
+    assert np.all(edge_marker_coll2.get_sizes() == np.array([20**2]))
 
     # line lw
     for patch in ax1.patches:  # lines
-        assert np.all(patch.get_linewidth() == np.array([1.5]))
+        assert np.all(patch.get_linewidth() == np.array([1]))
     for patch in ax2.patches:  # lines
         assert np.all(patch.get_linewidth() == np.array([2]))
 
@@ -584,29 +585,79 @@ def test_draw_dihypergraph(diedgelist2, edgelist8):
         assert np.all(patch.get_facecolor() == np.array([[0, 0, 1, 1]]))
 
     # zorder
-    assert node_coll.get_zorder() == 4
-    assert phantom_node_coll.get_zorder() == 2
+    assert node_coll1.get_zorder() == 2
+    assert edge_marker_coll1.get_zorder() == 1
     for patch in ax1.patches:  # lines
         assert patch.get_zorder() == 0
 
-    # test toggle for edges
-    fig, ax2 = plt.subplots()
-    ax2, collections = xgi.draw_dihypergraph(DH, edge_marker_toggle=False, ax=ax2)
-    node_coll, phantom_node_coll = collections
-    assert len(ax2.collections) == 1
-    assert phantom_node_coll is None
+    plt.close("all")
+
+    H = xgi.Hypergraph(edgelist8)
+
+    fig3, ax3 = plt.subplots()
+    ax3, collections3 = xgi.draw_bipartite(H, ax=ax3)
+    node_coll3, edge_marker_coll3, dyad_coll3 = collections3
+    fig4, ax4 = plt.subplots()
+    ax4, collections4 = xgi.draw_bipartite(
+        H,
+        ax=ax4,
+        node_fc="red",
+        node_ec="blue",
+        node_lw=2,
+        node_size=20,
+        dyad_color="blue",
+        dyad_lw=2,
+        edge_marker_fc="red",
+        edge_marker_lw=2,
+        edge_marker_size=20,
+    )
+    node_coll4, edge_marker_coll4, dyad_coll4 = collections4
+
+    # number of elements
+    assert len(node_coll3.get_offsets()) == 7  # number of original nodes
+    assert len(edge_marker_coll3.get_offsets()) == 9  # number of original edges
+    assert len(dyad_coll3._paths) == 26  # number of lines
+
+    # # node face colors
+    assert np.all(node_coll3.get_facecolor() == np.array([[1, 1, 1, 1]]))  # white
+    assert np.all(node_coll4.get_facecolor() == np.array([[1, 0, 0, 1]]))  # red
+
+    # node edge colors
+    assert np.all(node_coll3.get_edgecolor() == np.array([[0, 0, 0, 1]]))  # black
+    assert np.all(node_coll4.get_edgecolor() == np.array([[0, 0, 1, 1]]))  # blue
+
+    # # node_lw
+    assert np.all(node_coll3.get_linewidth() == np.array([1]))
+    assert np.all(node_coll4.get_linewidth() == np.array([2]))
+
+    # # node_size
+    assert np.all(node_coll3.get_sizes() == np.array([7**2]))
+    assert np.all(node_coll4.get_sizes() == np.array([20**2]))
+
+    # # edge face colors
+    assert np.all(edge_marker_coll4.get_facecolor() == np.array([[1, 0, 0, 1]]))  # red
+
+    # # edge _lw
+    assert np.all(edge_marker_coll3.get_linewidth() == np.array([1]))
+    assert np.all(edge_marker_coll4.get_linewidth() == np.array([2]))
+
+    # # edge_size
+    assert np.all(edge_marker_coll3.get_sizes() == np.array([7**2]))
+    assert np.all(edge_marker_coll4.get_sizes() == np.array([20**2]))
 
     plt.close("all")
 
-    # test XGI ERROR raise
+    # test type
     with pytest.raises(XGIError):
-        H = xgi.Hypergraph(edgelist8)
-        fig, ax3 = plt.subplots()
-        ax3 = xgi.draw_dihypergraph(H, ax=ax3)
-        plt.close()
+        xgi.draw_bipartite([0, 1, 2])
+
+    # test gca
+    fig3, ax = plt.subplots()
+    ax_gca, collections3 = xgi.draw_bipartite(H)
+    assert ax == ax_gca
 
 
-def test_draw_dihypergraph_with_str_labels_and_isolated_nodes():
+def test_draw_bipartite_with_str_labels_and_isolated_nodes():
     DH1 = xgi.DiHypergraph()
     DH1.add_nodes_from(["one", "two", "three", "four", "five", "six"])
     DH1.add_edges_from(
@@ -617,12 +668,46 @@ def test_draw_dihypergraph_with_str_labels_and_isolated_nodes():
     )
 
     fig, ax4 = plt.subplots()
-    ax4, collections4 = xgi.draw_dihypergraph(DH1, ax=ax4)
-    node_coll4, phantom_node_coll4 = collections4
+    ax4, collections4 = xgi.draw_bipartite(DH1, ax=ax4)
+    node_coll4, edge_marker_coll4 = collections4
     assert len(node_coll4.get_offsets()) == 6  # number of original nodes
-    assert len(phantom_node_coll4.get_offsets()) == 2  # number of original edges
+    assert len(edge_marker_coll4.get_offsets()) == 2  # number of original edges
     assert len(ax4.patches) == 7  # number of lines
-    plt.close()
+    plt.close("all")
+
+
+def test_draw_undirected_dyads(edgelist8):
+    H = xgi.Hypergraph(edgelist8)
+
+    fig, ax = plt.subplots()
+    ax, dyad_collection = xgi.draw_undirected_dyads(H)
+    assert len(dyad_collection._paths) == 26  # number of lines
+
+    with pytest.raises(ValueError):
+        fig, ax = plt.subplots()
+        ax, dyad_collection = xgi.draw_undirected_dyads(H, dyad_lw=-1)
+
+    fig, ax = plt.subplots()
+    ax, dyad_collection = xgi.draw_undirected_dyads(
+        H, dyad_color=np.random.random(H.num_edges)
+    )
+    assert len(np.unique(dyad_collection.get_color())) == 28
+    plt.close("all")
+
+
+def test_draw_directed_dyads(diedgelist1):
+    H = xgi.DiHypergraph(diedgelist1)
+
+    fig, ax = plt.subplots()
+    ax = xgi.draw_directed_dyads(H)
+
+    with pytest.raises(ValueError):
+        fig, ax = plt.subplots()
+        ax = xgi.draw_directed_dyads(H, dyad_lw=-1)
+
+    fig, ax = plt.subplots()
+    ax = xgi.draw_directed_dyads(H, dyad_color=np.random.random(H.num_edges))
+    plt.close("all")
 
 
 def test_issue_499(edgelist8):
@@ -632,11 +717,11 @@ def test_issue_499(edgelist8):
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        ax, collections = xgi.draw(H, ax=ax, node_fc="black")
+        xgi.draw(H, ax=ax, node_fc="black")
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        ax, collections = xgi.draw(H, ax=ax, node_fc=["black"] * H.num_nodes)
+        xgi.draw(H, ax=ax, node_fc=["black"] * H.num_nodes)
 
     plt.close("all")
 
@@ -646,12 +731,10 @@ def test_issue_515(edgelist8):
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        ax, (node_coll, edge_coll) = xgi.draw_multilayer(H, node_fc="black")
+        xgi.draw_multilayer(H, node_fc="black")
 
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        ax, (node_coll, edge_coll) = xgi.draw_multilayer(
-            H, node_fc=["black"] * H.num_nodes
-        )
+        xgi.draw_multilayer(H, node_fc=["black"] * H.num_nodes)
 
     plt.close("all")
