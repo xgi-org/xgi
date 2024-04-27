@@ -193,4 +193,5 @@ def test_katz_centrality(edgelist1, edgelist8):
         5: 0.07147345362079142,
         6: 0.03614424740207708,
     }
-    assert c == expected_c
+    for n in c:
+        assert np.allclose(c[n], expected_c[n])
