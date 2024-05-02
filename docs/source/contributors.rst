@@ -58,6 +58,13 @@ Core team
     </p>
 
     <p>
+        <img src="https://github.com/tlarock.png"
+            width="50" height="50" hspace="5"
+            style="border-radius: 50%; vertical-align: middle;"/>
+        <a href="https://github.com/tlarock">@tlarock</a>
+    </p>
+
+    <p>
         <img src="https://github.com/thomasrobiglio.png"
             width="50" height="50" hspace="5"
             style="border-radius: 50%; vertical-align: middle;"/>
@@ -143,11 +150,4 @@ Contributors
             width="50" height="50" hspace="5"
             style="border-radius: 50%; vertical-align: middle;"/>
         <a href="https://github.com/saad1282">@saad1282</a>
-    </p>
-
-    <p>
-        <img src="https://github.com/tlarock.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/tlarock">@tlarock</a>
     </p>
