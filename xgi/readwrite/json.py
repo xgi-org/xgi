@@ -1,5 +1,6 @@
 """Read from and write to JSON."""
 import json
+from collections import Counter
 
 from ..convert import dict_to_hypergraph
 from ..exception import XGIError
@@ -17,6 +18,12 @@ def write_json(H, path):
         The specified hypergraph object
     path: string
         The path of the file to read from
+    
+    Raises
+    ------
+    XGIError
+        If the node or edge IDs have conflicts after casting
+        to strings, e.g., node IDs "2" and 2.
 
     """
     # initialize empty data
@@ -29,11 +36,31 @@ def write_json(H, path):
     # get node data
     try:
         data["node-data"] = {str(idx): H.nodes[idx] for idx in H.nodes}
+
+        if len(data["node-data"]) != H.num_nodes:
+            dups = [
+                item
+                for item, count in Counter([str(n) for n in H.nodes]).items()
+                if count > 1
+            ]
+            raise XGIError(
+                f"When casting node IDs to strings, ID(s) {', '.join(dups)} have conflicting IDs!"
+            )
     except KeyError:
         raise XGIError("Node attributes not saved!")
 
     try:
         data["edge-data"] = {str(idx): H.edges[idx] for idx in H.edges}
+
+        if len(data["edge-data"]) != H.num_edges:
+            dups = [
+                item
+                for item, count in Counter([str(n) for n in H.edges]).items()
+                if count > 1
+            ]
+            raise XGIError(
+                f"When casting edge IDs to strings, ID(s) {', '.join(dups)} have conflicting IDs!"
+            )
     except KeyError:
         raise XGIError("Edge attributes not saved!")
 
