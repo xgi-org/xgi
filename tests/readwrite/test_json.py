@@ -256,7 +256,7 @@ def test_write_json(edgelist1):
     # duplicate node IDs when casting to a string
     badH.add_nodes_from(["2", 2])
     with pytest.raises(XGIError):
-        xgi.write_json(badH)
+        xgi.write_json(badH, "test.json")
 
     badH = xgi.Hypergraph()
     # duplicate edge IDs when casting to a string
