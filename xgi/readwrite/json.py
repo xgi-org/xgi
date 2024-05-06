@@ -18,7 +18,7 @@ def write_json(H, path):
         The specified hypergraph object
     path: string
         The path of the file to read from
-    
+
     Raises
     ------
     XGIError

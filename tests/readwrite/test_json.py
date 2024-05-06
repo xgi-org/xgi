@@ -262,4 +262,4 @@ def test_write_json(edgelist1):
     # duplicate edge IDs when casting to a string
     badH.add_edges_from({"2": [1, 2, 3], 2: [4, 5, 6]})
     with pytest.raises(XGIError):
-        xgi.write_json(badH)
+        xgi.write_json(badH, "test.json")
