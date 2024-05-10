@@ -251,3 +251,15 @@ def test_write_json(edgelist1):
     assert H2.nodes[2] == {"name": "Ilya"}
     assert H2.edges[1] == {"weight": 2}
     assert H2["name"] == "test"
+
+    badH = xgi.Hypergraph()
+    # duplicate node IDs when casting to a string
+    badH.add_nodes_from(["2", 2])
+    with pytest.raises(XGIError):
+        xgi.write_json(badH, "test.json")
+
+    badH = xgi.Hypergraph()
+    # duplicate edge IDs when casting to a string
+    badH.add_edges_from({"2": [1, 2, 3], 2: [4, 5, 6]})
+    with pytest.raises(XGIError):
+        xgi.write_json(badH, "test.json")
