@@ -188,20 +188,6 @@ def node_connected_component(H, n):
         raise XGIError("Specified node is not in the hypergraph!")
 
 
-def _plain_bfs(H, source):
-    """A fast BFS node generator"""
-    seen = set()
-    nextlevel = {source}
-    while nextlevel:
-        thislevel = nextlevel
-        nextlevel = set()
-        for v in thislevel:
-            if v not in seen:
-                seen.add(v)
-                nextlevel.update(H.nodes.neighbors(v))
-    return seen
-
-
 def largest_connected_hypergraph(H, in_place=False):
     """
     A function to find the largest connected hypergraph from a data set.
@@ -242,3 +228,21 @@ def largest_connected_hypergraph(H, in_place=False):
         return subhypergraph(H, nodes=connected_nodes).copy()
     else:
         H.remove_nodes_from(set(H.nodes).difference(connected_nodes))
+
+
+def _plain_bfs(H, source):
+    """A fast BFS node generator
+
+    Source:
+    https://networkx.org/documentation/stable/_modules/networkx/algorithms/components/connected.html
+    """
+    seen = set()
+    nextlevel = {source}
+    while nextlevel:
+        thislevel = nextlevel
+        nextlevel = set()
+        for v in thislevel:
+            if v not in seen:
+                seen.add(v)
+                nextlevel.update(H.nodes.neighbors(v))
+    return seen
