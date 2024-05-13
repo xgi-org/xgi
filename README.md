@@ -106,7 +106,7 @@ We acknowledge the importance of good software to support research, and we note 
 ## License
 Released under the 3-Clause BSD license (see [`LICENSE.md`](LICENSE.md))
 
-Copyright (C) 2021-2023 XGI Developers
+Copyright (C) 2021-2024 XGI Developers
 
 The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](LICENSE.md)
 
