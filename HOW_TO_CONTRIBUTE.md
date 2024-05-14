@@ -10,11 +10,16 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 2. [Optional, but STRONGLY preferred] Add unit tests for features being added or bugs being fixed.
 3. [Optional, but STRONGLY preferred] Include any new method/function in the corresponding docs file.
 4. Run `pytest` to verify all unit tests pass.
-5. [Optional, but STRONGLY preferred] Run `pylint xgi/ --disable all --enable W0611` and `nbqa pylint . --disable all --enable W0611` and remove any unnecessary dependencies.
-6. [Optional, but STRONGLY preferred] Run `isort .` and `nbqa isort .` to sort any new import statements in the source code and tutorials.
-7. [Optional, but STRONGLY preferred] Run `black .` for consistent styling.
-8.  Submit Pull Request with a list of changes, links to issues that it addresses (if applicable)
-9.  You may merge the Pull Request in once you have the sign-off of at least one other developer, or if you do not have permission to do that, you may request the reviewer to merge it for you.
+5. Identify the unnecessary imports in the
+   1. source code by running `pylint xgi/ --disable all --enable W0611`
+   2. notebooks by running `nbqa pylint . --disable all --enable W0611`
+6. Remove these unnecessary imports.
+7. Sort the import statements in the
+   1. source code by running `isort .`
+   2. notebooks by running `nbqa isort .` to sort any new import statements in the source code and tutorials.
+8. Format the source code and notebooks by running `black .` for consistent styling.
+9.  Submit Pull Request with a list of changes, links to issues that it addresses (if applicable)
+10. You may merge the Pull Request in once you have the sign-off of at least one other developer, or if you do not have permission to do that, you may request the reviewer to merge it for you.
 
 ## New Version process
 1. Make sure that the Github Actions workflow runs without any errors.
