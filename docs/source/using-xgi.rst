@@ -2,7 +2,7 @@
 Projects using XGI
 ******************
 
-XGI has been used in a variety of published work and other software.
+XGI has been used in a variety of published work and other software. This is a list of projects that use XGI in substantive ways.
 
 Articles are listed by year and then alphabetically by the last name of the first author (and title if necessary).
 
@@ -21,6 +21,11 @@ Nicholas W. Landry, Jean-Gabriel Young, and Nicole Eikmeier, "The simpliciality 
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1140/epjds/s13688-024-00458-1>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/the-simpliciality-of-higher-order-networks>`
+
+Leonie Neuhäuser, Michael Scholkemper, Francesco Tudisco, and Michael T. Schaub, "Learning the effective order of a hypergraph dynamical system", *Science Advances* **10**,eadh4053 (2024).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1126/sciadv.adh4053>`
+:bdg-link-primary-line:`Code <https://git.rwth-aachen.de/netsci/publication-2023-learning-the-effective-order-of-a-hypergraph-dynamical-system>`
 
 2023
 ----
@@ -62,6 +67,11 @@ Gonzalo Contreras-Aso, Regino Criado, and Miguel Romance, "Beyond directed hyper
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2403.11825>`
 :bdg-link-primary-line:`Code <https://github.com/goznalo-git/DirectedHyperCentrality>`
 
+Robin Delabays, Giulia De Pasquale, Florian Dörfler, Yuanzhao Zhang, "Hypergraph reconstruction from dynamics", arXiv:2402.00078 (2024).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2402.00078>`
+:bdg-link-primary-line:`Code <https://github.com/TaylorBasedHypergraphInference/THIS>`
+
 Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Domenico, "Functional reducibility of higher-order networks", arXiv:2404.08547 (2024).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2404.08547>`
@@ -87,6 +97,14 @@ Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, Maxim
 
 Theses
 ======
+
+2024
+----
+
+Yifei (Bell) Luo, "Efficient sampling of configuration model random hypergraphs", (2024).
+
+2023
+----
 
 Leonie Neuhäuser, "Modelling the effect of groups on network structure and dynamics", (2023).
 
