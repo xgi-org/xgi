@@ -71,4 +71,4 @@ License
 -------
 Released under the 3-Clause BSD license (see the `license file <https://github.com/xgi-org/xgi/blob/main/LICENSE.md>`_)
 
-Copyright (C) 2021-2023 XGI Developers
+Copyright (C) 2021-2024 XGI Developers
