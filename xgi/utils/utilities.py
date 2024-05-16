@@ -24,6 +24,7 @@ __all__ = [
     "convert_labels_to_integers",
     "hist",
     "binomial_sequence",
+    "get_network_type",
 ]
 
 
@@ -536,3 +537,7 @@ def binomial_sequence(k, N):
         for seq in binomial_sequence(k - 1, N - 1):
             res.add(seq + "1")
     return res
+
+
+def get_network_type(H):
+    return str(type(H)).split(".")[-1].split("'")[0].lower()

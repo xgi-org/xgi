@@ -1,11 +1,12 @@
 """Read from and write to JSON."""
 import json
-from collections import Counter
+from collections import Counter, defaultdict
 
 from ..convert import dict_to_hypergraph
 from ..exception import XGIError
+from ..utils import get_network_type
 
-__all__ = ["write_json", "read_json"]
+__all__ = ["write_json", "write_json_collection", "read_json"]
 
 
 def write_json(H, path):
@@ -28,7 +29,7 @@ def write_json(H, path):
     """
     # initialize empty data
     data = {}
-
+    data["type"] = get_network_type(H)
     # name always gets written (default is an empty string)
     data["hypergraph-data"] = {}
     data["hypergraph-data"].update(H._hypergraph)
@@ -75,6 +76,21 @@ def write_json(H, path):
         output_file.write(datastring)
 
 
+def write_json_collection(collection, dir):
+    collection_data = defaultdict(dict)
+    for i, H in enumerate(collection):
+        path = f"{dir}/{i}.json"
+        collection_data["path"][i] = path
+        write_json(H, path)
+
+    collection_data["type"] = "collection"
+
+    datastring = json.dumps(collection_data, indent=2)
+
+    with open(f"{dir}/collection.json", "w") as output_file:
+        output_file.write(datastring)
+
+
 def read_json(path, nodetype=None, edgetype=None):
     """
     A function to read a file in a standardized JSON format.
@@ -101,5 +117,19 @@ def read_json(path, nodetype=None, edgetype=None):
     """
     with open(path) as file:
         data = json.loads(file.read())
+
+    if data["type"] == "collection":
+        collection = {}
+        paths = data["path"]
+        for i, path in paths.items():
+            with open(path) as file:
+                data = json.loads(file.read())
+            H = dict_to_hypergraph(data, nodetype=nodetype, edgetype=edgetype)
+
+            try:
+                collection[H["name"]] = H
+            except XGIError:
+                collection[i] = H
+        return collection
 
     return dict_to_hypergraph(data, nodetype=nodetype, edgetype=edgetype)
