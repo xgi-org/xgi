@@ -9,6 +9,7 @@ class HigherOrderSystem:
     _node_attr_dict_factory = IDDict
     _edge_dict_factory = IDDict
     _edge_attr_dict_factory = IDDict
+    _incidence_attr_dict_factory = IDDict
     _net_attr_dict_factory = dict
 
     def __init__(self, data=None, directed=False):
@@ -16,6 +17,7 @@ class HigherOrderSystem:
         self._edge = self._edge_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
         self._edge_attr = self._edge_attr_dict_factory()
+        self._incidence_attr = self._incidence_attr_dict_factory()
         self._net = self._net_attr_dict_factory()
         self._nodeview = NodeView(self)
         self._edgeview = EdgeView(self)
