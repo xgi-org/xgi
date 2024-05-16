@@ -76,10 +76,13 @@ def write_json(H, path):
         output_file.write(datastring)
 
 
-def write_json_collection(collection, dir):
+def write_json_collection(collection, dir, collection_name=None):
     collection_data = defaultdict(dict)
+    if collection_name is not None:
+        collection_name += "_"
+
     for i, H in enumerate(collection):
-        path = f"{dir}/{i}.json"
+        path = f"{dir}/{collection_name}{i}.json"
         collection_data["path"][i] = path
         write_json(H, path)
 
@@ -87,7 +90,9 @@ def write_json_collection(collection, dir):
 
     datastring = json.dumps(collection_data, indent=2)
 
-    with open(f"{dir}/collection.json", "w") as output_file:
+    with open(
+        f"{dir}/{collection_name}collection_information.json", "w"
+    ) as output_file:
         output_file.write(datastring)
 
 
@@ -120,16 +125,11 @@ def read_json(path, nodetype=None, edgetype=None):
 
     if data["type"] == "collection":
         collection = {}
-        paths = data["path"]
-        for i, path in paths.items():
+        for name, path in data["path"].items():
             with open(path) as file:
                 data = json.loads(file.read())
             H = dict_to_hypergraph(data, nodetype=nodetype, edgetype=edgetype)
-
-            try:
-                collection[H["name"]] = H
-            except XGIError:
-                collection[i] = H
+            collection[name] = H
         return collection
 
     return dict_to_hypergraph(data, nodetype=nodetype, edgetype=edgetype)

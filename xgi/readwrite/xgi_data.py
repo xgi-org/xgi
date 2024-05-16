@@ -3,7 +3,7 @@ import json
 import os
 from warnings import warn
 
-from .. import convert
+from ..convert import dict_to_hypergraph
 from ..exception import XGIError
 from ..utils import request_json_from_url, request_json_from_url_cached
 
@@ -66,7 +66,7 @@ def load_xgi_data(
         if os.path.exists(cfp):
             data = json.load(open(cfp, "r"))
 
-            return convert.dict_to_hypergraph(
+            return dict_to_hypergraph(
                 data, nodetype=nodetype, edgetype=edgetype, max_order=max_order
             )
         else:
@@ -77,7 +77,17 @@ def load_xgi_data(
             )
     data = _request_from_xgi_data(index_url, dataset, cache=cache)
 
-    return convert.dict_to_hypergraph(
+    if data["type"] == "collection":
+        collection = {}
+        for name, path in data["path"].items():
+            with open(path) as file:
+                data = json.loads(file.read())
+
+            H = dict_to_hypergraph(data, nodetype=nodetype, edgetype=edgetype)
+            collection[name] = H
+        return collection
+
+    return dict_to_hypergraph(
         data, nodetype=nodetype, edgetype=edgetype, max_order=max_order
     )
 
@@ -96,10 +106,18 @@ def download_xgi_data(dataset, path=""):
         file to local directory.
     """
     index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
+
     jsondata = _request_from_xgi_data(index_url, dataset)
-    jsonfile = open(os.path.join(path, dataset + ".json"), "w")
-    json.dump(jsondata, jsonfile)
-    jsonfile.close()
+    if jsondata["type"] == "collection":
+        jsonfile = open(os.path.join(path, f"{dataset}_collection_data.json"), "w")
+        json.dump(jsondata, jsonfile, indent=2)
+        jsonfile.close()
+
+        for name, url in jsondata["path"].items():
+            jsondata = request_json_from_url(url)
+            jsonfile = open(os.path.join(path, f"{dataset}_{name}.json"), "w")
+            json.dump(jsondata, jsonfile, indent=2)
+            jsonfile.close()
 
 
 def _request_from_xgi_data(index_url, dataset=None, cache=True):
