@@ -1,6 +1,7 @@
 """Read from and write to JSON."""
 import json
 from collections import Counter, defaultdict
+from os.path import dirname, join
 
 from ..convert import dict_to_hypergraph
 from ..exception import XGIError
@@ -76,19 +77,24 @@ def write_json(H, path):
         output_file.write(datastring)
 
 
-def write_json_collection(collection, dir, collection_name=None):
+def write_json_collection(collection, dir, collection_name=""):
     collection_data = defaultdict(dict)
-    if collection_name is not None:
+    if collection_name:
         collection_name += "_"
+
     if isinstance(collection, list):
         for i, H in enumerate(collection):
             path = f"{dir}/{collection_name}{i}.json"
-            collection_data["path"][i] = path
+            collection_data["datasets"][i] = {
+                "relative-path": f"{collection_name}{i}.json"
+            }
             write_json(H, path)
     elif isinstance(collection, dict):
         for name, H in collection.items():
             path = f"{dir}/{collection_name}{name}.json"
-            collection_data["path"][name] = path
+            collection_data["datasets"][name] = {
+                "relative-path": f"{collection_name}{name}.json"
+            }
             write_json(H, path)
 
     collection_data["type"] = "collection"
@@ -128,10 +134,11 @@ def read_json(path, nodetype=None, edgetype=None):
     with open(path) as file:
         data = json.loads(file.read())
 
-    if data["type"] == "collection":
+    if "type" in data and data["type"] == "collection":
         collection = {}
-        for name, path in data["path"].items():
-            with open(path) as file:
+        for name, data in data["datasets"].items():
+            relpath = data["relative-path"]
+            with open(join(dirname(path), relpath)) as file:
                 data = json.loads(file.read())
             H = dict_to_hypergraph(data, nodetype=nodetype, edgetype=edgetype)
             collection[name] = H
