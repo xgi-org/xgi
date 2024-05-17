@@ -80,11 +80,16 @@ def write_json_collection(collection, dir, collection_name=None):
     collection_data = defaultdict(dict)
     if collection_name is not None:
         collection_name += "_"
-
-    for i, H in enumerate(collection):
-        path = f"{dir}/{collection_name}{i}.json"
-        collection_data["path"][i] = path
-        write_json(H, path)
+    if isinstance(collection, list):
+        for i, H in enumerate(collection):
+            path = f"{dir}/{collection_name}{i}.json"
+            collection_data["path"][i] = path
+            write_json(H, path)
+    elif isinstance(collection, dict):
+        for name, H in collection.items():
+            path = f"{dir}/{collection_name}{name}.json"
+            collection_data["path"][name] = path
+            write_json(H, path)
 
     collection_data["type"] = "collection"
 
