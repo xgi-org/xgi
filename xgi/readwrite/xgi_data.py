@@ -95,7 +95,7 @@ def download_xgi_data(dataset, path=""):
         index.json file in the xgi-data repository.
 
     path : str, optional
-        Path to where the local copy should be saved. If none is given, save
+        Directory where the local copy should be saved. If none is given, save
         file to local directory.
     """
     from ..readwrite import write_json
@@ -114,7 +114,8 @@ def download_xgi_data(dataset, path=""):
     H = _request_from_xgi_data(
         url, nodetype=None, edgetype=None, max_order=None, cache=True
     )
-    write_json(H, path)
+    filename = join(path, key + ".json")
+    write_json(H, filename)
 
 
 def _request_from_xgi_data(
