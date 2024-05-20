@@ -1,12 +1,60 @@
 """Method for converting from a standardized dictionary."""
 
+from collections import Counter
+
 from ..exception import XGIError
 from ..generators import empty_hypergraph
+from ..utils import get_network_type
 
-__all__ = ["dict_to_hypergraph"]
+__all__ = ["to_hypergraph_dict", "from_hypergraph_dict"]
 
 
-def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
+def to_hypergraph_dict(H):
+    data = {}
+    data["type"] = get_network_type(H)
+    # name always gets written (default is an empty string)
+    data["hypergraph-data"] = {}
+    data["hypergraph-data"].update(H._hypergraph)
+
+    # get node data
+    try:
+        data["node-data"] = {str(idx): H.nodes[idx] for idx in H.nodes}
+
+        if len(data["node-data"]) != H.num_nodes:
+            dups = [
+                item
+                for item, count in Counter([str(n) for n in H.nodes]).items()
+                if count > 1
+            ]
+            raise XGIError(
+                f"When casting node IDs to strings, ID(s) {', '.join(dups)} have conflicting IDs!"
+            )
+    except KeyError:
+        raise XGIError("Node attributes not saved!")
+
+    try:
+        data["edge-data"] = {str(idx): H.edges[idx] for idx in H.edges}
+
+        if len(data["edge-data"]) != H.num_edges:
+            dups = [
+                item
+                for item, count in Counter([str(n) for n in H.edges]).items()
+                if count > 1
+            ]
+            raise XGIError(
+                f"When casting edge IDs to strings, ID(s) {', '.join(dups)} have conflicting IDs!"
+            )
+    except KeyError:
+        raise XGIError("Edge attributes not saved!")
+
+    # hyperedge dict
+    data["edge-dict"] = {
+        str(idx): [str(n) for n in H.edges.members(idx)] for idx in H.edges
+    }
+    return data
+
+
+def from_hypergraph_dict(data, nodetype=None, edgetype=None, max_order=None):
     """
     A function to read a file in a standardized JSON format.
 
