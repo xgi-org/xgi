@@ -1,11 +1,9 @@
 """Read from and write to JSON."""
 import json
-from collections import Counter, defaultdict
+from collections import defaultdict
 from os.path import dirname, join
 
 from ..convert import from_hypergraph_dict, to_hypergraph_dict
-from ..exception import XGIError
-from ..utils import get_network_type
 
 __all__ = ["write_json", "read_json"]
 
@@ -19,7 +17,11 @@ def write_json(H, path, collection_name=""):
     H: Hypergraph object
         The specified hypergraph object
     path: string
-        The path of the file to read from
+        The path of the file to write to. If the data is a collection,
+        it is the directory in which to put all the files.
+    collection_name : str
+        The name of the collection of data (if any). If `H` is not
+        a collection, this argument is unused.
 
     Raises
     ------
@@ -28,7 +30,6 @@ def write_json(H, path, collection_name=""):
         to strings, e.g., node IDs "2" and 2.
 
     """
-
     if collection_name:
         collection_name += "_"
     if isinstance(H, list):
@@ -50,7 +51,7 @@ def write_json(H, path, collection_name=""):
             write_json(H, path)
 
     # write collection data
-    if isinstance(H, [dict, list]):
+    if isinstance(H, (dict, list)):
         collection_data["type"] = "collection"
         datastring = json.dumps(collection_data, indent=2)
 
