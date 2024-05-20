@@ -1,13 +1,12 @@
 """Load a data set from the xgi-data repository or a local file."""
-import json
-import os
+from os.path import dirname, exists, join
 from warnings import warn
 
 from ..convert import dict_to_hypergraph
 from ..exception import XGIError
 from ..utils import request_json_from_url, request_json_from_url_cached
 
-__all__ = ["load_xgi_data", "download_xgi_data"]
+__all__ = ["load_xgi_data"]#, "download_xgi_data"]
 
 
 def load_xgi_data(
@@ -54,73 +53,70 @@ def load_xgi_data(
     """
     index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
 
-    # If no dataset is specified, print a list of the available datasets.
-    if dataset is None:
-        index_data = request_json_from_url(index_url)
-        print("Available datasets are the following:")
-        print(*index_data, sep="\n")
-        return
-
     if read:
-        cfp = os.path.join(path, dataset + ".json")
-        if os.path.exists(cfp):
-            data = json.load(open(cfp, "r"))
-
-            return dict_to_hypergraph(
-                data, nodetype=nodetype, edgetype=edgetype, max_order=max_order
-            )
+        cfp = join(path, dataset + ".json")
+        if exists(cfp):
+            from ..readwrite import read_json
+            return read_json(cfp, nodetype=nodetype, edgetype=edgetype)
         else:
             warn(
                 f"No local copy was found at {cfp}. The data is requested "
                 "from the xgi-data repository instead. To download a local "
                 "copy, use `download_xgi_data`."
             )
-    data = _request_from_xgi_data(index_url, dataset, cache=cache)
 
-    if data["type"] == "collection":
-        collection = {}
-        for name, path in data["path"].items():
-            with open(path) as file:
-                data = json.loads(file.read())
+    # If no dataset is specified, print a list of the available datasets.
+    index_data = request_json_from_url(index_url)
+    if dataset is None:
+        print("Available datasets are the following:")
+        print(*index_data, sep="\n")
+        return
 
-            H = dict_to_hypergraph(data, nodetype=nodetype, edgetype=edgetype)
-            collection[name] = H
-        return collection
+    key = dataset.lower()
+    if key not in index_data:
+        print("Valid dataset names:")
+        print(*index_data, sep="\n")
+        raise XGIError("Must choose a valid dataset name!")
+    url = index_data[key]["url"]
 
-    return dict_to_hypergraph(
-        data, nodetype=nodetype, edgetype=edgetype, max_order=max_order
+    return _request_from_xgi_data(
+        url, nodetype=nodetype, edgetype=edgetype, max_order=max_order, cache=cache
     )
 
 
-def download_xgi_data(dataset, path=""):
-    """Make a local copy of a dataset in the xgi-data repository.
+# def download_xgi_data(dataset, path=""):
+#     """Make a local copy of a dataset in the xgi-data repository.
 
-    Parameters
-    ----------
-    dataset : str
-        Dataset name. Valid options are the top-level tags of the
-        index.json file in the xgi-data repository.
+#     Parameters
+#     ----------
+#     dataset : str
+#         Dataset name. Valid options are the top-level tags of the
+#         index.json file in the xgi-data repository.
 
-    path : str, optional
-        Path to where the local copy should be saved. If none is given, save
-        file to local directory.
-    """
-    index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
+#     path : str, optional
+#         Path to where the local copy should be saved. If none is given, save
+#         file to local directory.
+#     """
+#     index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
 
-    jsondata = _request_from_xgi_data(index_url, dataset)
-    if jsondata["type"] == "collection":
-        jsonfile = open(os.path.join(path, f"{dataset}_collection_data.json"), "w")
-        json.dump(jsondata, jsonfile, indent=2)
-        jsonfile.close()
+#     jsondata = _request_from_xgi_data(index_url, dataset)
 
-        for name, url in jsondata["path"].items():
-            jsondata = request_json_from_url(url)
-            jsonfile = open(os.path.join(path, f"{dataset}_{name}.json"), "w")
-            json.dump(jsondata, jsonfile, indent=2)
-            jsonfile.close()
+#     if jsondata["type"] == "collection":
+#         jsonfile = open(join(path, f"{dataset}_collection_data.json"), "w")
+#         json.dump(jsondata, jsonfile, indent=2)
+#         jsonfile.close()
+
+#         for name, data in jsondata["datasets"].items():
+#             relpath = data["relative-path"]
+#             jsondata = request_json_from_url(join(dirname(url), relpath))
+#             jsonfile = open(join(path, f"{dataset}_{name}.json"), "w")
+#             json.dump(jsondata, jsonfile, indent=2)
+#             jsonfile.close()
 
 
-def _request_from_xgi_data(index_url, dataset=None, cache=True):
+def _request_from_xgi_data(
+    url, nodetype=None, edgetype=None, max_order=None, cache=True
+):
     """Request a dataset from xgi-data.
 
     Parameters
@@ -146,15 +142,25 @@ def _request_from_xgi_data(index_url, dataset=None, cache=True):
     ---------
     load_xgi_data
     """
-    index_data = request_json_from_url(index_url)
-
-    key = dataset.lower()
-    if key not in index_data:
-        print("Valid dataset names:")
-        print(*index_data, sep="\n")
-        raise XGIError("Must choose a valid dataset name!")
-
     if cache:
-        return request_json_from_url_cached(index_data[key]["url"])
+        jsondata = request_json_from_url_cached(url)
     else:
-        return request_json_from_url(index_data[key]["url"])
+        jsondata = request_json_from_url(url)
+
+    if "type" in jsondata and jsondata["type"] == "collection":
+        collection = {}
+        for name, data in jsondata["datasets"].items():
+            relpath = data["relative-path"]
+            H = _request_from_xgi_data(
+                join(dirname(url), relpath),
+                nodetype=nodetype,
+                edgetype=edgetype,
+                max_order=max_order,
+                cache=cache,
+            )
+            collection[name] = H
+        return collection
+
+    return dict_to_hypergraph(
+       jsondata, nodetype=nodetype, edgetype=edgetype, max_order=max_order
+    )

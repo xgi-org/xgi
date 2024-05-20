@@ -132,16 +132,16 @@ def read_json(path, nodetype=None, edgetype=None):
 
     """
     with open(path) as file:
-        data = json.loads(file.read())
+        jsondata = json.loads(file.read())
 
-    if "type" in data and data["type"] == "collection":
+    if "type" in jsondata and jsondata["type"] == "collection":
         collection = {}
-        for name, data in data["datasets"].items():
+        for name, data in jsondata["datasets"].items():
             relpath = data["relative-path"]
-            with open(join(dirname(path), relpath)) as file:
-                data = json.loads(file.read())
-            H = dict_to_hypergraph(data, nodetype=nodetype, edgetype=edgetype)
+            H = read_json(
+                join(dirname(path), relpath), nodetype=nodetype, edgetype=edgetype
+            )
             collection[name] = H
         return collection
 
-    return dict_to_hypergraph(data, nodetype=nodetype, edgetype=edgetype)
+    return dict_to_hypergraph(jsondata, nodetype=nodetype, edgetype=edgetype)
