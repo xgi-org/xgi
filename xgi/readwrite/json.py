@@ -62,7 +62,6 @@ def write_json(H, path, collection_name=""):
 
     data = to_hypergraph_dict(H)
     datastring = json.dumps(data, indent=2)
-    print(path)
     with open(path, "w") as output_file:
         output_file.write(datastring)
 
