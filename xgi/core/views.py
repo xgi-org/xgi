@@ -77,12 +77,12 @@ class IDView(Mapping, Set):
     def __init__(self, network, ids=None):
         self._net = network
 
-        if self._id_kind == "node":
+        if self._id_kind in {"node", "dinode"}:
             self._id_dict = None if self._net is None else network._node
             self._id_attr = None if self._net is None else network._node_attr
             self._bi_id_dict = None if self._net is None else network._edge
             self._bi_id_attr = None if self._net is None else network._edge_attr
-        elif self._id_kind == "edge":
+        elif self._id_kind in {"edge", "diedge"}:
             self._id_dict = None if self._net is None else network._edge
             self._id_attr = None if self._net is None else network._edge_attr
             self._bi_id_dict = None if self._net is None else network._node
