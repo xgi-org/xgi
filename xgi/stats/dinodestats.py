@@ -192,7 +192,7 @@ def in_degree(net, bunch, order=None, weight=None):
     >>> import xgi
     >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
     >>> H.nodes.in_degree.asdict()
-    {1: 1, 2: 1, 5: 0, 6: 0, 4: 1, 3: 0}
+    {1: 1, 2: 0, 5: 1, 6: 1, 4: 0, 3: 1}
     """
     if order is None and weight is None:
         return {n: len(net._node[n]["in"]) for n in bunch}
@@ -248,7 +248,7 @@ def out_degree(net, bunch, order=None, weight=None):
     >>> import xgi
     >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
     >>> H.nodes.out_degree.asdict()
-    {1: 1, 2: 0, 5: 1, 6: 1, 4: 0, 3: 1}
+    {1: 1, 2: 1, 5: 0, 6: 0, 4: 1, 3: 0}
     """
     if order is None and weight is None:
         return {n: len(net._node[n]["out"]) for n in bunch}

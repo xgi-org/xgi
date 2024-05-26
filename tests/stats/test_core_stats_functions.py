@@ -268,43 +268,43 @@ def test_hypergraph_filterby(edgelist1, edgelist8):
 
 def test_dihypergraph_filterby(diedgelist1, diedgelist2):
     H = xgi.DiHypergraph(diedgelist2)
-    assert H.nodes.filterby("degree", 2).in_degree.asdict() == {1: 2, 4: 1}
-    assert H.nodes.filterby("degree", 2).out_degree.asdict() == {1: 0, 4: 2}
-    assert H.nodes.filterby("in_degree", 1).degree.asdict() == {0: 1, 3: 1, 4: 2}
-    assert H.nodes.filterby("out_degree", 1).degree.asdict() == {2: 3, 5: 1}
+    assert H.nodes.filterby("degree", 2).in_degree.asdict() == {1: 0, 4: 2}
+    assert H.nodes.filterby("degree", 2).out_degree.asdict() == {1: 2, 4: 1}
+    assert H.nodes.filterby("in_degree", 1).degree.asdict() == {2: 3, 5: 1}
+    assert H.nodes.filterby("out_degree", 1).degree.asdict() == {0: 1, 3: 1, 4: 2}
 
     assert H.edges.filterby("order", 2).size.asdict() == {0: 3, 1: 3}
     assert H.edges.filterby("size", 4).order.asdict() == {2: 3}
 
     H = xgi.DiHypergraph(diedgelist1)
     assert H.nodes.filterby("degree", 1).in_degree.asdict() == {
-        1: 1,
-        2: 1,
-        3: 1,
-        4: 0,
-        5: 1,
-        6: 1,
-        7: 0,
-        8: 0,
-    }
-    assert H.nodes.filterby("degree", 1).out_degree.asdict() == {
         1: 0,
         2: 0,
         3: 0,
         4: 1,
         5: 0,
         6: 1,
-        7: 1,
         8: 1,
+        7: 1,
     }
-    assert H.nodes.filterby("in_degree", 1).degree.asdict() == {
+    assert H.nodes.filterby("degree", 1).out_degree.asdict() == {
+        1: 1,
+        2: 1,
+        3: 1,
+        4: 0,
+        5: 1,
+        6: 1,
+        8: 0,
+        7: 0,
+    }
+    assert H.nodes.filterby("in_degree", 1).degree.asdict() == {4: 1, 6: 1, 8: 1, 7: 1}
+    assert H.nodes.filterby("out_degree", 1).degree.asdict() == {
         1: 1,
         2: 1,
         3: 1,
         5: 1,
         6: 1,
     }
-    assert H.nodes.filterby("out_degree", 1).degree.asdict() == {8: 1, 4: 1, 6: 1, 7: 1}
 
 
 def test_filterby_modes(edgelist1, edgelist8):
@@ -370,7 +370,7 @@ def test_dihypergraph_call_filterby(diedgelist1, diedgelist2):
     H = xgi.DiHypergraph(diedgelist1)
 
     filtered = H.nodes([4, 5, 6]).filterby("in_degree", 1).degree
-    assert filtered.asdict() == {5: 1, 6: 1}
+    assert filtered.asdict() == {4: 1, 6: 1}
 
     H = xgi.DiHypergraph(diedgelist2)
     assert set(H.nodes([1, 2, 3]).filterby("degree", 2)) == {1}

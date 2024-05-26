@@ -11,7 +11,7 @@ from warnings import warn
 
 from ..exception import IDNotFound, XGIError, frozen
 from ..utils import IDDict, update_uid_counter
-from .diviews import DiEdgeView, DiNodeView
+from .views import DiEdgeView, DiNodeView
 
 __all__ = ["DiHypergraph"]
 

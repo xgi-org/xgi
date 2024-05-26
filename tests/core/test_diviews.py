@@ -170,11 +170,11 @@ def test_edge_head(diedgelist2):
 def test_view_len(diedgelist2):
     H = xgi.DiHypergraph(diedgelist2)
     nodes = H.nodes
-    assert len(nodes) == len(H._node_in)
+    assert len(nodes) == len(H._node)
     H.add_node(10)
-    assert len(nodes) == len(H._node_in)
+    assert len(nodes) == len(H._node)
     H.add_nodes_from(range(10, 20))
-    assert len(nodes) == len(H._node_in)
+    assert len(nodes) == len(H._node)
 
 
 def test_bunch_view(diedgelist2):
