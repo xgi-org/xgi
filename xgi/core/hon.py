@@ -1,5 +1,5 @@
 from ..utils import IDDict, update_uid_counter
-from views import NodeView, EdgeView
+from .views import NodeView, EdgeView
 from ..exception import XGIError
 from warnings import warn
 
