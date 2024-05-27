@@ -12,7 +12,7 @@ Published work
 2024
 ----
 
-Nicholas W. Landry, Ilya Amburg, Mirah Shi, and Sinan Aksoy, "Filtering higher-order datasets", *Journal of Physics: Complexity* **5** 015006 (2024).
+Nicholas W. Landry, Ilya Amburg, Mirah Shi, and Sinan Aksoy, "Filtering higher-order datasets", *Journal of Physics: Complexity* **5**, 015006 (2024).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1088/2632-072X/ad253a>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/filtering-higher-order-datasets>`
@@ -22,7 +22,7 @@ Nicholas W. Landry, Jean-Gabriel Young, and Nicole Eikmeier, "The simpliciality 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1140/epjds/s13688-024-00458-1>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/the-simpliciality-of-higher-order-networks>`
 
-Leonie Neuhäuser, Michael Scholkemper, Francesco Tudisco, and Michael T. Schaub, "Learning the effective order of a hypergraph dynamical system", *Science Advances* **10**,eadh4053 (2024).
+Leonie Neuhäuser, Michael Scholkemper, Francesco Tudisco, and Michael T. Schaub, "Learning the effective order of a hypergraph dynamical system", *Science Advances* **10**, eadh4053 (2024).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1126/sciadv.adh4053>`
 :bdg-link-primary-line:`Code <https://git.rwth-aachen.de/netsci/publication-2023-learning-the-effective-order-of-a-hypergraph-dynamical-system>`
