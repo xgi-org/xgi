@@ -1,6 +1,7 @@
 import tempfile
 
 import pytest
+from os.path import join
 
 import xgi
 from xgi.exception import XGIError
@@ -216,7 +217,7 @@ def test_read_json():
         xgi.read_json(filename, edgetype=int)
 
 
-def test_write_json(edgelist1):
+def test_write_json(edgelist1, edgelist2):
     _, filename = tempfile.mkstemp()
     H1 = xgi.Hypergraph(edgelist1)
 
@@ -263,3 +264,13 @@ def test_write_json(edgelist1):
     badH.add_edges_from({"2": [1, 2, 3], 2: [4, 5, 6]})
     with pytest.raises(XGIError):
         xgi.write_json(badH, "test.json")
+
+    # test list collection
+    H2 = xgi.Hypergraph(edgelist2)
+    collection = [H1, H2]
+    dir = tempfile.mkdtemp()
+
+    xgi.write_json(collection, dir, collection_name="test")
+    collection = xgi.read_json(join(dir, "test_collection_information.json"))
+    assert len(collection) == 2
+    assert isinstance(collection, dict)
