@@ -1,16 +1,16 @@
 from . import (
     classic,
-    uniform,
-    random,
-    simple,
     lattice,
-    simplicial_complexes,
+    random,
     randomizing,
+    simple,
+    simplicial_complexes,
+    uniform,
 )
 from .classic import *
-from .random import *
-from .uniform import *
-from .simple import *
 from .lattice import *
-from .simplicial_complexes import *
+from .random import *
 from .randomizing import *
+from .simple import *
+from .simplicial_complexes import *
+from .uniform import *
