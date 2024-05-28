@@ -20,7 +20,7 @@ def to_hypergraph_dict(H):
     Returns
     -------
     dict
-        A dictionary of the form described in https://github.org/xgi-org/xgi-data.
+        A dictionary of the form described in https://github.com/xgi-org/xgi-data.
 
     Raises
     ------
