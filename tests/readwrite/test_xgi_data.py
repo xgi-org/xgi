@@ -1,5 +1,4 @@
 import tempfile
-import time
 from os.path import join
 
 import pytest

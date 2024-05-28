@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 from numpy.linalg import norm
 
 import xgi

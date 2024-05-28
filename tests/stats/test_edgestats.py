@@ -1,6 +1,3 @@
-import pandas as pd
-import pytest
-
 import xgi
 
 ### edge stat specific tests

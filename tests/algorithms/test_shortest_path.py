@@ -1,8 +1,6 @@
 import numpy as np
-import pytest
 
 import xgi
-from xgi.exception import XGIError
 
 
 def test_single_source_shortest_path_length(edgelist1):
