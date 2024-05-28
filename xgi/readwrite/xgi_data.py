@@ -44,7 +44,8 @@ def load_xgi_data(
     Returns
     -------
     Hypergraph
-        The loaded hypergraph.
+        The loaded hypergraph. If the dataset chosen is a collection,
+        returns a dictionary of Hypergraph objects.
 
     Raises
     ------
@@ -87,6 +88,10 @@ def load_xgi_data(
 
 def download_xgi_data(dataset, path=""):
     """Make a local copy of a dataset in the xgi-data repository.
+
+    If the dataset is a collection, makes local copies of all the
+    datasets in the collection and a main file pointing to all of
+    the datasets.
 
     Parameters
     ----------

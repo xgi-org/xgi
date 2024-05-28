@@ -10,6 +10,25 @@ __all__ = ["to_hypergraph_dict", "from_hypergraph_dict"]
 
 
 def to_hypergraph_dict(H):
+    """A method to convert a hypergraph into a standard dictionary format.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph to convert
+
+    Returns
+    -------
+    dict
+        A dictionary of the form described in https://github.org/xgi-org/xgi-data.
+
+    Raises
+    ------
+    XGIError
+        If node IDs will be collapsed when casting to a string.
+    XGIError
+        If edge Ids will be collapsed when casting to a string.
+    """
     data = {}
     data["type"] = get_network_type(H)
     # name always gets written (default is an empty string)
@@ -17,39 +36,33 @@ def to_hypergraph_dict(H):
     data["hypergraph-data"].update(H._hypergraph)
 
     # get node data
-    try:
-        data["node-data"] = {str(idx): H.nodes[idx] for idx in H.nodes}
+    data["node-data"] = {str(idx): H.nodes[idx] for idx in H.nodes}
 
-        if len(data["node-data"]) != H.num_nodes:
-            dups = [
-                item
-                for item, count in Counter([str(n) for n in H.nodes]).items()
-                if count > 1
-            ]
-            raise XGIError(
-                f"When casting node IDs to strings, ID(s) {', '.join(dups)} have conflicting IDs!"
-            )
-    except KeyError:
-        raise XGIError("Node attributes not saved!")
+    if len(data["node-data"]) != H.num_nodes:
+        dups = [
+            item
+            for item, count in Counter([str(n) for n in H.nodes]).items()
+            if count > 1
+        ]
+        raise XGIError(
+            f"When casting node IDs to strings, ID(s) {', '.join(dups)} have conflicting IDs!"
+        )
 
-    try:
-        data["edge-data"] = {str(idx): H.edges[idx] for idx in H.edges}
+    data["edge-data"] = {str(idx): H.edges[idx] for idx in H.edges}
 
-        if len(data["edge-data"]) != H.num_edges:
-            dups = [
-                item
-                for item, count in Counter([str(n) for n in H.edges]).items()
-                if count > 1
-            ]
-            raise XGIError(
-                f"When casting edge IDs to strings, ID(s) {', '.join(dups)} have conflicting IDs!"
-            )
-    except KeyError:
-        raise XGIError("Edge attributes not saved!")
+    if len(data["edge-data"]) != H.num_edges:
+        dups = [
+            item
+            for item, count in Counter([str(n) for n in H.edges]).items()
+            if count > 1
+        ]
+        raise XGIError(
+            f"When casting edge IDs to strings, ID(s) {', '.join(dups)} have conflicting IDs!"
+        )
 
     # hyperedge dict
     data["edge-dict"] = {
-        str(idx): [str(n) for n in H.edges.members(idx)] for idx in H.edges
+        str(idx): [str(n) for n in sorted(H.edges.members(idx))] for idx in H.edges
     }
     return data
 

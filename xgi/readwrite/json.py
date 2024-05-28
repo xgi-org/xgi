@@ -12,6 +12,10 @@ def write_json(H, path, collection_name=""):
     """
     A function to write a file in a standardized JSON format.
 
+    If the dataset is a collection, makes local copies of all the
+    datasets in the collection and a main file pointing to all of
+    the datasets.
+
     Parameters
     ----------
     H: Hypergraph object
@@ -81,8 +85,9 @@ def read_json(path, nodetype=None, edgetype=None):
 
     Returns
     -------
-    A Hypergraph object
-        The loaded hypergraph
+    Hypergraph
+        The loaded hypergraph. If the dataset chosen is a collection,
+        returns a dictionary of Hypergraph objects.
 
     Raises
     ------
