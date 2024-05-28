@@ -4,6 +4,7 @@ from collections import defaultdict
 from os.path import dirname, join
 
 from ..convert import from_hypergraph_dict, to_hypergraph_dict
+from ..core import Hypergraph, SimplicialComplex
 
 __all__ = ["write_json", "read_json"]
 
@@ -36,38 +37,42 @@ def write_json(H, path, collection_name=""):
     """
     if collection_name:
         collection_name += "_"
+
     if isinstance(H, list):
         collection_data = defaultdict(dict)
         for i, H in enumerate(H):
-            path = f"{dir}/{collection_name}{i}.json"
+            fname = f"{path}/{collection_name}{i}.json"
             collection_data["datasets"][i] = {
                 "relative-path": f"{collection_name}{i}.json"
             }
-            write_json(H, path)
+            write_json(H, fname)
+        collection_data["type"] = "collection"
+        datastring = json.dumps(collection_data, indent=2)
+        with open(
+            f"{path}/{collection_name}collection_information.json", "w"
+        ) as output_file:
+            output_file.write(datastring)
 
     elif isinstance(H, dict):
         collection_data = defaultdict(dict)
         for name, H in H.items():
-            path = f"{dir}/{collection_name}{name}.json"
+            fname = f"{path}/{collection_name}{name}.json"
             collection_data["datasets"][name] = {
                 "relative-path": f"{collection_name}{name}.json"
             }
-            write_json(H, path)
-
-    # write collection data
-    if isinstance(H, (dict, list)):
+            write_json(H, fname)
         collection_data["type"] = "collection"
         datastring = json.dumps(collection_data, indent=2)
-
         with open(
-            f"{dir}/{collection_name}collection_information.json", "w"
+            f"{path}/{collection_name}collection_information.json", "w"
         ) as output_file:
             output_file.write(datastring)
 
-    data = to_hypergraph_dict(H)
-    datastring = json.dumps(data, indent=2)
-    with open(path, "w") as output_file:
-        output_file.write(datastring)
+    elif isinstance(H, (Hypergraph, SimplicialComplex)):
+        data = to_hypergraph_dict(H)
+        datastring = json.dumps(data, indent=2)
+        with open(path, "w") as output_file:
+            output_file.write(datastring)
 
 
 def read_json(path, nodetype=None, edgetype=None):

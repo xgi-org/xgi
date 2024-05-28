@@ -86,7 +86,7 @@ def load_xgi_data(
     )
 
 
-def download_xgi_data(dataset, path=""):
+def download_xgi_data(dataset, path="", collection_name=""):
     """Make a local copy of a dataset in the xgi-data repository.
 
     If the dataset is a collection, makes local copies of all the
@@ -102,6 +102,10 @@ def download_xgi_data(dataset, path=""):
     path : str, optional
         Directory where the local copy should be saved. If none is given, save
         file to local directory.
+
+    collection_name : str, optional
+        The name of the collection of data (if any). If `dataset` is not
+        a collection, this argument is unused.
     """
     from ..readwrite import write_json
 
@@ -119,8 +123,11 @@ def download_xgi_data(dataset, path=""):
     H = _request_from_xgi_data(
         url, nodetype=None, edgetype=None, max_order=None, cache=True
     )
-    filename = join(path, key + ".json")
-    write_json(H, filename)
+    if isinstance(H, dict):
+        write_json(H, path, collection_name=collection_name)
+    else:
+        filename = join(path, key + ".json")
+        write_json(H, filename)
 
 
 def _request_from_xgi_data(
