@@ -1,16 +1,15 @@
-
 {
     "version": 1,
     "project": "xgi",
     "project_url": "xgi.readthedocs.io",
-    "repo": "..",
+    "repo": ".",
     "branches": ["main"],
     "dvcs": "git",
-    "environment_type": "conda",
+    "environment_type": "virtualenv",
     "show_commit_url": "https://github.com/xgi-org/xgi/commit/",
-    "pythons": ["3.10"],
+    "pythons": ["3.12"],
     "benchmark_dir": "benchmarks",
-    "results_dir": "results",
-    "html_dir": "html",
+    "results_dir": ".asv/results",
+    "html_dir": ".asv/html",
     "build_cache_size": 8
 }

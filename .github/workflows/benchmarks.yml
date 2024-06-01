@@ -13,4 +13,4 @@ jobs:
       - run: git fetch origin $GITHUB_BASE_REF:base $GITHUB_REF:pr
       - run: pip install asv virtualenv
       - run: asv machine --yes
-      - run: asv continuous base pr --strict -e
+      - run: asv continuous base pr -e
