@@ -8,7 +8,7 @@
     "environment_type": "virtualenv",
     "show_commit_url": "https://github.com/xgi-org/xgi/commit/",
     "pythons": ["3.12"],
-    "benchmark_dir": "benchmarks",
+    "benchmark_dir": "benchmarks/benchmarks",
     "results_dir": ".asv/results",
     "html_dir": ".asv/html",
     "build_cache_size": 8
