@@ -69,7 +69,7 @@ def to_hypergraph(data, create_using=None):
         H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
         ee = data.edges
         H.add_edges_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
-        H._net_attr = deepcopy(data._net_attr)
+        H._hypergraph = deepcopy(data._hypergraph)
         return H
 
     elif isinstance(data, DiHypergraph):
@@ -77,7 +77,7 @@ def to_hypergraph(data, create_using=None):
         H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
         ee = data.edges
         H.add_edges_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
-        H._net_attr = deepcopy(data._net_attr)
+        H._hypergraph = deepcopy(data._hypergraph)
         if not isinstance(create_using, DiHypergraph):
             return H
 
@@ -86,7 +86,7 @@ def to_hypergraph(data, create_using=None):
         H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
         ee = data.edges
         H.add_edges_from((ee.members(e), e, deepcopy(attr)) for e, attr in ee.items())
-        H._net_attr = deepcopy(data._net_attr)
+        H._hypergraph = deepcopy(data._hypergraph)
         return H
 
     elif isinstance(data, list):
@@ -161,7 +161,7 @@ def to_dihypergraph(data, create_using=None):
         H.add_nodes_from((n, attr) for n, attr in data.nodes.items())
         ee = data.edges
         H.add_edges_from((ee.dimembers(e), e, deepcopy(attr)) for e, attr in ee.items())
-        H._net_attr = deepcopy(data._net_attr)
+        H._hypergraph = deepcopy(data._hypergraph)
         if not isinstance(create_using, DiHypergraph):
             return H
 
@@ -222,7 +222,7 @@ def to_simplicial_complex(data, create_using=None):
         H.add_simplices_from(
             (ee.members(e), e, deepcopy(attr)) for e, attr in ee.items()
         )
-        H._net_attr = deepcopy(data._net_attr)
+        H._hypergraph = deepcopy(data._hypergraph)
         return H
 
     elif isinstance(data, Hypergraph):

@@ -80,7 +80,7 @@ class SimplicialComplex(Hypergraph):
 
     def __init__(self, incoming_data=None, **attr):
         self._edge_uid = count()
-        self._net_attr = self._hypergraph_attr_dict_factory()
+        self._hypergraph = self._hypergraph_attr_dict_factory()
         self._node = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
         self._edge = self._hyperedge_dict_factory()
@@ -93,7 +93,7 @@ class SimplicialComplex(Hypergraph):
             from ..convert import to_simplicial_complex
 
             to_simplicial_complex(incoming_data, create_using=self)
-        self._net_attr.update(attr)  # must be after convert
+        self._hypergraph.update(attr)  # must be after convert
 
     def __str__(self):
         """Returns a short summary of the simplicial complex.
@@ -831,7 +831,7 @@ class SimplicialComplex(Hypergraph):
             (e, id, deepcopy(self.edges[id]))
             for id, e in ee.members(dtype=dict).items()
         )
-        cp._net_attr = deepcopy(self._net_attr)
+        cp._hypergraph = deepcopy(self._hypergraph)
 
         cp._edge_uid = copy(self._edge_uid)
 
@@ -859,7 +859,7 @@ class SimplicialComplex(Hypergraph):
                     (e, id, deepcopy(temp.edges[id]))
                     for id, e in ee.members(dtype=dict).items()
                 )
-                self._net_attr = deepcopy(temp._net_attr)
+                self._hypergraph = deepcopy(temp._hypergraph)
         else:
             S = self.copy()
             if not isolates:

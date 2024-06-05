@@ -389,7 +389,7 @@ def test_copy(edgelist1):
     assert list(copy.nodes) == list(H.nodes)
     assert list(copy.edges) == list(H.edges)
     assert list(copy.edges.members()) == list(H.edges.members())
-    assert H._net_attr == copy._net_attr
+    assert H._hypergraph == copy._hypergraph
 
     H.add_node(10)
     assert list(copy.nodes) != list(H.nodes)
@@ -399,7 +399,7 @@ def test_copy(edgelist1):
     assert list(copy.edges) != list(H.edges)
 
     H["key2"] = "value2"
-    assert H._net_attr != copy._net_attr
+    assert H._hypergraph != copy._hypergraph
 
     copy.add_node(10)
     copy.add_simplex([1, 3, 5])
@@ -407,7 +407,7 @@ def test_copy(edgelist1):
     assert list(copy.nodes) == list(H.nodes)
     assert list(copy.edges) == list(H.edges)
     assert list(copy.edges.members()) == list(H.edges.members())
-    assert H._net_attr == copy._net_attr
+    assert H._hypergraph == copy._hypergraph
 
     H1 = xgi.SimplicialComplex()
     H1.add_simplex((1, 2), id="x")
@@ -415,7 +415,7 @@ def test_copy(edgelist1):
     assert list(copy2.nodes) == list(H1.nodes)
     assert list(copy2.edges) == list(H1.edges)
     assert list(copy2.edges.members()) == list(H1.edges.members())
-    assert H1._net_attr == copy2._net_attr
+    assert H1._hypergraph == copy2._hypergraph
 
 
 def test_duplicate_edges(edgelist1):

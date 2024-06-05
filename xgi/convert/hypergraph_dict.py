@@ -38,7 +38,7 @@ def dict_to_hypergraph(data, nodetype=None, edgetype=None, max_order=None):
     """
     H = empty_hypergraph()
     try:
-        H._net_attr.update(data["hypergraph-data"])
+        H._hypergraph.update(data["hypergraph-data"])
     except KeyError:
         raise XGIError("Failed to get hypergraph data attributes.")
 

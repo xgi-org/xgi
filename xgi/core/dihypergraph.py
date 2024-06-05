@@ -103,7 +103,7 @@ class DiHypergraph:
         """
         return {
             "_edge_uid": self._edge_uid,
-            "_hypergraph": self._net_attr,
+            "_hypergraph": self._hypergraph,
             "_node_in": self._node_in,
             "_node_out": self._node_out,
             "_node_attr": self._node_attr,
@@ -126,7 +126,7 @@ class DiHypergraph:
         This allows the python multiprocessing module to be used.
         """
         self._edge_uid = state["_edge_uid"]
-        self._net_attr = state["_hypergraph"]
+        self._hypergraph = state["_hypergraph"]
         self._node_in = state["_node_in"]
         self._node_out = state["_node_out"]
         self._node_attr = state["_node_attr"]
@@ -138,7 +138,7 @@ class DiHypergraph:
 
     def __init__(self, incoming_data=None, **attr):
         self._edge_uid = count()
-        self._net_attr = self._hypergraph_attr_dict_factory()
+        self._hypergraph = self._hypergraph_attr_dict_factory()
 
         self._node_in = self._node_dict_factory()
         self._node_out = self._node_dict_factory()
@@ -160,7 +160,7 @@ class DiHypergraph:
             from ..convert import to_dihypergraph
 
             to_dihypergraph(incoming_data, create_using=self)
-        self._net_attr.update(attr)  # must be after convert
+        self._hypergraph.update(attr)  # must be after convert
 
     def __str__(self):
         """Returns a short summary of the directed hypergraph.
@@ -223,13 +223,13 @@ class DiHypergraph:
     def __getitem__(self, attr):
         """Read dihypergraph attribute."""
         try:
-            return self._net_attr[attr]
+            return self._hypergraph[attr]
         except KeyError:
             raise XGIError("This attribute has not been set.")
 
     def __setitem__(self, attr, val):
         """Write dihypergraph attribute."""
-        self._net_attr[attr] = val
+        self._hypergraph[attr] = val
 
     def __getattr__(self, attr):
         stat = getattr(self.nodes, attr, None)
@@ -926,7 +926,7 @@ class DiHypergraph:
         self._edge_out.clear()
         self._edge_attr.clear()
         if hypergraph_attr:
-            self._net_attr.clear()
+            self._hypergraph.clear()
 
     def copy(self):
         """A deep copy of the dihypergraph.
@@ -947,7 +947,7 @@ class DiHypergraph:
             (e, id, deepcopy(self.edges[id]))
             for id, e in ee.dimembers(dtype=dict).items()
         )
-        cp._net_attr = deepcopy(self._net_attr)
+        cp._hypergraph = deepcopy(self._hypergraph)
 
         cp._edge_uid = copy(self._edge_uid)
 
@@ -971,7 +971,7 @@ class DiHypergraph:
                     (e, id, deepcopy(temp.edges[id]))
                     for id, e in ee.dimembers(dtype=dict).items()
                 )
-                self._net_attr = deepcopy(temp._net_attr)
+                self._hypergraph = deepcopy(temp._hypergraph)
         else:
             DH = self.copy()
             if not isolates:
