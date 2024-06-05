@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.8.6
+* Added numpy<2.0 to the requirements to avoid breaking changes with Numpy version [2.0](https://numpy.org/news/#numpy-20-release-date-june-16) [#545](https://github.com/xgi-org/xgi/pull/545) (@nwlandry).
+* Update license and contributing [#539](https://github.com/xgi-org/xgi/pull/539) (@nwlandry).
+* Added error handling for JSON duplicate IDs [#538](https://github.com/xgi-org/xgi/pull/538) (@nwlandry).
+* Added a new drawing recipe for drawing multiple hypergraphs with the same node positions [#535](https://github.com/xgi-org/xgi/pull/535) (@nwlandry).
+
 ## v0.8.5
 * Added the ability to draw hypergraphs and dihypergraphs as bipartite graphs, added a bipartite spring layout, and added the ability to place edge markers at the barycenters of the positions of their member nodes with the `edge_positions_from _barycenters` function [#492](https://github.com/xgi-org/xgi/pull/492) (@nwlandry).
 * Updated the documentation to include (1) new relevant software packages organized by language, (2) documentation for the encapsulation DAG, (3) new gallery examples, (4) new projects using XGI, and (5) links to the XGI JOSS paper [#529](https://github.com/xgi-org/xgi/pull/529) (@nwlandry).
