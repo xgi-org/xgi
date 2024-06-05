@@ -24,7 +24,7 @@ def write_json(H, path):
 
     # name always gets written (default is an empty string)
     data["hypergraph-data"] = {}
-    data["hypergraph-data"].update(H._hypergraph)
+    data["hypergraph-data"].update(H._net_attr)
 
     # get node data
     try:
