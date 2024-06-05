@@ -8,8 +8,8 @@ from warnings import warn
 
 from ..exception import IDNotFound, XGIError, frozen
 from ..utils import IDDict, update_uid_counter
-from .views import EdgeView, NodeView
 from .hon import HigherOrderNetwork
+from .views import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
 
