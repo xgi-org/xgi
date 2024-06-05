@@ -125,7 +125,7 @@ This library may not meet your needs and if this is this case, consider checking
 * [halp](http://murali-group.github.io/halp): A Python package with directed and undirected hypergraph implementations and several algorithms.
 * [Hypergraph Analysis Toolbox (HAT)](https://hypergraph-analysis-toolbox.readthedocs.io): A Python/Matlab package for hypergraph construction, visualization, and analysis (Especially for Pore-C data).
 * [Hypergraphx](https://hypergraphx.readthedocs.io): A Python for representing, analyzing, and visualizing hypergraphs.
-* [HyperNetX](https://pnnl.github.io/HyperNetX): A Python package for representing, analyzing, and visualizing hypergraphs.
+* [HyperNetX](https://hypernetx.readthedocs.io/en/latest/): A Python package for representing, analyzing, and visualizing hypergraphs.
 * [NetworkX](https://networkx.org): A Python package for representing, analyzing, and visualizing networks.
 * [Reticula](https://docs.reticula.network): A Python package wrapping C++ functions for representing, analyzing, and visualizing temporal and static graphs and hypergraphs.
 
