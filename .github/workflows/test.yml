@@ -30,10 +30,70 @@ jobs:
         python -m pip install .
         python -m pip list
 
-    - name: Prepare tutorial notebooks
+    - name: Prepare case studies notebooks
       run: |
         # go into tutorial location
-        cd docs/source/api/tutorials/ 
+        cd tutorials/case_studies
+        # convert each notebook into a python file
+        jupyter nbconvert --to script *.ipynb
+        # rename the files so they are found by pytest: add 'test' at the beginning
+        rename 's/(.*)\.py/test $1.py/' *
+        # rename the files so they are found by pytest: change spaces to underscores
+        rename 's/ /_/g' test*
+        # modify each file by adding one level of indentation to each line
+        sed -i 's/^/    /' test*.py
+        # modify each file by adding 'def test_func():' at the top
+        sed -i '1s;^;def test_func():\n;' test*.py
+    
+    - name: Prepare focus notebooks
+      run: |
+        # go into tutorial location
+        cd tutorials/focus
+        # convert each notebook into a python file
+        jupyter nbconvert --to script *.ipynb
+        # rename the files so they are found by pytest: add 'test' at the beginning
+        rename 's/(.*)\.py/test $1.py/' *
+        # rename the files so they are found by pytest: change spaces to underscores
+        rename 's/ /_/g' test*
+        # modify each file by adding one level of indentation to each line
+        sed -i 's/^/    /' test*.py
+        # modify each file by adding 'def test_func():' at the top
+        sed -i '1s;^;def test_func():\n;' test*.py
+    
+    - name: Prepare getting started notebooks
+      run: |
+        # go into tutorial location
+        cd tutorials/getting_started
+        # convert each notebook into a python file
+        jupyter nbconvert --to script *.ipynb
+        # rename the files so they are found by pytest: add 'test' at the beginning
+        rename 's/(.*)\.py/test $1.py/' *
+        # rename the files so they are found by pytest: change spaces to underscores
+        rename 's/ /_/g' test*
+        # modify each file by adding one level of indentation to each line
+        sed -i 's/^/    /' test*.py
+        # modify each file by adding 'def test_func():' at the top
+        sed -i '1s;^;def test_func():\n;' test*.py
+
+    - name: Prepare in-depth notebooks
+      run: |
+        # go into tutorial location
+        cd tutorials/in_depth
+        # convert each notebook into a python file
+        jupyter nbconvert --to script *.ipynb
+        # rename the files so they are found by pytest: add 'test' at the beginning
+        rename 's/(.*)\.py/test $1.py/' *
+        # rename the files so they are found by pytest: change spaces to underscores
+        rename 's/ /_/g' test*
+        # modify each file by adding one level of indentation to each line
+        sed -i 's/^/    /' test*.py
+        # modify each file by adding 'def test_func():' at the top
+        sed -i '1s;^;def test_func():\n;' test*.py
+
+    - name: Prepare recipes
+      run: |
+        # go into tutorial location
+        cd tutorials/recipes
         # convert each notebook into a python file
         jupyter nbconvert --to script *.ipynb
         # rename the files so they are found by pytest: add 'test' at the beginning
@@ -48,7 +108,21 @@ jobs:
     - name: Test tutorial notebooks
       run: |
         # run pytest ONLY on the tutorials
-        cd docs/source/api/tutorials/ 
+        cd tutorials
+
+        cd case_studies
+        pytest --color=yes
+
+        cd ../focus
+        pytest --color=yes
+
+        cd ../getting_started
+        pytest --color=yes
+
+        cd ../in_depth
+        pytest --color=yes
+
+        cd ../recipes
         pytest --color=yes
 
   pytest:
