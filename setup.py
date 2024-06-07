@@ -1,16 +1,32 @@
+import codecs
+import os.path
 import sys
 
 import setuptools
 from setuptools import setup
 
-__version__ = "0.8.6"
+name = "xgi"
+
+
+def read(rel_path):
+    here = os.path.abspath(os.path.dirname(__file__))
+    with codecs.open(os.path.join(here, rel_path), "r") as fp:
+        return fp.read()
+
+
+def get_version(rel_path):
+    for line in read(rel_path).splitlines():
+        if line.startswith("__version__"):
+            delim = '"' if '"' in line else "'"
+            return line.split(delim)[1]
+    else:
+        raise RuntimeError("Unable to find version string.")
+
 
 if sys.version_info < (3, 8):
     sys.exit("XGI requires Python 3.8 or later.")
 
-name = "xgi"
-
-version = __version__
+version = get_version("xgi/__init__.py")
 
 authors = "XGI Developers"
 
