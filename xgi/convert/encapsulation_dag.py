@@ -31,6 +31,7 @@ def to_encapsulation_dag(H, subset_types="all"):
                 encapsulate hyperedegs of size 3, which will be included if
                 using this setting (whereas relationships with subsets of size 2
                 would not be included).
+    
     Returns
     -------
     LG : networkx.DiGraph
@@ -124,6 +125,7 @@ def _get_candidates(subset_types, H, he):
         The hypergraph
     he : Set
         The hyperedge
+    
     Returns
     -------
     candidates : Set
@@ -153,6 +155,7 @@ def _check_candidate(subset_types, he, cand):
         The hyperedge
     cand : Set
         The candidate
+    
     Returns
     -------
     is_candidate : bool

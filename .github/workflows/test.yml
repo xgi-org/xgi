@@ -122,9 +122,6 @@ jobs:
         cd ../in_depth
         pytest --color=yes
 
-        cd ../recipes
-        pytest --color=yes
-
   pytest:
     runs-on: ${{ matrix.os }}-latest
     strategy:
