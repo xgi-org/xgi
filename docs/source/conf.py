@@ -83,6 +83,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_design",
     "nbsphinx",
+    "nbsphinx_link",
 ]
 
 # Automatically generate stub pages when using the .. autosummary directive
