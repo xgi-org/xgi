@@ -520,6 +520,7 @@ def draw_hyperedges(
     dyad_vmin=None,
     dyad_vmax=None,
     edge_fc=None,
+    edge_ec=None,
     edge_fc_cmap="crest_r",
     edge_vmin=None,
     edge_vmax=None,
@@ -578,6 +579,8 @@ def draw_hyperedges(
         * IDStat containing the `ids` as keys
 
         If None (default), color by edge size.
+    edge_ec : color or None, optional
+        Color of the edge of the hyperedges. 
     edge_fc_cmap: matplotlib colormap
         Colormap used to map the edge colors. By default, "crest_r".
     edge_vmin, edge_vmax : float, optional
@@ -733,6 +736,7 @@ def draw_hyperedges(
     edge_collection = PatchCollection(
         patches,
         facecolors=edge_fc_colors,
+        edgecolors=edge_ec,
         array=edge_fc_arr,
         cmap=edge_fc_cmap,
         alpha=alpha,
