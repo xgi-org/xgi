@@ -67,10 +67,16 @@ Gonzalo Contreras-Aso, Regino Criado, and Miguel Romance, "Beyond directed hyper
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2403.11825>`
 :bdg-link-primary-line:`Code <https://github.com/goznalo-git/DirectedHyperCentrality>`
 
-Robin Delabays, Giulia De Pasquale, Florian Dörfler, Yuanzhao Zhang, "Hypergraph reconstruction from dynamics", arXiv:2402.00078 (2024).
+Robin Delabays, Giulia De Pasquale, Florian Dörfler, and Yuanzhao Zhang, "Hypergraph reconstruction from dynamics", arXiv:2402.00078 (2024).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2402.00078>`
 :bdg-link-primary-line:`Code <https://github.com/TaylorBasedHypergraphInference/THIS>`
+
+Nicholas W. Landry, William Thompson, Laurent Hébert-Dufresne, and Jean-Gabriel Young, "Complex contagions can outperform simple contagions for network reconstruction with dense networks or saturated dynamics", arXiv:2405.00129
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2405.00129>`
+:bdg-link-primary-line:`Code <https://github.com/nwlandry/complex-network-reconstruction>`
+
 
 Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Domenico, "Functional reducibility of higher-order networks", arXiv:2404.08547 (2024).
 
@@ -90,7 +96,7 @@ Iacopo Iacopini, Márton Karsai, and Alain Barrat, "The temporal dynamics of gro
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2306.09967>`
 :bdg-link-primary-line:`Code <https://github.com/iaciac/temporal-group-interactions>`
 
-Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, Maxime Lucas, "Deeper but smaller: Higher-order interactions increase linear stability but shrink basins", arXiv:2309.16581 (2023).
+Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, and Maxime Lucas, "Deeper but smaller: Higher-order interactions increase linear stability but shrink basins", arXiv:2309.16581 (2023).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2309.16581>`
 :bdg-link-primary-line:`Code <https://github.com/maximelucas/basins_and_triangles>`
