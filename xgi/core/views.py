@@ -984,16 +984,25 @@ class DiEdgeView(IDView):
         """
         if e is None:
             if dtype is dict:
-                return {key: self._id_dict[key].copy() for key in self}
+                return {
+                    key: (
+                        self._id_dict[key]["in"].copy(),
+                        self._id_dict[key]["out"].copy(),
+                    )
+                    for key in self
+                }
             elif dtype is list:
-                return [self._id_dict[key].copy() for key in self]
+                return [
+                    (self._id_dict[key]["in"].copy(), self._id_dict[key]["out"].copy())
+                    for key in self
+                ]
             else:
                 raise XGIError(f"Unrecognized dtype {dtype}")
 
         if e not in self:
             raise IDNotFound(f'ID "{e}" not in this view')
 
-        return self._id_dict[e].copy()
+        return (self._id_dict[e]["in"].copy(), self._id_dict[e]["out"].copy())
 
     def members(self, e=None, dtype=list):
         """Get the edges of a directed hypergraph.
