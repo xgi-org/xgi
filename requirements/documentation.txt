@@ -7,3 +7,4 @@ matplotlib>=3.3
 sphinx-design
 ipykernel
 nbsphinx
+nbsphinx-link

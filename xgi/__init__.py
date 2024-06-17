@@ -1,5 +1,3 @@
-import pkg_resources
-
 from . import (
     utils,
     core,
@@ -24,4 +22,4 @@ from .readwrite import *
 from .stats import *
 
 
-__version__ = pkg_resources.require("xgi")[0].version
+__version__ = "0.8.6"

@@ -21,7 +21,7 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 # -- Project information -----------------------------------------------------
 project = "XGI"
 copyright = "Copyright (C) 2021-2024 XGI Developers"
-release = "0.8.5"
+release = "0.8.6"
 
 # -- General configuration ---------------------------------------------------
 
@@ -83,6 +83,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_design",
     "nbsphinx",
+    "nbsphinx_link",
 ]
 
 # Automatically generate stub pages when using the .. autosummary directive

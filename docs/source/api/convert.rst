@@ -9,7 +9,7 @@ convert package
 
    ~xgi.convert.bipartite_edges
    ~xgi.convert.bipartite_graph
-   ~xgi.encapsulation_dag
+   ~xgi.convert.encapsulation_dag
    ~xgi.convert.graph
    ~xgi.convert.higher_order_network
    ~xgi.convert.hyperedges
