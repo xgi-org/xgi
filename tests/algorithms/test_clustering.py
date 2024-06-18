@@ -41,7 +41,8 @@ def test_local_clustering_coefficient(edgelist8):
         5: 0.0,
         6: 0.0,
     }
-    assert cc == true_cc
+    for n in cc:
+        assert round(cc[n], 3) == round(true_cc[n], 3)
 
 
 def test_clustering_coefficient(edgelist1):

@@ -125,7 +125,7 @@ def is_uniform(H):
     if not edge_sizes or len(edge_sizes) != 1:
         return False
 
-    return edge_sizes.pop() - 1  # order of all edges
+    return int(edge_sizes.pop() - 1)  # order of all edges
 
 
 def edge_neighborhood(H, n, include_self=False):

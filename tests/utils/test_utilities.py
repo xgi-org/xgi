@@ -2,7 +2,6 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 import pytest
-from numpy import infty
 
 import xgi
 from xgi.exception import IDNotFound, XGIError
@@ -107,7 +106,7 @@ def test_find_triangles():
 
 
 def test_min_where():
-    vals = {"a": 1.0, "b": 0.0, "c": infty, "d": 2.0}
+    vals = {"a": 1.0, "b": 0.0, "c": np.inf, "d": 2.0}
 
     where = {"a": True, "b": False, "c": True, "d": True}
     assert (
@@ -115,7 +114,7 @@ def test_min_where():
     )  # replace with xgi.min_where (it seems not to work...)
 
     where = {"a": False, "b": False, "c": False, "d": False}
-    assert xgi.utils.utilities.min_where(vals, where) == infty
+    assert xgi.utils.utilities.min_where(vals, where) == np.inf
 
 
 def test_subfaces(edgelist5):

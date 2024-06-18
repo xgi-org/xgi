@@ -69,7 +69,7 @@ def clustering_coefficient(H):
     with np.errstate(divide="ignore", invalid="ignore"):
         result = np.nan_to_num(0.5 * mat.diagonal() / denom)
 
-    return {n: result[ndict[n]] if n in ndict else 0 for n in H.nodes}
+    return {n: float(result[ndict[n]]) if n in ndict else 0 for n in H.nodes}
 
 
 def local_clustering_coefficient(H):

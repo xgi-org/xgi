@@ -8,7 +8,6 @@ from itertools import chain, combinations, count
 import numpy as np
 import pandas as pd
 import requests
-from numpy import infty
 
 from xgi.exception import IDNotFound, XGIError
 
@@ -220,12 +219,12 @@ def min_where(dicty, where):
 
     Return
     ------
-    min_val : float or np.Inf
-        Minimum value found in `dicty`. Is set to np.infty if `where` indicated
-        nowhere or if all values are `np.infty`.
+    min_val : float or np.inf
+        Minimum value found in `dicty`. Is set to np.inf if `where` indicated
+        nowhere or if all values are `np.inf`.
     """
 
-    min_val = infty
+    min_val = np.inf
     for key in dicty.keys():
         if where[key]:
             if dicty[key] < min_val:
