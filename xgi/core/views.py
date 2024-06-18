@@ -795,7 +795,7 @@ class EdgeView(IDView):
 
 
 class DiNodeView(IDView):
-    """An DiIDView that keeps track of node ids.
+    """A DiIDView that keeps track of node ids.
 
     .. warning::
         This is currently an experimental feature.
@@ -1027,8 +1027,6 @@ class DiEdgeView(IDView):
         The members of an edge are the union of
         its head and tail sets.
 
-        The
-
         Raises
         ------
         TypeError
@@ -1037,7 +1035,6 @@ class DiEdgeView(IDView):
             If `dtype` is not dict or list
         IDNotFound
             If `e` does not exist in the hypergraph
-
         """
         if e is None:
             if dtype is dict:
