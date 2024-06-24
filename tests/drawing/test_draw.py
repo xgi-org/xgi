@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 import seaborn as sb
-from matplotlib.patches import FancyArrowPatch
 
 import xgi
 from xgi.exception import XGIError

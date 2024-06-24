@@ -136,12 +136,12 @@ def degree(net, bunch, order=None, weight=None):
     {1: 2, 2: 1, 5: 1, 6: 1, 4: 1, 3: 1}
     """
     if order is None and weight is None:
-        return {n: len(net._node_in[n].union(net._node_out[n])) for n in bunch}
+        return {n: len(net._node[n]["in"].union(net._node[n]["out"])) for n in bunch}
     if order is None and weight:
         return {
             n: sum(
                 net._edge_attr[e].get(weight, 1)
-                for e in net._node_in[n].union(net._node_out[n])
+                for e in net._node[n]["in"].union(net._node[n]["out"])
             )
             for n in bunch
         }
@@ -149,8 +149,8 @@ def degree(net, bunch, order=None, weight=None):
         return {
             n: sum(
                 1
-                for e in net._node_in[n].union(net._node_out[n])
-                if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
+                for e in net._node[n]["in"].union(net._node[n]["out"])
+                if len(net._edge[e]["in"].union(net._edge[e]["out"])) == order + 1
             )
             for n in bunch
         }
@@ -158,8 +158,8 @@ def degree(net, bunch, order=None, weight=None):
         return {
             n: sum(
                 net._edge_attr[e].get(weight, 1)
-                for e in net._node_in[n].union(net._node_out[n])
-                if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
+                for e in net._node[n]["in"].union(net._node[n]["out"])
+                if len(net._edge[e]["in"].union(net._edge[e]["out"])) == order + 1
             )
             for n in bunch
         }
@@ -192,21 +192,21 @@ def in_degree(net, bunch, order=None, weight=None):
     >>> import xgi
     >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
     >>> H.nodes.in_degree.asdict()
-    {1: 1, 2: 1, 5: 0, 6: 0, 4: 1, 3: 0}
+    {1: 1, 2: 0, 5: 1, 6: 1, 4: 0, 3: 1}
     """
     if order is None and weight is None:
-        return {n: len(net._node_in[n]) for n in bunch}
+        return {n: len(net._node[n]["in"]) for n in bunch}
     if order is None and weight:
         return {
-            n: sum(net._edge_attr[e].get(weight, 1) for e in net._node_in[n])
+            n: sum(net._edge_attr[e].get(weight, 1) for e in net._node[n]["in"])
             for n in bunch
         }
     if order is not None and weight is None:
         return {
             n: sum(
                 1
-                for e in net._node_in[n]
-                if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
+                for e in net._node[n]["in"]
+                if len(net._edge[e]["in"].union(net._edge[e]["out"])) == order + 1
             )
             for n in bunch
         }
@@ -214,8 +214,8 @@ def in_degree(net, bunch, order=None, weight=None):
         return {
             n: sum(
                 net._edge_attr[e].get(weight, 1)
-                for e in net._node_in[n]
-                if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
+                for e in net._node[n]["in"]
+                if len(net._edge[e]["in"].union(net._edge[e]["out"])) == order + 1
             )
             for n in bunch
         }
@@ -248,21 +248,21 @@ def out_degree(net, bunch, order=None, weight=None):
     >>> import xgi
     >>> H = xgi.DiHypergraph([[{1, 2}, {5, 6}], [{4}, {1, 3}]])
     >>> H.nodes.out_degree.asdict()
-    {1: 1, 2: 0, 5: 1, 6: 1, 4: 0, 3: 1}
+    {1: 1, 2: 1, 5: 0, 6: 0, 4: 1, 3: 0}
     """
     if order is None and weight is None:
-        return {n: len(net._node_out[n]) for n in bunch}
+        return {n: len(net._node[n]["out"]) for n in bunch}
     if order is None and weight:
         return {
-            n: sum(net._edge_attr[e].get(weight, 1) for e in net._node_out[n])
+            n: sum(net._edge_attr[e].get(weight, 1) for e in net._node[n]["out"])
             for n in bunch
         }
     if order is not None and weight is None:
         return {
             n: sum(
                 1
-                for e in net._node_out[n]
-                if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
+                for e in net._node[n]["out"]
+                if len(net._edge[e]["in"].union(net._edge[e]["out"])) == order + 1
             )
             for n in bunch
         }
@@ -270,8 +270,8 @@ def out_degree(net, bunch, order=None, weight=None):
         return {
             n: sum(
                 net._edge_attr[e].get(weight, 1)
-                for e in net._node[n]
-                if len(net._edge_in[e].union(net._edge_out[e])) == order + 1
+                for e in net._node[n]["out"]
+                if len(net._edge[e]["in"].union(net._edge[e]["out"])) == order + 1
             )
             for n in bunch
         }

@@ -14,3 +14,5 @@
         IDView
         NodeView
         EdgeView
+        DiNodeView
+        DiEdgeView

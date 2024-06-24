@@ -1,5 +1,3 @@
-import pytest
-
 import xgi
 
 ### di-edge stat specific tests

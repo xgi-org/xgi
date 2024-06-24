@@ -7,13 +7,12 @@
 #    * Statistics of stats (max, min, etc.)
 #    * Filterby
 
-# Node and edge attributes: T onversion functions (tohist, tonumpy, etc.), stats of stats (max, min, etc.), and filterby
+# Node and edge attributes: Conversion functions (tohist, tonumpy, etc.), stats of stats (max, min, etc.), and filterby
 
 # Tests specific to different metrics are implemented in the other files.
 
 ### General functionality
 
-import numpy as np
 import pandas as pd
 import pytest
 
@@ -68,7 +67,8 @@ def test_dihypergraph_stats_items(diedgelist2):
 
 def test_hypergraph_view_val(edgelist1, edgelist2):
     H = xgi.Hypergraph(edgelist1)
-    assert H.nodes.degree._val == {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
+    d = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
+    assert H.nodes.degree._val == d
     assert H.nodes([1, 2, 3]).degree._val == {1: 1, 2: 1, 3: 1}
     assert H.edges.order._val == {0: 2, 1: 0, 2: 1, 3: 2}
     assert H.edges([1, 2]).order._val == {1: 0, 2: 1}
@@ -96,11 +96,14 @@ def test_dihypergraph_view_val(diedgelist1, diedgelist2):
 def test_hypergraph_stats_are_views(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     ns = H.nodes.degree
-    assert ns.asdict() == {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
+    d = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}
+    assert ns.asdict() == d
     H.add_node(10)
-    assert ns.asdict() == {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1, 10: 0}
+    d = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1, 10: 0}
+    assert ns.asdict() == d
     H.add_edge([1, 2, 10, 20])
-    assert ns.asdict() == {1: 2, 2: 2, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1, 10: 1, 20: 1}
+    d = {1: 2, 2: 2, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1, 10: 1, 20: 1}
+    assert ns.asdict() == d
 
     H = xgi.Hypergraph(edgelist1)
     es = H.edges.order
@@ -118,9 +121,11 @@ def test_dihypergraph_stats_are_views(diedgelist2):
 
     H = xgi.DiHypergraph(diedgelist2)
     ns = H.nodes.degree
-    assert ns.asdict() == {0: 1, 1: 2, 2: 3, 4: 2, 3: 1, 5: 1}
+    d = {0: 1, 1: 2, 2: 3, 4: 2, 3: 1, 5: 1}
+    assert ns.asdict() == d
     H.add_node(10)
-    assert ns.asdict() == {0: 1, 1: 2, 2: 3, 4: 2, 3: 1, 5: 1, 10: 0}
+    d = {0: 1, 1: 2, 2: 3, 4: 2, 3: 1, 5: 1, 10: 0}
+    assert ns.asdict() == d
 
 
 def test_hypergraph_user_defined(edgelist1):
@@ -249,15 +254,14 @@ def test_dihypergraph_stats_items(diedgelist2):
 
 def test_hypergraph_filterby(edgelist1, edgelist8):
     H = xgi.Hypergraph(edgelist1)
-    assert H.nodes.filterby("degree", 2).average_neighbor_degree.asdict() == {6: 1.0}
-    assert H.nodes.filterby("average_neighbor_degree", 1.0).degree.asdict() == {
-        1: 1,
-        2: 1,
-        3: 1,
-        6: 2,
-    }
-    assert H.edges.filterby("order", 2).size.asdict() == {0: 3, 3: 3}
-    assert H.edges.filterby("size", 2).order.asdict() == {2: 1}
+    d = {6: 1.0}
+    assert H.nodes.filterby("degree", 2).average_neighbor_degree.asdict() == d
+    d = {1: 1, 2: 1, 3: 1, 6: 2}
+    assert H.nodes.filterby("average_neighbor_degree", 1.0).degree.asdict() == d
+    d = {0: 3, 3: 3}
+    assert H.edges.filterby("order", 2).size.asdict() == d
+    d = {2: 1}
+    assert H.edges.filterby("size", 2).order.asdict() == d
 
     H = xgi.Hypergraph(edgelist8)
     assert H.nodes.filterby("degree", 3).average_neighbor_degree.asdict() == {4: 4.2}
@@ -268,43 +272,23 @@ def test_hypergraph_filterby(edgelist1, edgelist8):
 
 def test_dihypergraph_filterby(diedgelist1, diedgelist2):
     H = xgi.DiHypergraph(diedgelist2)
-    assert H.nodes.filterby("degree", 2).in_degree.asdict() == {1: 2, 4: 1}
-    assert H.nodes.filterby("degree", 2).out_degree.asdict() == {1: 0, 4: 2}
-    assert H.nodes.filterby("in_degree", 1).degree.asdict() == {0: 1, 3: 1, 4: 2}
-    assert H.nodes.filterby("out_degree", 1).degree.asdict() == {2: 3, 5: 1}
+    assert H.nodes.filterby("degree", 2).in_degree.asdict() == {1: 0, 4: 2}
+    assert H.nodes.filterby("degree", 2).out_degree.asdict() == {1: 2, 4: 1}
+    assert H.nodes.filterby("in_degree", 1).degree.asdict() == {2: 3, 5: 1}
+    assert H.nodes.filterby("out_degree", 1).degree.asdict() == {0: 1, 3: 1, 4: 2}
 
     assert H.edges.filterby("order", 2).size.asdict() == {0: 3, 1: 3}
     assert H.edges.filterby("size", 4).order.asdict() == {2: 3}
 
     H = xgi.DiHypergraph(diedgelist1)
-    assert H.nodes.filterby("degree", 1).in_degree.asdict() == {
-        1: 1,
-        2: 1,
-        3: 1,
-        4: 0,
-        5: 1,
-        6: 1,
-        7: 0,
-        8: 0,
-    }
-    assert H.nodes.filterby("degree", 1).out_degree.asdict() == {
-        1: 0,
-        2: 0,
-        3: 0,
-        4: 1,
-        5: 0,
-        6: 1,
-        7: 1,
-        8: 1,
-    }
-    assert H.nodes.filterby("in_degree", 1).degree.asdict() == {
-        1: 1,
-        2: 1,
-        3: 1,
-        5: 1,
-        6: 1,
-    }
-    assert H.nodes.filterby("out_degree", 1).degree.asdict() == {8: 1, 4: 1, 6: 1, 7: 1}
+    d = {1: 0, 2: 0, 3: 0, 4: 1, 5: 0, 6: 1, 8: 1, 7: 1}
+    assert H.nodes.filterby("degree", 1).in_degree.asdict() == d
+    d = {1: 1, 2: 1, 3: 1, 4: 0, 5: 1, 6: 1, 8: 0, 7: 0}
+    assert H.nodes.filterby("degree", 1).out_degree.asdict() == d
+    d = {4: 1, 6: 1, 8: 1, 7: 1}
+    assert H.nodes.filterby("in_degree", 1).degree.asdict() == d
+    d = {1: 1, 2: 1, 3: 1, 5: 1, 6: 1}
+    assert H.nodes.filterby("out_degree", 1).degree.asdict() == d
 
 
 def test_filterby_modes(edgelist1, edgelist8):
@@ -370,7 +354,7 @@ def test_dihypergraph_call_filterby(diedgelist1, diedgelist2):
     H = xgi.DiHypergraph(diedgelist1)
 
     filtered = H.nodes([4, 5, 6]).filterby("in_degree", 1).degree
-    assert filtered.asdict() == {5: 1, 6: 1}
+    assert filtered.asdict() == {4: 1, 6: 1}
 
     H = xgi.DiHypergraph(diedgelist2)
     assert set(H.nodes([1, 2, 3]).filterby("degree", 2)) == {1}
@@ -699,7 +683,7 @@ def test_missing_attrs(hyperwithattrs):
 
 def test_multi_stats_order(edgelist1, edgelist8):
     H = xgi.Hypergraph(edgelist1)
-    assert H.nodes.multi(["degree", "average_neighbor_degree"]).asdict() == {
+    d = {
         1: {"degree": 1, "average_neighbor_degree": 1.0},
         2: {"degree": 1, "average_neighbor_degree": 1.0},
         3: {"degree": 1, "average_neighbor_degree": 1.0},
@@ -709,7 +693,8 @@ def test_multi_stats_order(edgelist1, edgelist8):
         7: {"degree": 1, "average_neighbor_degree": 1.5},
         8: {"degree": 1, "average_neighbor_degree": 1.5},
     }
-    assert H.nodes.multi(["average_neighbor_degree", "degree"]).asdict() == {
+    assert H.nodes.multi(["degree", "average_neighbor_degree"]).asdict() == d
+    d = {
         1: {"average_neighbor_degree": 1.0, "degree": 1},
         2: {"average_neighbor_degree": 1.0, "degree": 1},
         3: {"average_neighbor_degree": 1.0, "degree": 1},
@@ -719,9 +704,10 @@ def test_multi_stats_order(edgelist1, edgelist8):
         7: {"average_neighbor_degree": 1.5, "degree": 1},
         8: {"average_neighbor_degree": 1.5, "degree": 1},
     }
+    assert H.nodes.multi(["average_neighbor_degree", "degree"]).asdict() == d
 
     H = xgi.Hypergraph(edgelist8)
-    assert H.nodes.multi(["degree", "average_neighbor_degree"]).asdict() == {
+    d = {
         0: {"degree": 6, "average_neighbor_degree": 3.6},
         1: {"degree": 5, "average_neighbor_degree": 3.5},
         2: {"degree": 4, "average_neighbor_degree": 4.0},
@@ -730,7 +716,8 @@ def test_multi_stats_order(edgelist1, edgelist8):
         5: {"degree": 2, "average_neighbor_degree": 4.0},
         6: {"degree": 2, "average_neighbor_degree": 5.5},
     }
-    assert H.nodes.multi(["average_neighbor_degree", "degree"]).asdict() == {
+    assert H.nodes.multi(["degree", "average_neighbor_degree"]).asdict() == d
+    d = {
         0: {"average_neighbor_degree": 3.6, "degree": 6},
         1: {"average_neighbor_degree": 3.5, "degree": 5},
         2: {"average_neighbor_degree": 4.0, "degree": 4},
@@ -739,12 +726,13 @@ def test_multi_stats_order(edgelist1, edgelist8):
         5: {"average_neighbor_degree": 4.0, "degree": 2},
         6: {"average_neighbor_degree": 5.5, "degree": 2},
     }
+    assert H.nodes.multi(["average_neighbor_degree", "degree"]).asdict() == d
 
 
 def test_multi_stats_with_parameters(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     multi = H.nodes.multi(["degree", H.nodes.degree(order=2)])
-    assert multi.asdict() == {
+    d = {
         1: {"degree": 1, "degree(order=2)": 1},
         2: {"degree": 1, "degree(order=2)": 1},
         3: {"degree": 1, "degree(order=2)": 1},
@@ -754,6 +742,7 @@ def test_multi_stats_with_parameters(edgelist1):
         7: {"degree": 1, "degree(order=2)": 1},
         8: {"degree": 1, "degree(order=2)": 1},
     }
+    assert multi.asdict() == d
 
 
 def test_multi_stats_dict_transpose(edgelist1, edgelist8):
@@ -761,7 +750,8 @@ def test_multi_stats_dict_transpose(edgelist1, edgelist8):
     multi = H.nodes.multi(
         ["average_neighbor_degree", "degree", H.nodes.degree(order=2)]
     )
-    assert multi.asdict() == {
+
+    d = {
         1: {"average_neighbor_degree": 1.0, "degree": 1, "degree(order=2)": 1},
         2: {"average_neighbor_degree": 1.0, "degree": 1, "degree(order=2)": 1},
         3: {"average_neighbor_degree": 1.0, "degree": 1, "degree(order=2)": 1},
@@ -771,7 +761,9 @@ def test_multi_stats_dict_transpose(edgelist1, edgelist8):
         7: {"average_neighbor_degree": 1.5, "degree": 1, "degree(order=2)": 1},
         8: {"average_neighbor_degree": 1.5, "degree": 1, "degree(order=2)": 1},
     }
-    assert multi.asdict(transpose=True) == {
+    assert multi.asdict() == d
+
+    d = {
         "average_neighbor_degree": {
             1: 1.0,
             2: 1.0,
@@ -785,12 +777,14 @@ def test_multi_stats_dict_transpose(edgelist1, edgelist8):
         "degree": {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1},
         "degree(order=2)": {1: 1, 2: 1, 3: 1, 4: 0, 5: 0, 6: 1, 7: 1, 8: 1},
     }
+    assert multi.asdict(transpose=True) == d
 
     H = xgi.Hypergraph(edgelist8)
     multi = H.nodes.multi(
         ["average_neighbor_degree", "degree", H.nodes.degree(order=2)]
     )
-    assert multi.asdict() == {
+
+    d = {
         0: {"average_neighbor_degree": 3.6, "degree": 6, "degree(order=2)": 3},
         1: {"average_neighbor_degree": 3.5, "degree": 5, "degree(order=2)": 2},
         2: {"average_neighbor_degree": 4.0, "degree": 4, "degree(order=2)": 3},
@@ -799,7 +793,9 @@ def test_multi_stats_dict_transpose(edgelist1, edgelist8):
         5: {"average_neighbor_degree": 4.0, "degree": 2, "degree(order=2)": 2},
         6: {"average_neighbor_degree": 5.5, "degree": 2, "degree(order=2)": 0},
     }
-    assert multi.asdict(transpose=True) == {
+    assert multi.asdict() == d
+
+    d = {
         "average_neighbor_degree": {
             0: 3.6,
             1: 3.5,
@@ -812,12 +808,14 @@ def test_multi_stats_dict_transpose(edgelist1, edgelist8):
         "degree": {0: 6, 1: 5, 2: 4, 3: 4, 4: 3, 5: 2, 6: 2},
         "degree(order=2)": {0: 3, 1: 2, 2: 3, 3: 3, 4: 2, 5: 2, 6: 0},
     }
+    assert multi.asdict(transpose=True) == d
 
 
 def test_multi_stats_dict_list(edgelist1, edgelist8):
     H = xgi.Hypergraph(edgelist1)
     multi = H.nodes.multi(["average_neighbor_degree", "degree"])
-    assert multi.asdict(list) == {
+
+    d = {
         1: [1.0, 1],
         2: [1.0, 1],
         3: [1.0, 1],
@@ -827,10 +825,12 @@ def test_multi_stats_dict_list(edgelist1, edgelist8):
         7: [1.5, 1],
         8: [1.5, 1],
     }
+    assert multi.asdict(list) == d
 
     H = xgi.Hypergraph(edgelist8)
     multi = H.nodes.multi(["average_neighbor_degree", "degree"])
-    assert multi.asdict(list) == {
+
+    d = {
         0: [3.6, 6],
         1: [3.5, 5],
         2: [4.0, 4],
@@ -839,12 +839,14 @@ def test_multi_stats_dict_list(edgelist1, edgelist8):
         5: [4.0, 2],
         6: [5.5, 2],
     }
+    assert multi.asdict(list) == d
 
 
 def test_multi_stats_list_dict(edgelist1, edgelist8):
     H = xgi.Hypergraph(edgelist1)
     multi = H.nodes.multi(["average_neighbor_degree", "degree"])
-    assert multi.aslist(dict) == [
+
+    l = [
         {"average_neighbor_degree": 1.0, "degree": 1},
         {"average_neighbor_degree": 1.0, "degree": 1},
         {"average_neighbor_degree": 1.0, "degree": 1},
@@ -854,10 +856,12 @@ def test_multi_stats_list_dict(edgelist1, edgelist8):
         {"average_neighbor_degree": 1.5, "degree": 1},
         {"average_neighbor_degree": 1.5, "degree": 1},
     ]
+    assert multi.aslist(dict) == l
 
     H = xgi.Hypergraph(edgelist8)
     multi = H.nodes.multi(["average_neighbor_degree", "degree"])
-    assert multi.aslist(dict) == [
+
+    l = [
         {"average_neighbor_degree": 3.6, "degree": 6},
         {"average_neighbor_degree": 3.5, "degree": 5},
         {"average_neighbor_degree": 4.0, "degree": 4},
@@ -866,6 +870,7 @@ def test_multi_stats_list_dict(edgelist1, edgelist8):
         {"average_neighbor_degree": 4.0, "degree": 2},
         {"average_neighbor_degree": 5.5, "degree": 2},
     ]
+    assert multi.aslist(dict) == l
 
 
 def test_multi_stats_list_transpose(edgelist1, edgelist8):
@@ -873,7 +878,8 @@ def test_multi_stats_list_transpose(edgelist1, edgelist8):
     multi = H.nodes.multi(
         ["average_neighbor_degree", "degree", H.nodes.degree(order=2)]
     )
-    assert multi.aslist() == [
+
+    l = [
         [1.0, 1, 1],
         [1.0, 1, 1],
         [1.0, 1, 1],
@@ -883,17 +889,21 @@ def test_multi_stats_list_transpose(edgelist1, edgelist8):
         [1.5, 1, 1],
         [1.5, 1, 1],
     ]
-    assert multi.aslist(transpose=True) == [
+    assert multi.aslist() == l
+
+    l = [
         [1.0, 1.0, 1.0, 0, 2.0, 1.0, 1.5, 1.5],
         [1, 1, 1, 1, 1, 2, 1, 1],
         [1, 1, 1, 0, 0, 1, 1, 1],
     ]
+    assert multi.aslist(transpose=True) == l
 
     H = xgi.Hypergraph(edgelist8)
     multi = H.nodes.multi(
         ["average_neighbor_degree", "degree", H.nodes.degree(order=2)]
     )
-    assert multi.aslist() == [
+
+    l = [
         [3.6, 6, 3],
         [3.5, 5, 2],
         [4.0, 4, 3],
@@ -902,11 +912,14 @@ def test_multi_stats_list_transpose(edgelist1, edgelist8):
         [4.0, 2, 2],
         [5.5, 2, 0],
     ]
-    assert multi.aslist(transpose=True) == [
+    assert multi.aslist() == l
+
+    l = [
         [3.6, 3.5, 4.0, 4.0, 4.2, 4.0, 5.5],
         [6, 5, 4, 4, 3, 2, 2],
         [3, 2, 3, 3, 2, 2, 0],
     ]
+    assert multi.aslist(transpose=True) == l
 
 
 def test_multi_stats_aspandas(edgelist1, edgelist8):
@@ -928,29 +941,35 @@ def test_multi_stats_aspandas(edgelist1, edgelist8):
 def test_multi_with_attrs(hyperwithattrs):
     H = hyperwithattrs
     multi = H.nodes.multi([H.nodes.attrs("color")])
-    assert multi.asdict() == {
+
+    d = {
         1: {"attrs(color)": "red"},
         2: {"attrs(color)": "blue"},
         3: {"attrs(color)": "yellow"},
         4: {"attrs(color)": "red"},
         5: {"attrs(color)": "blue"},
     }
-    assert multi.asdict(transpose=True) == {
-        "attrs(color)": {1: "red", 2: "blue", 3: "yellow", 4: "red", 5: "blue"}
-    }
+    assert multi.asdict() == d
+
+    d = {"attrs(color)": {1: "red", 2: "blue", 3: "yellow", 4: "red", 5: "blue"}}
+    assert multi.asdict(transpose=True) == d
 
     multi = H.nodes.multi([H.nodes.degree, H.nodes.attrs("color")])
-    assert multi.asdict() == {
+
+    d = {
         1: {"degree": 1, "attrs(color)": "red"},
         2: {"degree": 2, "attrs(color)": "blue"},
         3: {"degree": 3, "attrs(color)": "yellow"},
         4: {"degree": 2, "attrs(color)": "red"},
         5: {"degree": 2, "attrs(color)": "blue"},
     }
-    assert multi.asdict(list) == {
+    assert multi.asdict() == d
+
+    d = {
         1: [1, "red"],
         2: [2, "blue"],
         3: [3, "yellow"],
         4: [2, "red"],
         5: [2, "blue"],
     }
+    assert multi.asdict(list) == d

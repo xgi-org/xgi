@@ -7,8 +7,8 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 ## Pull Request process
 
 1. Download the dependencies in the developer [requirements file](/requirements/developer.txt).
-2. [Optional, but STRONGLY preferred] Add unit tests for features being added or bugs being fixed.
-3. [Optional, but STRONGLY preferred] Include any new method/function in the corresponding docs file.
+2. Add unit tests for features being added or bugs being fixed.
+3. Include any new method/function in the corresponding docs file.
 4. Run `pytest` to verify all unit tests pass.
 5. Identify the unnecessary imports in the
    1. source code by running `pylint xgi/ --disable all --enable W0611`

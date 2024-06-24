@@ -2,7 +2,6 @@ import networkx as nx
 import pytest
 
 import xgi
-from xgi.exception import XGIError
 
 
 def test_flag_complex():

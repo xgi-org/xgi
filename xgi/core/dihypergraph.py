@@ -11,7 +11,7 @@ from warnings import warn
 
 from ..exception import IDNotFound, XGIError, frozen
 from ..utils import IDDict, update_uid_counter
-from .diviews import DiEdgeView, DiNodeView
+from .views import DiEdgeView, DiNodeView
 
 __all__ = ["DiHypergraph"]
 
@@ -104,11 +104,9 @@ class DiHypergraph:
         return {
             "_edge_uid": self._edge_uid,
             "_hypergraph": self._hypergraph,
-            "_node_in": self._node_in,
-            "_node_out": self._node_out,
+            "_node": self._node,
             "_node_attr": self._node_attr,
-            "_edge_in": self._edge_in,
-            "_edge_out": self._edge_out,
+            "_edge": self._edge,
             "_edge_attr": self._edge_attr,
         }
 
@@ -127,11 +125,9 @@ class DiHypergraph:
         """
         self._edge_uid = state["_edge_uid"]
         self._hypergraph = state["_hypergraph"]
-        self._node_in = state["_node_in"]
-        self._node_out = state["_node_out"]
+        self._node = state["_node"]
         self._node_attr = state["_node_attr"]
-        self._edge_in = state["_edge_in"]
-        self._edge_out = state["_edge_out"]
+        self._edge = state["_edge"]
         self._edge_attr = state["_edge_attr"]
         self._nodeview = DiNodeView(self)
         self._edgeview = DiEdgeView(self)
@@ -140,12 +136,10 @@ class DiHypergraph:
         self._edge_uid = count()
         self._hypergraph = self._hypergraph_attr_dict_factory()
 
-        self._node_in = self._node_dict_factory()
-        self._node_out = self._node_dict_factory()
+        self._node = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
 
-        self._edge_in = self._hyperedge_dict_factory()
-        self._edge_out = self._hyperedge_dict_factory()
+        self._edge = self._hyperedge_dict_factory()
         self._edge_attr = self._hyperedge_attr_dict_factory()
 
         self._nodeview = DiNodeView(self)
@@ -184,7 +178,7 @@ class DiHypergraph:
         iterator
             An iterator over all nodes in the dihypergraph.
         """
-        return iter(self._node_in)
+        return iter(self._node)
 
     def __contains__(self, n):
         """Check for if a node is in this dihypergraph.
@@ -200,7 +194,7 @@ class DiHypergraph:
             Whether the node exists in the dihypergraph.
         """
         try:
-            return n in self._node_in
+            return n in self._node
         except TypeError:
             return False
 
@@ -218,7 +212,7 @@ class DiHypergraph:
         num_edges : number of edges in the dihypergraph
 
         """
-        return len(self._node_in)
+        return len(self._node)
 
     def __getitem__(self, attr):
         """Read dihypergraph attribute."""
@@ -274,7 +268,7 @@ class DiHypergraph:
         4
 
         """
-        return len(self._node_in)
+        return len(self._node)
 
     @property
     def num_edges(self):
@@ -297,7 +291,7 @@ class DiHypergraph:
         >>> DH.num_edges
         1
         """
-        return len(self._edge_in)
+        return len(self._edge)
 
     @property
     def nodes(self):
@@ -328,9 +322,8 @@ class DiHypergraph:
         If node is already in the dihypergraph, its attributes are still updated.
 
         """
-        if node not in self._node_in:
-            self._node_in[node] = set()
-            self._node_out[node] = set()
+        if node not in self._node:
+            self._node[node] = {"in": set(), "out": set()}
             self._node_attr[node] = self._node_attr_dict_factory()
         self._node_attr[node].update(attr)
 
@@ -356,16 +349,15 @@ class DiHypergraph:
         """
         for n in nodes_for_adding:
             try:
-                newnode = n not in self._node_in
+                newnode = n not in self._node
                 newdict = attr
             except TypeError:
                 n, ndict = n
-                newnode = n not in self._node_in
+                newnode = n not in self._node
                 newdict = attr.copy()
                 newdict.update(ndict)
             if newnode:
-                self._node_in[n] = set()
-                self._node_out[n] = set()
+                self._node[n] = {"in": set(), "out": set()}
                 self._node_attr[n] = self._node_attr_dict_factory()
             self._node_attr[n].update(newdict)
 
@@ -395,29 +387,25 @@ class DiHypergraph:
         remove_nodes_from
 
         """
-        out_edge_neighbors = self._node_in[n]
-        in_edge_neighbors = self._node_out[n]
-        del self._node_in[n]
-        del self._node_out[n]
+        edge_neighbors = self._node[n]
+        del self._node[n]
         del self._node_attr[n]
 
         if strong:
-            for edge in in_edge_neighbors.union(out_edge_neighbors):
-                del self._edge_in[edge]
-                del self._edge_out[edge]
+            for edge in edge_neighbors["in"].union(edge_neighbors["out"]):
+                del self._edge[edge]
                 del self._edge_attr[edge]
         else:  # weak removal
-            for edge in in_edge_neighbors:
-                self._edge_in[edge].remove(n)
+            for edge in edge_neighbors["in"]:
+                self._edge[edge]["out"].remove(n)
 
-            for edge in out_edge_neighbors:
-                self._edge_out[edge].remove(n)
+            for edge in edge_neighbors["out"]:
+                self._edge[edge]["in"].remove(n)
 
             # remove empty edges
-            for edge in in_edge_neighbors.union(out_edge_neighbors):
-                if not self._edge_in[edge] and not self._edge_out[edge]:
-                    del self._edge_in[edge]
-                    del self._edge_out[edge]
+            for edge in edge_neighbors["in"].union(edge_neighbors["out"]):
+                if not self._edge[edge]["in"] and not self._edge[edge]["out"]:
+                    del self._edge[edge]
                     del self._edge_attr[edge]
 
     def remove_nodes_from(self, nodes):
@@ -434,7 +422,7 @@ class DiHypergraph:
 
         """
         for n in nodes:
-            if n not in self._node_in:
+            if n not in self._node:
                 warn(f"Node {n} not in dihypergraph")
                 continue
             self.remove_node(n)
@@ -549,28 +537,25 @@ class DiHypergraph:
 
         uid = next(self._edge_uid) if id is None else id
 
-        if id in self._edge_in.keys():  # check that uid is not present yet
+        if id in self._edge.keys():  # check that uid is not present yet
             warn(f"uid {id} already exists, cannot add edge {members}")
             return
 
-        self._edge_in[uid] = set()
-        self._edge_out[uid] = set()
+        self._edge[uid] = {"in": set(), "out": set()}
 
         for node in tail:
-            if node not in self._node_in:
-                self._node_in[node] = set()
-                self._node_out[node] = set()
+            if node not in self._node:
+                self._node[node] = {"in": set(), "out": set()}
                 self._node_attr[node] = self._node_attr_dict_factory()
-            self._node_in[node].add(uid)
-            self._edge_out[uid].add(node)
+            self._node[node]["out"].add(uid)
+            self._edge[uid]["in"].add(node)
 
         for node in head:
-            if node not in self._node_out:
-                self._node_in[node] = set()
-                self._node_out[node] = set()
+            if node not in self._node:
+                self._node[node] = {"in": set(), "out": set()}
                 self._node_attr[node] = self._node_attr_dict_factory()
-            self._node_out[node].add(uid)
-            self._edge_in[uid].add(node)
+            self._node[node]["in"].add(uid)
+            self._edge[uid]["out"].add(node)
 
         self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
@@ -681,7 +666,7 @@ class DiHypergraph:
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
             for id, members in ebunch_to_add.items():
-                if id in self._edge_in.keys():  # check that uid is not present yet
+                if id in self._edge.keys():  # check that uid is not present yet
                     warn(f"uid {id} already exists, cannot add edge {members}.")
                     continue
 
@@ -692,25 +677,22 @@ class DiHypergraph:
                     raise XGIError("Directed edge must be a list or tuple!")
 
                 try:
-                    self._edge_in[id] = set(head)
-                    self._edge_out[id] = set(tail)
+                    self._edge[id] = {"in": set(tail), "out": set(head)}
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
 
                 for n in tail:
-                    if n not in self._node_in:
-                        self._node_in[n] = set()
-                        self._node_out[n] = set()
+                    if n not in self._node:
+                        self._node[n] = {"in": set(), "out": set()}
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node_in[n].add(id)
+                    self._node[n]["out"].add(id)
                 self._edge_attr[id] = self._hyperedge_attr_dict_factory()
 
                 for n in head:
-                    if n not in self._node_in:
-                        self._node_in[n] = set()
-                        self._node_out[n] = set()
+                    if n not in self._node:
+                        self._node[n] = {"in": set(), "out": set()}
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node_out[n].add(id)
+                    self._node[n]["in"].add(id)
 
                 update_uid_counter(self, id)
 
@@ -753,32 +735,29 @@ class DiHypergraph:
             elif format4:
                 members, id, eattr = e[0], e[1], e[2]
 
-            if id in self._edge_in.keys():  # check that uid is not present yet
+            if id in self._edge.keys():  # check that uid is not present yet
                 warn(f"uid {id} already exists, cannot add edge {members}.")
             else:
                 try:
                     tail = members[0]
                     head = members[1]
-                    self._edge_out[id] = set(tail)
-                    self._edge_in[id] = set(head)
+                    self._edge[id] = {"in": set(tail), "out": set(head)}
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
 
                 for node in tail:
-                    if node not in self._node_in:
-                        self._node_in[node] = set()
-                        self._node_out[node] = set()
+                    if node not in self._node:
+                        self._node[node] = {"in": set(), "out": set()}
                         self._node_attr[node] = self._node_attr_dict_factory()
-                    self._node_in[node].add(id)
-                    self._edge_out[id].add(node)
+                    self._node[node]["out"].add(id)
+                    self._edge[id]["in"].add(node)
 
                 for node in head:
-                    if node not in self._node_out:
-                        self._node_in[node] = set()
-                        self._node_out[node] = set()
+                    if node not in self._node:
+                        self._node[node] = {"in": set(), "out": set()}
                         self._node_attr[node] = self._node_attr_dict_factory()
-                    self._node_out[node].add(id)
-                    self._edge_in[id].add(node)
+                    self._node[node]["in"].add(id)
+                    self._edge[id]["out"].add(node)
 
                 self._edge_attr[id] = self._hyperedge_attr_dict_factory()
                 self._edge_attr[id].update(attr)
@@ -809,16 +788,14 @@ class DiHypergraph:
         remove_edges_from : Remove multiple edges.
 
         """
-        head = self._edge_in[id].copy()
-        tail = self._edge_out[id].copy()
+        edge = self._edge[id].copy()
 
-        for node in head:
-            self._node_out[node].remove(id)
-        for node in tail:
-            self._node_in[node].remove(id)
+        for node in edge["in"]:
+            self._node[node]["out"].remove(id)
+        for node in edge["out"]:
+            self._node[node]["in"].remove(id)
 
-        del self._edge_in[id]
-        del self._edge_out[id]
+        del self._edge[id]
         del self._edge_attr[id]
 
     def remove_edges_from(self, ebunch):
@@ -840,16 +817,14 @@ class DiHypergraph:
 
         """
         for id in ebunch:
-            head = self._edge_in[id].copy()
-            tail = self._edge_out[id].copy()
+            edge = self._edge[id].copy()
 
-            for node in head:
-                self._node_out[node].remove(id)
-            for node in tail:
-                self._node_in[node].remove(id)
+            for node in edge["in"]:
+                self._node[node]["out"].remove(id)
+            for node in edge["out"]:
+                self._node[node]["in"].remove(id)
 
-            del self._edge_in[id]
-            del self._edge_out[id]
+            del self._edge[id]
             del self._edge_attr[id]
 
     def set_edge_attributes(self, values, name=None):
@@ -892,7 +867,7 @@ class DiHypergraph:
                         warn(f"Edge {e} does not exist!")
             except AttributeError:
                 # treat `values` as a constant
-                for e in self._edge_in:
+                for e in self._edge:
                     self._edge_attr[e][name] = values
         else:
             try:
@@ -919,11 +894,9 @@ class DiHypergraph:
             By default, True.
 
         """
-        self._node_in.clear()
-        self._node_out.clear()
+        self._node.clear()
         self._node_attr.clear()
-        self._edge_in.clear()
-        self._edge_out.clear()
+        self._edge.clear()
         self._edge_attr.clear()
         if hypergraph_attr:
             self._hypergraph.clear()

@@ -50,8 +50,7 @@ from scipy.stats import moment as spmoment
 
 from ..exception import IDNotFound
 from ..utils import hist
-
-from . import edgestats, diedgestats, dinodestats, nodestats
+from . import diedgestats, dinodestats, edgestats, nodestats
 
 __all__ = [
     "nodestat_func",

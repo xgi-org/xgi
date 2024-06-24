@@ -162,7 +162,7 @@ def test_add_edge_warns_when_overwriting_edge_id():
     H2.add_edge(([3, 4], [5, 6, 7]))
     with pytest.warns(Warning):
         H2.add_edge(([5, 6], [8]), id=0)
-    assert H2._edge_out == {0: {1, 2}, 1: {3, 4}}
+    assert {i: e["in"] for i, e in H2._edge.items()} == {0: {1, 2}, 1: {3, 4}}
 
 
 def test_add_edge_with_id():
@@ -241,7 +241,7 @@ def test_add_edges_from_format2():
     H1 = xgi.DiHypergraph([({1, 2}, {3}), ({2, 3, 4}, {1})])
     with pytest.warns(Warning):
         H1.add_edges_from([(({1, 3}, {2}), 0)])
-    assert H1._edge_out == {0: {1, 2}, 1: {2, 3, 4}}
+    assert {i: e["in"] for i, e in H1._edge.items()} == {0: {1, 2}, 1: {2, 3, 4}}
 
 
 def test_add_edges_from_format3():
@@ -280,7 +280,7 @@ def test_add_edges_from_format4():
     H1 = xgi.DiHypergraph([({1, 2}, {3}), ({2, 3, 4}, {1})])
     with pytest.warns(Warning):
         H1.add_edges_from([(({0, 1}, {2}), 0, {"color": "red"})])
-    assert H1._edge_out == {0: {1, 2}, 1: {2, 3, 4}}
+    assert {i: e["out"] for i, e in H1._edge.items()} == {0: {3}, 1: {1}}
 
 
 def test_add_edges_from_dict(diedgedict1):
@@ -388,7 +388,7 @@ def test_copy_issue128():
 def test_remove_node_weak(diedgelist1, diedgelist2):
     H = xgi.DiHypergraph(diedgelist1)
 
-    # node in the tail
+    # # node in the tail
     assert 1 in H
     H.remove_node(1)
     assert 1 not in H
@@ -615,7 +615,6 @@ def test_cleanup(dihypergraph1):
     assert "test" not in cleanDH
     assert set(cleanDH.nodes) == {"a", "b", "c", "d"}
     assert set(cleanDH.edges) == {"e1", "e2", "e3"}
-    edges = cleanDH.edges.dimembers()
     assert cleanDH.edges.dimembers("e1") == ({"a", "b"}, {"c"})
     assert cleanDH.edges.dimembers("e2") == ({"b"}, {"c", "d"})
     assert cleanDH.edges.dimembers("e3") == ({"b"}, {"c"})
@@ -649,5 +648,9 @@ def test_cleanup(dihypergraph1):
     assert cleanDH.edges.dimembers(1) == ({1}, {2, 3})
     assert cleanDH.edges.dimembers(2) == ({1}, {2})
 
-    assert cleanDH._edge_in == xgi.dual_dict(cleanDH._node_out)
-    assert cleanDH._edge_out == xgi.dual_dict(cleanDH._node_in)
+    node_in = {i: n["in"] for i, n in cleanDH._node.items()}
+    node_out = {i: n["out"] for i, n in cleanDH._node.items()}
+    edge_in = {i: e["in"] for i, e in cleanDH._edge.items()}
+    edge_out = {i: e["out"] for i, e in cleanDH._edge.items()}
+    assert edge_in == xgi.dual_dict(node_out)
+    assert edge_out == xgi.dual_dict(node_in)
