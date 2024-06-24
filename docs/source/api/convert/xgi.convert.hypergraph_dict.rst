@@ -7,4 +7,5 @@ xgi.convert.hypergraph_dict
    
    .. rubric:: Functions
    
-   .. autofunction:: dict_to_hypergraph
+   .. autofunction:: to_hypergraph_dict
+   .. autofunction:: from_hypergraph_dict

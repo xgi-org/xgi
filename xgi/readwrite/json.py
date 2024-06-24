@@ -1,23 +1,32 @@
 """Read from and write to JSON."""
 import json
-from collections import Counter
+from collections import defaultdict
+from os.path import dirname, join
 
-from ..convert import dict_to_hypergraph
-from ..exception import XGIError
+from ..convert import from_hypergraph_dict, to_hypergraph_dict
+from ..core import Hypergraph, SimplicialComplex
 
 __all__ = ["write_json", "read_json"]
 
 
-def write_json(H, path):
+def write_json(H, path, collection_name=""):
     """
     A function to write a file in a standardized JSON format.
+
+    If the dataset is a collection, makes local copies of all the
+    datasets in the collection and a main file pointing to all of
+    the datasets.
 
     Parameters
     ----------
     H: Hypergraph object
         The specified hypergraph object
     path: string
-        The path of the file to read from
+        The path of the file to write to. If the data is a collection,
+        it is the directory in which to put all the files.
+    collection_name : str
+        The name of the collection of data (if any). If `H` is not
+        a collection, this argument is unused.
 
     Raises
     ------
@@ -26,53 +35,44 @@ def write_json(H, path):
         to strings, e.g., node IDs "2" and 2.
 
     """
-    # initialize empty data
-    data = {}
+    if collection_name:
+        collection_name += "_"
 
-    # name always gets written (default is an empty string)
-    data["hypergraph-data"] = {}
-    data["hypergraph-data"].update(H._hypergraph)
+    if isinstance(H, list):
+        collection_data = defaultdict(dict)
+        for i, H in enumerate(H):
+            fname = f"{path}/{collection_name}{i}.json"
+            collection_data["datasets"][i] = {
+                "relative-path": f"{collection_name}{i}.json"
+            }
+            write_json(H, fname)
+        collection_data["type"] = "collection"
+        datastring = json.dumps(collection_data, indent=2)
+        with open(
+            f"{path}/{collection_name}collection_information.json", "w"
+        ) as output_file:
+            output_file.write(datastring)
 
-    # get node data
-    try:
-        data["node-data"] = {str(idx): H.nodes[idx] for idx in H.nodes}
+    elif isinstance(H, dict):
+        collection_data = defaultdict(dict)
+        for name, H in H.items():
+            fname = f"{path}/{collection_name}{name}.json"
+            collection_data["datasets"][name] = {
+                "relative-path": f"{collection_name}{name}.json"
+            }
+            write_json(H, fname)
+        collection_data["type"] = "collection"
+        datastring = json.dumps(collection_data, indent=2)
+        with open(
+            f"{path}/{collection_name}collection_information.json", "w"
+        ) as output_file:
+            output_file.write(datastring)
 
-        if len(data["node-data"]) != H.num_nodes:
-            dups = [
-                item
-                for item, count in Counter([str(n) for n in H.nodes]).items()
-                if count > 1
-            ]
-            raise XGIError(
-                f"When casting node IDs to strings, ID(s) {', '.join(dups)} have conflicting IDs!"
-            )
-    except KeyError:
-        raise XGIError("Node attributes not saved!")
-
-    try:
-        data["edge-data"] = {str(idx): H.edges[idx] for idx in H.edges}
-
-        if len(data["edge-data"]) != H.num_edges:
-            dups = [
-                item
-                for item, count in Counter([str(n) for n in H.edges]).items()
-                if count > 1
-            ]
-            raise XGIError(
-                f"When casting edge IDs to strings, ID(s) {', '.join(dups)} have conflicting IDs!"
-            )
-    except KeyError:
-        raise XGIError("Edge attributes not saved!")
-
-    # hyperedge dict
-    data["edge-dict"] = {
-        str(idx): [str(n) for n in H.edges.members(idx)] for idx in H.edges
-    }
-
-    datastring = json.dumps(data, indent=2)
-
-    with open(path, "w") as output_file:
-        output_file.write(datastring)
+    elif isinstance(H, (Hypergraph, SimplicialComplex)):
+        data = to_hypergraph_dict(H)
+        datastring = json.dumps(data, indent=2)
+        with open(path, "w") as output_file:
+            output_file.write(datastring)
 
 
 def read_json(path, nodetype=None, edgetype=None):
@@ -90,8 +90,9 @@ def read_json(path, nodetype=None, edgetype=None):
 
     Returns
     -------
-    A Hypergraph object
-        The loaded hypergraph
+    Hypergraph
+        The loaded hypergraph. If the dataset chosen is a collection,
+        returns a dictionary of Hypergraph objects.
 
     Raises
     ------
@@ -100,6 +101,16 @@ def read_json(path, nodetype=None, edgetype=None):
 
     """
     with open(path) as file:
-        data = json.loads(file.read())
+        jsondata = json.loads(file.read())
 
-    return dict_to_hypergraph(data, nodetype=nodetype, edgetype=edgetype)
+    if "type" in jsondata and jsondata["type"] == "collection":
+        collection = {}
+        for name, data in jsondata["datasets"].items():
+            relpath = data["relative-path"]
+            H = read_json(
+                join(dirname(path), relpath), nodetype=nodetype, edgetype=edgetype
+            )
+            collection[name] = H
+        return collection
+
+    return from_hypergraph_dict(jsondata, nodetype=nodetype, edgetype=edgetype)

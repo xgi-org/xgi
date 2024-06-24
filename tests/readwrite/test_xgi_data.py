@@ -47,10 +47,29 @@ def test_load_xgi_data(capfd):
     assert "email-enron" in out
     assert "congress-bills" in out
 
+    # test collection
+    collection = load_xgi_data("hyperbard")
+    assert len(collection) == 37
+    assert isinstance(collection, dict)
+    assert collection["as-you-like-it"].num_nodes == 30
+    assert collection["as-you-like-it"].num_edges == 80
 
+
+@pytest.mark.webtest
+@pytest.mark.slow
 def test_download_xgi_data():
     dir = tempfile.mkdtemp()
     download_xgi_data("email-enron", dir)
     H = read_json(join(dir, "email-enron.json"))
     H_online = load_xgi_data("email-enron")
     assert H.edges.members() == H_online.edges.members()
+
+    dir = tempfile.mkdtemp()
+    download_xgi_data("hyperbard", dir)
+    collection = read_json(join(dir, "collection_information.json"))
+
+    print(collection)
+    assert len(collection) == 37
+    assert isinstance(collection, dict)
+    assert collection["as-you-like-it"].num_nodes == 30
+    assert collection["as-you-like-it"].num_edges == 80
