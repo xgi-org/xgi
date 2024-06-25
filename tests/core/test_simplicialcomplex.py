@@ -39,7 +39,7 @@ def test_string():
     S1 = xgi.SimplicialComplex()
     assert str(S1) == "Unnamed SimplicialComplex with 0 nodes and 0 simplices"
     S2 = xgi.SimplicialComplex(name="test")
-    assert str(S2) == "SimplicialComplex named 'test' with 0 nodes and 0 simplices"
+    assert str(S2) == "SimplicialComplex named test with 0 nodes and 0 simplices"
 
 
 def test_add_simplex():
