@@ -3,7 +3,7 @@
 import random
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
-from copy import deepcopy
+from copy import copy, deepcopy
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError, frozen
@@ -123,7 +123,7 @@ class Hypergraph(HigherOrderNetwork):
 
             to_hypergraph(incoming_data, create_using=self)
         self._net_attr.update(attr)  # must be after convert
-    
+
     def __str__(self):
         """Returns a short summary of the hypergraph.
 
@@ -1108,6 +1108,31 @@ class Hypergraph(HigherOrderNetwork):
                 "You will not be able to color/draw by "
                 "merged attributes with xgi.draw()!"
             )
+
+    def copy(self):
+        """A deep copy of the hypergraph.
+
+        A deep copy of the hypergraph, including node, edge, and hypergraph attributes.
+
+        Returns
+        -------
+        H : Hypergraph
+            A copy of the hypergraph.
+
+        """
+        cp = self.__class__()
+        nn = self.nodes
+        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+        ee = self.edges
+        cp.add_edges_from(
+            (e, id, deepcopy(self.edges[id]))
+            for id, e in ee.members(dtype=dict).items()
+        )
+        cp._net_attr = deepcopy(self._net_attr)
+
+        cp._edge_uid = copy(self._edge_uid)
+
+        return cp
 
     def dual(self):
         """The dual of the hypergraph.

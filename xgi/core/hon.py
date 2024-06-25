@@ -1,10 +1,8 @@
-from copy import copy, deepcopy
 from itertools import count
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError
 from ..utils import IDDict
-from .views import EdgeView, NodeView
 
 
 class HigherOrderNetwork:
@@ -251,6 +249,7 @@ class HigherOrderNetwork:
             self._node[node] = set()
         self._edge.clear()
         self._edge_attr.clear()
+        self._incidence_attr.clear()
 
     def clear(self, clear_network_attrs=True):
         """Remove all nodes and edges from the graph.
@@ -268,25 +267,6 @@ class HigherOrderNetwork:
         self._node_attr.clear()
         self._edge.clear()
         self._edge_attr.clear()
+        self._incidence_attr.clear()
         if clear_network_attrs:
             self._net_attr.clear()
-
-    def copy(self):
-        """A deep copy of the higher-order network.
-
-        A deep copy of the higher-order network, including node, edge, and higher-order network attributes.
-
-        Returns
-        -------
-        H : higher-order network
-            A copy of the higher-order network.
-
-        """
-        cp = self.__class__()
-        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in self._node_attr.items())
-        cp.add_edges_from(
-            (self._edge[id], id, deepcopy(self._edge_attr[id])) for id in self._edge
-        )
-        cp._net_attr = deepcopy(self._net_attr)
-        cp._edge_uid = copy(self._edge_uid)
-        return cp
