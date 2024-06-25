@@ -85,8 +85,8 @@ class DiHypergraph:
 
     _node_dict_factory = IDDict
     _node_attr_dict_factory = IDDict
-    _hyperedge_dict_factory = IDDict
-    _hyperedge_attr_dict_factory = IDDict
+    _edge_dict_factory = IDDict
+    _edge_attr_dict_factory = IDDict
     _net_attr_dict_factory = dict
 
     def __getstate__(self):
@@ -141,8 +141,8 @@ class DiHypergraph:
         self._node = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
 
-        self._edge = self._hyperedge_dict_factory()
-        self._edge_attr = self._hyperedge_attr_dict_factory()
+        self._edge = self._edge_dict_factory()
+        self._edge_attr = self._edge_attr_dict_factory()
 
         self._nodeview = DiNodeView(self)
         """A :class:`~xgi.core.direportviews.DiNodeView` of the directed hypergraph."""
@@ -559,7 +559,7 @@ class DiHypergraph:
             self._node[node]["in"].add(uid)
             self._edge[uid]["out"].add(node)
 
-        self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+        self._edge_attr[uid] = self._edge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
 
         if id:  # set self._edge_uid correctly
@@ -688,7 +688,7 @@ class DiHypergraph:
                         self._node[n] = {"in": set(), "out": set()}
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node[n]["out"].add(id)
-                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[id] = self._edge_attr_dict_factory()
 
                 for n in head:
                     if n not in self._node:
@@ -761,7 +761,7 @@ class DiHypergraph:
                     self._node[node]["in"].add(id)
                     self._edge[id]["out"].add(node)
 
-                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[id] = self._edge_attr_dict_factory()
                 self._edge_attr[id].update(attr)
                 self._edge_attr[id].update(eattr)
 

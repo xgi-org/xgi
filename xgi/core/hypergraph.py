@@ -70,8 +70,8 @@ class Hypergraph:
 
     _node_dict_factory = IDDict
     _node_attr_dict_factory = IDDict
-    _hyperedge_dict_factory = IDDict
-    _hyperedge_attr_dict_factory = IDDict
+    _edge_dict_factory = IDDict
+    _edge_attr_dict_factory = IDDict
     _net_attr_dict_factory = dict
 
     def __getstate__(self):
@@ -124,8 +124,8 @@ class Hypergraph:
         self._net_attr = self._net_attr_dict_factory()
         self._node = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
-        self._edge = self._hyperedge_dict_factory()
-        self._edge_attr = self._hyperedge_attr_dict_factory()
+        self._edge = self._edge_dict_factory()
+        self._edge_attr = self._edge_attr_dict_factory()
 
         self._nodeview = NodeView(self)
         """A :class:`~xgi.core.reportviews.NodeView` of the hypergraph."""
@@ -594,7 +594,7 @@ class Hypergraph:
             self._node[node].add(uid)
             self._edge[uid].add(node)
 
-        self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+        self._edge_attr[uid] = self._edge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
 
         if id:  # set self._edge_uid correctly
@@ -714,7 +714,7 @@ class Hypergraph:
                         self._node[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node[n].add(id)
-                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[id] = self._edge_attr_dict_factory()
 
                 update_uid_counter(self, id)
 
@@ -776,7 +776,7 @@ class Hypergraph:
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node[n].add(id)
 
-                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[id] = self._edge_attr_dict_factory()
                 self._edge_attr[id].update(attr)
                 self._edge_attr[id].update(eattr)
 

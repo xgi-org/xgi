@@ -21,26 +21,6 @@ class HigherOrderNetwork:
         self._incidence_attr = self._incidence_attr_dict_factory()
         self._net_attr = self._net_attr_dict_factory()
 
-    def __str__(self):
-        """Returns a short summary of the hypergraph.
-
-        Returns
-        -------
-        string
-            Hypergraph information
-
-        """
-        try:
-            return (
-                f"{type(self).__name__} named {self['name']} "
-                f"with {self.num_nodes} nodes and {self.num_edges} hyperedges"
-            )
-        except XGIError:
-            return (
-                f"Unnamed {type(self).__name__} with "
-                f"{self.num_nodes} nodes and {self.num_edges} hyperedges"
-            )
-
     def __iter__(self):
         """Iterate over the nodes.
 
@@ -95,29 +75,7 @@ class HigherOrderNetwork:
     def __setitem__(self, attr, val):
         """Write hypergraph attribute."""
         self._net_attr[attr] = val
-
-    def __getattr__(self, attr):
-        stat = getattr(self.nodes, attr, None)
-        word = "nodes"
-        if stat is None:
-            stat = getattr(self.edges, attr, None)
-            word = "edges"
-        if stat is None:
-            word = None
-            raise AttributeError(
-                f"{attr} is not a method of Hypergraph or a "
-                "recognized NodeStat or EdgeStat"
-            )
-
-        def func(node=None, *args, **kwargs):
-            val = stat(*args, **kwargs).asdict()
-            return val if node is None else val[node]
-
-        func.__doc__ = f"""Equivalent to H.{word}.{attr}.asdict(). For accepted *args and
-        **kwargs, see documentation of H.{word}.{attr}."""
-
-        return func
-
+    
     @property
     def num_nodes(self):
         return len(self._node)

@@ -83,8 +83,8 @@ class SimplicialComplex(Hypergraph):
         self._net_attr = self._net_attr_dict_factory()
         self._node = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
-        self._edge = self._hyperedge_dict_factory()
-        self._edge_attr = self._hyperedge_attr_dict_factory()
+        self._edge = self._edge_dict_factory()
+        self._edge_attr = self._edge_attr_dict_factory()
 
         self._nodeview = NodeView(self)
         self._edgeview = EdgeView(self)
@@ -232,7 +232,7 @@ class SimplicialComplex(Hypergraph):
             self._node[node].add(id)
 
         self._edge[id] = members
-        self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+        self._edge_attr[id] = self._edge_attr_dict_factory()
         self._edge_attr[id].update(attr)
 
     def _add_face(self, members):
@@ -248,7 +248,7 @@ class SimplicialComplex(Hypergraph):
                 self._node_attr[n] = self._node_attr_dict_factory()
             self._node[n].add(id)
 
-        self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+        self._edge_attr[id] = self._edge_attr_dict_factory()
 
     def add_simplex(self, members, id=None, **attr):
         """Add a simplex to the simplicial complex, and all its subfaces that do
@@ -621,7 +621,7 @@ class SimplicialComplex(Hypergraph):
                     self._node_attr[n] = self._node_attr_dict_factory()
                 self._node[n].add(id)
 
-            self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+            self._edge_attr[id] = self._edge_attr_dict_factory()
             self._edge_attr[id].update(attr)
             self._edge_attr[id].update(eattr)
 
