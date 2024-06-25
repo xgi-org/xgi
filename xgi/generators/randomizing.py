@@ -63,7 +63,7 @@ def shuffle_hyperedges(S, order, p):
     nodes = list(S.nodes)
     d_hyperedges = H.edges.filterby("order", order).members(dtype=dict)
 
-    for id_, members in d_hyperedges.items():
+    for id_, _ in d_hyperedges.items():
         if random.random() <= p:
             H.remove_edge(id_)
             new_hyperedge = tuple(random.sample(nodes, order + 1))
