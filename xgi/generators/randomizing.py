@@ -20,7 +20,7 @@ def shuffle_hyperedges(S, order, p):
 
     Parameters
     ----------
-    S : xgi.HyperGraph
+    H : xgi.Hypergraph
         Hypergraph
     order : int
         Order of hyperedges to shuffle
@@ -58,12 +58,7 @@ def shuffle_hyperedges(S, order, p):
         raise ValueError("p must be between 0 and 1 included.")
 
     # convert to Hypergraph to be able to shuffle edges
-    if isinstance(S, xgi.Hypergraph):
-        H = xgi.Hypergraph()
-        H.add_nodes_from(S.nodes)
-        H.add_edges_from(S._edge)
-    else:
-        H = S.copy()
+    H = xgi.Hypergraph(S)
 
     nodes = list(S.nodes)
     d_hyperedges = H.edges.filterby("order", order).members(dtype=dict)
