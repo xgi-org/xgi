@@ -15,7 +15,6 @@ from warnings import warn
 from ..exception import XGIError, frozen
 from ..utils.utilities import powerset, update_uid_counter
 from .hon import HigherOrderNetwork
-from .hypergraph import Hypergraph
 from .views import EdgeView, NodeView
 
 __all__ = ["SimplicialComplex"]
