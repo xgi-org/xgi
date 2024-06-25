@@ -115,7 +115,7 @@ def test_from_hypergraph_dict(edgelist1):
     for n in H.nodes:
         assert H.nodes[n] == Hd.nodes[n]
 
-    assert H._hypergraph == Hd._hypergraph
+    assert H._net_attr == Hd._net_attr
 
     # test bad dicts
     hd = {

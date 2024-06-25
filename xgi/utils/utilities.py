@@ -394,7 +394,7 @@ def convert_labels_to_integers(net, label_attribute="label"):
     edge_dict = dict(zip(net.edges, range(net.num_edges)))
 
     temp_net = net.__class__()
-    temp_net._hypergraph = deepcopy(net._hypergraph)
+    temp_net._net_attr = deepcopy(net._net_attr)
 
     temp_net.add_nodes_from((id, deepcopy(net.nodes[n])) for n, id in node_dict.items())
     temp_net.set_node_attributes(
