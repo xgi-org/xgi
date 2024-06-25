@@ -11,8 +11,8 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 3. Include any new method/function in the corresponding docs file.
 4. Run `pytest` to verify all unit tests pass.
 5. Identify the unnecessary imports in the
-   1. source code by running `pylint xgi/ --disable all --enable W0611`
-   2. notebooks by running `nbqa pylint . --disable all --enable W0611`
+   1. source code by running `pylint xgi/ --disable=all --enable W0611`
+   2. notebooks by running `nbqa pylint . --disable=all --enable W0611`
 6. Remove these unnecessary imports.
 7. Sort the import statements in the
    1. source code by running `isort .`
