@@ -69,19 +69,6 @@ def test_add_simplex():
     assert S2._edge == {0: frozenset({1, 2}), 1: frozenset({3, 4})}
 
 
-def test_add_edge():
-    S = xgi.SimplicialComplex()
-    with pytest.warns(UserWarning):
-        S.add_simplex([1, 2, 3])
-        warn(
-            "add_edge is deprecated in SimplicialComplex. Use add_simplex instead",
-            UserWarning,
-        )
-    S1 = xgi.SimplicialComplex()
-    S1.add_simplex([1, 2, 3])
-    assert S._edge == S1._edge
-
-
 def test_add_simplices_from_iterable_of_members():
     edges = [{0, 1}, {1, 2}, {1, 2, 4}]
     simplices1 = [
