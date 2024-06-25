@@ -21,7 +21,7 @@ from .views import EdgeView, NodeView
 __all__ = ["SimplicialComplex"]
 
 
-class SimplicialComplex(Hypergraph, HigherOrderNetwork):
+class SimplicialComplex(HigherOrderNetwork):
     r"""A class to represent undirected simplicial complexes.
 
     A simplicial complex is a collection of subsets of a set of *nodes* or *vertices*.
@@ -87,6 +87,85 @@ class SimplicialComplex(Hypergraph, HigherOrderNetwork):
 
             to_simplicial_complex(incoming_data, create_using=self)
         self._net_attr.update(attr)  # must be after convert
+
+    def __str__(self):
+        """Returns a short summary of the hypergraph.
+
+        Returns
+        -------
+        string
+            Hypergraph information
+
+        """
+        try:
+            return (
+                f"{type(self).__name__} named {self['name']} "
+                f"with {self.num_nodes} nodes and {self.num_edges} simplices"
+            )
+        except XGIError:
+            return (
+                f"Unnamed {type(self).__name__} with "
+                f"{self.num_nodes} nodes and {self.num_edges} simplices"
+            )
+
+    def add_node(self, node, **attr):
+        """Add one node with optional attributes.
+
+        Parameters
+        ----------
+        node : node
+            A node can be any hashable Python object except None.
+        attr : keyword arguments, optional
+            Set or change node attributes using key=value.
+
+        See Also
+        --------
+        add_nodes_from
+        set_node_attributes
+
+        Notes
+        -----
+        If node is already in the hypergraph, its attributes are still updated.
+
+        """
+        if node not in self._node:
+            self._node[node] = set()
+            self._node_attr[node] = self._node_attr_dict_factory()
+        self._node_attr[node].update(attr)
+
+    def add_nodes_from(self, nodes_for_adding, **attr):
+        """Add multiple nodes with optional attributes.
+
+        Parameters
+        ----------
+        nodes_for_adding : iterable
+            An iterable of nodes (list, dict, set, etc.).
+            OR
+            An iterable of (node, attribute dict) tuples.
+            Node attributes are updated using the attribute dict.
+        attr : keyword arguments, optional (default= no attributes)
+            Update attributes for all nodes in nodes.
+            Node attributes specified in nodes as a tuple take
+            precedence over attributes specified via keyword arguments.
+
+        See Also
+        --------
+        add_node
+        set_node_attributes
+        """
+        for n in nodes_for_adding:
+            try:
+                newnode = n not in self._node
+                newdict = attr
+            except TypeError:
+                n, ndict = n
+                newnode = n not in self._node
+                newdict = attr.copy()
+                newdict.update(ndict)
+            if newnode:
+                self._node[n] = set()
+                self._node_attr[n] = self._node_attr_dict_factory()
+            self._node_attr[n].update(newdict)
 
     def remove_node(self, n):
         """Remove a single node.

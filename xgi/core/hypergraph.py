@@ -123,6 +123,26 @@ class Hypergraph(HigherOrderNetwork):
 
             to_hypergraph(incoming_data, create_using=self)
         self._net_attr.update(attr)  # must be after convert
+    
+    def __str__(self):
+        """Returns a short summary of the hypergraph.
+
+        Returns
+        -------
+        string
+            Hypergraph information
+
+        """
+        try:
+            return (
+                f"{type(self).__name__} named {self['name']} "
+                f"with {self.num_nodes} nodes and {self.num_edges} hyperedges"
+            )
+        except XGIError:
+            return (
+                f"Unnamed {type(self).__name__} with "
+                f"{self.num_nodes} nodes and {self.num_edges} hyperedges"
+            )
 
     def __getattr__(self, attr):
         stat = getattr(self.nodes, attr, None)
