@@ -1,3 +1,5 @@
+from copy import copy, deepcopy
+from itertools import count
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError
@@ -20,6 +22,7 @@ class HigherOrderNetwork:
         self._edge_attr = self._edge_attr_dict_factory()
         self._incidence_attr = self._incidence_attr_dict_factory()
         self._net_attr = self._net_attr_dict_factory()
+        self._edge_uid = count()
 
     def __iter__(self):
         """Iterate over the nodes.
@@ -27,12 +30,12 @@ class HigherOrderNetwork:
         Returns
         -------
         iterator
-            An iterator over all nodes in the hypergraph.
+            An iterator over all nodes in the higher-order network.
         """
         return iter(self._node)
 
     def __contains__(self, n):
-        """Check for if a node is in this hypergraph.
+        """Check for if a node is in this higher-order network.
 
         Parameters
         ----------
@@ -42,7 +45,7 @@ class HigherOrderNetwork:
         Returns
         -------
         bool
-            Whether the node exists in the hypergraph.
+            Whether the node exists in the higher-order network.
         """
         try:
             return n in self._node
@@ -50,32 +53,32 @@ class HigherOrderNetwork:
             return False
 
     def __len__(self):
-        """Number of nodes in the hypergraph.
+        """Number of nodes in the higher-order network.
 
         Returns
         -------
         int
-            The number of nodes in the hypergraph.
+            The number of nodes in the higher-order network.
 
         See Also
         --------
         num_nodes : identical method
-        num_edges : number of edges in the hypergraph
+        num_edges : number of edges in the higher-order network
 
         """
         return len(self._node)
 
     def __getitem__(self, attr):
-        """Read hypergraph attribute."""
+        """Read higher-order network attribute."""
         try:
             return self._net_attr[attr]
         except KeyError:
             raise XGIError("This attribute has not been set.")
 
     def __setitem__(self, attr, val):
-        """Write hypergraph attribute."""
+        """Write higher-order network attribute."""
         self._net_attr[attr] = val
-    
+
     @property
     def num_nodes(self):
         return len(self._node)
@@ -111,7 +114,7 @@ class HigherOrderNetwork:
 
         Notes
         -----
-        After computing some property of the nodes of a hypergraph, you may
+        After computing some property of the nodes of a higher-order network, you may
         want to assign a node attribute to store the value of that property
         for each node.
 
@@ -227,3 +230,23 @@ class HigherOrderNetwork:
         self._edge_attr.clear()
         if clear_network_attrs:
             self._net_attr.clear()
+
+    def copy(self):
+        """A deep copy of the higher-order network.
+
+        A deep copy of the higher-order network, including node, edge, and higher-order network attributes.
+
+        Returns
+        -------
+        H : higher-order network
+            A copy of the higher-order network.
+
+        """
+        cp = self.__class__()
+        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in self._node_attr.items())
+        cp.add_edges_from(
+            (self._edge[id], id, deepcopy(self._edge_attr[id])) for id in self._edge
+        )
+        cp._net_attr = deepcopy(self._net_attr)
+        cp._edge_uid = copy(self._edge_uid)
+        return cp

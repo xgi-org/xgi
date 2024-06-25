@@ -3,18 +3,18 @@
 import random
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
-from itertools import count
+from copy import deepcopy
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError, frozen
-from ..utils import IDDict, update_uid_counter
+from ..utils import update_uid_counter
+from .hon import HigherOrderNetwork
 from .views import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
 
 
-class Hypergraph:
+class Hypergraph(HigherOrderNetwork):
     r"""A hypergraph is a collection of subsets of a set of *nodes* or *vertices*.
 
     A hypergraph is a pair :math:`(V, E)`, where :math:`V` is a set of elements called
@@ -68,12 +68,6 @@ class Hypergraph:
 
     """
 
-    _node_dict_factory = IDDict
-    _node_attr_dict_factory = IDDict
-    _edge_dict_factory = IDDict
-    _edge_attr_dict_factory = IDDict
-    _net_attr_dict_factory = dict
-
     def __getstate__(self):
         """Function that allows pickling.
 
@@ -120,12 +114,7 @@ class Hypergraph:
         self._edgeview = EdgeView(self)
 
     def __init__(self, incoming_data=None, **attr):
-        self._edge_uid = count()
-        self._net_attr = self._net_attr_dict_factory()
-        self._node = self._node_dict_factory()
-        self._node_attr = self._node_attr_dict_factory()
-        self._edge = self._edge_dict_factory()
-        self._edge_attr = self._edge_attr_dict_factory()
+        HigherOrderNetwork.__init__(self)
 
         self._nodeview = NodeView(self)
         """A :class:`~xgi.core.reportviews.NodeView` of the hypergraph."""
@@ -160,61 +149,6 @@ class Hypergraph:
                 f"Unnamed {type(self).__name__} with "
                 f"{self.num_nodes} nodes and {self.num_edges} hyperedges"
             )
-
-    def __iter__(self):
-        """Iterate over the nodes.
-
-        Returns
-        -------
-        iterator
-            An iterator over all nodes in the hypergraph.
-        """
-        return iter(self._node)
-
-    def __contains__(self, n):
-        """Check for if a node is in this hypergraph.
-
-        Parameters
-        ----------
-        n : hashable
-            node ID
-
-        Returns
-        -------
-        bool
-            Whether the node exists in the hypergraph.
-        """
-        try:
-            return n in self._node
-        except TypeError:
-            return False
-
-    def __len__(self):
-        """Number of nodes in the hypergraph.
-
-        Returns
-        -------
-        int
-            The number of nodes in the hypergraph.
-
-        See Also
-        --------
-        num_nodes : identical method
-        num_edges : number of edges in the hypergraph
-
-        """
-        return len(self._node)
-
-    def __getitem__(self, attr):
-        """Read hypergraph attribute."""
-        try:
-            return self._net_attr[attr]
-        except KeyError:
-            raise XGIError("This attribute has not been set.")
-
-    def __setitem__(self, attr, val):
-        """Write hypergraph attribute."""
-        self._net_attr[attr] = val
 
     def __getattr__(self, attr):
         stat = getattr(self.nodes, attr, None)
@@ -297,54 +231,6 @@ class Hypergraph:
     def edges(self):
         """An :class:`EdgeView` of this network."""
         return self._edgeview
-
-    @property
-    def num_nodes(self):
-        """The number of nodes in the hypergraph.
-
-        Returns
-        -------
-        int
-            The number of nodes in the hypergraph.
-
-        See Also
-        --------
-        num_edges : returns the number of edges in the hypergraph
-
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.num_nodes
-        4
-
-        """
-        return len(self._node)
-
-    @property
-    def num_edges(self):
-        """The number of edges in the hypergraph.
-
-        Returns
-        -------
-        int
-            The number of edges in the hypergraph.
-
-        See Also
-        --------
-        num_nodes : returns the number of nodes in the hypergraph
-
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(hyperedge_list)
-        >>> H.num_edges
-        2
-
-        """
-        return len(self._edge)
 
     def add_node(self, node, **attr):
         """Add one node with optional attributes.
@@ -467,69 +353,6 @@ class Hypergraph:
                 warn(f"Node {n} not in hypergraph")
                 continue
             self.remove_node(n)
-
-    def set_node_attributes(self, values, name=None):
-        """Sets node attributes from a given value or dictionary of values.
-
-        Parameters
-        ----------
-        values : scalar value, dict-like
-            What the node attribute should be set to.  If `values` is
-            not a dictionary, then it is treated as a single attribute value
-            that is then applied to every node in `H`.  This means that if
-            you provide a mutable object, like a list, updates to that object
-            will be reflected in the node attribute for every node.
-            The attribute name will be `name`.
-
-            If `values` is a dict or a dict of dict, it should be keyed
-            by node to either an attribute value or a dict of attribute key/value
-            pairs used to update the node's attributes.
-        name : string, optional
-            Name of the node attribute to set if values is a scalar, by default None.
-
-        See Also
-        --------
-        set_edge_attributes
-        add_node
-        add_nodes_from
-
-        Notes
-        -----
-        After computing some property of the nodes of a hypergraph, you may
-        want to assign a node attribute to store the value of that property
-        for each node.
-
-        If you provide a list as the second argument, updates to the list
-        will be reflected in the node attribute for each node.
-
-        If you provide a dictionary of dictionaries as the second argument,
-        the outer dictionary is assumed to be keyed by node to an inner
-        dictionary of node attributes for that node.
-
-        Note that if the dictionary contains nodes that are not in `G`, the
-        values are silently ignored.
-
-        """
-        # Set node attributes based on type of `values`
-        if name is not None:  # `values` must not be a dict of dict
-            if isinstance(values, dict):  # `values` is a dict
-                for n, v in values.items():
-                    try:
-                        self._node_attr[n][name] = v
-                    except IDNotFound:
-                        warn(f"Node {n} does not exist!")
-            else:  # `values` is a constant
-                for n in self:
-                    self._node_attr[n][name] = values
-        else:  # `values` must be dict of dict
-            try:
-                for n, d in values.items():
-                    try:
-                        self._node_attr[n].update(d)
-                    except IDNotFound:
-                        warn(f"Node {n} does not exist!")
-            except (TypeError, ValueError, AttributeError):
-                raise XGIError("Must pass a dictionary of dictionaries")
 
     def add_edge(self, members, id=None, **attr):
         """Add one edge with optional attributes.
@@ -829,61 +652,6 @@ class Hypergraph:
             )
         except KeyError:
             XGIError("Empty or invalid edges specified.")
-
-    def set_edge_attributes(self, values, name=None):
-        """Set the edge attributes from a value or a dictionary of values.
-
-        Parameters
-        ----------
-        values : scalar value, dict-like
-            What the edge attribute should be set to.  If `values` is
-            not a dictionary, then it is treated as a single attribute value
-            that is then applied to every edge in `H`.  This means that if
-            you provide a mutable object, like a list, updates to that object
-            will be reflected in the edge attribute for each edge.  The attribute
-            name will be `name`.
-            If `values` is a dict or a dict of dict, it should be keyed
-            by edge ID to either an attribute value or a dict of attribute
-            key/value pairs used to update the edge's attributes.
-        name : string, optional
-            Name of the edge attribute to set if values is a scalar. By default, None.
-
-        See Also
-        --------
-        set_node_attributes
-        add_edge
-        add_edges_from
-
-        Notes
-        -----
-        Note that if the dict contains edge IDs that are not in `H`, they are
-        silently ignored.
-
-        """
-        if name is not None:
-            # `values` does not contain attribute names
-            try:
-                for e, value in values.items():
-                    try:
-                        self._edge_attr[e][name] = value
-                    except IDNotFound:
-                        warn(f"Edge {e} does not exist!")
-            except AttributeError:
-                # treat `values` as a constant
-                for e in self._edge:
-                    self._edge_attr[e][name] = values
-        else:
-            try:
-                for e, d in values.items():
-                    try:
-                        self._edge_attr[e].update(d)
-                    except IDNotFound:
-                        warn(f"Edge {e} does not exist!")
-            except AttributeError:
-                raise XGIError(
-                    "name property has not been set and a "
-                    "dict-of-dicts has not been provided."
-                )
 
     def double_edge_swap(self, n_id1, n_id2, e_id1, e_id2):
         """Swap the edge memberships of two selected nodes, given two edges.
@@ -1193,32 +961,6 @@ class Hypergraph:
         if edges:
             self.add_edges_from(edges)
 
-    def clear(self, hypergraph_attr=True):
-        """Remove all nodes and edges from the graph.
-
-        Also removes node and edge attributes, and optionally hypergraph attributes.
-
-        Parameters
-        ----------
-        hypergraph_attr : bool, optional
-            Whether to remove hypergraph attributes as well.
-            By default, True.
-
-        """
-        self._node.clear()
-        self._node_attr.clear()
-        self._edge.clear()
-        self._edge_attr.clear()
-        if hypergraph_attr:
-            self._net_attr.clear()
-
-    def clear_edges(self):
-        """Remove all edges from the graph without altering any nodes."""
-        for node in self.nodes:
-            self._node[node] = set()
-        self._edge.clear()
-        self._edge_attr.clear()
-
     def merge_duplicate_edges(
         self, rename="first", merge_rule="first", multiplicity=None
     ):
@@ -1383,31 +1125,6 @@ class Hypergraph:
                 "merged attributes with xgi.draw()!"
             )
 
-    def copy(self):
-        """A deep copy of the hypergraph.
-
-        A deep copy of the hypergraph, including node, edge, and hypergraph attributes.
-
-        Returns
-        -------
-        H : Hypergraph
-            A copy of the hypergraph.
-
-        """
-        cp = self.__class__()
-        nn = self.nodes
-        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-        ee = self.edges
-        cp.add_edges_from(
-            (e, id, deepcopy(self.edges[id]))
-            for id, e in ee.members(dtype=dict).items()
-        )
-        cp._net_attr = deepcopy(self._net_attr)
-
-        cp._edge_uid = copy(self._edge_uid)
-
-        return cp
-
     def dual(self):
         """The dual of the hypergraph.
 
@@ -1420,12 +1137,10 @@ class Hypergraph:
 
         """
         dual = self.__class__()
-        nn = self.nodes
         dual.add_edges_from(
-            (nn.memberships(n), n, deepcopy(attr)) for n, attr in nn.items()
+            (self._node[n], n, deepcopy(self._node_attr[n])) for n in self._node
         )
-        ee = self.edges
-        dual.add_nodes_from((e, deepcopy(attr)) for e, attr in ee.items())
+        dual.add_nodes_from((e, deepcopy(attr)) for e, attr in self._edge_attr.items())
         dual._net_attr = deepcopy(self._net_attr)
 
         return dual
