@@ -4,6 +4,7 @@
     This is currently an experimental feature.
 
 """
+
 from collections.abc import Hashable, Iterable
 from copy import copy, deepcopy
 from itertools import count
@@ -81,6 +82,7 @@ class DiHypergraph:
     >>> [sorted(e) for e in DH.edges.members()]
     [[1, 2, 3, 4], [5, 6, 7, 8]]
     """
+
     _node_dict_factory = IDDict
     _node_attr_dict_factory = IDDict
     _hyperedge_dict_factory = IDDict

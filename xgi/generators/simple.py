@@ -4,6 +4,7 @@ All the functions in this module return a Hypergraph class (i.e. a simple, undir
 hypergraph).
 
 """
+
 from itertools import combinations
 
 from ..exception import XGIError
