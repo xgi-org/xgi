@@ -15,7 +15,7 @@ class HigherOrderNetwork:
     _incidence_attr_dict_factory = IDDict
     _net_attr_dict_factory = dict
 
-    def __init__(self):
+    def __init__(self, nodeview, edgeview):
         self._node = self._node_dict_factory()
         self._edge = self._edge_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
@@ -23,6 +23,9 @@ class HigherOrderNetwork:
         self._incidence_attr = self._incidence_attr_dict_factory()
         self._net_attr = self._net_attr_dict_factory()
         self._edge_uid = count()
+
+        self._nodeview = nodeview(self)
+        self._edgeview = edgeview(self)
 
     def __iter__(self):
         """Iterate over the nodes.
@@ -67,6 +70,26 @@ class HigherOrderNetwork:
 
         """
         return len(self._node)
+    
+    def __str__(self):
+        """Returns a short summary of the hypergraph.
+
+        Returns
+        -------
+        string
+            Hypergraph information
+
+        """
+        try:
+            return (
+                f"{type(self).__name__} named {self['name']} "
+                f"with {self.num_nodes} nodes and {self.num_edges} hyperedges"
+            )
+        except XGIError:
+            return (
+                f"Unnamed {type(self).__name__} with "
+                f"{self.num_nodes} nodes and {self.num_edges} hyperedges"
+            )
 
     def __getitem__(self, attr):
         """Read higher-order network attribute."""
@@ -86,6 +109,43 @@ class HigherOrderNetwork:
     @property
     def num_edges(self):
         return len(self._edge)
+    
+    @property
+    def nodes(self):
+        """A :class:`NodeView` of this network."""
+        return self._nodeview
+
+    @property
+    def edges(self):
+        """An :class:`EdgeView` of this network."""
+        return self._edgeview
+
+    @property
+    def is_frozen(self):
+        """Checks whether a simplicial complex is frozen
+
+        Returns
+        -------
+        bool
+            True if simplicial complex is frozen, false if not.
+
+        See Also
+        --------
+        freeze : A method to prevent a simplicial complex from being modified.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> edges = [[1, 2], [2, 3, 4]]
+        >>> S = xgi.SimplicialComplex(edges)
+        >>> S.freeze()
+        >>> S.is_frozen
+        True
+        """
+        try:
+            return self.frozen
+        except AttributeError:
+            return False
 
     def set_node_attributes(self, values, name=None):
         """Sets node attributes from a given value or dictionary of values.
