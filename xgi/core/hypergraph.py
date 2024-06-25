@@ -114,13 +114,7 @@ class Hypergraph(HigherOrderNetwork):
         self._edgeview = EdgeView(self)
 
     def __init__(self, incoming_data=None, **attr):
-        HigherOrderNetwork.__init__(self)
-
-        self._nodeview = NodeView(self)
-        """A :class:`~xgi.core.reportviews.NodeView` of the hypergraph."""
-
-        self._edgeview = EdgeView(self)
-        """An :class:`~xgi.core.reportviews.EdgeView` of the hypergraph."""
+        HigherOrderNetwork.__init__(self, NodeView, EdgeView)
 
         if incoming_data is not None:
             # This import needs to happen when this function is called, not when it is
@@ -129,26 +123,6 @@ class Hypergraph(HigherOrderNetwork):
 
             to_hypergraph(incoming_data, create_using=self)
         self._net_attr.update(attr)  # must be after convert
-
-    def __str__(self):
-        """Returns a short summary of the hypergraph.
-
-        Returns
-        -------
-        string
-            Hypergraph information
-
-        """
-        try:
-            return (
-                f"{type(self).__name__} named {self['name']} "
-                f"with {self.num_nodes} nodes and {self.num_edges} hyperedges"
-            )
-        except XGIError:
-            return (
-                f"Unnamed {type(self).__name__} with "
-                f"{self.num_nodes} nodes and {self.num_edges} hyperedges"
-            )
 
     def __getattr__(self, attr):
         stat = getattr(self.nodes, attr, None)
@@ -221,16 +195,6 @@ class Hypergraph(HigherOrderNetwork):
         tempH._net_attr.update(deepcopy(H2._net_attr))
 
         return tempH
-
-    @property
-    def nodes(self):
-        """A :class:`NodeView` of this network."""
-        return self._nodeview
-
-    @property
-    def edges(self):
-        """An :class:`EdgeView` of this network."""
-        return self._edgeview
 
     def add_node(self, node, **attr):
         """Add one node with optional attributes.
@@ -1253,31 +1217,3 @@ class Hypergraph(HigherOrderNetwork):
         self.remove_node_from_edge = frozen
         self.clear = frozen
         self.frozen = True
-
-    @property
-    def is_frozen(self):
-        """Checks whether a dihypergraph is frozen
-
-        Returns
-        -------
-        bool
-            True if hypergraph is frozen, false if not.
-
-        See Also
-        --------
-        freeze : A method to prevent a hypergraph from being modified.
-
-        Examples
-        --------
-        >>> import xgi
-        >>> edges = [[1, 2], [2, 3, 4]]
-        >>> H = xgi.Hypergraph(edges)
-        >>> H.freeze()
-        >>> H.is_frozen
-        True
-
-        """
-        try:
-            return self.frozen
-        except AttributeError:
-            return False

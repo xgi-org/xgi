@@ -70,7 +70,7 @@ class HigherOrderNetwork:
 
         """
         return len(self._node)
-    
+
     def __str__(self):
         """Returns a short summary of the hypergraph.
 
@@ -109,7 +109,7 @@ class HigherOrderNetwork:
     @property
     def num_edges(self):
         return len(self._edge)
-    
+
     @property
     def nodes(self):
         """A :class:`NodeView` of this network."""
