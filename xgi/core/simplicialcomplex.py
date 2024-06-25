@@ -810,7 +810,7 @@ class SimplicialComplex(HigherOrderNetwork):
 
         """
         return frozenset(simplex) in self._edge.values()
-    
+
     def copy(self):
         """A deep copy of the simplicial complex.
 
