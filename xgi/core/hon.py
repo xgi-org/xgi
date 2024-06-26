@@ -1,3 +1,4 @@
+from copy import copy, deepcopy
 from itertools import count
 from warnings import warn
 
@@ -13,7 +14,58 @@ class HigherOrderNetwork:
     _incidence_attr_dict_factory = IDDict
     _net_attr_dict_factory = dict
 
-    def __init__(self, nodeview, edgeview):
+    def __getstate__(self):
+        """Function that allows pickling.
+
+        Returns
+        -------
+        dict
+            The keys label the hyeprgraph dict and the values
+            are dictionarys from the Hypergraph class.
+
+        Notes
+        -----
+        This allows the python multiprocessing module to be used.
+
+        """
+        return {
+            "_edge_uid": self._edge_uid,
+            "_net_attr": self._net_attr,
+            "_node": self._node,
+            "_node_attr": self._node_attr,
+            "_edge": self._edge,
+            "_edge_attr": self._edge_attr,
+            "_incidence_attr": self._incidence_attr,
+            "_nodeviewclass": self._nodeviewclass,
+            "_edgeviewclass": self._edgeviewclass,
+        }
+
+    def __setstate__(self, state):
+        """Function that allows unpickling of a hypergraph.
+
+        Parameters
+        ----------
+        state
+            The keys access the dictionary names the values are the
+            dictionarys themselves from the Hypergraph class.
+
+        Notes
+        -----
+        This allows the python multiprocessing module to be used.
+        """
+        self._edge_uid = state["_edge_uid"]
+        self._net_attr = state["_net_attr"]
+        self._node = state["_node"]
+        self._node_attr = state["_node_attr"]
+        self._edge = state["_edge"]
+        self._edge_attr = state["_edge_attr"]
+        self._incidence_attr = state["_incidence_attr"]
+        self._nodeviewclass = state["_nodeviewclass"]
+        self._edgeviewclass = state["_edgeviewclass"]
+        self._nodeview = self._nodeviewclass(self)
+        self._edgeview = self._edgeviewclass(self)
+
+    def __init__(self, nodeviewclass, edgeviewclass):
         self._node = self._node_dict_factory()
         self._edge = self._edge_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
@@ -22,8 +74,10 @@ class HigherOrderNetwork:
         self._net_attr = self._net_attr_dict_factory()
         self._edge_uid = count()
 
-        self._nodeview = nodeview(self)
-        self._edgeview = edgeview(self)
+        self._nodeviewclass = nodeviewclass
+        self._edgeviewclass = edgeviewclass
+        self._nodeview = nodeviewclass(self)
+        self._edgeview = edgeviewclass(self)
 
     def __iter__(self):
         """Iterate over the nodes.
@@ -270,3 +324,28 @@ class HigherOrderNetwork:
         self._incidence_attr.clear()
         if clear_network_attrs:
             self._net_attr.clear()
+
+    def copy(self):
+        """A deep copy of the dihypergraph.
+
+        A deep copy of the dihypergraph, including node, edge, and hypergraph attributes.
+
+        Returns
+        -------
+        DH : DiHypergraph
+            A copy of the hypergraph.
+
+        """
+        cp = self.__class__()
+        cp._node = deepcopy(self._node)
+        cp._node_attr = deepcopy(self._node_attr)
+        cp._edge = deepcopy(self._edge)
+        cp._edge_attr = deepcopy(self._edge_attr)
+        cp._incidence_attr = deepcopy(self._incidence_attr)
+        cp._net_attr = deepcopy(self._net_attr)
+        cp._edge_uid = copy(self._edge_uid)
+
+        cp._nodeview = cp._nodeviewclass(cp)
+        cp._edgeview = cp._edgeviewclass(cp)
+
+        return cp

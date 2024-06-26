@@ -8,7 +8,7 @@ Multi-simplices are not allowed.
 """
 
 from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
+from copy import deepcopy
 from itertools import combinations
 from warnings import warn
 
@@ -809,31 +809,6 @@ class SimplicialComplex(HigherOrderNetwork):
 
         """
         return frozenset(simplex) in self._edge.values()
-
-    def copy(self):
-        """A deep copy of the simplicial complex.
-
-        A deep copy of the simplicial complex, including node, edge, and attributes.
-
-        Returns
-        -------
-        cp : SimplicialComplex
-            A copy of the simplicial complex.
-
-        """
-        cp = self.__class__()
-        nn = self.nodes
-        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-        ee = self.edges
-        cp.add_simplices_from(
-            (e, id, deepcopy(self.edges[id]))
-            for id, e in ee.members(dtype=dict).items()
-        )
-        cp._net_attr = deepcopy(self._net_attr)
-
-        cp._edge_uid = copy(self._edge_uid)
-
-        return cp
 
     def cleanup(self, isolates=False, connected=True, relabel=True, in_place=True):
         if in_place:

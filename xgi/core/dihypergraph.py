@@ -6,7 +6,7 @@
 """
 
 from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
+from copy import deepcopy
 from warnings import warn
 
 from ..exception import XGIError, frozen
@@ -82,51 +82,6 @@ class DiHypergraph(HigherOrderNetwork):
     >>> [sorted(e) for e in DH.edges.members()]
     [[1, 2, 3, 4], [5, 6, 7, 8]]
     """
-
-    def __getstate__(self):
-        """Function that allows pickling.
-
-        Returns
-        -------
-        dict
-            The keys label the hypergraph dict and the values
-            are dictionaries from the DiHypergraph class.
-
-        Notes
-        -----
-        This allows the python multiprocessing module to be used.
-
-        """
-        return {
-            "_edge_uid": self._edge_uid,
-            "_net_attr": self._net_attr,
-            "_node": self._node,
-            "_node_attr": self._node_attr,
-            "_edge": self._edge,
-            "_edge_attr": self._edge_attr,
-        }
-
-    def __setstate__(self, state):
-        """Function that allows unpickling of a dihypergraph.
-
-        Parameters
-        ----------
-        state
-            The keys access the dictionary names the values are the
-            dictionarys themselves from the DiHypergraph class.
-
-        Notes
-        -----
-        This allows the python multiprocessing module to be used.
-        """
-        self._edge_uid = state["_edge_uid"]
-        self._net_attr = state["_net_attr"]
-        self._node = state["_node"]
-        self._node_attr = state["_node_attr"]
-        self._edge = state["_edge"]
-        self._edge_attr = state["_edge_attr"]
-        self._nodeview = DiNodeView(self)
-        self._edgeview = DiEdgeView(self)
 
     def __init__(self, incoming_data=None, **attr):
         HigherOrderNetwork.__init__(self, DiNodeView, DiEdgeView)
@@ -634,31 +589,6 @@ class DiHypergraph(HigherOrderNetwork):
 
             del self._edge[id]
             del self._edge_attr[id]
-
-    def copy(self):
-        """A deep copy of the dihypergraph.
-
-        A deep copy of the dihypergraph, including node, edge, and hypergraph attributes.
-
-        Returns
-        -------
-        DH : DiHypergraph
-            A copy of the hypergraph.
-
-        """
-        cp = self.__class__()
-        nn = self.nodes
-        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-        ee = self.edges
-        cp.add_edges_from(
-            (e, id, deepcopy(self.edges[id]))
-            for id, e in ee.dimembers(dtype=dict).items()
-        )
-        cp._net_attr = deepcopy(self._net_attr)
-
-        cp._edge_uid = copy(self._edge_uid)
-
-        return cp
 
     def cleanup(self, isolates=False, relabel=True, in_place=True):
         if in_place:

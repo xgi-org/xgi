@@ -3,7 +3,7 @@
 import random
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
+from copy import deepcopy
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError, frozen
@@ -67,51 +67,6 @@ class Hypergraph(HigherOrderNetwork):
     EdgeView((0, 1, 2, 3))
 
     """
-
-    def __getstate__(self):
-        """Function that allows pickling.
-
-        Returns
-        -------
-        dict
-            The keys label the hyeprgraph dict and the values
-            are dictionarys from the Hypergraph class.
-
-        Notes
-        -----
-        This allows the python multiprocessing module to be used.
-
-        """
-        return {
-            "_edge_uid": self._edge_uid,
-            "_net_attr": self._net_attr,
-            "_node": self._node,
-            "_node_attr": self._node_attr,
-            "_edge": self._edge,
-            "_edge_attr": self._edge_attr,
-        }
-
-    def __setstate__(self, state):
-        """Function that allows unpickling of a hypergraph.
-
-        Parameters
-        ----------
-        state
-            The keys access the dictionary names the values are the
-            dictionarys themselves from the Hypergraph class.
-
-        Notes
-        -----
-        This allows the python multiprocessing module to be used.
-        """
-        self._edge_uid = state["_edge_uid"]
-        self._net_attr = state["_net_attr"]
-        self._node = state["_node"]
-        self._node_attr = state["_node_attr"]
-        self._edge = state["_edge"]
-        self._edge_attr = state["_edge_attr"]
-        self._nodeview = NodeView(self)
-        self._edgeview = EdgeView(self)
 
     def __init__(self, incoming_data=None, **attr):
         HigherOrderNetwork.__init__(self, NodeView, EdgeView)
@@ -1108,31 +1063,6 @@ class Hypergraph(HigherOrderNetwork):
                 "You will not be able to color/draw by "
                 "merged attributes with xgi.draw()!"
             )
-
-    def copy(self):
-        """A deep copy of the hypergraph.
-
-        A deep copy of the hypergraph, including node, edge, and hypergraph attributes.
-
-        Returns
-        -------
-        H : Hypergraph
-            A copy of the hypergraph.
-
-        """
-        cp = self.__class__()
-        nn = self.nodes
-        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-        ee = self.edges
-        cp.add_edges_from(
-            (e, id, deepcopy(self.edges[id]))
-            for id, e in ee.members(dtype=dict).items()
-        )
-        cp._net_attr = deepcopy(self._net_attr)
-
-        cp._edge_uid = copy(self._edge_uid)
-
-        return cp
 
     def dual(self):
         """The dual of the hypergraph.
