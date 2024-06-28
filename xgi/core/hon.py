@@ -326,22 +326,24 @@ class HigherOrderNetwork:
             self._net_attr.clear()
 
     def copy(self):
-        """A deep copy of the dihypergraph.
+        """A deep copy of the higher-order network.
 
-        A deep copy of the dihypergraph, including node, edge, and hypergraph attributes.
+        A deep copy of the higher-order, including node, edge, and network attributes.
 
         Returns
         -------
-        DH : DiHypergraph
-            A copy of the hypergraph.
+        cp : Hypergraph, SimplicialComplex, DiHypergraph
+            A copy of the higher-order network. (The same class as the original network)
 
         """
         cp = self.__class__()
-        cp._node = deepcopy(self._node)
-        cp._node_attr = deepcopy(self._node_attr)
-        cp._edge = deepcopy(self._edge)
-        cp._edge_attr = deepcopy(self._edge_attr)
-        cp._incidence_attr = deepcopy(self._incidence_attr)
+        cp._node = {n: deepcopy(neigh) for n, neigh in self._node.items()}
+        cp._node_attr = {n: deepcopy(attrs) for n, attrs in self._node_attr.items()}
+        cp._edge = {e: deepcopy(members) for e, members in self._edge.items()}
+        cp._edge_attr = {e: deepcopy(attrs) for e, attrs in self._edge_attr.items()}
+        cp._incidence_attr = {
+            i: deepcopy(attrs) for i, attrs in self._incidence_attr.items()
+        }
         cp._net_attr = deepcopy(self._net_attr)
         cp._edge_uid = copy(self._edge_uid)
 
