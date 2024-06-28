@@ -14,6 +14,18 @@ class HigherOrderNetwork:
     _incidence_attr_dict_factory = IDDict
     _net_attr_dict_factory = dict
 
+    __slots__ = (
+        "_edge_uid",
+        "_net_attr",
+        "_node",
+        "_node_attr",
+        "_edge",
+        "_edge_attr",
+        "_incidence_attr",
+        "_nodeviewclass",
+        "_edgeviewclass",
+    )
+
     def __getstate__(self):
         """Function that allows pickling.
 
