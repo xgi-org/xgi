@@ -1,4 +1,5 @@
 """Load a data set from the xgi-data repository or a local file."""
+
 from os.path import dirname, exists, join
 from warnings import warn
 

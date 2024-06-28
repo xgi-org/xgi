@@ -1,4 +1,5 @@
 """Read from and write to JSON."""
+
 import json
 from collections import defaultdict
 from os.path import dirname, join

@@ -8,19 +8,19 @@ Multi-simplices are not allowed.
 """
 
 from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
-from itertools import combinations, count
+from copy import deepcopy
+from itertools import combinations
 from warnings import warn
 
 from ..exception import XGIError, frozen
 from ..utils.utilities import powerset, update_uid_counter
-from .hypergraph import Hypergraph
+from .hon import HigherOrderNetwork
 from .views import EdgeView, NodeView
 
 __all__ = ["SimplicialComplex"]
 
 
-class SimplicialComplex(Hypergraph):
+class SimplicialComplex(HigherOrderNetwork):
     r"""A class to represent undirected simplicial complexes.
 
     A simplicial complex is a collection of subsets of a set of *nodes* or *vertices*.
@@ -79,21 +79,13 @@ class SimplicialComplex(Hypergraph):
     """
 
     def __init__(self, incoming_data=None, **attr):
-        self._edge_uid = count()
-        self._hypergraph = self._hypergraph_attr_dict_factory()
-        self._node = self._node_dict_factory()
-        self._node_attr = self._node_attr_dict_factory()
-        self._edge = self._hyperedge_dict_factory()
-        self._edge_attr = self._hyperedge_attr_dict_factory()
-
-        self._nodeview = NodeView(self)
-        self._edgeview = EdgeView(self)
+        HigherOrderNetwork.__init__(self, NodeView, EdgeView)
 
         if incoming_data is not None:
             from ..convert import to_simplicial_complex
 
             to_simplicial_complex(incoming_data, create_using=self)
-        self._hypergraph.update(attr)  # must be after convert
+        self._net_attr.update(attr)  # must be after convert
 
     def __str__(self):
         """Returns a short summary of the simplicial complex.
@@ -101,67 +93,78 @@ class SimplicialComplex(Hypergraph):
         Returns
         -------
         string
-            SimplicialComplex information
-
-        Examples
-        --------
-        >>> import xgi
-        >>> S = xgi.SimplicialComplex(name="foo")
-        >>> str(S)
-        "SimplicialComplex named 'foo' with 0 nodes and 0 simplices"
+            Simplicial complex information
 
         """
         try:
             return (
-                f"{type(self).__name__} named '{self['name']}' "
+                f"{type(self).__name__} named {self['name']} "
                 f"with {self.num_nodes} nodes and {self.num_edges} simplices"
             )
         except XGIError:
             return (
-                f"Unnamed {type(self).__name__} with {self.num_nodes}"
-                f" nodes and {self.num_edges} simplices"
+                f"Unnamed {type(self).__name__} with "
+                f"{self.num_nodes} nodes and {self.num_edges} simplices"
             )
 
-    def add_edge(self, edge, id=None, **attr):
-        """Deprecated in SimplicialComplex. Use add_simplex instead"""
-        warn("add_edge is deprecated in SimplicialComplex. Use add_simplex instead")
-        return self.add_simplex(edge, id=None, **attr)
+    def add_node(self, node, **attr):
+        """Add one node with optional attributes.
 
-    def add_edges_from(self, ebunch_to_add, max_order=None, **attr):
-        """Deprecated in SimplicialComplex. Use add_simplices_from instead"""
-        warn(
-            "add_edges_from is deprecated in SimplicialComplex. "
-            "Use add_simplices_from instead"
-        )
-        return self.add_simplices_from(ebunch_to_add, max_order=None, **attr)
+        Parameters
+        ----------
+        node : node
+            A node can be any hashable Python object except None.
+        attr : keyword arguments, optional
+            Set or change node attributes using key=value.
 
-    def add_weighted_edges_from(
-        self, ebunch_to_add, max_order=None, weight="weight", **attr
-    ):
-        """Deprecated in SimplicialComplex. Use add_weighted_simplices_from instead"""
-        warn(
-            "add_weighted_edges_from is deprecated in SimplicialComplex."
-            " Use add_weighted_simplices_from instead"
-        )
-        return self.add_weighted_simplices_from(
-            ebunch_to_add, max_order=max_order, weight=weight, **attr
-        )
+        See Also
+        --------
+        add_nodes_from
+        set_node_attributes
 
-    def remove_edge(self, id):
-        """Deprecated in SimplicialComplex. Use remove_simplex_id instead"""
-        warn(
-            "remove_edge is deprecated in SimplicialComplex. "
-            "Use remove_simplex_id instead"
-        )
-        return self.remove_simplex_id(id)
+        Notes
+        -----
+        If node is already in the hypergraph, its attributes are still updated.
 
-    def remove_edges_from(self, ebunch):
-        """Deprecated in SimplicialComplex. Use remove_simplex_ids_from instead"""
-        warn(
-            "remove_edges_from is deprecated in SimplicialComplex. "
-            "Use remove_simplex_ids_from instead"
-        )
-        return self.remove_simplex_ids_from(ebunch)
+        """
+        if node not in self._node:
+            self._node[node] = set()
+            self._node_attr[node] = self._node_attr_dict_factory()
+        self._node_attr[node].update(attr)
+
+    def add_nodes_from(self, nodes_for_adding, **attr):
+        """Add multiple nodes with optional attributes.
+
+        Parameters
+        ----------
+        nodes_for_adding : iterable
+            An iterable of nodes (list, dict, set, etc.).
+            OR
+            An iterable of (node, attribute dict) tuples.
+            Node attributes are updated using the attribute dict.
+        attr : keyword arguments, optional (default= no attributes)
+            Update attributes for all nodes in nodes.
+            Node attributes specified in nodes as a tuple take
+            precedence over attributes specified via keyword arguments.
+
+        See Also
+        --------
+        add_node
+        set_node_attributes
+        """
+        for n in nodes_for_adding:
+            try:
+                newnode = n not in self._node
+                newdict = attr
+            except TypeError:
+                n, ndict = n
+                newnode = n not in self._node
+                newdict = attr.copy()
+                newdict.update(ndict)
+            if newnode:
+                self._node[n] = set()
+                self._node_attr[n] = self._node_attr_dict_factory()
+            self._node_attr[n].update(newdict)
 
     def remove_node(self, n):
         """Remove a single node.
@@ -214,10 +217,6 @@ class SimplicialComplex(Hypergraph):
                 continue
             self.remove_node(n)
 
-    def add_node_to_edge(self, edge, node):
-        """add_node_to_edge is not implemented in SimplicialComplex."""
-        raise XGIError("add_node_to_edge is not implemented in SimplicialComplex.")
-
     def _add_simplex(self, members, id=None, **attr):
         """Helper function to add a simplex to a simplicial complex, without any
         check. Does not automatically update self._edge_uid"""
@@ -232,7 +231,7 @@ class SimplicialComplex(Hypergraph):
             self._node[node].add(id)
 
         self._edge[id] = members
-        self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+        self._edge_attr[id] = self._edge_attr_dict_factory()
         self._edge_attr[id].update(attr)
 
     def _add_face(self, members):
@@ -248,7 +247,7 @@ class SimplicialComplex(Hypergraph):
                 self._node_attr[n] = self._node_attr_dict_factory()
             self._node[n].add(id)
 
-        self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+        self._edge_attr[id] = self._edge_attr_dict_factory()
 
     def add_simplex(self, members, id=None, **attr):
         """Add a simplex to the simplicial complex, and all its subfaces that do
@@ -621,7 +620,7 @@ class SimplicialComplex(Hypergraph):
                     self._node_attr[n] = self._node_attr_dict_factory()
                 self._node[n].add(id)
 
-            self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+            self._edge_attr[id] = self._edge_attr_dict_factory()
             self._edge_attr[id].update(attr)
             self._edge_attr[id].update(eattr)
 
@@ -811,32 +810,6 @@ class SimplicialComplex(Hypergraph):
         """
         return frozenset(simplex) in self._edge.values()
 
-    def copy(self):
-        """A deep copy of the simplicial complex.
-
-        A deep copy of the simplicial complex,
-        including node, edge, and network attributes.
-
-        Returns
-        -------
-        S : SimplicialComplex
-            A copy of the simplicial complex.
-
-        """
-        cp = self.__class__()
-        nn = self.nodes
-        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-        ee = self.edges
-        cp.add_simplices_from(
-            (e, id, deepcopy(self.edges[id]))
-            for id, e in ee.members(dtype=dict).items()
-        )
-        cp._hypergraph = deepcopy(self._hypergraph)
-
-        cp._edge_uid = copy(self._edge_uid)
-
-        return cp
-
     def cleanup(self, isolates=False, connected=True, relabel=True, in_place=True):
         if in_place:
             if not isolates:
@@ -859,7 +832,7 @@ class SimplicialComplex(Hypergraph):
                     (e, id, deepcopy(temp.edges[id]))
                     for id, e in ee.members(dtype=dict).items()
                 )
-                self._hypergraph = deepcopy(temp._hypergraph)
+                self._net_attr = deepcopy(temp._net_attr)
         else:
             S = self.copy()
             if not isolates:
@@ -906,30 +879,3 @@ class SimplicialComplex(Hypergraph):
         self.remove_simplex_ids_from = frozen
         self.clear = frozen
         self.frozen = True
-
-    @property
-    def is_frozen(self):
-        """Checks whether a simplicial complex is frozen
-
-        Returns
-        -------
-        bool
-            True if simplicial complex is frozen, false if not.
-
-        See Also
-        --------
-        freeze : A method to prevent a simplicial complex from being modified.
-
-        Examples
-        --------
-        >>> import xgi
-        >>> edges = [[1, 2], [2, 3, 4]]
-        >>> S = xgi.SimplicialComplex(edges)
-        >>> S.freeze()
-        >>> S.is_frozen
-        True
-        """
-        try:
-            return self.frozen
-        except AttributeError:
-            return False

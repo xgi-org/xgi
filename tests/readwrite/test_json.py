@@ -1,7 +1,7 @@
 import tempfile
+from os.path import join
 
 import pytest
-from os.path import join
 
 import xgi
 from xgi.exception import XGIError

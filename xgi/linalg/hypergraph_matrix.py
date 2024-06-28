@@ -43,6 +43,7 @@ array([[1, 0, 0],
        [1, 0, 1]])
 
 """
+
 from warnings import catch_warnings, warn
 
 import numpy as np
