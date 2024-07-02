@@ -1,0 +1,24 @@
+name: Benchmarks
+
+on: [push, pull_request]
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - uses: actions/checkout@v3
+      - name: Install packages
+        run: |
+          git fetch origin $GITHUB_BASE_REF:base $GITHUB_REF:pr
+          python -m pip install --upgrade pip wheel setuptools
+          pip install -r requirements/default.txt -r requirements/benchmarks.txt
+          pip install virtualenv, setuptools
+          pip install .
+          python -m pip list
+      - name: Benchmark against main
+        run: |
+          asv machine --yes
+          asv continuous base pr -e
