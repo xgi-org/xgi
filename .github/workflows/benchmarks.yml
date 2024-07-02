@@ -10,7 +10,12 @@ jobs:
         with:
           python-version: "3.12"
       - uses: actions/checkout@v3
-      - run: git fetch origin $GITHUB_BASE_REF:base $GITHUB_REF:pr
-      - run: pip install asv virtualenv
+      - name: Install packages
+        run: |
+          git fetch origin $GITHUB_BASE_REF:base $GITHUB_REF:pr
+          python -m pip install --upgrade pip wheel setuptools
+          pip install -r requirements/default.txt -r requirements/benchmarks.txt
+          pip install .
+          python -m pip list
       - run: asv machine --yes
       - run: asv continuous base pr -e
