@@ -16,6 +16,7 @@ jobs:
           python -m pip install --upgrade pip wheel setuptools
           pip install -r requirements/default.txt -r requirements/benchmarks.txt
           pip install virtualenv
+          pip install .
           python -m pip list
       - name: Benchmark against main
         run: |
