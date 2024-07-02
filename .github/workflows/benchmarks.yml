@@ -17,5 +17,7 @@ jobs:
           pip install -r requirements/default.txt -r requirements/benchmarks.txt
           pip install .
           python -m pip list
-      - run: asv machine --yes
-      - run: asv continuous base pr -e
+      - name: Benchmark against main
+        run: |
+          asv machine --yes
+          asv continuous base pr -e
