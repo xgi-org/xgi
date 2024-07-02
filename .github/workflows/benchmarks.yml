@@ -1,6 +1,12 @@
 name: Benchmarks
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   benchmark:
@@ -21,5 +27,6 @@ jobs:
           python -m pip list
       - name: Benchmark against main
         run: |
+          cd benchmarks/
           asv machine --yes
           asv continuous base pr -e
