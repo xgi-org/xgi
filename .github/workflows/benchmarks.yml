@@ -15,7 +15,7 @@ jobs:
           git fetch origin $GITHUB_BASE_REF:base $GITHUB_REF:pr
           python -m pip install --upgrade pip wheel setuptools
           pip install -r requirements/default.txt -r requirements/benchmarks.txt
-          pip install .
+          pip install virtualenv
           python -m pip list
       - name: Benchmark against main
         run: |
