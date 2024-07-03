@@ -26,7 +26,7 @@ def test_constructor(diedgelist1, diedgedict1):
 
 def test_hypergraph_attrs():
     H = xgi.DiHypergraph()
-    assert H._hypergraph == {}
+    assert H._net_attr == {}
     with pytest.raises(XGIError):
         H["name"]
     H = xgi.DiHypergraph(name="test")
@@ -347,7 +347,7 @@ def test_copy(diedgelist1):
     assert list(copy.nodes) == list(H.nodes)
     assert list(copy.edges) == list(H.edges)
     assert list(copy.edges.members()) == list(H.edges.members())
-    assert H._hypergraph == copy._hypergraph
+    assert H._net_attr == copy._net_attr
 
     H.add_node(10)
     assert list(copy.nodes) != list(H.nodes)
@@ -357,7 +357,7 @@ def test_copy(diedgelist1):
     assert list(copy.edges) != list(H.edges)
 
     H["key2"] = "value2"
-    assert H._hypergraph != copy._hypergraph
+    assert H._net_attr != copy._net_attr
 
     copy.add_node(10)
     copy.add_edge(([1, 3, 5], [6]))
@@ -365,7 +365,7 @@ def test_copy(diedgelist1):
     assert list(copy.nodes) == list(H.nodes)
     assert list(copy.edges) == list(H.edges)
     assert list(copy.edges.members()) == list(H.edges.members())
-    assert H._hypergraph == copy._hypergraph
+    assert H._net_attr == copy._net_attr
 
     H1 = xgi.DiHypergraph()
     H1.add_edge(([1, 2], [3]), id="x")
@@ -373,7 +373,7 @@ def test_copy(diedgelist1):
     assert list(copy2.nodes) == list(H1.nodes)
     assert list(copy2.edges) == list(H1.edges)
     assert list(copy2.edges.members()) == list(H1.edges.members())
-    assert H1._hypergraph == copy2._hypergraph
+    assert H1._net_attr == copy2._net_attr
 
 
 def test_copy_issue128():

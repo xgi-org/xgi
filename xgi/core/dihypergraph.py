@@ -4,19 +4,20 @@
     This is currently an experimental feature.
 
 """
+
 from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
-from itertools import count
+from copy import deepcopy
 from warnings import warn
 
-from ..exception import IDNotFound, XGIError, frozen
-from ..utils import IDDict, update_uid_counter
+from ..exception import XGIError, frozen
+from ..utils import update_uid_counter
+from .hon import HigherOrderNetwork
 from .views import DiEdgeView, DiNodeView
 
 __all__ = ["DiHypergraph"]
 
 
-class DiHypergraph:
+class DiHypergraph(HigherOrderNetwork):
     r"""A dihypergraph is a collection of directed interactions of arbitrary size.
 
     .. warning::
@@ -81,72 +82,9 @@ class DiHypergraph:
     >>> [sorted(e) for e in DH.edges.members()]
     [[1, 2, 3, 4], [5, 6, 7, 8]]
     """
-    _node_dict_factory = IDDict
-    _node_attr_dict_factory = IDDict
-    _hyperedge_dict_factory = IDDict
-    _hyperedge_attr_dict_factory = IDDict
-    _hypergraph_attr_dict_factory = dict
-
-    def __getstate__(self):
-        """Function that allows pickling.
-
-        Returns
-        -------
-        dict
-            The keys label the hypergraph dict and the values
-            are dictionaries from the DiHypergraph class.
-
-        Notes
-        -----
-        This allows the python multiprocessing module to be used.
-
-        """
-        return {
-            "_edge_uid": self._edge_uid,
-            "_hypergraph": self._hypergraph,
-            "_node": self._node,
-            "_node_attr": self._node_attr,
-            "_edge": self._edge,
-            "_edge_attr": self._edge_attr,
-        }
-
-    def __setstate__(self, state):
-        """Function that allows unpickling of a dihypergraph.
-
-        Parameters
-        ----------
-        state
-            The keys access the dictionary names the values are the
-            dictionarys themselves from the DiHypergraph class.
-
-        Notes
-        -----
-        This allows the python multiprocessing module to be used.
-        """
-        self._edge_uid = state["_edge_uid"]
-        self._hypergraph = state["_hypergraph"]
-        self._node = state["_node"]
-        self._node_attr = state["_node_attr"]
-        self._edge = state["_edge"]
-        self._edge_attr = state["_edge_attr"]
-        self._nodeview = DiNodeView(self)
-        self._edgeview = DiEdgeView(self)
 
     def __init__(self, incoming_data=None, **attr):
-        self._edge_uid = count()
-        self._hypergraph = self._hypergraph_attr_dict_factory()
-
-        self._node = self._node_dict_factory()
-        self._node_attr = self._node_attr_dict_factory()
-
-        self._edge = self._hyperedge_dict_factory()
-        self._edge_attr = self._hyperedge_attr_dict_factory()
-
-        self._nodeview = DiNodeView(self)
-        """A :class:`~xgi.core.direportviews.DiNodeView` of the directed hypergraph."""
-
-        self._edgeview = DiEdgeView(self)
-        """An :class:`~xgi.core.direportviews.DiEdgeView` of the directed hypergraph."""
+        HigherOrderNetwork.__init__(self, DiNodeView, DiEdgeView)
 
         if incoming_data is not None:
             # This import needs to happen when this function is called, not when it is
@@ -154,7 +92,7 @@ class DiHypergraph:
             from ..convert import to_dihypergraph
 
             to_dihypergraph(incoming_data, create_using=self)
-        self._hypergraph.update(attr)  # must be after convert
+        self._net_attr.update(attr)  # must be after convert
 
     def __str__(self):
         """Returns a short summary of the directed hypergraph.
@@ -169,61 +107,6 @@ class DiHypergraph:
             return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
         except XGIError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
-
-    def __iter__(self):
-        """Iterate over the nodes.
-
-        Returns
-        -------
-        iterator
-            An iterator over all nodes in the dihypergraph.
-        """
-        return iter(self._node)
-
-    def __contains__(self, n):
-        """Check for if a node is in this dihypergraph.
-
-        Parameters
-        ----------
-        n : hashable
-            node ID
-
-        Returns
-        -------
-        bool
-            Whether the node exists in the dihypergraph.
-        """
-        try:
-            return n in self._node
-        except TypeError:
-            return False
-
-    def __len__(self):
-        """Number of nodes in the dihypergraph.
-
-        Returns
-        -------
-        int
-            The number of nodes in the dihypergraph.
-
-        See Also
-        --------
-        num_nodes : identical method
-        num_edges : number of edges in the dihypergraph
-
-        """
-        return len(self._node)
-
-    def __getitem__(self, attr):
-        """Read dihypergraph attribute."""
-        try:
-            return self._hypergraph[attr]
-        except KeyError:
-            raise XGIError("This attribute has not been set.")
-
-    def __setitem__(self, attr, val):
-        """Write dihypergraph attribute."""
-        self._hypergraph[attr] = val
 
     def __getattr__(self, attr):
         stat = getattr(self.nodes, attr, None)
@@ -245,63 +128,6 @@ class DiHypergraph:
         **kwargs, see documentation of DH.{word}.{attr}."""
 
         return func
-
-    @property
-    def num_nodes(self):
-        """The number of nodes in the dihypergraph.
-
-        Returns
-        -------
-        int
-            The number of nodes in the dihypergraph.
-
-        See Also
-        --------
-        num_edges : returns the number of edges in the dihypergraph
-
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [([1, 2], [2, 3, 4])]
-        >>> DH = xgi.DiHypergraph(hyperedge_list)
-        >>> DH.num_nodes
-        4
-
-        """
-        return len(self._node)
-
-    @property
-    def num_edges(self):
-        """The number of directed edges in the dihypergraph.
-
-        Returns
-        -------
-        int
-            The number of directed edges in the dihypergraph.
-
-        See Also
-        --------
-        num_nodes : returns the number of nodes in the dihypergraph
-
-        Examples
-        --------
-        >>> import xgi
-        >>> hyperedge_list = [([1, 2], [2, 3, 4])]
-        >>> DH = xgi.DiHypergraph(hyperedge_list)
-        >>> DH.num_edges
-        1
-        """
-        return len(self._edge)
-
-    @property
-    def nodes(self):
-        """A :class:`DiNodeView` of this network."""
-        return self._nodeview
-
-    @property
-    def edges(self):
-        """An :class:`DiEdgeView` of this network."""
-        return self._edgeview
 
     def add_node(self, node, **attr):
         """Add one node with optional attributes.
@@ -427,69 +253,6 @@ class DiHypergraph:
                 continue
             self.remove_node(n)
 
-    def set_node_attributes(self, values, name=None):
-        """Sets node attributes from a given value or dictionary of values.
-
-        Parameters
-        ----------
-        values : scalar value, dict-like
-            What the node attribute should be set to.  If `values` is
-            not a dictionary, then it is treated as a single attribute value
-            that is then applied to every node in `DH`.  This means that if
-            you provide a mutable object, like a list, updates to that object
-            will be reflected in the node attribute for every node.
-            The attribute name will be `name`.
-
-            If `values` is a dict or a dict of dict, it should be keyed
-            by node to either an attribute value or a dict of attribute key/value
-            pairs used to update the node's attributes.
-        name : string, optional
-            Name of the node attribute to set if values is a scalar, by default None.
-
-        See Also
-        --------
-        set_edge_attributes
-        add_node
-        add_nodes_from
-
-        Notes
-        -----
-        After computing some property of the nodes of a hypergraph, you may
-        want to assign a node attribute to store the value of that property
-        for each node.
-
-        If you provide a list as the second argument, updates to the list
-        will be reflected in the node attribute for each node.
-
-        If you provide a dictionary of dictionaries as the second argument,
-        the outer dictionary is assumed to be keyed by node to an inner
-        dictionary of node attributes for that node.
-
-        Note that if the dictionary contains nodes that are not in `G`, the
-        values are silently ignored.
-
-        """
-        # Set node attributes based on type of `values`
-        if name is not None:  # `values` must not be a dict of dict
-            if isinstance(values, dict):  # `values` is a dict
-                for n, v in values.items():
-                    try:
-                        self._node_attr[n][name] = v
-                    except IDNotFound:
-                        warn(f"Node {n} does not exist!")
-            else:  # `values` is a constant
-                for n in self:
-                    self._node_attr[n][name] = values
-        else:  # `values` must be dict of dict
-            try:
-                for n, d in values.items():
-                    try:
-                        self._node_attr[n].update(d)
-                    except IDNotFound:
-                        warn(f"Node {n} does not exist!")
-            except (TypeError, ValueError, AttributeError):
-                raise XGIError("Must pass a dictionary of dictionaries")
-
     def add_edge(self, members, id=None, **attr):
         """Add one edge with optional attributes.
 
@@ -557,7 +320,7 @@ class DiHypergraph:
             self._node[node]["in"].add(uid)
             self._edge[uid]["out"].add(node)
 
-        self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+        self._edge_attr[uid] = self._edge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
 
         if id:  # set self._edge_uid correctly
@@ -686,7 +449,7 @@ class DiHypergraph:
                         self._node[n] = {"in": set(), "out": set()}
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node[n]["out"].add(id)
-                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[id] = self._edge_attr_dict_factory()
 
                 for n in head:
                     if n not in self._node:
@@ -759,7 +522,7 @@ class DiHypergraph:
                     self._node[node]["in"].add(id)
                     self._edge[id]["out"].add(node)
 
-                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[id] = self._edge_attr_dict_factory()
                 self._edge_attr[id].update(attr)
                 self._edge_attr[id].update(eattr)
 
@@ -827,105 +590,6 @@ class DiHypergraph:
             del self._edge[id]
             del self._edge_attr[id]
 
-    def set_edge_attributes(self, values, name=None):
-        """Set the edge attributes from a value or a dictionary of values.
-
-        Parameters
-        ----------
-        values : scalar value, dict-like
-            What the edge attribute should be set to.  If `values` is
-            not a dictionary, then it is treated as a single attribute value
-            that is then applied to every edge in `DH`.  This means that if
-            you provide a mutable object, like a list, updates to that object
-            will be reflected in the edge attribute for each edge.  The attribute
-            name will be `name`.
-            If `values` is a dict or a dict of dict, it should be keyed
-            by edge ID to either an attribute value or a dict of attribute
-            key/value pairs used to update the edge's attributes.
-        name : string, optional
-            Name of the edge attribute to set if values is a scalar. By default, None.
-
-        See Also
-        --------
-        set_node_attributes
-        add_edge
-        add_edges_from
-
-        Notes
-        -----
-        Note that if the dict contains edge IDs that are not in `DH`, they are
-        silently ignored.
-
-        """
-        if name is not None:
-            # `values` does not contain attribute names
-            try:
-                for e, value in values.items():
-                    try:
-                        self._edge_attr[id][name] = value
-                    except IDNotFound:
-                        warn(f"Edge {e} does not exist!")
-            except AttributeError:
-                # treat `values` as a constant
-                for e in self._edge:
-                    self._edge_attr[e][name] = values
-        else:
-            try:
-                for e, d in values.items():
-                    try:
-                        self._edge_attr[e].update(d)
-                    except IDNotFound:
-                        warn(f"Edge {e} does not exist!")
-            except AttributeError:
-                raise XGIError(
-                    "name property has not been set and a "
-                    "dict-of-dicts has not been provided."
-                )
-
-    def clear(self, hypergraph_attr=True):
-        """Remove all nodes and edges from the graph.
-
-        Also removes node and edge attributes, and optionally hypergraph attributes.
-
-        Parameters
-        ----------
-        hypergraph_attr : bool, optional
-            Whether to remove hypergraph attributes as well.
-            By default, True.
-
-        """
-        self._node.clear()
-        self._node_attr.clear()
-        self._edge.clear()
-        self._edge_attr.clear()
-        if hypergraph_attr:
-            self._hypergraph.clear()
-
-    def copy(self):
-        """A deep copy of the dihypergraph.
-
-        A deep copy of the dihypergraph, including node, edge, and hypergraph attributes.
-
-        Returns
-        -------
-        DH : DiHypergraph
-            A copy of the hypergraph.
-
-        """
-        cp = self.__class__()
-        nn = self.nodes
-        cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-        ee = self.edges
-        cp.add_edges_from(
-            (e, id, deepcopy(self.edges[id]))
-            for id, e in ee.dimembers(dtype=dict).items()
-        )
-        cp._hypergraph = deepcopy(self._hypergraph)
-
-        cp._edge_uid = copy(self._edge_uid)
-
-        return cp
-
     def cleanup(self, isolates=False, relabel=True, in_place=True):
         if in_place:
             if not isolates:
@@ -944,7 +608,7 @@ class DiHypergraph:
                     (e, id, deepcopy(temp.edges[id]))
                     for id, e in ee.dimembers(dtype=dict).items()
                 )
-                self._hypergraph = deepcopy(temp._hypergraph)
+                self._net_attr = deepcopy(temp._net_attr)
         else:
             DH = self.copy()
             if not isolates:
@@ -988,31 +652,3 @@ class DiHypergraph:
         self.remove_node_from_edge = frozen
         self.clear = frozen
         self.frozen = True
-
-    @property
-    def is_frozen(self):
-        """Checks whether a hypergraph is frozen
-
-        Returns
-        -------
-        bool
-            True if hypergraph is frozen, false if not.
-
-        See Also
-        --------
-        freeze : A method to prevent a hypergraph from being modified.
-
-        Examples
-        --------
-        >>> import xgi
-        >>> edges = [([1, 2], [2, 3, 4])]
-        >>> DH = xgi.DiHypergraph(edges)
-        >>> DH.freeze()
-        >>> DH.is_frozen
-        True
-
-        """
-        try:
-            return self.frozen
-        except AttributeError:
-            return False

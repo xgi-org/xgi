@@ -33,7 +33,7 @@ def to_hypergraph_dict(H):
     data["type"] = get_network_type(H)
     # name always gets written (default is an empty string)
     data["hypergraph-data"] = {}
-    data["hypergraph-data"].update(H._hypergraph)
+    data["hypergraph-data"].update(H._net_attr)
 
     # get node data
     data["node-data"] = {str(idx): H.nodes[idx] for idx in H.nodes}
@@ -99,7 +99,7 @@ def from_hypergraph_dict(data, nodetype=None, edgetype=None, max_order=None):
     """
     H = empty_hypergraph()
     try:
-        H._hypergraph.update(data["hypergraph-data"])
+        H._net_attr.update(data["hypergraph-data"])
     except KeyError:
         raise XGIError("Failed to get hypergraph data attributes.")
 

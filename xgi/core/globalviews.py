@@ -56,7 +56,7 @@ def subhypergraph(H, nodes=None, edges=None, keep_isolates=True):
     """
     new = H.__class__()
 
-    new._hypergraph = H._hypergraph.copy()
+    new._net_attr = H._net_attr.copy()
     nodes = set(H.nodes) if nodes is None else (set(nodes) & set(H.nodes))
     edges = set(H.edges) if edges is None else (set(edges) & set(H.edges))
 
