@@ -223,7 +223,7 @@ def hypergraph2():
 def simplicialcomplex1():
     S = xgi.SimplicialComplex()
     S.add_nodes_from(["b", "c", 0])
-    S.add_edges_from(
+    S.add_simplices_from(
         {"e1": [0, "b"], "e2": [0, "c"], "e3": [0, "b", "c"], "e4": ["b", "c"]}
     )
     return S
