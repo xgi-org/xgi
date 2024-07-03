@@ -1,4 +1,5 @@
 """Generate random uniform hypergraphs."""
+
 import itertools
 import operator
 import random
