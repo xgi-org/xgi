@@ -58,7 +58,10 @@ def clique_eigenvector_centrality(H, tol=1e-6):
     if not is_connected(H):
         return {n: np.nan for n in H.nodes}
     W, node_dict = clique_motif_matrix(H, index=True)
-    _, v = eigsh(W.asfptype(), k=1, which="LM", tol=tol)
+    try:
+        _, v = eigsh(W.astype(float), k=1, which="LM", tol=tol)
+    except AttributeError:
+        _, v = eigsh(W.asfptype(), k=1, which="LM", tol=tol)
 
     # multiply by the sign to try and enforce positivity
     v = np.sign(v[0]) * v / norm(v, 1)
