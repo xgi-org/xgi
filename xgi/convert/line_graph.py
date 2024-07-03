@@ -55,16 +55,16 @@ def to_line_graph(H, s=1, weights=None):
 
     edge_label_dict = {tuple(edge): index for index, edge in H._edge.items()}
 
-    LG.add_nodes_from(H.edges)
+    LG.add_nodes_from(edge_label_dict.values())
 
-    for edge1, edge2 in combinations(H.edges.members(), 2):
+    for edge1, edge2 in combinations(edge_label_dict.keys(), 2):
         # Check that the intersection size is larger than s
-        intersection_size = len(edge1.intersection(edge2))
+        intersection_size = len(set(edge1).intersection(set(edge2)))
         if intersection_size >= s:
             if not weights:
                 # Add unweighted edge
                 LG.add_edge(
-                    edge_label_dict[tuple(edge1)], edge_label_dict[tuple(edge2)]
+                    edge_label_dict[edge1], edge_label_dict[edge2]
                 )
             else:
                 # Compute the (normalized) weight
@@ -73,8 +73,8 @@ def to_line_graph(H, s=1, weights=None):
                     weight /= min([len(edge1), len(edge2)])
                 # Add edge with weight
                 LG.add_edge(
-                    edge_label_dict[tuple(edge1)],
-                    edge_label_dict[tuple(edge2)],
+                    edge_label_dict[edge1],
+                    edge_label_dict[edge2],
                     weight=weight,
                 )
 
