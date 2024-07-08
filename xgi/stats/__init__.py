@@ -68,8 +68,9 @@ class IDStat:
     def __init__(self, network, view, func, args=None, kwargs=None):
         self.view = view
         self.net = network
+        print(args)
         self.args = () if args is None else args
-        self.kwargs = {} if args is None else kwargs
+        self.kwargs = {} if kwargs is None else kwargs
         self.func = func
 
     def __call__(self, *args, **kwargs):
