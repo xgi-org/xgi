@@ -1,5 +1,6 @@
 """Methods for converting to and from bipartite edgelists."""
 
+from ..core import DiHypergraph
 from ..generators import empty_hypergraph
 
 __all__ = ["from_bipartite_edgelist", "to_bipartite_edgelist"]
@@ -47,4 +48,13 @@ def to_bipartite_edgelist(H):
     --------
     from_hyperedge_list
     """
-    return [(n, id) for id, e in H.edges.members(dtype=dict).items() for n in e]
+    if isinstance(H, DiHypergraph):
+        edgelist = []
+        for e, edge in H._edge.items():
+            for n in edge["in"]:
+                edgelist.append((n, e, "in"))
+            for n in edge["out"]:
+                edgelist.append((n, e, "out"))
+        return edgelist
+
+    return [(n, e) for e, edge in H.edges.members(dtype=dict).items() for n in edge]
