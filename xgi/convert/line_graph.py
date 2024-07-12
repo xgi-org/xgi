@@ -53,7 +53,7 @@ def to_line_graph(H, s=1, weights=None):
         )
     LG = nx.Graph()
 
-    LG.add_nodes_from([(k, {'original_hyperedge':v}) for k,v in H._edge.items()])
+    LG.add_nodes_from([(k, {"original_hyperedge": v}) for k, v in H._edge.items()])
 
     for e1, e2 in combinations(H._edge, 2):
         # Check that the intersection size is larger than s
@@ -61,9 +61,7 @@ def to_line_graph(H, s=1, weights=None):
         if intersection_size >= s:
             if not weights:
                 # Add unweighted edge
-                LG.add_edge(
-                    e1, e2
-                )
+                LG.add_edge(e1, e2)
             else:
                 # Compute the (normalized) weight
                 weight = intersection_size
@@ -71,7 +69,8 @@ def to_line_graph(H, s=1, weights=None):
                     weight /= min([len(H._edge[e1]), len(H._edge[e2])])
                 # Add edge with weight
                 LG.add_edge(
-                    e1, e2,
+                    e1,
+                    e2,
                     weight=weight,
                 )
 
