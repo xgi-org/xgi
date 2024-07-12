@@ -1,4 +1,5 @@
 """Base class for undirected hypergraphs."""
+
 import random
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
@@ -66,11 +67,12 @@ class Hypergraph:
     EdgeView((0, 1, 2, 3))
 
     """
+
     _node_dict_factory = IDDict
     _node_attr_dict_factory = IDDict
-    _hyperedge_dict_factory = IDDict
-    _hyperedge_attr_dict_factory = IDDict
-    _hypergraph_attr_dict_factory = dict
+    _edge_dict_factory = IDDict
+    _edge_attr_dict_factory = IDDict
+    _net_attr_dict_factory = dict
 
     def __getstate__(self):
         """Function that allows pickling.
@@ -88,7 +90,7 @@ class Hypergraph:
         """
         return {
             "_edge_uid": self._edge_uid,
-            "_hypergraph": self._hypergraph,
+            "_net_attr": self._net_attr,
             "_node": self._node,
             "_node_attr": self._node_attr,
             "_edge": self._edge,
@@ -109,7 +111,7 @@ class Hypergraph:
         This allows the python multiprocessing module to be used.
         """
         self._edge_uid = state["_edge_uid"]
-        self._hypergraph = state["_hypergraph"]
+        self._net_attr = state["_net_attr"]
         self._node = state["_node"]
         self._node_attr = state["_node_attr"]
         self._edge = state["_edge"]
@@ -119,11 +121,11 @@ class Hypergraph:
 
     def __init__(self, incoming_data=None, **attr):
         self._edge_uid = count()
-        self._hypergraph = self._hypergraph_attr_dict_factory()
+        self._net_attr = self._net_attr_dict_factory()
         self._node = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
-        self._edge = self._hyperedge_dict_factory()
-        self._edge_attr = self._hyperedge_attr_dict_factory()
+        self._edge = self._edge_dict_factory()
+        self._edge_attr = self._edge_attr_dict_factory()
 
         self._nodeview = NodeView(self)
         """A :class:`~xgi.core.reportviews.NodeView` of the hypergraph."""
@@ -137,7 +139,7 @@ class Hypergraph:
             from ..convert import to_hypergraph
 
             to_hypergraph(incoming_data, create_using=self)
-        self._hypergraph.update(attr)  # must be after convert
+        self._net_attr.update(attr)  # must be after convert
 
     def __str__(self):
         """Returns a short summary of the hypergraph.
@@ -206,13 +208,13 @@ class Hypergraph:
     def __getitem__(self, attr):
         """Read hypergraph attribute."""
         try:
-            return self._hypergraph[attr]
+            return self._net_attr[attr]
         except KeyError:
             raise XGIError("This attribute has not been set.")
 
     def __setitem__(self, attr, val):
         """Write hypergraph attribute."""
-        self._hypergraph[attr] = val
+        self._net_attr[attr] = val
 
     def __getattr__(self, attr):
         stat = getattr(self.nodes, attr, None)
@@ -281,8 +283,8 @@ class Hypergraph:
         tempH.add_edges_from(zip(self._edge.values(), self._edge_attr.values()))
         tempH.add_edges_from(zip(H2._edge.values(), H2._edge_attr.values()))
 
-        tempH._hypergraph = deepcopy(self._hypergraph)
-        tempH._hypergraph.update(deepcopy(H2._hypergraph))
+        tempH._net_attr = deepcopy(self._net_attr)
+        tempH._net_attr.update(deepcopy(H2._net_attr))
 
         return tempH
 
@@ -592,7 +594,7 @@ class Hypergraph:
             self._node[node].add(uid)
             self._edge[uid].add(node)
 
-        self._edge_attr[uid] = self._hyperedge_attr_dict_factory()
+        self._edge_attr[uid] = self._edge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
 
         if id:  # set self._edge_uid correctly
@@ -712,7 +714,7 @@ class Hypergraph:
                         self._node[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node[n].add(id)
-                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[id] = self._edge_attr_dict_factory()
 
                 update_uid_counter(self, id)
 
@@ -774,7 +776,7 @@ class Hypergraph:
                         self._node_attr[n] = self._node_attr_dict_factory()
                     self._node[n].add(id)
 
-                self._edge_attr[id] = self._hyperedge_attr_dict_factory()
+                self._edge_attr[id] = self._edge_attr_dict_factory()
                 self._edge_attr[id].update(attr)
                 self._edge_attr[id].update(eattr)
 
@@ -1208,7 +1210,7 @@ class Hypergraph:
         self._edge.clear()
         self._edge_attr.clear()
         if hypergraph_attr:
-            self._hypergraph.clear()
+            self._net_attr.clear()
 
     def clear_edges(self):
         """Remove all edges from the graph without altering any nodes."""
@@ -1400,7 +1402,7 @@ class Hypergraph:
             (e, id, deepcopy(self.edges[id]))
             for id, e in ee.members(dtype=dict).items()
         )
-        cp._hypergraph = deepcopy(self._hypergraph)
+        cp._net_attr = deepcopy(self._net_attr)
 
         cp._edge_uid = copy(self._edge_uid)
 
@@ -1424,7 +1426,7 @@ class Hypergraph:
         )
         ee = self.edges
         dual.add_nodes_from((e, deepcopy(attr)) for e, attr in ee.items())
-        dual._hypergraph = deepcopy(self._hypergraph)
+        dual._net_attr = deepcopy(self._net_attr)
 
         return dual
 
@@ -1484,7 +1486,7 @@ class Hypergraph:
                     (e, id, deepcopy(temp.edges[id]))
                     for id, e in ee.members(dtype=dict).items()
                 )
-                self._hypergraph = deepcopy(temp._hypergraph)
+                self._net_attr = deepcopy(temp._net_attr)
         else:
             H = self.copy()
             if not multiedges:
