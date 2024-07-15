@@ -161,11 +161,13 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
     elif data["type"] == "directed":
         G = DiHypergraph()
 
+    # Import network metadata
     try:
         G._net_attr.update(data["metadata"])
     except KeyError:
         raise XGIError("Failed to get metadata.")
 
+    # Import network structure through incidence records
     try:
         if data["type"] == "directed":
             edgedict = defaultdict(lambda: {"in": set(), "out": set()})
@@ -209,6 +211,7 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
     except KeyError as e:
         raise XGIError("Failed to import incidences.") from e
 
+    # import nodes attributes
     try:
         for record in data["nodes"]:
             nid = record["uid"]
@@ -220,7 +223,7 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
                     raise TypeError(
                         f"Failed to convert node IDs to type {nodetype}."
                     ) from e
-            G._node_attr[nid] = attrs
+            G.add_node(nid, **attrs)
     except KeyError:
         raise XGIError("Failed to import node attributes.")
 
