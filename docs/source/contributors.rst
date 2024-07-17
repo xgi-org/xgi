@@ -139,6 +139,13 @@ Contributors
     </p>
 
     <p>
+        <img src="https://github.com/pgberlureau.png"
+            width="50" height="50" hspace="5"
+            style="border-radius: 50%; vertical-align: middle;"/>
+        <a href="https://github.com/pgberlureau">@pgberlureau</a>
+    </p>
+
+    <p>
         <img src="https://github.com/pietrotraversa.png"
             width="50" height="50" hspace="5"
             style="border-radius: 50%; vertical-align: middle;"/>

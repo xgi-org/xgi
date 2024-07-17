@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.8.7
+* Renamed the `_hypergraph` internal variable to `_net_attr` [#560](https://github.com/xgi-org/xgi/pull/560) (@nwlandry).
+* Get rid of KeyErrors in `to_line_graph`  [#558](https://github.com/xgi-org/xgi/pull/558) (@pgberlureau).
+* Fix `asfptype()` scipy error [#559](https://github.com/xgi-org/xgi/pull/559) (@nwlandry).
+* Added the ability for XGI to load data collections [#540](https://github.com/xgi-org/xgi/pull/540) (@nwlandry).
+* Made the `DiHypergraph` class more consistent with other class internals [#541](https://github.com/xgi-org/xgi/pull/541) (@nwlandry).
+* Fix Numpy 2.0 breaking changes [#547](https://github.com/xgi-org/xgi/pull/547) (@nwlandry).
+* Moved tutorials to the top level [#550](https://github.com/xgi-org/xgi/pull/550) (@nwlandry).
+
 ## v0.8.6
 * Added numpy<2.0 to the requirements to avoid breaking changes with Numpy version [2.0](https://numpy.org/news/#numpy-20-release-date-june-16) [#545](https://github.com/xgi-org/xgi/pull/545) (@nwlandry).
 * Update license and contributing [#539](https://github.com/xgi-org/xgi/pull/539) (@nwlandry).
