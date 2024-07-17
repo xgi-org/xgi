@@ -525,9 +525,6 @@ class DiHypergraph:
         >>> DH.add_edge(([1, 2, 3], [2, 3, 4]))
         >>> DH.add_edge(([3, 4], set()), id='myedge')
         """
-        if not members:
-            raise XGIError("Cannot add an empty edge")
-
         if isinstance(members, (tuple, list)):
             tail = members[0]
             head = members[1]
