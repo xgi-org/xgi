@@ -47,16 +47,12 @@ def to_hif(G, path):
 
     # get node data
     try:
-        data["nodes"] = [
-            IDDict({"uid": idx}) + {"attrs": G.nodes[idx]} for idx in G.nodes
-        ]
+        data["nodes"] = [[idx, G.nodes[idx]] for idx in G.nodes]
     except KeyError:
         raise XGIError("Node attributes not saved!")
 
     try:
-        data["edges"] = [
-            IDDict({"uid": idx}) + {"attrs": G.edges[idx]} for idx in G.edges
-        ]
+        data["edges"] = [[idx, G.edges[idx]] for idx in G.edges]
 
     except KeyError:
         raise XGIError("Edge attributes not saved!")
@@ -64,14 +60,10 @@ def to_hif(G, path):
     # hyperedge dict
     if data["type"] == "directed":
         data["incidences"] = [
-            IDDict({"edge": e, "node": n, "direction": d}) + {"attrs": []}
-            for n, e, d in to_bipartite_edgelist(G)
+            [e, n, {"direction": d}] for n, e, d in to_bipartite_edgelist(G)
         ]
     elif data["type"] == "undirected":
-        data["incidences"] = [
-            IDDict({"edge": e, "node": n}) + {"attrs": []}
-            for n, e in to_bipartite_edgelist(G)
-        ]
+        data["incidences"] = [[e, n, {}] for n, e in to_bipartite_edgelist(G)]
     elif data["type"] == "asc":
         # get maximal edges and edges with attributes
         edges_with_attrs = {eid for eid in G.edges if G.edges[eid]}
@@ -79,9 +71,7 @@ def to_hif(G, path):
         eids = edges_with_attrs.intersection(maximal_edges)
 
         data["incidences"] = [
-            IDDict({"edge": e, "node": n}) + {"attrs": []}
-            for n, e in to_bipartite_edgelist(G)
-            if e in eids
+            [e, n, {}] for n, e in to_bipartite_edgelist(G) if e in eids
         ]
 
     datastring = json.dumps(data, indent=2)
@@ -150,23 +140,36 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
     read_json
 
     """
+    def _empty_edge(network_type):
+        if network_type in {"asc", "undirected"}:
+            return set()
+        else:
+            return {"in": set(), "out": set()}
     if not max_order:
         max_order = np.inf
 
-    if data["type"] == "asc":
-        G = SimplicialComplex()
-        G.add_edge = G.add_simplex
-    elif data["type"] == "undirected":
+    if "network-type" in data:
+        if data["network-type"] == "asc":
+            G = SimplicialComplex()
+            G.add_edge = G.add_simplex
+            network_type = "asc"
+        elif data["network-type"] == "undirected":
+            G = Hypergraph()
+            network_type = "undirected"
+        elif data["network-type"] == "directed":
+            G = DiHypergraph()
+            network_type = "dihypergraph"
+        else:
+            XGIError("Invalid type")
+    else:
+        # default is a hypergraph
         G = Hypergraph()
-    elif data["type"] == "directed":
-        G = DiHypergraph()
+        network_type = "undirected"
 
     # Import network metadata
-    try:
+    if "metadata" in G:
         G._net_attr.update(data["metadata"])
-    except KeyError:
-        raise XGIError("Failed to get metadata.")
-
+    
     # Import network structure through incidence records
     try:
         if data["type"] == "directed":
@@ -174,9 +177,7 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
         else:
             edgedict = defaultdict(set)
 
-        for record in data["incidences"]:
-            eid = record["edge"]
-            nid = record["node"]
+        for eid, nid, attrs in data["incidences"]:
             if edgetype:
                 try:
                     eid = edgetype(eid)
@@ -206,16 +207,13 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
                 order = len(e) - 1
 
             if order <= max_order:
-                G.add_edge(e, eid)
-
+                G.add_edge(e, eid)    
     except KeyError as e:
         raise XGIError("Failed to import incidences.") from e
-
-    # import nodes attributes
-    try:
-        for record in data["nodes"]:
-            nid = record["uid"]
-            attrs = record["attrs"]
+    
+    # import node attributes if they exist
+    if "nodes" in data:
+        for nid, attrs in data["nodes"]:
             if nodetype:
                 try:
                     nid = nodetype(nid)
@@ -223,14 +221,14 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
                     raise TypeError(
                         f"Failed to convert node IDs to type {nodetype}."
                     ) from e
-            G.add_node(nid, **attrs)
-    except KeyError:
-        raise XGIError("Failed to import node attributes.")
-
-    try:
-        for record in data["edges"]:
-            eid = record["uid"]
-            attrs = record["attrs"]
+            if nid not in G._node:
+                G.add_node(nid, **attrs)
+            else:
+                G.set_node_attributes({nid: attrs})
+    
+    # import edge attributes if they exist
+    if "edges" in data:
+        for eid, attrs in data["edges"]:
             if edgetype:
                 try:
                     eid = edgetype(eid)
@@ -238,8 +236,9 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
                     raise TypeError(
                         f"Failed to convert edge IDs to type {edgetype}."
                     ) from e
-            G._edge_attr[eid] = attrs
-    except KeyError:
-        raise XGIError("Failed to import edge attributes.")
+            if eid not in G._edge:
+                G.add_edge(_empty_edge(network_type), eid, **attrs)
+            else:
+                G.set_edge_attributes({eid: attrs})
 
     return G
