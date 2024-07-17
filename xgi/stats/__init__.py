@@ -226,8 +226,8 @@ class IDStat:
         
         Notes
         -----
-        This implementation is divided by N, not N-1
-        as is done for the sample standard deviation.
+        This implementation calculates the standard deviation with N in the denominator.
+        This is in contrast to the sample standard deviation which normalizes by N-1.
         See https://www.allendowney.com/blog/2024/06/08/which-standard-deviation/
         for more details.
         """
@@ -238,8 +238,8 @@ class IDStat:
 
         Notes
         -----
-        This implementation is divided by N, not N-1
-        as is done for the sample standard deviation.
+        This implementation calculates the variance with N in the denominator.
+        This is in contrast to the sample variation which normalizes by N-1.
         See https://www.allendowney.com/blog/2024/06/08/which-standard-deviation/
         for more details.
         """
