@@ -172,7 +172,7 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
     
     # Import network structure through incidence records
     try:
-        if data["type"] == "directed":
+        if network_type == "directed":
             edgedict = defaultdict(lambda: {"in": set(), "out": set()})
         else:
             edgedict = defaultdict(set)
@@ -194,14 +194,14 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
                         f"Failed to convert node with ID {nid} to type {nodetype}."
                     ) from e
 
-            if data["type"] == "directed":
-                direction = data["direction"]
+            if network_type == "directed":
+                direction = attrs["direction"]
                 edgedict[eid][direction].add(nid)
             else:
                 edgedict[eid].add(nid)
 
         for eid, e in edgedict.items():
-            if data["type"] == "directed":
+            if network_type == "directed":
                 order = len(e["in"].union(e["out"])) - 1
             else:
                 order = len(e) - 1
