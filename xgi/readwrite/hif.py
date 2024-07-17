@@ -140,11 +140,13 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
     read_json
 
     """
+
     def _empty_edge(network_type):
         if network_type in {"asc", "undirected"}:
             return set()
         else:
             return {"in": set(), "out": set()}
+
     if not max_order:
         max_order = np.inf
 
@@ -169,7 +171,7 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
     # Import network metadata
     if "metadata" in G:
         G._net_attr.update(data["metadata"])
-    
+
     # Import network structure through incidence records
     try:
         if network_type == "directed":
@@ -207,10 +209,10 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
                 order = len(e) - 1
 
             if order <= max_order:
-                G.add_edge(e, eid)    
+                G.add_edge(e, eid)
     except KeyError as e:
         raise XGIError("Failed to import incidences.") from e
-    
+
     # import node attributes if they exist
     if "nodes" in data:
         for nid, attrs in data["nodes"]:
@@ -225,7 +227,7 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
                 G.add_node(nid, **attrs)
             else:
                 G.set_node_attributes({nid: attrs})
-    
+
     # import edge attributes if they exist
     if "edges" in data:
         for eid, attrs in data["edges"]:
