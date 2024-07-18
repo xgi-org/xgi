@@ -450,13 +450,15 @@ class Hypergraph:
                     del self._edge[edge]
                     del self._edge_attr[edge]
 
-    def remove_nodes_from(self, nodes, remove_empty=True):
+    def remove_nodes_from(self, nodes, strong=False, remove_empty=True):
         """Remove multiple nodes.
 
         Parameters
         ----------
         nodes : iterable
             An iterable of nodes.
+        strong : bool, optional
+            Whether to execute weak or strong removal. By default, False.
         remove_empty : bool, optional
             Whether to remove empty edges. By default, True.
 
@@ -469,7 +471,7 @@ class Hypergraph:
             if n not in self:
                 warn(f"Node {n} not in hypergraph")
                 continue
-            self.remove_node(n, remove_empty=remove_empty)
+            self.remove_node(n, strong=strong, remove_empty=remove_empty)
 
     def set_node_attributes(self, values, name=None):
         """Sets node attributes from a given value or dictionary of values.

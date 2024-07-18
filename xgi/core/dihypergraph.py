@@ -363,7 +363,7 @@ class DiHypergraph:
                 self._node_attr[n] = self._node_attr_dict_factory()
             self._node_attr[n].update(newdict)
 
-    def remove_node(self, n, strong=False):
+    def remove_node(self, n, strong=False, remove_empty=True):
         """Remove a single node.
 
         The removal may be weak (default) or strong.  In weak removal, the node is
@@ -375,9 +375,11 @@ class DiHypergraph:
         ----------
         n : node
             A node in the dihypergraph
-
         strong : bool (default False)
             Whether to execute weak or strong removal.
+        remove_empty : bool, optional
+            Whether to remove empty edges (0 members in both head and tail).
+            By default, False.
 
         Raises
         ------
@@ -406,17 +408,22 @@ class DiHypergraph:
 
             # remove empty edges
             for edge in edge_neighbors["in"].union(edge_neighbors["out"]):
-                if not self._edge[edge]["in"] and not self._edge[edge]["out"]:
+                if not self._edge[edge]["in"] and not self._edge[edge]["out"] and remove_empty:
                     del self._edge[edge]
                     del self._edge_attr[edge]
 
-    def remove_nodes_from(self, nodes):
+    def remove_nodes_from(self, nodes, strong=False, remove_empty=True):
         """Remove multiple nodes.
 
         Parameters
         ----------
         nodes : iterable
             An iterable of nodes.
+        strong : bool (default False)
+            Whether to execute weak or strong removal.
+        remove_empty : bool, optional
+            Whether to remove empty edges (0 members in both head and tail).
+            By default, False.
 
         See Also
         --------
@@ -427,7 +434,7 @@ class DiHypergraph:
             if n not in self._node:
                 warn(f"Node {n} not in dihypergraph")
                 continue
-            self.remove_node(n)
+            self.remove_node(n, strong=strong, remove_empty=remove_empty)
 
     def set_node_attributes(self, values, name=None):
         """Sets node attributes from a given value or dictionary of values.
@@ -980,11 +987,8 @@ class DiHypergraph:
         self.remove_nodes_from = frozen
         self.add_edge = frozen
         self.add_edges_from = frozen
-        self.add_weighted_edges_from = frozen
         self.remove_edge = frozen
         self.remove_edges_from = frozen
-        self.add_node_to_edge = frozen
-        self.remove_node_from_edge = frozen
         self.clear = frozen
         self.frozen = True
 
