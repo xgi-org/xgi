@@ -313,9 +313,6 @@ class SimplicialComplex(Hypergraph):
         except TypeError:
             raise XGIError("The simplex cannot be cast to a frozenset.")
 
-        if not members:
-            raise XGIError("Cannot add an empty edge")
-
         if self.has_simplex(members):
             return
 
