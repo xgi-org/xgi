@@ -55,7 +55,7 @@ class Hypergraph:
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `Hypergraph` class.  For more details, see the
     `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     Examples
     --------

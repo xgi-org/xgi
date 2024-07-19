@@ -12,7 +12,7 @@ jobs:
       uses: urlstechie/urlchecker-action@master
       with:
         # A comma-separated list of file types to cover in the URL checks
-        file_types: .md,.py,.rst,ipynb
+        file_types: .md,.py,.rst,.ipynb
 
         # Choose whether to include file with no URLs in the prints.
         print_all: false
