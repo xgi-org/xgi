@@ -127,15 +127,12 @@ def test_add_edge_accepts_different_types():
         assert H.edges.head(dtype=dict) == {0: {4}}
 
 
-def test_add_edge_raises_with_empty_edges():
+def test_add_empty_edges():
     H = xgi.DiHypergraph()
-    for edge in [[], {}, iter([])]:
-        with pytest.raises(XGIError):
-            H.add_edge(edge)
-
     for edge in [[[], []], (set(), set())]:
-        with pytest.raises(XGIError):
-            H.add_edge(edge)
+        H.add_edge(edge)
+
+    assert H.edges.size.asdict == {0: 0, 1: 0, 2: 0}
 
 
 def test_add_edge_rejects_set():

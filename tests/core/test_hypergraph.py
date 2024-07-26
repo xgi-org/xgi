@@ -181,10 +181,12 @@ def test_add_edge():
         assert {1, 2, 3} == H.edges.members(0)
         assert H.edges.members(dtype=dict) == {0: {1, 2, 3}}
 
+    # test adding empty edges
     H = xgi.Hypergraph()
     for edge in [[], set(), iter([])]:
-        with pytest.raises(XGIError):
-            H.add_edge(edge)
+        H.add_edge(edge)
+
+    assert H.edges.size.asdict == {0: 0, 1: 0, 2: 0}
 
     # check that uid works correctly
     H1 = xgi.Hypergraph()

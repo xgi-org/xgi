@@ -408,7 +408,11 @@ class DiHypergraph:
 
             # remove empty edges
             for edge in edge_neighbors["in"].union(edge_neighbors["out"]):
-                if not self._edge[edge]["in"] and not self._edge[edge]["out"] and remove_empty:
+                if (
+                    not self._edge[edge]["in"]
+                    and not self._edge[edge]["out"]
+                    and remove_empty
+                ):
                     del self._edge[edge]
                     del self._edge_attr[edge]
 
