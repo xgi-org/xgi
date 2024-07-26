@@ -186,7 +186,7 @@ def test_add_edge():
     for edge in [[], set(), iter([])]:
         H.add_edge(edge)
 
-    assert H.edges.size.asdict == {0: 0, 1: 0, 2: 0}
+    assert H.edges.size.asdict() == {0: 0, 1: 0, 2: 0}
 
     # check that uid works correctly
     H1 = xgi.Hypergraph()

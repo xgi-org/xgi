@@ -517,11 +517,6 @@ class DiHypergraph:
         **attr : dict, optional
             Attributes of the new edge.
 
-        Raises
-        -----
-        XGIError
-            If `members` is empty or is not a list or tuple.
-
         See Also
         --------
         add_edges_from : Add a collection of edges.
@@ -541,9 +536,6 @@ class DiHypergraph:
             head = members[1]
         else:
             raise XGIError("Directed edge must be a list or tuple!")
-
-        if not head and not tail:
-            raise XGIError("Cannot add an empty edge")
 
         uid = next(self._edge_uid) if id is None else id
 
