@@ -268,11 +268,6 @@ class SimplicialComplex(Hypergraph):
         **attr : dict, optional
             Attributes of the new simplex.
 
-        Raises
-        -----
-        XGIError
-            If `members` is empty.
-
         See Also
         --------
         add_simplices_from : Add a collection of simplices.
