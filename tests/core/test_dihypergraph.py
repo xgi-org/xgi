@@ -132,7 +132,7 @@ def test_add_empty_edges():
     for edge in [[[], []], (set(), set())]:
         H.add_edge(edge)
 
-    assert H.edges.size.asdict == {0: 0, 1: 0, 2: 0}
+    assert H.edges.size.asdict() == {0: 0, 1: 0}
 
 
 def test_add_edge_rejects_set():
