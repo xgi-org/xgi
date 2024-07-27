@@ -39,11 +39,11 @@ def to_hif(G, path):
     data["metadata"].update(G._net_attr)
 
     if isinstance(G, SimplicialComplex):
-        data["type"] = "asc"
+        data["network-type"] = "asc"
     elif isinstance(G, Hypergraph):
-        data["type"] = "undirected"
+        data["network-type"] = "undirected"
     elif isinstance(G, DiHypergraph):
-        data["type"] = "directed"
+        data["network-type"] = "directed"
 
     # get node data
     try:
@@ -58,13 +58,13 @@ def to_hif(G, path):
         raise XGIError("Edge attributes not saved!")
 
     # hyperedge dict
-    if data["type"] == "directed":
+    if data["network-type"] == "directed":
         data["incidences"] = [
             [e, n, {"direction": d}] for n, e, d in to_bipartite_edgelist(G)
         ]
-    elif data["type"] == "undirected":
+    elif data["network-type"] == "undirected":
         data["incidences"] = [[e, n, {}] for n, e in to_bipartite_edgelist(G)]
-    elif data["type"] == "asc":
+    elif data["network-type"] == "asc":
         # get maximal edges and edges with attributes
         edges_with_attrs = {eid for eid in G.edges if G.edges[eid]}
         maximal_edges = set(G.edges.maximal())
