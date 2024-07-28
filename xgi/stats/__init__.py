@@ -238,7 +238,7 @@ class IDStat:
 
         Notes
         -----
-        This implementation calculates the variance with N in the denominator.
+        This implementation calculates the variance with N in the denominator. (NumPy's default)
         This is in contrast to the sample variation which normalizes by N-1.
         See https://www.allendowney.com/blog/2024/06/08/which-standard-deviation/
         for more details.
