@@ -222,11 +222,27 @@ class IDStat:
         return np.median(self.asnumpy(), axis=0)
 
     def std(self):
-        """The standard deviation of this stat."""
+        """The standard deviation of this stat.
+        
+        Notes
+        -----
+        This implementation calculates the standard deviation with N in the denominator (NumPy's default).
+        This is in contrast to the sample standard deviation which normalizes by N-1.
+        See https://www.allendowney.com/blog/2024/06/08/which-standard-deviation/
+        for more details.
+        """
         return self.asnumpy().std(axis=0)
 
     def var(self):
-        """The variance of this stat."""
+        """The variance of this stat.
+
+        Notes
+        -----
+        This implementation calculates the variance with N in the denominator. (NumPy's default)
+        This is in contrast to the sample variation which normalizes by N-1.
+        See https://www.allendowney.com/blog/2024/06/08/which-standard-deviation/
+        for more details.
+        """
         return self.asnumpy().var(axis=0)
 
     def moment(self, order=2, center=False):
