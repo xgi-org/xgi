@@ -412,7 +412,14 @@ def test_remove_node_weak(diedgelist1, diedgelist2):
     H.remove_node(3)
     H.remove_node(4)
 
-    assert 0 not in H.edges
+    # test keeping empty edges
+    H = xgi.DiHypergraph(diedgelist1)
+    H.remove_node(1)
+    H.remove_node(2)
+    H.remove_node(3)
+    H.remove_node(4, remove_empty=False)
+    assert 0 in H.edges
+    assert H.edges.size[0] == 0
 
     # test multiple edge removal with a single node.
     H = xgi.DiHypergraph(diedgelist2)
@@ -453,9 +460,9 @@ def test_remove_node_strong(diedgelist1):
     # node in both head and tail
     assert 6 in H
     H.remove_node(6, strong=True)
-    # assert 6 not in H
+    assert 6 not in H
 
-    # assert 1 not in H.edges
+    assert 1 not in H.edges
 
 
 def test_remove_nodes_from(diedgelist1):
@@ -466,6 +473,16 @@ def test_remove_nodes_from(diedgelist1):
 
     with pytest.warns(Warning):
         H.remove_nodes_from([1, 2, 3])
+
+    H = xgi.DiHypergraph(diedgelist1)
+
+    H.remove_nodes_from([1, 5], strong=True)
+    assert len(H.edges) == 0
+
+    H = xgi.DiHypergraph(diedgelist1)
+    H.remove_nodes_from([1, 2, 3, 4], remove_empty=False)
+    assert 0 in H.edges
+    assert H.edges.size[0] == 0
 
 
 def test_pickle(diedgelist1):

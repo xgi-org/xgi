@@ -585,6 +585,15 @@ def test_remove_node_weak(edgelist1):
     with pytest.raises(IDNotFound):
         H.remove_node(10)
 
+    # test keeping empty edges
+    H = xgi.Hypergraph(edgelist1)
+    H.remove_node(1)
+    H.remove_node(2)
+    H.remove_node(3, remove_empty=False)
+    H.remove_node(4, remove_empty=False)
+    assert 0 in H.edges and 1 in H.edges
+    assert H.edges.size[0] == 0 and H.edges.size[1] == 0
+
 
 def test_remove_node_strong(edgelist1):
     H = xgi.Hypergraph(edgelist1)
@@ -592,6 +601,27 @@ def test_remove_node_strong(edgelist1):
     H.remove_node(1, strong=True)
     assert 1 not in H
     assert 0 not in H.edges
+
+
+def test_remove_nodes_from(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+
+    H.remove_nodes_from([1, 2, 3])
+    assert 1 not in H and 2 not in H and 3 not in H
+    assert 0 not in H.edges
+
+    with pytest.warns(Warning):
+        H.remove_nodes_from([1, 2, 3])
+
+    H = xgi.Hypergraph(edgelist1)
+
+    H.remove_nodes_from([1, 4], strong=True)
+    assert 0 not in H.edges and 1 not in H.edges
+
+    H = xgi.Hypergraph(edgelist1)
+    H.remove_nodes_from([1, 2, 3, 4], remove_empty=False)
+    assert 0 in H.edges and 1 in H.edges
+    assert H.edges.size[0] == 0 and H.edges.size[1] == 0
 
 
 def test_issue_445(edgelist1):
