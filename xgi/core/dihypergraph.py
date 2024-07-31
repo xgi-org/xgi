@@ -803,7 +803,7 @@ class DiHypergraph:
         if direction == "in":
             self._edge[edge]["in"].add(node)
             self._node[node]["out"].add(edge)
-        if direction == "out":
+        elif direction == "out":
             self._edge[edge]["out"].add(node)
             self._node[node]["in"].add(edge)
 
@@ -863,6 +863,60 @@ class DiHypergraph:
 
             del self._edge[id]
             del self._edge_attr[id]
+
+    def remove_node_from_edge(self, edge, node, direction, remove_empty=True):
+        """Remove a node from an existing edge.
+
+        Parameters
+        ----------
+        edge : hashable
+            The edge ID
+        node : hashable
+            The node ID
+        direction : str
+            "in" or "out" indicates that the node should be removed from
+            the tail or head respectively.
+
+        Raises
+        ------
+        XGIError
+            If either the node or edge does not exist.
+
+        See Also
+        --------
+        remove_node
+        remove_edge
+        add_node_to_edge
+
+        Notes
+        -----
+        If edge is left empty as a result of removing node from it, the edge is also
+        removed.
+
+        """
+        if direction == "in":
+            ed = "in"
+            nd = "out"
+        elif direction == "out":
+            ed = "out"
+            nd = "in"
+        try:
+            self._node[node][nd].remove(edge)
+        except KeyError as e:
+            raise XGIError(f"Node {node} not in the hypergraph") from e
+        except ValueError as e:
+            raise XGIError(f"Node {node} not in edge {edge}") from e
+
+        try:
+            self._edge[edge][ed].remove(node)
+        except KeyError as e:
+            raise XGIError(f"Edge {edge} not in the hypergraph") from e
+        except ValueError as e:
+            raise XGIError(f"Edge {edge} does not contain node {node}") from e
+
+        if not self._edge[edge]["in"] and not self._edge[edge]["out"] and remove_empty:
+            del self._edge[edge]
+            del self._edge_attr[edge]
 
     def set_edge_attributes(self, values, name=None):
         """Set the edge attributes from a value or a dictionary of values.
