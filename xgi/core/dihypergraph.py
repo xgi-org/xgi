@@ -771,6 +771,41 @@ class DiHypergraph:
                 if format2 or format4:
                     update_uid_counter(self, id)
                 break
+    
+    def add_node_to_edge(self, edge, node, direction):
+        """Add one node to an existing edge.
+
+        If the node or edge IDs do not exist, they are created.
+
+        Parameters
+        ----------
+        edge : hashable
+            edge ID
+        node : hashable
+            node ID
+        direction : str
+            "in" or "out" indicates that the node should be added to
+            the tail or head respectively.
+
+        See Also
+        --------
+        add_node
+        add_edge
+        remove_node_from_edge
+        """
+        if edge not in self._edge:
+            self._edge[edge] = {"in": set(), "out": set()}
+            self._edge_attr[edge] = {}
+        if node not in self._node:
+            self._node[node] = {"in": set(), "out": set()}
+            self._node_attr[node] = {}
+        
+        if direction == "in":
+            self._edge[edge]["in"].add(node)
+            self._node[node]["out"].add(edge)
+        if direction == "out":
+            self._edge[edge]["out"].add(node)
+            self._node[node]["in"].add(edge)
 
     def remove_edge(self, id):
         """Remove one edge.
