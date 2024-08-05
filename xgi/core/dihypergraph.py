@@ -900,6 +900,9 @@ class DiHypergraph:
         elif direction == "out":
             ed = "out"
             nd = "in"
+        else:
+            raise XGIError("Invalid direction!")
+        
         try:
             self._node[node][nd].remove(edge)
         except KeyError as e:
