@@ -376,6 +376,10 @@ def convert_labels_to_integers(net, label_attribute="label", in_place=False):
     label_attribute : string, default: "label"
         The attribute name that stores the old node and edge labels
 
+    in_place : bool, optional
+        Whether the relabeling should modify the network in-place or return a new
+        network.
+
     Returns
     -------
     Hypergraph, DiHypergraph, or SimplicialComplex
