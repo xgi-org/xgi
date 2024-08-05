@@ -396,40 +396,41 @@ def convert_labels_to_integers(net, label_attribute="label", in_place=False):
     if not in_place:
         net = net.copy()
 
-    nn = net.nodes
-    ee = net.edges
+    node_attrs = net._node_attr.copy()
+    edge_attrs = net._edge_attr.copy()
+    edges = net._edge.copy()
     net.clear()
-    net.add_nodes_from((id, deepcopy(nn[n])) for n, id in node_dict.items())
-    net.set_node_attributes({n: {label_attribute: id} for id, n in node_dict.items()})
+    net.add_nodes_from((id, deepcopy(node_attrs[n])) for n, id in node_dict.items())
+    net.set_node_attributes({id: {label_attribute: n} for n, id in node_dict.items()})
     if isinstance(net, SimplicialComplex):
         net.add_simplices_from(
             (
-                {node_dict[n] for n in e},
-                edge_dict[id],
-                deepcopy(ee[id]),
+                {node_dict[n] for n in edge},
+                edge_dict[e],
+                deepcopy(edge_attrs[e]),
             )
-            for id, e in ee.members(dtype=dict).items()
+            for e, edge in edges.items()
         )
     elif isinstance(net, Hypergraph):
-        ee.add_edges_from(
+        net.add_edges_from(
             (
-                {node_dict[n] for n in e},
-                edge_dict[id],
-                deepcopy(ee[id]),
+                {node_dict[n] for n in edge},
+                edge_dict[e],
+                deepcopy(edge_attrs[e]),
             )
-            for id, e in ee.members(dtype=dict).items()
+            for e, edge in edges.items()
         )
     elif isinstance(net, DiHypergraph):
         net.add_edges_from(
             (
                 [{node_dict[n] for n in tail}, {node_dict[n] for n in head}],
-                edge_dict[id],
-                deepcopy(ee[id]),
+                edge_dict[e],
+                deepcopy(edge_attrs[e]),
             )
-            for id, (tail, head) in ee.dimembers(dtype=dict).items()
+            for e, (tail, head) in edges.items()
         )
 
-    net.set_edge_attributes({e: {label_attribute: id} for id, e in edge_dict.items()})
+    net.set_edge_attributes({id: {label_attribute: e} for e, id in edge_dict.items()})
 
     if not in_place:
         return net
