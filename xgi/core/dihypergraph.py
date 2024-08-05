@@ -933,23 +933,13 @@ class DiHypergraph:
             _DH = self
         else:
             _DH = self.copy()
+
         if not isolates:
             _DH.remove_nodes_from(_DH.nodes.isolates())
         if relabel:
             from ..utils import convert_labels_to_integers
 
-            temp = convert_labels_to_integers(_DH).copy()
-
-            nn = temp.nodes
-            ee = temp.edges
-
-            _DH.clear()
-            _DH.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-            _DH.add_edges_from(
-                (e, id, deepcopy(temp.edges[id]))
-                for id, e in ee.dimembers(dtype=dict).items()
-            )
-            _DH._net_attr = deepcopy(temp._net_attr)
+            convert_labels_to_integers(_DH, in_place=True)
 
         if not in_place:
             return _DH

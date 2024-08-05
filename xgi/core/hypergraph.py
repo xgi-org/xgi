@@ -1479,18 +1479,7 @@ class Hypergraph:
         if relabel:
             from ..utils import convert_labels_to_integers
 
-            temp = convert_labels_to_integers(_H).copy()
-
-            nn = temp.nodes
-            ee = temp.edges
-
-            _H.clear()
-            _H.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-            _H.add_edges_from(
-                (e, id, deepcopy(temp.edges[id]))
-                for id, e in ee.members(dtype=dict).items()
-            )
-            _H._net_attr = deepcopy(temp._net_attr)
+            convert_labels_to_integers(_H, in_place=True)
 
         if not in_place:
             return _H
