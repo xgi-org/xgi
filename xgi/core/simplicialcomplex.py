@@ -839,33 +839,33 @@ class SimplicialComplex(Hypergraph):
 
     def cleanup(self, isolates=False, connected=True, relabel=True, in_place=True):
         if in_place:
-            S = self
+            _S = self
         else:
-            S = self.copy()
+            _S = self.copy()
         if not isolates:
-            S.remove_nodes_from(S.nodes.isolates())
+            _S.remove_nodes_from(_S.nodes.isolates())
         if connected:
             from ..algorithms import largest_connected_hypergraph
 
-            largest_connected_hypergraph(S, in_place=True)
+            largest_connected_hypergraph(_S, in_place=True)
         if relabel:
             from ..utils import convert_labels_to_integers
 
-            temp = convert_labels_to_integers(S).copy()
+            temp = convert_labels_to_integers(_S).copy()
 
             nn = temp.nodes
             ee = temp.edges
 
-            S.clear()
-            S.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-            S.add_simplices_from(
+            _S.clear()
+            _S.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+            _S.add_simplices_from(
                 (e, id, deepcopy(temp.edges[id]))
                 for id, e in ee.members(dtype=dict).items()
             )
-            S._net_attr = deepcopy(temp._net_attr)
+            _S._net_attr = deepcopy(temp._net_attr)
 
         if not in_place:
-            return S
+            return _S
 
     def freeze(self):
         """Method for freezing a simplicial complex

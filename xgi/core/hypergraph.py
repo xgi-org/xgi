@@ -1462,38 +1462,38 @@ class Hypergraph:
 
         """
         if in_place:
-            H = self
+            _H = self
         else:
-            H = self.copy()
+            _H = self.copy()
 
         if not multiedges:
-            H.merge_duplicate_edges()
+            _H.merge_duplicate_edges()
         if not singletons:
-            H.remove_edges_from(H.edges.singletons())
+            _H.remove_edges_from(_H.edges.singletons())
         if not isolates:
-            H.remove_nodes_from(H.nodes.isolates())
+            _H.remove_nodes_from(_H.nodes.isolates())
         if connected:
             from ..algorithms import largest_connected_hypergraph
 
-            largest_connected_hypergraph(H, in_place=True)
+            largest_connected_hypergraph(_H, in_place=True)
         if relabel:
             from ..utils import convert_labels_to_integers
 
-            temp = convert_labels_to_integers(H).copy()
+            temp = convert_labels_to_integers(_H).copy()
 
             nn = temp.nodes
             ee = temp.edges
 
-            H.clear()
-            H.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-            H.add_edges_from(
+            _H.clear()
+            _H.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+            _H.add_edges_from(
                 (e, id, deepcopy(temp.edges[id]))
                 for id, e in ee.members(dtype=dict).items()
             )
-            H._net_attr = deepcopy(temp._net_attr)
+            _H._net_attr = deepcopy(temp._net_attr)
 
         if not in_place:
-            return H
+            return _H
 
     def freeze(self):
         """Method for freezing a hypergraph which prevents it from being modified

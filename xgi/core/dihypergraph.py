@@ -930,29 +930,29 @@ class DiHypergraph:
 
     def cleanup(self, isolates=False, relabel=True, in_place=True):
         if in_place:
-            DH = self
+            _DH = self
         else:
-            DH = self.copy()
+            _DH = self.copy()
         if not isolates:
-            DH.remove_nodes_from(DH.nodes.isolates())
+            _DH.remove_nodes_from(_DH.nodes.isolates())
         if relabel:
             from ..utils import convert_labels_to_integers
 
-            temp = convert_labels_to_integers(DH).copy()
+            temp = convert_labels_to_integers(_DH).copy()
 
             nn = temp.nodes
             ee = temp.edges
 
-            DH.clear()
-            DH.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-            DH.add_edges_from(
+            _DH.clear()
+            _DH.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+            _DH.add_edges_from(
                 (e, id, deepcopy(temp.edges[id]))
                 for id, e in ee.dimembers(dtype=dict).items()
             )
-            DH._net_attr = deepcopy(temp._net_attr)
+            _DH._net_attr = deepcopy(temp._net_attr)
 
         if not in_place:
-            return DH
+            return _DH
 
     def freeze(self):
         """Method for freezing a dihypergraph which prevents it from being modified
