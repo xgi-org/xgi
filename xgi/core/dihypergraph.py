@@ -930,32 +930,28 @@ class DiHypergraph:
 
     def cleanup(self, isolates=False, relabel=True, in_place=True):
         if in_place:
-            if not isolates:
-                self.remove_nodes_from(self.nodes.isolates())
-            if relabel:
-                from ..utils import convert_labels_to_integers
-
-                temp = convert_labels_to_integers(self).copy()
-
-                nn = temp.nodes
-                ee = temp.edges
-
-                self.clear()
-                self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-                self.add_edges_from(
-                    (e, id, deepcopy(temp.edges[id]))
-                    for id, e in ee.dimembers(dtype=dict).items()
-                )
-                self._net_attr = deepcopy(temp._net_attr)
+            DH = self
         else:
             DH = self.copy()
-            if not isolates:
-                DH.remove_nodes_from(DH.nodes.isolates())
-            if relabel:
-                from ..utils import convert_labels_to_integers
+        if not isolates:
+            DH.remove_nodes_from(DH.nodes.isolates())
+        if relabel:
+            from ..utils import convert_labels_to_integers
 
-                DH = convert_labels_to_integers(DH)
+            temp = convert_labels_to_integers(DH).copy()
 
+            nn = temp.nodes
+            ee = temp.edges
+
+            DH.clear()
+            DH.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+            DH.add_edges_from(
+                (e, id, deepcopy(temp.edges[id]))
+                for id, e in ee.dimembers(dtype=dict).items()
+            )
+            DH._net_attr = deepcopy(temp._net_attr)
+
+        if not in_place:
             return DH
 
     def freeze(self):

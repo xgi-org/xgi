@@ -839,40 +839,32 @@ class SimplicialComplex(Hypergraph):
 
     def cleanup(self, isolates=False, connected=True, relabel=True, in_place=True):
         if in_place:
-            if not isolates:
-                self.remove_nodes_from(self.nodes.isolates())
-            if connected:
-                from ..algorithms import largest_connected_component
-
-                self.remove_nodes_from(self.nodes - largest_connected_component(self))
-            if relabel:
-                from ..utils import convert_labels_to_integers
-
-                temp = convert_labels_to_integers(self).copy()
-
-                nn = temp.nodes
-                ee = temp.edges
-
-                self.clear()
-                self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-                self.add_simplices_from(
-                    (e, id, deepcopy(temp.edges[id]))
-                    for id, e in ee.members(dtype=dict).items()
-                )
-                self._net_attr = deepcopy(temp._net_attr)
+            S = self
         else:
             S = self.copy()
-            if not isolates:
-                S.remove_nodes_from(S.nodes.isolates())
-            if connected:
-                from ..algorithms import largest_connected_component
+        if not isolates:
+            S.remove_nodes_from(S.nodes.isolates())
+        if connected:
+            from ..algorithms import largest_connected_hypergraph
 
-                S.remove_nodes_from(S.nodes - largest_connected_component(S))
-            if relabel:
-                from ..utils import convert_labels_to_integers
+            largest_connected_hypergraph(S, in_place=True)
+        if relabel:
+            from ..utils import convert_labels_to_integers
 
-                S = convert_labels_to_integers(S)
+            temp = convert_labels_to_integers(S).copy()
 
+            nn = temp.nodes
+            ee = temp.edges
+
+            S.clear()
+            S.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
+            S.add_simplices_from(
+                (e, id, deepcopy(temp.edges[id]))
+                for id, e in ee.members(dtype=dict).items()
+            )
+            S._net_attr = deepcopy(temp._net_attr)
+
+        if not in_place:
             return S
 
     def freeze(self):
