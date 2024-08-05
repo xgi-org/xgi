@@ -423,11 +423,14 @@ def convert_labels_to_integers(net, label_attribute="label", in_place=False):
     elif isinstance(net, DiHypergraph):
         net.add_edges_from(
             (
-                [{node_dict[n] for n in tail}, {node_dict[n] for n in head}],
+                [
+                    {node_dict[n] for n in edge["in"]},
+                    {node_dict[n] for n in edge["out"]},
+                ],
                 edge_dict[e],
                 deepcopy(edge_attrs[e]),
             )
-            for e, (tail, head) in edges.items()
+            for e, edge in edges.items()
         )
 
     net.set_edge_attributes({id: {label_attribute: e} for e, id in edge_dict.items()})
