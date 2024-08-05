@@ -365,7 +365,7 @@ def subfaces(edges, order=None):
     return faces
 
 
-def convert_labels_to_integers(net, label_attribute="label"):
+def convert_labels_to_integers(net, label_attribute="label", in_place=False):
     """Relabel node and edge IDs to be sequential integers.
 
     Parameters
@@ -375,6 +375,10 @@ def convert_labels_to_integers(net, label_attribute="label"):
 
     label_attribute : string, default: "label"
         The attribute name that stores the old node and edge labels
+
+    in_place : bool, optional
+        Whether the relabeling should modify the network in-place or return a new
+        network.
 
     Returns
     -------
@@ -393,46 +397,50 @@ def convert_labels_to_integers(net, label_attribute="label"):
     node_dict = dict(zip(net.nodes, range(net.num_nodes)))
     edge_dict = dict(zip(net.edges, range(net.num_edges)))
 
-    temp_net = net.__class__()
-    temp_net._net_attr = deepcopy(net._net_attr)
+    if not in_place:
+        net = net.copy()
 
-    temp_net.add_nodes_from((id, deepcopy(net.nodes[n])) for n, id in node_dict.items())
-    temp_net.set_node_attributes(
-        {n: {label_attribute: id} for id, n in node_dict.items()}
-    )
+    node_attrs = net._node_attr.copy()
+    edge_attrs = net._edge_attr.copy()
+    edges = net._edge.copy()
+    net.clear()
+    net.add_nodes_from((id, deepcopy(node_attrs[n])) for n, id in node_dict.items())
+    net.set_node_attributes({id: {label_attribute: n} for n, id in node_dict.items()})
     if isinstance(net, SimplicialComplex):
-        temp_net.add_simplices_from(
+        net.add_simplices_from(
             (
-                {node_dict[n] for n in e},
-                edge_dict[id],
-                deepcopy(net.edges[id]),
+                {node_dict[n] for n in edge},
+                edge_dict[e],
+                deepcopy(edge_attrs[e]),
             )
-            for id, e in net.edges.members(dtype=dict).items()
+            for e, edge in edges.items()
         )
     elif isinstance(net, Hypergraph):
-        temp_net.add_edges_from(
+        net.add_edges_from(
             (
-                {node_dict[n] for n in e},
-                edge_dict[id],
-                deepcopy(net.edges[id]),
+                {node_dict[n] for n in edge},
+                edge_dict[e],
+                deepcopy(edge_attrs[e]),
             )
-            for id, e in net.edges.members(dtype=dict).items()
+            for e, edge in edges.items()
         )
     elif isinstance(net, DiHypergraph):
-        temp_net.add_edges_from(
+        net.add_edges_from(
             (
-                [{node_dict[n] for n in tail}, {node_dict[n] for n in head}],
-                edge_dict[id],
-                deepcopy(net.edges[id]),
+                [
+                    {node_dict[n] for n in edge["in"]},
+                    {node_dict[n] for n in edge["out"]},
+                ],
+                edge_dict[e],
+                deepcopy(edge_attrs[e]),
             )
-            for id, (tail, head) in net.edges.dimembers(dtype=dict).items()
+            for e, edge in edges.items()
         )
 
-    temp_net.set_edge_attributes(
-        {e: {label_attribute: id} for id, e in edge_dict.items()}
-    )
+    net.set_edge_attributes({id: {label_attribute: e} for e, id in edge_dict.items()})
 
-    return temp_net
+    if not in_place:
+        return net
 
 
 def hist(vals, bins=10, bin_edges=False, density=False, log_binning=False):
