@@ -721,6 +721,20 @@ class EdgeView(IDView):
         """
         return self.filterby("size", 1)
 
+    def empty(self):
+        """Edges that contain no nodes.
+
+        Returns
+        -------
+        EdgeView containing the empty edges.
+
+        See Also
+        --------
+        :meth:`NodeView.isolates`
+
+        """
+        return self.filterby("size", 0)
+
     def maximal(self, strict=False):
         """Returns the maximal edges as an EdgeView.
 

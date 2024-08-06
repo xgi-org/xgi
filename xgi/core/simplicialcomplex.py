@@ -268,11 +268,6 @@ class SimplicialComplex(Hypergraph):
         **attr : dict, optional
             Attributes of the new simplex.
 
-        Raises
-        -----
-        XGIError
-            If `members` is empty.
-
         See Also
         --------
         add_simplices_from : Add a collection of simplices.
@@ -312,9 +307,6 @@ class SimplicialComplex(Hypergraph):
             members = frozenset(members)
         except TypeError:
             raise XGIError("The simplex cannot be cast to a frozenset.")
-
-        if not members:
-            raise XGIError("Cannot add an empty edge")
 
         if self.has_simplex(members):
             return
