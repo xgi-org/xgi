@@ -201,7 +201,7 @@ class IDView(Mapping, Set):
         See Also
         --------
         IDView.filterby_attr : For more details, see the `tutorial
-        <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+        <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
         Examples
         --------
@@ -288,7 +288,7 @@ class IDView(Mapping, Set):
         See Also
         --------
         IDView.filterby : Identical method.  For more details, see the `tutorial
-        <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+        <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
         Notes
         -----
@@ -555,7 +555,7 @@ class NodeView(IDView):
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `NodeView` class.  For more details, see the
     `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     """
 
@@ -652,7 +652,7 @@ class EdgeView(IDView):
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `EdgeView` class.  For more details, see the
     `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     """
 
@@ -830,7 +830,7 @@ class DiNodeView(IDView):
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `NodeView` class.  For more details, see the
     `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     """
 
@@ -950,7 +950,7 @@ class DiEdgeView(IDView):
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `EdgeView` class.  For more details, see the
     `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     """
 

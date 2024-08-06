@@ -259,10 +259,10 @@ def unique_edge_sizes(H):
 
     Returns
     -------
-    list()
+    list of int
         The unique edge sizes in ascending order by size.
     """
-    return sorted(set(H.edges.size.asnumpy()))
+    return sorted(set(H.edges.size.aslist()))
 
 
 def density(H, order=None, max_order=None, ignore_singletons=False):

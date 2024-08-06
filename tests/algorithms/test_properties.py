@@ -92,6 +92,11 @@ def test_unique_edge_sizes(edgelist1, edgelist2, edgelist4, edgelist5):
     assert xgi.unique_edge_sizes(H3) == [3, 4]
     assert xgi.unique_edge_sizes(H4) == [1, 2, 3, 4]
 
+    # ensure python int and not numpy int
+    # see https://github.com/xgi-org/xgi/issues/566
+
+    assert isinstance(xgi.unique_edge_sizes(H1)[0], int)
+
 
 def test_density_no_nodes():
     H = xgi.Hypergraph()

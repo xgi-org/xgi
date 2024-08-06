@@ -40,7 +40,7 @@ NodeView((1, 4))
 
 Many other features are available, including edge-statistics, and user-defined
 statistics.  For more details, see the `tutorial
-<https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+<https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
 """
 
@@ -69,7 +69,7 @@ class IDStat:
         self.view = view
         self.net = network
         self.args = () if args is None else args
-        self.kwargs = {} if args is None else kwargs
+        self.kwargs = {} if kwargs is None else kwargs
         self.func = func
 
     def __call__(self, *args, **kwargs):
@@ -222,11 +222,27 @@ class IDStat:
         return np.median(self.asnumpy(), axis=0)
 
     def std(self):
-        """The standard deviation of this stat."""
+        """The standard deviation of this stat.
+
+        Notes
+        -----
+        This implementation calculates the standard deviation with N in the denominator (NumPy's default).
+        This is in contrast to the sample standard deviation which normalizes by N-1.
+        See https://www.allendowney.com/blog/2024/06/08/which-standard-deviation/
+        for more details.
+        """
         return self.asnumpy().std(axis=0)
 
     def var(self):
-        """The variance of this stat."""
+        """The variance of this stat.
+
+        Notes
+        -----
+        This implementation calculates the variance with N in the denominator. (NumPy's default)
+        This is in contrast to the sample variation which normalizes by N-1.
+        See https://www.allendowney.com/blog/2024/06/08/which-standard-deviation/
+        for more details.
+        """
         return self.asnumpy().var(axis=0)
 
     def moment(self, order=2, center=False):
@@ -296,7 +312,7 @@ class NodeStat(IDStat):
 
     `NodeStat` objects represent a mapping that assigns a value to each node in a
     network.  For more details, see the `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     """
 
@@ -306,7 +322,7 @@ class DiNodeStat(IDStat):
 
     `NodeStat` objects represent a mapping that assigns a value to each node in a
     network.  For more details, see the `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     """
 
@@ -316,7 +332,7 @@ class EdgeStat(IDStat):
 
     `EdgeStat` objects represent a mapping that assigns a value to each edge in a
     network.  For more details, see the `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     """
 
@@ -326,7 +342,7 @@ class DiEdgeStat(IDStat):
 
     `EdgeStat` objects represent a mapping that assigns a value to each edge in a
     network.  For more details, see the `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     """
 
@@ -540,7 +556,7 @@ class MultiNodeStat(MultiIDStat):
     """Multiple node-quantity mappings.
 
     For more details, see the `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
     """
 
     statsclass = NodeStat
@@ -551,7 +567,7 @@ class MultiDiNodeStat(MultiIDStat):
     """Multiple node-quantity mappings.
 
     For more details, see the `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     """
 
@@ -563,7 +579,7 @@ class MultiEdgeStat(MultiIDStat):
     """Multiple edge-quantity mappings.
 
     For more details, see the `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     """
 
@@ -575,7 +591,7 @@ class MultiDiEdgeStat(MultiIDStat):
     """Multiple edge-quantity mappings.
 
     For more details, see the `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     """
 

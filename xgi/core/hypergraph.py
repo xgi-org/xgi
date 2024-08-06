@@ -55,7 +55,7 @@ class Hypergraph:
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `Hypergraph` class.  For more details, see the
     `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     Examples
     --------
@@ -1470,53 +1470,27 @@ class Hypergraph:
 
         """
         if in_place:
-            if not multiedges:
-                self.merge_duplicate_edges()
-            if not singletons:
-                self.remove_edges_from(self.edges.singletons())
-            if not empty_edges:
-                self.remove_edges_from(self.edges.empty())
-            if not isolates:
-                self.remove_nodes_from(self.nodes.isolates())
-            if connected:
-                from ..algorithms import largest_connected_component
-
-                self.remove_nodes_from(self.nodes - largest_connected_component(self))
-            if relabel:
-                from ..utils import convert_labels_to_integers
-
-                temp = convert_labels_to_integers(self).copy()
-
-                nn = temp.nodes
-                ee = temp.edges
-
-                self.clear()
-                self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-                self.add_edges_from(
-                    (e, id, deepcopy(temp.edges[id]))
-                    for id, e in ee.members(dtype=dict).items()
-                )
-                self._net_attr = deepcopy(temp._net_attr)
+            _H = self
         else:
-            H = self.copy()
-            if not multiedges:
-                H.merge_duplicate_edges()
-            if not singletons:
-                H.remove_edges_from(H.edges.singletons())
-            if not empty_edges:
-                H.remove_edges_from(H.edges.empty())
-            if not isolates:
-                H.remove_nodes_from(H.nodes.isolates())
-            if connected:
-                from ..algorithms import largest_connected_component
+            _H = self.copy()
 
-                H.remove_nodes_from(H.nodes - largest_connected_component(H))
-            if relabel:
-                from ..utils import convert_labels_to_integers
+        if not multiedges:
+            _H.merge_duplicate_edges()
+        if not singletons:
+            _H.remove_edges_from(_H.edges.singletons())
+        if not isolates:
+            _H.remove_nodes_from(_H.nodes.isolates())
+        if connected:
+            from ..algorithms import largest_connected_hypergraph
 
-                H = convert_labels_to_integers(H)
+            largest_connected_hypergraph(_H, in_place=True)
+        if relabel:
+            from ..utils import convert_labels_to_integers
 
-            return H
+            convert_labels_to_integers(_H, in_place=True)
+
+        if not in_place:
+            return _H
 
     def freeze(self):
         """Method for freezing a hypergraph which prevents it from being modified

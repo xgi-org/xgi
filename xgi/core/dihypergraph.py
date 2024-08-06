@@ -63,7 +63,7 @@ class DiHypergraph:
     In addition to the methods listed in this page, other methods defined in the `stats`
     package are also accessible via the `DiHypergraph` class.  For more details, see the
     `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/Tutorial%206%20-%20Statistics.html>`_.
+    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
     References
     ----------
@@ -930,33 +930,19 @@ class DiHypergraph:
 
     def cleanup(self, isolates=False, relabel=True, in_place=True):
         if in_place:
-            if not isolates:
-                self.remove_nodes_from(self.nodes.isolates())
-            if relabel:
-                from ..utils import convert_labels_to_integers
-
-                temp = convert_labels_to_integers(self).copy()
-
-                nn = temp.nodes
-                ee = temp.edges
-
-                self.clear()
-                self.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
-                self.add_edges_from(
-                    (e, id, deepcopy(temp.edges[id]))
-                    for id, e in ee.dimembers(dtype=dict).items()
-                )
-                self._net_attr = deepcopy(temp._net_attr)
+            _DH = self
         else:
-            DH = self.copy()
-            if not isolates:
-                DH.remove_nodes_from(DH.nodes.isolates())
-            if relabel:
-                from ..utils import convert_labels_to_integers
+            _DH = self.copy()
 
-                DH = convert_labels_to_integers(DH)
+        if not isolates:
+            _DH.remove_nodes_from(_DH.nodes.isolates())
+        if relabel:
+            from ..utils import convert_labels_to_integers
 
-            return DH
+            convert_labels_to_integers(_DH, in_place=True)
+
+        if not in_place:
+            return _DH
 
     def freeze(self):
         """Method for freezing a dihypergraph which prevents it from being modified
