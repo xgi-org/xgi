@@ -1130,7 +1130,7 @@ class Hypergraph:
             del self._edge[id]
             del self._edge_attr[id]
 
-    def remove_node_from_edge(self, edge, node, remove_empty=False):
+    def remove_node_from_edge(self, edge, node, remove_empty=True):
         """Remove a node from an existing edge.
 
         Parameters
@@ -1439,7 +1439,6 @@ class Hypergraph:
         self,
         isolates=False,
         singletons=False,
-        empty_edges=False,
         multiedges=False,
         connected=True,
         relabel=True,
@@ -1453,8 +1452,6 @@ class Hypergraph:
             Whether isolated nodes are allowed, by default False.
         singletons : bool, optional
             Whether singleton edges are allowed, by default False.
-        empty_edges : bool, optional
-            Whether empty edges are allowed, by default False.
         multiedges : bool, optional
             Whether multiedges are allowed, by default False.
         connected : bool, optional

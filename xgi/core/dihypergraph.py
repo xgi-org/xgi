@@ -379,7 +379,7 @@ class DiHypergraph:
             Whether to execute weak or strong removal.
         remove_empty : bool, optional
             Whether to remove empty edges (0 members in both head and tail).
-            By default, False.
+            By default, True.
 
         Raises
         ------
@@ -427,7 +427,7 @@ class DiHypergraph:
             Whether to execute weak or strong removal.
         remove_empty : bool, optional
             Whether to remove empty edges (0 members in both head and tail).
-            By default, False.
+            By default, True.
 
         See Also
         --------
