@@ -909,18 +909,13 @@ class DiHypergraph:
             raise XGIError("Invalid direction!")
 
         try:
-            self._node[node][nd].remove(edge)
-        except KeyError as e:
-            raise XGIError(f"Node {node} not in the hypergraph") from e
-        except ValueError as e:
-            raise XGIError(f"Node {node} not in edge {edge}") from e
-
-        try:
             self._edge[edge][ed].remove(node)
         except KeyError as e:
             raise XGIError(f"Edge {edge} not in the hypergraph") from e
         except ValueError as e:
             raise XGIError(f"Edge {edge} does not contain node {node}") from e
+
+        self._node[node][nd].remove(edge)
 
         if not self._edge[edge]["in"] and not self._edge[edge]["out"] and remove_empty:
             del self._edge[edge]

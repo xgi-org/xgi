@@ -143,15 +143,34 @@ def test_add_node_to_edge():
     H.add_edge([["A", "B"], ["C", "D"]], "rxn1")
     H.add_node_to_edge("rxn1", "D", "in")
     H.add_node_to_edge("rxn1", "A", "out")
-    H.add_node_to_edge("rxn2", "A", "in")
+    H.add_node_to_edge("rxn2", "E", "in")
     assert H.edges.dimembers(dtype=dict) == {
         "rxn1": ({"A", "B", "D"}, {"A", "C", "D"}),
-        "rxn2": ({"A"}, set()),
+        "rxn2": ({"E"}, set()),
     }
+
+    assert "E" in H.nodes
+    assert H.nodes["E"] == {}
+
+    # test bad direction
+    with pytest.raises(XGIError):
+        H.add_node_to_edge(0, 1, "test")
 
 
 def test_remove_node_from_edge(diedgelist1, diedgelist2):
     H = xgi.DiHypergraph(diedgelist1)
+
+    # test bad direction
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(0, 1, "test")
+
+    # test non-existent node
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(0, 1000, "in")
+
+    # test non-existent edge
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(1000, 1, "in")
 
     # it's in the input, not the output.
     with pytest.raises(XGIError):
