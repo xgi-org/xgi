@@ -577,8 +577,6 @@ class Hypergraph:
 
         """
         members = set(members)
-        if not members:
-            raise XGIError("Cannot add an empty edge")
 
         if id in self._edge.keys():  # check that uid is not present yet
             warn(f"uid {id} already exists, cannot add edge {members}")
