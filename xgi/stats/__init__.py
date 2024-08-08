@@ -223,7 +223,7 @@ class IDStat:
 
     def std(self):
         """The standard deviation of this stat.
-        
+
         Notes
         -----
         This implementation calculates the standard deviation with N in the denominator (NumPy's default).

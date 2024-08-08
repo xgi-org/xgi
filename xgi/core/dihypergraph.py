@@ -771,7 +771,7 @@ class DiHypergraph:
                 if format2 or format4:
                     update_uid_counter(self, id)
                 break
-    
+
     def add_node_to_edge(self, edge, node, direction):
         """Add one node to an existing edge.
 
@@ -793,19 +793,24 @@ class DiHypergraph:
         add_edge
         remove_node_from_edge
         """
+        if direction == "in":
+            ed = "in"
+            nd = "out"
+        elif direction == "out":
+            ed = "out"
+            nd = "in"
+        else:
+            raise XGIError("Invalid direction!")
+
         if edge not in self._edge:
             self._edge[edge] = {"in": set(), "out": set()}
             self._edge_attr[edge] = {}
         if node not in self._node:
             self._node[node] = {"in": set(), "out": set()}
             self._node_attr[node] = {}
-        
-        if direction == "in":
-            self._edge[edge]["in"].add(node)
-            self._node[node]["out"].add(edge)
-        elif direction == "out":
-            self._edge[edge]["out"].add(node)
-            self._node[node]["in"].add(edge)
+
+        self._edge[edge][ed].add(node)
+        self._node[node][nd].add(edge)
 
     def remove_edge(self, id):
         """Remove one edge.
@@ -902,7 +907,7 @@ class DiHypergraph:
             nd = "in"
         else:
             raise XGIError("Invalid direction!")
-        
+
         try:
             self._node[node][nd].remove(edge)
         except KeyError as e:
