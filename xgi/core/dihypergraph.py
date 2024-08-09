@@ -908,12 +908,12 @@ class DiHypergraph:
         else:
             raise XGIError("Invalid direction!")
 
-        try:
+        if edge not in self._edge:
+            raise XGIError(f"Edge {edge} not in the hypergraph")
+        elif node not in self._edge[edge][ed]:
+            raise XGIError(f"{ed}-edge {edge} does not contain node {node}")
+        else:
             self._edge[edge][ed].remove(node)
-        except KeyError as e:
-            raise XGIError(f"Edge {edge} not in the hypergraph") from e
-        except ValueError as e:
-            raise XGIError(f"Edge {edge} does not contain node {node}") from e
 
         self._node[node][nd].remove(edge)
 
