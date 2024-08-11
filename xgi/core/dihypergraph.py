@@ -910,6 +910,8 @@ class DiHypergraph:
 
         if edge not in self._edge:
             raise XGIError(f"Edge {edge} not in the hypergraph")
+        if node not in self._node:
+            raise XGIError(f"Node {node} not in the hypergraph")
         elif node not in self._edge[edge][ed]:
             raise XGIError(f"{ed}-edge {edge} does not contain node {node}")
         else:
