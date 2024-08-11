@@ -238,6 +238,41 @@ def test_add_node_to_edge():
     }
 
 
+def test_remove_node_from_edge(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+
+    # test non-existent node
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(1, 1000)
+
+    # test non-existent edge
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(1000, 1)
+
+    # test node which exists, but not in the edge
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(1, 1)
+
+    H.remove_node_from_edge(0, 1)
+    assert 1 not in H.edges.members(0)
+
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(0, 1)
+
+    H.remove_node_from_edge(0, 2)
+    H.remove_node_from_edge(0, 3)
+
+    assert 0 not in H.edges
+
+    # test leaving empty edges
+    H = xgi.Hypergraph(edgelist1)
+    H.remove_node_from_edge(0, 1)
+    H.remove_node_from_edge(0, 2)
+    H.remove_node_from_edge(0, 3, remove_empty=False)
+    assert 0 in H.edges
+    assert H.edges.members(0) == set()
+
+
 def test_add_edges_from_iterable_of_members():
     edges = [{0, 1}, {1, 2}, {2, 3, 4}]
     H = xgi.Hypergraph()
