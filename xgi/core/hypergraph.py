@@ -1161,6 +1161,8 @@ class Hypergraph:
         """
         if edge not in self._edge:
             raise XGIError(f"Edge {edge} not in the hypergraph")
+        elif node not in self._node:
+            raise XGIError(f"Node {node} not in the hypergraph")
         elif node not in self._edge[edge]:
             raise XGIError(f"Edge {edge} does not contain node {node}")
         else:
