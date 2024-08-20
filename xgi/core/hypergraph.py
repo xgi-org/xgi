@@ -405,7 +405,7 @@ class Hypergraph:
                 self._node_attr[n] = self._node_attr_dict_factory()
             self._node_attr[n].update(newdict)
 
-    def remove_node(self, n, strong=False):
+    def remove_node(self, n, strong=False, remove_empty=True):
         """Remove a single node.
 
         The removal may be weak (default) or strong.  In weak removal, the node is
@@ -417,9 +417,10 @@ class Hypergraph:
         ----------
         n : node
             A node in the hypergraph
-
         strong : bool, optional
             Whether to execute weak or strong removal. By default, False.
+        remove_empty : bool, optional
+            Whether to remove empty edges. By default, True.
 
         Raises
         ------
@@ -445,17 +446,21 @@ class Hypergraph:
         else:  # weak removal
             for edge in edge_neighbors:
                 self._edge[edge].remove(n)
-                if not self._edge[edge]:
+                if not self._edge[edge] and remove_empty:
                     del self._edge[edge]
                     del self._edge_attr[edge]
 
-    def remove_nodes_from(self, nodes):
+    def remove_nodes_from(self, nodes, strong=False, remove_empty=True):
         """Remove multiple nodes.
 
         Parameters
         ----------
         nodes : iterable
             An iterable of nodes.
+        strong : bool, optional
+            Whether to execute weak or strong removal. By default, False.
+        remove_empty : bool, optional
+            Whether to remove empty edges. By default, True.
 
         See Also
         --------
@@ -466,7 +471,7 @@ class Hypergraph:
             if n not in self:
                 warn(f"Node {n} not in hypergraph")
                 continue
-            self.remove_node(n)
+            self.remove_node(n, strong=strong, remove_empty=remove_empty)
 
     def set_node_attributes(self, values, name=None):
         """Sets node attributes from a given value or dictionary of values.
@@ -577,8 +582,6 @@ class Hypergraph:
 
         """
         members = set(members)
-        if not members:
-            raise XGIError("Cannot add an empty edge")
 
         if id in self._edge.keys():  # check that uid is not present yet
             warn(f"uid {id} already exists, cannot add edge {members}")
@@ -1127,7 +1130,7 @@ class Hypergraph:
             del self._edge[id]
             del self._edge_attr[id]
 
-    def remove_node_from_edge(self, edge, node):
+    def remove_node_from_edge(self, edge, node, remove_empty=True):
         """Remove a node from an existing edge.
 
         Parameters
@@ -1136,6 +1139,8 @@ class Hypergraph:
             The edge ID
         node : hashable
             The node ID
+        remove_empty : bool, optional
+            Whether empty edges are removed. By default, True.
 
         Raises
         ------
@@ -1154,21 +1159,18 @@ class Hypergraph:
         removed.
 
         """
-        try:
-            self._node[node].remove(edge)
-        except KeyError as e:
-            raise XGIError(f"Node {node} not in the hypergraph") from e
-        except ValueError as e:
-            raise XGIError(f"Node {node} not in edge {edge}") from e
-
-        try:
+        if edge not in self._edge:
+            raise XGIError(f"Edge {edge} not in the hypergraph")
+        elif node not in self._node:
+            raise XGIError(f"Node {node} not in the hypergraph")
+        elif node not in self._edge[edge]:
+            raise XGIError(f"Edge {edge} does not contain node {node}")
+        else:
             self._edge[edge].remove(node)
-        except KeyError as e:
-            raise XGIError(f"Edge {edge} not in the hypergraph") from e
-        except ValueError as e:
-            raise XGIError(f"Edge {edge} does not contain node {node}") from e
 
-        if not self._edge[edge]:
+        self._node[node].remove(edge)
+
+        if not self._edge[edge] and remove_empty:
             del self._edge[edge]
             del self._edge_attr[edge]
 
