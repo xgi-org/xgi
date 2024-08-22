@@ -46,25 +46,17 @@ def to_hif(G, path):
         data["network-type"] = "directed"
 
     # get node data
-    try:
-        isolates = set(G.nodes.isolates())
-        nodes_with_attrs = set(n for n in G.nodes if G.nodes[n])
-        for n in isolates.union(nodes_with_attrs):
-            attr = {"attr": G.nodes[n]} if G.nodes[n] else {}
-            data["nodes"].append(IDDict({"node": n}) + attr)
+    isolates = set(G.nodes.isolates())
+    nodes_with_attrs = set(n for n in G.nodes if G.nodes[n])
+    for n in isolates.union(nodes_with_attrs):
+        attr = {"attr": G.nodes[n]} if G.nodes[n] else {}
+        data["nodes"].append(IDDict({"node": n}) + attr)
 
-    except KeyError:
-        raise XGIError("Node attributes not saved!")
-
-    try:
-        empty = set(G.edges.empty())
-        edges_with_attrs = set(e for e in G.edges if G.edges[e])
-        for e in empty.union(edges_with_attrs):
-            attr = {"attr": G.edges[e]} if G.edges[e] else {}
-            data["edges"].append(IDDict({"edge": e}) + attr)
-
-    except KeyError:
-        raise XGIError("Edge attributes not saved!")
+    empty = set(G.edges.empty())
+    edges_with_attrs = set(e for e in G.edges if G.edges[e])
+    for e in empty.union(edges_with_attrs):
+        attr = {"attr": G.edges[e]} if G.edges[e] else {}
+        data["edges"].append(IDDict({"edge": e}) + attr)
 
     # hyperedge dict
     if data["network-type"] == "directed":
@@ -155,12 +147,8 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
     else:
         network_type = "undirected"
 
-    if network_type == "asc":
-        # Convert to simplicial complex after
+    if network_type in {"asc", "undirected"}:
         G = Hypergraph()
-    elif network_type == "undirected":
-        G = Hypergraph()
-        network_type = "undirected"
     elif network_type == "directed":
         G = DiHypergraph()
     else:
@@ -171,28 +159,24 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
         G._net_attr.update(data["metadata"])
 
     # Import network structure through incidence records
-    try:
-        if network_type == "directed":
-            edgedict = defaultdict(lambda: {"in": set(), "out": set()})
+    if network_type == "directed":
+        edgedict = defaultdict(lambda: {"in": set(), "out": set()})
+    else:
+        edgedict = defaultdict(set)
+
+    for record in data["incidences"]:
+        n = record["node"]
+        e = record["edge"]
+        if "attr" in record:
+            attr = record["attr"]
         else:
-            edgedict = defaultdict(set)
+            attr = {}
 
-        for record in data["incidences"]:
-            n = record["node"]
-            e = record["edge"]
-            if "attr" in record:
-                attr = record["attr"]
-            else:
-                attr = {}
-
-            if network_type == "directed":
-                d = record["direction"]
-                G.add_node_to_edge(n, e, d, **attr)
-            else:
-                G.add_node_to_edge(n, e, **attr)
-
-    except KeyError as e:
-        raise XGIError("Failed to import incidences.") from e
+        if network_type == "directed":
+            d = record["direction"]
+            G.add_node_to_edge(n, e, d)
+        else:
+            G.add_node_to_edge(n, e)
 
     # import node attributes if they exist
     if "nodes" in data:
@@ -202,10 +186,11 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
                 attr = record["attr"]
             else:
                 attr = {}
-        if n not in G._node:
-            G.add_node(n, **attr)
-        else:
-            G.set_node_attributes({n: attr})
+
+            if n not in G._node:
+                G.add_node(n, **attr)
+            else:
+                G.set_node_attributes({n: attr})
 
     # import edge attributes if they exist
     if "edges" in data:
@@ -215,6 +200,7 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
                 attr = record["attr"]
             else:
                 attr = {}
+
             if e not in G._edge:
                 G.add_edge(_empty_edge(network_type), e, **attr)
             else:
