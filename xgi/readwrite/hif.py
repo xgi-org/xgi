@@ -47,16 +47,27 @@ def to_hif(G, path):
 
     # get node data
     try:
-        data["nodes"] = [
-            IDDict({"node": n}) + IDDict({"attr": G.nodes[n]}) for n in G.nodes
-        ]
+        isolates = set(G.nodes.isolates())
+        nodes_with_attrs = set(n for n in G.nodes if G.nodes[n])
+        for n in isolates.union(nodes_with_attrs):
+            attr = {"attr": G.nodes[n]} if G.nodes[n] else {}
+
+            data["nodes"] = [
+                IDDict({"node": n}) + attr for n in G.nodes
+            ]
+
     except KeyError:
         raise XGIError("Node attributes not saved!")
 
     try:
-        data["edges"] = [
-            IDDict({"edge": e}) + IDDict({"attr": G.edges[e]}) for e in G.edges
-        ]
+        empty = set(G.edges.empty())
+        edges_with_attrs = set(n for n in G.nodes if G.nodes[n])
+        for e in empty.union(edges_with_attrs):
+            attr = {"attr": G.nodes[e]} if G.edges[e] else {}
+
+            data["edges"] = [
+                IDDict({"edge": e}) + attr for e in G.edges
+            ]
 
     except KeyError:
         raise XGIError("Edge attributes not saved!")
@@ -156,9 +167,6 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
         else:
             return {"in": set(), "out": set()}
 
-    if not max_order:
-        max_order = np.inf
-
     if "network-type" in data:
         network_type = data["network-type"]
     else:
@@ -186,69 +194,48 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
         else:
             edgedict = defaultdict(set)
 
-        for eid, nid, attrs in data["incidences"]:
-            if edgetype:
-                try:
-                    eid = edgetype(eid)
-                except ValueError as e:
-                    raise TypeError(
-                        f"Failed to convert the edge with ID {eid} to type {edgetype}."
-                    ) from e
-
-            if nodetype:
-                try:
-                    eid = edgetype(eid)
-                except ValueError as e:
-                    raise TypeError(
-                        f"Failed to convert node with ID {nid} to type {nodetype}."
-                    ) from e
+        for record in data["incidences"]:
+            n = record["node"]
+            e = record["edge"]
+            if "attr" in record:
+                attr = record["attr"]
+            else:
+                attr = {}
 
             if network_type == "directed":
-                direction = attrs["direction"]
-                edgedict[eid][direction].add(nid)
+                d = record["direction"]
+                G.add_node_to_edge(n, e, d, **attr)
             else:
-                edgedict[eid].add(nid)
+                G.add_node_to_edge(n, e, **attr)
 
-        for eid, e in edgedict.items():
-            if network_type == "directed":
-                order = len(e["in"].union(e["out"])) - 1
-            else:
-                order = len(e) - 1
-
-            if order <= max_order:
-                G.add_edge(e, eid)
     except KeyError as e:
         raise XGIError("Failed to import incidences.") from e
 
     # import node attributes if they exist
     if "nodes" in data:
-        for nid, attrs in data["nodes"]:
-            if nodetype:
-                try:
-                    nid = nodetype(nid)
-                except ValueError as e:
-                    raise TypeError(
-                        f"Failed to convert node IDs to type {nodetype}."
-                    ) from e
-            if nid not in G._node:
-                G.add_node(nid, **attrs)
+        for record in data["nodes"]:
+            n = record["node"]
+            if "attr" in record:
+                attr = record["attr"]
             else:
-                G.set_node_attributes({nid: attrs})
+                attr = {}
+        if n not in G._node:
+            G.add_node(n, **attr)
+        else:
+            G.set_node_attributes({n: attr})
 
     # import edge attributes if they exist
     if "edges" in data:
-        for eid, attrs in data["edges"]:
-            if edgetype:
-                try:
-                    eid = edgetype(eid)
-                except ValueError as e:
-                    raise TypeError(
-                        f"Failed to convert edge IDs to type {edgetype}."
-                    ) from e
-            if eid not in G._edge:
-                G.add_edge(_empty_edge(network_type), eid, **attrs)
+        for record in data["edges"]:
+            e = record["edge"]
+            if "attr" in record:
+                attr = record["attr"]
             else:
-                G.set_edge_attributes({eid: attrs})
+                attr = {}
+            if e not in G._edge:
+                G.add_edge(_empty_edge(network_type), e, **attr)
+            else:
+                G.set_edge_attributes({e: attr})
 
     if network_type == "asc":
         G = SimplicialComplex(G)
