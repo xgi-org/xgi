@@ -47,12 +47,16 @@ def to_hif(G, path):
 
     # get node data
     try:
-        data["nodes"] = [IDDict({"node": n}) + IDDict({"attr": G.nodes[n]}) for n in G.nodes]
+        data["nodes"] = [
+            IDDict({"node": n}) + IDDict({"attr": G.nodes[n]}) for n in G.nodes
+        ]
     except KeyError:
         raise XGIError("Node attributes not saved!")
 
     try:
-        data["edges"] = [IDDict({"edge": e}) + IDDict({"attr": G.edges[e]}) for e in G.edges]
+        data["edges"] = [
+            IDDict({"edge": e}) + IDDict({"attr": G.edges[e]}) for e in G.edges
+        ]
 
     except KeyError:
         raise XGIError("Edge attributes not saved!")
@@ -60,10 +64,13 @@ def to_hif(G, path):
     # hyperedge dict
     if data["network-type"] == "directed":
         data["incidences"] = [
-        IDDict({"edge": e, "node": n, "direction": d}) for n, e, d in to_bipartite_edgelist(G)
+            IDDict({"edge": e, "node": n, "direction": d})
+            for n, e, d in to_bipartite_edgelist(G)
         ]
     elif data["network-type"] == "undirected":
-        data["incidences"] = [IDDict({"edge": e, "node": n}) for n, e in to_bipartite_edgelist(G)]
+        data["incidences"] = [
+            IDDict({"edge": e, "node": n}) for n, e in to_bipartite_edgelist(G)
+        ]
     elif data["network-type"] == "asc":
         # get maximal edges and edges with attributes
         edges_with_attrs = {eid for eid in G.edges if G.edges[eid]}
@@ -71,7 +78,9 @@ def to_hif(G, path):
         eids = edges_with_attrs.intersection(maximal_edges)
 
         data["incidences"] = [
-            IDDict({"edge": e, "node": n}) for n, e in to_bipartite_edgelist(G) if e in eids
+            IDDict({"edge": e, "node": n})
+            for n, e in to_bipartite_edgelist(G)
+            if e in eids
         ]
 
     datastring = json.dumps(data, indent=2)
@@ -240,7 +249,7 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
                 G.add_edge(_empty_edge(network_type), eid, **attrs)
             else:
                 G.set_edge_attributes({eid: attrs})
-    
+
     if network_type == "asc":
         G = SimplicialComplex(G)
     return G

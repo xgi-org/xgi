@@ -54,7 +54,7 @@ class IDDict(dict):
             return dict.__delitem__(self, item)
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
-        
+
     def __add__(self, dict):
         d = dict.copy()
         d.update(self)

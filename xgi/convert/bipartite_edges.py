@@ -1,20 +1,19 @@
 """Methods for converting to and from bipartite edgelists."""
 
-from ..core import DiHypergraph
+from ..core import DiHypergraph, Hypergraph
+from ..exception import XGIError
 from ..generators import empty_hypergraph
 
 __all__ = ["from_bipartite_edgelist", "to_bipartite_edgelist"]
 
 
-def from_bipartite_edgelist(edges, create_using=None):
+def from_bipartite_edgelist(edges):
     """Generate a hypergraph from a list of lists.
 
     Parameters
     ----------
     e : tuple, list, or array of tuples, lists, or arrays, each of size 2
         A bipartite edgelist
-    create_using : Hypergraph constructor, optional
-        The hypergraph to add the edges to, by default None
 
     Returns
     -------
@@ -25,10 +24,21 @@ def from_bipartite_edgelist(edges, create_using=None):
     --------
     to_hyperedge_list
     """
-    H = empty_hypergraph(create_using)
-    for n, e in edges:
-        H.add_node_to_edge(e, n)
-    return H
+    if len(edges[0]) == 3:  # directed
+        H = DiHypergraph()
+        for n, e, d in edges:
+            H.add_node_to_edge(e, n, d)
+        return H
+    elif len(edges[0]) == 2:  # undirected
+        H = Hypergraph()
+        for n, e in edges:
+            H.add_node_to_edge(e, n)
+        return H
+    else:
+        raise XGIError(
+            "Each list element must have two entries for directed "
+            "and three entries for directed."
+        )
 
 
 def to_bipartite_edgelist(H):
