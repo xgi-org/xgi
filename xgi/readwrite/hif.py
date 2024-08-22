@@ -174,9 +174,9 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
 
         if network_type == "directed":
             d = record["direction"]
-            G.add_node_to_edge(n, e, d)
+            G.add_node_to_edge(e, n, d)
         else:
-            G.add_node_to_edge(n, e)
+            G.add_node_to_edge(e, n)
 
     # import node attributes if they exist
     if "nodes" in data:
@@ -200,7 +200,6 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
                 attr = record["attr"]
             else:
                 attr = {}
-
             if e not in G._edge:
                 G.add_edge(_empty_edge(network_type), e, **attr)
             else:
