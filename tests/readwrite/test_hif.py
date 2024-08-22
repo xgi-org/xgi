@@ -34,4 +34,3 @@ def test_to_hif(edgelist1, hyperwithattrs):
     # hypergraph with attributes
     _, filename = tempfile.mkstemp()
     xgi.to_hif(hyperwithattrs, filename)
-

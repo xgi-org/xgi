@@ -32,7 +32,7 @@ def to_hif(G, path):
 
     """
     # initialize empty data
-    data = {}
+    data = defaultdict(list)
 
     # name always gets written (default is an empty string)
     data["metadata"] = {}
@@ -51,23 +51,17 @@ def to_hif(G, path):
         nodes_with_attrs = set(n for n in G.nodes if G.nodes[n])
         for n in isolates.union(nodes_with_attrs):
             attr = {"attr": G.nodes[n]} if G.nodes[n] else {}
-
-            data["nodes"] = [
-                IDDict({"node": n}) + attr for n in G.nodes
-            ]
+            data["nodes"].append(IDDict({"node": n}) + attr)
 
     except KeyError:
         raise XGIError("Node attributes not saved!")
 
     try:
         empty = set(G.edges.empty())
-        edges_with_attrs = set(n for n in G.nodes if G.nodes[n])
+        edges_with_attrs = set(e for e in G.edges if G.edges[e])
         for e in empty.union(edges_with_attrs):
-            attr = {"attr": G.nodes[e]} if G.edges[e] else {}
-
-            data["edges"] = [
-                IDDict({"edge": e}) + attr for e in G.edges
-            ]
+            attr = {"attr": G.edges[e]} if G.edges[e] else {}
+            data["edges"].append(IDDict({"edge": e}) + attr)
 
     except KeyError:
         raise XGIError("Edge attributes not saved!")
