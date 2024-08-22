@@ -72,20 +72,9 @@ def to_hif(G, path):
             IDDict({"edge": e, "node": n, "direction": d})
             for n, e, d in to_bipartite_edgelist(G)
         ]
-    elif data["network-type"] == "undirected":
+    elif data["network-type"] in {"undirected", "asc"}:
         data["incidences"] = [
             IDDict({"edge": e, "node": n}) for n, e in to_bipartite_edgelist(G)
-        ]
-    elif data["network-type"] == "asc":
-        # get maximal edges and edges with attributes
-        edges_with_attrs = {eid for eid in G.edges if G.edges[eid]}
-        maximal_edges = set(G.edges.maximal())
-        eids = edges_with_attrs.intersection(maximal_edges)
-
-        data["incidences"] = [
-            IDDict({"edge": e, "node": n})
-            for n, e in to_bipartite_edgelist(G)
-            if e in eids
         ]
 
     datastring = json.dumps(data, indent=2)
