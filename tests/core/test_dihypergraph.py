@@ -135,6 +135,73 @@ def test_add_empty_edges():
     assert H.edges.size.asdict() == {0: 0, 1: 0}
 
 
+def test_add_node_to_edge():
+    H = xgi.DiHypergraph()
+    H.add_edge([["A", "B"], ["C", "D"]], "rxn1")
+    H.add_node_to_edge("rxn1", "D", "in")
+    H.add_node_to_edge("rxn1", "A", "out")
+    H.add_node_to_edge("rxn2", "E", "in")
+    assert H.edges.dimembers(dtype=dict) == {
+        "rxn1": ({"A", "B", "D"}, {"A", "C", "D"}),
+        "rxn2": ({"E"}, set()),
+    }
+
+    assert "E" in H.nodes
+    assert H.nodes["E"] == {}
+
+    # test bad direction
+    with pytest.raises(XGIError):
+        H.add_node_to_edge(0, 1, "test")
+
+
+def test_remove_node_from_edge(diedgelist1, diedgelist2):
+    H = xgi.DiHypergraph(diedgelist1)
+
+    # test bad direction
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(0, 1, "test")
+
+    # test non-existent node
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(0, 1000, "in")
+
+    # test non-existent edge
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(1000, 1, "in")
+
+    # it's in the input, not the output.
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(0, 1, "out")
+
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(0, 4, "in")
+
+    H.remove_node_from_edge(0, 1, "in")
+    assert 1 not in H.edges.head(0)
+
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(0, 1, "in")
+
+    H.remove_node_from_edge(0, 4, "out")
+    assert 1 not in H.edges.head(0)
+
+    with pytest.raises(XGIError):
+        H.remove_node_from_edge(0, 4, "out")
+
+    H.remove_node_from_edge(0, 2, "in")
+    H.remove_node_from_edge(0, 3, "in")
+
+    assert 0 not in H.edges
+
+    # test leaving empty edges
+    H = xgi.DiHypergraph(diedgelist2)
+    H.remove_node_from_edge(0, 0, "in")
+    H.remove_node_from_edge(0, 1, "in")
+    H.remove_node_from_edge(0, 2, "out", remove_empty=False)
+    assert 0 in H.edges
+    assert H.edges.dimembers(0) == (set(), set())
+
+
 def test_add_edge_rejects_set():
     H = xgi.DiHypergraph()
     with pytest.raises(XGIError):

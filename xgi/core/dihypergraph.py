@@ -772,6 +772,46 @@ class DiHypergraph:
                     update_uid_counter(self, id)
                 break
 
+    def add_node_to_edge(self, edge, node, direction):
+        """Add one node to an existing edge.
+
+        If the node or edge IDs do not exist, they are created.
+
+        Parameters
+        ----------
+        edge : hashable
+            edge ID
+        node : hashable
+            node ID
+        direction : str
+            "in" or "out" indicates that the node should be added to
+            the tail or head respectively.
+
+        See Also
+        --------
+        add_node
+        add_edge
+        remove_node_from_edge
+        """
+        if direction == "in":
+            ed = "in"
+            nd = "out"
+        elif direction == "out":
+            ed = "out"
+            nd = "in"
+        else:
+            raise XGIError("Invalid direction!")
+
+        if edge not in self._edge:
+            self._edge[edge] = {"in": set(), "out": set()}
+            self._edge_attr[edge] = {}
+        if node not in self._node:
+            self._node[node] = {"in": set(), "out": set()}
+            self._node_attr[node] = {}
+
+        self._edge[edge][ed].add(node)
+        self._node[node][nd].add(edge)
+
     def remove_edge(self, id):
         """Remove one edge.
 
@@ -828,6 +868,60 @@ class DiHypergraph:
 
             del self._edge[id]
             del self._edge_attr[id]
+
+    def remove_node_from_edge(self, edge, node, direction, remove_empty=True):
+        """Remove a node from an existing edge.
+
+        Parameters
+        ----------
+        edge : hashable
+            The edge ID
+        node : hashable
+            The node ID
+        direction : str
+            "in" or "out" indicates that the node should be removed from
+            the tail or head respectively.
+
+        Raises
+        ------
+        XGIError
+            If either the node or edge does not exist.
+
+        See Also
+        --------
+        remove_node
+        remove_edge
+        add_node_to_edge
+
+        Notes
+        -----
+        If edge is left empty as a result of removing node from it, the edge is also
+        removed.
+
+        """
+        if direction == "in":
+            ed = "in"
+            nd = "out"
+        elif direction == "out":
+            ed = "out"
+            nd = "in"
+        else:
+            raise XGIError("Invalid direction!")
+
+        if edge not in self._edge:
+            raise XGIError(f"Edge {edge} not in the hypergraph")
+        if node not in self._node:
+            raise XGIError(f"Node {node} not in the hypergraph")
+        elif node not in self._edge[edge][ed]:
+            raise XGIError(f"{ed}-edge {edge} does not contain node {node}")
+        else:
+            self._edge[edge][ed].remove(node)
+
+        self._node[node][nd].remove(edge)
+
+        if not self._edge[edge]["in"] and not self._edge[edge]["out"] and remove_empty:
+            del self._edge[edge]
+            del self._edge_attr[edge]
 
     def set_edge_attributes(self, values, name=None):
         """Set the edge attributes from a value or a dictionary of values.
