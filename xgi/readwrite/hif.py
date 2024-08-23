@@ -105,7 +105,7 @@ def from_hif(path, nodetype=None, edgetype=None):
     return _from_dict(data, nodetype=nodetype, edgetype=edgetype)
 
 
-def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
+def _from_dict(data, nodetype=None, edgetype=None):
     """
     A function to read a file in a standardized JSON format.
 
@@ -117,8 +117,6 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
         Type that the node IDs will be cast to
     edgetype: type, optional
         Type that the edge IDs will be cast to
-    max_order: int, optional
-        Maximum order of edges to add to the hypergraph
 
     Returns
     -------
@@ -141,6 +139,15 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
             return set()
         else:
             return {"in": set(), "out": set()}
+
+    def _convert_id(i, idtype):
+        if idtype:
+            try:
+                return idtype(i)
+            except ValueError as e:
+                raise TypeError(f"Failed to convert ID {i} to type {idtype}.") from e
+        else:
+            return i
 
     if "network-type" in data:
         network_type = data["network-type"]
@@ -165,8 +172,8 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
         edgedict = defaultdict(set)
 
     for record in data["incidences"]:
-        n = record["node"]
-        e = record["edge"]
+        n = _convert_id(record["node"], nodetype)
+        e = _convert_id(record["edge"], edgetype)
         if "attr" in record:
             attr = record["attr"]
         else:
@@ -181,7 +188,7 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
     # import node attributes if they exist
     if "nodes" in data:
         for record in data["nodes"]:
-            n = record["node"]
+            n = _convert_id(record["node"], nodetype)
             if "attr" in record:
                 attr = record["attr"]
             else:
@@ -195,7 +202,7 @@ def _from_dict(data, nodetype=None, edgetype=None, max_order=None):
     # import edge attributes if they exist
     if "edges" in data:
         for record in data["edges"]:
-            e = record["edge"]
+            e = _convert_id(record["edge"], edgetype)
             if "attr" in record:
                 attr = record["attr"]
             else:
