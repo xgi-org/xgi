@@ -20,6 +20,8 @@ def test_to_hif(
     assert "nodes" not in jsondata
     assert "edges" not in jsondata
     assert "incidences" in jsondata
+    assert "network-type" in jsondata
+    assert jsondata["network-type"] == "undirected"
 
     incidences = [
         {"edge": 0, "node": 1},
@@ -47,6 +49,8 @@ def test_to_hif(
     assert "nodes" in jsondata
     assert "edges" in jsondata
     assert "incidences" in jsondata
+    assert "network-type" in jsondata
+    assert jsondata["network-type"] == "undirected"
 
     nodes = [
         {"node": 1, "attr": {"color": "red", "name": "horse"}},
@@ -96,6 +100,8 @@ def test_to_hif(
     assert "nodes" not in jsondata
     assert "edges" not in jsondata
     assert "incidences" in jsondata
+    assert "network-type" in jsondata
+    assert jsondata["network-type"] == "asc"
 
     incidences = [
         {"edge": "e1", "node": 0},
@@ -140,3 +146,74 @@ def test_to_hif(
     assert "nodes" in jsondata
     assert "edges" in jsondata
     assert "incidences" in jsondata
+
+
+def test_from_hif(
+    hyperwithdupsandattrs,
+    simplicialcomplex1,
+    dihyperwithattrs,
+):
+    _, filename = tempfile.mkstemp()
+    xgi.to_hif(hyperwithdupsandattrs, filename)
+
+    # test basic import
+    H = xgi.from_hif(filename)
+
+    assert isinstance(H, xgi.Hypergraph)
+    assert (H.num_nodes, H.num_edges) == (5, 5)
+    assert set(H.nodes) == {1, 2, 3, 4, 5}
+    assert H.nodes[1] == {"color": "red", "name": "horse"}
+    assert H.nodes[2] == {"color": "blue", "name": "pony"}
+    assert H.nodes[3] == {"color": "yellow", "name": "zebra"}
+    assert H.nodes[4] == {"color": "red", "name": "orangutan", "age": 20}
+    assert H.nodes[5] == {"color": "blue", "name": "fish", "age": 2}
+
+    assert set(H.edges) == {0, 1, 2, 3, 4}
+    assert H.edges[0] == {"color": "blue"}
+    assert H.edges[1] == {"color": "red", "weight": 2}
+    assert H.edges[2] == {"color": "yellow"}
+    assert H.edges[3] == {"color": "purple"}
+    assert H.edges[4] == {"color": "purple", "name": "test"}
+
+    edgedict = {0: {1, 2}, 1: {1, 2}, 2: {1, 2}, 3: {3, 4, 5}, 4: {3, 4, 5}}
+    assert H.edges.members(dtype=dict) == edgedict
+
+    # cast nodes and edges
+    H = xgi.from_hif(filename, nodetype=str, edgetype=float)
+    assert set(H.nodes) == {"1", "2", "3", "4", "5"}
+    assert set(H.edges) == {0.0, 1.0, 2.0, 3.0, 4.0}
+
+    assert H.nodes["1"] == {"color": "red", "name": "horse"}
+    assert H.edges[0.0] == {"color": "blue"}
+
+    edgedict = {
+        0: {"1", "2"},
+        1: {"1", "2"},
+        2: {"1", "2"},
+        3: {"3", "4", "5"},
+        4: {"3", "4", "5"},
+    }
+    assert H.edges.members(dtype=dict) == edgedict
+
+    _, filename = tempfile.mkstemp()
+    xgi.to_hif(simplicialcomplex1, filename)
+
+    S = xgi.from_hif(filename)
+    assert isinstance(S, xgi.SimplicialComplex)
+    assert (S.num_nodes, S.num_edges) == (3, 4)
+
+    assert set(S.nodes) == {0, "b", "c"}
+    assert set(S.edges) == {"e1", "e2", "e3", "e4"}
+
+    # dihypergraphs
+    _, filename = tempfile.mkstemp()
+    xgi.to_hif(dihyperwithattrs, filename)
+
+    DH = xgi.from_hif(filename)
+    assert (DH.num_nodes, DH.num_edges) == (6, 3)
+    assert isinstance(DH, xgi.DiHypergraph)
+    assert set(DH.nodes) == {0, 1, 2, 3, 4, 5}
+    assert set(DH.edges) == {0, 1, 2}
+
+    edgedict = {0: ({0, 1}, {2}), 1: ({1, 2}, {4}), 2: ({2, 3, 4}, {4, 5})}
+    assert DH.edges.dimembers(dtype=dict) == edgedict
