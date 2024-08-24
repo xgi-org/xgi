@@ -2,7 +2,6 @@
 
 from ..core import DiHypergraph, Hypergraph
 from ..exception import XGIError
-from ..generators import empty_hypergraph
 
 __all__ = ["from_bipartite_edgelist", "to_bipartite_edgelist"]
 

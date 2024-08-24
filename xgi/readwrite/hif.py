@@ -7,11 +7,8 @@ HIF `project <https://github.com/pszufe/HIF_validators>`_.
 import json
 from collections import defaultdict
 
-import numpy as np
-
 from ..convert import to_bipartite_edgelist
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
-from ..exception import XGIError
 from ..utils import IDDict
 
 __all__ = ["write_hif", "read_hif"]
