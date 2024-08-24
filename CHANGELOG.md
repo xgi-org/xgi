@@ -3,7 +3,7 @@
 ## v0.8.8
 * Added the ability to read and write files according the HIF functionality standard [#572](https://github.com/xgi-org/xgi/pull/572) (@nwlandry).
 * Implemented the `add_node_to_edge` and `remove_node_from_edge` methods for DiHypergraphs [#571](https://github.com/xgi-org/xgi/pull/571) (@nwlandry).
-* Allow empty edges [#565](https://github.com/xgi-org/xgi/pull/565)
+* Allow empty edges [#565](https://github.com/xgi-org/xgi/pull/565) (@nwlandry).
 * Simplified the `cleanup()` methods [#569](https://github.com/xgi-org/xgi/pull/569) (@nwlandry).
 * Fix Issue [#566](https://github.com/xgi-org/xgi/issues/566) [#567](https://github.com/xgi-org/xgi/pull/567) (@maximelucas).
 * Added documentation about N vs. N-1 in the `var()` and `std()` methods in the stats module [#562](https://github.com/xgi-org/xgi/pull/562) (@nwlandry).
