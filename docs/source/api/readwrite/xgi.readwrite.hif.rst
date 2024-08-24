@@ -3,7 +3,7 @@ xgi.readwrite.hif
 
 .. currentmodule:: xgi.readwrite.hif
 
-.. automodule:: xgi.readwrite.bigg_data
+.. automodule:: xgi.readwrite.hif
 
    .. rubric:: Functions
 
