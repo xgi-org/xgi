@@ -22,6 +22,7 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 10. You may merge the Pull Request in once you have the sign-off of at least one other developer, or if you do not have permission to do that, you may request the reviewer to merge it for you.
 
 ## New Version process
+
 1. Make sure that the Github Actions workflow runs without any errors.
 2. Using the `github-changelog` package (a dependency in the [release](requirements/release.txt) requirements file), run `changelog -m xgi-org xgi [last release tag]` to get the merged pull requests with their links. Paste this into the changelog file under a new heading and edit to make more legible. Associate a GitHub username with each pull request.
 3. Increase the version number in [\_\_init\_\_.py](xgi/__init__.py.py) and [conf.py](docs/source/conf.py) to the new version agreed upon by the core developers. The versioning scheme we use is [SemVer](http://semver.org/).
