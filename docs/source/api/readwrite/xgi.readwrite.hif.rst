@@ -7,5 +7,5 @@ xgi.readwrite.hif
 
    .. rubric:: Functions
 
-   .. autofunction:: from_hif
-   .. autofunction:: to_hif
+   .. autofunction:: read_hif
+   .. autofunction:: write_hif

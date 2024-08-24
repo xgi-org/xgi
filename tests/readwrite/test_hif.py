@@ -15,7 +15,7 @@ def test_to_hif(
 ):
     H = xgi.Hypergraph(edgelist1)
     _, filename = tempfile.mkstemp()
-    xgi.to_hif(H, filename)
+    xgi.write_hif(H, filename)
     with open(filename) as file:
         jsondata = json.loads(file.read())
 
@@ -44,7 +44,7 @@ def test_to_hif(
     # hypergraph with attributes
     _, filename = tempfile.mkstemp()
     hyperwithdupsandattrs["name"] = "test"
-    xgi.to_hif(hyperwithdupsandattrs, filename)
+    xgi.write_hif(hyperwithdupsandattrs, filename)
 
     with open(filename) as file:
         jsondata = json.loads(file.read())
@@ -97,7 +97,7 @@ def test_to_hif(
 
     # Simplicial complexes
     _, filename = tempfile.mkstemp()
-    xgi.to_hif(simplicialcomplex1, filename)
+    xgi.write_hif(simplicialcomplex1, filename)
 
     with open(filename) as file:
         jsondata = json.loads(file.read())
@@ -132,7 +132,7 @@ def test_to_hif(
     H = xgi.DiHypergraph(diedgedict1)
 
     _, filename = tempfile.mkstemp()
-    xgi.to_hif(H, filename)
+    xgi.write_hif(H, filename)
 
     with open(filename) as file:
         jsondata = json.loads(file.read())
@@ -143,7 +143,7 @@ def test_to_hif(
 
     # dihypergraphs with attributes
     _, filename = tempfile.mkstemp()
-    xgi.to_hif(dihyperwithattrs, filename)
+    xgi.write_hif(dihyperwithattrs, filename)
 
     with open(filename) as file:
         jsondata = json.loads(file.read())
@@ -159,10 +159,10 @@ def test_from_hif(
     dihyperwithattrs,
 ):
     _, filename1 = tempfile.mkstemp()
-    xgi.to_hif(hyperwithdupsandattrs, filename1)
+    xgi.write_hif(hyperwithdupsandattrs, filename1)
 
     # test basic import
-    H = xgi.from_hif(filename1)
+    H = xgi.read_hif(filename1)
 
     assert isinstance(H, xgi.Hypergraph)
     assert (H.num_nodes, H.num_edges) == (5, 5)
@@ -184,7 +184,7 @@ def test_from_hif(
     assert H.edges.members(dtype=dict) == edgedict
 
     # cast nodes and edges
-    H = xgi.from_hif(filename1, nodetype=str, edgetype=float)
+    H = xgi.read_hif(filename1, nodetype=str, edgetype=float)
     assert set(H.nodes) == {"1", "2", "3", "4", "5"}
     assert set(H.edges) == {0.0, 1.0, 2.0, 3.0, 4.0}
 
@@ -201,9 +201,9 @@ def test_from_hif(
     assert H.edges.members(dtype=dict) == edgedict
 
     _, filename2 = tempfile.mkstemp()
-    xgi.to_hif(simplicialcomplex1, filename2)
+    xgi.write_hif(simplicialcomplex1, filename2)
 
-    S = xgi.from_hif(filename2)
+    S = xgi.read_hif(filename2)
     assert isinstance(S, xgi.SimplicialComplex)
     assert (S.num_nodes, S.num_edges) == (3, 4)
 
@@ -212,9 +212,9 @@ def test_from_hif(
 
     # dihypergraphs
     _, filename3 = tempfile.mkstemp()
-    xgi.to_hif(dihyperwithattrs, filename3)
+    xgi.write_hif(dihyperwithattrs, filename3)
 
-    DH = xgi.from_hif(filename3)
+    DH = xgi.read_hif(filename3)
     assert (DH.num_nodes, DH.num_edges) == (6, 3)
     assert isinstance(DH, xgi.DiHypergraph)
     assert set(DH.nodes) == {0, 1, 2, 3, 4, 5}
@@ -225,13 +225,13 @@ def test_from_hif(
 
     # test error checking
     with pytest.raises(TypeError):
-        S = xgi.from_hif(filename2, edgetype=int)
+        S = xgi.read_hif(filename2, edgetype=int)
 
     # metadata
     _, filename4 = tempfile.mkstemp()
     hyperwithdupsandattrs["name"] = "test"
-    xgi.to_hif(hyperwithdupsandattrs, filename4)
-    H = xgi.from_hif(filename4)
+    xgi.write_hif(hyperwithdupsandattrs, filename4)
+    H = xgi.read_hif(filename4)
 
     assert H["name"] == "test"
 
@@ -241,9 +241,9 @@ def test_from_hif(
     H.add_edges_from([[1, 2, 3], []])
 
     _, filename5 = tempfile.mkstemp()
-    xgi.to_hif(H, filename5)
+    xgi.write_hif(H, filename5)
 
-    H = xgi.from_hif(filename5)
+    H = xgi.read_hif(filename5)
     assert H.edges.size.aslist() == [3, 0]
     assert set(H.nodes.isolates()) == {0, 4}
 
@@ -252,8 +252,8 @@ def test_from_hif(
     H.add_edges_from([([1, 2, 3], [2, 4]), [[], []]])
 
     _, filename6 = tempfile.mkstemp()
-    xgi.to_hif(H, filename6)
+    xgi.write_hif(H, filename6)
 
-    H = xgi.from_hif(filename6)
+    H = xgi.read_hif(filename6)
     # assert H.edges.size.aslist() == [5, 0]
     # assert set(H.nodes.isolates()) == {0}

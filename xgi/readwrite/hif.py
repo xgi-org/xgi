@@ -1,4 +1,8 @@
-"""Read from and write to JSON."""
+"""Read from and write to the HIF Standard.
+
+For more information on the HIF standard, see the
+HIF `project <https://github.com/pszufe/HIF_validators>`_.
+"""
 
 import json
 from collections import defaultdict
@@ -10,10 +14,10 @@ from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..utils import IDDict
 
-__all__ = ["to_hif", "from_hif"]
+__all__ = ["write_hif", "read_hif"]
 
 
-def to_hif(G, path):
+def write_hif(G, path):
     """
     A function to write a higher-order network according to the HIF standard.
 
@@ -70,7 +74,7 @@ def to_hif(G, path):
         output_file.write(datastring)
 
 
-def from_hif(path, nodetype=None, edgetype=None):
+def read_hif(path, nodetype=None, edgetype=None):
     """
     A function to read a file created according to the HIF format.
 
