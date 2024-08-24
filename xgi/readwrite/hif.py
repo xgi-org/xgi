@@ -138,7 +138,7 @@ def _from_dict(data, nodetype=None, edgetype=None):
         if network_type in {"asc", "undirected"}:
             return set()
         else:
-            return {"in": set(), "out": set()}
+            return (set(), set())
 
     def _convert_id(i, idtype):
         if idtype:
@@ -170,6 +170,8 @@ def _from_dict(data, nodetype=None, edgetype=None):
         edgedict = defaultdict(lambda: {"in": set(), "out": set()})
     else:
         edgedict = defaultdict(set)
+
+    G._net_attr.update(data["metadata"])
 
     for record in data["incidences"]:
         n = _convert_id(record["node"], nodetype)

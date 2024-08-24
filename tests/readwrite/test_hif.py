@@ -1,6 +1,8 @@
 import json
 import tempfile
 
+import pytest
+
 import xgi
 
 
@@ -41,6 +43,7 @@ def test_to_hif(
 
     # hypergraph with attributes
     _, filename = tempfile.mkstemp()
+    hyperwithdupsandattrs["name"] = "test"
     xgi.to_hif(hyperwithdupsandattrs, filename)
 
     with open(filename) as file:
@@ -51,6 +54,8 @@ def test_to_hif(
     assert "incidences" in jsondata
     assert "network-type" in jsondata
     assert jsondata["network-type"] == "undirected"
+    assert "metadata" in jsondata
+    assert jsondata["metadata"] == {"name": "test"}
 
     nodes = [
         {"node": 1, "attr": {"color": "red", "name": "horse"}},
@@ -153,11 +158,11 @@ def test_from_hif(
     simplicialcomplex1,
     dihyperwithattrs,
 ):
-    _, filename = tempfile.mkstemp()
-    xgi.to_hif(hyperwithdupsandattrs, filename)
+    _, filename1 = tempfile.mkstemp()
+    xgi.to_hif(hyperwithdupsandattrs, filename1)
 
     # test basic import
-    H = xgi.from_hif(filename)
+    H = xgi.from_hif(filename1)
 
     assert isinstance(H, xgi.Hypergraph)
     assert (H.num_nodes, H.num_edges) == (5, 5)
@@ -179,7 +184,7 @@ def test_from_hif(
     assert H.edges.members(dtype=dict) == edgedict
 
     # cast nodes and edges
-    H = xgi.from_hif(filename, nodetype=str, edgetype=float)
+    H = xgi.from_hif(filename1, nodetype=str, edgetype=float)
     assert set(H.nodes) == {"1", "2", "3", "4", "5"}
     assert set(H.edges) == {0.0, 1.0, 2.0, 3.0, 4.0}
 
@@ -195,10 +200,10 @@ def test_from_hif(
     }
     assert H.edges.members(dtype=dict) == edgedict
 
-    _, filename = tempfile.mkstemp()
-    xgi.to_hif(simplicialcomplex1, filename)
+    _, filename2 = tempfile.mkstemp()
+    xgi.to_hif(simplicialcomplex1, filename2)
 
-    S = xgi.from_hif(filename)
+    S = xgi.from_hif(filename2)
     assert isinstance(S, xgi.SimplicialComplex)
     assert (S.num_nodes, S.num_edges) == (3, 4)
 
@@ -206,10 +211,10 @@ def test_from_hif(
     assert set(S.edges) == {"e1", "e2", "e3", "e4"}
 
     # dihypergraphs
-    _, filename = tempfile.mkstemp()
-    xgi.to_hif(dihyperwithattrs, filename)
+    _, filename3 = tempfile.mkstemp()
+    xgi.to_hif(dihyperwithattrs, filename3)
 
-    DH = xgi.from_hif(filename)
+    DH = xgi.from_hif(filename3)
     assert (DH.num_nodes, DH.num_edges) == (6, 3)
     assert isinstance(DH, xgi.DiHypergraph)
     assert set(DH.nodes) == {0, 1, 2, 3, 4, 5}
@@ -217,3 +222,38 @@ def test_from_hif(
 
     edgedict = {0: ({0, 1}, {2}), 1: ({1, 2}, {4}), 2: ({2, 3, 4}, {4, 5})}
     assert DH.edges.dimembers(dtype=dict) == edgedict
+
+    # test error checking
+    with pytest.raises(TypeError):
+        S = xgi.from_hif(filename2, edgetype=int)
+
+    # metadata
+    _, filename4 = tempfile.mkstemp()
+    hyperwithdupsandattrs["name"] = "test"
+    xgi.to_hif(hyperwithdupsandattrs, filename4)
+    H = xgi.from_hif(filename4)
+
+    assert H["name"] == "test"
+
+    # test isolates and empty edges
+    H = xgi.Hypergraph()
+    H.add_nodes_from(range(5))
+    H.add_edges_from([[1, 2, 3], []])
+
+    _, filename5 = tempfile.mkstemp()
+    xgi.to_hif(H, filename5)
+
+    H = xgi.from_hif(filename5)
+    assert H.edges.size.aslist() == [3, 0]
+    assert set(H.nodes.isolates()) == {0, 4}
+
+    H = xgi.DiHypergraph()
+    H.add_nodes_from(range(5))
+    H.add_edges_from([([1, 2, 3], [2, 4]), [[], []]])
+
+    _, filename6 = tempfile.mkstemp()
+    xgi.to_hif(H, filename6)
+
+    H = xgi.from_hif(filename6)
+    # assert H.edges.size.aslist() == [5, 0]
+    # assert set(H.nodes.isolates()) == {0}
