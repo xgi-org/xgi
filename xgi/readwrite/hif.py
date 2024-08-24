@@ -34,7 +34,6 @@ def to_hif(G, path):
     # initialize empty data
     data = defaultdict(list)
 
-    # name always gets written (default is an empty string)
     data["metadata"] = {}
     data["metadata"].update(G._net_attr)
 
@@ -176,10 +175,6 @@ def _from_dict(data, nodetype=None, edgetype=None):
     for record in data["incidences"]:
         n = _convert_id(record["node"], nodetype)
         e = _convert_id(record["edge"], edgetype)
-        if "attr" in record:
-            attr = record["attr"]
-        else:
-            attr = {}
 
         if network_type == "directed":
             d = record["direction"]
