@@ -62,6 +62,10 @@ Preprints
 2024
 ----
 
+Jordan Barrett, Paweł Prałat, Aaron Smith, François Théberge, "Counting simplicial pairs in hypergraphs", arXiv:2408.11806 (2024).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2408.11806>`
+
 Gonzalo Contreras-Aso, Regino Criado, and Miguel Romance, "Beyond directed hypergraphs: heterogeneous hypergraphs and spectral centralities", arXiv:2403.11825 (2024).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2403.11825>`
@@ -82,6 +86,10 @@ Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Do
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2404.08547>`
 :bdg-link-primary-line:`Code <https://github.com/maximelucas/hypergraph_reducibility>`
+
+Corbit R. Sampson, Juan G. Restrepo, "Competing Social Contagions with Opinion Dependent Infectivity", arXiv:2408.10373 (2024).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2408.10373>`
 
 2023
 ----

@@ -1175,3 +1175,17 @@ class DiEdgeView(IDView):
 
         """
         return self.head(e=e, dtype=dtype)
+
+    def empty(self):
+        """Edges with no nodes in the head or the tail.
+
+        Returns
+        -------
+        DiEdgeView containing the empty edges.
+
+        See Also
+        --------
+        :meth:`EdgeView.empty`
+
+        """
+        return self.filterby("size", 0)

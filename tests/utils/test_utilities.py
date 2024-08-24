@@ -5,6 +5,7 @@ import pytest
 
 import xgi
 from xgi.exception import IDNotFound, XGIError
+from xgi.utils import IDDict
 
 
 def test_iddict(edgelist1):
@@ -30,6 +31,15 @@ def test_iddict(edgelist1):
 
     with pytest.raises(TypeError):
         H._node[[0, 1, 2]] = [0, 1]
+
+    a = IDDict({1: 2})
+    b = IDDict({3: 4})
+    c = {5: 6}
+    assert a + b == IDDict({1: 2, 3: 4})
+    assert b + a == IDDict({1: 2, 3: 4})
+    assert a + c == IDDict({1: 2, 5: 6})
+    with pytest.raises(TypeError):
+        c + a
 
 
 def test_neighbors():

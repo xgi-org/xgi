@@ -55,6 +55,11 @@ class IDDict(dict):
         except KeyError as e:
             raise IDNotFound(f"ID {item} not found") from e
 
+    def __add__(self, dict):
+        d = dict.copy()
+        d.update(self)
+        return d
+
 
 def dual_dict(edge_dict):
     """Given a dictionary with IDs as keys
