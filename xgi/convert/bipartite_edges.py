@@ -46,8 +46,8 @@ def to_bipartite_edgelist(H):
 
     Parameters
     ----------
-    H : Hypergraph object
-        The hypergraph of interest
+    H : Hypergraph, SimplicialComplex, or DiHypergraph object
+        The network of interest
 
     Returns
     -------

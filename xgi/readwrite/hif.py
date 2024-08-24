@@ -15,7 +15,9 @@ __all__ = ["to_hif", "from_hif"]
 
 def to_hif(G, path):
     """
-    A function to write a file in a standardized JSON format.
+    A function to write a higher-order network according to the HIF standard.
+
+    For more information, see the HIF `project <https://github.com/pszufe/HIF_validators>`_.
 
     Parameters
     ----------
@@ -23,13 +25,6 @@ def to_hif(G, path):
         The specified higher-order network
     path: string
         The path of the file to read from
-
-    Raises
-    ------
-    XGIError
-        If the node or edge IDs have conflicts after casting
-        to strings, e.g., node IDs "2" and 2.
-
     """
     # initialize empty data
     data = defaultdict(list)
@@ -59,8 +54,9 @@ def to_hif(G, path):
 
     # hyperedge dict
     if data["network-type"] == "directed":
+        _convert_d = lambda d: "tail" if d == "in" else "head"
         data["incidences"] = [
-            IDDict({"edge": e, "node": n, "direction": d})
+            IDDict({"edge": e, "node": n, "direction": _convert_d(d)})
             for n, e, d in to_bipartite_edgelist(G)
         ]
     elif data["network-type"] in {"undirected", "asc"}:
@@ -76,7 +72,9 @@ def to_hif(G, path):
 
 def from_hif(path, nodetype=None, edgetype=None):
     """
-    A function to read a file in a standardized JSON format.
+    A function to read a file created according to the HIF format.
+
+    For more information, see the HIF `project <https://github.com/pszufe/HIF_validators>`_.
 
     Parameters
     ----------
@@ -89,14 +87,8 @@ def from_hif(path, nodetype=None, edgetype=None):
 
     Returns
     -------
-    A Hypergraph object
-        The loaded hypergraph
-
-    Raises
-    ------
-    XGIError
-        If the JSON is not in a format that can be loaded.
-
+    A Hypergraph, SimplicialComplex, or DiHypergraph object
+        The loaded network
     """
     with open(path) as file:
         data = json.loads(file.read())
@@ -106,7 +98,9 @@ def from_hif(path, nodetype=None, edgetype=None):
 
 def _from_dict(data, nodetype=None, edgetype=None):
     """
-    A function to read a file in a standardized JSON format.
+    A helper function to read a file created according to the HIF format.
+
+    For more information, see the HIF `project <https://github.com/pszufe/HIF_validators>`_.
 
     Parameters
     ----------
@@ -119,18 +113,8 @@ def _from_dict(data, nodetype=None, edgetype=None):
 
     Returns
     -------
-    A Hypergraph object
-        The loaded hypergraph
-
-    Raises
-    ------
-    XGIError
-        If the JSON is not in a format that can be loaded.
-
-    See Also
-    --------
-    read_json
-
+    A Hypergraph, SimplicialComplex, or DiHypergraph object
+        The loaded network
     """
 
     def _empty_edge(network_type):
@@ -148,6 +132,8 @@ def _from_dict(data, nodetype=None, edgetype=None):
         else:
             return i
 
+    _convert_d = lambda d: "in" if d == "tail" else "out"
+
     if "network-type" in data:
         network_type = data["network-type"]
     else:
@@ -157,20 +143,10 @@ def _from_dict(data, nodetype=None, edgetype=None):
         G = Hypergraph()
     elif network_type == "directed":
         G = DiHypergraph()
-    else:
-        XGIError("Invalid type")
 
     # Import network metadata
-    if "metadata" in G:
+    if "metadata" in data:
         G._net_attr.update(data["metadata"])
-
-    # Import network structure through incidence records
-    if network_type == "directed":
-        edgedict = defaultdict(lambda: {"in": set(), "out": set()})
-    else:
-        edgedict = defaultdict(set)
-
-    G._net_attr.update(data["metadata"])
 
     for record in data["incidences"]:
         n = _convert_id(record["node"], nodetype)
@@ -178,6 +154,7 @@ def _from_dict(data, nodetype=None, edgetype=None):
 
         if network_type == "directed":
             d = record["direction"]
+            d = _convert_d(d)  # convert from head/tail to in/out
             G.add_node_to_edge(e, n, d)
         else:
             G.add_node_to_edge(e, n)
