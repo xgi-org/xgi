@@ -10,13 +10,18 @@ build:
   os: ubuntu-20.04
   tools:
     python: "3.12"
-  
-  commands:
-    - pip install xgi[docs]
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
    configuration: docs/source/conf.py
+
+# Optionally declare the Python requirements required to build your docs
+python:
+  install:
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
 
 formats:
   - pdf
