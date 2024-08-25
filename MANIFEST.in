@@ -1,5 +1,5 @@
 include MANIFEST.in
-include setup.py
+include pyproject.toml
 include HOW_TO_CONTRIBUTE.md
 include long_description.rst
 include README.md
