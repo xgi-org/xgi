@@ -99,7 +99,7 @@ tutorial = [
 all = ["xgi[benchmark,developer,docs,release,test,tutorial]"]
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["xgi"]
 
 [tool.setuptools.dynamic.version]
 attr = "xgi.__version__"
