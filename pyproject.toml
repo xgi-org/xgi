@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=73", "wheel"]
 build-backend = "setuptools.build_meta"
+requires = ["setuptools>=61.2", "wheel"]
 
 [project]
 name = "xgi"
@@ -12,11 +12,35 @@ license = {text = "3-Clause BSD license"}
 authors = [
     {name = "XGI Developers", email = "nicholas.landry@virginia.edu"}
 ]
-keywords = ["networks", "higher-order", "XGI"]
+maintainers = [
+    {name = "XGI Developers", email = "nicholas.landry@virginia.edu"}
+]
+keywords = [
+    "networks",
+    "higher-order",
+    "higher-order network",
+    "hypergraph",
+    "simplicial complex",
+    "network science",
+]
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
 ]
 dependencies = [
     "numpy>=1.20",
