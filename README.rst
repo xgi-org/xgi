@@ -30,17 +30,19 @@
    :target: https://github.com/pyOpenSci/software-review/issues/115
    :alt: pyOpenSci
 
-* `**Source** <https://github.com/xgi-org/xgi>`_
-* `**Bug reports** <https://github.com/xgi-org/xgi/issues>`_
-* `**GitHub Discussions** <https://github.com/xgi-org/xgi/discussions>`_
-* `**Documentation** <https://xgi.readthedocs.io>`_
-* `**Contributors** <https://xgi.readthedocs.io/en/stable/contributors.html>`_
-* `**Projects using XGI** <https://xgi.readthedocs.io/en/stable/using-xgi.html>`_
+* `Source <https://github.com/xgi-org/xgi>`_
+* `Bug reports <https://github.com/xgi-org/xgi/issues>`_
+* `GitHub Discussions <https://github.com/xgi-org/xgi/discussions>`_
+* `Documentation <https://xgi.readthedocs.io>`_
+* `Contributors <https://xgi.readthedocs.io/en/stable/contributors.html>`_
+* `Projects using XGI <https://xgi.readthedocs.io/en/stable/using-xgi.html>`_
 
 Sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI
 on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
 
-### Table of Contents: ###
+Table of Contents:
+==================
+
 - `What is XGI? <#what-is-xgi>`_
 - `Installation <#installation>`_
 - `Getting Started <#getting-started>`_
@@ -51,7 +53,8 @@ on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz
 - `Funding <#funding>`_
 - `Other Resources <#other-resources>`_
 
-## What is XGI?
+What is XGI?
+============
 
 Comple\ **X** **G**\ roup **I**\ nteractions (XGI) is a Python package for
 higher-order networks (If you want more information on what
@@ -69,7 +72,8 @@ XGI can
 * Draw higher-order networks in a variety of **visually striking ways**
 (See our `gallery <https://xgi.readthedocs.io/en/stable/gallery.html>`_ for several examples.)
 
-## Installation
+Installation
+============
 
 XGI runs on Python 3.8 or higher.
 
@@ -89,13 +93,17 @@ To install this package locally:
 
    pip install -e .\[all\]
 
-## Getting Started
+Getting Started
+===============
+
 To get started, take a look at the
 `tutorials <https://xgi.readthedocs.io/en/stable/api/tutorials.html>`_
 illustrating the library's basic functionality.
 
 
-## Corresponding Data
+Corresponding Data
+==================
+
 A number of higher-order datasets are available in the
 `XGI-DATA repository <https://github.com/xgi-org/xgi-data>`_
 and can be easily accessed with the ``load_xgi_data()`` function.
@@ -117,11 +125,13 @@ signing up for our `mailing list <http://eepurl.com/igE6ez>`_, or starring this 
 `new issue <https://github.com/xgi-org/xgi/issues/new>`_.
 * **Create a Pull Request (PR)** to address an
 `open issue <https://github.com/xgi-org/xgi/discussions>`_ or add a feature.
-* **Join our `Zulip channel <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_**
+* **Join our **`Zulip channel <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_
 to be a part of the daily goings-on of XGI.
 
 
-## How to Cite
+How to Cite
+===========
+
 We acknowledge the importance of good software to support research,
 and we note that research becomes more valuable when it is communicated effectively.
 To demonstrate the value of XGI, we ask that you cite the XGI
@@ -144,13 +154,17 @@ You can cite XGI either by going to our repository page `repository page <https:
         url = {https://doi.org/10.21105/joss.05162},
     }
 
-## License
+License
+=======
+
 Released under the 3-Clause BSD license
 (see ```LICENSE.md`` <https://github.com/xgi-org/xgi/blob/main/LICENSE.md>`_).
 
 Copyright (C) 2021-2024 XGI Developers
 
-## Funding
+Funding
+=======
+
 The XGI package has been supported by NSF Grant 2121905,
 `"HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks" <https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905>`_.
 
