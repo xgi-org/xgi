@@ -1,7 +1,6 @@
 include MANIFEST.in
 include pyproject.toml
 include HOW_TO_CONTRIBUTE.md
-include long_description.rst
 include README.md
 include LICENSE.md
 include CITATION.cff

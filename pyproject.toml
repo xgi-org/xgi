@@ -47,7 +47,7 @@ developer = [
     "pylint>=3.0",
     "nbqa",
 ]
-doc = [
+docs = [
     "sphinx~=6.0",
     "sphinx_copybutton",
     "sphinx-rtd-theme>=1.2",
