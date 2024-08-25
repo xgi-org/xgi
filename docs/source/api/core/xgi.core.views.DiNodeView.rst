@@ -22,6 +22,6 @@ xgi.core.views.DiNodeView
 
       ~DiNodeView.memberships
       ~DiNodeView.dimemberships
-      ~DiIDView.filterby
-      ~DiIDView.filterby_attr
+      ~IDView.filterby
+      ~IDView.filterby_attr
       ~DiNodeView.isolates
