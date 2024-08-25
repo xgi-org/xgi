@@ -13,7 +13,7 @@ build:
   
   commands:
     - pip install xgi[docs]
-    - docs/source/conf.py --output $READTHEDOCS_OUTPUT/html/ docs/
+    - xgi --settings docs/source/conf.py --output $READTHEDOCS_OUTPUT/html/ docs/
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
