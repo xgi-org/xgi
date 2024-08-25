@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=73", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xgi"
+dynamic = ["version"]
+description = "XGI is a Python package for higher-order networks."
+readme = "long_description.rst"
+requires-python = ">=3.8"
+license = {text = "3-Clause BSD license"}
+authors = [
+    {name = "XGI Developers", email = "nicholas.landry@virginia.edu"}
+]
+keywords = ["networks", "higher-order", "XGI"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+]
+dependencies = []
+
+[project.urls]
+Documentation = "https://xgi.readthedocs.io/en/stable/"
+"Bug Reports" = "https://github.com/xgi-org/xgi/issues"
+Source = "https://github.com/xgi-org/xgi"
+PyPI = "https://pypi.org/project/xgi/"
+"GitHub Discussions" = "https://github.com/xgi-org/xgi/discussions"
+
+[project.optional-dependencies]
+# These should be taken from requirements/default.txt
+default = [
+    "numpy>=1.20"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.dynamic.version]
+attr = "xgi.__version__"
