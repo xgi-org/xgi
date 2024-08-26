@@ -58,9 +58,38 @@ pip install -e .["all"]
 ```
 * If that command does not work, you may try the following instead
 ````zsh
-pip install -e .\[all\]
+pip install -e ."[all]"
 ````
 
+You may wish to selectively install dependencies required for testing, developing, or building certain parts of the project.
+These options are the following:
+
+- `benchmark`: Requirements needed to run the benchmarking notebooks
+- `tutorial`: Requirements needed to run the Jupyter Notebooks with the examples
+- `test`: Requirements needed to run the test suite
+- `docs`: Requirements needed to build the documentation (see the [docs](https://github.com/xgi-org/xgi/tree/main/docs))
+- `developer`: Requirements needed to format the codebase
+- `release`: Requirements needed to release new versions of XGI
+
+```sh
+pip install xgi[option]
+pip install xgi[option1,option2]
+```
+
+## Examples
+
+### Installing requirements
+
+```bash
+$ pip install -U -r requirements/default.txt
+```
+
+### Running the tests
+
+```bash
+$ pip install -U -r requirements/default.txt
+$ pip install -U -r requirements/test.txt
+```
 
 ## Getting Started
 To get started, take a look at the [tutorials](https://xgi.readthedocs.io/en/stable/api/tutorials.html) illustrating the library's basic functionality.
