@@ -124,8 +124,7 @@ jobs:
     - name: Install packages
       run: |
         python -m pip install --upgrade pip wheel setuptools
-        python -m pip install -r requirements/default.txt -r requirements/test.txt -r requirements/documentation.txt
-        python -m pip install .
+        python -m pip install . [test,docs]
         python -m pip list
 
     - name: Test XGI
