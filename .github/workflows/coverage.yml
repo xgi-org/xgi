@@ -17,9 +17,9 @@ jobs:
           python-version: '3.12'
       - name: Install packages
         run: |
-          python pip install --upgrade pip
-          python pip install .[test]
-          python pip list
+          pip install --upgrade pip
+          pip install .[test]
+          pip list
       - name: Run tests and collect coverage
         run: |
           cd tests/
