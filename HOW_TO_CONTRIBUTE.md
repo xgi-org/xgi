@@ -31,7 +31,3 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 6. Run `python -m build` from the main folder. This will create a zipped file to upload to PyPI and save it to the "dist" folder.
 6. Using `twine` (a dependency in the [release](requirements/release.txt) requirements file), run `twine upload dist/xgi-[version number].tar.gz`. Enter your username and password.
 4. The new version is now on PyPI.
-
-## Attribution
-
-This Contributing Statement is adapted from [this template by @PurpleBooth](https://gist.github.com/PurpleBooth/b24679402957c63ec426).
