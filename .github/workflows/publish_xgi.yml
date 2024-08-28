@@ -30,11 +30,11 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-        pip install -U build twine wheel
+        pip install -U build twine
     
     - name: Build package
       run: |
-        python -m build --sdist --wheel
+        python -m build
     
     - name: Verify the distribution
       run: twine check --strict dist/*

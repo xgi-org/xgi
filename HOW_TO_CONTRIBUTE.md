@@ -28,7 +28,7 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 3. Increase the version number in [\_\_init\_\_.py](xgi/__init__.py.py) and [conf.py](docs/source/conf.py) to the new version agreed upon by the core developers. The versioning scheme we use is [SemVer](http://semver.org/).
 4. Commit these changes.
 5. Create a new release on GitHub by selecting "Releases", then clicking "Draft a new release". Click "Choose a tag" and type "v" followed by the version number and then click "Create new tag". The release title will be this same string. Paste the contents of the CHANGELOG into the "Describe this release" field. Click "Publish release".
-6. Run `python setup.py sdist` from the main folder. This will create a zipped file to upload to PyPI and save it to the "dist" folder.
+6. Run `python -m build` from the main folder. This will create a zipped file to upload to PyPI and save it to the "dist" folder.
 6. Using `twine` (a dependency in the [release](requirements/release.txt) requirements file), run `twine upload dist/xgi-[version number].tar.gz`. Enter your username and password.
 4. The new version is now on PyPI.
 
