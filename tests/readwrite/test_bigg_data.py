@@ -7,7 +7,7 @@ from xgi.exception import XGIError
 
 
 @pytest.mark.skipif(
-    sys.version_info != (3, 12) and sys.platform != "linux",
+    sys.version_info != (3, 12) and not sys.platform.startswith("linux"),
     reason="Only need one test!",
 )
 @pytest.mark.webtest
@@ -36,6 +36,12 @@ def test_load_bigg_data(capfd):
         load_bigg_data("test")
 
 
+@pytest.mark.skipif(
+    sys.version_info != (3, 12) and not sys.platform.startswith("linux"),
+    reason="Only need one test!",
+)
+@pytest.mark.webtest
+@pytest.mark.slow
 def test_411():
     with pytest.warns(Warning):
         H = load_bigg_data("iCN718")
@@ -44,6 +50,12 @@ def test_411():
     assert H.num_edges == 1436
 
 
+@pytest.mark.skipif(
+    sys.version_info != (3, 12) and not sys.platform.startswith("linux"),
+    reason="Only need one test!",
+)
+@pytest.mark.webtest
+@pytest.mark.slow
 def test_458():
     H = load_bigg_data("e_coli_core")
     assert H.edges.dimembers("FORt") == ({"for_c"}, {"for_e"})

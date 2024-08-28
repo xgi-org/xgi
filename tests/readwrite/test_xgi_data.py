@@ -9,7 +9,8 @@ from xgi.exception import XGIError
 
 
 @pytest.mark.skipif(
-    sys.version_info != (3, 12) and sys.platform != "linux", reason="only need one test"
+    sys.version_info != (3, 12) and sys.platform.startswith("linux"),
+    reason="only need one test",
 )
 @pytest.mark.webtest
 @pytest.mark.slow
