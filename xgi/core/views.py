@@ -809,7 +809,7 @@ class EdgeView(IDView):
 
 
 class DiNodeView(IDView):
-    """A DiIDView that keeps track of node ids.
+    """A IDView that keeps track of node ids.
 
     .. warning::
         This is currently an experimental feature.
@@ -823,7 +823,7 @@ class DiNodeView(IDView):
 
     See Also
     --------
-    DiIDView
+    IDView
 
     Notes
     -----
@@ -929,7 +929,7 @@ class DiNodeView(IDView):
 
 
 class DiEdgeView(IDView):
-    """An DiIDView that keeps track of edge ids.
+    """An IDView that keeps track of edge ids.
 
     .. warning::
         This is currently an experimental feature.
@@ -943,7 +943,7 @@ class DiEdgeView(IDView):
 
     See Also
     --------
-    DiIDView
+    IDView
 
     Notes
     -----

@@ -1,3 +1,5 @@
+import platform
+import sys
 import tempfile
 from os.path import join
 
@@ -7,6 +9,10 @@ from xgi import download_xgi_data, load_xgi_data, read_json
 from xgi.exception import XGIError
 
 
+@pytest.mark.skipif(
+    sys.version_info != (3, 12) and not platform.system() == "Linux",
+    reason="only need one test",
+)
 @pytest.mark.webtest
 @pytest.mark.slow
 def test_load_xgi_data(capfd):
@@ -55,6 +61,10 @@ def test_load_xgi_data(capfd):
     assert collection["as-you-like-it"].num_edges == 80
 
 
+@pytest.mark.skipif(
+    sys.version_info != (3, 12) and not platform.system() == "Linux",
+    reason="only need one test",
+)
 @pytest.mark.webtest
 @pytest.mark.slow
 def test_download_xgi_data():

@@ -58,8 +58,9 @@ pip install -e .["all"]
 ```
 * If that command does not work, you may try the following instead
 ````zsh
-pip install -e .\[all\]
+pip install -e ."[all]"
 ````
+For more installation options, see the [guide](https://github.com/xgi-org/xgi/blob/main/requirements/README.md).
 
 
 ## Getting Started

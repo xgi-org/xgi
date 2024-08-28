@@ -24,5 +24,5 @@ xgi.core.views.DiEdgeView
       ~DiEdgeView.dimembers
       ~DiEdgeView.head
       ~DiEdgeView.tail
-      ~DiIDView.filterby
-      ~DiIDView.filterby_attr
+      ~IDView.filterby
+      ~IDView.filterby_attr

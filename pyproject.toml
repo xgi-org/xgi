@@ -1,0 +1,105 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=61.2", "wheel"]
+
+[project]
+name = "xgi"
+dynamic = ["version"]
+description = "XGI is a Python package for higher-order networks."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE.md"}
+authors = [
+    {name = "XGI Developers", email = "nicholas.landry@virginia.edu"}
+]
+maintainers = [
+    {name = "XGI Developers", email = "nicholas.landry@virginia.edu"}
+]
+keywords = [
+    "networks",
+    "higher-order",
+    "higher-order network",
+    "hypergraph",
+    "simplicial complex",
+    "network science",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "numpy>=1.20",
+    "scipy>=1.8",
+    "pandas>=1.3",
+    "networkx>=2.7",
+    "requests>=2.0",
+    "matplotlib>=3.4",
+    "seaborn>=0.10",
+]
+
+[project.urls]
+Documentation = "https://xgi.readthedocs.io/en/stable/"
+"Bug Reports" = "https://github.com/xgi-org/xgi/issues"
+Source = "https://github.com/xgi-org/xgi"
+PyPI = "https://pypi.org/project/xgi/"
+"GitHub Discussions" = "https://github.com/xgi-org/xgi/discussions"
+
+[project.optional-dependencies]
+benchmark = [
+    "hypernetx>=1.0",
+    "asv>=0.5",
+]
+developer = [
+    "black[jupyter]>=24.3",
+    "isort==5.10.1",
+    "pylint>=3.0",
+    "nbqa",
+]
+docs = [
+    "sphinx~=6.0",
+    "sphinx_copybutton",
+    "sphinx-rtd-theme>=1.2",
+    "numpydoc>=1.1",
+    "pillow>=8.2",
+    "matplotlib>=3.3",
+    "sphinx-design",
+    "ipykernel",
+    "nbsphinx",
+    "nbsphinx-link",
+]
+release = [
+    "twine>=3.4",
+    "build>=1.2.1",
+    "wheel>=0.36",
+    "github-changelog",
+]
+test = [
+    "pytest>=7.2",
+    "pytest-cov>=4.0",
+]
+tutorial = [
+    "jupyter>=1.0",
+    "ipython<=8.12.0",
+]
+all = ["xgi[benchmark,developer,docs,release,test,tutorial]"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.dynamic.version]
+attr = "xgi.__version__"

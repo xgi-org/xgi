@@ -207,7 +207,12 @@ def test_draw_nodes_interp(edgelist8):
         node_size=arg,
         node_lw=arg,
         rescale_sizes=True,
-        **{"min_node_size": 1, "max_node_size": 20, "min_node_lw": 1, "max_node_lw": 10}
+        **{
+            "min_node_size": 1,
+            "max_node_size": 20,
+            "min_node_lw": 1,
+            "max_node_lw": 10,
+        },
     )
     assert min(node_collection.get_sizes()) == 1**2
     assert max(node_collection.get_sizes()) == 20**2

@@ -21,18 +21,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.12'
+    
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        python -m pip install setuptools
+        pip install --upgrade pip
+        pip install -U build twine
+    
     - name: Build package
       run: |
-        python setup.py sdist
+        python -m build
+    
+    - name: Verify the distribution
+      run: twine check --strict dist/*
+    
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
