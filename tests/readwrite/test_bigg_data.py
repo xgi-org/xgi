@@ -1,3 +1,4 @@
+import platform
 import sys
 
 import pytest
@@ -7,7 +8,7 @@ from xgi.exception import XGIError
 
 
 @pytest.mark.skipif(
-    sys.version_info != (3, 12) and not sys.platform.startswith("linux"),
+    sys.version_info != (3, 12) and not platform.system() == "Linux",
     reason="Only need one test!",
 )
 @pytest.mark.webtest
@@ -37,7 +38,7 @@ def test_load_bigg_data(capfd):
 
 
 @pytest.mark.skipif(
-    sys.version_info != (3, 12) and not sys.platform.startswith("linux"),
+    sys.version_info != (3, 12) and not platform.system() == "Linux",
     reason="Only need one test!",
 )
 @pytest.mark.webtest
@@ -51,7 +52,7 @@ def test_411():
 
 
 @pytest.mark.skipif(
-    sys.version_info != (3, 12) and not sys.platform.startswith("linux"),
+    sys.version_info != (3, 12) and not platform.system() == "Linux",
     reason="Only need one test!",
 )
 @pytest.mark.webtest
