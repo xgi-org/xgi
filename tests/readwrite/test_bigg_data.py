@@ -1,9 +1,12 @@
+import sys
+
 import pytest
 
 from xgi import load_bigg_data
 from xgi.exception import XGIError
 
 
+@pytest.mark.skipif(sys.version_info != (3, 12) and sys.platform != "linux", reason="Only need one test!")
 @pytest.mark.webtest
 @pytest.mark.slow
 def test_load_bigg_data(capfd):
