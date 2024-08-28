@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "XGI is a Python package for higher-order networks."
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "3-Clause BSD license"}
+license = {file = "LICENSE.md"}
 authors = [
     {name = "XGI Developers", email = "nicholas.landry@virginia.edu"}
 ]
