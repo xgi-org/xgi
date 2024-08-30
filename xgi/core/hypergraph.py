@@ -1195,14 +1195,14 @@ class Hypergraph:
         if edges:
             self.add_edges_from(edges)
 
-    def clear(self, hypergraph_attr=True):
+    def clear(self, remove_net_attr=True):
         """Remove all nodes and edges from the graph.
 
         Also removes node and edge attributes, and optionally hypergraph attributes.
 
         Parameters
         ----------
-        hypergraph_attr : bool, optional
+        remove_net_attr : bool, optional
             Whether to remove hypergraph attributes as well.
             By default, True.
 
@@ -1211,7 +1211,7 @@ class Hypergraph:
         self._node_attr.clear()
         self._edge.clear()
         self._edge_attr.clear()
-        if hypergraph_attr:
+        if remove_net_attr:
             self._net_attr.clear()
 
     def clear_edges(self):
@@ -1467,7 +1467,6 @@ class Hypergraph:
             _H = self
         else:
             _H = self.copy()
-
         if not multiedges:
             _H.merge_duplicate_edges()
         if not singletons:

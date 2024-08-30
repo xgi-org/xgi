@@ -978,14 +978,14 @@ class DiHypergraph:
                     "dict-of-dicts has not been provided."
                 )
 
-    def clear(self, hypergraph_attr=True):
+    def clear(self, remove_net_attr=True):
         """Remove all nodes and edges from the graph.
 
         Also removes node and edge attributes, and optionally hypergraph attributes.
 
         Parameters
         ----------
-        hypergraph_attr : bool, optional
+        remove_net_attr : bool, optional
             Whether to remove hypergraph attributes as well.
             By default, True.
 
@@ -994,7 +994,7 @@ class DiHypergraph:
         self._node_attr.clear()
         self._edge.clear()
         self._edge_attr.clear()
-        if hypergraph_attr:
+        if remove_net_attr:
             self._net_attr.clear()
 
     def copy(self):

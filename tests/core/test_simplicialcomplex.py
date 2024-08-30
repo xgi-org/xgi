@@ -567,7 +567,9 @@ def test_cleanup():
 
     # test relabel
     cleanSC = SC.copy()
+    cleanSC["name"] = "test"
     cleanSC.cleanup(connected=False)
+    assert cleanSC["name"] == "test"
     assert set(cleanSC.nodes) == {0, 1, 2, 3, 4}
     assert cleanSC.num_edges == 5
     simplices = cleanSC.edges.members()
