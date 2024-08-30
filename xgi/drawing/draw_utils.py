@@ -78,7 +78,7 @@ def _parse_color_arg(colors, ids, id_kind="edges"):
 
     This function is needed to handle the input formats not naturally
     handled by matploltib's Collections: IDStat, dict, and arrays of
-    floats. All those are converted to arrays of floats and.
+    floats. All those numerical foramtsare converted to arrays of floats.
 
     Parameters:
     -----------
@@ -103,8 +103,8 @@ def _parse_color_arg(colors, ids, id_kind="edges"):
     --------
     colors : single color or ndarray
         Processed color values for plotting.
-    colors_are_mapped : bool
-        True if the colors are mapped and need special handling. This
+    colors_to_map : bool
+        True if the colors need to be mapped and need special handling. This
         is used in draw_hyperedges to deal with Collections.
 
     Raises:
@@ -127,6 +127,7 @@ def _parse_color_arg(colors, ids, id_kind="edges"):
 
     xsize = len(ids)
 
+    # convert all dict-like input formats to an array
     if isinstance(colors, IDStat):
         colors = colors.asdict()
     if isinstance(colors, dict):
@@ -135,13 +136,14 @@ def _parse_color_arg(colors, ids, id_kind="edges"):
         values = list(colors.values())
         colors = np.array(values)
 
+    # see if input format needs to be mapped to colors (if numeric)
     try:  # see if the input format is compatible with PatchCollection's facecolor
         colors = to_rgba_array(colors)
-        colors_are_mapped = False
+        colors_to_map = False
     except:
         try:  # in case of array of floats (can be fed to PatchCollection with some care)
             colors = np.asanyarray(colors, dtype=float)
-            colors_are_mapped = True
+            colors_to_map = True
         except:
             raise ValueError("Invalid input format for colors.")
 
@@ -150,7 +152,7 @@ def _parse_color_arg(colors, ids, id_kind="edges"):
             f"The input color argument must be a single color or its length must match the number of plotted elements ({xsize})."
         )
 
-    return colors, colors_are_mapped
+    return colors, colors_to_map
 
 
 def _draw_arg_to_arr(arg):

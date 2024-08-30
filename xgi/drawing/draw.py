@@ -73,6 +73,7 @@ def draw(
     edge_fc_cmap="crest_r",
     edge_vmin=None,
     edge_vmax=None,
+    edge_ec=None,
     alpha=0.4,
     hull=False,
     radius=0.05,
@@ -166,6 +167,23 @@ def draw(
         Colormap used to map the edge colors. By default, "cres_r".
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
+    edge_ec : color or list of colors or array-like or dict or EdgeStat, optional
+        Color of the hyperedges.  The accepted formats are the same as
+        matplotlib's scatter, with the addition of dict and IDStat.
+        Formats with colors:
+        * single color as a string
+        * single color as 3- or 4-tuple
+        * list of colors of length len(ids)
+        * dict of colors containing the `ids` as keys
+
+        Formats with numerical values (will be mapped to colors):
+        * array of floats
+        * dict of floats containing the `ids` as keys
+        * IDStat containing the `ids` as keys
+
+        If None (default), color by edge size.
+        Numerical formats will be mapped to colors using edge_vmin, edge_vmax, 
+        and edge_fc_cmap.
     alpha : float, optional
         The edge transparency. By default, 0.4.
     hull : bool, optional
@@ -262,6 +280,7 @@ def draw(
             edge_fc_cmap=edge_fc_cmap,
             edge_vmin=edge_vmin,
             edge_vmax=edge_vmax,
+            edge_ec=edge_ec,
             max_order=max_order,
             hyperedge_labels=hyperedge_labels,
             rescale_sizes=rescale_sizes,
@@ -285,6 +304,7 @@ def draw(
             edge_fc_cmap=edge_fc_cmap,
             edge_vmin=edge_vmin,
             edge_vmax=edge_vmax,
+            edge_ec=edge_ec,
             max_order=max_order,
             hyperedge_labels=hyperedge_labels,
             hull=hull,
@@ -523,6 +543,7 @@ def draw_hyperedges(
     edge_fc_cmap="crest_r",
     edge_vmin=None,
     edge_vmax=None,
+    edge_ec=None,
     alpha=0.4,
     max_order=None,
     params=dict(),
@@ -566,13 +587,13 @@ def draw_hyperedges(
     edge_fc : color or list of colors or array-like or dict or EdgeStat, optional
         Color of the hyperedges.  The accepted formats are the same as
         matplotlib's scatter, with the addition of dict and IDStat.
-        Those with colors:
+        Formats with colors:
         * single color as a string
         * single color as 3- or 4-tuple
         * list of colors of length len(ids)
         * dict of colors containing the `ids` as keys
 
-        Those with numerical values (will be mapped to colors):
+        Formats with numerical values (will be mapped to colors):
         * array of floats
         * dict of floats containing the `ids` as keys
         * IDStat containing the `ids` as keys
@@ -582,6 +603,23 @@ def draw_hyperedges(
         Colormap used to map the edge colors. By default, "crest_r".
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
+    edge_ec : color or list of colors or array-like or dict or EdgeStat, optional
+        Color of the hyperedges.  The accepted formats are the same as
+        matplotlib's scatter, with the addition of dict and IDStat.
+        Formats with colors:
+        * single color as a string
+        * single color as 3- or 4-tuple
+        * list of colors of length len(ids)
+        * dict of colors containing the `ids` as keys
+
+        Formats with numerical values (will be mapped to colors):
+        * array of floats
+        * dict of floats containing the `ids` as keys
+        * IDStat containing the `ids` as keys
+
+        If None (default), color by edge size.
+        Numerical formats will be mapped to colors using edge_vmin, edge_vmax, 
+        and edge_fc_cmap.
     alpha : float, optional
         The edge transparency. By default, 0.4.
     max_order : int, optional
@@ -650,13 +688,18 @@ def draw_hyperedges(
 
     if edge_fc is None:  # color is proportional to size
         edge_fc = edges.size
+    if edge_ec is None:  # color is proportional to size
+        edge_ec = edges.size
 
     # convert all formats to ndarray
     dyad_lw = _draw_arg_to_arr(dyad_lw)
 
     # parse colors
-    dyad_color, dyad_c_mapped = _parse_color_arg(dyad_color, list(dyads))
-    edge_fc, edge_c_mapped = _parse_color_arg(edge_fc, list(edges))
+    dyad_color, dyad_c_to_map = _parse_color_arg(dyad_color, list(dyads))
+    edge_fc, edge_c_to_map = _parse_color_arg(edge_fc, list(edges))
+    edge_ec, edge_ec_to_map = _parse_color_arg(edge_ec, list(edges))
+    # edge_c_to_map and dyad_c_to_map are True if the colors
+    # are input as numeric values that need to be mapped to colors
 
     # check validity of input values
     if np.any(dyad_lw < 0):
@@ -672,7 +715,7 @@ def draw_hyperedges(
     dyad_pos = np.asarray([(pos[list(e)[0]], pos[list(e)[1]]) for e in dyads.members()])
 
     # plot dyads
-    if dyad_c_mapped:
+    if dyad_c_to_map:
         dyad_c_arr = dyad_color
         dyad_colors = None
     else:
@@ -682,7 +725,7 @@ def draw_hyperedges(
     dyad_collection = LineCollection(
         dyad_pos,
         colors=dyad_colors,
-        array=dyad_c_arr,  # colors if mapped, ie arr of floats
+        array=dyad_c_arr,  # colors if to be mapped, ie arr of floats
         linewidths=dyad_lw,
         antialiaseds=(1,),
         linestyle=dyad_style,
@@ -691,7 +734,7 @@ def draw_hyperedges(
     )
 
     # dyad_collection.set_cmap(dyad_color_cmap)
-    if dyad_c_mapped:
+    if dyad_c_to_map:
         dyad_collection.set_clim(dyad_vmin, dyad_vmax)
     # dyad_collection.set_zorder(max_order - 1)  # edges go behind nodes
     ax.add_collection(dyad_collection)
@@ -700,12 +743,26 @@ def draw_hyperedges(
     ids_sorted = np.argsort(edges.size.aslist())[::-1]
 
     # plot other hyperedges
-    if edge_c_mapped:
+
+    # prepare colors for PatchCollection format
+    if edge_c_to_map:
         edge_fc_arr = edge_fc[ids_sorted]
         edge_fc_colors = None
     else:
         edge_fc_arr = None
         edge_fc_colors = edge_fc[ids_sorted] if len(edge_fc) > 1 else edge_fc
+
+    
+    edge_ec = edge_ec[ids_sorted] if len(edge_ec) > 1 else edge_ec # reorder
+
+    if edge_ec_to_map: # edgecolors need to be manually mapped
+
+        # create scalarmappable to map floats to colors
+        # we use the same vmin, vmax, and cmap as for edge_fc
+        norm = mpl.colors.Normalize(vmin=edge_vmin, vmax=edge_vmax)
+        sm_edgecolors = cm.ScalarMappable(norm=norm, cmap=edge_fc_cmap)
+
+        edge_ec = sm_edgecolors.to_rgba(edge_ec) # map to colors
 
     patches = []
     for he in np.array(edges.members())[ids_sorted]:
@@ -733,13 +790,14 @@ def draw_hyperedges(
     edge_collection = PatchCollection(
         patches,
         facecolors=edge_fc_colors,
-        array=edge_fc_arr,
+        array=edge_fc_arr, # will be mapped by PatchCollection
         cmap=edge_fc_cmap,
+        edgecolors=edge_ec,
         alpha=alpha,
         zorder=max_order - 2,  # below dyads
     )
     # edge_collection.set_cmap(edge_fc_cmap)
-    if edge_c_mapped:
+    if edge_c_to_map:
         edge_collection.set_clim(edge_vmin, edge_vmax)
     ax.add_collection(edge_collection)
 
@@ -1379,9 +1437,9 @@ def draw_multilayer(
         raise ValueError("dyad_lw cannot contain negative values.")
 
     # parse colors
-    dyad_color, dyad_c_mapped = _parse_color_arg(dyad_color, list(dyads))
-    edge_fc, edge_c_mapped = _parse_color_arg(edge_fc, list(edges))
-    layer_color, layer_c_mapped = _parse_color_arg(layer_color, orders)
+    dyad_color, dyad_c_to_map = _parse_color_arg(dyad_color, list(dyads))
+    edge_fc, edge_c_to_map = _parse_color_arg(edge_fc, list(edges))
+    layer_color, layer_c_to_map = _parse_color_arg(layer_color, orders)
 
     node_size = np.array(node_size) ** 2
 
@@ -1402,7 +1460,7 @@ def draw_multilayer(
         # draw surfaces corresponding to the different orders
         zz = np.zeros(xx.shape) + d * sep
 
-        if layer_c_mapped:
+        if layer_c_to_map:
             layer_c = None
         else:
             layer_c = layer_color[jj] if len(layer_color) > 1 else layer_color
@@ -1427,7 +1485,7 @@ def draw_multilayer(
     ]
 
     # plot dyads
-    if dyad_c_mapped:
+    if dyad_c_to_map:
         raise ValueError(
             "dyad_color needs to be a color or list of colors, not numerical values."
         )
@@ -1447,7 +1505,7 @@ def draw_multilayer(
     ids_sorted = np.argsort(edges.size.aslist())[::-1]
 
     # plot other hyperedges
-    if edge_c_mapped:
+    if edge_c_to_map:
         edge_fc_arr = edge_fc[ids_sorted]
         edge_fc_colors = None
     else:
@@ -1474,7 +1532,7 @@ def draw_multilayer(
         zorder=max_order - 2,  # below dyads
     )
     edge_collection.set_cmap(edge_fc_cmap)
-    if edge_c_mapped:
+    if edge_c_to_map:
         edge_collection.set_clim(edge_vmin, edge_vmax)
     ax.add_collection3d(edge_collection)
 
@@ -1963,7 +2021,7 @@ def draw_undirected_dyads(
         )
 
     # parse colors
-    dyad_color, dyads_c_mapped = _parse_color_arg(dyad_color, H.edges)
+    dyad_color, dyads_c_to_map = _parse_color_arg(dyad_color, H.edges)
 
     # The following two list comprehensions map colors assigned to a hyperedge to
     # all of the bipartite edges, so that users need not specify colors for every
@@ -1986,7 +2044,7 @@ def draw_undirected_dyads(
         )
 
     # convert numbers to colors for FancyArrowPatch
-    if dyads_c_mapped:
+    if dyads_c_to_map:
         norm = mpl.colors.Normalize()
         m = cm.ScalarMappable(norm=norm, cmap=dyad_color_cmap)
         dyad_color = m.to_rgba(dyad_color)
@@ -2160,10 +2218,10 @@ def draw_directed_dyads(
         )
 
     # parse colors
-    dyad_color, dyads_c_mapped = _parse_color_arg(dyad_color, H.edges)
+    dyad_color, dyads_c_to_map = _parse_color_arg(dyad_color, H.edges)
 
     # convert numbers to colors for FancyArrowPatch
-    if dyads_c_mapped:
+    if dyads_c_to_map:
         norm = mpl.colors.Normalize()
         m = cm.ScalarMappable(norm=norm, cmap=dyad_color_cmap)
         dyad_color = m.to_rgba(dyad_color)
@@ -2233,7 +2291,7 @@ def draw_directed_dyads(
             else:
                 dlw = dyad_lw
 
-            if dyads_c_mapped:
+            if dyads_c_to_map:
                 d_color = dyad_color[edge_to_idx[e]]
             else:
                 d_color = dyad_color
