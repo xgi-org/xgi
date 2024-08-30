@@ -722,6 +722,7 @@ def test_cleanup(dihypergraph1):
 
     # test relabel
     cleanDH = dihypergraph1.copy()
+    cleanDH["name"] = "test"
     cleanDH.cleanup()
     assert set(cleanDH.nodes) == {0, 1, 2, 3}
     assert cleanDH.num_edges == 3
@@ -735,3 +736,4 @@ def test_cleanup(dihypergraph1):
     edge_out = {i: e["out"] for i, e in cleanDH._edge.items()}
     assert edge_in == xgi.dual_dict(node_out)
     assert edge_out == xgi.dual_dict(node_in)
+    assert cleanDH["name"] == "test"

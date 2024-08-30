@@ -408,7 +408,7 @@ def convert_labels_to_integers(net, label_attribute="label", in_place=False):
     node_attrs = net._node_attr.copy()
     edge_attrs = net._edge_attr.copy()
     edges = net._edge.copy()
-    net.clear()
+    net.clear(remove_net_attr=False)
     net.add_nodes_from((id, deepcopy(node_attrs[n])) for n, id in node_dict.items())
     net.set_node_attributes({id: {label_attribute: n} for n, id in node_dict.items()})
     if isinstance(net, SimplicialComplex):

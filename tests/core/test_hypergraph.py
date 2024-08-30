@@ -948,11 +948,13 @@ def test_cleanup():
 
     # test relabel
     cleanH = H.copy()
+    cleanH["name"] = "test"
     cleanH.cleanup(connected=False)
     assert set(cleanH.nodes) == {0, 1, 2, 3, 4}
     assert cleanH.num_edges == 2
     edges = cleanH.edges.members()
     assert {0, 1, 2} in edges
     assert {3, 4} in edges
+    assert cleanH["name"] == "test"
 
     assert cleanH._edge == xgi.dual_dict(cleanH._node)
