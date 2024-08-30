@@ -78,7 +78,7 @@ def _parse_color_arg(colors, ids, id_kind="edges"):
 
     This function is needed to handle the input formats not naturally
     handled by matploltib's Collections: IDStat, dict, and arrays of
-    floats. All those numerical foramtsare converted to arrays of floats.
+    floats. All those numerical formats are converted to arrays of floats.
 
     Parameters:
     -----------
