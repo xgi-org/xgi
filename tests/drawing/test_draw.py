@@ -335,6 +335,27 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
     plt.close()
 
 
+def test_draw_hyperedges_ec(edgelist8):
+    # implemented in PR #575
+
+    H = xgi.Hypergraph(edgelist8)
+
+    colors = np.array([[0.6468274 , 0.80289262, 0.56592265, 0.4],
+                [0.17363177, 0.19076859, 0.44549087, 0.4],
+                [0.17363177, 0.19076859, 0.44549087, 0.4],
+                [0.17363177, 0.19076859, 0.44549087, 0.4],
+                [0.17363177, 0.19076859, 0.44549087, 0.4],
+                [0.17363177, 0.19076859, 0.44549087, 0.4]])
+
+    # edge stat color
+    fig, ax = plt.subplots()
+    ax, collections = xgi.draw_hyperedges(H,ax=ax, edge_ec=H.edges.size, edge_fc="w")
+    (_, edge_collection) = collections
+
+    assert np.all(edge_collection.get_edgecolor() == colors)
+    plt.close("all")
+
+
 def test_draw_simplices(edgelist8):
     with pytest.raises(XGIError):
         H = xgi.Hypergraph(edgelist8)
@@ -684,16 +705,16 @@ def test_draw_undirected_dyads(edgelist8):
     H = xgi.Hypergraph(edgelist8)
 
     fig, ax = plt.subplots()
-    ax, dyad_collection = xgi.draw_undirected_dyads(H)
+    ax, dyad_collection = xgi.draw_undirected_dyads(H, ax=ax)
     assert len(dyad_collection._paths) == 26  # number of lines
 
     with pytest.raises(ValueError):
         fig, ax = plt.subplots()
-        ax, dyad_collection = xgi.draw_undirected_dyads(H, dyad_lw=-1)
+        ax, dyad_collection = xgi.draw_undirected_dyads(H, dyad_lw=-1, ax=ax)
 
     fig, ax = plt.subplots()
     ax, dyad_collection = xgi.draw_undirected_dyads(
-        H, dyad_color=np.random.random(H.num_edges)
+        H, dyad_color=np.random.random(H.num_edges), ax=ax
     )
     assert len(np.unique(dyad_collection.get_color())) == 28
     plt.close("all")
