@@ -172,8 +172,15 @@ html_theme_options = {
             "url": "https://twitter.com/xginets",
             "icon": "fab fa-twitter-square",  # Font Awesome icon
         },
+        {
+            "name": "Mastodon",
+            "url": "https://mathstodon.xyz/@xginets",
+            "icon": "fa-brands fa-mastodon",  # Font Awesome icon
+        },
     ],
 }
+
+
 
 
 html_sidebars = {
