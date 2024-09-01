@@ -10,6 +10,11 @@ To install and use XGI as an end user, execute
 
    pip install xgi
 
+
+
+Once installed, go directly to the `User Guides <user_guides.html>`_ to get started!
+
+
 To install for development purposes, first clone the repository and then execute
 
 .. code:: bash

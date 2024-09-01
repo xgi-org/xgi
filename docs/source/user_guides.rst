@@ -52,15 +52,15 @@ User guides
     	In depth tutorials
     	^^^
 
-    	To know everything there is to know about specific features of XGI 
+    	To know everything there is to know about a specific feature of XGI 
     	+++
 
-        .. button-ref:: focus_tutorials
+        .. button-ref:: indepth_tutorials
             :expand:
             :color: secondary
             :click-parent:
 
-            To the focus tutorials
+            To the in-depth tutorials
 
     .. grid-item-card:: 
     	:text-align: center
