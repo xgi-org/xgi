@@ -159,11 +159,39 @@ html_theme = "pydata_sphinx_theme"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-# html_theme_options = {}
+html_theme_options = {
+    "navbar_end": ["theme-switcher", "navbar-icon-links"],  # Place the social links at the end of the navbar
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://xgi.readthedocs.io/",
+            "icon": "fab fa-github-square",  # Font Awesome icon
+        },
+        {
+            "name": "Twitter",
+            "url": "https://twitter.com/xginets",
+            "icon": "fab fa-twitter-square",  # Font Awesome icon
+        },
+    ],
+}
+
+
+html_sidebars = {
+    "**": ["sidebar-nav-bs", "sidebar-ethical-ads"],
+    "index": [],
+    "installing": [],
+    "tutorial": [],
+    "xgi-data": [],
+    "gallery": [],
+    "contribute": [],
+    "user_guides": [],
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = ["_static"]
 # html_static_path = ["_static"]
+
+html_logo = "../../logo/logo.svg"
 
 html_show_sphinx = True
 
