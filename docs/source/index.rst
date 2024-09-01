@@ -12,7 +12,6 @@
    xgi-data
    gallery
    contribute
-   about_us
 
 
 Software for higher-order networks
@@ -27,6 +26,7 @@ with group (higher-order) interactions. It provides tools to:
 * analyze the structure of higher-order networks with metrics and algorithms
 * compute nodes and edge statistics in a unified interface
 * draw higher-order networks
+* manipulate hypergraphs (undirected and directed) and simplicial complexes
 
 
 Higher-order networks generalize standard (pairwise) networks by allowing to encode higher-order interactions, 
@@ -47,7 +47,7 @@ Corresponding Data
 ==================
 
 A number of higher-order datasets are available in the `XGI-DATA repository <https://github.com/xgi-org/xgi-data>`_ and can be easily accessed with the ``load_xgi_data()`` function.
-More information about the datasets and how to load them is in the `XGI-DATA menu <xgi-data.html>`_
+More information about the datasets and how to load them is in the `XGI-DATA menu <xgi-data.html>`_.
 
 Get involved
 ==================
@@ -55,7 +55,7 @@ Get involved
 To simply getting news and updates, you can sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
 
 If you want to contribute, even better! The XGI community always welcomes contributions, no matter how small.
-For more information, see `contribution guide <development.html>`_
+For more information, see our `contribution guide <contribute.html>`_.
 
 
 
