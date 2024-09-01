@@ -10,3 +10,18 @@ Why higher-order interactions?
 ==============================
 
 Higher-order interactions can reveal more nuanced and sophisticated patterns of connection and can naturally encode different scales of interaction which are inaccessible to pairwise network representations. Higher-order networks can be helpful for describing social networks, ecological communities, co-authorship or citation networks, email, protein interactions, and many more examples. Higher-order networks can also exhibit rich dynamical behavior for simple models of contagion, synchronization, and opinion formation.
+
+
+Academic References
+===================
+
+* `The Why, How, and When of Representations for Complex Systems
+  <https://doi.org/10.1137/20M1355896>`_, Torres, L., Blevins, A.S., Bassett, D. and Eliassi-Rad, T., 2021. SIAM Review, 63(3), pp.435-485.
+
+* `Networks beyond pairwise interactions: Structure and dynamics
+  <https://doi.org/10.1016/j.physrep.2020.05.004>`_, Battiston, F., Cencetti, G., Iacopini, I., Latora, V., Lucas, M., Patania, A., Young, J.G. and Petri, G., 2020. Physics reports, 874, pp.1-92.
+
+* `What are higher-order networks? <https://arxiv.org/abs/2104.11329>`_, Bick, C., Gross, E., Harrington, H.A. and Schaub, M.T., 2023. SIAM Review, 65(3), pp.686-731.
+
+* `From networks to optimal higher-order models of complex systems
+  <https://www.nature.com/articles/s41567-019-0459-y>`_, Lambiotte, R., Rosvall, M. and Scholtes, I., 2019. Nature physics, 15(4), pp.313-320.

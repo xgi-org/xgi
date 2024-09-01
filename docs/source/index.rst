@@ -15,32 +15,34 @@
    about_us
 
 
-About
-=====
+Software for higher-order networks
+==================================
 
 The Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/xgi-org/xgi>`_
 library provides data structures and algorithms for modeling, analyzing, and visualizing complex systems
-with group (higher-order) interactions. For more information about what higher-order
-interactions are, see a `brief overview <higher-order.html>`_.
+with group (higher-order) interactions. It provides tools to:
 
-Many datasets can be represented as graphs, where pairs of entities (or nodes) are
-related via links (or edges).  Examples are road networks, energy grids, social
-networks, neural networks, etc.  However, in many other datasets, more than two entities
-can be related at a time.  For example, many scientists (entities) can collaborate on a
-scientific article together (links), and multiple email accounts (entities) can all
-participate on the same email thread (links).  In this latter case, graphs no longer
-present a viable alternative to represent such datasets.  It is for this kind of
-datasets, where the interactions are given among groups of more than two entities (also
-called higher-order interactions), that XGI was designed for.
+* easily load and store higher-order networks in standard formats
+* generate many random and non-random higher-order networks from models
+* analyze the structure of higher-order networks with classic and state-of-the-art algorithms
+* compute nodes and edge statistics in unified interface
+* draw higher-order networks with intuitive customizations
+
+
+Higher-order networks generalize standard (pairwise) networks by allowing to encore higher-order interactions, 
+that is interactions between any number of entities. Collaborations or contagion processes are typical
+examples where these higher-order interactions are crucial.
+For more information about what higher-order
+interactions are, see a `brief overview <higher-order.html>`_.
 
 XGI is implemented in pure Python and is designed to seamlessly interoperate with the
 rest of the Python scientific stack (numpy, scipy, pandas, matplotlib, etc).  XGI is
 designed and developed by network scientists with the needs of network scientists in
-mind. Browse the `list of projects Using XGI <using-xgi.html>`_ to get an idea.
-We thank all our great `contributors <contributors.html>`_! 
+mind. Browse the `list of projects Using XGI <using-xgi.html>`_ to get an idea of what XGI can do.
 
-Sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
+Get started immediately by `installing XGI <installing.html>`_ and checking the `XGI in 1 minute <api/tutorials/getting_started_1.html>`_ tutorial.
 
+Then, sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
 
 
 Corresponding Data
@@ -82,20 +84,15 @@ Academic References
 ===================
 
 * `The Why, How, and When of Representations for Complex Systems
-  <https://doi.org/10.1137/20M1355896>`_, Leo Torres, Ann S. Blevins, Danielle Bassett,
-  and Tina Eliassi-Rad.
+  <https://doi.org/10.1137/20M1355896>`_, Torres, L., Blevins, A.S., Bassett, D. and Eliassi-Rad, T., 2021. SIAM Review, 63(3), pp.435-485.
 
 * `Networks beyond pairwise interactions: Structure and dynamics
-  <https://doi.org/10.1016/j.physrep.2020.05.004>`_, Federico Battiston, Giulia
-  Cencetti, Iacopo Iacopini, Vito Latora, Maxime Lucas, Alice Patania, Jean-Gabriel
-  Young, and Giovanni Petri.
+  <https://doi.org/10.1016/j.physrep.2020.05.004>`_, Battiston, F., Cencetti, G., Iacopini, I., Latora, V., Lucas, M., Patania, A., Young, J.G. and Petri, G., 2020. Physics reports, 874, pp.1-92.
 
-* `What are higher-order networks? <https://arxiv.org/abs/2104.11329>`_, Christian Bick,
-  Elizabeth Gross, Heather A. Harrington, Michael T. Schaub.
+* `What are higher-order networks? <https://arxiv.org/abs/2104.11329>`_, Bick, C., Gross, E., Harrington, H.A. and Schaub, M.T., 2023. SIAM Review, 65(3), pp.686-731.
 
 * `From networks to optimal higher-order models of complex systems
-  <https://www.nature.com/articles/s41567-019-0459-y>`_, Renaud Lambiotte, Martin
-  Rosvall, and Ingo Scholtes.
+  <https://www.nature.com/articles/s41567-019-0459-y>`_, Lambiotte, R., Rosvall, M. and Scholtes, I., 2019. Nature physics, 15(4), pp.313-320.
 
 
 Funding
@@ -111,4 +108,3 @@ License
 This project is licensed under the `BSD 3-Clause License
 <https://github.com/xgi-org/xgi/blob/main/LICENSE.md>`_.
 
-Copyright (C) 2021-2024 XGI Developers

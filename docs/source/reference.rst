@@ -4,7 +4,21 @@
 API Reference
 **************
 
+This page gives an overview of all public XGI objects, functions and methods. All classes and functions are exposed in xgi.* namespace are public.
 
+XGI is organized into the following subpackages:
+
+* ``xgi.algorithms``: Function to compute classic algorightms on higher-order networks
+* ``xgi.convert``:  Functions to convert between different representations of the data
+* ``xgi.core``: Classes for the core datastructures and views
+* ``xgi.drawing``:  Functions for plotting
+* ``xgi.dynamics``: Functions to simulate given dynamical processes
+* ``xgi.generators``: Functions to generate higher-order networks from models
+* ``xgi.linalg``: Functions to compute matrix and tensors representations
+* ``xgi.readwrite``:  Functions to load and store higher-order networks in standard formats
+* ``xgi.stats``:  Functions to compute node and edge statistics in a single interface
+* ``xgi.utils``: Small utility functions
+   
 .. toctree::
    :maxdepth: 2
 
@@ -14,13 +28,3 @@ API Reference
    api/generators.rst
    api/linalg.rst
 
-Core functionality <>
-Node and edge statistics <>
-Algorithms <>
-Generative Models <>
-Linear Algebra <>
-Read/Write <api/readwrite.rst>
-Dynamics <api/dynamics.rst>
-Drawing <api/drawing.rst>
-Converting to and from other data formats <api/convert.rst>
-Utilities <api/utils.rst>
