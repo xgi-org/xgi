@@ -1,5 +1,7 @@
+.. _focus_tutorials:
+
 ################
- Focus tutorials
+Focus tutorials
 ################
 
 
