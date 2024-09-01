@@ -42,13 +42,20 @@ mind. Browse the `list of projects using XGI <using-xgi.html>`_ to get an idea o
 
 Get started immediately by `installing XGI <installing.html>`_ and checking the `XGI in 1 minute <api/tutorials/getting_started_1.html>`_ tutorial.
 
-Then, sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
-
 
 Corresponding Data
 ==================
 
 A number of higher-order datasets are available in the `XGI-DATA repository <https://github.com/xgi-org/xgi-data>`_ and can be easily accessed with the ``load_xgi_data()`` function.
+More information about the datasets and how to load them is in the `XGI-DATA menu <xgi-data.html>`_
+
+Get involved
+==================
+
+To simply getting news and updates, you can sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
+
+If you want to contribute, even better! The XGI community always welcomes contributions, no matter how small.
+For more information, see `contribution guide <development.html>`_
 
 
 

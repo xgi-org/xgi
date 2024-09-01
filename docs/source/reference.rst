@@ -22,9 +22,13 @@ XGI is organized into the following subpackages:
 .. toctree::
    :maxdepth: 2
 
-   api/core.rst
-   api/stats.rst
-   api/algorithms.rst
-   api/generators.rst
-   api/linalg.rst
-
+   Algorithms <api/algorithms.rst>
+   Convert <api/convert.rst>
+   Core functionality <api/core.rst>
+   Drawing <api/drawing.rst>
+   Dynamics <api/dynamics.rst>
+   Generators <api/generators.rst>
+   Linalg <api/linalg.rst>
+   I/O <api/readwrite.rst>
+   Stats <api/stats.rst>
+   Utils <api/utils.rst>
