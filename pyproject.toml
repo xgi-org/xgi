@@ -81,6 +81,7 @@ docs = [
     "ipykernel",
     "nbsphinx",
     "nbsphinx-link",
+    "pydata-sphinx-theme",
 ]
 release = [
     "twine>=3.4",
