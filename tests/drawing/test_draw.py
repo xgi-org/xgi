@@ -340,16 +340,20 @@ def test_draw_hyperedges_ec(edgelist8):
 
     H = xgi.Hypergraph(edgelist8)
 
-    colors = np.array([[0.6468274 , 0.80289262, 0.56592265, 0.4],
-                [0.17363177, 0.19076859, 0.44549087, 0.4],
-                [0.17363177, 0.19076859, 0.44549087, 0.4],
-                [0.17363177, 0.19076859, 0.44549087, 0.4],
-                [0.17363177, 0.19076859, 0.44549087, 0.4],
-                [0.17363177, 0.19076859, 0.44549087, 0.4]])
+    colors = np.array(
+        [
+            [0.6468274, 0.80289262, 0.56592265, 0.4],
+            [0.17363177, 0.19076859, 0.44549087, 0.4],
+            [0.17363177, 0.19076859, 0.44549087, 0.4],
+            [0.17363177, 0.19076859, 0.44549087, 0.4],
+            [0.17363177, 0.19076859, 0.44549087, 0.4],
+            [0.17363177, 0.19076859, 0.44549087, 0.4],
+        ]
+    )
 
     # edge stat color
     fig, ax = plt.subplots()
-    ax, collections = xgi.draw_hyperedges(H,ax=ax, edge_ec=H.edges.size, edge_fc="w")
+    ax, collections = xgi.draw_hyperedges(H, ax=ax, edge_ec=H.edges.size, edge_fc="w")
     (_, edge_collection) = collections
 
     assert np.all(edge_collection.get_edgecolor() == colors)

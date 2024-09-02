@@ -1,3 +1,6 @@
+.. _indepth_tutorials:
+
+
 ##################
 In Depth tutorials
 ##################

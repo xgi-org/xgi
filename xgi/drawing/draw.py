@@ -182,7 +182,7 @@ def draw(
         * IDStat containing the `ids` as keys
 
         If None (default), color by edge size.
-        Numerical formats will be mapped to colors using edge_vmin, edge_vmax, 
+        Numerical formats will be mapped to colors using edge_vmin, edge_vmax,
         and edge_fc_cmap.
     alpha : float, optional
         The edge transparency. By default, 0.4.
@@ -618,7 +618,7 @@ def draw_hyperedges(
         * IDStat containing the `ids` as keys
 
         If None (default), color by edge size.
-        Numerical formats will be mapped to colors using edge_vmin, edge_vmax, 
+        Numerical formats will be mapped to colors using edge_vmin, edge_vmax,
         and edge_fc_cmap.
     alpha : float, optional
         The edge transparency. By default, 0.4.
@@ -752,17 +752,16 @@ def draw_hyperedges(
         edge_fc_arr = None
         edge_fc_colors = edge_fc[ids_sorted] if len(edge_fc) > 1 else edge_fc
 
-    
-    edge_ec = edge_ec[ids_sorted] if len(edge_ec) > 1 else edge_ec # reorder
+    edge_ec = edge_ec[ids_sorted] if len(edge_ec) > 1 else edge_ec  # reorder
 
-    if edge_ec_to_map: # edgecolors need to be manually mapped
+    if edge_ec_to_map:  # edgecolors need to be manually mapped
 
         # create scalarmappable to map floats to colors
         # we use the same vmin, vmax, and cmap as for edge_fc
         norm = mpl.colors.Normalize(vmin=edge_vmin, vmax=edge_vmax)
         sm_edgecolors = cm.ScalarMappable(norm=norm, cmap=edge_fc_cmap)
 
-        edge_ec = sm_edgecolors.to_rgba(edge_ec) # map to colors
+        edge_ec = sm_edgecolors.to_rgba(edge_ec)  # map to colors
 
     patches = []
     for he in np.array(edges.members())[ids_sorted]:
@@ -790,7 +789,7 @@ def draw_hyperedges(
     edge_collection = PatchCollection(
         patches,
         facecolors=edge_fc_colors,
-        array=edge_fc_arr, # will be mapped by PatchCollection
+        array=edge_fc_arr,  # will be mapped by PatchCollection
         cmap=edge_fc_cmap,
         edgecolors=edge_ec,
         alpha=alpha,

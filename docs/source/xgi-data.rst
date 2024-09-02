@@ -4,6 +4,29 @@ XGI-DATA
 
 XGI-DATA is a repository of openly available hypergraph datasets in JSON format with corresponding documentation of network statistics, limitations of the data, and methods of collection. They are hosted in the `XGI Community <https://zenodo.org/communities/xgi>`_ on Zenodo. This is loosely inspired by `Datasheets for Datasets <https://arxiv.org/abs/1803.09010>`_ by Gebru et al.
 
+Loading datasets
+----------------
+
+Loading a dataset using XGI is as simple as the following two lines:
+
+.. code-block:: python
+
+   import xgi
+   H = xgi.load_xgi_data("<dataset_name>")
+
+XGI-DATA uses an HTTP request to load the hypergraph dataset. See the `Reference <api/readwrite/xgi.readwrite.xgi_data.html>`_ for a complete description of the function.
+
+The directed hypergraph datasets from the Biochemical, Genetic and Genomic (BIGG) database can also be loaded with:
+
+
+.. code-block:: python
+
+   import xgi
+   H = xgi.load_bigg_data("<dataset_name>")  
+
+
+See the `Reference <api/readwrite/xgi.readwrite.bigg_data.html>`_ for a complete description of the function.
+
 Dataset format
 --------------
 
@@ -23,18 +46,6 @@ The xgi-data format for higher-order datasets is a JSON data structure with the 
   * Other tags are user-specified based on the particular attributes provided by the dataset.
 
 * :code:`edge-dict`: This tag accesses the edge IDs and the corresponding nodes which participate in that hyperedge.
-
-Loading datasets
-----------------
-
-Loading a dataset using XGI is as simple as the following two lines:
-
-.. code-block:: python
-
-   import xgi
-   H = xgi.load_xgi_data("<dataset_name>")
-
-XGI-DATA uses an HTTP request to load the hypergraph dataset.
 
 
 Network Statistics

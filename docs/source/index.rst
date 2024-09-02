@@ -3,133 +3,70 @@
   :width: 200
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Home
+   :maxdepth: 1
    :hidden:
 
-   about
-   contributors
-   higher-order
+   installing
+   user_guides
+   reference
    xgi-data
    gallery
+   contribute
    using-xgi
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Practical guides
-   :hidden:
-   
-   Tutorials <api/tutorials.rst>
-   Recipes <api/recipes.rst>
-   
-.. toctree::
-   :maxdepth: 2
-   :caption: Quick reference links
-   :hidden:
 
-   Hypergraph class <api/core/xgi.core.hypergraph.Hypergraph.rst>
-   Simplicial Complex class <api/core/xgi.core.simplicialcomplex.SimplicialComplex.rst>
-   Directed Hypergraph class <api/core/xgi.core.dihypergraph.DiHypergraph>
+.. button-link:: https://github.com/xgi-org/xgi/releases/tag/v0.8.9
+    :color: primary
+    :outline:
 
-.. toctree::
-   :maxdepth: 2
-   :caption: API Reference
-   :hidden:
-
-   Core functionality <api/core.rst>
-   Node and edge statistics <api/stats.rst>
-   Algorithms <api/algorithms.rst>
-   Generative Models <api/generators.rst>
-   Linear Algebra <api/linalg.rst>
-   Read/Write <api/readwrite.rst>
-   Dynamics <api/dynamics.rst>
-   Drawing <api/drawing.rst>
-   Converting to and from other data formats <api/convert.rst>
-   Utilities <api/utils.rst>
+    XGI |version| released! |today|
 
 
-About
-=====
+Software for higher-order networks
+==================================
 
 The Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/xgi-org/xgi>`_
-library provides data structures and algorithms for modeling and analyzing complex systems
-with group (higher-order) interactions. For more information about what higher-order
-interactions are, see a `brief overview <higher-order.html>`_.
+library provides data structures and algorithms for modeling, analyzing, and visualizing complex systems
+with group (higher-order) interactions. It provides tools to:
 
-Many datasets can be represented as graphs, where pairs of entities (or nodes) are
-related via links (or edges).  Examples are road networks, energy grids, social
-networks, neural networks, etc.  However, in many other datasets, more than two entities
-can be related at a time.  For example, many scientists (entities) can collaborate on a
-scientific article together (links), and multiple email accounts (entities) can all
-participate on the same email thread (links).  In this latter case, graphs no longer
-present a viable alternative to represent such datasets.  It is for this kind of
-datasets, where the interactions are given among groups of more than two entities (also
-called higher-order interactions), that XGI was designed for.
+* load and store higher-order networks in standard formats
+* generate many random and non-random higher-order networks from models
+* analyze the structure of higher-order networks with metrics and algorithms
+* compute nodes and edge statistics in a unified interface
+* draw higher-order networks
+* manipulate hypergraphs (undirected and directed) and simplicial complexes
+
+
+Higher-order networks generalize standard (pairwise) networks by allowing to encode higher-order interactions, 
+that is, interactions between any number of entities. Collaborations and contagion processes are typical
+examples where these higher-order interactions are crucial.
+For more information about what higher-order
+interactions are, see a `brief overview <higher-order.html>`_.
 
 XGI is implemented in pure Python and is designed to seamlessly interoperate with the
 rest of the Python scientific stack (numpy, scipy, pandas, matplotlib, etc).  XGI is
 designed and developed by network scientists with the needs of network scientists in
-mind.
+mind. Browse the `list of projects using XGI <using-xgi.html>`_ to get an idea of what XGI can do and how it is being used by other people.
 
-- Repository: https://github.com/xgi-org/xgi
-- PyPI: `latest release <https://pypi.org/project/xgi/>`_
-- Twitter: `@xginets <https://twitter.com/xginets>`_
-- `List of Contributors <contributors.html>`_
-- `Projects Using XGI <using-xgi.html>`_
-
-Sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
-
-
-Installation
-============
-
-To install and use XGI as an end user, execute
-
-.. code:: bash
-
-   pip install xgi
-
-To install for development purposes, first clone the repository and then execute
-
-.. code:: bash
-
-   pip install -e .['all']
-
-If that command does not work, you may try the following instead
-
-.. code:: zsh
-
-   pip install -e .\[all\]
-
-XGI was developed and tested for Python 3.8-3.12 on Mac OS, Windows, and Ubuntu.
+Get started immediately by `installing XGI <installing.html>`_ and checking the `XGI in 1 minute <api/tutorials/getting_started_1.html>`_ tutorial.
 
 
 Corresponding Data
 ==================
 
 A number of higher-order datasets are available in the `XGI-DATA repository <https://github.com/xgi-org/xgi-data>`_ and can be easily accessed with the ``load_xgi_data()`` function.
+More information about the datasets and how to load them is in the `XGI-DATA menu <xgi-data.html>`_.
 
 
-Contributing
-============
+Get involved
+==================
 
-If you want to contribute to this project, please make sure to read the
-`contributing guidelines <https://github.com/xgi-org/xgi/blob/main/HOW_TO_CONTRIBUTE.md>`_.
-We expect respectful and kind interactions by all contributors and users
-as laid out in our `code of conduct <https://github.com/xgi-org/xgi/blob/main/CODE_OF_CONDUCT.md>`_.
+To simply getting news and updates, you can sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
 
-The XGI community always welcomes contributions, no matter how small.
-We're happy to help troubleshoot XGI issues you run into,
-assist you if you would like to add functionality or fixes to the codebase,
-or answer any questions you may have.
+If you want to contribute, even better! The XGI community always welcomes contributions, no matter how small.
+For more information, see our `contribution guide <contribute.html>`_.
 
-Some concrete ways that you can get involved:
 
-* **Get XGI updates** by following the XGI `Twitter <https://twitter.com/xginets>`_ account, signing up for our `mailing list <http://eepurl.com/igE6ez>`_, or starring this repository.
-* **Spread the word** when you use XGI by sharing with your colleagues and friends.
-* **Request a new feature or report a bug** by raising a `new issue <https://github.com/xgi-org/xgi/issues/new>`_.
-* **Create a Pull Request (PR)** to address an `open issue <https://github.com/xgi-org/xgi/issues>`_ or add a feature.
-* **Join our Zulip channel** to be a part of the `daily goings-on of XGI <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_.
 
 How to Cite
 ===========
@@ -163,20 +100,15 @@ Academic References
 ===================
 
 * `The Why, How, and When of Representations for Complex Systems
-  <https://doi.org/10.1137/20M1355896>`_, Leo Torres, Ann S. Blevins, Danielle Bassett,
-  and Tina Eliassi-Rad.
+  <https://doi.org/10.1137/20M1355896>`_, Torres, L., Blevins, A.S., Bassett, D. and Eliassi-Rad, T., 2021. SIAM Review, 63(3), pp.435-485.
 
 * `Networks beyond pairwise interactions: Structure and dynamics
-  <https://doi.org/10.1016/j.physrep.2020.05.004>`_, Federico Battiston, Giulia
-  Cencetti, Iacopo Iacopini, Vito Latora, Maxime Lucas, Alice Patania, Jean-Gabriel
-  Young, and Giovanni Petri.
+  <https://doi.org/10.1016/j.physrep.2020.05.004>`_, Battiston, F., Cencetti, G., Iacopini, I., Latora, V., Lucas, M., Patania, A., Young, J.G. and Petri, G., 2020. Physics reports, 874, pp.1-92.
 
-* `What are higher-order networks? <https://arxiv.org/abs/2104.11329>`_, Christian Bick,
-  Elizabeth Gross, Heather A. Harrington, Michael T. Schaub.
+* `What are higher-order networks? <https://arxiv.org/abs/2104.11329>`_, Bick, C., Gross, E., Harrington, H.A. and Schaub, M.T., 2023. SIAM Review, 65(3), pp.686-731.
 
 * `From networks to optimal higher-order models of complex systems
-  <https://www.nature.com/articles/s41567-019-0459-y>`_, Renaud Lambiotte, Martin
-  Rosvall, and Ingo Scholtes.
+  <https://www.nature.com/articles/s41567-019-0459-y>`_, Lambiotte, R., Rosvall, M. and Scholtes, I., 2019. Nature physics, 15(4), pp.313-320.
 
 
 Funding
@@ -192,4 +124,3 @@ License
 This project is licensed under the `BSD 3-Clause License
 <https://github.com/xgi-org/xgi/blob/main/LICENSE.md>`_.
 
-Copyright (C) 2021-2024 XGI Developers

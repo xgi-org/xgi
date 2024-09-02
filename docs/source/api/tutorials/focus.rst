@@ -1,5 +1,7 @@
+.. _focus_tutorials:
+
 ################
- Focus tutorials
+Focus tutorials
 ################
 
 
@@ -13,3 +15,8 @@
     focus_5
     focus_6
     focus_7
+
+.. seealso:: 
+   
+   This is now too easy and you want to dive deeper into some features of XGI?
+   Go to the `In-depth Tutorials <in_depth.html>`_.

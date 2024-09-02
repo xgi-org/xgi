@@ -20,8 +20,10 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 
 # -- Project information -----------------------------------------------------
 project = "XGI"
-copyright = "Copyright (C) 2021-2024 XGI Developers"
+copyright = "2021-2024 XGI Developers"
 release = "0.8.9"
+version = release
+today = "30-08-2024"
 
 # -- General configuration ---------------------------------------------------
 
@@ -130,7 +132,7 @@ exclude_patterns = []
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
-# add_module_names = True
+add_module_names = False
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
@@ -154,16 +156,52 @@ todo_include_todos = True
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = "sphinx_rtd_theme"
+html_theme = "pydata_sphinx_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-# html_theme_options = {}
+html_theme_options = {
+    "navbar_end": [
+        "navbar-icon-links",
+    ],  # Place the social links at the end of the navbar
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://xgi.readthedocs.io/",
+            "icon": "fab fa-github-square",  # Font Awesome icon
+        },
+        {
+            "name": "Twitter",
+            "url": "https://twitter.com/xginets",
+            "icon": "fab fa-twitter-square",  # Font Awesome icon
+        },
+        {
+            "name": "Mastodon",
+            "url": "https://mathstodon.xyz/@xginets",
+            "icon": "fa-brands fa-mastodon",  # Font Awesome icon
+        },
+    ],
+}
+
+
+html_sidebars = {
+    "**": ["sidebar-nav-bs", "sidebar-ethical-ads"],
+    "index": [],
+    "installing": [],
+    "tutorial": [],
+    "xgi-data": [],
+    "gallery": [],
+    "contribute": [],
+    "user_guides": [],
+    "using-xgi": [],
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = ["_static"]
 # html_static_path = ["_static"]
+
+html_logo = "../../logo/logo.svg"
 
 html_show_sphinx = True
 
