@@ -22,4 +22,4 @@ from .readwrite import *
 from .stats import *
 
 
-__version__ = "0.8.9"
+__version__ = "0.8.10"

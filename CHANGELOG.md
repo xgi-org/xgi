@@ -1,6 +1,11 @@
 # Changelog
 
+## v0.8.10
+
+- Migrating to the PyData theme for the online docs [#576](https://github.com/xgi-org/xgi/pull/576)  (@maximelucas).
+
 ## v0.8.9
+
 * Added a new recipe to address Issue [#549](https://github.com/xgi-org/xgi/issues/549) [#574](https://github.com/xgi-org/xgi/pull/574) (@nwlandry).
 * Added the `edge_ec` argument to the `draw` method to specify edge colors [#575](https://github.com/xgi-org/xgi/pull/575) (@maximelucas).
 * Switched from setup.py to pyproject.toml for installation [#573](https://github.com/xgi-org/xgi/pull/573) (@nwlandry).
