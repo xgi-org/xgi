@@ -46,7 +46,7 @@ interactions are, see a `brief overview <higher-order.html>`_.
 XGI is implemented in pure Python and is designed to seamlessly interoperate with the
 rest of the Python scientific stack (numpy, scipy, pandas, matplotlib, etc).  XGI is
 designed and developed by network scientists with the needs of network scientists in
-mind. Browse the `list of projects using XGI <using-xgi.html>`_ to get an idea of what XGI can do.
+mind. 
 
 Get started immediately by `installing XGI <installing.html>`_ and checking the `XGI in 1 minute <api/tutorials/getting_started_1.html>`_ tutorial.
 
@@ -56,6 +56,11 @@ Corresponding Data
 
 A number of higher-order datasets are available in the `XGI-DATA repository <https://github.com/xgi-org/xgi-data>`_ and can be easily accessed with the ``load_xgi_data()`` function.
 More information about the datasets and how to load them is in the `XGI-DATA menu <xgi-data.html>`_.
+
+Projects using XGI
+===================
+
+Browse the `list of projects using XGI <using-xgi.html>`_ to get an idea of what XGI can do and how it is being used by other people.
 
 Get involved
 ==================
