@@ -194,6 +194,7 @@ html_sidebars = {
     "gallery": [],
     "contribute": [],
     "user_guides": [],
+    "using-xgi": [],
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
