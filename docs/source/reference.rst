@@ -4,7 +4,7 @@
 API Reference
 **************
 
-This page gives an overview of all public XGI objects, functions and methods. All classes and functions are exposed in xgi.* namespace are public.
+This page gives an overview of all public XGI objects, functions and methods. All classes and functions are exposed in xgi.* namespace are public
 
 XGI is organized into the following subpackages:
 
@@ -18,6 +18,11 @@ XGI is organized into the following subpackages:
 * ``xgi.readwrite``:  Functions to load and store higher-order networks in standard formats
 * ``xgi.stats``:  Functions to compute node and edge statistics in a single interface
 * ``xgi.utils``: Small utility functions
+
+
+.. note::
+
+   This page describes release |version| of XGI. Find out more in the `Release notes <https://github.com/xgi-org/xgi/releases>`_ about this and previous releases.
    
 .. toctree::
    :maxdepth: 2
