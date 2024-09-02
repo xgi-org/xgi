@@ -23,6 +23,7 @@ project = "XGI"
 copyright = "2021-2024 XGI Developers"
 release = "0.8.9"
 version = release
+today = "30-08-2024"
 
 # -- General configuration ---------------------------------------------------
 

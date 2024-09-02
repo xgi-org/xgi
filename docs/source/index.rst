@@ -19,6 +19,9 @@
     :color: primary
     :outline:
 
+    XGI |version| released! |today|
+
+
 Software for higher-order networks
 ==================================
 
