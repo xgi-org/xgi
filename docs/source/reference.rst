@@ -28,7 +28,7 @@ XGI is organized into the following subpackages:
    Drawing <api/drawing.rst>
    Dynamics <api/dynamics.rst>
    Generators <api/generators.rst>
-   Linalg <api/linalg.rst>
+   Linear Algebra <api/linalg.rst>
    I/O <api/readwrite.rst>
-   Stats <api/stats.rst>
-   Utils <api/utils.rst>
+   Stats for nodes and edges <api/stats.rst>
+   Utilities <api/utils.rst>

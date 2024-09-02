@@ -20,7 +20,7 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 
 # -- Project information -----------------------------------------------------
 project = "XGI"
-copyright = "Copyright (C) 2021-2024 XGI Developers"
+copyright = "2021-2024 XGI Developers"
 release = "0.8.9"
 
 # -- General configuration ---------------------------------------------------
@@ -130,7 +130,7 @@ exclude_patterns = []
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
-# add_module_names = True
+add_module_names = False
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
@@ -161,7 +161,6 @@ html_theme = "pydata_sphinx_theme"
 # documentation.
 html_theme_options = {
     "navbar_end": [
-        "theme-switcher",
         "navbar-icon-links",
     ],  # Place the social links at the end of the navbar
     "icon_links": [
