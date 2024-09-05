@@ -1,4 +1,4 @@
-<img src='logo/logo.svg' alt="XGI" width='50%'></img>
+<img src='https://github.com/xgi-org/xgi/blob/main/logo/logo.svg' alt="XGI" width='50%'></img>
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Supports Python versions 3.8 and above.](https://img.shields.io/badge/Python%20versions%20supported-3.8%2B-forest
