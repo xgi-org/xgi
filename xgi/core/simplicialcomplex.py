@@ -906,10 +906,10 @@ class SimplicialComplex(Hypergraph):
             return self.frozen
         except AttributeError:
             return False
-        
+
     def k_skeleton(self, order, in_place=True):
         """Returns the k-skeleton of the simplicial complex.
-        
+
         Parameters
         ----------
         order : int
@@ -924,9 +924,11 @@ class SimplicialComplex(Hypergraph):
             _H = self.copy()
         max_order = max(len(edge) for edge in _H._edge.values()) - 1
         if order > max_order:
-            raise XGIError(f"Order {order} is greater than the maximum order {max_order}")
+            raise XGIError(
+                f"Order {order} is greater than the maximum order {max_order}"
+            )
         if order != max_order:
-            bunch = _H.edges.filterby('order', order, 'gt')
+            bunch = _H.edges.filterby("order", order, "gt")
             _H.remove_simplex_ids_from(bunch)
         if not in_place:
             return _H
