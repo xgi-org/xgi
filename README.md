@@ -9,9 +9,9 @@
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.05162/status.svg)](https://doi.org/10.21105/joss.05162)
 [![pyOpenSci](https://tinyurl.com/y22nb8up)](https://github.com/pyOpenSci/software-review/issues/115)
 
-* [**Source**](../../)
-* [**Bug reports**](../../issues)
-* [**GitHub Discussions**](../../discussions)
+* [**Source**](https://github.com/xgi-org/xgi)
+* [**Bug reports**](https://github.com/xgi-org/xgi/issues)
+* [**GitHub Discussions**](https://github.com/xgi-org/xgi/discussions)
 * [**Documentation**](https://xgi.readthedocs.io)
 * [**Contributors**](https://xgi.readthedocs.io/en/stable/contributors.html)
 * [**Projects using XGI**](https://xgi.readthedocs.io/en/stable/using-xgi.html)
@@ -73,7 +73,7 @@ A number of higher-order datasets are available in the [XGI-DATA repository](htt
 
 ## How to Contribute
 If you want to contribute to this project, please make sure to read the
-[contributing guidelines](HOW_TO_CONTRIBUTE.md). We expect respectful and kind interactions by all contributors and users as laid out in our [code of conduct](CODE_OF_CONDUCT.md).
+[contributing guidelines](https://github.com/xgi-org/xgi/blob/main/HOW_TO_CONTRIBUTE.md). We expect respectful and kind interactions by all contributors and users as laid out in our [code of conduct](https://github.com/xgi-org/xgi/blob/main/CODE_OF_CONDUCT.md).
 
 The XGI community always welcomes contributions, no matter how small. We're happy to help troubleshoot XGI issues you run into, assist you if you would like to add functionality or fixes to the codebase, or answer any questions you may have.
 
@@ -82,12 +82,12 @@ Some concrete ways that you can get involved:
 * **Get XGI updates** by following the XGI [Twitter](https://twitter.com/xginets) account, signing up for our [mailing list](http://eepurl.com/igE6ez), or starring this repository.
 * **Spread the word** when you use XGI by sharing with your colleagues and friends.
 * **Request a new feature or report a bug** by raising a [new issue](https://github.com/xgi-org/xgi/issues/new).
-* **Create a Pull Request (PR)** to address an [open issue](../../issues) or add a feature.
+* **Create a Pull Request (PR)** to address an [open issue](https://github.com/xgi-org/xgi/issues) or add a feature.
 * **Join our [Zulip channel](https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/)** to be a part of the daily goings-on of XGI.
 
 
 ## How to Cite
-We acknowledge the importance of good software to support research, and we note that research becomes more valuable when it is communicated effectively. To demonstrate the value of XGI, we ask that you cite the XGI [paper](https://doi.org/10.21105/joss.05162) in your work. You can cite XGI either by going to our repository page [repository page](../../) (if you haven't already) and clicking the "cite this repository" button on the right sidebar (which will generate a citation in your preferred format) or by copying the following BibTeX entry:
+We acknowledge the importance of good software to support research, and we note that research becomes more valuable when it is communicated effectively. To demonstrate the value of XGI, we ask that you cite the XGI [paper](https://doi.org/10.21105/joss.05162) in your work. You can cite XGI either by going to our repository page [repository page](https://github.com/xgi-org/xgi) (if you haven't already) and clicking the "cite this repository" button on the right sidebar (which will generate a citation in your preferred format) or by copying the following BibTeX entry:
 ```
 @article{Landry_XGI_2023,
     author = {Landry, Nicholas W. and Lucas, Maxime and Iacopini, Iacopo and Petri, Giovanni and Schwarze, Alice and Patania, Alice and Torres, Leo},
@@ -105,31 +105,12 @@ We acknowledge the importance of good software to support research, and we note 
 ```
 
 ## License
-Released under the 3-Clause BSD license (see [`LICENSE.md`](LICENSE.md))
+Released under the 3-Clause BSD license (see [`LICENSE.md`](https://github.com/xgi-org/xgi/blob/main/LICENSE.md))
 
 Copyright (C) 2021-2024 XGI Developers
-
-The XGI library has copied or modified code from the HyperNetX and NetworkX libraries, the licenses of which can be found in our [license file](LICENSE.md)
 
 ## Funding
 The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905).
 
 ## Other Resources
-This library may not meet your needs and if this is this case, consider checking out these other resources:
-
-**Julia**
-* [HyperGraphs.jl](https://github.com/lpmdiaz/HyperGraphs.jl): A Julia package for representing, analyzing, and generating hypergraphs which may be oriented and weighted.
-* [SimpleHypergraphs.jl](https://pszufe.github.io/SimpleHypergraphs.jl/v0.1): A Julia package for representing, analyzing, and generating hypergraphs.
-
-**Python**
-* [EasyGraph](https://easy-graph.github.io/): A Python package for analyzing undirected and directed networks as well as hypergraphs.
-* [halp](http://murali-group.github.io/halp): A Python package with directed and undirected hypergraph implementations and several algorithms.
-* [Hypergraph Analysis Toolbox (HAT)](https://hypergraph-analysis-toolbox.readthedocs.io): A Python/Matlab package for hypergraph construction, visualization, and analysis (Especially for Pore-C data).
-* [Hypergraphx](https://hypergraphx.readthedocs.io): A Python for representing, analyzing, and visualizing hypergraphs.
-* [HyperNetX](https://hypernetx.readthedocs.io): A Python package for representing, analyzing, and visualizing hypergraphs.
-* [NetworkX](https://networkx.org): A Python package for representing, analyzing, and visualizing networks.
-* [Reticula](https://docs.reticula.network): A Python package wrapping C++ functions for representing, analyzing, and visualizing temporal and static graphs and hypergraphs.
-
-
-**R**
-* [hyperG](https://cran.r-project.org/package=HyperG): An R package for storing and analyzing hypergraphs
+This library may not meet your needs and if this is this case, consider checking out our [list of other resources](https://github.com/xgi-org/xgi/blob/main/OTHER_RESOURCES.md).
