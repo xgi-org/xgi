@@ -17,7 +17,7 @@ User Guides
 
     	+++
 
-        .. button-ref:: xgi_in_x_minutes
+        .. button-ref:: api/tutorials/getting_started
             :expand:
             :color: secondary
             :click-parent:
@@ -35,7 +35,7 @@ User Guides
 
     	+++
 
-        .. button-ref:: focus_tutorials
+        .. button-ref:: api/tutorials/focus
             :expand:
             :color: secondary
             :click-parent:
@@ -55,7 +55,7 @@ User Guides
     	To know everything there is to know about a specific feature of XGI 
     	+++
 
-        .. button-ref:: indepth_tutorials
+        .. button-ref:: api/tutorials/in_depth
             :expand:
             :color: secondary
             :click-parent:
@@ -72,7 +72,7 @@ User Guides
 
     	+++
 
-        .. button-ref:: recipes
+        .. button-ref:: api/recipes/recipes
             :expand:
             :color: secondary
             :click-parent:

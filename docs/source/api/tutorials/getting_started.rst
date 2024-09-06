@@ -1,5 +1,3 @@
-.. _xgi_in_x_minutes:
-
 ###############
 Getting started
 ###############

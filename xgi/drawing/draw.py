@@ -916,7 +916,7 @@ def draw_simplices(
         for it. By default, True.
     params : dict
         Default parameters. Keys that may be useful to override default settings:
-        
+
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
 
@@ -1323,14 +1323,18 @@ def draw_multilayer(
         Color of the hyperedges.  The accepted formats are the same as
         matplotlib's scatter, with the addition of dict and IDStat.
         Those with colors:
+
         * single color as a string
         * single color as 3- or 4-tuple
         * list of colors of length len(ids)
         * dict of colors containing the `ids` as keys
+
         Those with numerical values (will be mapped to colors):
+
         * array of floats
         * dict of floats containing the `ids` as keys
         * IDStat containing the `ids` as keys
+
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap, optional
         Colormap used to map the edge colors. By default, "crest_r".
@@ -1357,6 +1361,7 @@ def draw_multilayer(
         The separation between layers. Default is 0.4.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
+
         * "min_node_size" (default: 10)
         * "max_node_size" (default: 30)
         * "min_node_lw" (default: 2)
@@ -1369,6 +1374,7 @@ def draw_multilayer(
     ax : matplotlib Axes3DSubplot
         The subplot with the multilayer network visualization.
     collections : a tuple of 2 collections:
+    
         * node_collection : matplotlib PathCollection
             Collection containing the nodes one the top layer
         * edge_collection : matplotlib PathCollection
@@ -1763,14 +1769,13 @@ def draw_bipartite(
     -------
     ax : matplotlib.pyplot.axes
         The axes corresponding the visualization
-    collections : a tuple of 3 collections:
+    collections : a tuple of 3 collections
 
         * node_collection : matplotlib PathCollection
             Collection containing the nodes
         * edge_marker_collection : matplotlib PathCollection
             Collection containing the edge markers
-        * dyad_collection : matplotlib LineCollection if undirected,
-                            list of FancyArrowPatches if not
+        * dyad_collection : matplotlib LineCollection if undirected, list of FancyArrowPatches if not
             Collection containing the edges
 
     Raises
