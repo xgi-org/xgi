@@ -170,7 +170,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "GitHub",
-            "url": "https://xgi.readthedocs.io/",
+            "url": "https://github.com/xgi-org/xgi",
             "icon": "fab fa-github-square",  # Font Awesome icon
         },
         {

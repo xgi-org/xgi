@@ -14,7 +14,7 @@ Loading a dataset using XGI is as simple as the following two lines:
    import xgi
    H = xgi.load_xgi_data("<dataset_name>")
 
-XGI-DATA uses an HTTP request to load the hypergraph dataset. See the `Reference <api/readwrite/xgi.readwrite.xgi_data.html>`_ for a complete description of the function.
+XGI-DATA uses an HTTP request to load the hypergraph dataset. See the `:code:`load_xgi_data` documentation  <api/readwrite/xgi.readwrite.xgi_data.html>`_ for a complete description of the function.
 
 The directed hypergraph datasets from the Biochemical, Genetic and Genomic (BIGG) database can also be loaded with:
 
@@ -25,7 +25,7 @@ The directed hypergraph datasets from the Biochemical, Genetic and Genomic (BIGG
    H = xgi.load_bigg_data("<dataset_name>")  
 
 
-See the `Reference <api/readwrite/xgi.readwrite.bigg_data.html>`_ for a complete description of the function.
+See the `:code:`load_bigg_data` documentation <api/readwrite/xgi.readwrite.bigg_data.html>`_ for a complete description of the function.
 
 Dataset format
 --------------
