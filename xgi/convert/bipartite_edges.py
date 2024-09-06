@@ -21,7 +21,9 @@ def from_bipartite_edgelist(edges):
 
     See Also
     --------
-    ~xgi.convert.edgelist.from_hyperedge_list
+    to_bipartite_edgelist
+    ~xgi.convert.hyperedges.from_hyperedge_list
+    ~xgi.convert.hyperedges.to_hyperedge_list
     """
     if len(edges[0]) == 3:  # directed
         H = DiHypergraph()
@@ -55,7 +57,9 @@ def to_bipartite_edgelist(H):
 
     See Also
     --------
-    ~xgi.convert.edgelist.to_hyperedge_list
+    from_bipartite_edgelist
+    ~xgi.convert.hyperedges.to_hyperedge_list
+    ~xgi.convert.hyperedges.from_hyperedge_list
     """
     if isinstance(H, DiHypergraph):
         edgelist = []
