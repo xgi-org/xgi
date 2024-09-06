@@ -628,7 +628,7 @@ class Hypergraph:
             the same length, i.e. you cannot mix different formats.  The iterables
             containing edge members cannot be strings.
 
-        attr : :param `**kwargs`:, optional
+        attr : \*\*kwargs:, optional
             Additional attributes to be assigned to all edges. Attribues specified via
             `ebunch_to_add` take precedence over `attr`.
 
@@ -987,8 +987,8 @@ class Hypergraph:
         If the same node appears in both hyperedges, then this is still true after reshuffling.
         If either `e_id1` or `e_id2` is not provided, then two random edges are selected.
 
-        Reference
-        ---------
+        References
+        ----------
         Philip S Chodrow, 2020.
         "Configuration models of random hypergraphs."
         Journal of Complex Networks, 8(3).
