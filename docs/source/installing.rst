@@ -1,8 +1,6 @@
-.. _installing:
-
-***************
-Installing
-***************
+**************
+Installing XGI
+**************
 
 
 Installing the released version

@@ -1,8 +1,8 @@
-.. _installing_more:
+:orphan:
 
-***************************
+*************************
 Installation instructions
-***************************
+*************************
 
 pip installing with options
 ============================

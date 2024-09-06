@@ -1,8 +1,6 @@
-.. _guides:
-
-***********************************
+***********
 User Guides
-***********************************
+***********
 
 
 .. grid::
@@ -24,6 +22,8 @@ User Guides
 
             To the absolute beginner's guide
 
+.. grid::
+
     .. grid-item-card:: 
     	:text-align: center
 
@@ -42,10 +42,6 @@ User Guides
 
             To the focus tutorials
 
-
-
-.. grid::
-	
     .. grid-item-card:: 
     	:text-align: center
 
@@ -62,6 +58,8 @@ User Guides
 
             To the in-depth tutorials
 
+.. grid::
+
     .. grid-item-card:: 
     	:text-align: center
 
@@ -72,13 +70,28 @@ User Guides
 
     	+++
 
-        .. button-ref:: api/recipes/recipes
+        .. button-ref:: :orphan: api/recipes/recipes
             :expand:
             :color: secondary
             :click-parent:
 
             To the cookbook
+	
+    .. grid-item-card:: 
+    	:text-align: center
 
+    	Case studies
+    	^^^
+
+    	To see how others have used XGI in their work
+    	+++
+
+        .. button-ref:: api/tutorials/case_studies
+            :expand:
+            :color: secondary
+            :click-parent:
+
+            To the case studies
 
 
 For all specifications and options of a particular function, or to explore all existing function, see the `API Reference <reference.html>`_.

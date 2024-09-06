@@ -989,7 +989,7 @@ class Hypergraph:
 
         Reference
         ---------
-        Philip S C., 2020.
+        Philip S Chodrow, 2020.
         "Configuration models of random hypergraphs."
         Journal of Complex Networks, 8(3).
         https://doi.org/10.1093/comnet/cnaa018
