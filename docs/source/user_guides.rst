@@ -70,7 +70,7 @@ User Guides
 
     	+++
 
-        .. button-ref:: :orphan: api/recipes/recipes
+        .. button-ref:: api/recipes/recipes
             :expand:
             :color: secondary
             :click-parent:
@@ -94,4 +94,4 @@ User Guides
             To the case studies
 
 
-For all specifications and options of a particular function, or to explore all existing function, see the `API Reference <reference.html>`_.
+For all specifications and options of a particular function, or to explore all existing functions, see the `API Reference <reference.html>`_.
