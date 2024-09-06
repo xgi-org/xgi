@@ -152,7 +152,7 @@ def edge_neighborhood(H, n, include_self=False):
 
     See Also
     --------
-    neighbors
+    ~xgi.core.views.IDView.neighbors
 
     Examples
     --------

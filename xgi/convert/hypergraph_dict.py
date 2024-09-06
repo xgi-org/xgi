@@ -28,6 +28,11 @@ def to_hypergraph_dict(H):
         If node IDs will be collapsed when casting to a string.
     XGIError
         If edge Ids will be collapsed when casting to a string.
+
+    See Also
+    --------
+    ~xgi.readwrite.json.read_json
+    ~xgi.readwrite.json.write_json
     """
     data = {}
     data["type"] = get_network_type(H)
@@ -94,7 +99,8 @@ def from_hypergraph_dict(data, nodetype=None, edgetype=None, max_order=None):
 
     See Also
     --------
-    read_json
+    ~xgi.readwrite.json.read_json
+    ~xgi.readwrite.json.write_json
 
     """
     H = empty_hypergraph()

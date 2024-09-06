@@ -44,6 +44,11 @@ class Hypergraph:
         Attributes to add to the hypergraph as key, value pairs.
         By default, None.
 
+    See Also
+    --------
+    ~xgi.core.simplicialcomplex.SimplicialComplex
+    ~xgi.core.dihypergraph.DiHypergraph
+
     Notes
     -----
     Unique IDs are assigned to each node and edge internally and are used to refer to
@@ -128,10 +133,10 @@ class Hypergraph:
         self._edge_attr = self._edge_attr_dict_factory()
 
         self._nodeview = NodeView(self)
-        """A :class:`~xgi.core.reportviews.NodeView` of the hypergraph."""
+        """A :class:`~xgi.core.views.NodeView` of the hypergraph."""
 
         self._edgeview = EdgeView(self)
-        """An :class:`~xgi.core.reportviews.EdgeView` of the hypergraph."""
+        """An :class:`~xgi.core.views.EdgeView` of the hypergraph."""
 
         if incoming_data is not None:
             # This import needs to happen when this function is called, not when it is
@@ -1490,7 +1495,7 @@ class Hypergraph:
 
         See Also
         --------
-        frozen : Method that raises an error when a user tries to modify the hypergraph
+        ~xgi.exception.frozen : Method that raises an error when a user tries to modify the hypergraph
         is_frozen : Check whether a hypergraph is frozen
 
         Examples

@@ -30,7 +30,8 @@ def from_hyperedge_dict(d, create_using=None):
     See Also
     --------
     to_hyperedge_dict
-
+    from_hyperedge_list
+    to_hyperedge_list
     """
     H = empty_hypergraph(create_using)
     H.add_edges_from((members, uid) for uid, members in d.items())
@@ -54,6 +55,8 @@ def to_hyperedge_dict(H):
     See Also
     --------
     from_hyperedge_dict
+    to_hyperedge_list
+    from_hyperedge_list
     """
     return H.edges.members(dtype=dict)
 
@@ -76,6 +79,8 @@ def from_hyperedge_list(d, create_using=None, max_order=None):
     See Also
     --------
     to_hyperedge_list
+    from_hyperedge_dict
+    to_hyperedge_dict
     """
     H = empty_hypergraph(create_using)
     if isinstance(H, SimplicialComplex):
@@ -101,5 +106,7 @@ def to_hyperedge_list(H):
     See Also
     --------
     from_hyperedge_list
+    to_hyperedge_dict
+    from_hyperedge_dict
     """
     return H.edges.members()

@@ -362,7 +362,7 @@ class IDView(Mapping, Set):
 
         See Also
         --------
-        ~xgi.core.function.edge_neighborhood
+        ~xgi.algorithms.properties.edge_neighborhood
 
         Examples
         --------

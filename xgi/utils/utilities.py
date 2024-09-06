@@ -453,9 +453,9 @@ def hist(vals, bins=10, bin_edges=False, density=False, log_binning=False):
 
     Parameters
     ----------
-    vals : Numpy array
+    vals : numpy.ndarray
         The array of values
-    bins : int, list, or Numpy array
+    bins : int, list, or numpy.ndarray
         The number of bins or the bin edges.
         By default, 10.
     bin_edges : bool
@@ -470,7 +470,7 @@ def hist(vals, bins=10, bin_edges=False, density=False, log_binning=False):
 
     Returns
     -------
-    Pandas DataFrame
+    ~pandas.DataFrame
         A two-column table with "bin_center" and "value" columns,
         where "value" is a count or a probability. If `bin_edges`
         is True, outputs two additional columns, `bin_lo` and `bin_hi`,
