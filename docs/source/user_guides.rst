@@ -70,7 +70,7 @@ User Guides
 
     	+++
 
-        .. button-ref:: api/recipes/recipes
+        .. button-ref:: api/tutorials/recipes
             :expand:
             :color: secondary
             :click-parent:
