@@ -10,3 +10,4 @@ sphinx-design
 ipykernel
 nbsphinx
 nbsphinx-link
+pydata-sphinx-theme

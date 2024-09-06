@@ -16,6 +16,7 @@ async function fetch_JSON_file(url) {
 function create_table(json_data) {
     const section = document.getElementById("network-statistics")
     const table = document.createElement('table');
+    table.setAttribute( "class", "data" );
     const table_header = document.createElement('thead')
     const table_body = document.createElement('tbody')
 
