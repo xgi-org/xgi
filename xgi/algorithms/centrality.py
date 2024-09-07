@@ -10,7 +10,7 @@ from scipy.sparse.linalg import eigsh
 from ..convert import to_line_graph
 from ..exception import XGIError
 from ..linalg import clique_motif_matrix, incidence_matrix
-from ..utils import convert_labels_to_integers
+from ..utils import convert_labels_to_integers, pairwise_incidence, ttsv1, ttsv2
 from .properties import is_uniform
 
 __all__ = [
@@ -65,8 +65,8 @@ def clique_eigenvector_centrality(H, tol=1e-6):
     return {node_dict[n]: v[n].item() for n in node_dict}
 
 
-def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
-    """Compute the H-eigenvector centrality of a uniform hypergraph.
+def h_eigenvector_centrality(H, max_iter=100, tol=1e-6, fast=True):
+    """Compute the H-eigenvector centrality of a hypergraph.
 
     Parameters
     ----------
@@ -76,7 +76,7 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
         The maximum number of iterations before the algorithm terminates.
         By default, 100.
     tol : float > 0, optional
-        The desired L2 error in the centrality vector. By default, 1e-6.
+        The desired convergence tolerance. By default, 1e-6.
 
     Returns
     -------
@@ -95,11 +95,16 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
 
     References
     ----------
+    Scalable Tensor Methods for Nonuniform Hypergraphs,
+    Sinan Aksoy, Ilya Amburg, Stephen Young,
+    https://doi.org/10.48550/arXiv.2306.17825
+
     Three Hypergraph Eigenvector Centralities,
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
     """
     from ..algorithms import is_connected
+    from ..convert import to_hyperedge_dict
 
     # if there aren't any nodes, return an empty dict
     if H.num_nodes == 0:
@@ -109,29 +114,128 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     if not is_connected(H):
         return {n: np.nan for n in H.nodes}
 
-    m = is_uniform(H)
-    if not m:
-        raise XGIError("This method is not defined for non-uniform hypergraphs.")
-
     new_H = convert_labels_to_integers(H, "old-label")
 
-    f = lambda v, m: np.power(v, 1.0 / m)  # noqa: E731
-    g = lambda v, x: np.prod(v[list(x)])  # noqa: E731
+    r = H.edges.size.max()
 
     x = np.random.uniform(size=(new_H.num_nodes))
     x = x / norm(x, 1)
 
-    for iter in range(max_iter):
-        new_x = apply(new_H, x, g)
-        new_x = f(new_x, m)
-        # multiply by the sign to try and enforce positivity
-        new_x = np.sign(new_x[0]) * new_x / norm(new_x, 1)
-        if norm(x - new_x) <= tol:
-            break
-        x = new_x.copy()
+    if fast:
+        edge_dict = to_hyperedge_dict(new_H)
+        node_dict = new_H.nodes.memberships()
+        y = np.abs(np.array(ttsv1(node_dict, edge_dict, r, x)))
+    else:
+        f = lambda v, r: np.power(v, 1.0 / r)  # noqa: E731
+        g = lambda v, x: np.prod(v[list(x)])  # noqa: E731
+
+    converged = False
+    it = 0
+    while it < max_iter and not converged:
+        if fast:
+            y_scaled = [_y ** (1 / (r - 1)) for _y in y]
+            x = y_scaled / np.linalg.norm(y_scaled, 1)
+            y = np.abs(np.array(ttsv1(node_dict, edge_dict, r, x)))
+            s = [a / (b ** (r - 1)) for a, b in zip(y, x)]
+            converged = (np.max(s) - np.min(s)) / np.min(s) < tol
+        else:
+            new_x = apply(new_H, x, g)
+            new_x = f(new_x, r)
+            # multiply by the sign to try and enforce positivity
+            new_x = np.sign(new_x[0]) * new_x / norm(new_x, 1)
+            if norm(x - new_x) <= tol:
+                break
+            x = new_x.copy()
+        it += 1
     else:
         warn("Iteration did not converge!")
-    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
+    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, x / norm(x, 1))}
+
+
+def z_eigenvector_centrality(H, max_iter=100, tol=1e-6, fast=True):
+    """Compute the Z-eigenvector centrality of a hypergraph.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest.
+    max_iter : int, optional
+        The maximum number of iterations before the algorithm terminates.
+        By default, 100.
+    tol : float > 0, optional
+        The desired convergence tolerance. By default, 1e-6.
+
+    Returns
+    -------
+    dict
+        Centrality, where keys are node IDs and values are centralities. The
+        centralities are 1-normalized.
+
+    Raises
+    ------
+    XGIError
+        If the hypergraph is not uniform.
+
+    See Also
+    --------
+    clique_eigenvector_centrality
+
+    References
+    ----------
+    Scalable Tensor Methods for Nonuniform Hypergraphs,
+    Sinan Aksoy, Ilya Amburg, Stephen Young,
+    https://doi.org/10.48550/arXiv.2306.17825
+
+    Three Hypergraph Eigenvector Centralities,
+    Austin R. Benson,
+    https://doi.org/10.1137/18M1203031
+    """
+    from ..algorithms import is_connected
+    from ..convert import to_hyperedge_dict
+
+    # if there aren't any nodes, return an empty dict
+    n = H.num_nodes
+    if n == 0:
+        return dict()
+    # if the hypergraph is not connected,
+    # this metric doesn't make sense and should return nan.
+    if not is_connected(H):
+        return {n: np.nan for n in H.nodes}
+
+    new_H = convert_labels_to_integers(H, "old-label")
+    edge_dict = to_hyperedge_dict(new_H)
+    r = H.edges.size.max()
+    pairs_dict = pairwise_incidence(edge_dict, r)
+    x = np.ones(n) / n
+
+    if fast:
+
+        def LR_evec(A):
+            """Compute the largest real eigenvalue of the matrix A"""
+            _, v = eigsh(A, k=1, which="LM", tol=1e-5, maxiter=200)
+            evec = np.array([_v for _v in v[:, 0]])
+            if evec[0] < 0:
+                evec = -evec
+            return evec / np.linalg.norm(evec, 1)
+
+        def f(u):
+            return LR_evec(ttsv2(pairs_dict, edge_dict, r, u, n)) - u
+
+    h = 0.5
+    converged = False
+    it = 0
+    while it < max_iter and not converged:
+        print(f"{iter} of {max_iter-1}", flush=True)
+        x_new = x + h * f(x)
+        s = np.array([a / b for a, b in zip(x_new, x)])
+        converged = (np.max(s) - np.min(s)) / np.min(s) < tol
+        x = x_new
+    else:
+        warn("Iteration did not converge!")
+    return {
+        new_H.nodes[n]["old-label"]: c
+        for n, c in zip(new_H.nodes, x / np.linalg.norm(x, 1))
+    }
 
 
 def apply(H, x, g=lambda v, e: np.sum(v[list(e)])):

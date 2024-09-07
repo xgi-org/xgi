@@ -66,10 +66,6 @@ def test_h_eigenvector_centrality():
     assert norm(c[1:] - c[1]) < 1e-4
     assert abs(c[0] / c[1] - ratio(5, 7, kind="HEC")) < 1e-4
 
-    with pytest.raises(XGIError):
-        H = xgi.Hypergraph([[1, 2], [2, 3, 4]])
-        H.nodes.h_eigenvector_centrality.asnumpy()
-
 
 def test_node_edge_centrality():
     # test empty hypergraph
