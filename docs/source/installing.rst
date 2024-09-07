@@ -1,6 +1,6 @@
-**************
-Installing XGI
-**************
+**********
+Installing
+**********
 
 
 Installing the released version
