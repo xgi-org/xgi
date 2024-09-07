@@ -1,8 +1,6 @@
-.. _installing:
-
-***************
+**********
 Installing
-***************
+**********
 
 
 Installing the released version

@@ -1,4 +1,4 @@
-.. _focus_tutorials:
+:orphan:
 
 ################
 Focus tutorials
@@ -18,5 +18,5 @@ Focus tutorials
 
 .. seealso:: 
    
-   This is now too easy and you want to dive deeper into some features of XGI?
+   Is this too easy and you want to dive deeper into some features of XGI?
    Go to the `In-depth Tutorials <in_depth.html>`_.

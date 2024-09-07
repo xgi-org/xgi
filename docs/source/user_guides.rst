@@ -1,8 +1,6 @@
-.. _guides:
-
-***********************************
+***********
 User Guides
-***********************************
+***********
 
 
 .. grid::
@@ -17,12 +15,14 @@ User Guides
 
     	+++
 
-        .. button-ref:: xgi_in_x_minutes
+        .. button-ref:: api/tutorials/getting_started
             :expand:
             :color: secondary
             :click-parent:
 
             To the absolute beginner's guide
+
+.. grid::
 
     .. grid-item-card:: 
     	:text-align: center
@@ -35,17 +35,13 @@ User Guides
 
     	+++
 
-        .. button-ref:: focus_tutorials
+        .. button-ref:: api/tutorials/focus
             :expand:
             :color: secondary
             :click-parent:
 
             To the focus tutorials
 
-
-
-.. grid::
-	
     .. grid-item-card:: 
     	:text-align: center
 
@@ -55,12 +51,14 @@ User Guides
     	To know everything there is to know about a specific feature of XGI 
     	+++
 
-        .. button-ref:: indepth_tutorials
+        .. button-ref:: api/tutorials/in_depth
             :expand:
             :color: secondary
             :click-parent:
 
             To the in-depth tutorials
+
+.. grid::
 
     .. grid-item-card:: 
     	:text-align: center
@@ -72,13 +70,28 @@ User Guides
 
     	+++
 
-        .. button-ref:: recipes
+        .. button-ref:: api/tutorials/recipes
             :expand:
             :color: secondary
             :click-parent:
 
             To the cookbook
+	
+    .. grid-item-card:: 
+    	:text-align: center
+
+    	Case studies
+    	^^^
+
+    	To see how others have used XGI in their work
+    	+++
+
+        .. button-ref:: api/tutorials/case_studies
+            :expand:
+            :color: secondary
+            :click-parent:
+
+            To the case studies
 
 
-
-For all specifications and options of a particular function, or to explore all existing function, see the `API Reference <reference.html>`_.
+For all specifications and options of a particular function, or to explore all existing functions, see the `API Reference <reference.html>`_.

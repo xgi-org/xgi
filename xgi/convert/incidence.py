@@ -37,7 +37,7 @@ def from_incidence_matrix(d, create_using=None, nodelabels=None, edgelabels=None
 
     See Also
     --------
-    incidence_matrix
+    ~xgi.linalg.hypergraph_matrix.incidence_matrix
     to_incidence_matrix
     """
     I = coo_array(d)
@@ -92,7 +92,7 @@ def to_incidence_matrix(H, sparse=True, index=False):
 
     See Also
     --------
-    incidence_matrix
+    ~xgi.linalg.hypergraph_matrix.incidence_matrix
     from_incidence_matrix
     """
     return incidence_matrix(H, sparse=sparse, index=index)

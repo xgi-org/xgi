@@ -44,6 +44,11 @@ class Hypergraph:
         Attributes to add to the hypergraph as key, value pairs.
         By default, None.
 
+    See Also
+    --------
+    ~xgi.core.simplicialcomplex.SimplicialComplex
+    ~xgi.core.dihypergraph.DiHypergraph
+
     Notes
     -----
     Unique IDs are assigned to each node and edge internally and are used to refer to
@@ -128,10 +133,10 @@ class Hypergraph:
         self._edge_attr = self._edge_attr_dict_factory()
 
         self._nodeview = NodeView(self)
-        """A :class:`~xgi.core.reportviews.NodeView` of the hypergraph."""
+        """A :class:`~xgi.core.views.NodeView` of the hypergraph."""
 
         self._edgeview = EdgeView(self)
-        """An :class:`~xgi.core.reportviews.EdgeView` of the hypergraph."""
+        """An :class:`~xgi.core.views.EdgeView` of the hypergraph."""
 
         if incoming_data is not None:
             # This import needs to happen when this function is called, not when it is
@@ -628,7 +633,7 @@ class Hypergraph:
             the same length, i.e. you cannot mix different formats.  The iterables
             containing edge members cannot be strings.
 
-        attr : **kwargs, optional
+        attr : \*\*kwargs:, optional
             Additional attributes to be assigned to all edges. Attribues specified via
             `ebunch_to_add` take precedence over `attr`.
 
@@ -987,9 +992,9 @@ class Hypergraph:
         If the same node appears in both hyperedges, then this is still true after reshuffling.
         If either `e_id1` or `e_id2` is not provided, then two random edges are selected.
 
-        Reference
-        ---------
-        Philip S C., 2020.
+        References
+        ----------
+        Philip S Chodrow, 2020.
         "Configuration models of random hypergraphs."
         Journal of Complex Networks, 8(3).
         https://doi.org/10.1093/comnet/cnaa018
@@ -1490,7 +1495,7 @@ class Hypergraph:
 
         See Also
         --------
-        frozen : Method that raises an error when a user tries to modify the hypergraph
+        ~xgi.exception.frozen : Method that raises an error when a user tries to modify the hypergraph
         is_frozen : Check whether a hypergraph is frozen
 
         Examples

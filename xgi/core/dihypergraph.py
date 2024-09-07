@@ -52,6 +52,10 @@ class DiHypergraph:
     **attr : dict, optional, default: None
         Attributes to add to the hypergraph as key, value pairs.
 
+    See Also
+    --------
+    ~xgi.core.hypergraph.Hypergraph
+    
     Notes
     -----
     Unique IDs are assigned to each node and edge internally and are used to refer to
@@ -145,10 +149,10 @@ class DiHypergraph:
         self._edge_attr = self._edge_attr_dict_factory()
 
         self._nodeview = DiNodeView(self)
-        """A :class:`~xgi.core.direportviews.DiNodeView` of the directed hypergraph."""
+        """A :class:`~xgi.core.views.DiNodeView` of the directed hypergraph."""
 
         self._edgeview = DiEdgeView(self)
-        """An :class:`~xgi.core.direportviews.DiEdgeView` of the directed hypergraph."""
+        """An :class:`~xgi.core.views.DiEdgeView` of the directed hypergraph."""
 
         if incoming_data is not None:
             # This import needs to happen when this function is called, not when it is
@@ -1043,7 +1047,7 @@ class DiHypergraph:
 
         See Also
         --------
-        frozen : Method that raises an error when a user tries to modify the hypergraph
+        ~xgi.exception.frozen : Method that raises an error when a user tries to modify the hypergraph
         is_frozen : Check whether a dihypergraph is frozen
 
         Examples

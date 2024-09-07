@@ -1,8 +1,8 @@
-.. _installing_more:
+:orphan:
 
-***************************
+*************************
 Installation instructions
-***************************
+*************************
 
 pip installing with options
 ============================
@@ -33,7 +33,7 @@ You may wish to install the dependencies without actually installing XGI itself.
 - ``default.txt``: Default requirements
 - ``tutorial.txt``: Requirements for running the Jupyter Notebooks with the examples
 - ``test.txt``: Requirements for running test suite
-- ```docs.txt``: Requirements for building the documentation (see `../docs/`)
+- ``docs.txt``: Requirements for building the documentation (see `../docs/`)
 - ``developer.txt``: Requirements for developers
 - ``release.txt``: Requirements for making releases
 

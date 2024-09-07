@@ -1,4 +1,4 @@
-.. _xgi_in_x_minutes:
+:orphan:
 
 ###############
 Getting started

@@ -3,7 +3,7 @@
 This module is part of the stats package, and it defines node-level statistics.  That
 is, each function defined in this module is assumed to define a node-quantity mapping.
 Each callable defined here is accessible via a `Network` object, or a
-:class:`~xgi.core.reportviews.NodeView` object.  For more details, see the `tutorial
+:class:`~xgi.core.views.NodeView` object.  For more details, see the `tutorial
 <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
 Examples

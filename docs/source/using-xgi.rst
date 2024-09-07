@@ -1,6 +1,3 @@
-.. _using_xgi:
-
-
 ******************
 Projects using XGI
 ******************
@@ -14,6 +11,16 @@ Published work
 
 2024
 ----
+
+Gonzalo Contreras-Aso, Regino Criado, and Miguel Romance, "Beyond directed hypergraphs: heterogeneous hypergraphs and spectral centralities", *Journal of Complex Networks*, Volume 12, Issue 4, cnae037 (2024).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1093/comnet/cnae037>`
+:bdg-link-primary-line:`Code <https://github.com/goznalo-git/DirectedHyperCentrality>`
+
+Iacopo Iacopini, Márton Karsai, and Alain Barrat, "The temporal dynamics of group interactions in higher-order social networks", *Nature Communications* **15**, 7391 (2024).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41467-024-50918-5>`
+:bdg-link-primary-line:`Code <https://github.com/iaciac/temporal-group-interactions>`
 
 Nicholas W. Landry, Ilya Amburg, Mirah Shi, and Sinan Aksoy, "Filtering higher-order datasets", *Journal of Physics: Complexity* **5**, 015006 (2024).
 
@@ -69,11 +76,6 @@ Jordan Barrett, Paweł Prałat, Aaron Smith, François Théberge, "Counting simp
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2408.11806>`
 
-Gonzalo Contreras-Aso, Regino Criado, and Miguel Romance, "Beyond directed hypergraphs: heterogeneous hypergraphs and spectral centralities", arXiv:2403.11825 (2024).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2403.11825>`
-:bdg-link-primary-line:`Code <https://github.com/goznalo-git/DirectedHyperCentrality>`
-
 Robin Delabays, Giulia De Pasquale, Florian Dörfler, and Yuanzhao Zhang, "Hypergraph reconstruction from dynamics", arXiv:2402.00078 (2024).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2402.00078>`
@@ -101,11 +103,6 @@ Gonzalo Contreras-Aso, Cristian Pérez-Corral, and Miguel Romance, "Uplifting ed
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2310.20335>`
 :bdg-link-primary-line:`Code <https://github.com/LaComarca-Lab/non-uniform-hypergraphs>`
-
-Iacopo Iacopini, Márton Karsai, and Alain Barrat, "The temporal dynamics of group interactions in higher-order social networks", arXiv:2306.09967 (2023).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2306.09967>`
-:bdg-link-primary-line:`Code <https://github.com/iaciac/temporal-group-interactions>`
 
 Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, and Maxime Lucas, "Deeper but smaller: Higher-order interactions increase linear stability but shrink basins", arXiv:2309.16581 (2023).
 

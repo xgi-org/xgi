@@ -58,7 +58,7 @@ def to_hypergraph(data, create_using=None):
 
     See Also
     --------
-    from_max_simplices : Constructs a hypergraph from the maximal simplices of a simplicial complex.
+    ~xgi.utils.utilities.from_max_simplices : Constructs a hypergraph from the maximal simplices of a simplicial complex.
 
     """
     if data is None:

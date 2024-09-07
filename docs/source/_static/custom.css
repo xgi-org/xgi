@@ -20,14 +20,37 @@ td a {
     display: block;
 }
  
-table tr:nth-child(even){background-color: #f2f2f2;}
- 
-table tr:hover {background-color: #ddd;}
- 
 th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
     background-color: #04AA6D;
     color: white;
+}
+
+html[data-theme="light"] {
+    /* whatever you want to change */
+    background: white;
+}
+
+/* anything related to the dark theme */
+html[data-theme="dark"] {
+    /* whatever you want to change */
+    background: black;
+}
+
+html[data-theme="dark"] table.data tbody tr:nth-child(odd) {
+    background-color: #2e2e2e; /* Darker gray */
+}
+
+html[data-theme="dark"] table.data tbody tr:nth-child(even) {
+    background-color: #3e3e3e; /* Lighter gray */
+}
+
+html[data-theme="light"] table.data tbody tr:nth-child(odd) {
+    background-color: #eeeeee; /* Darker gray */
+}
+
+html[data-theme="light"] table.data tbody tr:nth-child(even) {
+    background-color: #f2f2f2; /* Lighter gray */
 }

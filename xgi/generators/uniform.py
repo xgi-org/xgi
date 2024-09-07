@@ -289,7 +289,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="degree", seed=None):
 
     See Also
     --------
-    random_hypergraph
+    ~xgi.generators.random.random_hypergraph
     """
     if seed is not None:
         np.random.seed(seed)

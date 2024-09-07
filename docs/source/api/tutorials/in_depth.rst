@@ -1,5 +1,4 @@
-.. _indepth_tutorials:
-
+:orphan:
 
 ##################
 In Depth tutorials

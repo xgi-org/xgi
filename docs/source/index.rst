@@ -8,7 +8,7 @@
 
    installing
    user_guides
-   reference
+   api_reference
    xgi-data
    gallery
    contribute

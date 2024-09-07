@@ -1,5 +1,3 @@
-.. _reference:
-
 **************
 API Reference
 **************
@@ -22,7 +20,7 @@ XGI is organized into the following subpackages:
 
 .. note::
 
-   This page describes release |version| of XGI. Find out more in the `Release notes <https://github.com/xgi-org/xgi/releases>`_ about this and previous releases.
+   This page describes release |version| of XGI. Find out more about this release and previous releases in the `release notes <https://github.com/xgi-org/xgi/releases>`_.
    
 .. toctree::
    :maxdepth: 2
