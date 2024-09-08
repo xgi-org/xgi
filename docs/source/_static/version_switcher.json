@@ -1,0 +1,13 @@
+[
+    {
+        "name": "latest",
+        "version": "latest",
+        "url": "https://xgi.readthedocs.io/en/latest/"
+    },
+    {
+        "name": "stable",
+        "version":"stable",
+        "url": "https://xgi.readthedocs.io/en/stable/",
+        "preferred": true
+    }
+]
