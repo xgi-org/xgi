@@ -36,6 +36,12 @@ def edit_simpliciality(H, min_size=2, exclude_min_size=True):
     -------
     float
         The edit simpliciality
+
+    References
+    ----------
+    "The simpliciality of higher-order order networks"
+    by Nicholas Landry, Jean-Gabriel Young, and Nicole Eikmeier,
+    *EPJ Data Science* **13**, 17 (2024).
     """
     edges = H.edges.filterby("size", min_size, "geq").members()
 
@@ -100,6 +106,12 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
     -------
     float
         The edit simpliciality
+
+    References
+    ----------
+    "The simpliciality of higher-order order networks"
+    by Nicholas Landry, Jean-Gabriel Young, and Nicole Eikmeier,
+    *EPJ Data Science* **13**, 17 (2024).
     """
     edges = H.edges.filterby("size", min_size, "geq").members()
 
@@ -165,6 +177,12 @@ def face_edit_simpliciality(H, min_size=2, exclude_min_size=True):
     -------
     float
         The face edit simpliciality
+
+    References
+    ----------
+    "The simpliciality of higher-order order networks"
+    by Nicholas Landry, Jean-Gabriel Young, and Nicole Eikmeier,
+    *EPJ Data Science* **13**, 17 (2024).
     """
     edges = (
         H.edges.maximal().filterby("size", min_size + exclude_min_size, "geq").members()
@@ -210,7 +228,7 @@ def mean_face_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True
     ----------
     "The simpliciality of higher-order order networks"
     by Nicholas Landry, Jean-Gabriel Young, and Nicole Eikmeier,
-    *EPJ Data Science* **13**, 17 (2024)
+    *EPJ Data Science* **13**, 17 (2024).
     """
     t = Trie()
     t.build_trie(H.edges.filterby("size", min_size, "geq").members())
@@ -248,6 +266,12 @@ def simplicial_fraction(H, min_size=2, exclude_min_size=True):
     -------
     float
         The simplicial fraction
+
+    References
+    ----------
+    "The simpliciality of higher-order order networks"
+    by Nicholas Landry, Jean-Gabriel Young, and Nicole Eikmeier,
+    *EPJ Data Science* **13**, 17 (2024).
     """
     try:
         ns = _count_simplices(H, min_size, exclude_min_size)
