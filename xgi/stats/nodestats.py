@@ -493,3 +493,42 @@ def katz_centrality(net, bunch, cutoff=100):
     """
     c = xgi.katz_centrality(net, cutoff=cutoff)
     return {n: c[n] for n in c if n in bunch}
+
+
+def local_simplicial_fraction(net, bunch, min_size=2, exclude_min_size=True):
+    s = dict()
+    for n in bunch:
+        nbrs = net.nodes.neighbors(n)
+        if len(nbrs) == 0:
+            s[n] = np.nan
+        else:
+            nbrs.add(n)
+            sh = xgi.subhypergraph(net, nodes=nbrs)
+            s[n] = xgi.simplicial_fraction(sh, min_size, exclude_min_size)
+    return s
+
+
+def local_edit_simpliciality(net, bunch, min_size=2, exclude_min_size=True):
+    s = dict()
+    for n in bunch:
+        nbrs = net.nodes.neighbors(n)
+        if len(nbrs) == 0:
+            s[n] = np.nan
+        else:
+            nbrs.add(n)
+            sh = xgi.subhypergraph(net, nodes=nbrs)
+            s[n] = xgi.edit_simpliciality(sh, min_size, exclude_min_size)
+    return s
+
+
+def local_face_edit_simpliciality(net, bunch, min_size=2, exclude_min_size=True):
+    s = dict()
+    for n in bunch:
+        nbrs = net.nodes.neighbors(n)
+        if len(nbrs) == 0:
+            s[n] = np.nan
+        else:
+            nbrs.add(n)
+            sh = xgi.subhypergraph(net, nodes=nbrs)
+            s[n] = xgi.face_edit_simpliciality(sh, min_size, exclude_min_size)
+    return s
