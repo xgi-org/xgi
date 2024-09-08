@@ -1,5 +1,10 @@
 
-.. image:: ../../logo/logo.svg
+.. image:: ../../logo/logo.png
+  :class: only-light
+  :width: 200
+
+.. image:: ../../logo/logo_white.png
+  :class: only-dark
   :width: 200
 
 .. toctree::
