@@ -927,8 +927,8 @@ class SimplicialComplex(Hypergraph):
             raise XGIError(
                 f"Order {order} is greater than the maximum order {max_order}"
             )
-        for i in range(max_order, order, -1):
-            bunch = _H.edges.filterby('order', i)
-            _H.remove_simplex_ids_from(bunch)
+        if order != max_order:
+             bunch = _H.edges.filterby('order', order, 'gt')
+             _H.remove_simplex_ids_from(bunch)
         if not in_place:
             return _H
