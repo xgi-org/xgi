@@ -57,7 +57,7 @@ html[data-theme="light"] table.data tbody tr:nth-child(even) {
 
 /* Fixed width for the navbar items */
 .bd-header ul.navbar-nav {
-    width: 600px;
+    width: 475px;
 }
 /* Remove whitespace to the right of the xgi logo */
 .bd-header .navbar-header-items__start {
