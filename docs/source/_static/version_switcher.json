@@ -1,7 +1,7 @@
 [
     {
-        "name": "latest",
-        "version": "latest",
+        "name": "dev",
+        "version": "dev",
         "url": "https://xgi.readthedocs.io/en/latest/"
     },
     {

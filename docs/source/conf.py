@@ -17,6 +17,8 @@ from datetime import date, datetime
 
 import requests
 
+import xgi
+
 sys.path.insert(0, os.path.abspath("."))
 sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 
@@ -24,8 +26,7 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 # -- Project information -----------------------------------------------------
 project = "XGI"
 copyright = f"2021-{date.today().year} XGI Developers"
-release = "0.8.10"
-version = release
+version = xgi.__version__
 
 # -- General configuration ---------------------------------------------------
 
@@ -173,12 +174,33 @@ html_theme = "pydata_sphinx_theme"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 
+version_match = os.environ.get("READTHEDOCS_VERSION")
+
+# If READTHEDOCS_VERSION doesn't exist, we're not on RTD
+if not version_match:
+    version_match = "dev"
+
+# If it is an integer, we're in a PR build and the version isn't correct.
+elif version_match.isdigit():
+    version_match = "dev"
+
+# If it's "latest" → change to "dev" (that's what we want the switcher to call it)
+elif version_match == "latest":
+    version_match = "dev"
+
+else:
+    version_match = "stable"
+
+if version_match == "dev":
+    version = "dev"
+
 # documentation.
 html_theme_options = {
     "logo": {
         "image_light": "../../logo/logo.svg",
         "image_dark": "../../logo/logo_white.svg",
     },
+    "navbar_start": ["navbar-logo", "navbar-version"],
     "navbar_end": [
         "theme-switcher",
         "navbar-icon-links",
@@ -195,18 +217,13 @@ html_theme_options = {
             "url": "https://twitter.com/xginets",
             "icon": "fab fa-twitter-square",  # Font Awesome icon
         },
-        {
-            "name": "Mastodon",
-            "url": "https://mathstodon.xyz/@xginets",
-            "icon": "fa-brands fa-mastodon",  # Font Awesome icon
-        },
     ],
     "header_links_before_dropdown": 4,
     "switcher": {
         "json_url": (
             "https://xgi.readthedocs.io/en/latest/_static/version_switcher.json"
         ),
-        "version_match": "latest" if "dev" in version else version,
+        "version_match": version_match,
     },
 }
 
