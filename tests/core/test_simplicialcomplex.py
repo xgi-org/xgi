@@ -481,7 +481,7 @@ def test_remove_simplex_ids_from(edgelist6, edgelist2):
     assert set(S.edges.members()) == set(edges)
 
     # test issue 580
-    S1 = xgi.SimplicialComplex(edgelist2)
+    S1 = xgi.SimplicialComplex(edgelist4)
     id_all = list(S1.edges)
     S1.remove_simplex_ids_from(id_all)
     assert S1.num_edges == 0
