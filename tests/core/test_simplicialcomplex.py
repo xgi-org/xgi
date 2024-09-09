@@ -597,7 +597,7 @@ def test_issue_445(edgelist1):
     assert S._edge == xgi.dual_dict(S._node)
 
 
-def test_k_skeleton(edgelist1):
+def test_k_skeleton(edgelist1, edgelist2):
     S = xgi.SimplicialComplex(edgelist1)
     S1 = S.k_skeleton(1, in_place=False)
     edges_skeleton = [
@@ -614,3 +614,7 @@ def test_k_skeleton(edgelist1):
 
     with pytest.raises(XGIError):
         S.k_skeleton(5, in_place=True)
+
+    S2 = xgi.SimplicialComplex(edgelist2)
+    S2.k_skeleton(0, in_place=True)
+    assert S2.num_edges == 0
