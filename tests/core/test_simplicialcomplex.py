@@ -462,7 +462,7 @@ def test_remove_simplex_id(edgelist6):
     assert set(S.edges.members()) == set(edges)
 
 
-def test_remove_simplex_ids_from(edgelist6):
+def test_remove_simplex_ids_from(edgelist6, edgelist4):
     S = xgi.SimplicialComplex()
     S.add_simplices_from(edgelist6)
 
@@ -479,6 +479,12 @@ def test_remove_simplex_ids_from(edgelist6):
         frozenset({1, 3}),
     ]
     assert set(S.edges.members()) == set(edges)
+
+    # test issue 580
+    S1 = xgi.SimplicialComplex(edgelist4)
+    id_all = list(S1.edges)
+    S1.remove_simplex_ids_from(id_all)
+    assert S1.num_edges == 0
 
 
 def test_freeze(edgelist1):

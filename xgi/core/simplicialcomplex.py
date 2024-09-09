@@ -745,12 +745,12 @@ class SimplicialComplex(Hypergraph):
         remove_edges_from : remove a collection of edges
         """
         try:
-            # remove all simplices that contain simplex
+            # Remove all simplices that contain the given simplex
             supfaces_ids = self._supfaces_id(self._edge[id])
             for sup_id in supfaces_ids:
                 self._remove_simplex_id(sup_id)
 
-            # remove simplex
+            # Remove simplex itself
             self._remove_simplex_id(id)
 
         except KeyError as e:
@@ -775,7 +775,10 @@ class SimplicialComplex(Hypergraph):
         remove_simplex_id : remove a single simplex by ID.
 
         """
+        all_ids = set(self._edge.keys())
         for id in ebunch:
+            if id in all_ids and id not in self._edge.keys():
+                continue
             self.remove_simplex_id(id)
 
     def has_simplex(self, simplex):
