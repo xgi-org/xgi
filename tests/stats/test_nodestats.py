@@ -117,3 +117,149 @@ def test_attrs(hyperwithattrs, attr1, attr2, attr3, attr4, attr5):
 
     with pytest.raises(ValueError):
         H.nodes.attrs(-1).asdict()
+
+
+def test_local_edit_simpliciality(
+    sc1_with_singletons,
+    h_links_and_triangles2,
+):
+    # no nodes
+    H = xgi.Hypergraph()
+
+    assert H.local_edit_simpliciality() == dict()
+    assert H.nodes.local_edit_simpliciality().asdict() == dict()
+
+    val = sc1_with_singletons.nodes.local_edit_simpliciality.asdict()
+    true_val = {
+        1: 1.0,
+        2: 1.0,
+        3: 1.0,
+    }
+    assert val == true_val
+
+    val = h_links_and_triangles2.nodes.local_edit_simpliciality.asdict()
+    true_val = {
+        1: 0.75,
+        2: 0.75,
+        3: 0.75,
+        4: 0.75,
+    }
+    assert val == true_val
+
+    val = h_links_and_triangles2.nodes.local_edit_simpliciality(min_size=1).asdict()
+    true_val = {
+        1: 0.5,
+        2: 0.5,
+        3: 0.5,
+        4: 0.5,
+    }
+    assert val == true_val
+
+    val = h_links_and_triangles2.nodes.local_edit_simpliciality(
+        min_size=1, exclude_min_size=False
+    ).asdict()
+    true_val = {
+        1: 0.5,
+        2: 0.5,
+        3: 0.5,
+        4: 0.5,
+    }
+    assert val == true_val
+
+
+def test_local_face_edit_simpliciality(
+    sc1_with_singletons,
+    h_links_and_triangles2,
+):
+    # no nodes
+    H = xgi.Hypergraph()
+
+    assert H.local_face_edit_simpliciality() == dict()
+    assert H.nodes.local_face_edit_simpliciality().asdict() == dict()
+
+    val = sc1_with_singletons.nodes.local_face_edit_simpliciality.asdict()
+    true_val = {
+        1: 1.0,
+        2: 1.0,
+        3: 1.0,
+    }
+    assert val == true_val
+
+    val = h_links_and_triangles2.nodes.local_face_edit_simpliciality.asdict()
+    true_val = {
+        1: 2 / 3,
+        2: 2 / 3,
+        3: 2 / 3,
+        4: 2 / 3,
+    }
+    assert val == true_val
+
+    val = h_links_and_triangles2.nodes.local_face_edit_simpliciality(
+        min_size=1
+    ).asdict()
+    true_val = {
+        1: 0.2222222222222222,
+        2: 0.2222222222222222,
+        3: 0.2222222222222222,
+        4: 0.2222222222222222,
+    }
+    assert val == true_val
+
+    val = h_links_and_triangles2.nodes.local_face_edit_simpliciality(
+        min_size=1, exclude_min_size=False
+    ).asdict()
+    true_val = {
+        1: 0.2222222222222222,
+        2: 0.2222222222222222,
+        3: 0.2222222222222222,
+        4: 0.2222222222222222,
+    }
+    assert val == true_val
+
+
+def test_local_simplicial_fraction(
+    sc1_with_singletons,
+    h_links_and_triangles2,
+):
+    # no nodes
+    H = xgi.Hypergraph()
+
+    assert H.local_simplicial_fraction() == dict()
+    assert H.nodes.local_simplicial_fraction().asdict() == dict()
+
+    val = sc1_with_singletons.nodes.local_simplicial_fraction.asdict()
+    true_val = {
+        1: 1.0,
+        2: 1.0,
+        3: 1.0,
+    }
+    assert val == true_val
+
+    val = h_links_and_triangles2.nodes.local_simplicial_fraction.asdict()
+    true_val = {
+        1: 0.0,
+        2: 0.0,
+        3: 0.0,
+        4: 0.0,
+    }
+    assert val == true_val
+
+    val = h_links_and_triangles2.nodes.local_simplicial_fraction(min_size=1).asdict()
+    true_val = {
+        1: 0.0,
+        2: 0.0,
+        3: 0.0,
+        4: 0.0,
+    }
+    assert val == true_val
+
+    val = h_links_and_triangles2.nodes.local_simplicial_fraction(
+        min_size=1, exclude_min_size=False
+    ).asdict()
+    true_val = {
+        1: 0.0,
+        2: 0.0,
+        3: 0.0,
+        4: 0.0,
+    }
+    assert val == true_val

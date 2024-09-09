@@ -241,7 +241,7 @@ def mean_face_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True
         if len(e) >= min_size:
             s = _count_subfaces(t, e, min_size=min_size)
             m = _max_number_of_subfaces(min_size, len(e))
-            d = m - s # missing subfaces
+            d = m - s  # missing subfaces
             if normalize and m != 0:
                 d *= 1.0 / m
             avg_d += d / len(max_faces)
