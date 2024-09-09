@@ -66,7 +66,7 @@ More information about the datasets and how to load them is in the `XGI-DATA men
 Get involved
 ==================
 
-To simply getting news and updates, you can sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_ or `Mastodon <https://mathstodon.xyz/@xginets>`_!
+To simply getting news and updates, you can sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_!
 
 If you want to contribute, even better! The XGI community always welcomes contributions, no matter how small.
 For more information, see our `contribution guide <contribute.html>`_.
