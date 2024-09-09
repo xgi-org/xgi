@@ -201,7 +201,7 @@ html_theme_options = {
             "icon": "fa-brands fa-mastodon",  # Font Awesome icon
         },
     ],
-    "header_links_before_dropdown": 5,
+    "header_links_before_dropdown": 4,
     "switcher": {
         "json_url": (
             "https://xgi.readthedocs.io/en/latest/_static/version_switcher.json"
