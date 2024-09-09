@@ -748,7 +748,7 @@ class SimplicialComplex(Hypergraph):
             # Remove all simplices that contain the given simplex
             supfaces_ids = self._supfaces_id(self._edge[id])
             for sup_id in supfaces_ids:
-                self.remove_simplex_id(sup_id)
+                self._remove_simplex_id(sup_id)
 
             # Remove simplex itself
             self._remove_simplex_id(id)
