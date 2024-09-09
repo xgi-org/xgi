@@ -55,7 +55,7 @@ class DiHypergraph:
     See Also
     --------
     ~xgi.core.hypergraph.Hypergraph
-    
+
     Notes
     -----
     Unique IDs are assigned to each node and edge internally and are used to refer to

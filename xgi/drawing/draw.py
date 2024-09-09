@@ -180,7 +180,7 @@ def draw(
         * dict of colors containing the `ids` as keys
 
         Formats with numerical values (will be mapped to colors):
-        
+
         * array of floats
         * dict of floats containing the `ids` as keys
         * IDStat containing the `ids` as keys
@@ -1374,7 +1374,7 @@ def draw_multilayer(
     ax : matplotlib Axes3DSubplot
         The subplot with the multilayer network visualization.
     collections : a tuple of 2 collections:
-    
+
         * node_collection : matplotlib PathCollection
             Collection containing the nodes one the top layer
         * edge_collection : matplotlib PathCollection

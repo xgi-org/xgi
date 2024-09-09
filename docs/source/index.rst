@@ -1,5 +1,10 @@
 
-.. image:: ../../logo/logo.svg
+.. image:: ../../logo/logo.png
+  :class: only-light
+  :width: 200
+
+.. image:: ../../logo/logo_white.png
+  :class: only-dark
   :width: 200
 
 .. toctree::
@@ -10,9 +15,9 @@
    user_guides
    api_reference
    xgi-data
-   gallery
    contribute
    using-xgi
+   gallery
 
 
 .. button-link:: https://github.com/xgi-org/xgi/releases/tag/v0.8.10

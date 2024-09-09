@@ -13,6 +13,9 @@
 
 import os
 import sys
+from datetime import date, datetime
+
+import requests
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
@@ -20,10 +23,9 @@ sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
 
 # -- Project information -----------------------------------------------------
 project = "XGI"
-copyright = "2021-2024 XGI Developers"
+copyright = f"2021-{date.today().year} XGI Developers"
 release = "0.8.10"
 version = release
-today = "02-09-2024"
 
 # -- General configuration ---------------------------------------------------
 
@@ -65,9 +67,9 @@ exclude_patterns = []
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 html_js_files = ["table.js"]
-
+html_favicon = "_static/x.ico"
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = "1.3"
+needs_sphinx = "6.2.1"
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -87,6 +89,7 @@ extensions = [
     "nbsphinx",
     "nbsphinx_link",
 ]
+
 
 # Automatically generate stub pages when using the .. autosummary directive
 autosummary_generate = True
@@ -115,9 +118,18 @@ language = "en"
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
-# today = ''
+r = requests.get("https://api.github.com/repos/xgi-org/xgi/releases/latest")
+
+if r.ok:
+    release_date = (
+        datetime.fromisoformat(r.json()["published_at"]).date().strftime("%b %d, %Y")
+    )
+else:
+    raise Exception(f"Error: HTTP response {r.status_code}")
+
+today = release_date
 # Else, today_fmt is used as the format for a strftime call.
-today_fmt = "%B %d, %Y"
+# today_fmt = "%B %d, %Y"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -163,10 +175,15 @@ html_theme = "pydata_sphinx_theme"
 
 # documentation.
 html_theme_options = {
+    "logo": {
+        "image_light": "../../logo/logo.svg",
+        "image_dark": "../../logo/logo_white.svg",
+    },
     "navbar_end": [
         "theme-switcher",
         "navbar-icon-links",
-    ],  # Place the social links at the end of the navbar
+        "version-switcher",
+    ],
     "icon_links": [
         {
             "name": "GitHub",
@@ -184,6 +201,13 @@ html_theme_options = {
             "icon": "fa-brands fa-mastodon",  # Font Awesome icon
         },
     ],
+    "header_links_before_dropdown": 4,
+    "switcher": {
+        "json_url": (
+            "https://xgi.readthedocs.io/en/latest/_static/version_switcher.json"
+        ),
+        "version_match": "latest" if "dev" in version else version,
+    },
 }
 
 
@@ -201,9 +225,7 @@ html_sidebars = {
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = ["_static"]
-# html_static_path = ["_static"]
-
-html_logo = "../../logo/logo.svg"
+html_static_path = ["_static"]
 
 html_show_sphinx = True
 
