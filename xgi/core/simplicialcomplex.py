@@ -928,7 +928,7 @@ class SimplicialComplex(Hypergraph):
                 f"Order {order} is greater than the maximum order {max_order}"
             )
         if order != max_order:
-             bunch = _H.edges.filterby('order', order, 'gt')
-             _H.remove_simplex_ids_from(bunch)
+            bunch = _H.edges.filterby("order", order, "gt")
+            _H.remove_simplex_ids_from(bunch)
         if not in_place:
             return _H
