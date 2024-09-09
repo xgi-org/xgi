@@ -462,7 +462,7 @@ def test_remove_simplex_id(edgelist6):
     assert set(S.edges.members()) == set(edges)
 
 
-def test_remove_simplex_ids_from(edgelist6, edgelist2):
+def test_remove_simplex_ids_from(edgelist6, edgelist4):
     S = xgi.SimplicialComplex()
     S.add_simplices_from(edgelist6)
 
