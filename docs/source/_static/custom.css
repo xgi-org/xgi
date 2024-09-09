@@ -54,3 +54,12 @@ html[data-theme="light"] table.data tbody tr:nth-child(odd) {
 html[data-theme="light"] table.data tbody tr:nth-child(even) {
     background-color: #ffffff; /* Lighter gray */
 }
+
+/* Fixed width for the navbar items */
+.bd-header ul.navbar-nav {
+    width: 600px;
+}
+/* Remove whitespace to the right of the xgi logo */
+.bd-header .navbar-header-items__start {
+    width: 100px;
+}

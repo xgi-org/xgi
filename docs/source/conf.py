@@ -13,7 +13,9 @@
 
 import os
 import sys
-from datetime import date
+from datetime import date, datetime
+
+import requests
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.append(os.path.join(os.path.dirname(__name__), "xgi"))
@@ -66,9 +68,8 @@ html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 html_js_files = ["table.js"]
 html_favicon = "_static/x.ico"
-
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = "1.3"
+needs_sphinx = "6.2.1"
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -117,9 +118,18 @@ language = "en"
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
-# today = ''
+r = requests.get("https://api.github.com/repos/xgi-org/xgi/releases/latest")
+
+if r.ok:
+    release_date = (
+        datetime.fromisoformat(r.json()["published_at"]).date().strftime("%B %d, %Y")
+    )
+else:
+    raise Exception(f"Error: HTTP response {r.status_code}")
+
+today = release_date
 # Else, today_fmt is used as the format for a strftime call.
-today_fmt = "%B %d, %Y"
+# today_fmt = "%B %d, %Y"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
