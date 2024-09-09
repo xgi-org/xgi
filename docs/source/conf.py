@@ -122,7 +122,7 @@ r = requests.get("https://api.github.com/repos/xgi-org/xgi/releases/latest")
 
 if r.ok:
     release_date = (
-        datetime.fromisoformat(r.json()["published_at"]).date().strftime("%B %d, %Y")
+        datetime.fromisoformat(r.json()["published_at"]).date().strftime("%b %d, %Y")
     )
 else:
     raise Exception(f"Error: HTTP response {r.status_code}")
