@@ -910,6 +910,10 @@ class SimplicialComplex(Hypergraph):
     def k_skeleton(self, order, in_place=True):
         """Returns the k-skeleton of the simplicial complex.
 
+        The :math:`k`-skeleton of a simplicial complex is its subcomplex
+        containing all simplices of dimension at most :math:`k`.
+        
+
         Parameters
         ----------
         order : int
@@ -917,6 +921,10 @@ class SimplicialComplex(Hypergraph):
         in_place : bool, optional
             Whether to modify the current hypergraph or output a new one, by default
             True.
+
+        References
+        ----------
+        https://en.wikipedia.org/wiki/N-skeleton
         """
         if in_place:
             _H = self
