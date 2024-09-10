@@ -3,6 +3,7 @@
 from ..core import Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..generators import empty_simplicial_complex
+from ..algorithms.properties import max_edge_order
 
 __all__ = ["from_simplex_dict", "from_max_simplices", "k_skeleton"]
 
@@ -80,7 +81,7 @@ def k_skeleton(SC, order, in_place=True):
         _S = SC
     else:
         _S = SC.copy()
-    max_order = max(len(edge) for edge in _S._edge.values()) - 1
+    max_order = max_edge_order(_S)
     if order > max_order:
         raise XGIError(f"Order {order} is greater than the maximum order {max_order}")
     if order != max_order:
