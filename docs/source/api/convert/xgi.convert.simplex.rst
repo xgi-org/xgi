@@ -9,3 +9,4 @@ xgi.convert.simplex
    
    .. autofunction:: from_max_simplices
    .. autofunction:: from_simplex_dict
+   .. autofunction:: k_skeleton
