@@ -906,37 +906,3 @@ class SimplicialComplex(Hypergraph):
             return self.frozen
         except AttributeError:
             return False
-
-    def k_skeleton(self, order, in_place=True):
-        """Returns the k-skeleton of the simplicial complex.
-
-        The :math:`k`-skeleton of a simplicial complex is the subcomplex
-        containing all the simplices of the original complex of dimension at most :math:`k`.
-
-
-        Parameters
-        ----------
-        order : int
-            The order (k) of the skeleton to return.
-        in_place : bool, optional
-            Whether to modify the current hypergraph or output a new one, by default
-            True.
-
-        References
-        ----------
-        https://en.wikipedia.org/wiki/N-skeleton
-        """
-        if in_place:
-            _H = self
-        else:
-            _H = self.copy()
-        max_order = max(len(edge) for edge in _H._edge.values()) - 1
-        if order > max_order:
-            raise XGIError(
-                f"Order {order} is greater than the maximum order {max_order}"
-            )
-        if order != max_order:
-            bunch = _H.edges.filterby("order", order, "gt")
-            _H.remove_simplex_ids_from(bunch)
-        if not in_place:
-            return _H

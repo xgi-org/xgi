@@ -4,7 +4,7 @@ from ..core import Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..generators import empty_simplicial_complex
 
-__all__ = ["from_simplex_dict", "from_max_simplices"]
+__all__ = ["from_simplex_dict", "from_max_simplices", "k_skeleton"]
 
 
 def from_simplex_dict(d, create_using=None):
@@ -53,3 +53,38 @@ def from_max_simplices(SC):
     H.add_nodes_from(SC.nodes)  # to keep node order and isolated nodes
     H.add_edges_from([list(SC.edges.members(e)) for e in max_simplices])
     return H
+
+
+def k_skeleton(SC, order, in_place=True):
+    """Returns the k-skeleton of the simplicial complex.
+
+    The :math:`k`-skeleton of a simplicial complex is the subcomplex
+    containing all the simplices of the original complex of dimension at most :math:`k`.
+
+
+    Parameters
+    ----------
+    SC : SimplicialComplex
+        The simplicial complex to return the k-skeleton of.
+    order : int
+        The order (k) of the skeleton to return.
+    in_place : bool, optional
+        Whether to modify the current hypergraph or output a new one, by default
+        True.
+
+    References
+    ----------
+    https://en.wikipedia.org/wiki/N-skeleton
+    """
+    if in_place:
+        _S = SC
+    else:
+        _S = SC.copy()
+    max_order = max(len(edge) for edge in _S._edge.values()) - 1
+    if order > max_order:
+        raise XGIError(f"Order {order} is greater than the maximum order {max_order}")
+    if order != max_order:
+        bunch = _S.edges.filterby("order", order, "gt")
+        _S.remove_simplex_ids_from(bunch)
+    if not in_place:
+        return _S
