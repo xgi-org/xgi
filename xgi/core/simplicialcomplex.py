@@ -910,9 +910,9 @@ class SimplicialComplex(Hypergraph):
     def k_skeleton(self, order, in_place=True):
         """Returns the k-skeleton of the simplicial complex.
 
-        The :math:`k`-skeleton of a simplicial complex is its subcomplex
-        containing all simplices of dimension at most :math:`k`.
-        
+        The :math:`k`-skeleton of a simplicial complex is the subcomplex
+        containing all the simplices of the original complex of dimension at most :math:`k`.
+
 
         Parameters
         ----------
