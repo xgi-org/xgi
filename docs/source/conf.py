@@ -191,16 +191,13 @@ elif version_match == "latest":
 else:
     version_match = "stable"
 
-if version_match == "dev":
-    version = "dev"
-
 # documentation.
 html_theme_options = {
     "logo": {
         "image_light": "../../logo/logo.svg",
         "image_dark": "../../logo/logo_white.svg",
     },
-    "navbar_start": ["navbar-logo", "navbar-version"],
+    "navbar_start": ["navbar-logo"],
     "navbar_end": [
         "theme-switcher",
         "navbar-icon-links",

@@ -61,5 +61,5 @@ html[data-theme="light"] table.data tbody tr:nth-child(even) {
 }
 /* Remove whitespace to the right of the xgi logo */
 .bd-header .navbar-header-items__start {
-    width: 130px;
+    width: 100px;
 }
