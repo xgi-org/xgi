@@ -126,6 +126,7 @@ if r.ok:
         datetime.fromisoformat(r.json()["published_at"]).date().strftime("%b %d, %Y")
     )
     release_url = r.json()["html_url"]
+    release_version = r.json()["tag_name"].strip("v")
 else:
     raise Exception(f"Error: HTTP response {r.status_code}")
 
@@ -133,7 +134,7 @@ else:
 rst_epilog = f"""
 .. role:: raw-html(raw)
    :format: html
-.. |release_announcement| replace:: :raw-html:`<a href={release_url}><button type="button" class="version-button">XGI {version} released! {release_date}</button></a>`
+.. |release_announcement| replace:: :raw-html:`<a href={release_url}><button type="button" class="version-button">XGI {release_version} released! {release_date}</button></a>`
 """
 
 today = release_date
