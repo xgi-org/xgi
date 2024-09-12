@@ -64,7 +64,10 @@ html[data-theme="light"] table.data tbody tr:nth-child(even) {
     width: 100px;
 }
 
-/* Style for the latest version button */
+/*
+Style for the "latest version" button
+Comes from https://github.com/executablebooks/sphinx-design/blob/main/style/_button.scss
+ */
 .version-button {
     background-color: transparent;
     border: 1px solid;
