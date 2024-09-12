@@ -15,6 +15,7 @@ from scipy.sparse import (
     lil_matrix,
 )
 
+from ..algorithms.properties import max_edge_order
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..generators import empty_dihypergraph, empty_hypergraph, empty_simplicial_complex
@@ -22,7 +23,6 @@ from .hyperedges import from_hyperedge_dict, from_hyperedge_list
 from .incidence import from_incidence_matrix
 from .pandas import from_bipartite_pandas_dataframe
 from .simplex import from_simplex_dict
-from ..algorithms.properties import max_edge_order
 
 __all__ = [
     "to_hypergraph",
