@@ -19,13 +19,7 @@
    using-xgi
    gallery
 
-
-.. button-link:: https://github.com/xgi-org/xgi/releases/tag/v0.8.10
-    :color: primary
-    :outline:
-
-    XGI |version| released! |today|
-
+|release_announcement|
 
 Software for higher-order networks
 ==================================

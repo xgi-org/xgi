@@ -125,8 +125,16 @@ if r.ok:
     release_date = (
         datetime.fromisoformat(r.json()["published_at"]).date().strftime("%b %d, %Y")
     )
+    release_url = r.json()["html_url"]
 else:
     raise Exception(f"Error: HTTP response {r.status_code}")
+
+
+rst_epilog = f"""
+.. role:: raw-html(raw)
+   :format: html
+.. |release_announcement| replace:: :raw-html:`<a href={release_url}><button type="button" class="version-button">XGI {version} released! {release_date}</button></a>`
+"""
 
 today = release_date
 # Else, today_fmt is used as the format for a strftime call.

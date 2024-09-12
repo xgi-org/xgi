@@ -63,3 +63,33 @@ html[data-theme="light"] table.data tbody tr:nth-child(even) {
 .bd-header .navbar-header-items__start {
     width: 100px;
 }
+
+/* Style for the latest version button */
+.version-button {
+    background-color: transparent;
+    border: 1px solid;
+    border-color: #0A7D91;
+    border-radius: 0.25rem;
+    color: #0A7D91;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.5;
+    padding: 0.375rem 0.75rem;
+    text-align: center;
+    text-decoration: none;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+      border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    vertical-align: middle;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+  
+    &:hover {
+      text-decoration: none;
+      background-color: #0A7D91;
+      color: white;
+    }
+}
