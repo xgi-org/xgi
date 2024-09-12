@@ -272,10 +272,11 @@ def to_simplicial_complex(data, create_using=None):
         )
     else:
         raise XGIError("Input data has unsupported type.")
-    
+
+
 def cut_to_order(H, order):
     """Returns a copy of the higher-order network with edges of order less than or equal to the given order.
-        
+
     Parameters
     ----------
     H : Hypergraph
@@ -299,4 +300,3 @@ def cut_to_order(H, order):
         else:
             _H.remove_edges_from(bunch)
     return _H
-

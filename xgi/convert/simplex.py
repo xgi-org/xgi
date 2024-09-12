@@ -74,9 +74,7 @@ def k_skeleton(SC, order):
     https://en.wikipedia.org/wiki/N-skeleton
     """
     from .higher_order_network import cut_to_order
-    
+
     if type(SC) != SimplicialComplex:
         raise XGIError("The input must be a SimplicialComplex")
     return cut_to_order(SC, order)
-
-

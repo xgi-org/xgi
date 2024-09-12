@@ -75,6 +75,7 @@ def test_convert_pandas_dataframe_to_simplicial_complex(dataframe5):
     assert set(SC.nodes) == set(dataframe5["col1"])
     assert SC.edges.maximal().members() == [{0, 1, 2, 3}, {4}, {5, 6}, {8, 6, 7}]
 
+
 def test_cut_to_order(edgelist1, edgelist3):
     H = xgi.Hypergraph(edgelist1)
     H_cut = xgi.cut_to_order(H, 1)
