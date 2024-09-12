@@ -22,11 +22,13 @@ from .hyperedges import from_hyperedge_dict, from_hyperedge_list
 from .incidence import from_incidence_matrix
 from .pandas import from_bipartite_pandas_dataframe
 from .simplex import from_simplex_dict
+from ..algorithms.properties import max_edge_order
 
 __all__ = [
     "to_hypergraph",
     "to_dihypergraph",
     "to_simplicial_complex",
+    "cut_to_order",
 ]
 
 
@@ -270,3 +272,31 @@ def to_simplicial_complex(data, create_using=None):
         )
     else:
         raise XGIError("Input data has unsupported type.")
+
+
+def cut_to_order(H, order):
+    """Returns a copy of the higher-order network with edges of order less than or equal to the given order.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The higher-order network to cut
+    order : int
+        The order of the edges to keep
+    Returns
+    -------
+    Hypergraph object
+        A copy of the higher-order network with edges of order less than or equal to the given order
+
+    """
+    _H = H.copy()
+    max_order = max_edge_order(H)
+    if order > max_order:
+        raise XGIError(f"The order must be less than or equal to {max_order}")
+    if order != max_order:
+        bunch = _H.edges.filterby("order", order, "gt")
+        if type(_H) == SimplicialComplex:
+            _H.remove_simplex_ids_from(bunch)
+        else:
+            _H.remove_edges_from(bunch)
+    return _H

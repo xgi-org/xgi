@@ -4,7 +4,7 @@ from ..core import Hypergraph, SimplicialComplex
 from ..exception import XGIError
 from ..generators import empty_simplicial_complex
 
-__all__ = ["from_simplex_dict", "from_max_simplices"]
+__all__ = ["from_simplex_dict", "from_max_simplices", "k_skeleton"]
 
 
 def from_simplex_dict(d, create_using=None):
@@ -53,3 +53,28 @@ def from_max_simplices(SC):
     H.add_nodes_from(SC.nodes)  # to keep node order and isolated nodes
     H.add_edges_from([list(SC.edges.members(e)) for e in max_simplices])
     return H
+
+
+def k_skeleton(SC, order):
+    """Returns the k-skeleton of the simplicial complex.
+
+    The :math:`k`-skeleton of a simplicial complex is the subcomplex
+    containing all the simplices of the original complex of dimension at most :math:`k`.
+
+
+    Parameters
+    ----------
+    SC : SimplicialComplex
+        The simplicial complex to return the k-skeleton of.
+    order : int
+        The order (k) of the skeleton to return.
+
+    References
+    ----------
+    https://en.wikipedia.org/wiki/N-skeleton
+    """
+    from .higher_order_network import cut_to_order
+
+    if type(SC) != SimplicialComplex:
+        raise XGIError("The input must be a SimplicialComplex")
+    return cut_to_order(SC, order)
