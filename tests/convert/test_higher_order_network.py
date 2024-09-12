@@ -1,4 +1,7 @@
+import pytest
+
 import xgi
+from xgi.exception import XGIError
 
 
 def test_convert_empty_hypergraph():
@@ -71,3 +74,16 @@ def test_convert_pandas_dataframe_to_simplicial_complex(dataframe5):
     assert isinstance(SC, xgi.SimplicialComplex)
     assert set(SC.nodes) == set(dataframe5["col1"])
     assert SC.edges.maximal().members() == [{0, 1, 2, 3}, {4}, {5, 6}, {8, 6, 7}]
+
+def test_cut_to_order(edgelist1, edgelist3):
+    H = xgi.Hypergraph(edgelist1)
+    H_cut = xgi.cut_to_order(H, 1)
+    edges_cut = [frozenset({4}), frozenset({5, 6})]
+    assert H_cut.edges.members() == edges_cut
+
+    with pytest.raises(XGIError):
+        xgi.cut_to_order(H, 5)
+
+    H1 = xgi.Hypergraph(edgelist3)
+    H1_cut = xgi.cut_to_order(H1, 0)
+    assert H1_cut.num_edges == 0

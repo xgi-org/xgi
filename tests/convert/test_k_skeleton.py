@@ -6,7 +6,7 @@ from xgi.exception import XGIError
 
 def test_k_skeleton(edgelist1, edgelist2):
     S = xgi.SimplicialComplex(edgelist1)
-    S1 = xgi.k_skeleton(S, 1, in_place=False)
+    S1 = xgi.k_skeleton(S, 1)
     edges_skeleton = [
         frozenset({4}),
         frozenset({5, 6}),
@@ -19,9 +19,6 @@ def test_k_skeleton(edgelist1, edgelist2):
     ]
     assert set(S1.edges.members()) == set(edges_skeleton)
 
+    H = xgi.Hypergraph(edgelist2)
     with pytest.raises(XGIError):
-        xgi.k_skeleton(S, 5, in_place=True)
-
-    S2 = xgi.SimplicialComplex(edgelist2)
-    xgi.k_skeleton(S2, 0, in_place=True)
-    assert S2.num_edges == 0
+        xgi.k_skeleton(H, 2)
