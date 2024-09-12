@@ -13,7 +13,7 @@
 * [**Bug reports**](https://github.com/xgi-org/xgi/issues)
 * [**GitHub Discussions**](https://github.com/xgi-org/xgi/discussions)
 * [**Documentation**](https://xgi.readthedocs.io)
-* [**Contributors**](https://xgi.readthedocs.io/en/stable/contributors.html)
+* [**Contribute**](https://xgi.readthedocs.io/en/stable/contribute.html)
 * [**Projects using XGI**](https://xgi.readthedocs.io/en/stable/using-xgi.html)
 
 Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twitter](https://twitter.com/xginets) or [Mastodon](https://mathstodon.xyz/@xginets)!
@@ -29,7 +29,7 @@ Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twit
 - [Funding](#funding)
 - [Other Resources](#other-resources)
 
-## What is XGI?
+## What is XGI?<a id="what-is-xgi"></a>
 
 Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for higher-order networks (If you want more information on what higher-order networks are, see our [brief introduction](https://xgi.readthedocs.io/en/stable/higher-order.html)).
 
@@ -41,7 +41,7 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for higher-
 * **Manipulate node and edge statistics** in a flexible and customizable way.
 * Draw higher-order networks in a variety of **visually striking ways** (See our [gallery](https://xgi.readthedocs.io/en/stable/gallery.html) for several examples.)
 
-## Installation
+## Installation<a id="installation"></a>
 XGI runs on Python 3.8 or higher.
 
 To install the latest version of XGI, run the following command:
@@ -63,15 +63,15 @@ pip install -e ."[all]"
 For more installation options, see the [guide](https://github.com/xgi-org/xgi/blob/main/requirements/README.md).
 
 
-## Getting Started
+## Getting Started<a id="getting-started"></a>
 To get started, take a look at the [tutorials](https://xgi.readthedocs.io/en/stable/api/tutorials.html) illustrating the library's basic functionality.
 
 
-## Corresponding Data
+## Corresponding Data<a id="corresponding-data"></a>
 A number of higher-order datasets are available in the [XGI-DATA repository](https://github.com/xgi-org/xgi-data) and can be easily accessed with the `load_xgi_data()` function.
 
 
-## How to Contribute
+## How to Contribute<a id="how-to-contribute"></a>
 If you want to contribute to this project, please make sure to read the
 [contributing guidelines](https://github.com/xgi-org/xgi/blob/main/HOW_TO_CONTRIBUTE.md). We expect respectful and kind interactions by all contributors and users as laid out in our [code of conduct](https://github.com/xgi-org/xgi/blob/main/CODE_OF_CONDUCT.md).
 
@@ -86,7 +86,7 @@ Some concrete ways that you can get involved:
 * **Join our [Zulip channel](https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/)** to be a part of the daily goings-on of XGI.
 
 
-## How to Cite
+## How to Cite<a id="how-to-cite"></a>
 We acknowledge the importance of good software to support research, and we note that research becomes more valuable when it is communicated effectively. To demonstrate the value of XGI, we ask that you cite the XGI [paper](https://doi.org/10.21105/joss.05162) in your work. You can cite XGI either by going to our repository page [repository page](https://github.com/xgi-org/xgi) (if you haven't already) and clicking the "cite this repository" button on the right sidebar (which will generate a citation in your preferred format) or by copying the following BibTeX entry:
 ```
 @article{Landry_XGI_2023,
@@ -104,13 +104,13 @@ We acknowledge the importance of good software to support research, and we note 
 }
 ```
 
-## License
+## License<a id="license"></a>
 Released under the 3-Clause BSD license (see [`LICENSE.md`](https://github.com/xgi-org/xgi/blob/main/LICENSE.md))
 
 Copyright (C) 2021-2024 XGI Developers
 
-## Funding
+## Funding<a id="funding"></a>
 The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905).
 
-## Other Resources
+## Other Resources<a id="other-resources"></a>
 This library may not meet your needs and if this is this case, consider checking out our [list of other resources](https://github.com/xgi-org/xgi/blob/main/OTHER_RESOURCES.md).
