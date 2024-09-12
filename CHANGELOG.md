@@ -1,8 +1,18 @@
 # Changelog
 
+## v0.9
+
+* Added methods to (1) cut networks by order (`cut_to_order`) and (2) generate the k-skeleton of a SC (`k_skeleton`) [#578](https://github.com/xgi-org/xgi/pull/578) (@thomasrobiglio).
+* Fixed an issue where the latest version displayed "dev" [#592](https://github.com/xgi-org/xgi/pull/592) (@nwlandry).
+* Fixed the issue in the XGI version switcher so it no longer displays "Choose version" [#590](https://github.com/xgi-org/xgi/pull/590) (@nwlandry).
+* Added the ability to switch between XGI versions on ReadTheDocs, added a favicon, added a theme-dependent logo, added the ability to auto-retrieve the license date range, and the ability to auto-retrieve the date of the latest release [#586](https://github.com/xgi-org/xgi/pull/586) (@nwlandry).
+* Fixed Issue [#580](https://github.com/xgi-org/xgi/issues/580) and added related unit tests [#581](https://github.com/xgi-org/xgi/pull/581) (@thomasrobiglio).
+* Added the ability to change the website color themes (light, dark, auto), removed unnecessary files from the PyData migration, and fixed Sphinx errors [#582](https://github.com/xgi-org/xgi/pull/582) (@nwlandry).
+* Fixed broken links on the PyPI landing page from relative paths [#579](https://github.com/xgi-org/xgi/pull/579) (@nwlandry).
+
 ## v0.8.10
 
-- Migrating to the PyData theme for the online docs [#576](https://github.com/xgi-org/xgi/pull/576)  (@maximelucas).
+* Migrating to the PyData theme for the online docs [#576](https://github.com/xgi-org/xgi/pull/576)  (@maximelucas).
 
 ## v0.8.9
 
