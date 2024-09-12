@@ -285,7 +285,7 @@ def cut_to_order(H, order):
         The order of the edges to keep
     Returns
     -------
-    Hypergraph
+    Hypergraph object
         A copy of the higher-order network with edges of order less than or equal to the given order
 
     """
