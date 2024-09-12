@@ -22,7 +22,7 @@ Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twit
 - [What is XGI?](#what-is-xgi)
 - [Installation](#installation)
 - [Getting Started](#getting-started)
-- [Corresponding Data](#corresponding-data)
+- [XGI-DATA](#xgi-data)
 - [How to Contribute](#how-to-contribute)
 - [How to Cite](#how-to-cite)
 - [License](#license)
@@ -64,10 +64,10 @@ For more installation options, see the [guide](https://github.com/xgi-org/xgi/bl
 
 
 ## Getting Started<a id="getting-started"></a>
-To get started, take a look at the [tutorials](https://xgi.readthedocs.io/en/stable/api/tutorials.html) illustrating the library's basic functionality.
+To get started, take a look at the [user guides](https://xgi.readthedocs.io/en/stable/user_guides.html) illustrating the library's basic functionality.
 
 
-## Corresponding Data<a id="corresponding-data"></a>
+## XGI-DATA<a id="xgi-data"></a>
 A number of higher-order datasets are available in the [XGI-DATA repository](https://github.com/xgi-org/xgi-data) and can be easily accessed with the `load_xgi_data()` function.
 
 
