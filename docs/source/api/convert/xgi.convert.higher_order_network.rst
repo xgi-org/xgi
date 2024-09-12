@@ -10,3 +10,4 @@ xgi.convert.higher_order_network
    .. autofunction:: to_hypergraph
    .. autofunction:: to_dihypergraph
    .. autofunction:: to_simplicial_complex
+   .. autofunction:: cut_to_order
