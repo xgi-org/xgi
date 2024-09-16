@@ -130,11 +130,12 @@ if r.ok:
 else:
     raise Exception(f"Error: HTTP response {r.status_code}")
 
-
 rst_epilog = f"""
 .. role:: raw-html(raw)
    :format: html
 .. |release_announcement| replace:: :raw-html:`<a href={release_url}><button type="button" class="version-button">XGI {release_version} released! {release_date}</button></a>`
+.. |release_date| replace:: {release_date}
+.. |release_version| replace:: {release_version}
 """
 
 today = release_date
@@ -199,6 +200,12 @@ elif version_match == "latest":
 
 else:
     version_match = "stable"
+
+
+if version_match == "stable":
+    tags.add("stable_version")
+elif version_match == "dev":
+    tags.add("dev_version")
 
 # documentation.
 html_theme_options = {
