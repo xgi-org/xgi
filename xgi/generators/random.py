@@ -11,7 +11,6 @@ from scipy.special import comb
 
 from .classic import empty_hypergraph
 from .lattice import ring_lattice
-from .uniform import uniform_erdos_renyi_hypergraph
 
 __all__ = [
     "random_hypergraph",
@@ -21,7 +20,7 @@ __all__ = [
 ]
 
 
-def random_hypergraph(n, ps, order=None, seed=None):
+def random_hypergraph(N, ps, order=None, seed=None):
     """Generates a random hypergraph
 
     Generate N nodes, and connect any d+1 nodes
@@ -29,7 +28,7 @@ def random_hypergraph(n, ps, order=None, seed=None):
 
     Parameters
     ----------
-    n : int
+    N : int
         Number of nodes
     ps : list of float
         List of probabilities (between 0 and 1) to create a
@@ -57,20 +56,18 @@ def random_hypergraph(n, ps, order=None, seed=None):
     >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
 
     """
-    ps = np.array(ps)
+    if seed is not None:
+        np.random.seed(seed)
 
     if order is not None:
         if len(ps) != 1:
             raise ValueError("ps must contain a single element if order is an int")
 
-    if (ps < 0).any() or (ps > 1).any():
+    if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
 
-    nodes = range(n)
+    nodes = range(N)
     hyperedges = []
-
-    H = empty_hypergraph()
-    H.add_nodes_from(nodes)
 
     for i, p in enumerate(ps):
 
@@ -79,10 +76,17 @@ def random_hypergraph(n, ps, order=None, seed=None):
         else:
             d = i + 1  # order, ps[0] is prob of edges (d=1)
 
-        size = d + 1
-        if p > 0:
-            h_uniform = uniform_erdos_renyi_hypergraph(n, size, p, seed=seed)
-            H << h_uniform
+        potential_edges = combinations(nodes, d + 1)
+        n_comb = comb(N, d + 1, exact=True)
+        mask = np.random.random(size=n_comb) <= p  # True if edge to keep
+
+        edges_to_add = [e for e, val in zip(potential_edges, mask) if val]
+
+        hyperedges += edges_to_add
+
+    H = empty_hypergraph()
+    H.add_nodes_from(nodes)
+    H.add_edges_from(hyperedges)
 
     return H
 
