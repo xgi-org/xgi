@@ -7,6 +7,7 @@ import warnings
 from functools import reduce
 
 import numpy as np
+from scipy.special import comb
 
 from ..exception import XGIError
 from .classic import empty_hypergraph
@@ -260,7 +261,7 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
     return uniform_HSBM(n, m, p, sizes, seed=seed)
 
 
-def uniform_erdos_renyi_hypergraph(n, m, p, p_type="degree", seed=None):
+def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, seed=None):
     """Generate an m-uniform Erdős–Rényi hypergraph
 
     This creates a hypergraph with `n` nodes where
@@ -277,7 +278,16 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="degree", seed=None):
         Mean expected degree if p_type="degree" and
         probability of an m-hyperedge if p_type="prob"
     p_type : str
-        "degree" or "prob", by default "degree"
+        "degree" or "prob", by default "prob"
+    multiedges : bool, optional
+        Whether or not to allow multiedges. If True, there
+        can be significant speedups but at the cost of creating
+        (potentially unwanted artifacts). When multiedges=True,
+        it treats each edge permutation as distinct, which can
+        lead to multiedges, especially for dense hypergraphs.
+        For sparse hypergraphs, however, this is unlikely to
+        be the case.
+        By default, False.
     seed : integer or None (default)
         The seed for the random number generator
 
@@ -308,18 +318,29 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="degree", seed=None):
     if q > 1 or q < 0:
         raise XGIError("Probability not in [0,1].")
 
-    index = np.random.geometric(q) - 1  # -1 b/c zero indexing
-    max_index = n**m
-    while index < max_index:
-        e = set(_index_to_edge(index, n, m))
+    if multiedges:
+        max_index = n**m
+        index = np.random.geometric(q) - 1  # -1 b/c zero indexing
+        f = _index_to_edge_prod
+    else:
+        max_index = comb(n, m, exact=True)
+        index = np.random.geometric(q)
+        f = _index_to_edge_comb
+
+    while index <= max_index:
+        e = set(f(index, n, m))
         if len(e) == m:
             H.add_edge(e)
         index += np.random.geometric(q)
     return H
 
 
-def _index_to_edge(index, n, m):
+def _index_to_edge_prod(index, n, m):
     """Generate a hyperedge given an index in the list of possible edges.
+
+    In this method, it treats each edge permutation as distinct, which can
+    lead to multiedges, especially for dense hypergraphs.
+
 
     Parameters
     ----------
@@ -344,6 +365,47 @@ def _index_to_edge(index, n, m):
     https://stackoverflow.com/questions/53834707/element-at-index-in-itertools-product
     """
     return [(index // (n**r) % n) for r in range(m - 1, -1, -1)]
+
+
+def _index_to_edge_comb(index, n, m):
+    """Generate a hyperedge given an index in the list of possible edges.
+
+    In this function, we prohibit multiedges, so each index corresponds to a
+    unique edge.
+
+    Parameters
+    ----------
+    index : int > 0
+        The index of the hyperedge in the list of all possible hyperedges.
+    n : int > 0
+        The number of nodes
+    m : int > 0
+        The hyperedge size.
+
+    Returns
+    -------
+    list
+        The reconstructed hyperedge
+
+    See Also
+    --------
+    _index_to_edge_partition
+
+    References
+    ----------
+    https://math.stackexchange.com/questions/1227409/indexing-all-combinations-without-making-list
+    """
+    c = []
+    r = index
+    j = -1
+    for s in range(1, m + 1):
+        cs = j + 1
+        while r - comb(n - 1 - cs, m - s, exact=True) > 0:
+            r -= comb(n - 1 - cs, m - s, exact=True)
+            cs += 1
+        c.append(cs)
+        j = cs
+    return c
 
 
 def _index_to_edge_partition(index, partition_sizes, m):

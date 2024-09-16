@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from scipy.special import comb
 
 import xgi
 from xgi.exception import XGIError
@@ -150,14 +151,29 @@ def test_uniform_HPPM():
 def test_uniform_erdos_renyi_hypergraph():
     m = 2
     n = 10
-    k = 2
-    H1 = xgi.uniform_erdos_renyi_hypergraph(n, m, k, seed=0)
+    p = 1
+    H1 = xgi.uniform_erdos_renyi_hypergraph(n, m, p, seed=0)
+    ne1 = H1.num_edges
+    H1.merge_duplicate_edges(rename="tuple")
+    ne2 = H1.num_edges
+    assert ne1 == ne2
+    assert ne1 == comb(n, m)
 
     assert H1.num_nodes == 10
     assert xgi.unique_edge_sizes(H1) == [2]
 
+    H2 = xgi.uniform_erdos_renyi_hypergraph(n, m, p, seed=0, multiedges=True)
+    print(H2.edges)
+    ne1 = H2.num_edges
+    H2.merge_duplicate_edges()
+    ne2 = H2.num_edges
+    assert ne1 != ne2
+    assert ne1 == n**m - n # remove loopy edges
+
     # test that the seed works
-    H2 = xgi.uniform_erdos_renyi_hypergraph(n, m, k, seed=0)
+    p = 0.1
+    H1 = xgi.uniform_erdos_renyi_hypergraph(n, m, p, seed=0)
+    H2 = xgi.uniform_erdos_renyi_hypergraph(n, m, p, seed=0)
 
     assert H1.edges.members(dtype=dict) == H2.edges.members(dtype=dict)
 
