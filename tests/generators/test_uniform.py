@@ -168,7 +168,7 @@ def test_uniform_erdos_renyi_hypergraph():
     H2.merge_duplicate_edges()
     ne2 = H2.num_edges
     assert ne1 != ne2
-    assert ne1 == n**m - n # remove loopy edges
+    assert ne1 == n**m - n  # remove loopy edges
 
     # test that the seed works
     p = 0.1

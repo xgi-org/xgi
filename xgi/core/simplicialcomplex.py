@@ -848,8 +848,7 @@ class SimplicialComplex(Hypergraph):
 
             convert_labels_to_integers(_S, in_place=True)
 
-        if not in_place:
-            return _S
+        return _S
 
     def freeze(self):
         """Method for freezing a simplicial complex

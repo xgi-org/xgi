@@ -296,7 +296,6 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     Hypergraph
         The Erdos Renyi hypergraph
 
-
     See Also
     --------
     ~xgi.generators.random.random_hypergraph
