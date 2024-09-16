@@ -26,7 +26,7 @@ XGI is organized into the following subpackages:
       
    .. only:: dev_version
       
-      This page describes the latest XGI development with features that may not have been released yet. To see officially released features, visit the `API reference <https://xgi.readthedocs.io/en/stable/api_reference.html>`_ for the most recent stable version.
+      This page describes the latest XGI development with features that may not be released yet. To see officially released features, visit the `API reference <https://xgi.readthedocs.io/en/stable/api_reference.html>`_ for the most recent stable version.
 
 .. toctree::
    :maxdepth: 2
