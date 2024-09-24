@@ -308,7 +308,10 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     H.add_nodes_from(node_labels)
 
     if p_type == "degree":
-        q = p / (m * n ** (m - 1))  # wiring probability
+        if multiedges:
+            q = p / (m * n ** (m - 1))  # wiring probability
+        else:
+            q = p * n / (m * comb(n, m))
     elif p_type == "prob":
         q = p
     else:
