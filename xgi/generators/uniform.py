@@ -157,7 +157,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
     if len(set(np.shape(p))) != 1:
         raise XGIError("'p' must be a square tensor.")
     if np.max(p) > 1 or np.min(p) < 0:
-        raise XGIError("Entries of 'p' not in [0,1].")
+        raise XGIError("Entries of 'p' not in [0, 1].")
     if np.sum(sizes) != n:
         raise XGIError("Sum of sizes does not match n")
 
@@ -318,7 +318,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
         raise XGIError("Invalid p_type!")
 
     if q > 1 or q < 0:
-        raise XGIError("Probability not in [0,1].")
+        raise XGIError("Probability not in [0, 1].")
 
     if multiedges:
         max_index = n**m
