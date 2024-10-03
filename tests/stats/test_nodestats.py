@@ -142,10 +142,10 @@ def test_local_edit_simpliciality(
 
     val = h_links_and_triangles2.nodes.local_edit_simpliciality.asdict()
     true_val = {
-        1: 0.75,
-        2: 0.75,
-        3: 0.75,
-        4: 0.75,
+        1: 2 / 3,
+        2: 2 / 3,
+        3: 2 / 3,
+        4: 2 / 3,
     }
     for n in true_val:
         assert np.allclose(val[n], true_val[n])
@@ -153,10 +153,10 @@ def test_local_edit_simpliciality(
 
     val = h_links_and_triangles2.nodes.local_edit_simpliciality(min_size=1).asdict()
     true_val = {
-        1: 0.5,
-        2: 0.5,
-        3: 0.5,
-        4: 0.5,
+        1: 1 / 3,
+        2: 1 / 3,
+        3: 1 / 3,
+        4: 1 / 3,
     }
     for n in true_val:
         assert np.allclose(val[n], true_val[n])
@@ -166,10 +166,10 @@ def test_local_edit_simpliciality(
         min_size=1, exclude_min_size=False
     ).asdict()
     true_val = {
-        1: 0.5,
-        2: 0.5,
-        3: 0.5,
-        4: 0.5,
+        1: 1 / 3,
+        2: 1 / 3,
+        3: 1 / 3,
+        4: 1 / 3,
     }
     for n in true_val:
         assert np.allclose(val[n], true_val[n])
