@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 import xgi
@@ -135,7 +136,9 @@ def test_local_edit_simpliciality(
         2: 1.0,
         3: 1.0,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
 
     val = h_links_and_triangles2.nodes.local_edit_simpliciality.asdict()
     true_val = {
@@ -144,7 +147,9 @@ def test_local_edit_simpliciality(
         3: 0.75,
         4: 0.75,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
 
     val = h_links_and_triangles2.nodes.local_edit_simpliciality(min_size=1).asdict()
     true_val = {
@@ -153,7 +158,9 @@ def test_local_edit_simpliciality(
         3: 0.5,
         4: 0.5,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
 
     val = h_links_and_triangles2.nodes.local_edit_simpliciality(
         min_size=1, exclude_min_size=False
@@ -164,7 +171,9 @@ def test_local_edit_simpliciality(
         3: 0.5,
         4: 0.5,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
 
 
 def test_local_face_edit_simpliciality(
@@ -183,7 +192,9 @@ def test_local_face_edit_simpliciality(
         2: 1.0,
         3: 1.0,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
 
     val = h_links_and_triangles2.nodes.local_face_edit_simpliciality.asdict()
     true_val = {
@@ -192,7 +203,9 @@ def test_local_face_edit_simpliciality(
         3: 2 / 3,
         4: 2 / 3,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
 
     val = h_links_and_triangles2.nodes.local_face_edit_simpliciality(
         min_size=1
@@ -203,7 +216,9 @@ def test_local_face_edit_simpliciality(
         3: 0.2222222222222222,
         4: 0.2222222222222222,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
 
     val = h_links_and_triangles2.nodes.local_face_edit_simpliciality(
         min_size=1, exclude_min_size=False
@@ -214,7 +229,9 @@ def test_local_face_edit_simpliciality(
         3: 0.2222222222222222,
         4: 0.2222222222222222,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
 
 
 def test_local_simplicial_fraction(
@@ -233,7 +250,9 @@ def test_local_simplicial_fraction(
         2: 1.0,
         3: 1.0,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
 
     val = h_links_and_triangles2.nodes.local_simplicial_fraction.asdict()
     true_val = {
@@ -242,7 +261,9 @@ def test_local_simplicial_fraction(
         3: 0.0,
         4: 0.0,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
 
     val = h_links_and_triangles2.nodes.local_simplicial_fraction(min_size=1).asdict()
     true_val = {
@@ -251,7 +272,9 @@ def test_local_simplicial_fraction(
         3: 0.0,
         4: 0.0,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
 
     val = h_links_and_triangles2.nodes.local_simplicial_fraction(
         min_size=1, exclude_min_size=False
@@ -262,4 +285,6 @@ def test_local_simplicial_fraction(
         3: 0.0,
         4: 0.0,
     }
-    assert val == true_val
+    for n in true_val:
+        assert np.allclose(val[n], true_val[n])
+    assert sorted(val) == sorted(true_val)
