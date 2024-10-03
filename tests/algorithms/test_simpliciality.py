@@ -25,45 +25,48 @@ def test_edit_simpliciality(
     assert es == 1.0
 
     es = xgi.edit_simpliciality(h_missing_one_singleton, min_size=1)
-    assert np.allclose(es, 6 / 7)
+    assert np.allclose(es, 5 / 6)
 
     es = xgi.edit_simpliciality(
         h_missing_one_singleton, min_size=1, exclude_min_size=False
     )
-    assert np.allclose(es, 6 / 7)
+    assert np.allclose(es, 5 / 6)
 
     # h2
     es = xgi.edit_simpliciality(h_missing_one_link)
-    assert np.allclose(es, 3 / 4)
+    assert np.allclose(es, 2 / 3)
 
     es = xgi.edit_simpliciality(h_missing_one_link, min_size=1)
-    assert np.allclose(es, 6 / 7)
+    assert np.allclose(es, 5 / 6)
 
     # links and triangles 2
     es = xgi.edit_simpliciality(h_links_and_triangles2)
-    assert np.allclose(es, 3 / 4)
+    assert np.allclose(es, 2 / 3)
 
     es = xgi.edit_simpliciality(h_links_and_triangles2, min_size=1)
-    assert np.allclose(es, 1 / 2)
+    assert np.allclose(es, 1 / 3)
 
     es = xgi.edit_simpliciality(h_links_and_triangles2, exclude_min_size=False)
-    assert np.allclose(es, 3 / 4)
+    assert np.allclose(es, 3 / 5)
 
     # test h1
     es = xgi.edit_simpliciality(h1)
     s = 4
     m = 4 + 10
-    assert np.allclose(es, s / (m + s))
+    mf = 3
+    assert np.allclose(es, (s - mf) / (m + s - mf))
 
     es = xgi.edit_simpliciality(h1, min_size=1)
     s = 4
     m = 4 + 10 + 7
-    assert np.allclose(es, s / (m + s))
+    mf = 3
+    assert np.allclose(es, (s - mf) / (m + s - mf))
 
     es = xgi.edit_simpliciality(h1, exclude_min_size=False)
     s = 4
     m = 4 + 10
-    assert np.allclose(es, s / (m + s))
+    mf = 3
+    assert np.allclose(es, (s - mf) / (m + s - mf))
 
 
 def test_simplicial_edit_distance(
@@ -90,45 +93,48 @@ def test_simplicial_edit_distance(
     assert sed == 0.0
 
     sed = xgi.simplicial_edit_distance(h_missing_one_singleton, min_size=1)
-    assert np.allclose(sed, 1 / 7)
+    assert np.allclose(sed, 1 / 6)
 
     sed = xgi.simplicial_edit_distance(
         h_missing_one_singleton, min_size=1, exclude_min_size=False
     )
-    assert np.allclose(sed, 1 / 7)
+    assert np.allclose(sed, 1 / 6)
 
     # h2
     sed = xgi.simplicial_edit_distance(h_missing_one_link)
-    assert np.allclose(sed, 1 / 4)
+    assert np.allclose(sed, 1 / 3)
 
     sed = xgi.simplicial_edit_distance(h_missing_one_link, min_size=1)
-    assert np.allclose(sed, 1 / 7)
+    assert np.allclose(sed, 1 / 6)
 
     # links and triangles 2
     sed = xgi.simplicial_edit_distance(h_links_and_triangles2)
-    assert np.allclose(sed, 1 / 4)
+    assert np.allclose(sed, 1 / 3)
 
     sed = xgi.simplicial_edit_distance(h_links_and_triangles2, min_size=1)
-    assert np.allclose(sed, 1 / 2)
+    assert np.allclose(sed, 2 / 3)
 
     sed = xgi.simplicial_edit_distance(h_links_and_triangles2, exclude_min_size=False)
-    assert np.allclose(sed, 1 / 4)
+    assert np.allclose(sed, 2 / 5)
 
     # test h1
     sed = xgi.simplicial_edit_distance(h1)
     s = 4
     m = 4 + 10
-    assert np.allclose(sed, m / (m + s))
+    mf = 3
+    assert np.allclose(sed, m / (m + s - mf))
 
     sed = xgi.simplicial_edit_distance(h1, min_size=1)
     s = 4
     m = 4 + 10 + 7
-    assert np.allclose(sed, m / (m + s))
+    mf = 3
+    assert np.allclose(sed, m / (m + s - mf))
 
     sed = xgi.simplicial_edit_distance(h1, exclude_min_size=False)
     s = 4
     m = 4 + 10
-    assert np.allclose(sed, m / (m + s))
+    mf = 3
+    assert np.allclose(sed, m / (m + s - mf))
 
     sed = xgi.simplicial_edit_distance(h1, exclude_min_size=False, normalize=False)
     assert np.allclose(sed, m)
@@ -353,15 +359,15 @@ def test_powerset():
     }
 
 
-def test_count_subfaces(h_missing_one_link):
-    count_subfaces = xgi.algorithms.simpliciality._count_subfaces
+def test_count_missing_subfaces(h_missing_one_link):
+    count_missing_subfaces = xgi.algorithms.simpliciality._count_missing_subfaces
     t = xgi.Trie()
     t.build_trie(h_missing_one_link.edges.members())
-    assert count_subfaces(t, {1}, min_size=2) == 0
-    assert count_subfaces(t, {2, 3}, min_size=2) == 0
-    assert count_subfaces(t, {2, 3}) == 2
-    assert count_subfaces(t, {1, 2, 3}) == 5
-    assert count_subfaces(t, {1, 2, 3}, min_size=2) == 2
+    assert count_missing_subfaces(t, {1}, min_size=2) == 0
+    assert count_missing_subfaces(t, {2, 3}, min_size=2) == 0
+    assert count_missing_subfaces(t, {2, 3}) == 0
+    assert count_missing_subfaces(t, {1, 2, 3}) == 1
+    assert count_missing_subfaces(t, {1, 2, 3}, min_size=2) == 1
 
 
 def test_max_number_of_subfaces():

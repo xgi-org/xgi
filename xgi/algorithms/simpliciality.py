@@ -106,10 +106,9 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
                     if not t.search(c):
                         redundant_missing_faces.add(frozenset(c))
 
-        nm = _max_number_of_subfaces(min_size, len(e))
-        nf = _count_subfaces(t, e, min_size)
+        mf = _count_missing_subfaces(t, e, min_size)
         rmf = len(redundant_missing_faces)
-        ms += nm - nf - rmf
+        ms += mf - rmf
 
     if normalize:
         s = len(edges)
@@ -189,9 +188,8 @@ def mean_face_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True
     avg_d = 0
     for e in max_faces:
         if len(e) >= min_size:
-            s = _count_subfaces(t, e, min_size=min_size)
+            d = _count_missing_subfaces(t, e, min_size=min_size)  # missing subfaces
             m = _max_number_of_subfaces(min_size, len(e))
-            d = m - s  # missing subfaces
             if normalize and m != 0:
                 d *= 1.0 / m
             avg_d += d / len(max_faces)
@@ -265,7 +263,7 @@ def _powerset(iterable, min_size=1, max_size=None):
     )
 
 
-def _count_subfaces(t, face, min_size=1):
+def _count_missing_subfaces(t, face, min_size=1):
     """Computing the edit distance for a single face.
 
     Parameters
@@ -287,37 +285,8 @@ def _count_subfaces(t, face, min_size=1):
     sub_edges = list(_powerset(face, min_size=min_size, max_size=len(face) - 1))
     count = 0
     for e in sub_edges:
-        if t.search(e):
+        if not t.search(e):
             count += 1
-
-    return count
-
-
-def _count_subfaces(t, face, min_size=1):
-    """Computing the edit distance for a single face.
-
-    Parameters
-    ----------
-    t : Trie
-        The trie representing the hypergraph
-    face : iterable
-        The edge for which to find the edit distance
-    min_size: int, default: 1
-        The minimum hyperedge size to include when
-        calculating whether a hyperedge is a simplex
-        by counting subfaces.
-
-    Returns
-    -------
-    int
-        The edit distance
-    """
-    sub_edges = list(_powerset(face, min_size=min_size, max_size=len(face) - 1))
-    count = 0
-    for e in sub_edges:
-        if t.search(e):
-            count += 1
-
     return count
 
 
