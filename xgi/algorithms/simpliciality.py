@@ -43,44 +43,9 @@ def edit_simpliciality(H, min_size=2, exclude_min_size=True):
     by Nicholas Landry, Jean-Gabriel Young, and Nicole Eikmeier,
     *EPJ Data Science* **13**, 17 (2024).
     """
-    edges = H.edges.filterby("size", min_size, "geq").members()
-
-    t = Trie()
-    t.build_trie(edges)
-
-    maxH = Hypergraph(
-        H.edges.maximal()
-        .filterby("size", min_size + exclude_min_size, "geq")
-        .members(dtype=dict)
+    return 1 - simplicial_edit_distance(
+        H, min_size=min_size, exclude_min_size=exclude_min_size
     )
-    if not maxH.edges:
-        return np.nan
-
-    ms = 0
-    for id1, e in maxH.edges.members(dtype=dict).items():
-        redundant_missing_faces = set()
-        for id2 in maxH.edges.neighbors(id1):
-            if id2 < id1:
-                c = maxH._edge[id2].intersection(e)
-                if len(c) >= min_size:
-                    redundant_missing_faces.update(_missing_subfaces(t, c, min_size))
-
-                    # we don't have to worry about the intersection being a max face
-                    # because a) there are no multiedges and b) these are all maximal
-                    # faces so no inclusions.
-                    if not t.search(c):
-                        redundant_missing_faces.add(frozenset(c))
-
-        nm = _max_number_of_subfaces(min_size, len(e))
-        nf = _count_subfaces(t, e, min_size)
-        rmf = len(redundant_missing_faces)
-        ms += nm - nf - rmf
-
-    try:
-        s = len(edges)
-        return s / (ms + s)
-    except ZeroDivisionError:
-        return np.nan
 
 
 def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True):
@@ -146,14 +111,15 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
         rmf = len(redundant_missing_faces)
         ms += nm - nf - rmf
 
-    try:
-        if normalize:
-            s = len(edges)
-            return ms / (ms + s)
+    if normalize:
+        s = len(edges)
+        mf = maxH.num_edges
+        if s - mf + ms > 0:
+            return ms / (s - mf + ms)
         else:
-            return ms
-    except ZeroDivisionError:
-        return np.nan
+            return np.nan
+    else:
+        return ms
 
 
 def face_edit_simpliciality(H, min_size=2, exclude_min_size=True):
@@ -184,25 +150,9 @@ def face_edit_simpliciality(H, min_size=2, exclude_min_size=True):
     by Nicholas Landry, Jean-Gabriel Young, and Nicole Eikmeier,
     *EPJ Data Science* **13**, 17 (2024).
     """
-    edges = (
-        H.edges.maximal().filterby("size", min_size + exclude_min_size, "geq").members()
+    return 1 - mean_face_edit_distance(
+        H, min_size=min_size, exclude_min_size=exclude_min_size
     )
-    t = Trie()
-    t.build_trie(H.edges.filterby("size", min_size, "geq").members())
-
-    if not edges:
-        return np.nan
-
-    fes = 0
-    for e in edges:
-        n = _count_subfaces(t, e, min_size=min_size)
-        d = _max_number_of_subfaces(min_size, len(e))
-        # happens when you include the minimal faces when counting simplices
-        try:
-            fes += float(n / (d * len(edges)))
-        except ZeroDivisionError:
-            fes += 1.0 / len(edges)
-    return fes
 
 
 def mean_face_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True):
