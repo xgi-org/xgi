@@ -37,6 +37,10 @@ def edit_simpliciality(H, min_size=2, exclude_min_size=True):
     float
         The edit simpliciality
 
+    See Also
+    --------
+    simplicial_edit_distance
+
     References
     ----------
     "The simpliciality of higher-order order networks"
@@ -71,6 +75,10 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
     -------
     float
         The edit simpliciality
+
+    See Also
+    --------
+    edit_simpliciality
 
     References
     ----------
@@ -143,6 +151,10 @@ def face_edit_simpliciality(H, min_size=2, exclude_min_size=True):
     float
         The face edit simpliciality
 
+    See Also
+    --------
+    mean_face_edit_distance
+
     References
     ----------
     "The simpliciality of higher-order order networks"
@@ -172,6 +184,10 @@ def mean_face_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True
     -------
     float
         The mean face edit distance
+
+    See Also
+    --------
+    face_edit_simpliciality
 
     References
     ----------
