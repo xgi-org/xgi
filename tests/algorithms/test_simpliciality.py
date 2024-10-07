@@ -69,7 +69,7 @@ def test_edit_simpliciality(
     assert np.allclose(es, (s - mf) / (m + s - mf))
 
     H = xgi.Hypergraph([[1, 2, 3, 4], [3, 4, 5, 6], [2, 3, 6, 7], [1, 2], [3, 4], [2, 3], [3, 6], [3, 4]])
-    es = xgi.edit_simpliciality(h1, exclude_min_size=False)
+    es = xgi.edit_simpliciality(H, exclude_min_size=False)
     assert np.allclose(es, 0.1785714285714286)
 
 
