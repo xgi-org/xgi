@@ -56,7 +56,7 @@ def edit_simpliciality(H, min_size=2, exclude_min_size=True):
 
     2. Hyperedges we call “minimal faces” may significantly skew the
     simpliciality of a dataset. The minimal faces of a hypergraph :math:`H`
-    are the edges of the minimal size, i.e., :math:`|e| = min(K)`, where :math:`K`
+    are the edges of the minimal size, i.e., :math:`|e| = \min(K)`, where :math:`K`
     is the set of sizes that we consider based on note 1.
     (In a traditional simplicial complex, the minimal faces are singletons).
     With the size restrictions in place, the minimal faces of a hypergraph
@@ -122,7 +122,7 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
 
     2. Hyperedges we call “minimal faces” may significantly skew the
     simpliciality of a dataset. The minimal faces of a hypergraph :math:`H`
-    are the edges of the minimal size, i.e., :math:`|e| = min(K)`, where :math:`K`
+    are the edges of the minimal size, i.e., :math:`|e| = \min(K)`, where :math:`K`
     is the set of sizes that we consider based on note 1.
     (In a traditional simplicial complex, the minimal faces are singletons).
     With the size restrictions in place, the minimal faces of a hypergraph
@@ -225,7 +225,7 @@ def face_edit_simpliciality(H, min_size=2, exclude_min_size=True):
 
     2. Hyperedges we call “minimal faces” may significantly skew the
     simpliciality of a dataset. The minimal faces of a hypergraph :math:`H`
-    are the edges of the minimal size, i.e., :math:`|e| = min(K)`, where :math:`K`
+    are the edges of the minimal size, i.e., :math:`|e| = \min(K)`, where :math:`K`
     is the set of sizes that we consider based on note 1.
     (In a traditional simplicial complex, the minimal faces are singletons).
     With the size restrictions in place, the minimal faces of a hypergraph
@@ -290,7 +290,7 @@ def mean_face_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True
 
     2. Hyperedges we call “minimal faces” may significantly skew the
     simpliciality of a dataset. The minimal faces of a hypergraph :math:`H`
-    are the edges of the minimal size, i.e., :math:`|e| = min(K)`, where :math:`K`
+    are the edges of the minimal size, i.e., :math:`|e| = \min(K)`, where :math:`K`
     is the set of sizes that we consider based on note 1.
     (In a traditional simplicial complex, the minimal faces are singletons).
     With the size restrictions in place, the minimal faces of a hypergraph
@@ -360,7 +360,7 @@ def simplicial_fraction(H, min_size=2, exclude_min_size=True):
 
     2. Hyperedges we call “minimal faces” may significantly skew the
     simpliciality of a dataset. The minimal faces of a hypergraph :math:`H`
-    are the edges of the minimal size, i.e., :math:`|e| = min(K)`, where :math:`K`
+    are the edges of the minimal size, i.e., :math:`|e| = \min(K)`, where :math:`K`
     is the set of sizes that we consider based on note 1.
     (In a traditional simplicial complex, the minimal faces are singletons).
     With the size restrictions in place, the minimal faces of a hypergraph
