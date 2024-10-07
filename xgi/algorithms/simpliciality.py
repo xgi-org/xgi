@@ -18,8 +18,7 @@ __all__ = [
 def edit_simpliciality(H, min_size=2, exclude_min_size=True):
     """Computes the edit simpliciality.
 
-    The number of edges needed to be added
-    to a hypergraph to make it a simplicial complex.
+    The fraction of sub-edges contained when compared to a simplicial complex.
 
     Parameters
     ----------
@@ -81,7 +80,7 @@ def edit_simpliciality(H, min_size=2, exclude_min_size=True):
 def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True):
     """Computes the simplicial edit distance.
 
-    The number of edges needed to be added
+    The number (or fraction) of sub-edges needed to be added
     to a hypergraph to make it a simplicial complex.
 
     Parameters
@@ -187,8 +186,8 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
 def face_edit_simpliciality(H, min_size=2, exclude_min_size=True):
     """Computes the face edit simpliciality.
 
-    The average number of edges needed to be added
-    to a hyperedge to make it a simplex.
+    The average fraction of sub-edges contained in a hyperedge
+    relative to a simplex.
 
     Parameters
     ----------
@@ -249,6 +248,9 @@ def face_edit_simpliciality(H, min_size=2, exclude_min_size=True):
 
 def mean_face_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True):
     """Computes the mean face edit distance
+
+    The average number (or fraction) of sub-edges needed to be added to make
+    a hyperedge a simplex.
 
     Parameters
     ----------
