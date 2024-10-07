@@ -98,12 +98,14 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
     )
     if not maxH.edges:
         return np.nan
+    
+    id_to_num = dict(zip(maxH.edges, range(maxH.num_edges)))
 
     ms = 0
     for id1, e in maxH.edges.members(dtype=dict).items():
         redundant_missing_faces = set()
         for id2 in maxH.edges.neighbors(id1):
-            if id2 < id1:
+            if id_to_num[id2] < id_to_num[id1]:
                 c = maxH._edge[id2].intersection(e)
                 if len(c) >= min_size:
                     redundant_missing_faces.update(_missing_subfaces(t, c, min_size))
