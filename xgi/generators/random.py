@@ -5,9 +5,9 @@ import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
+from warnings import warn
 
 import numpy as np
-from scipy.special import comb
 
 from .classic import empty_hypergraph
 from .lattice import ring_lattice
@@ -21,7 +21,7 @@ __all__ = [
 ]
 
 
-def random_hypergraph(n, ps, order=None, seed=None):
+def fast_random_hypergraph(n, ps, order=None, seed=None):
     """Generates a random hypergraph
 
     Generate N nodes, and connect any d+1 nodes
@@ -51,10 +51,14 @@ def random_hypergraph(n, ps, order=None, seed=None):
     ----------
     Described as 'random hypergraph' by M. Dewar et al. in https://arxiv.org/abs/1703.07686
 
+    See Also
+    --------
+    random_hypergraph
+
     Example
     -------
     >>> import xgi
-    >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
+    >>> H = xgi.fast_random_hypergraph(50, [0.1, 0.01])
 
     """
     ps = np.array(ps)
@@ -67,7 +71,6 @@ def random_hypergraph(n, ps, order=None, seed=None):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
 
     nodes = range(n)
-    hyperedges = []
 
     H = empty_hypergraph()
     H.add_nodes_from(nodes)
@@ -83,6 +86,74 @@ def random_hypergraph(n, ps, order=None, seed=None):
         if p > 0:
             h_uniform = uniform_erdos_renyi_hypergraph(n, size, p, seed=seed)
             H << h_uniform
+
+    return H
+
+
+def random_hypergraph(N, ps, seed=None):
+    """Generates a random hypergraph
+
+    Generate N nodes, and connect any d+1 nodes
+    by a hyperedge with probability ps[d-1].
+
+    Parameters
+    ----------
+    N : int
+        Number of nodes
+    ps : list of float
+        List of probabilities (between 0 and 1) to create a
+        hyperedge at each order d between any d+1 nodes. For example,
+        ps[0] is the wiring probability of any edge (2 nodes), ps[1]
+        of any triangles (3 nodes).
+    seed : integer, random_state, or None (default)
+            Indicator of random number generation state.
+
+    Returns
+    -------
+    Hypergraph object
+        The generated hypergraph
+
+    References
+    ----------
+    Described as 'random hypergraph' by M. Dewar et al. in https://arxiv.org/abs/1703.07686
+
+    Warns
+    -----
+    warnings.warn
+        Because `fast_random_hypergraph` is a much faster method for generating random hypergraphs.
+
+    See Also
+    --------
+    fast_random_hypergraph
+
+    Example
+    -------
+    >>> import xgi
+    >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
+
+    """
+    warn("This method is much slower than fast_random_hypergraph")
+    if seed is not None:
+        random.seed(seed)
+
+    if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
+        raise ValueError("All elements of ps must be between 0 and 1 included.")
+
+    nodes = range(N)  # list(G.nodes())
+    hyperedges = []  # hyperedges = list(G.edges())
+
+    for i, p in enumerate(ps):
+        d = i + 1  # order, ps[0] is prob of edges (d=1)
+
+        for hyperedge in combinations(nodes, d + 1):
+            if random.random() <= p:
+                hyperedges.append(hyperedge)
+
+    hyperedges += [[i] for i in nodes]  # add singleton edges
+
+    H = empty_hypergraph()
+    H.add_nodes_from(nodes)
+    H.add_edges_from(hyperedges)
 
     return H
 
