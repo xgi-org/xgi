@@ -282,7 +282,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     multiedges : bool, optional
         Whether or not to allow multiedges. If True, there
         can be significant speedups but at the cost of creating
-        (potentially unwanted artifacts). When multiedges=True,
+        (potentially unwanted) artifacts. When multiedges=True,
         it treats each edge permutation as distinct, which can
         lead to multiedges, especially for dense hypergraphs.
         For sparse hypergraphs, however, this is unlikely to
