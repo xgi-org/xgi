@@ -16,3 +16,6 @@
    .. autofunction:: local_clustering_coefficient
    .. autofunction:: node_edge_centrality
    .. autofunction:: two_node_clustering_coefficient
+   .. autofunction:: local_simplicial_fraction
+   .. autofunction:: local_edit_simpliciality
+   .. autofunction:: local_face_edit_simpliciality
