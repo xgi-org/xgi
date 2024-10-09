@@ -27,6 +27,11 @@ Nicholas W. Landry, Ilya Amburg, Mirah Shi, and Sinan Aksoy, "Filtering higher-o
 :bdg-link-primary-line:`Paper <https://doi.org/10.1088/2632-072X/ad253a>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/filtering-higher-order-datasets>`
 
+Nicholas W. Landry, William Thompson, Laurent Hébert-Dufresne, and Jean-Gabriel Young, "Reconstructing networks from simple and complex contagions", Physical Review E **110**, L042301 (2024).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1103/PhysRevE.110.L042301>`
+:bdg-link-primary-line:`Code <https://github.com/nwlandry/complex-network-reconstruction>`
+
 Nicholas W. Landry, Jean-Gabriel Young, and Nicole Eikmeier, "The simpliciality of higher-order networks", *EPJ Data Science* **13**, 17 (2024).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1140/epjds/s13688-024-00458-1>`
@@ -80,12 +85,6 @@ Robin Delabays, Giulia De Pasquale, Florian Dörfler, and Yuanzhao Zhang, "Hyper
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2402.00078>`
 :bdg-link-primary-line:`Code <https://github.com/TaylorBasedHypergraphInference/THIS>`
-
-Nicholas W. Landry, William Thompson, Laurent Hébert-Dufresne, and Jean-Gabriel Young, "Complex contagions can outperform simple contagions for network reconstruction with dense networks or saturated dynamics", arXiv:2405.00129
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2405.00129>`
-:bdg-link-primary-line:`Code <https://github.com/nwlandry/complex-network-reconstruction>`
-
 
 Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Domenico, "Functional reducibility of higher-order networks", arXiv:2404.08547 (2024).
 
