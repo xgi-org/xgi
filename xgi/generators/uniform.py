@@ -10,7 +10,7 @@ import numpy as np
 from scipy.special import comb
 
 from ..exception import XGIError
-from .classic import empty_hypergraph
+from .classic import complete_hypergraph, empty_hypergraph
 
 __all__ = [
     "uniform_hypergraph_configuration_model",
@@ -108,6 +108,12 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
 def uniform_HSBM(n, m, p, sizes, seed=None):
     """Create a uniform hypergraph stochastic block model (HSBM).
 
+    This uses a fast method for generating hyperedges
+    so that instead of the algorithm being of complexity
+    :math:`\mathcal{O}(N^m)`, it can be as fast as
+    :math:`\mathcal{O}(m(N + |E|))`. See the references
+    for more details.
+
     Parameters
     ----------
     n : int
@@ -141,11 +147,21 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
     --------
     uniform_HPPM
 
+    Notes
+    -----
+    Because XGI only stores edges as sets, when self-loops occur,
+    they become smaller edges (for example, the edge (0, 0, 0)
+    will be mapped to {0}). However, because this is explicitly
+    a *uniform* method, we discard these edges so that this is the case.
+    For sparse networks, this is a rare occurrence and this method offers
+    an order of magnitude speedup.
+
     References
     ----------
-    Nicholas W. Landry and Juan G. Restrepo.
-    "Polarization in hypergraphs with community structure."
-    Preprint, 2023. https://doi.org/10.48550/arXiv.2302.13967
+    Nicholas W. Landry and Juan G. Restrepo,
+    "Opinion disparity in hypergraphs with community structure",
+    Phys. Rev. E **108**, 034311 (2024).
+    https://doi.org/10.1103/PhysRevE.108.034311
     """
 
     # Check if dimensions match
@@ -191,6 +207,12 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
             while index < max_index:
                 indices = _index_to_edge_partition(index, partition_sizes, m)
                 e = {partition[block[i]][indices[i]] for i in range(m)}
+                # edge ids are not guaranteed to be unique
+                # and when casting to a set, they will no
+                # longer be of size m.
+                # for instance (0, 0, 0) becomes {0}
+                # if we accept these edges, the hypergraph
+                # will not longer be uniform, so we discard them.
                 if len(e) == m:
                     H.add_edge(e)
                 index += np.random.geometric(p[block])
@@ -199,6 +221,12 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
 
 def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
     """Construct the m-uniform hypergraph planted partition model (m-HPPM)
+
+    This uses a fast method for generating hyperedges
+    so that instead of the algorithm being of complexity
+    :math:`\mathcal{O}(N^m)`, it can be as fast as
+    :math:`\mathcal{O}(m(N + |E|))`. See the references
+    for more details.
 
     Parameters
     ----------
@@ -231,11 +259,21 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
     --------
     uniform_HSBM
 
+    Notes
+    -----
+    Because XGI only stores edges as sets, when self-loops occur,
+    they become smaller edges (for example, the edge (0, 0, 0)
+    will be mapped to {0}). However, because this is explicitly
+    a *uniform* method, we discard these edges so that this is the case.
+    For sparse networks, this is a rare occurrence and this method offers
+    an order of magnitude speedup.
+
     References
     ----------
-    Nicholas W. Landry and Juan G. Restrepo.
-    "Polarization in hypergraphs with community structure."
-    Preprint, 2023. https://doi.org/10.48550/arXiv.2302.13967
+    Nicholas W. Landry and Juan G. Restrepo,
+    "Opinion disparity in hypergraphs with community structure",
+    Phys. Rev. E **108**, 034311 (2024).
+    https://doi.org/10.1103/PhysRevE.108.034311
     """
 
     if rho < 0 or rho > 1:
@@ -268,6 +306,12 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     hyperedges of size `m` are created at random to
     obtain a mean degree of `k`.
 
+    This uses a fast method for generating hyperedges
+    so that instead of the algorithm being of complexity
+    :math:`\mathcal{O}(N^m)`, it can be as fast as
+    :math:`\mathcal{O}(m(N + |E|))`. See the references
+    for more details.
+
     Parameters
     ----------
     n : int > 0
@@ -275,10 +319,11 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     m : int > 0
         Hyperedge size
     p : float or int > 0
-        Mean expected degree if p_type="degree" and
-        probability of an m-hyperedge if p_type="prob"
-    p_type : str
-        "degree" or "prob", by default "prob"
+        probability of an m-hyperedge if p_type="prob" and
+        mean expected degree if p_type="degree"
+    p_type : str, optional
+        changes the way p is interpreted (see p for detail).
+        Valid options are "prob" or "degree", by default "prob"
     multiedges : bool, optional
         Whether or not to allow multiedges. If True, there
         can be significant speedups but at the cost of creating
@@ -299,6 +344,23 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     See Also
     --------
     ~xgi.generators.random.random_hypergraph
+
+    Notes
+    -----
+    Because XGI only stores edges as sets, if self-loops are allowed,
+    for example, the edge (0, 0, 0) will be mapped to {0}. However,
+    because this is explicitly a *uniform* method, we discard these edges
+    so that this is the case. For sparse networks, this is a rare
+    occurrence and this method offers an order of magnitude speedup,
+    so while it is not the default behavior, this option is exposed to
+    the users by setting `multiedges=True`.
+
+    References
+    ----------
+    Nicholas W. Landry and Juan G. Restrepo,
+    "Opinion disparity in hypergraphs with community structure",
+    Phys. Rev. E **108**, 034311 (2024).
+    https://doi.org/10.1103/PhysRevE.108.034311
     """
     if seed is not None:
         np.random.seed(seed)
@@ -320,17 +382,31 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     if q > 1 or q < 0:
         raise XGIError("Probability not in [0, 1].")
 
+    if q == 1:
+        return complete_hypergraph(n, order=m - 1)
+    if q == 0:
+        H = empty_hypergraph()
+        H.add_nodes_from(range(n))
+        return H
+
+    index = np.random.geometric(q) - 1  # -1 b/c zero indexing
     if multiedges:
         max_index = n**m
-        index = np.random.geometric(q) - 1  # -1 b/c zero indexing
+
         f = _index_to_edge_prod
     else:
         max_index = comb(n, m, exact=True)
-        index = np.random.geometric(q)
         f = _index_to_edge_comb
 
     while index <= max_index:
         e = set(f(index, n, m))
+        # if f corresponds to _index_to_edge_prod,
+        # edge ids are not guaranteed to be unique
+        # and when casting to a set, they will no
+        # longer be of size m.
+        # for instance (0, 0, 0) becomes {0}
+        # if we accept these edges, the hypergraph
+        # will not longer be uniform, so we discard them.
         if len(e) == m:
             H.add_edge(e)
         index += np.random.geometric(q)
@@ -338,7 +414,22 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
 
 
 def _index_to_edge_prod(index, n, m):
-    """Generate a hyperedge given an index in the list of possible edges.
+    """Generate a hyperedge from an index given the
+    number of nodes and size of hyperedges.
+
+    Imagine that there is a hypergraph with 4 nodes and an edge size of 3.
+    We write out each edge (allowing duplicate entries) incrementing the last entry first,
+    followed by the second-to-last entry and so on, with each edge corresponding to an index
+    starting at zero. For example, (0, 0, 0) has index 0, (0, 0, 1) has index 1,
+    (0, 0, 2) has index 2, (0, 0, 3) has index 3, (0, 1, 0) has index 4, and so on.
+    This function will, for instance,
+    return (0, 0, 3) for index 3, network size 4, and edge size 3.
+
+    Because XGI only stores edges as sets, the edge (0, 0, 0) will be mapped
+    to {0}. However, because this is explicitly a *uniform* method, we discard
+    these edges so that this is the case. For sparse networks, this is a rare
+    occurrence and this method offers an order of magnitude speedup, so while
+    it is not the default behavior.
 
     In this method, it treats each edge permutation as distinct, which can
     lead to multiedges, especially for dense hypergraphs.
@@ -356,11 +447,12 @@ def _index_to_edge_prod(index, n, m):
     Returns
     -------
     list
-        The reconstructed hyperedge
+        The hyperedge to which that index corresponds
 
     See Also
     --------
     _index_to_edge_partition
+    _index_to_edge_comb
 
     References
     ----------
@@ -370,14 +462,22 @@ def _index_to_edge_prod(index, n, m):
 
 
 def _index_to_edge_comb(index, n, m):
-    """Generate a hyperedge given an index in the list of possible edges.
+    """Generate a hyperedge from an index given the number of nodes and size of hyperedges.
+
+    Imagine that there is a hypergraph with 4 nodes and an edge size of 3.
+    We write out each edge incrementing the last entry first, followed by the
+    second-to-last entry and so on, with each edge corresponding to an index
+    starting at zero. For example, (0, 1, 2) has index 0, (0, 1, 3) has index 0,
+    (0, 2, 3) has index 2, and (1, 2, 3) has index 3. This function will, for instance,
+    return (0, 2, 3) for index 2, network size 4, and edge size 3.
+
 
     In this function, we prohibit multiedges, so each index corresponds to a
     unique edge.
 
     Parameters
     ----------
-    index : int > 0
+    index : int >= 0
         The index of the hyperedge in the list of all possible hyperedges.
     n : int > 0
         The number of nodes
@@ -387,18 +487,19 @@ def _index_to_edge_comb(index, n, m):
     Returns
     -------
     list
-        The reconstructed hyperedge
+        The hyperedge to which that index corresponds
 
     See Also
     --------
     _index_to_edge_partition
+    _index_to_edge_prod
 
     References
     ----------
     https://math.stackexchange.com/questions/1227409/indexing-all-combinations-without-making-list
     """
     c = []
-    r = index
+    r = index + 1  # makes it zero indexed
     j = -1
     for s in range(1, m + 1):
         cs = j + 1
@@ -411,26 +512,40 @@ def _index_to_edge_comb(index, n, m):
 
 
 def _index_to_edge_partition(index, partition_sizes, m):
-    """Generate a hyperedge given an index in the list of possible edges
-    and a partition of community labels.
+    """Generate a hyperedge from an index given the
+    number of nodes, size of hyperedges, and community sizes.
+
+    Imagine that there is a hypergraph with 10 nodes, an edge size of 3,
+    and two communities, the first of size 8 and the second of size 2.
+    We start out by specifying which community each node belongs to
+    and index into each community. For example, suppose the nodes
+    belong to communities 1, 1, and 2. Thene write out each edge
+    (allowing duplicate entries) incrementing the last entry first,
+    followed by the second-to-last entry and so on, with each edge
+    corresponding to an index starting at zero. For example, (0, 0, 0) has index 0,
+    (0, 0, 1) has index 1, (0, 1, 0) has index 2, (0, 1, 1) has index 3,
+    (0, 2, 0) has index 4, and so on. These are indices in each partition,
+    however, and we need the original labels of each node in each partition
+    to recover the nodes in each edge.
 
     Parameters
     ----------
     index : int > 0
         The index of the hyperedge in the list of all possible hyperedges.
-    n : int > 0
-        The number of nodes
+    partition_sizes : list or numpy array
+        The sizes of the partitions to which the nodes belong.
     m : int > 0
         The hyperedge size.
 
     Returns
     -------
     list
-        The reconstructed hyperedge
+        The indices in each partition to which that index corresponds
 
     See Also
     --------
-    _index_to_edge
+    _index_to_edge_prod
+    _index_to_edge_comb
 
     """
     try:
