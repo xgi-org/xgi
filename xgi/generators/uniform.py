@@ -382,7 +382,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     if q > 1 or q < 0:
         raise XGIError("Probability not in [0, 1].")
 
-    if q == 1:
+    if q == 1 and not multiedges:
         return complete_hypergraph(n, order=m - 1)
     if q == 0:
         H = empty_hypergraph()
@@ -392,7 +392,6 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     index = np.random.geometric(q) - 1  # -1 b/c zero indexing
     if multiedges:
         max_index = n**m
-
         f = _index_to_edge_prod
     else:
         max_index = comb(n, m, exact=True)
