@@ -71,7 +71,6 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     -------
     >>> import xgi
     >>> H = xgi.fast_random_hypergraph(50, [0.1, 0.01])
-
     """
     ps, order = _check_input_args(ps, order)
 
@@ -156,6 +155,7 @@ def random_hypergraph(n, ps, order=None, seed=None):
                 H.add_edge(edge)
     return H
 
+
 def _check_input_args(ps, order):
     """Check input args for random_hypergraph and fast_random_hypergraph"""
     if order is None:
@@ -185,7 +185,7 @@ def _check_input_args(ps, order):
 
     if (order < 0).any():
         raise ValueError("All elements of ps must be between 0 and 1 included.")
-    
+
     return ps, order
 
 
