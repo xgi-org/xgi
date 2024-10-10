@@ -90,7 +90,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     return H
 
 
-def random_hypergraph(N, ps, seed=None):
+def random_hypergraph(n, ps, seed=None):
     """Generates a random hypergraph
 
     Generate N nodes, and connect any d+1 nodes
