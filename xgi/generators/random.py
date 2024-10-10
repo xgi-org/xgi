@@ -33,7 +33,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
 
     Parameters
     ----------
-    N : int
+    n : int
         Number of nodes
     ps : list of float, or float
         List of probabilities (between 0 and 1) to create a
@@ -153,19 +153,24 @@ def random_hypergraph(n, ps, seed=None):
     Example
     -------
     >>> import xgi
-    >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
+    >>> H = xgi.fast_random_hypergraph(50, [0.1, 0.01])
 
     """
     warn("This method is much slower than fast_random_hypergraph")
     if seed is not None:
         random.seed(seed)
+    ps = np.array(ps)
 
-    if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
+    if order is not None:
+        if len(ps) != 1:
+            raise ValueError("ps must contain a single element if order is an int")
+
+    if (ps < 0).any() or (ps > 1).any():
         raise ValueError("All elements of ps must be between 0 and 1 included.")
 
-    H = empty_hypergraph()
-
     nodes = range(n)
+
+    H = empty_hypergraph()
     H.add_nodes_from(nodes)
 
     for i, p in enumerate(ps):
