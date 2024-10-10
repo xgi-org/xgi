@@ -13,7 +13,7 @@ To install XGI, execute the following in the command line:
    pip install xgi
 
 
-XGI was developed and tested for Python 3.8-3.12 on Mac OS, Windows, and Ubuntu.
+XGI was developed and tested for Python 3.9-3.13 on Mac OS, Windows, and Ubuntu.
 
 Once installed, go directly to the `User Guides <user_guides.html>`_ to get started!
 

@@ -58,19 +58,19 @@ def test_to_hif(
     assert jsondata["metadata"] == {"name": "test"}
 
     nodes = [
-        {"node": 1, "attr": {"color": "red", "name": "horse"}},
-        {"node": 2, "attr": {"color": "blue", "name": "pony"}},
-        {"node": 3, "attr": {"color": "yellow", "name": "zebra"}},
-        {"node": 4, "attr": {"color": "red", "name": "orangutan", "age": 20}},
-        {"node": 5, "attr": {"color": "blue", "name": "fish", "age": 2}},
+        {"node": 1, "attrs": {"color": "red", "name": "horse"}},
+        {"node": 2, "attrs": {"color": "blue", "name": "pony"}},
+        {"node": 3, "attrs": {"color": "yellow", "name": "zebra"}},
+        {"node": 4, "attrs": {"color": "red", "name": "orangutan", "age": 20}},
+        {"node": 5, "attrs": {"color": "blue", "name": "fish", "age": 2}},
     ]
 
     edges = [
-        {"edge": 0, "attr": {"color": "blue"}},
-        {"edge": 1, "attr": {"color": "red", "weight": 2}},
-        {"edge": 2, "attr": {"color": "yellow"}},
-        {"edge": 3, "attr": {"color": "purple"}},
-        {"edge": 4, "attr": {"color": "purple", "name": "test"}},
+        {"edge": 0, "attrs": {"color": "blue"}},
+        {"edge": 1, "attrs": {"color": "red", "weight": 2}},
+        {"edge": 2, "attrs": {"color": "yellow"}},
+        {"edge": 3, "attrs": {"color": "purple"}},
+        {"edge": 4, "attrs": {"color": "purple", "name": "test"}},
     ]
 
     incidences = [
