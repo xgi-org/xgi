@@ -11,6 +11,7 @@ import numpy as np
 
 from .classic import empty_hypergraph
 from .lattice import ring_lattice
+from .uniform import uniform_erdos_renyi_hypergraph
 
 __all__ = [
     "fast_random_hypergraph",
