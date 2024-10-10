@@ -1039,8 +1039,7 @@ class DiHypergraph:
 
             convert_labels_to_integers(_DH, in_place=True)
 
-        if not in_place:
-            return _DH
+        return _DH
 
     def freeze(self):
         """Method for freezing a dihypergraph which prevents it from being modified

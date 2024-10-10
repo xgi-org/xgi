@@ -1487,8 +1487,7 @@ class Hypergraph:
 
             convert_labels_to_integers(_H, in_place=True)
 
-        if not in_place:
-            return _H
+        return _H
 
     def freeze(self):
         """Method for freezing a hypergraph which prevents it from being modified
