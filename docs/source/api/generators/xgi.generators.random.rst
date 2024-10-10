@@ -9,5 +9,6 @@ xgi.generators.random
    
     .. autofunction:: chung_lu_hypergraph
     .. autofunction:: dcsbm_hypergraph
+    .. autofunction:: fast_random_hypergraph
     .. autofunction:: random_hypergraph
     .. autofunction:: watts_strogatz_hypergraph
