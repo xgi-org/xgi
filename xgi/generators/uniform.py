@@ -319,7 +319,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     m : int > 0
         Hyperedge size
     p : float or int > 0
-        probability of an m-hyperedge if p_type="prob" and
+        Probability of an m-hyperedge if p_type="prob" and
         mean expected degree if p_type="degree"
     p_type : str, optional
         changes the way p is interpreted (see p for detail).
