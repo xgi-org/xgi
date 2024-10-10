@@ -430,7 +430,7 @@ def _index_to_edge_prod(index, n, m):
     occurrence and this method offers an order of magnitude speedup, so while
     it is not the default behavior.
 
-    In this method, it treats each edge permutation as distinct, which can
+    This method treats each edge permutation as distinct, which can
     lead to multiedges, especially for dense hypergraphs.
 
 
