@@ -13,6 +13,7 @@ from .classic import empty_hypergraph
 from .lattice import ring_lattice
 
 __all__ = [
+    "fast_random_hypergraph",
     "random_hypergraph",
     "chung_lu_hypergraph",
     "dcsbm_hypergraph",
@@ -33,14 +34,15 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     ----------
     N : int
         Number of nodes
-    ps : list of float
+    ps : list of float, or float
         List of probabilities (between 0 and 1) to create a
         hyperedge at each order d between any d+1 nodes. For example,
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
-        of any triangles (3 nodes).
-    order: int of None (default)
-        If None, ignore. If int, generates a uniform hypergraph with edges
-        of order `order` (ps must have only one element).
+        of any triangles (3 nodes). If a float, generate a uniform hypergraph
+    order: int, list of ints, or array of ints or None (default)
+        If None, ignore. If list or array, generates a hypergraph
+        with edges of orders `order[0]`, `order[1]`, etc.
+        (The length of `ps` must match the length of `order` in this case).
     seed : integer or None (default)
             Seed for the random number generator.
 
@@ -70,31 +72,43 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     >>> H = xgi.fast_random_hypergraph(50, [0.1, 0.01])
 
     """
-    if seed is not None:
-        np.random.seed(seed)
-
-    if order is not None:
-        if len(ps) != 1:
-            raise ValueError("ps must contain a single element if order is an int")
+    if order is None:
+        order = [i for i in range(2, len(ps)+ 2)]
+    else:
+        if isinstance(order, int):
+            if not isinstance(ps, float):
+                raise ValueError("If order is an int, ps must be a float")
+            else:
+                order = [order]
+                ps = [ps]
+        elif isinstance(order, (list, np.ndarray)) and isinstance(ps, (list, np.ndarray)):
+            if len(ps) != len(order):
+                raise ValueError("The length ps must match the length of order")
+        else:
+            raise ValueError("Invalid entries!")
+    
+    ps = np.array(ps)
+    order = np.array(order)
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
+        raise ValueError("All elements of ps must be between 0 and 1 included.")
+    
+    if (order < 0).any():
         raise ValueError("All elements of ps must be between 0 and 1 included.")
 
     nodes = range(n)
 
-    for i, p in enumerate(ps):
+    H = empty_hypergraph()
+    H.add_nodes_from(nodes)
 
-        if order is not None:
-            d = order
-        else:
-            d = i + 1  # order, ps[0] is prob of edges (d=1)
-
+    for d, p in zip(order, ps):
+        
         if p > 0:
             h_uniform = uniform_erdos_renyi_hypergraph(n, d + 1, p, seed=seed)
             # The "<<" operation is "__lshift__" in the Hypergraph class
             # It is similar to "adding" two hypergraphs together, by taking
             # the union of their nodes and edges.
-            H << h_uniform
+            H = H << h_uniform
 
     return H
 
