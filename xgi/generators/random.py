@@ -21,10 +21,13 @@ __all__ = [
 
 
 def fast_random_hypergraph(n, ps, order=None, seed=None):
-    """Generates a random hypergraph
+    """Generates a random hypergraph with a fast algorithm.
 
-    Generate N nodes, and connect any d+1 nodes
-    by a hyperedge with probability ps[d-1].
+    Generate `n` nodes, and connect any `d+1` nodes
+    by a hyperedge with probability `ps[d-1]`.
+
+    This uses a fast method for generating hyperedges.
+    See the references for more details.
 
     Parameters
     ----------
@@ -48,7 +51,14 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
 
     References
     ----------
-    Described as 'random hypergraph' by M. Dewar et al. in https://arxiv.org/abs/1703.07686
+    M. Dewar et al.
+    "Subhypergraphs in non-uniform random hypergraphs"
+    https://arxiv.org/abs/1703.07686
+
+    Nicholas W. Landry and Juan G. Restrepo,
+    "Opinion disparity in hypergraphs with community structure",
+    Phys. Rev. E **108**, 034311 (2024).
+    https://doi.org/10.1103/PhysRevE.108.034311
 
     See Also
     --------
@@ -79,17 +89,12 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
         else:
             d = i + 1  # order, ps[0] is prob of edges (d=1)
 
-        potential_edges = combinations(nodes, d + 1)
-        n_comb = comb(N, d + 1, exact=True)
-        mask = np.random.random(size=n_comb) <= p  # True if edge to keep
-
-        edges_to_add = [e for e, val in zip(potential_edges, mask) if val]
-
-        hyperedges += edges_to_add
-
-    H = empty_hypergraph()
-    H.add_nodes_from(nodes)
-    H.add_edges_from(hyperedges)
+        if p > 0:
+            h_uniform = uniform_erdos_renyi_hypergraph(n, d + 1, p, seed=seed)
+            # The "<<" operation is "__lshift__" in the Hypergraph class
+            # It is similar to "adding" two hypergraphs together, by taking
+            # the union of their nodes and edges.
+            H << h_uniform
 
     return H
 
@@ -143,22 +148,17 @@ def random_hypergraph(n, ps, seed=None):
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
 
-    nodes = range(N)  # list(G.nodes())
-    hyperedges = []  # hyperedges = list(G.edges())
+    H = empty_hypergraph()
+
+    nodes = range(n)
+    H.add_nodes_from(nodes)
 
     for i, p in enumerate(ps):
         d = i + 1  # order, ps[0] is prob of edges (d=1)
 
-        for hyperedge in combinations(nodes, d + 1):
+        for edge in combinations(nodes, d + 1):
             if random.random() <= p:
-                hyperedges.append(hyperedge)
-
-    hyperedges += [[i] for i in nodes]  # add singleton edges
-
-    H = empty_hypergraph()
-    H.add_nodes_from(nodes)
-    H.add_edges_from(hyperedges)
-
+                H.add_edge(edge)
     return H
 
 
