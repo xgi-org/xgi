@@ -73,29 +73,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     >>> H = xgi.fast_random_hypergraph(50, [0.1, 0.01])
 
     """
-    if order is None:
-        order = [i for i in range(2, len(ps)+ 2)]
-    else:
-        if isinstance(order, int):
-            if not isinstance(ps, float):
-                raise ValueError("If order is an int, ps must be a float")
-            else:
-                order = [order]
-                ps = [ps]
-        elif isinstance(order, (list, np.ndarray)) and isinstance(ps, (list, np.ndarray)):
-            if len(ps) != len(order):
-                raise ValueError("The length ps must match the length of order")
-        else:
-            raise ValueError("Invalid entries!")
-    
-    ps = np.array(ps)
-    order = np.array(order)
-
-    if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
-        raise ValueError("All elements of ps must be between 0 and 1 included.")
-    
-    if (order < 0).any():
-        raise ValueError("All elements of ps must be between 0 and 1 included.")
+    ps, order = _check_input_args(ps, order)
 
     nodes = range(n)
 
@@ -103,7 +81,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     H.add_nodes_from(nodes)
 
     for d, p in zip(order, ps):
-        
+
         if p > 0:
             h_uniform = uniform_erdos_renyi_hypergraph(n, d + 1, p, seed=seed)
             # The "<<" operation is "__lshift__" in the Hypergraph class
@@ -114,7 +92,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     return H
 
 
-def random_hypergraph(n, ps, seed=None):
+def random_hypergraph(n, ps, order=None, seed=None):
     """Generates a random hypergraph
 
     Generate N nodes, and connect any d+1 nodes
@@ -124,11 +102,16 @@ def random_hypergraph(n, ps, seed=None):
     ----------
     n : int
         Number of nodes
-    ps : list of float
+    ps : list of float, or float
         List of probabilities (between 0 and 1) to create a
         hyperedge at each order d between any d+1 nodes. For example,
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
-        of any triangles (3 nodes).
+        of any triangles (3 nodes). If a float, generate a uniform hypergraph
+        (in this case, order must be specified)
+    order: int, list of ints, or array of ints or None (default)
+        If None, ignore. If list or array, generates a hypergraph
+        with edges of orders `order[0]`, `order[1]`, etc.
+        (The length of `ps` must match the length of `order` in this case).
     seed : integer, random_state, or None (default)
             Indicator of random number generation state.
 
@@ -153,33 +136,57 @@ def random_hypergraph(n, ps, seed=None):
     Example
     -------
     >>> import xgi
-    >>> H = xgi.fast_random_hypergraph(50, [0.1, 0.01])
+    >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
 
     """
     warn("This method is much slower than fast_random_hypergraph")
     if seed is not None:
         random.seed(seed)
-    ps = np.array(ps)
 
-    if order is not None:
-        if len(ps) != 1:
-            raise ValueError("ps must contain a single element if order is an int")
-
-    if (ps < 0).any() or (ps > 1).any():
-        raise ValueError("All elements of ps must be between 0 and 1 included.")
+    ps, order = _check_input_args(ps, order)
 
     nodes = range(n)
 
     H = empty_hypergraph()
     H.add_nodes_from(nodes)
 
-    for i, p in enumerate(ps):
-        d = i + 1  # order, ps[0] is prob of edges (d=1)
-
+    for d, p in zip(order, ps):
         for edge in combinations(nodes, d + 1):
             if random.random() <= p:
                 H.add_edge(edge)
     return H
+
+def _check_input_args(ps, order):
+    """Check input args for random_hypergraph and fast_random_hypergraph"""
+    if order is None:
+        if isinstance(ps, float):
+            raise ValueError("If ps is a float, order must be specified as an int")
+        order = [i for i in range(2, len(ps) + 2)]
+    else:
+        if isinstance(order, int):
+            if not isinstance(ps, float):
+                raise ValueError("If order is an int, ps must be a float")
+            else:
+                order = [order]
+                ps = [ps]
+        elif isinstance(order, (list, np.ndarray)) and isinstance(
+            ps, (list, np.ndarray)
+        ):
+            if len(ps) != len(order):
+                raise ValueError("The length ps must match the length of order")
+        else:
+            raise ValueError("Invalid entries!")
+
+    ps = np.array(ps)
+    order = np.array(order)
+
+    if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
+        raise ValueError("All elements of ps must be between 0 and 1 included.")
+
+    if (order < 0).any():
+        raise ValueError("All elements of ps must be between 0 and 1 included.")
+    
+    return ps, order
 
 
 def chung_lu_hypergraph(k1, k2, seed=None):

@@ -303,7 +303,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     """Generate an m-uniform Erdős–Rényi hypergraph
 
     This creates a hypergraph with `n` nodes where
-    hyperedges of size `m` are created at random 
+    hyperedges of size `m` are created at random
     with probability (or to obtain a mean degree of) `p`.
 
     This uses a fast method for generating hyperedges
