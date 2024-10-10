@@ -349,8 +349,8 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     -----
     Because XGI only stores edges as sets, if self-loops are allowed,
     for example, the edge (0, 0, 0) will be mapped to {0}. However,
-    because this is explicitly a *uniform* method, we discard these edges
-    so that this is the case. For sparse networks, this is a rare
+    because this is explicitly a *uniform* method, we discard these edges. 
+    For sparse networks, this is a rare
     occurrence and this method offers an order of magnitude speedup,
     so while it is not the default behavior, this option is exposed to
     the users by setting `multiedges=True`.
