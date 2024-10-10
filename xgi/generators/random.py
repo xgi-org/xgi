@@ -5,14 +5,16 @@ import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
+from warnings import warn
 
 import numpy as np
-from scipy.special import comb
 
 from .classic import empty_hypergraph
 from .lattice import ring_lattice
+from .uniform import uniform_erdos_renyi_hypergraph
 
 __all__ = [
+    "fast_random_hypergraph",
     "random_hypergraph",
     "chung_lu_hypergraph",
     "dcsbm_hypergraph",
@@ -20,24 +22,28 @@ __all__ = [
 ]
 
 
-def random_hypergraph(N, ps, order=None, seed=None):
-    """Generates a random hypergraph
+def fast_random_hypergraph(n, ps, order=None, seed=None):
+    """Generates a random hypergraph with a fast algorithm.
 
-    Generate N nodes, and connect any d+1 nodes
-    by a hyperedge with probability ps[d-1].
+    Generate `n` nodes, and connect any `d+1` nodes
+    by a hyperedge with probability `ps[d-1]`.
+
+    This uses a fast method for generating hyperedges.
+    See the references for more details.
 
     Parameters
     ----------
-    N : int
+    n : int
         Number of nodes
-    ps : list of float
+    ps : list of float, or float
         List of probabilities (between 0 and 1) to create a
         hyperedge at each order d between any d+1 nodes. For example,
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
-        of any triangles (3 nodes).
-    order: int of None (default)
-        If None, ignore. If int, generates a uniform hypergraph with edges
-        of order `order` (ps must have only one element).
+        of any triangles (3 nodes). If a float, generate a uniform hypergraph
+    order: int, list of ints, or array of ints or None (default)
+        If None, ignore. If list or array, generates a hypergraph
+        with edges of orders `order[0]`, `order[1]`, etc.
+        (The length of `ps` must match the length of `order` in this case).
     seed : integer or None (default)
             Seed for the random number generator.
 
@@ -48,7 +54,83 @@ def random_hypergraph(N, ps, order=None, seed=None):
 
     References
     ----------
+    M. Dewar et al.
+    "Subhypergraphs in non-uniform random hypergraphs"
+    https://arxiv.org/abs/1703.07686
+
+    Nicholas W. Landry and Juan G. Restrepo,
+    "Opinion disparity in hypergraphs with community structure",
+    Phys. Rev. E **108**, 034311 (2024).
+    https://doi.org/10.1103/PhysRevE.108.034311
+
+    See Also
+    --------
+    random_hypergraph
+
+    Example
+    -------
+    >>> import xgi
+    >>> H = xgi.fast_random_hypergraph(50, [0.1, 0.01])
+    """
+    ps, order = _check_input_args(ps, order)
+
+    nodes = range(n)
+
+    H = empty_hypergraph()
+    H.add_nodes_from(nodes)
+
+    for d, p in zip(order, ps):
+
+        if p > 0:
+            h_uniform = uniform_erdos_renyi_hypergraph(n, d + 1, p, seed=seed)
+            # The "<<" operation is "__lshift__" in the Hypergraph class
+            # It is similar to "adding" two hypergraphs together, by taking
+            # the union of their nodes and edges.
+            H = H << h_uniform
+
+    return H
+
+
+def random_hypergraph(n, ps, order=None, seed=None):
+    """Generates a random hypergraph
+
+    Generate N nodes, and connect any d+1 nodes
+    by a hyperedge with probability ps[d-1].
+
+    Parameters
+    ----------
+    n : int
+        Number of nodes
+    ps : list of float, or float
+        List of probabilities (between 0 and 1) to create a
+        hyperedge at each order d between any d+1 nodes. For example,
+        ps[0] is the wiring probability of any edge (2 nodes), ps[1]
+        of any triangles (3 nodes). If a float, generate a uniform hypergraph
+        (in this case, order must be specified)
+    order: int, list of ints, or array of ints or None (default)
+        If None, ignore. If list or array, generates a hypergraph
+        with edges of orders `order[0]`, `order[1]`, etc.
+        (The length of `ps` must match the length of `order` in this case).
+    seed : integer, random_state, or None (default)
+            Indicator of random number generation state.
+
+    Returns
+    -------
+    Hypergraph object
+        The generated hypergraph
+
+    References
+    ----------
     Described as 'random hypergraph' by M. Dewar et al. in https://arxiv.org/abs/1703.07686
+
+    Warns
+    -----
+    warnings.warn
+        Because `fast_random_hypergraph` is a much faster method for generating random hypergraphs.
+
+    See Also
+    --------
+    fast_random_hypergraph
 
     Example
     -------
@@ -56,39 +138,55 @@ def random_hypergraph(N, ps, order=None, seed=None):
     >>> H = xgi.random_hypergraph(50, [0.1, 0.01])
 
     """
+    warn("This method is much slower than fast_random_hypergraph")
     if seed is not None:
-        np.random.seed(seed)
+        random.seed(seed)
 
-    if order is not None:
-        if len(ps) != 1:
-            raise ValueError("ps must contain a single element if order is an int")
+    ps, order = _check_input_args(ps, order)
+
+    nodes = range(n)
+
+    H = empty_hypergraph()
+    H.add_nodes_from(nodes)
+
+    for d, p in zip(order, ps):
+        for edge in combinations(nodes, d + 1):
+            if random.random() <= p:
+                H.add_edge(edge)
+    return H
+
+
+def _check_input_args(ps, order):
+    """Check input args for random_hypergraph and fast_random_hypergraph"""
+    if order is None:
+        if isinstance(ps, float):
+            raise ValueError("If ps is a float, order must be specified as an int")
+        order = [i for i in range(2, len(ps) + 2)]
+    else:
+        if isinstance(order, int):
+            if not isinstance(ps, float):
+                raise ValueError("If order is an int, ps must be a float")
+            else:
+                order = [order]
+                ps = [ps]
+        elif isinstance(order, (list, np.ndarray)) and isinstance(
+            ps, (list, np.ndarray)
+        ):
+            if len(ps) != len(order):
+                raise ValueError("The length ps must match the length of order")
+        else:
+            raise ValueError("Invalid entries!")
+
+    ps = np.array(ps)
+    order = np.array(order)
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
 
-    nodes = range(N)
-    hyperedges = []
+    if (order < 0).any():
+        raise ValueError("All elements of ps must be between 0 and 1 included.")
 
-    for i, p in enumerate(ps):
-
-        if order is not None:
-            d = order
-        else:
-            d = i + 1  # order, ps[0] is prob of edges (d=1)
-
-        potential_edges = combinations(nodes, d + 1)
-        n_comb = comb(N, d + 1, exact=True)
-        mask = np.random.random(size=n_comb) <= p  # True if edge to keep
-
-        edges_to_add = [e for e, val in zip(potential_edges, mask) if val]
-
-        hyperedges += edges_to_add
-
-    H = empty_hypergraph()
-    H.add_nodes_from(nodes)
-    H.add_edges_from(hyperedges)
-
-    return H
+    return ps, order
 
 
 def chung_lu_hypergraph(k1, k2, seed=None):
