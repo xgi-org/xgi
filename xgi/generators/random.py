@@ -102,7 +102,7 @@ def random_hypergraph(n, ps, seed=None):
 
     Parameters
     ----------
-    N : int
+    n : int
         Number of nodes
     ps : list of float
         List of probabilities (between 0 and 1) to create a
