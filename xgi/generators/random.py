@@ -1,17 +1,18 @@
 """Generate random (non-uniform) hypergraphs."""
 
-import math
 import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
+from math import floor, log
 from warnings import warn
 
 import numpy as np
+from scipy.special import comb
 
 from .classic import empty_hypergraph
 from .lattice import ring_lattice
-from .uniform import uniform_erdos_renyi_hypergraph
+from .uniform import _index_to_edge_comb, uniform_erdos_renyi_hypergraph
 
 __all__ = [
     "fast_random_hypergraph",
@@ -72,6 +73,9 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     >>> import xgi
     >>> H = xgi.fast_random_hypergraph(50, [0.1, 0.01])
     """
+    if seed is not None:
+        random.seed(seed)
+
     ps, order = _check_input_args(ps, order)
 
     nodes = range(n)
@@ -80,14 +84,19 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     H.add_nodes_from(nodes)
 
     for d, p in zip(order, ps):
-
         if p > 0:
-            h_uniform = uniform_erdos_renyi_hypergraph(n, d + 1, p, seed=seed)
-            # The "<<" operation is "__lshift__" in the Hypergraph class
-            # It is similar to "adding" two hypergraphs together, by taking
-            # the union of their nodes and edges.
-            H = H << h_uniform
+            r = random.random()
+            index = floor(log(r) / log(1 - p)) - 1  # -1 b/c zero indexing
+            max_index = comb(n, d + 1, exact=True)
 
+            while index <= max_index:
+                e = set(_index_to_edge_comb(index, n, d + 1))
+                H.add_edge(e)
+                # We no longer subtract 1 because if we did, the minimum
+                # value of the right-hand side would be zero, meaning that
+                # we sample the same index multiple times.
+                r = random.random()
+                index += floor(log(r) / log(1 - p))
     return H
 
 
@@ -262,7 +271,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
             if p != 1:
                 r = random.random()
                 try:
-                    j = j + math.floor(math.log(r) / math.log(1 - p))
+                    j = j + floor(log(r) / log(1 - p))
                 except ZeroDivisionError:
                     j = np.inf
 
@@ -404,7 +413,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                     if p != 1:
                         r = random.random()
                         try:
-                            j = j + math.floor(math.log(r) / math.log(1 - p))
+                            j = j + floor(log(r) / log(1 - p))
                         except ZeroDivisionError:
                             j = np.inf
                     if j < len(community2_nodes[group2]):
