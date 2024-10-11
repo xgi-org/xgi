@@ -44,13 +44,13 @@ def write_hif(G, path):
     isolates = set(G.nodes.isolates())
     nodes_with_attrs = set(n for n in G.nodes if G.nodes[n])
     for n in isolates.union(nodes_with_attrs):
-        attr = {"attr": G.nodes[n]} if G.nodes[n] else {}
+        attr = {"attrs": G.nodes[n]} if G.nodes[n] else {}
         data["nodes"].append(IDDict({"node": n}) + attr)
 
     empty = set(G.edges.empty())
     edges_with_attrs = set(e for e in G.edges if G.edges[e])
     for e in empty.union(edges_with_attrs):
-        attr = {"attr": G.edges[e]} if G.edges[e] else {}
+        attr = {"attrs": G.edges[e]} if G.edges[e] else {}
         data["edges"].append(IDDict({"edge": e}) + attr)
 
     # hyperedge dict
@@ -164,8 +164,8 @@ def _from_dict(data, nodetype=None, edgetype=None):
     if "nodes" in data:
         for record in data["nodes"]:
             n = _convert_id(record["node"], nodetype)
-            if "attr" in record:
-                attr = record["attr"]
+            if "attrs" in record:
+                attr = record["attrs"]
             else:
                 attr = {}
 
@@ -178,8 +178,8 @@ def _from_dict(data, nodetype=None, edgetype=None):
     if "edges" in data:
         for record in data["edges"]:
             e = _convert_id(record["edge"], edgetype)
-            if "attr" in record:
-                attr = record["attr"]
+            if "attrs" in record:
+                attr = record["attrs"]
             else:
                 attr = {}
             if e not in G._edge:

@@ -42,6 +42,11 @@ Leonie Neuhäuser, Michael Scholkemper, Francesco Tudisco, and Michael T. Schaub
 :bdg-link-primary-line:`Paper <https://doi.org/10.1126/sciadv.adh4053>`
 :bdg-link-primary-line:`Code <https://git.rwth-aachen.de/netsci/publication-2023-learning-the-effective-order-of-a-hypergraph-dynamical-system>`
 
+Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, and Maxime Lucas, "Deeper but smaller: Higher-order interactions increase linear stability but shrink basins", *Science Advances* **10**,eado8049 (2024).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1126/sciadv.ado8049>`
+:bdg-link-primary-line:`Code <https://github.com/maximelucas/basins_and_triangles>`
+
 2023
 ----
 
@@ -103,10 +108,6 @@ Gonzalo Contreras-Aso, Cristian Pérez-Corral, and Miguel Romance, "Uplifting ed
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2310.20335>`
 :bdg-link-primary-line:`Code <https://github.com/LaComarca-Lab/non-uniform-hypergraphs>`
 
-Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, and Maxime Lucas, "Deeper but smaller: Higher-order interactions increase linear stability but shrink basins", arXiv:2309.16581 (2023).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2309.16581>`
-:bdg-link-primary-line:`Code <https://github.com/maximelucas/basins_and_triangles>`
 
 Theses
 ======

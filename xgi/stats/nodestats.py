@@ -493,3 +493,117 @@ def katz_centrality(net, bunch, cutoff=100):
     """
     c = xgi.katz_centrality(net, cutoff=cutoff)
     return {n: c[n] for n in c if n in bunch}
+
+
+def local_simplicial_fraction(net, bunch, min_size=2, exclude_min_size=True):
+    """The local simplicial fraction.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Nodes in `net`.
+    min_size: int, default: 2
+        The minimum hyperedge size to include when
+        calculating whether a hyperedge is a simplex
+        by counting subfaces.
+    exclude_min_size : bool, optional
+        Whether to include minimal simplices when counting simplices, by default True
+
+    Returns
+    -------
+    dict
+
+    References
+    ----------
+    "The simpliciality of higher-order order networks"
+    by Nicholas Landry, Jean-Gabriel Young, and Nicole Eikmeier,
+    *EPJ Data Science* **13**, 17 (2024).
+    """
+    s = dict()
+    for n in bunch:
+        nbrs = net.nodes.neighbors(n)
+        if len(nbrs) == 0:
+            s[n] = np.nan
+        else:
+            nbrs.add(n)
+            sh = xgi.subhypergraph(net, nodes=nbrs)
+            s[n] = xgi.simplicial_fraction(sh, min_size, exclude_min_size)
+    return s
+
+
+def local_edit_simpliciality(net, bunch, min_size=2, exclude_min_size=True):
+    """The local edit simpliciality.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Nodes in `net`.
+    min_size: int, default: 2
+        The minimum hyperedge size to include when
+        calculating whether a hyperedge is a simplex
+        by counting subfaces.
+    exclude_min_size : bool, optional
+        Whether to include minimal simplices when counting simplices, by default True
+
+    Returns
+    -------
+    dict
+
+    References
+    ----------
+    "The simpliciality of higher-order order networks"
+    by Nicholas Landry, Jean-Gabriel Young, and Nicole Eikmeier,
+    *EPJ Data Science* **13**, 17 (2024).
+    """
+    s = dict()
+    for n in bunch:
+        nbrs = net.nodes.neighbors(n)
+        if len(nbrs) == 0:
+            s[n] = np.nan
+        else:
+            nbrs.add(n)
+            sh = xgi.subhypergraph(net, nodes=nbrs)
+            s[n] = xgi.edit_simpliciality(sh, min_size, exclude_min_size)
+    return s
+
+
+def local_face_edit_simpliciality(net, bunch, min_size=2, exclude_min_size=True):
+    """The local face edit simpliciality.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Nodes in `net`.
+    min_size: int, default: 2
+        The minimum hyperedge size to include when
+        calculating whether a hyperedge is a simplex
+        by counting subfaces.
+    exclude_min_size : bool, optional
+        Whether to include minimal simplices when counting simplices, by default True
+
+    Returns
+    -------
+    dict
+
+    References
+    ----------
+    "The simpliciality of higher-order order networks"
+    by Nicholas Landry, Jean-Gabriel Young, and Nicole Eikmeier,
+    *EPJ Data Science* **13**, 17 (2024).
+    """
+    s = dict()
+    for n in bunch:
+        nbrs = net.nodes.neighbors(n)
+        if len(nbrs) == 0:
+            s[n] = np.nan
+        else:
+            nbrs.add(n)
+            sh = xgi.subhypergraph(net, nodes=nbrs)
+            s[n] = xgi.face_edit_simpliciality(sh, min_size, exclude_min_size)
+    return s
