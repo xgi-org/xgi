@@ -150,7 +150,7 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
     )
     if not maxH.edges:
         return np.nan
-    
+
     id_to_num = dict(zip(maxH.edges, range(maxH.num_edges)))
 
     ms = 0

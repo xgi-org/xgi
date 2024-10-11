@@ -55,13 +55,61 @@ def test_random_hypergraph():
     assert H1.num_nodes == 10
     assert xgi.unique_edge_sizes(H1) == [2, 3]
 
-    # wrong input
+    # wrong inputs
+    # p > 1
     with pytest.raises(ValueError):
         H1 = xgi.random_hypergraph(10, [1, 1.1])
+    # p < 0
     with pytest.raises(ValueError):
         H1 = xgi.random_hypergraph(10, [1, -2])
+    # p list and order number
+    with pytest.raises(ValueError):
+        H1 = xgi.random_hypergraph(10, [0.1, 0.1], order=3)
+    # different lengths
+    with pytest.raises(ValueError):
+        H1 = xgi.random_hypergraph(10, [0.1, 0.1], order=[3])
 
     # uniform
-    H4 = xgi.random_hypergraph(10, [0.1], order=2, seed=1)
+    H4 = xgi.random_hypergraph(10, 0.1, order=2, seed=1)
     assert H4.num_nodes == 10
     assert xgi.unique_edge_sizes(H4) == [3]
+
+    H5 = xgi.random_hypergraph(10, [0.1, 0.1], order=[1, 3], seed=1)
+    assert H5.num_nodes == 10
+    assert xgi.unique_edge_sizes(H5) == [2, 4]
+
+
+def test_fast_random_hypergraph():
+    # seed
+    H1 = xgi.fast_random_hypergraph(10, [0.1, 0.01], seed=1)
+    H2 = xgi.fast_random_hypergraph(10, [0.1, 0.01], seed=2)
+    H3 = xgi.fast_random_hypergraph(10, [0.1, 0.01], seed=2)
+
+    assert H1._edge != H2._edge
+    assert H2._edge == H3._edge
+
+    assert H1.num_nodes == 10
+    assert xgi.unique_edge_sizes(H1) == [2, 3]
+
+    # wrong inputs
+    # p > 1
+    with pytest.raises(ValueError):
+        H1 = xgi.fast_random_hypergraph(10, [1, 1.1])
+    # p < 0
+    with pytest.raises(ValueError):
+        H1 = xgi.fast_random_hypergraph(10, [1, -2])
+    # p list and order number
+    with pytest.raises(ValueError):
+        H1 = xgi.fast_random_hypergraph(10, [0.1, 0.1], order=3)
+    # different lengths
+    with pytest.raises(ValueError):
+        H1 = xgi.fast_random_hypergraph(10, [0.1, 0.1], order=[3])
+
+    # uniform
+    H4 = xgi.fast_random_hypergraph(10, 0.1, order=2, seed=1)
+    assert H4.num_nodes == 10
+    assert xgi.unique_edge_sizes(H4) == [3]
+
+    H5 = xgi.fast_random_hypergraph(10, [0.1, 0.1], order=[1, 3], seed=1)
+    assert H5.num_nodes == 10
+    assert xgi.unique_edge_sizes(H5) == [2, 4]

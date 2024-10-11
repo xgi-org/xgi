@@ -161,7 +161,7 @@ def _check_input_args(ps, order):
     if order is None:
         if isinstance(ps, float):
             raise ValueError("If ps is a float, order must be specified as an int")
-        order = [i for i in range(2, len(ps) + 2)]
+        order = [i + 1 for i in range(len(ps))]
     else:
         if isinstance(order, int):
             if not isinstance(ps, float):
