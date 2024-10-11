@@ -12,7 +12,7 @@ from scipy.special import comb
 
 from .classic import empty_hypergraph
 from .lattice import ring_lattice
-from .uniform import _index_to_edge_comb, uniform_erdos_renyi_hypergraph
+from .uniform import _index_to_edge_comb
 
 __all__ = [
     "fast_random_hypergraph",
