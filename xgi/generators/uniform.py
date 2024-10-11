@@ -399,7 +399,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
         max_index = comb(n, m, exact=True)
         f = _index_to_edge_comb
 
-    index = np.random.geometric(p) - 1  # -1 b/c zero indexing
+    index = np.random.geometric(q) - 1  # -1 b/c zero indexing
     while index <= max_index:
         e = set(f(index, n, m))
         # if f corresponds to _index_to_edge_prod,
@@ -414,7 +414,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
         # We no longer subtract 1 because if we did, the minimum
         # value of the right-hand side would be zero, meaning that
         # we sample the same index multiple times.
-        index += np.random.geometric(p)
+        index += np.random.geometric(q)
     return H
 
 
