@@ -2,6 +2,7 @@ import random
 
 import numpy as np
 import pytest
+from scipy.special import comb
 
 import xgi
 
@@ -113,3 +114,18 @@ def test_fast_random_hypergraph():
     H5 = xgi.fast_random_hypergraph(10, [0.1, 0.1], order=[1, 3], seed=1)
     assert H5.num_nodes == 10
     assert xgi.unique_edge_sizes(H5) == [2, 4]
+
+    H5 = xgi.fast_random_hypergraph(10, [1, 1])
+    assert H5.num_edges == comb(10, 2) + comb(10, 3)
+
+    with pytest.raises(ValueError):
+        xgi.fast_random_hypergraph(10, 0.1)
+
+    with pytest.raises(ValueError):
+        xgi.fast_random_hypergraph(10, 0.1, order=[1, 2])
+
+    with pytest.raises(ValueError):
+        xgi.fast_random_hypergraph(10, [1.1, 1])
+
+    with pytest.raises(ValueError):
+        xgi.fast_random_hypergraph(10, [-0.1, 1])

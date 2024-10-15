@@ -85,7 +85,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
 
     for d, p in zip(order, ps):
         if p == 1.0:
-            H.add_edges_from([e for e in combinations(n, d + 1)])
+            H.add_edges_from([e for e in combinations(nodes, d + 1)])
         elif p > 0:
             r = random.random()
             index = floor(log(r) / log(1 - p)) - 1  # -1 b/c zero indexing
@@ -156,7 +156,6 @@ def random_hypergraph(n, ps, order=None, seed=None):
     ps, order = _check_input_args(ps, order)
 
     nodes = range(n)
-
     H = empty_hypergraph()
     H.add_nodes_from(nodes)
 
@@ -170,8 +169,10 @@ def random_hypergraph(n, ps, order=None, seed=None):
 def _check_input_args(ps, order):
     """Check input args for random_hypergraph and fast_random_hypergraph"""
     if order is None:
-        if isinstance(ps, float):
-            raise ValueError("If ps is a float, order must be specified as an int")
+        if not isinstance(ps, (list, np.ndarray)):
+            raise ValueError(
+                "If order is not specified, ps must be a list or numpy array!"
+            )
         order = [i + 1 for i in range(len(ps))]
     else:
         if isinstance(order, int):
