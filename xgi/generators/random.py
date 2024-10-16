@@ -85,7 +85,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     H.add_nodes_from(nodes)
 
     for d, p in zip(order, ps):
-        if p == 1.0:
+        if p == 1:
             H.add_edges_from([e for e in combinations(nodes, d + 1)])
         elif p > 0:
             r = random.random()
