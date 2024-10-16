@@ -16,7 +16,7 @@ __all__ = [
 
 
 def edit_simpliciality(H, min_size=2, exclude_min_size=True):
-    """Computes the edit simpliciality.
+    r"""Computes the edit simpliciality.
 
     The fraction of sub-edges contained when compared to a simplicial complex.
 
@@ -78,7 +78,7 @@ def edit_simpliciality(H, min_size=2, exclude_min_size=True):
 
 
 def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True):
-    """Computes the simplicial edit distance.
+    r"""Computes the simplicial edit distance.
 
     The number (or fraction) of sub-edges needed to be added
     to a hypergraph to make it a simplicial complex.
@@ -150,7 +150,7 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
     )
     if not maxH.edges:
         return np.nan
-    
+
     id_to_num = dict(zip(maxH.edges, range(maxH.num_edges)))
 
     ms = 0
@@ -184,7 +184,7 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
 
 
 def face_edit_simpliciality(H, min_size=2, exclude_min_size=True):
-    """Computes the face edit simpliciality.
+    r"""Computes the face edit simpliciality.
 
     The average fraction of sub-edges contained in a hyperedge
     relative to a simplex.
@@ -247,7 +247,7 @@ def face_edit_simpliciality(H, min_size=2, exclude_min_size=True):
 
 
 def mean_face_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True):
-    """Computes the mean face edit distance
+    r"""Computes the mean face edit distance
 
     The average number (or fraction) of sub-edges needed to be added to make
     a hyperedge a simplex.
@@ -324,7 +324,7 @@ def mean_face_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True
 
 
 def simplicial_fraction(H, min_size=2, exclude_min_size=True):
-    """Computing the simplicial fraction for a hypergraph.
+    r"""Computing the simplicial fraction for a hypergraph.
 
     What fraction of the hyperedges are simplices?
 

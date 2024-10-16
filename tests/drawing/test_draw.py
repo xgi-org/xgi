@@ -717,6 +717,7 @@ def test_draw_undirected_dyads(edgelist8):
         ax, dyad_collection = xgi.draw_undirected_dyads(H, dyad_lw=-1, ax=ax)
 
     fig, ax = plt.subplots()
+    np.random.seed(0)
     ax, dyad_collection = xgi.draw_undirected_dyads(
         H, dyad_color=np.random.random(H.num_edges), ax=ax
     )

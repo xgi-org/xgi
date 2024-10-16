@@ -106,7 +106,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
 
 
 def uniform_HSBM(n, m, p, sizes, seed=None):
-    """Create a uniform hypergraph stochastic block model (HSBM).
+    r"""Create a uniform hypergraph stochastic block model (HSBM).
 
     This uses a fast method for generating hyperedges
     so that instead of the algorithm being of complexity
@@ -220,7 +220,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
 
 
 def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
-    """Construct the m-uniform hypergraph planted partition model (m-HPPM)
+    r"""Construct the m-uniform hypergraph planted partition model (m-HPPM)
 
     This uses a fast method for generating hyperedges
     so that instead of the algorithm being of complexity
@@ -300,10 +300,10 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
 
 
 def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, seed=None):
-    """Generate an m-uniform Erdős–Rényi hypergraph
+    r"""Generate an m-uniform Erdős–Rényi hypergraph
 
     This creates a hypergraph with `n` nodes where
-    hyperedges of size `m` are created at random 
+    hyperedges of size `m` are created at random
     with probability (or to obtain a mean degree of) `p`.
 
     This uses a fast method for generating hyperedges
@@ -369,10 +369,6 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     if seed is not None:
         np.random.seed(seed)
 
-    node_labels = range(n)
-    H = empty_hypergraph()
-    H.add_nodes_from(node_labels)
-
     if p_type == "degree":
         if multiedges:
             q = p / (m * n ** (m - 1))  # wiring probability
@@ -393,7 +389,9 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
         H.add_nodes_from(range(n))
         return H
 
-    index = np.random.geometric(q) - 1  # -1 b/c zero indexing
+    H = empty_hypergraph()
+    H.add_nodes_from(range(n))
+
     if multiedges:
         max_index = n**m
         f = _index_to_edge_prod
@@ -401,6 +399,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
         max_index = comb(n, m, exact=True)
         f = _index_to_edge_comb
 
+    index = np.random.geometric(q) - 1  # -1 b/c zero indexing
     while index <= max_index:
         e = set(f(index, n, m))
         # if f corresponds to _index_to_edge_prod,
