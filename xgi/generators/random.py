@@ -38,11 +38,12 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
         Number of nodes
     ps : list of float, or float
         List of probabilities (between 0 and 1) to create a
-        hyperedge at each order d between any d+1 nodes. For example,
+        hyperedge at each order d between any d+1 nodes (when `order` is `None`). For example,
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
-        of any triangles (3 nodes). If a float, generate a uniform hypergraph
+        of any triangles (3 nodes). If a float, generate a uniform hypergraph. 
+        See `order` for advanced options when it is not `None`.
     order: int, list of ints, or array of ints or None (default)
-        If None, ignore. If list or array, generates a hypergraph
+        If None (default), ignored. If list or array, generates a hypergraph
         with edges of orders `order[0]`, `order[1]`, etc.
         (The length of `ps` must match the length of `order` in this case).
     seed : integer or None (default)
