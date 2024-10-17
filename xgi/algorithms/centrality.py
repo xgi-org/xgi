@@ -17,6 +17,8 @@ from .properties import is_uniform
 __all__ = [
     "clique_eigenvector_centrality",
     "h_eigenvector_centrality",
+    "h_eigenvector_tensor_centrality",
+    "z_eigenvector_tensor_centrality",
     "node_edge_centrality",
     "line_vector_centrality",
     "katz_centrality",
@@ -166,7 +168,7 @@ def node_edge_centrality(
     max_iter=100,
     tol=1e-6,
 ):
-    """Computes the node and edge centralities
+    r"""Computes the node and edge centralities
 
     Parameters
     ----------
@@ -440,14 +442,15 @@ def h_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     converged = False
     it = 0
     while it < max_iter and not converged:
-        print(f"{iter} of {max_iter-1}", flush=True)
+        print(f"{it + 1} of {max_iter}", flush=True)
         y_scaled = [_y ** (1 / (r - 1)) for _y in y]
         x = y_scaled / norm(y_scaled, 1)
-        y = np.abs(np.array(apply(node_dict, edge_dict, r, x)))
+        y = np.abs(np.array(ttsv1(node_dict, edge_dict, r, x)))
         s = [a / (b ** (r - 1)) for a, b in zip(y, x)]
         converged = (np.max(s) - np.min(s)) / np.min(s) < tol
         if converged:
             break
+        it += 1
     else:
         warn("Iteration did not converge!")
     return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, x / norm(x, 1))}
@@ -522,13 +525,14 @@ def z_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     converged = False
     it = 0
     while it < max_iter and not converged:
-        print(f"{iter} of {max_iter-1}", flush=True)
+        print(f"{it + 1} of {max_iter}", flush=True)
         x_new = x + h * f(x)
         s = np.array([a / b for a, b in zip(x_new, x)])
         converged = (np.max(s) - np.min(s)) / np.min(s) < tol
         if converged:
             break
         x = x_new
+        it += 1
     else:
         warn("Iteration did not converge!")
     return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, x / norm(x, 1))}
