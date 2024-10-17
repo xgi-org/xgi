@@ -1,7 +1,15 @@
 # Changelog
 
-## v0.9
+## v0.9.1
+* Fixed Issue [#361](https://github.com/xgi-org/xgi/issues/361) for `random_hypergraph` [#597](https://github.com/xgi-org/xgi/pull/597) (@nwlandry).
+- Added the ability to generate Erdős-Rényi hypergraphs without multiedges [#596](https://github.com/xgi-org/xgi/pull/596) (@nwlandry).
+- Added support for Python 3.13 [#599](https://github.com/xgi-org/xgi/pull/599) (@nwlandry).
+- Added a module for simpliciality measures [#587](https://github.com/xgi-org/xgi/pull/587) (@nwlandry).
+- Tweaked the HIF read/write functions to match updates [#598](https://github.com/xgi-org/xgi/pull/598) (@nwlandry).
+- Added a conditional API note [#595](https://github.com/xgi-org/xgi/pull/595) (@nwlandry).
+- Fixed broken links in the README [#594](https://github.com/xgi-org/xgi/pull/594) (@nwlandry).
 
+## v0.9
 * Added methods to (1) cut networks by order (`cut_to_order`) and (2) generate the k-skeleton of a SC (`k_skeleton`) [#578](https://github.com/xgi-org/xgi/pull/578) (@thomasrobiglio).
 * Fixed an issue where the latest version displayed "dev" [#592](https://github.com/xgi-org/xgi/pull/592) (@nwlandry).
 * Fixed the issue in the XGI version switcher so it no longer displays "Choose version" [#590](https://github.com/xgi-org/xgi/pull/590) (@nwlandry).
@@ -11,11 +19,9 @@
 * Fixed broken links on the PyPI landing page from relative paths [#579](https://github.com/xgi-org/xgi/pull/579) (@nwlandry).
 
 ## v0.8.10
-
 * Migrating to the PyData theme for the online docs [#576](https://github.com/xgi-org/xgi/pull/576)  (@maximelucas).
 
 ## v0.8.9
-
 * Added a new recipe to address Issue [#549](https://github.com/xgi-org/xgi/issues/549) [#574](https://github.com/xgi-org/xgi/pull/574) (@nwlandry).
 * Added the `edge_ec` argument to the `draw` method to specify edge colors [#575](https://github.com/xgi-org/xgi/pull/575) (@maximelucas).
 * Switched from setup.py to pyproject.toml for installation [#573](https://github.com/xgi-org/xgi/pull/573) (@nwlandry).
