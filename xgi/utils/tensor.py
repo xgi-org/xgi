@@ -7,7 +7,6 @@ from scipy.signal import convolve
 from scipy.sparse import coo_array
 from scipy.special import binom as binomial
 
-
 __all__ = [
     "pairwise_incidence",
     "ttsv1",
