@@ -12,6 +12,11 @@ Published work
 2024
 ----
 
+Sinan G. Aksoy, Ilya Amburg, and Stephen J. Young, "Scalable Tensor Methods for Nonuniform Hypergraphs", *SIAM Journal on Mathematics of Data Science*, Vol. 6, Iss. 2, 481-503 (2024).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1137/23M1584472>`
+:bdg-link-primary-line:`Code <https://github.com/pnnl/GENTTSV>`
+
 Gonzalo Contreras-Aso, Regino Criado, and Miguel Romance, "Beyond directed hypergraphs: heterogeneous hypergraphs and spectral centralities", *Journal of Complex Networks*, Volume 12, Issue 4, cnae037 (2024).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1093/comnet/cnae037>`
