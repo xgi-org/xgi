@@ -416,11 +416,15 @@ def h_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     ----------
     Scalable Tensor Methods for Nonuniform Hypergraphs,
     Sinan Aksoy, Ilya Amburg, Stephen Young,
-    https://doi.org/10.48550/arXiv.2306.17825
+    https://doi.org/10.1137/23M1584472
 
     Three Hypergraph Eigenvector Centralities,
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
+
+    Computing tensor Z-eigenvectors with dynamical systems
+    Austin R. Benson and David F. Gleich
+    https://doi.org/10.1137/18M1229584
     """
     # if there aren't any nodes, return an empty dict
     if H.num_nodes == 0:
@@ -488,7 +492,7 @@ def z_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     ----------
     Scalable Tensor Methods for Nonuniform Hypergraphs,
     Sinan Aksoy, Ilya Amburg, Stephen Young,
-    https://doi.org/10.48550/arXiv.2306.17825
+    https://doi.org/10.1137/23M1584472
 
     Three Hypergraph Eigenvector Centralities,
     Austin R. Benson,
