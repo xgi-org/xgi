@@ -980,3 +980,15 @@ def test_multi_with_attrs(hyperwithattrs):
         5: [2, "blue"],
     }
     assert multi.asdict(list) == d
+
+
+def test_aggregate_stats_types(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert isinstance(H.nodes.degree.max(), int)
+    assert isinstance(H.nodes.degree.min(), int)
+    assert isinstance(H.nodes.degree.median(), float)
+    assert isinstance(H.nodes.degree.mean(), float)
+    assert isinstance(H.nodes.degree.sum(), int)
+    assert isinstance(H.nodes.degree.std(), float)
+    assert isinstance(H.nodes.degree.var(), float)
+    assert isinstance(H.nodes.degree.moment(), float)
