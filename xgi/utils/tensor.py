@@ -1,4 +1,6 @@
 ## Tensor times same vector in all but one (TTSV1) and all but two (TTSV2)
+from collections import defaultdict
+from itertools import combinations
 from math import factorial
 
 import numpy as np
@@ -14,37 +16,26 @@ __all__ = [
 ]
 
 
-def pairwise_incidence(H, r):
+def pairwise_incidence(edgedict):
     """Create pairwise adjacency dictionary from hyperedge list dictionary
 
     Parameters
     ----------
-    H : xgi.Hypergraph
-        The hypergraph of interest
-    r : int
-        maximum hyperedge size
+    edgedict : dict
+        edge IDs are keys, edges are values
 
     Returns
     -------
-    E : dict
+    pairs : dict
         a dictionary with node pairs as keys and the hyperedges they appear in as values
     """
-    E = {}
-    for e, edge in H.items():
-        l = len(edge)
-        for i in range(0, l - 1):
-            for j in range(i + 1, l):
-                if (edge[i], edge[j]) not in E:
-                    E[(edge[i], edge[j])] = [e]
-                else:
-                    E[(edge[i], edge[j])].append(e)
-        if l < r:
-            for node in edge:
-                if (node, node) not in E:
-                    E[(node, node)] = [e]
-                else:
-                    E[(node, node)].append(e)
-    return E
+    pairs = defaultdict(set)
+    for e, edge in edgedict.items():
+        for i, j in combinations(sorted(edge), 2):
+            pairs[(i, j)].add(e)
+        for n in edge:
+            pairs[(n, n)].add(e)
+    return pairs
 
 
 def banerjee_coeff(l, r):

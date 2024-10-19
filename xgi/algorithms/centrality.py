@@ -446,7 +446,6 @@ def h_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     converged = False
     it = 0
     while it < max_iter and not converged:
-        print(f"{it + 1} of {max_iter}", flush=True)
         y_scaled = [_y ** (1 / (r - 1)) for _y in y]
         x = y_scaled / norm(y_scaled, 1)
         y = np.abs(np.array(ttsv1(node_dict, edge_dict, r, x)))
@@ -457,7 +456,10 @@ def h_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
         it += 1
     else:
         warn("Iteration did not converge!")
-    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, x / norm(x, 1))}
+    return {
+        new_H.nodes[n]["old-label"]: c.item()
+        for n, c in zip(new_H.nodes, x / norm(x, 1))
+    }
 
 
 def z_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
@@ -509,7 +511,8 @@ def z_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
         return {n: np.nan for n in H.nodes}
     new_H = convert_labels_to_integers(H, "old-label")
     edge_dict = new_H.edges.members(dtype=dict)
-    pairs_dict = pairwise_incidence(edge_dict, r)
+    pairs_dict = pairwise_incidence(edge_dict)
+
     r = H.edges.size.max()
 
     def LR_evec(A):
@@ -529,7 +532,6 @@ def z_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     converged = False
     it = 0
     while it < max_iter and not converged:
-        print(f"{it + 1} of {max_iter}", flush=True)
         x_new = x + h * f(x)
         s = np.array([a / b for a, b in zip(x_new, x)])
         converged = (np.max(s) - np.min(s)) / np.min(s) < tol
@@ -539,4 +541,7 @@ def z_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
         it += 1
     else:
         warn("Iteration did not converge!")
-    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, x / norm(x, 1))}
+    return {
+        new_H.nodes[n]["old-label"]: c.item()
+        for n, c in zip(new_H.nodes, x / norm(x, 1))
+    }
