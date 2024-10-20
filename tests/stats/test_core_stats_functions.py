@@ -13,6 +13,7 @@
 
 ### General functionality
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -422,6 +423,7 @@ def test_hypergraph_aggregates(edgelist1, edgelist2, edgelist8):
     assert round(H.nodes.degree.mean(), 3) == 1.125
     assert round(H.nodes.degree.std(), 3) == 0.331
     assert round(H.nodes.degree.var(), 3) == 0.109
+    assert np.allclose(H.nodes.degree.unique(), np.array([1, 2]))
 
     assert H.edges.order.max() == 2
     assert H.edges.order.min() == 0
@@ -429,6 +431,7 @@ def test_hypergraph_aggregates(edgelist1, edgelist2, edgelist8):
     assert round(H.edges.order.mean(), 3) == 1.25
     assert round(H.edges.order.std(), 3) == 0.829
     assert round(H.edges.order.var(), 3) == 0.688
+    assert np.allclose(H.edges.order.unique(), np.array([0, 1, 2]))
 
     H = xgi.Hypergraph(edgelist2)
     assert H.nodes.degree.max() == 2
@@ -442,6 +445,7 @@ def test_hypergraph_aggregates(edgelist1, edgelist2, edgelist8):
     assert round(H.nodes.degree.mean(), 3) == 1.167
     assert round(H.nodes.degree.std(), 3) == 0.373
     assert round(H.nodes.degree.var(), 3) == 0.139
+    assert np.allclose(H.nodes.degree.unique(), np.array([1, 2]))
 
     assert H.edges.order.max() == 2
     assert H.edges.order.min() == 1
@@ -449,6 +453,9 @@ def test_hypergraph_aggregates(edgelist1, edgelist2, edgelist8):
     assert round(H.edges.order.mean(), 3) == 1.333
     assert round(H.edges.order.std(), 3) == 0.471
     assert round(H.edges.order.var(), 3) == 0.222
+    assert np.allclose(H.edges.order.unique(), np.array([1, 2]))
+    assert len(H.edges.order.unique(return_counts=True)) == 2
+    assert np.allclose(H.edges.order.unique(return_counts=True)[1], np.array([2, 1]))
 
     H = xgi.Hypergraph(edgelist8)
     assert H.nodes.degree.max() == 6
@@ -973,3 +980,15 @@ def test_multi_with_attrs(hyperwithattrs):
         5: [2, "blue"],
     }
     assert multi.asdict(list) == d
+
+
+def test_aggregate_stats_types(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    assert isinstance(H.nodes.degree.max(), int)
+    assert isinstance(H.nodes.degree.min(), int)
+    assert isinstance(H.nodes.degree.median(), float)
+    assert isinstance(H.nodes.degree.mean(), float)
+    assert isinstance(H.nodes.degree.sum(), int)
+    assert isinstance(H.nodes.degree.std(), float)
+    assert isinstance(H.nodes.degree.var(), float)
+    assert isinstance(H.nodes.degree.moment(), float)

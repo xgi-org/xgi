@@ -203,23 +203,23 @@ class IDStat:
 
     def max(self):
         """The maximum value of this stat."""
-        return self.asnumpy().max(axis=0)
+        return self.asnumpy().max(axis=0).item()
 
     def min(self):
         """The minimum value of this stat."""
-        return self.asnumpy().min(axis=0)
+        return self.asnumpy().min(axis=0).item()
 
     def sum(self):
         """The sum of this stat."""
-        return self.asnumpy().sum(axis=0)
+        return self.asnumpy().sum(axis=0).item()
 
     def mean(self):
         """The arithmetic mean of this stat."""
-        return self.asnumpy().mean(axis=0)
+        return self.asnumpy().mean(axis=0).item()
 
     def median(self):
         """The median of this stat."""
-        return np.median(self.asnumpy(), axis=0)
+        return np.median(self.asnumpy(), axis=0).item()
 
     def std(self):
         """The standard deviation of this stat.
@@ -231,7 +231,7 @@ class IDStat:
         See https://www.allendowney.com/blog/2024/06/08/which-standard-deviation/
         for more details.
         """
-        return self.asnumpy().std(axis=0)
+        return self.asnumpy().std(axis=0).item()
 
     def var(self):
         """The variance of this stat.
@@ -243,7 +243,7 @@ class IDStat:
         See https://www.allendowney.com/blog/2024/06/08/which-standard-deviation/
         for more details.
         """
-        return self.asnumpy().var(axis=0)
+        return self.asnumpy().var(axis=0).item()
 
     def moment(self, order=2, center=False):
         """The statistical moments of this stat.
@@ -257,7 +257,9 @@ class IDStat:
 
         """
         arr = self.asnumpy()
-        return spmoment(arr, moment=order) if center else np.mean(arr**order)
+        return (
+            spmoment(arr, moment=order) if center else np.mean(arr**order).item()
+        )
 
     def argmin(self):
         """The ID corresponding to the minimum of the stat
@@ -305,6 +307,9 @@ class IDStat:
         """
         d = self.asdict()
         return sorted(d, key=d.get, reverse=reverse)
+
+    def unique(self, return_counts=False):
+        return np.unique(self.asnumpy(), return_counts=return_counts)
 
 
 class NodeStat(IDStat):
