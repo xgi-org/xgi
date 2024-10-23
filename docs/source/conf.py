@@ -233,7 +233,7 @@ html_theme_options = {
             "icon": "fab fa-twitter-square",  # Font Awesome icon
         },
     ],
-    "header_links_before_dropdown": 4,
+    "header_links_before_dropdown": 5,
     "switcher": {
         "json_url": (
             "https://xgi.readthedocs.io/en/latest/_static/version_switcher.json"
@@ -282,6 +282,7 @@ sphinx_gallery_conf = {
     # path where to save gallery generated examples
     "gallery_dirs": "auto_examples",
     "plot_gallery": "True",
+    "image_scrapers": ("matplotlib",),
 }
 
 # -- Options for LaTeX output ---------------------------------------------
