@@ -18,6 +18,7 @@
    contribute
    using-xgi
    gallery
+   auto_examples/index
 
 |release_announcement|
 

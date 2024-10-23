@@ -1,0 +1,29 @@
+{
+ "plt.show": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "show"
+  }
+ ],
+ "xgi.Hypergraph": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "xgi",
+   "module_short": "xgi",
+   "name": "Hypergraph"
+  }
+ ],
+ "xgi.draw": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "xgi",
+   "module_short": "xgi",
+   "name": "draw"
+  }
+ ]
+}
