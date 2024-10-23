@@ -82,6 +82,7 @@ docs = [
     "nbsphinx",
     "nbsphinx-link",
     "pydata-sphinx-theme",
+    "sphinx-gallery",
 ]
 release = [
     "twine>=3.4",
