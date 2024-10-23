@@ -15,10 +15,9 @@
    user_guides
    api_reference
    xgi-data
+   auto_examples/index
    contribute
    using-xgi
-   gallery
-   auto_examples/index
 
 |release_announcement|
 

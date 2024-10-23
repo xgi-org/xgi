@@ -1,6 +1,6 @@
 :orphan:
 
-Gallery of examples
+Gallery
 ==================
 
 Introductory examples to XGI.

@@ -249,6 +249,7 @@ html_sidebars = {
     "installing": [],
     "tutorial": [],
     "xgi-data": [],
+    "auto_examples/index" : [],
     "gallery": [],
     "contribute": [],
     "user_guides": [],
@@ -275,7 +276,6 @@ sphinx_gallery_conf = {
             "../../examples/layouts",
             "../../examples/stats",
             "../../examples/advanced",
-            "../../examples/algorithms",
         ]
     ),
     "within_subsection_order": "FileNameSortKey",
