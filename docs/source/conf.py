@@ -249,7 +249,7 @@ html_sidebars = {
     "installing": [],
     "tutorial": [],
     "xgi-data": [],
-    "auto_examples/index" : [],
+    "auto_examples/index": [],
     "gallery": [],
     "contribute": [],
     "user_guides": [],

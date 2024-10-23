@@ -257,9 +257,7 @@ class IDStat:
 
         """
         arr = self.asnumpy()
-        return (
-            spmoment(arr, moment=order) if center else np.mean(arr**order).item()
-        )
+        return spmoment(arr, moment=order) if center else np.mean(arr**order).item()
 
     def argmin(self):
         """The ID corresponding to the minimum of the stat
