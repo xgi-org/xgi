@@ -1,0 +1,4 @@
+Gallery
+==================
+
+Introductory examples to XGI.

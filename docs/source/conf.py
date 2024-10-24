@@ -14,6 +14,7 @@
 import os
 import sys
 from datetime import date, datetime
+from sphinx_gallery.sorting import ExplicitOrder, FileNameSortKey
 
 import requests
 
@@ -87,6 +88,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
     "sphinx_design",
+    "sphinx_gallery.gen_gallery",
     "nbsphinx",
     "nbsphinx_link",
 ]
@@ -231,7 +233,7 @@ html_theme_options = {
             "icon": "fab fa-twitter-square",  # Font Awesome icon
         },
     ],
-    "header_links_before_dropdown": 4,
+    "header_links_before_dropdown": 5,
     "switcher": {
         "json_url": (
             "https://xgi.readthedocs.io/en/latest/_static/version_switcher.json"
@@ -247,6 +249,7 @@ html_sidebars = {
     "installing": [],
     "tutorial": [],
     "xgi-data": [],
+    "auto_examples/index": [],
     "gallery": [],
     "contribute": [],
     "user_guides": [],
@@ -260,6 +263,27 @@ html_static_path = ["_static"]
 html_show_sphinx = True
 
 htmlhelp_basename = "XGIDoc"
+
+# -- Options for Sphinx Gallery ----------------------
+
+
+sphinx_gallery_conf = {
+    # path to your examples scripts
+    "examples_dirs": "../../examples",
+    "subsection_order": ExplicitOrder(
+        [
+            "../../examples/basic",
+            "../../examples/layouts",
+            "../../examples/stats",
+            "../../examples/advanced",
+        ]
+    ),
+    "within_subsection_order": "FileNameSortKey",
+    # path where to save gallery generated examples
+    "gallery_dirs": "auto_examples",
+    "plot_gallery": "True",
+    "image_scrapers": ("matplotlib",),
+}
 
 # -- Options for LaTeX output ---------------------------------------------
 
