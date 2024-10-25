@@ -1,6 +1,7 @@
 import pytest
 
 import xgi
+import networkx as nx
 from xgi.exception import XGIError
 
 
@@ -13,8 +14,9 @@ def test_local_clustering_coefficient(edgelist8):
 
     H = xgi.random_hypergraph(3, [1, 1])
     cc = xgi.local_clustering_coefficient(H)
-    true_cc = {0: 1.0, 1: 1.0, 2: 1.0}
-    assert cc == true_cc
+    true_cc = {0: 0.333, 1: 0.333, 2: 0.333}
+    for n in cc:
+        assert round(cc[n], 3) == true_cc[n]
 
     H = xgi.random_hypergraph(3, [0, 1])
     cc = xgi.local_clustering_coefficient(H)
@@ -33,16 +35,24 @@ def test_local_clustering_coefficient(edgelist8):
     H = xgi.Hypergraph(edgelist8)
     cc = xgi.local_clustering_coefficient(H)
     true_cc = {
-        0: 0.6777777777777778,
-        1: 0.575,
-        2: 0.3333333333333333,
-        3: 0.3333333333333333,
-        4: 0.6666666666666666,
-        5: 0.0,
-        6: 0.0,
+        0: 0.47111111111111115,
+        1: 0.44833333333333336,
+        2: 0.625,
+        3: 0.625,
+        4: 0.5833333333333334,
+        5: 1.0,
+        6: 1.0
     }
     for n in cc:
         assert round(cc[n], 3) == round(true_cc[n], 3)
+        
+    G = nx.erdos_renyi_graph(50, 0.1, seed=0)
+    H = xgi.Hypergraph()
+    H.add_nodes_from(G.nodes)
+    H.add_edges_from(G.edges)
+    cc = nx.clustering(G)
+    lcc = xgi.local_clustering_coefficient(H)
+    assert cc == lcc
 
 
 def test_clustering_coefficient(edgelist1):
