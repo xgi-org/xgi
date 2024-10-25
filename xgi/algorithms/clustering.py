@@ -119,7 +119,7 @@ def local_clustering_coefficient(H):
     >>> H = xgi.random_hypergraph(3, [1, 1])
     >>> cc = xgi.local_clustering_coefficient(H)
     >>> cc
-    {0: 1.0, 1: 1.0, 2: 1.0}
+    {0: 0.3333333333333333, 1: 0.3333333333333333, 2: 0.3333333333333333}
 
     """
     result = {}
