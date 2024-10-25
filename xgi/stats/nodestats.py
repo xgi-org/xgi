@@ -265,7 +265,7 @@ def local_clustering_coefficient(net, bunch):
     >>> import xgi
     >>> H = xgi.random_hypergraph(3, [1, 1])
     >>> H.nodes.local_clustering_coefficient.asdict()
-    {0: 1.0, 1: 1.0, 2: 1.0}
+    {0: 0.3333333333333333, 1: 0.3333333333333333, 2: 0.3333333333333333}
 
     """
     cc = xgi.local_clustering_coefficient(net)

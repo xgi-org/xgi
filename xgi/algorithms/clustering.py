@@ -1,6 +1,7 @@
 """Algorithms for computing nodal clustering coefficients."""
 
 import numpy as np
+from itertools import combinations
 
 from ..exception import XGIError
 from ..linalg import adjacency_matrix
@@ -118,7 +119,7 @@ def local_clustering_coefficient(H):
     >>> H = xgi.random_hypergraph(3, [1, 1])
     >>> cc = xgi.local_clustering_coefficient(H)
     >>> cc
-    {0: 1.0, 1: 1.0, 2: 1.0}
+    {0: 0.3333333333333333, 1: 0.3333333333333333, 2: 0.3333333333333333}
 
     """
     result = {}
@@ -134,30 +135,29 @@ def local_clustering_coefficient(H):
         else:
             total_eo = 0
             # go over all pairs of edges pairwise
-            for e1 in range(dv):
+            for e1, e2 in combinations(ev, 2):
                 edge1 = members[e1]
-                for e2 in range(e1):
-                    edge2 = members[e2]
-                    # set differences for the hyperedges
-                    D1 = set(edge1) - set(edge2)
-                    D2 = set(edge2) - set(edge1)
-                    # if edges are the same by definition the extra overlap is zero
-                    if len(D1.union(D2)) == 0:
-                        eo = 0
-                    else:
-                        # otherwise we have to look at their neighbours
-                        # the neighbours of D1 and D2, respectively.
-                        neighD1 = {i for d in D1 for i in H.nodes.neighbors(d)}
-                        neighD2 = {i for d in D2 for i in H.nodes.neighbors(d)}
-                        # compute extra overlap [len() is used for cardinality of edges]
-                        eo = (
-                            len(neighD1.intersection(D2))
-                            + len(neighD2.intersection(D1))
-                        ) / len(
-                            D1.union(D2)
-                        )  # add it up
-                    # add it up
-                    total_eo = total_eo + eo
+                edge2 = members[e2]
+                # set differences for the hyperedges
+                D1 = set(edge1) - set(edge2)
+                D2 = set(edge2) - set(edge1)
+                # if edges are the same by definition the extra overlap is zero
+                if len(D1.union(D2)) == 0:
+                    eo = 0
+                else:
+                    # otherwise we have to look at their neighbours
+                    # the neighbours of D1 and D2, respectively.
+                    neighD1 = {i for d in D1 for i in H.nodes.neighbors(d)}
+                    neighD2 = {i for d in D2 for i in H.nodes.neighbors(d)}
+                    # compute extra overlap [len() is used for cardinality of edges]
+                    eo = (
+                        len(neighD1.intersection(D2))
+                        + len(neighD2.intersection(D1))
+                    ) / len(
+                        D1.union(D2)
+                    )  # add it up
+                # add it up
+                total_eo = total_eo + eo
 
             # include normalisation by degree k*(k-1)/2
             result[n] = 2 * total_eo / (dv * (dv - 1))
