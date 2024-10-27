@@ -1,7 +1,7 @@
+import networkx as nx
 import pytest
 
 import xgi
-import networkx as nx
 from xgi.exception import XGIError
 
 
@@ -41,11 +41,11 @@ def test_local_clustering_coefficient(edgelist8):
         3: 0.625,
         4: 0.5833333333333334,
         5: 1.0,
-        6: 1.0
+        6: 1.0,
     }
     for n in cc:
         assert round(cc[n], 3) == round(true_cc[n], 3)
-        
+
     G = nx.erdos_renyi_graph(50, 0.1, seed=0)
     H = xgi.Hypergraph()
     H.add_nodes_from(G.nodes)
