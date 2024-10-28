@@ -33,7 +33,7 @@ def test_draw(edgelist8):
         assert patch.get_zorder() == z
     assert node_collection.get_zorder() == 4  # nodes
 
-    plt.close()
+    plt.close("all")
 
     # simplicial complex
     S = xgi.SimplicialComplex(edgelist8)
@@ -58,7 +58,7 @@ def test_draw(edgelist8):
     for patch, z in zip(ax.patches, [0, 2, 2]):  # hyperedges
         assert patch.get_zorder() == z
 
-    plt.close()
+    plt.close("all")
 
 
 def test_draw_nodes(edgelist8):
@@ -116,10 +116,10 @@ def test_draw_nodes(edgelist8):
     # negative node_lw or node_size
     with pytest.raises(ValueError):
         ax3, node_collection3 = xgi.draw_nodes(H, node_size=-1)
-        plt.close()
+        plt.close("all")
     with pytest.raises(ValueError):
         ax3, node_collection3 = xgi.draw_nodes(H, node_lw=-1)
-        plt.close()
+        plt.close("all")
 
     plt.close("all")
 
@@ -132,14 +132,14 @@ def test_draw_nodes_fc_cmap(edgelist8):
     fig, ax = plt.subplots()
     ax, node_collection = xgi.draw_nodes(H, ax=ax, node_fc="r")
     assert node_collection.get_cmap() == plt.cm.viridis
-    plt.close()
+    plt.close("all")
 
     # default cmap
     fig, ax = plt.subplots()
     colors = [11, 12, 14, 16, 17, 19, 21]
     ax, node_collection = xgi.draw_nodes(H, ax=ax, node_fc=colors)
     assert node_collection.get_cmap() == plt.cm.Reds
-    plt.close()
+    plt.close("all")
 
     # set cmap
     fig, ax = plt.subplots()
@@ -148,13 +148,13 @@ def test_draw_nodes_fc_cmap(edgelist8):
     )
     assert node_collection.get_cmap() == plt.cm.Greens
     assert (min(colors), max(colors)) == node_collection.get_clim()
-    plt.close()
+    plt.close("all")
 
     # vmin/vmax
     fig, ax = plt.subplots()
     ax, node_collection = xgi.draw_nodes(H, ax=ax, node_fc=colors, vmin=14, vmax=19)
     assert (14, 19) == node_collection.get_clim()
-    plt.close()
+    plt.close("all")
 
 
 def test_draw_nodes_interp(edgelist8):
@@ -168,7 +168,7 @@ def test_draw_nodes_interp(edgelist8):
     ax, node_collection = xgi.draw_nodes(H, ax=ax, node_size=1, node_lw=10)
     assert np.all(node_collection.get_sizes() == np.array([1]))
     assert np.all(node_collection.get_linewidth() == np.array([10]))
-    plt.close()
+    plt.close("all")
 
     # rescaling does not affect scalars
     fig, ax = plt.subplots()
@@ -177,7 +177,7 @@ def test_draw_nodes_interp(edgelist8):
     )
     assert np.all(node_collection.get_sizes() == np.array([1]))
     assert np.all(node_collection.get_linewidth() == np.array([10]))
-    plt.close()
+    plt.close("all")
 
     # not rescaling IDStat
     fig, ax = plt.subplots()
@@ -186,7 +186,7 @@ def test_draw_nodes_interp(edgelist8):
     )
     assert np.all(node_collection.get_sizes() == deg_arr**2)
     assert np.all(node_collection.get_linewidth() == deg_arr)
-    plt.close()
+    plt.close("all")
 
     # rescaling IDStat
     fig, ax = plt.subplots()
@@ -197,7 +197,7 @@ def test_draw_nodes_interp(edgelist8):
     assert max(node_collection.get_sizes()) == 30**2
     assert min(node_collection.get_linewidth()) == 0
     assert max(node_collection.get_linewidth()) == 5
-    plt.close()
+    plt.close("all")
 
     # rescaling IDStat with manual values
     fig, ax = plt.subplots()
@@ -218,7 +218,7 @@ def test_draw_nodes_interp(edgelist8):
     assert max(node_collection.get_sizes()) == 20**2
     assert min(node_collection.get_linewidth()) == 1
     assert max(node_collection.get_linewidth()) == 10
-    plt.close()
+    plt.close("all")
 
     # rescaling ndarray
     fig, ax = plt.subplots()
@@ -229,7 +229,7 @@ def test_draw_nodes_interp(edgelist8):
     assert max(node_collection.get_sizes()) == 30**2
     assert min(node_collection.get_linewidth()) == 0
     assert max(node_collection.get_linewidth()) == 5
-    plt.close()
+    plt.close("all")
 
 
 def test_draw_hyperedges(edgelist8):
@@ -281,7 +281,7 @@ def test_draw_hyperedges(edgelist8):
     with pytest.raises(ValueError):
         ax, collections = xgi.draw_hyperedges(H, ax=ax, dyad_lw=-1)
         (dyad_collection, edge_collection) = collections
-        plt.close()
+        plt.close("all")
 
     plt.close("all")
 
@@ -296,7 +296,7 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
     (dyad_collection, edge_collection) = collections
     assert dyad_collection.get_cmap() == plt.cm.Greys
     assert edge_collection.get_cmap() == sb.color_palette("crest_r", as_cmap=True)
-    plt.close()
+    plt.close("all")
 
     # set cmap
     fig, ax = plt.subplots()
@@ -313,7 +313,7 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
 
     assert (min(dyad_colors), max(dyad_colors)) == dyad_collection.get_clim()
     assert (3, 5) == edge_collection.get_clim()
-    plt.close()
+    plt.close("all")
 
     # vmin/vmax
     fig, ax = plt.subplots()
@@ -332,7 +332,7 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
     assert (14, 19) == edge_collection.get_clim()
     assert (5, 6) == dyad_collection.get_clim()
 
-    plt.close()
+    plt.close("all")
 
 
 def test_draw_hyperedges_ec(edgelist8):
@@ -364,7 +364,7 @@ def test_draw_simplices(edgelist8):
     with pytest.raises(XGIError):
         H = xgi.Hypergraph(edgelist8)
         ax = xgi.draw_simplices(H)
-        plt.close()
+        plt.close("all")
 
     S = xgi.SimplicialComplex(edgelist8)
 
@@ -386,7 +386,7 @@ def test_draw_simplices(edgelist8):
     for patch, z in zip(ax.patches, [0, 2, 2]):  # hyperedges
         assert patch.get_zorder() == z
 
-    plt.close()
+    plt.close("all")
 
 
 def test_draw_hypergraph_hull(edgelist8):
@@ -414,7 +414,7 @@ def test_draw_hypergraph_hull(edgelist8):
         assert patch.get_zorder() == z
     assert node_collection.get_zorder() == 4  # nodes
 
-    plt.close()
+    plt.close("all")
 
 
 def test_draw_multilayer(edgelist8):
@@ -461,7 +461,7 @@ def test_draw_multilayer(edgelist8):
     # node_size
     assert np.all(node_coll.get_sizes() == np.array([5**2]))
 
-    plt.close()
+    plt.close("all")
 
     # max_order parameter
     max_order = 2
@@ -484,7 +484,7 @@ def test_draw_multilayer(edgelist8):
 
     offsets = node_coll2.get_offsets()
     assert offsets.shape[0] == H.num_nodes  # nodes
-    plt.close()
+    plt.close("all")
 
     # conn_lines parameter
     ax3, (node_coll3, edge_coll3) = xgi.draw_multilayer(H, conn_lines=False)
@@ -503,7 +503,7 @@ def test_draw_multilayer(edgelist8):
         + num_dyad_collections
         == len(ax3.collections)
     )
-    plt.close()
+    plt.close("all")
 
     # custom parameters
     pos = xgi.circular_layout(H)
