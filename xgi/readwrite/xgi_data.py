@@ -109,8 +109,6 @@ def download_xgi_data(dataset, path="", collection_name=""):
         The name of the collection of data (if any). If `dataset` is not
         a collection, this argument is unused.
     """
-    from ..readwrite import write_json
-
     index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
     index_data = request_json_from_url(index_url)
 
