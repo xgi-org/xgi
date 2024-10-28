@@ -1580,14 +1580,10 @@ def draw_multilayer(
 
     # draw nodes (last)
     #create a pathpatch collection
+    node_collection = [] # to be implemented still 
     for d in orders:
         z = [sep * d] * H.num_nodes
-        """
-        # this works fine except for the fact that we do not return a collection
-        # for the nodes in the correct way :(
-        node_collection = [] 
         for id in range(H.num_nodes):
-            # Create the Circle patch for each node
             p = Circle(
                 xy=(xy[id, 0], xy[id, 1]), 
                 radius=node_size if isinstance(node_size, (int, float)) else node_size[id],
@@ -1597,12 +1593,6 @@ def draw_multilayer(
             )
             ax.add_patch(p)  # Add the 2D patch to the axis
             art3d.pathpatch_2d_to_3d(p, z=z[id], zdir="z")
-        """
-        circles = [Circle(xy=(xy[id, 0], xy[id, 1]), radius=node_size) for id in range(H.num_nodes)]
-
-        node_collection = CircleCollection(circles, offsets=xy, transOffset=ax.transData)
-        ax.add_collection(node_collection)
-        art3d.pathpatch_2d_to_3d(node_collection, z=z, zdir="z")
 
     ax.view_init(h_angle, v_angle)
     ax.set_ylim(np.min(ys) - ydiff * 0.1, np.max(ys) + ydiff * 0.1)
