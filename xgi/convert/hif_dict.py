@@ -1,3 +1,5 @@
+"""Methods for converting to/from HIF standard."""
+
 from collections import defaultdict
 
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
@@ -8,6 +10,21 @@ __all__ = ["to_hif_dict", "from_hif_dict"]
 
 
 def to_hif_dict(H):
+    """
+    A function to create a dictionary according to the HIF standard from a higher-order network.
+
+    For more information, see the HIF `project <https://github.com/pszufe/HIF_validators>`_.
+
+    Parameters
+    ----------
+    H: Hypergraph, DiHypergraph, or SimplicialComplex object
+        The specified higher-order network
+
+    Returns
+    -------
+    defaultdict
+        A dict according to the HIF standard.
+    """
     data = defaultdict(list)
 
     data["metadata"] = {}
@@ -49,7 +66,7 @@ def to_hif_dict(H):
 
 def from_hif_dict(data, nodetype=None, edgetype=None):
     """
-    A helper function to read a file created according to the HIF format.
+    A function to read a dictionary that follows the HIF standard.
 
     For more information, see the HIF `project <https://github.com/pszufe/HIF_validators>`_.
 
