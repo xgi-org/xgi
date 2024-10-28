@@ -3,9 +3,10 @@
 from os.path import dirname, exists, join
 from warnings import warn
 
-from ..convert import from_hypergraph_dict
+from ..convert import cut_to_order, from_hif_dict, from_hypergraph_dict
 from ..exception import XGIError
 from ..utils import request_json_from_url, request_json_from_url_cached
+from .hif import write_hif, write_hif_collection
 
 __all__ = ["load_xgi_data", "download_xgi_data"]
 
@@ -58,9 +59,9 @@ def load_xgi_data(
     if read:
         cfp = join(path, dataset + ".json")
         if exists(cfp):
-            from ..readwrite import read_json
+            from ..readwrite import read_hif
 
-            return read_json(cfp, nodetype=nodetype, edgetype=edgetype)
+            return read_hif(cfp, nodetype=nodetype, edgetype=edgetype)
         else:
             warn(
                 f"No local copy was found at {cfp}. The data is requested "
@@ -125,10 +126,10 @@ def download_xgi_data(dataset, path="", collection_name=""):
         url, nodetype=None, edgetype=None, max_order=None, cache=True
     )
     if isinstance(H, dict):
-        write_json(H, path, collection_name=collection_name)
+        write_hif_collection(H, path, collection_name=collection_name)
     else:
         filename = join(path, key + ".json")
-        write_json(H, filename)
+        write_hif(H, filename)
 
 
 def _request_from_xgi_data(
@@ -164,7 +165,10 @@ def _request_from_xgi_data(
     else:
         jsondata = request_json_from_url(url)
 
-    if "type" in jsondata and jsondata["type"] == "collection":
+    if "incidences" in jsondata:
+        H = from_hif_dict(H, nodetype=nodetype, edgetype=edgetype)
+        return cut_to_order(H, order=max_order)
+    if "type" in jsondata and jsondata["type"] != "collection":
         collection = {}
         for name, data in jsondata["datasets"].items():
             relpath = data["relative-path"]
