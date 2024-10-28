@@ -3,6 +3,7 @@
 import json
 from collections import defaultdict
 from os.path import dirname, join
+from warnings import warn
 
 from ..convert import from_hypergraph_dict, to_hypergraph_dict
 from ..core import Hypergraph, SimplicialComplex
@@ -36,6 +37,7 @@ def write_json(H, path, collection_name=""):
         to strings, e.g., node IDs "2" and 2.
 
     """
+    warn("This function is deprecated in favor of the 'write_hif()' function")
     if collection_name:
         collection_name += "_"
 
@@ -101,6 +103,7 @@ def read_json(path, nodetype=None, edgetype=None):
         If the JSON is not in a format that can be loaded.
 
     """
+    warn("This function is deprecated in favor of the 'read_hif()' function")
     with open(path) as file:
         jsondata = json.loads(file.read())
 
