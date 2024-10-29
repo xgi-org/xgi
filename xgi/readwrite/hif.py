@@ -11,7 +11,7 @@ from os.path import dirname, join
 from ..convert import from_hif_dict, to_hif_dict
 from ..exception import XGIError
 
-__all__ = ["write_hif", "read_hif"]
+__all__ = ["write_hif", "write_hif_collection", "read_hif", "read_hif_collection"]
 
 
 def write_hif(H, path):

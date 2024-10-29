@@ -9,7 +9,7 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 1. Download the dependencies in the developer [requirements file](/requirements/developer.txt).
 2. Add unit tests for features being added or bugs being fixed.
 3. Include any new method/function in the corresponding docs file.
-4. Run `pytest` to verify all unit tests pass.
+4. Run `pytest` to verify all unit tests pass. (If you want to see the overall coverage, run `pytest --cov=xgi tests` and to see the missing lines, run `pytest  --cov-report term-missing --cov=xgi tests`)
 5. Identify the unnecessary imports in the
    1. source code by running `pylint xgi/ --disable=all --enable W0611`
    2. notebooks by running `nbqa pylint . --disable=all --enable W0611`
