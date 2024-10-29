@@ -166,7 +166,9 @@ def _request_from_xgi_data(
 
     if "incidences" in jsondata:
         H = from_hif_dict(H, nodetype=nodetype, edgetype=edgetype)
-        return cut_to_order(H, order=max_order)
+        if max_order:
+            H = cut_to_order(H, order=max_order)
+        return H
 
     if "type" in jsondata and jsondata["type"] == "collection":
         collection = {}
