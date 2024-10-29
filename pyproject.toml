@@ -105,3 +105,17 @@ where = ["."]
 
 [tool.setuptools.dynamic.version]
 attr = "xgi.__version__"
+
+[tool.pytest.ini_options]
+# always run doctests
+addopts = "--doctest-modules --ignore=docs"
+
+# custom markers
+markers = [
+    "webtest: mark test as an online test.",
+    "slow: mark test as slow."
+]
+
+[tool.isort]
+skip = ["__init__.py", "benchmarks/env"]
+profile = "black"
