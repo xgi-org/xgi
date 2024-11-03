@@ -411,6 +411,7 @@ def h_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     See Also
     --------
     clique_eigenvector_centrality
+    z_eigenvector_tensor_centrality
 
     References
     ----------
