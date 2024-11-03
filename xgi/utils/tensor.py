@@ -16,13 +16,15 @@ __all__ = [
 ]
 
 
-def pairwise_incidence(edgedict):
+def pairwise_incidence(edgedict, max_size):
     """Create pairwise adjacency dictionary from hyperedge list dictionary
 
     Parameters
     ----------
     edgedict : dict
         edge IDs are keys, edges are values
+    max_size : int
+        the size of the largest edge in the hypergraph
 
     Returns
     -------
@@ -35,25 +37,51 @@ def pairwise_incidence(edgedict):
             pairs[(i, j)].add(e)
         for n in edge:
             pairs[(n, n)].add(e)
+
+        if len(edge) < max_size:
+            for n in edge:
+                pairs[(n, n)].add(e)
     return pairs
 
 
-def banerjee_coeff(l, r):
-    """Return the Banerjee alpha coefficient
+def banerjee_coeff(size, max_size):
+    r"""Return the Banerjee alpha coefficient
+
+    This coefficient measures the size of the set of edge blowups
+    defined in the corresponding references below. For example,
+    for the edge :math:`e=\{1, 3\}` in a rank 3 hypergraph, we have
+    the following blowup.
+
+    .. math::
+        \beta(e) = \{1, 1, 3\}, \{1, 3, 1\}, \{1, 3, 3\}, \{3, 1, 1\}, \{3, 1, 3\}, \{3, 3, 1\}
 
     Parameters
     ----------
-    l : int
+    size : int
         size of given hyperedge
-    r : int
+    max_size : int
         maximum hyperedge size
 
     Returns
     -------
     float
         the Banerjee coefficient
+
+    References
+    ----------
+    Anirban Banerjee, Arnab Char, and Bibhash Mondal,
+    "Spectra of general hypergraphs"
+    Linear Algebra and its Applications, **518**, 14-30 (2017),
+    https://doi.org/10.1016/j.laa.2016.12.022
+
+    Scalable Tensor Methods for Nonuniform Hypergraphs,
+    Sinan Aksoy, Ilya Amburg, Stephen Young,
+    https://doi.org/10.1137/23M1584472
     """
-    return sum(((-1) ** j) * binomial(l, j) * (l - j) ** r for j in range(l + 1))
+    return sum(
+        ((-1) ** j) * binomial(size, j) * (size - j) ** max_size
+        for j in range(size + 1)
+    )
 
 
 def get_gen_coef_subset_expansion(edge_values, node_value, r):
