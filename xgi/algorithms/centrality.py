@@ -17,11 +17,11 @@ from .properties import is_uniform
 __all__ = [
     "clique_eigenvector_centrality",
     "h_eigenvector_centrality",
-    "h_eigenvector_tensor_centrality",
-    "z_eigenvector_tensor_centrality",
+    "z_eigenvector_centrality",
     "node_edge_centrality",
     "line_vector_centrality",
     "katz_centrality",
+    "uniform_h_eigenvector_centrality",
 ]
 
 
@@ -64,99 +64,6 @@ def clique_eigenvector_centrality(H, tol=1e-6):
     # multiply by the sign to try and enforce positivity
     v = np.sign(v[0]) * v / norm(v, 1)
     return {node_dict[n]: v[n].item() for n in node_dict}
-
-
-def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
-    """Compute the H-eigenvector centrality of a uniform hypergraph.
-
-    Parameters
-    ----------
-    H : Hypergraph
-        The hypergraph of interest.
-    max_iter : int, optional
-        The maximum number of iterations before the algorithm terminates.
-        By default, 100.
-    tol : float > 0, optional
-        The desired L2 error in the centrality vector. By default, 1e-6.
-
-    Returns
-    -------
-    dict
-        Centrality, where keys are node IDs and values are centralities. The
-        centralities are 1-normalized.
-
-    Raises
-    ------
-    XGIError
-        If the hypergraph is not uniform.
-
-    See Also
-    --------
-    clique_eigenvector_centrality
-
-    References
-    ----------
-    Three Hypergraph Eigenvector Centralities,
-    Austin R. Benson,
-    https://doi.org/10.1137/18M1203031
-    """
-    # if there aren't any nodes, return an empty dict
-    if H.num_nodes == 0:
-        return dict()
-    # if the hypergraph is not connected,
-    # this metric doesn't make sense and should return nan.
-    if not is_connected(H):
-        return {n: np.nan for n in H.nodes}
-
-    m = is_uniform(H)
-    if not m:
-        raise XGIError("This method is not defined for non-uniform hypergraphs.")
-
-    new_H = convert_labels_to_integers(H, "old-label")
-
-    f = lambda v, m: np.power(v, 1.0 / m)  # noqa: E731
-    g = lambda v, x: np.prod(v[list(x)])  # noqa: E731
-
-    x = np.random.uniform(size=(new_H.num_nodes))
-    x = x / norm(x, 1)
-
-    for iter in range(max_iter):
-        new_x = apply(new_H, x, g)
-        new_x = f(new_x, m)
-        # multiply by the sign to try and enforce positivity
-        new_x = np.sign(new_x[0]) * new_x / norm(new_x, 1)
-        if norm(x - new_x) <= tol:
-            break
-        x = new_x.copy()
-    else:
-        warn("Iteration did not converge!")
-    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, new_x)}
-
-
-def apply(H, x, g=lambda v, e: np.sum(v[list(e)])):
-    """Apply a vector to the hypergraph given a function.
-
-    Parameters
-    ----------
-    H : Hypergraph
-        Hypergraph of interest.
-    x : 1D numpy array
-        1D vector
-    g : lambda function, optional
-        function to apply. By default, sum.
-
-    Returns
-    -------
-    1D numpy array
-        vector post application
-    """
-    new_x = np.zeros(H.num_nodes)
-    for edge in H.edges.members():
-        edge = list(edge)
-        # ordered permutations
-        for shift in range(len(edge)):
-            new_x[edge[shift]] += g(x, edge[shift + 1 :] + edge[:shift])
-    return new_x
 
 
 def node_edge_centrality(
@@ -213,13 +120,10 @@ def node_edge_centrality(
     Francesco Tudisco & Desmond J. Higham,
     https://doi.org/10.1038/s42005-021-00704-2
     """
-    # if there aren't any nodes or edges, return an empty dict
+    # if the hypergraph is not connected or is empty,
+    # this metric doesn't make sense and should return nan.
     if H.num_nodes == 0 or H.num_edges == 0 or not is_connected(H):
         return {n: np.nan for n in H.nodes}, {e: np.nan for e in H.edges}
-    # if the hypergraph is not connected,
-    # this metric doesn't make sense and should return nan.
-    # if not is_connected(H):
-    #     return {n: np.nan for n in H.nodes}, {e: np.nan for e in H.edges}
 
     n = H.num_nodes
     m = H.num_edges
@@ -234,9 +138,9 @@ def node_edge_centrality(
         u = np.multiply(x, g(I @ f(y)))
         v = np.multiply(y, psi(I.T @ phi(x)))
         # multiply by the sign to try and enforce positivity
-        new_x = np.sign(u[0]) * u / norm(u, 1)
-        new_y = np.sign(v[0]) * v / norm(v, 1)
 
+        new_x = np.sign(u[0].item()) * u / norm(u, 1)
+        new_y = np.sign(v[0].item()) * v / norm(v, 1)
         check = norm(new_x - x) + norm(new_y - y)
         if check < tol:
             break
@@ -244,8 +148,8 @@ def node_edge_centrality(
         y = new_y.copy()
     else:
         warn("Iteration did not converge!")
-    return {node_dict[n]: new_x[n] for n in node_dict}, {
-        edge_dict[e]: new_y[e] for e in edge_dict
+    return {node_dict[n]: x[n].item() for n in node_dict}, {
+        edge_dict[e]: y[e].item() for e in edge_dict
     }
 
 
@@ -389,7 +293,7 @@ def katz_centrality(H, cutoff=100):
     return {nodedict[idx]: c[idx] for idx in nodedict}
 
 
-def h_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
+def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     """Compute the H-eigenvector centrality of a hypergraph.
 
     Parameters
@@ -411,7 +315,7 @@ def h_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     See Also
     --------
     clique_eigenvector_centrality
-    z_eigenvector_tensor_centrality
+    z_eigenvector_centrality
 
     References
     ----------
@@ -451,8 +355,7 @@ def h_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
         x = y_scaled / norm(y_scaled, 1)
         y = np.abs(np.array(ttsv1(node_dict, edge_dict, r, x)))
         s = [a / (b ** (r - 1)) for a, b in zip(y, x)]
-        converged = (np.max(s) - np.min(s)) / np.min(s) < tol
-        if converged:
+        if (np.max(s) - np.min(s)) / np.min(s) < tol:
             break
         it += 1
     else:
@@ -463,7 +366,7 @@ def h_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     }
 
 
-def z_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
+def z_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     """Compute the Z-eigenvector centrality of a hypergraph.
 
     Parameters
@@ -490,7 +393,7 @@ def z_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     See Also
     --------
     clique_eigenvector_centrality
-    h_eigenvector_tensor_centrality
+    h_eigenvector_centrality
 
     References
     ----------
@@ -512,8 +415,9 @@ def z_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     if not is_connected(H):
         return {n: np.nan for n in H.nodes}
     new_H = convert_labels_to_integers(H, "old-label")
+    max_size = new_H.edges.size.max()
     edge_dict = new_H.edges.members(dtype=dict)
-    pairs_dict = pairwise_incidence(edge_dict)
+    pairs_dict = pairwise_incidence(edge_dict, max_size)
 
     r = H.edges.size.max()
 
@@ -536,8 +440,7 @@ def z_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
     while it < max_iter and not converged:
         x_new = x + h * f(x)
         s = np.array([a / b for a, b in zip(x_new, x)])
-        converged = (np.max(s) - np.min(s)) / np.min(s) < tol
-        if converged:
+        if (np.max(s) - np.min(s)) / np.min(s) < tol:
             break
         x = x_new
         it += 1
@@ -547,3 +450,96 @@ def z_eigenvector_tensor_centrality(H, max_iter=100, tol=1e-6):
         new_H.nodes[n]["old-label"]: c.item()
         for n, c in zip(new_H.nodes, x / norm(x, 1))
     }
+
+
+def uniform_h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
+    """Compute the H-eigenvector centrality of a uniform hypergraph.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        The hypergraph of interest.
+    max_iter : int, optional
+        The maximum number of iterations before the algorithm terminates.
+        By default, 100.
+    tol : float > 0, optional
+        The desired L2 error in the centrality vector. By default, 1e-6.
+
+    Returns
+    -------
+    dict
+        Centrality, where keys are node IDs and values are centralities. The
+        centralities are 1-normalized.
+
+    Raises
+    ------
+    XGIError
+        If the hypergraph is not uniform.
+
+    See Also
+    --------
+    clique_eigenvector_centrality
+
+    References
+    ----------
+    Three Hypergraph Eigenvector Centralities,
+    Austin R. Benson,
+    https://doi.org/10.1137/18M1203031
+    """
+    # if there aren't any nodes, return an empty dict
+    if H.num_nodes == 0:
+        return dict()
+    # if the hypergraph is not connected,
+    # this metric doesn't make sense and should return nan.
+    if not is_connected(H):
+        return {n: np.nan for n in H.nodes}
+
+    m = is_uniform(H)
+    if not m:
+        raise XGIError("This method is not defined for non-uniform hypergraphs.")
+
+    new_H = convert_labels_to_integers(H, "old-label")
+
+    f = lambda v, m: np.power(v, 1.0 / m)  # noqa: E731
+    g = lambda v, x: np.prod(v[list(x)])  # noqa: E731
+
+    x = np.random.uniform(size=(new_H.num_nodes))
+    x = x / norm(x, 1)
+
+    for iter in range(max_iter):
+        x_new = apply(new_H, x, g)
+        x_new = f(x_new, m)
+        # multiply by the sign to try and enforce positivity
+        x_new = np.sign(x_new[0]) * x_new / norm(x_new, 1)
+        if norm(x - x_new) <= tol:
+            break
+        x = x_new.copy()
+    else:
+        warn("Iteration did not converge!")
+    return {new_H.nodes[n]["old-label"]: c for n, c in zip(new_H.nodes, x_new)}
+
+
+def apply(H, x, g=lambda v, e: np.sum(v[list(e)])):
+    """Apply a vector to the hypergraph given a function.
+
+    Parameters
+    ----------
+    H : Hypergraph
+        Hypergraph of interest.
+    x : 1D numpy array
+        1D vector
+    g : lambda function, optional
+        function to apply. By default, sum.
+
+    Returns
+    -------
+    1D numpy array
+        vector post application
+    """
+    new_x = np.zeros(H.num_nodes)
+    for edge in H.edges.members():
+        edge = list(edge)
+        # ordered permutations
+        for shift in range(len(edge)):
+            new_x[edge[shift]] += g(x, edge[shift + 1 :] + edge[:shift])
+    return new_x

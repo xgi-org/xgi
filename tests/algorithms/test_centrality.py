@@ -37,38 +37,40 @@ def test_clique_eigenvector_centrality():
 
 
 @pytest.mark.slow
-def test_h_eigenvector_centrality():
+def test_uniform_h_eigenvector_centrality():
     # test empty hypergraph
     H = xgi.Hypergraph()
-    c = xgi.h_eigenvector_centrality(H)
+    c = xgi.uniform_h_eigenvector_centrality(H)
     assert c == dict()
 
     # Test no edges
     H.add_nodes_from([0, 1, 2])
-    hec = xgi.h_eigenvector_centrality(H)
+    hec = xgi.uniform_h_eigenvector_centrality(H)
     for i in hec:
         assert np.isnan(hec[i])
 
     # test disconnected
     H.add_edge([0, 1])
-    hec = xgi.h_eigenvector_centrality(H)
+    hec = xgi.uniform_h_eigenvector_centrality(H)
     assert set(hec) == {0, 1, 2}
     for i in hec:
         assert np.isnan(hec[i])
 
     H = xgi.sunflower(3, 1, 5)
-    c = H.nodes.h_eigenvector_centrality(max_iter=1000).asnumpy()
+    c = xgi.uniform_h_eigenvector_centrality(H, max_iter=1000)
+    c = np.array(list(c.values()))
     assert norm(c[1:] - c[1]) < 1e-4
     assert abs(c[0] / c[1] - _ratio(3, 5, kind="HEC")) < 1e-4
 
     H = xgi.sunflower(5, 1, 7)
-    c = H.nodes.h_eigenvector_centrality(max_iter=1000).asnumpy()
+    c = xgi.uniform_h_eigenvector_centrality(H, max_iter=1000)
+    c = np.array(list(c.values()))
     assert norm(c[1:] - c[1]) < 1e-4
     assert abs(c[0] / c[1] - _ratio(5, 7, kind="HEC")) < 1e-4
 
     with pytest.raises(XGIError):
         H = xgi.Hypergraph([[1, 2], [2, 3, 4]])
-        H.nodes.h_eigenvector_centrality.asnumpy()
+        xgi.uniform_h_eigenvector_centrality(H)
 
 
 def test_node_edge_centrality():
@@ -168,40 +170,40 @@ def test_katz_centrality(edgelist1, edgelist8):
 
 
 @pytest.mark.slow
-def test_h_eigenvector_tensor_centrality():
+def test_h_eigenvector_centrality():
     # test empty hypergraph
     H = xgi.Hypergraph()
-    c = xgi.h_eigenvector_tensor_centrality(H)
+    c = xgi.h_eigenvector_centrality(H)
     assert c == dict()
 
     # Test no edges
     H.add_nodes_from([0, 1, 2])
-    hec = xgi.h_eigenvector_tensor_centrality(H)
+    hec = xgi.h_eigenvector_centrality(H)
     for i in hec:
         assert np.isnan(hec[i])
 
     # test disconnected
     H.add_edge([0, 1])
-    hec = xgi.h_eigenvector_tensor_centrality(H)
+    hec = xgi.h_eigenvector_centrality(H)
     assert set(hec) == {0, 1, 2}
     for i in hec:
         assert np.isnan(hec[i])
 
     H = xgi.sunflower(3, 1, 5)
-    c = xgi.h_eigenvector_tensor_centrality(H, max_iter=1000)
+    c = xgi.h_eigenvector_centrality(H, max_iter=1000)
     assert (
         max([abs(c[0] / c[i + 1] - _ratio(3, 5, kind="HEC")) for i in range(12)]) < 1e-4
     )
 
     H = xgi.sunflower(5, 1, 7)
     print(H.num_nodes)
-    c = xgi.h_eigenvector_tensor_centrality(H, max_iter=1000)
+    c = xgi.h_eigenvector_centrality(H, max_iter=1000)
     assert (
         max([abs(c[0] / c[i + 1] - _ratio(5, 7, kind="HEC")) for i in range(29)]) < 1e-4
     )
 
     H = xgi.Hypergraph([[1, 2], [2, 3, 4]])
-    c = xgi.h_eigenvector_tensor_centrality(H)
+    c = xgi.h_eigenvector_centrality(H)
     true_c = {
         1: 0.24458437592396465,
         2: 0.3014043407819482,
@@ -213,40 +215,40 @@ def test_h_eigenvector_tensor_centrality():
 
 
 @pytest.mark.slow
-def test_z_eigenvector_tensor_centrality():
+def test_z_eigenvector_centrality():
     # test empty hypergraph
     H = xgi.Hypergraph()
-    c = xgi.z_eigenvector_tensor_centrality(H)
+    c = xgi.z_eigenvector_centrality(H)
     assert c == dict()
 
     # Test no edges
     H.add_nodes_from([0, 1, 2])
-    hec = xgi.z_eigenvector_tensor_centrality(H)
+    hec = xgi.z_eigenvector_centrality(H)
     for i in hec:
         assert np.isnan(hec[i])
 
     # test disconnected
     H.add_edge([0, 1])
-    hec = xgi.z_eigenvector_tensor_centrality(H)
+    hec = xgi.z_eigenvector_centrality(H)
     assert set(hec) == {0, 1, 2}
     for i in hec:
         assert np.isnan(hec[i])
 
     H = xgi.sunflower(3, 1, 5)
-    c = xgi.z_eigenvector_tensor_centrality(H, max_iter=1000)
+    c = H.nodes.z_eigenvector_centrality(max_iter=1000).asdict()
     assert (
         max([abs(c[0] / c[i + 1] - _ratio(3, 5, kind="ZEC")) for i in range(12)]) < 1e-4
     )
 
     H = xgi.sunflower(5, 1, 7)
     print(H.num_nodes)
-    c = xgi.z_eigenvector_tensor_centrality(H, max_iter=1000)
+    c = xgi.z_eigenvector_centrality(H, max_iter=1000)
     assert (
         max([abs(c[0] / c[i + 1] - _ratio(5, 7, kind="ZEC")) for i in range(29)]) < 1e-4
     )
 
     H = xgi.Hypergraph([[1, 2], [2, 3, 4]])
-    c = xgi.z_eigenvector_tensor_centrality(H, max_iter=10000)
+    c = xgi.z_eigenvector_centrality(H, max_iter=10000)
     true_c = {
         1: 0.45497398635982933,
         2: 0.45900452108663403,
