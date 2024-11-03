@@ -31,6 +31,7 @@ __all__ = [
     "two_node_clustering_coefficient",
     "clique_eigenvector_centrality",
     "h_eigenvector_centrality",
+    "z_eigenvector_centrality",
     "node_edge_centrality",
     "katz_centrality",
 ]
@@ -347,6 +348,9 @@ def clique_eigenvector_centrality(net, bunch, tol=1e-6):
 def h_eigenvector_centrality(net, bunch, max_iter=10, tol=1e-6):
     """Compute the H-eigenvector centrality of a hypergraph.
 
+    The H-eigenvector terminology comes from Qi (2005) which
+    defines a "tensor H-eigenpair".
+
     Parameters
     ----------
     net : xgi.Hypergraph
@@ -368,8 +372,54 @@ def h_eigenvector_centrality(net, bunch, max_iter=10, tol=1e-6):
     Three Hypergraph Eigenvector Centralities,
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
+
+    Scalable Tensor Methods for Nonuniform Hypergraphs,
+    Sinan Aksoy, Ilya Amburg, Stephen Young,
+    https://doi.org/10.1137/23M1584472
+
+    Liqun Qi
+    "Eigenvalues of a real supersymmetric tensor"
+    Journal of Symbolic Computation, **40**, *6* (2005).
+    https://doi.org/10.1016/j.jsc.2005.05.007.
     """
     c = xgi.h_eigenvector_centrality(net, max_iter, tol)
+    return {n: c[n] for n in c if n in bunch}
+
+
+def z_eigenvector_centrality(net, bunch, max_iter=10, tol=1e-6):
+    r"""Compute the Z-eigenvector centrality of a hypergraph.
+
+    The Z-eigenvector terminology comes from Qi (2005) which
+    defines a "tensor Z-eigenpair".
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The hypergraph of interest.
+    bunch : Iterable
+        Nodes in `net`.
+    max_iter : int, default: 10
+        The maximum number of iterations before the algorithm terminates.
+    tol : float > 0, default: 1e-6
+        The desired L2 error in the centrality vector.
+
+    Returns
+    -------
+    dict
+        Centrality, where keys are node IDs and values are centralities.
+
+    References
+    ----------
+    Three Hypergraph Eigenvector Centralities,
+    Austin R. Benson,
+    https://doi.org/10.1137/18M1203031
+
+    Liqun Qi
+    "Eigenvalues of a real supersymmetric tensor"
+    Journal of Symbolic Computation, **40**, *6* (2005).
+    https://doi.org/10.1016/j.jsc.2005.05.007.
+    """
+    c = xgi.z_eigenvector_centrality(net, max_iter, tol)
     return {n: c[n] for n in c if n in bunch}
 
 
@@ -383,7 +433,7 @@ def node_edge_centrality(
     max_iter=100,
     tol=1e-6,
 ):
-    """Computes node centralities.
+    """Computes nonlinear node-edge centralities.
 
     Parameters
     ----------
@@ -436,7 +486,7 @@ def node_edge_centrality(
 
 
 def katz_centrality(net, bunch, cutoff=100):
-    """Compute the H-eigenvector centrality of a hypergraph.
+    r"""Compute the Katz centrality of a hypergraph.
 
     Parameters
     ----------

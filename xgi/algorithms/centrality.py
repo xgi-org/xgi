@@ -296,6 +296,9 @@ def katz_centrality(H, cutoff=100):
 def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     """Compute the H-eigenvector centrality of a hypergraph.
 
+    The H-eigenvector terminology comes from Qi (2005) which
+    defines a "tensor H-eigenpair".
+
     Parameters
     ----------
     H : Hypergraph
@@ -330,6 +333,11 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     Computing tensor Z-eigenvectors with dynamical systems
     Austin R. Benson and David F. Gleich
     https://doi.org/10.1137/18M1229584
+
+    Liqun Qi
+    "Eigenvalues of a real supersymmetric tensor"
+    Journal of Symbolic Computation, **40**, *6* (2005).
+    https://doi.org/10.1016/j.jsc.2005.05.007.
     """
     # if there aren't any nodes, return an empty dict
     if H.num_nodes == 0:
@@ -369,6 +377,9 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
 def z_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     """Compute the Z-eigenvector centrality of a hypergraph.
 
+    The Z-eigenvector terminology comes from Qi (2005) which
+    defines a "tensor Z-eigenpair".
+
     Parameters
     ----------
     H : Hypergraph
@@ -404,6 +415,11 @@ def z_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     Three Hypergraph Eigenvector Centralities,
     Austin R. Benson,
     https://doi.org/10.1137/18M1203031
+
+    Liqun Qi
+    "Eigenvalues of a real supersymmetric tensor"
+    Journal of Symbolic Computation, **40**, *6* (2005).
+    https://doi.org/10.1016/j.jsc.2005.05.007.
     """
     # if there aren't any nodes, return an empty dict
     n = H.num_nodes
