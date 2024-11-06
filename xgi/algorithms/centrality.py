@@ -44,6 +44,7 @@ def clique_eigenvector_centrality(H, tol=1e-6):
     See Also
     --------
     h_eigenvector_centrality
+    z_eigenvector_centrality
 
     References
     ----------
@@ -319,6 +320,7 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     --------
     clique_eigenvector_centrality
     z_eigenvector_centrality
+    uniform_h_eigenvector_centrality
 
     References
     ----------
