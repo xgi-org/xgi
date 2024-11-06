@@ -134,13 +134,13 @@ def node_edge_centrality(
 
     check = np.inf
 
-    for iter in range(max_iter):
-        u = np.multiply(x, g(I @ f(y)))
-        v = np.multiply(y, psi(I.T @ phi(x)))
+    for it in range(max_iter):
+        u = (x * g(I @ f(y))) ** 0.5
+        v = (y * psi(I.T @ phi(x))) ** 0.5
         # multiply by the sign to try and enforce positivity
+        new_x = np.sign(u[0]) * u / norm(u, 1)
+        new_y = np.sign(v[0]) * v / norm(v, 1)
 
-        new_x = np.sign(u[0].item()) * u / norm(u, 1)
-        new_y = np.sign(v[0].item()) * v / norm(v, 1)
         check = norm(new_x - x) + norm(new_y - y)
         if check < tol:
             break
@@ -148,8 +148,8 @@ def node_edge_centrality(
         y = new_y.copy()
     else:
         warn("Iteration did not converge!")
-    return {node_dict[n]: x[n].item() for n in node_dict}, {
-        edge_dict[e]: y[e].item() for e in edge_dict
+    return {node_dict[n]: new_x[n] for n in node_dict}, {
+        edge_dict[e]: new_y[e] for e in edge_dict
     }
 
 
