@@ -17,7 +17,7 @@ __all__ = [
 
 
 def pairwise_incidence(edgedict, max_size):
-    """Create pairwise adjacency dictionary from hyperedge list dictionary
+    """Create pairwise incidence dictionary from hyperedge list dictionary
 
     Parameters
     ----------
