@@ -16,12 +16,12 @@ __all__ = [
 ]
 
 
-def pairwise_incidence(edgedict, max_size):
+def pairwise_incidence(edge_dict, max_size):
     """Create pairwise incidence dictionary from hyperedge list dictionary
 
     Parameters
     ----------
-    edgedict : dict
+    edge_dict : dict
         edge IDs are keys, edges are values
     max_size : int
         the size of the largest edge in the hypergraph
@@ -32,7 +32,7 @@ def pairwise_incidence(edgedict, max_size):
         a dictionary with node pairs as keys and the hyperedges they appear in as values
     """
     pairs = defaultdict(set)
-    for e, edge in edgedict.items():
+    for e, edge in edge_dict.items():
         for i, j in combinations(sorted(edge), 2):
             pairs[(i, j)].add(e)
         for n in edge:
@@ -84,17 +84,17 @@ def banerjee_coeff(size, max_size):
     )
 
 
-def ttsv1(nodedict, edgedict, r, a):
+def ttsv1(node_dict, edge_dict, r, a):
     """Computes the tensor times same vector in all modes but 1.
 
     This method uses generating functions as described in the corresponding reference.
 
     Parameters
     ----------
-    nodedict : dict
+    node_dict : dict
         A dictionary with nodes as keys and hyperedges they appear in
         as values.
-    edgedict : dict
+    edge_dict : dict
         A dictionary with edges as keys and nodes which are members as
         values.
     r : int
@@ -117,15 +117,15 @@ def ttsv1(nodedict, edgedict, r, a):
     Sinan Aksoy, Ilya Amburg, Stephen Young,
     https://doi.org/10.1137/23M1584472
     """
-    n = len(nodedict)
+    n = len(node_dict)
     s = np.zeros(n)
     r_minus_1_factorial = factorial(r - 1)
-    for node, edges in nodedict.items():
+    for node, edges in node_dict.items():
         c = 0
         for e in edges:
-            l = len(edgedict[e])
+            l = len(edge_dict[e])
             alpha = banerjee_coeff(l, r)
-            edge_without_node = [v for v in edgedict[e] if v != node]
+            edge_without_node = [v for v in edge_dict[e] if v != node]
             if l == r:
                 gen_fun_coef = prod(a[edge_without_node])
             elif 2 ** (l - 1) < r * (l - 1):
@@ -141,15 +141,15 @@ def ttsv1(nodedict, edgedict, r, a):
     return s
 
 
-def ttsv2(pairdict, edgedict, r, a, n):
+def ttsv2(pair_dict, edge_dict, r, a, n):
     """Computes the tensor times same vector in all modes but 2.
 
     Parameters
     ----------
-    pairdict : dict
+    pair_dict : dict
         A dictionary with node pairs as keys and hyperedges they appear in
         as values.
-    edgedict : dict
+    edge_dict : dict
         A dictionary with edges as keys and nodes which are members as
         values.
     r : int
@@ -177,12 +177,12 @@ def ttsv2(pairdict, edgedict, r, a, n):
     """
     s = {}
     r_minus_2_factorial = factorial(r - 2)
-    for (v1, v2), edges in pairdict.items():
+    for (v1, v2), edges in pair_dict.items():
         c = 0
         for e in edges:
-            l = len(edgedict[e])
+            l = len(edge_dict[e])
             alpha = banerjee_coeff(l, r)
-            edge_without_node = [v for v in edgedict[e] if v != v1 and v != v2]
+            edge_without_node = [v for v in edge_dict[e] if v != v1 and v != v2]
             if v1 != v2:
                 if 2 ** (l - 2) < (r - 2) * (l - 2):
                     gen_fun_coef = _get_gen_coef_subset_expansion(
@@ -193,7 +193,7 @@ def ttsv2(pairdict, edgedict, r, a, n):
                     for i in range(1, r - 1):
                         coefs.append(coefs[-1] * (a[v1] + a[v2]) / i)
                     coefs = np.array(coefs)
-                    for u in edgedict[e]:
+                    for u in edge_dict[e]:
                         if u != v1 and u != v2:
                             _coefs = [1]
                             for i in range(1, r - l + 2):
@@ -212,7 +212,7 @@ def ttsv2(pairdict, edgedict, r, a, n):
                     for i in range(1, r - 1):
                         coefs.append(coefs[-1] * (a[v1]) / i)
                     coefs = np.array(coefs)
-                    for u in edgedict[e]:
+                    for u in edge_dict[e]:
                         if u != v1 and u != v2:
                             _coefs = [1]
                             for i in range(1, r - l + 1):
@@ -248,7 +248,6 @@ def _get_gen_coef_subset_expansion(edge_values, node_value, r):
             subset_lengths.append(subset_lengths[t] + 1)
     for i in range(len(subset_lengths)):
         subset_lengths[i] = (-1) ** (k - subset_lengths[i])
-        # subset_lengths[i] = -1 if (k - subset_lengths[i]) % 2 == 1 else 1
     total = sum(
         [
             (node_value + subset_vector[i]) ** r * subset_lengths[i]
