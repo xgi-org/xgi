@@ -72,6 +72,11 @@ def test_uniform_h_eigenvector_centrality():
         H = xgi.Hypergraph([[1, 2], [2, 3, 4]])
         xgi.uniform_h_eigenvector_centrality(H)
 
+    # non-convergence
+    with pytest.raises(XGIError):
+        H = xgi.Hypergraph([[1, 2], [2, 3, 4]])
+        xgi.uniform_h_eigenvector_centrality(H, max_iter=2)
+
 
 def test_node_edge_centrality():
     # test empty hypergraph
