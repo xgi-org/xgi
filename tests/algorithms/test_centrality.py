@@ -213,6 +213,11 @@ def test_h_eigenvector_centrality():
     for i in c:
         assert np.allclose(c[i], true_c[i])
 
+    H = xgi.load_xgi_data("email-enron")
+    H.cleanup(relabel=False)
+    c = xgi.h_eigenvector_centrality(H)
+    assert sorted(c) == sorted(H.nodes)
+
 
 @pytest.mark.slow
 def test_z_eigenvector_centrality():
