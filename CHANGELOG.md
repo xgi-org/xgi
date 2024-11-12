@@ -4,7 +4,7 @@
 * Added nonuniform centralities and fixed the `node_edge_centrality` method [#600](https://github.com/xgi-org/xgi/pull/600) (@nwlandry).
 * Fixed Issue [#615](https://github.com/xgi-org/xgi/issues/615). Added a docstring to the `watts_strogatz_hypergraph` method [#618](https://github.com/xgi-org/xgi/pull/618) (@nwlandry).
 * Made the `HOW_TO_CONTRIBUTE` guide more friendly to new contributors and accurate to our current release process [#614](https://github.com/xgi-org/xgi/pull/614) (@nwlandry).
-* Fixed the clustering method [#608](https://github.com/xgi-org/xgi/pull/608) (@cosimoagostinelli).
+* Fixed the `local_clustering_coefficient` method [#608](https://github.com/xgi-org/xgi/pull/608) (@cosimoagostinelli).
 * Created an initial sphinx-gallery [#609](https://github.com/xgi-org/xgi/pull/609) (@maximelucas).
 * Changed aggregate stats type from numpy ints and floats to Python ints and floats and added `unique` method. [#603](https://github.com/xgi-org/xgi/pull/603) (@nwlandry).
 
