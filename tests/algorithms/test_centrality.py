@@ -113,8 +113,9 @@ def test_node_edge_centrality():
     assert abs(c[0] - c[1]) < 1e-6
 
     H = xgi.load_xgi_data("email-enron").cleanup()
-    c = H.edges.node_edge_centrality.asnumpy()
-    assert len(c) == H.num_nodes
+    c = xgi.node_edge_centrality(H)
+    assert len(c[0]) == H.num_nodes
+    assert len(c[1]) == H.num_edges
 
 
 def test_line_vector_centrality():
