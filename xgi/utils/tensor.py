@@ -238,7 +238,35 @@ def ttsv2(pair_dict, edge_dict, r, a, n):
 
 ## Helper functions for the tensor methods.
 
+
 def _get_gen_coef_subset_expansion(edge_values, node_value, r):
+    """Computes the generating funciton coefficient of order r using subset expansion.
+
+    Parameters
+    ----------
+    edge_values : NumPy array
+        Array of values from the `a` vector corresponding to
+        nodes in the hyperedge.
+    node_value : float
+        The value in a corresponding to the node being processed.
+    r : int
+        Desired order to get coefficient for.
+
+    Returns
+    -------
+    float
+        Generating function coefficient of order r.
+
+    See Also
+    --------
+    _get_gen_coef_fft_fast_array
+
+    References
+    ----------
+    Scalable Tensor Methods for Nonuniform Hypergraphs,
+    Sinan Aksoy, Ilya Amburg, Stephen Young,
+    https://doi.org/10.1137/23M1584472
+    """
     k = len(edge_values)
     subset_vector = [0]
     subset_lengths = [0]
@@ -258,6 +286,37 @@ def _get_gen_coef_subset_expansion(edge_values, node_value, r):
 
 
 def _get_gen_coef_fft_fast_array(edge_without_node, a, node, l, r):
+    """Computes the generating funciton coefficient of order r using the Fast Fourier Transform.
+
+    Parameters
+    ----------
+    edge_without_node : list
+        Array of node indices corresponding to
+        all nodes in the hyperedge but the one being processed.
+    a : NumPy array
+        The vector to multiply the tensor by.
+    node : int
+        The index of the node being processed.
+    l : int
+        Number of nodes in the hyperedge.
+    r : int
+        Desired order to get coefficient for.
+
+    Returns
+    -------
+    float
+        Generating function coefficient of order r.
+
+    See Also
+    --------
+    _get_gen_coef_subset_expansion
+
+    References
+    ----------
+    Scalable Tensor Methods for Nonuniform Hypergraphs,
+    Sinan Aksoy, Ilya Amburg, Stephen Young,
+    https://doi.org/10.1137/23M1584472
+    """
     coefs = [1]
     for i in range(1, r):
         coefs.append(coefs[-1] * a[node] / i)
@@ -270,4 +329,5 @@ def _get_gen_coef_fft_fast_array(edge_without_node, a, node, l, r):
         _coefs[0] = 0
         coefs = convolve(coefs, _coefs)[0:r]
     gen_fun_coef = coefs[-1]
+    print("hi")
     return gen_fun_coef
