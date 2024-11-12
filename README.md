@@ -39,7 +39,7 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for higher-
 * Represent **hypergraphs, directed hypergraphs, and simplicial complexes** with efficient and flexible data structures
 * Analyze higher-order networks with **measures and algorithms**
 * **Manipulate node and edge statistics** in a flexible and customizable way.
-* Draw higher-order networks in a variety of **visually striking ways** (See our [gallery](https://xgi.readthedocs.io/en/stable/gallery.html) for several examples.)
+* Draw higher-order networks in a variety of **visually striking ways** (See our [gallery](https://xgi.readthedocs.io/en/stable/auto_examples/index.html) for several examples.)
 
 ## Installation<a id="installation"></a>
 XGI runs on Python 3.9 or higher.
