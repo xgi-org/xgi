@@ -59,23 +59,6 @@ User Guides
             To the in-depth tutorials
 
 .. grid::
-
-    .. grid-item-card:: 
-    	:text-align: center
-
-    	Cookbook
-    	^^^
-
-    	Recipes to solve specific tasks in a few lines
-
-    	+++
-
-        .. button-ref:: api/tutorials/recipes
-            :expand:
-            :color: secondary
-            :click-parent:
-
-            To the cookbook
 	
     .. grid-item-card:: 
     	:text-align: center
@@ -92,6 +75,22 @@ User Guides
             :click-parent:
 
             To the case studies
+    
+    .. grid-item-card:: 
+    	:text-align: center
 
+    	Cookbook
+    	^^^
+
+    	Recipes to solve specific tasks in a few lines
+
+    	+++
+
+        .. button-ref:: api/tutorials/recipes
+            :expand:
+            :color: secondary
+            :click-parent:
+
+            To the cookbook
 
 For all specifications and options of a particular function, or to explore all existing functions, see the `API Reference <reference.html>`_.

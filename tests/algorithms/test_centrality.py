@@ -28,47 +28,54 @@ def test_clique_eigenvector_centrality():
     H = xgi.sunflower(3, 1, 3)
     c = H.nodes.clique_eigenvector_centrality.asnumpy()
     assert norm(c[1:] - c[1]) < 1e-4
-    assert abs(c[0] / c[1] - ratio(3, 3, kind="CEC")) < 1e-4
+    assert abs(c[0] / c[1] - _ratio(3, 3, kind="CEC")) < 1e-4
 
     H = xgi.sunflower(5, 1, 7)
     c = H.nodes.clique_eigenvector_centrality.asnumpy()
     assert norm(c[1:] - c[1]) < 1e-4
-    assert abs(c[0] / c[1] - ratio(5, 7, kind="CEC")) < 1e-4
+    assert abs(c[0] / c[1] - _ratio(5, 7, kind="CEC")) < 1e-4
 
 
 @pytest.mark.slow
-def test_h_eigenvector_centrality():
+def test_uniform_h_eigenvector_centrality():
     # test empty hypergraph
     H = xgi.Hypergraph()
-    c = xgi.h_eigenvector_centrality(H)
+    c = xgi.uniform_h_eigenvector_centrality(H)
     assert c == dict()
 
     # Test no edges
     H.add_nodes_from([0, 1, 2])
-    hec = xgi.h_eigenvector_centrality(H)
+    hec = xgi.uniform_h_eigenvector_centrality(H)
     for i in hec:
         assert np.isnan(hec[i])
 
     # test disconnected
     H.add_edge([0, 1])
-    hec = xgi.h_eigenvector_centrality(H)
+    hec = xgi.uniform_h_eigenvector_centrality(H)
     assert set(hec) == {0, 1, 2}
     for i in hec:
         assert np.isnan(hec[i])
 
     H = xgi.sunflower(3, 1, 5)
-    c = H.nodes.h_eigenvector_centrality(max_iter=1000).asnumpy()
+    c = xgi.uniform_h_eigenvector_centrality(H, max_iter=1000)
+    c = np.array(list(c.values()))
     assert norm(c[1:] - c[1]) < 1e-4
-    assert abs(c[0] / c[1] - ratio(3, 5, kind="HEC")) < 1e-4
+    assert abs(c[0] / c[1] - _ratio(3, 5, kind="HEC")) < 1e-4
 
     H = xgi.sunflower(5, 1, 7)
-    c = H.nodes.h_eigenvector_centrality(max_iter=1000).asnumpy()
+    c = xgi.uniform_h_eigenvector_centrality(H, max_iter=1000)
+    c = np.array(list(c.values()))
     assert norm(c[1:] - c[1]) < 1e-4
-    assert abs(c[0] / c[1] - ratio(5, 7, kind="HEC")) < 1e-4
+    assert abs(c[0] / c[1] - _ratio(5, 7, kind="HEC")) < 1e-4
 
     with pytest.raises(XGIError):
         H = xgi.Hypergraph([[1, 2], [2, 3, 4]])
-        H.nodes.h_eigenvector_centrality.asnumpy()
+        xgi.uniform_h_eigenvector_centrality(H)
+
+    # non-convergence
+    with pytest.raises(XGIError):
+        H = xgi.Hypergraph([[1, 2], [2, 3, 4]])
+        xgi.uniform_h_eigenvector_centrality(H, max_iter=2)
 
 
 def test_node_edge_centrality():
@@ -105,6 +112,11 @@ def test_node_edge_centrality():
     c = H.edges.node_edge_centrality.asnumpy()
     assert abs(c[0] - c[1]) < 1e-6
 
+    H = xgi.load_xgi_data("email-enron").cleanup()
+    c = xgi.node_edge_centrality(H)
+    assert len(c[0]) == H.num_nodes
+    assert len(c[1]) == H.num_edges
+
 
 def test_line_vector_centrality():
     H = xgi.Hypergraph()
@@ -126,36 +138,6 @@ def test_line_vector_centrality():
     with pytest.raises(Exception):
         H = xgi.Hypergraph([["a", "b"], ["b", "c"], ["a", "c"]])
         xgi.line_vector_centrality(H)
-
-
-def ratio(r, m, kind="CEC"):
-    """Generate the ratio between largest and second largest centralities
-    for the sunflower hypergraph with one core node.
-
-    Parameters
-    ----------
-    r : int
-        Number of petals
-    m : int
-        Size of edges
-    kind : str, default: "CEC"
-        "CEC" or "HEC"
-
-    Returns
-    -------
-    float
-        Ratio
-
-    References
-    ----------
-    Three Hypergraph Eigenvector Centralities,
-    Austin R. Benson,
-    https://doi.org/10.1137/18M1203031
-    """
-    if kind == "CEC":
-        return 2 * r * (m - 1) / (np.sqrt(m**2 + 4 * (m - 1) * (r - 1)) + m - 2)
-    elif kind == "HEC":
-        return r ** (1.0 / m)
 
 
 def test_katz_centrality(edgelist1, edgelist8):
@@ -195,3 +177,130 @@ def test_katz_centrality(edgelist1, edgelist8):
     }
     for n in c:
         assert np.allclose(c[n], expected_c[n])
+
+
+@pytest.mark.slow
+def test_h_eigenvector_centrality():
+    # test empty hypergraph
+    H = xgi.Hypergraph()
+    c = xgi.h_eigenvector_centrality(H)
+    assert c == dict()
+
+    # Test no edges
+    H.add_nodes_from([0, 1, 2])
+    hec = xgi.h_eigenvector_centrality(H)
+    for i in hec:
+        assert np.isnan(hec[i])
+
+    # test disconnected
+    H.add_edge([0, 1])
+    hec = xgi.h_eigenvector_centrality(H)
+    assert set(hec) == {0, 1, 2}
+    for i in hec:
+        assert np.isnan(hec[i])
+
+    H = xgi.sunflower(3, 1, 5)
+    c = xgi.h_eigenvector_centrality(H, max_iter=1000)
+    assert (
+        max([abs(c[0] / c[i + 1] - _ratio(3, 5, kind="HEC")) for i in range(12)]) < 1e-4
+    )
+
+    H = xgi.sunflower(5, 1, 7)
+    print(H.num_nodes)
+    c = xgi.h_eigenvector_centrality(H, max_iter=1000)
+    assert (
+        max([abs(c[0] / c[i + 1] - _ratio(5, 7, kind="HEC")) for i in range(29)]) < 1e-4
+    )
+
+    H = xgi.Hypergraph([[1, 2], [2, 3, 4]])
+    c = xgi.h_eigenvector_centrality(H)
+    true_c = {
+        1: 0.24458437592396465,
+        2: 0.3014043407819482,
+        3: 0.22700561916516002,
+        4: 0.22700566412892714,
+    }
+    for i in c:
+        assert np.allclose(c[i], true_c[i])
+
+    H = xgi.load_xgi_data("email-enron")
+    H.cleanup(relabel=False)
+    c = xgi.h_eigenvector_centrality(H)
+    assert sorted(c) == sorted(H.nodes)
+
+
+@pytest.mark.slow
+def test_z_eigenvector_centrality():
+    # test empty hypergraph
+    H = xgi.Hypergraph()
+    c = xgi.z_eigenvector_centrality(H)
+    assert c == dict()
+
+    # Test no edges
+    H.add_nodes_from([0, 1, 2])
+    hec = xgi.z_eigenvector_centrality(H)
+    for i in hec:
+        assert np.isnan(hec[i])
+
+    # test disconnected
+    H.add_edge([0, 1])
+    hec = xgi.z_eigenvector_centrality(H)
+    assert set(hec) == {0, 1, 2}
+    for i in hec:
+        assert np.isnan(hec[i])
+
+    H = xgi.sunflower(3, 1, 5)
+    c = H.nodes.z_eigenvector_centrality(max_iter=1000).asdict()
+    assert (
+        max([abs(c[0] / c[i + 1] - _ratio(3, 5, kind="ZEC")) for i in range(12)]) < 1e-4
+    )
+
+    H = xgi.sunflower(5, 1, 7)
+    print(H.num_nodes)
+    c = xgi.z_eigenvector_centrality(H, max_iter=1000)
+    assert (
+        max([abs(c[0] / c[i + 1] - _ratio(5, 7, kind="ZEC")) for i in range(29)]) < 1e-4
+    )
+
+    H = xgi.Hypergraph([[1, 2], [2, 3, 4]])
+    c = xgi.z_eigenvector_centrality(H, max_iter=10000)
+    true_c = {
+        1: 0.45497398635982933,
+        2: 0.45900452108663403,
+        3: 0.04301074627676834,
+        4: 0.04301074627676829,
+    }
+    for i in c:
+        assert np.allclose(c[i], true_c[i])
+
+
+def _ratio(r, m, kind="CEC"):
+    """Generate the _ratio between largest and second largest centralities
+    for the sunflower hypergraph with one core node.
+
+    Parameters
+    ----------
+    r : int
+        Number of petals
+    m : int
+        Size of edges
+    kind : str, default: "CEC"
+        "CEC" or "HEC"
+
+    Returns
+    -------
+    float
+        Ratio
+
+    References
+    ----------
+    Three Hypergraph Eigenvector Centralities,
+    Austin R. Benson,
+    https://doi.org/10.1137/18M1203031
+    """
+    if kind == "CEC":
+        return 2 * r * (m - 1) / (np.sqrt(m**2 + 4 * (m - 1) * (r - 1)) + m - 2)
+    elif kind == "HEC":
+        return r ** (1.0 / m)
+    elif kind == "ZEC":
+        return r**0.5
