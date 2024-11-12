@@ -1,7 +1,8 @@
 """Algorithms for computing nodal clustering coefficients."""
 
-import numpy as np
 from itertools import combinations
+
+import numpy as np
 
 from ..exception import XGIError
 from ..linalg import adjacency_matrix
@@ -151,8 +152,7 @@ def local_clustering_coefficient(H):
                     neighD2 = {i for d in D2 for i in H.nodes.neighbors(d)}
                     # compute extra overlap [len() is used for cardinality of edges]
                     eo = (
-                        len(neighD1.intersection(D2))
-                        + len(neighD2.intersection(D1))
+                        len(neighD1.intersection(D2)) + len(neighD2.intersection(D1))
                     ) / len(
                         D1.union(D2)
                     )  # add it up

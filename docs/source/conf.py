@@ -14,9 +14,9 @@
 import os
 import sys
 from datetime import date, datetime
-from sphinx_gallery.sorting import ExplicitOrder, FileNameSortKey
 
 import requests
+from sphinx_gallery.sorting import ExplicitOrder, FileNameSortKey
 
 import xgi
 
