@@ -107,6 +107,10 @@ def test_node_edge_centrality():
     c = H.edges.node_edge_centrality.asnumpy()
     assert abs(c[0] - c[1]) < 1e-6
 
+    H = xgi.load_xgi_data("email-enron").cleanup()
+    c = H.edges.node_edge_centrality.asnumpy()
+    assert len(c) == H.num_nodes
+
 
 def test_line_vector_centrality():
     H = xgi.Hypergraph()
