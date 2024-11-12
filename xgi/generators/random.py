@@ -434,6 +434,38 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
 
 
 def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
+    """Generates a Watts-Strogatz hypergraph
+
+    Parameters
+    ----------
+    n : int
+        Number of nodes
+    d : int
+        Edge size
+    k : int
+        Number of edges of which a node is a part. Should be a multiple of 2.
+    l : int
+        Overlap between edges
+    p : float
+        The rewiring probability
+    seed : int, optional
+        The seed for the random number generator, by default None
+
+    Returns
+    -------
+    xgi.Hypergraph
+        THe Watts-Strogatz hypergraph
+
+    See Also
+    --------
+    ~lattice.ring_lattice
+
+    References
+    ----------
+    Tanu Raghav, Stefano Boccaletti, and Sarika Jalan,
+    Smallworldness in hypergraphs,
+    https://doi.org/10.1088/2632-072X/acf430
+    """
     if seed is not None:
         np.random.seed(seed)
     H = ring_lattice(n, d, k, l)
