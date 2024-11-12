@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.9.2
+* Added nonuniform centralities and fixed the `node_edge_centrality` method [#600](https://github.com/xgi-org/xgi/pull/600) (@nwlandry).
+* Fixed Issue [#615](https://github.com/xgi-org/xgi/issues/615). Added a docstring to the `watts_strogatz_hypergraph` method [#618](https://github.com/xgi-org/xgi/pull/618) (@nwlandry).
+* Made the `HOW_TO_CONTRIBUTE` guide more friendly to new contributors and accurate to our current release process [#614](https://github.com/xgi-org/xgi/pull/614) (@nwlandry).
+* Fixed the clustering method [#608](https://github.com/xgi-org/xgi/pull/608) (@cosimoagostinelli).
+* Created an initial sphinx-gallery [#609](https://github.com/xgi-org/xgi/pull/609) (@maximelucas).
+* Changed aggregate stats type from numpy ints and floats to Python ints and floats and added `unique` method. [#603](https://github.com/xgi-org/xgi/pull/603) (@nwlandry).
+
 ## v0.9.1
 * Fixed Issue [#361](https://github.com/xgi-org/xgi/issues/361) for `random_hypergraph` [#597](https://github.com/xgi-org/xgi/pull/597) (@nwlandry).
 * Added the ability to generate Erdős-Rényi hypergraphs without multiedges [#596](https://github.com/xgi-org/xgi/pull/596) (@nwlandry).
