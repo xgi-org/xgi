@@ -150,7 +150,7 @@ def powerset(
     return chain.from_iterable(combinations(s, r) for r in range(start, max_size + 1))
 
 
-def update_uid_counter(H, new_id):
+def update_uid_counter(H, idx):
     """
     Helper function to make sure the uid counter is set correctly after
     adding an edge with a user-provided ID.
@@ -165,19 +165,19 @@ def update_uid_counter(H, new_id):
     ----------
     H : xgi.Hypergraph
         Hypergraph of which to update the uid counter
-    id : any hashable type
+    idx : any hashable type
         User-provided ID.
 
     """
     uid = next(H._edge_uid)
     if (
-        not isinstance(new_id, str)
-        and not isinstance(new_id, tuple)
-        and float(new_id).is_integer()
-        and uid <= new_id
+        not isinstance(idx, str)
+        and not isinstance(idx, tuple)
+        and float(idx).is_integer()
+        and uid <= idx
     ):
         # tuple comes from merging edges and doesn't have as as_integer() method.
-        start = int(new_id) + 1
+        start = int(idx) + 1
         # we set the start at one plus the maximum edge ID that is an integer,
         # because count() only yields integer IDs.
     else:
@@ -409,8 +409,8 @@ def convert_labels_to_integers(net, label_attribute="label", in_place=False):
     edge_attrs = net._edge_attr.copy()
     edges = net._edge.copy()
     net.clear(remove_net_attr=False)
-    net.add_nodes_from((id, deepcopy(node_attrs[n])) for n, id in node_dict.items())
-    net.set_node_attributes({id: {label_attribute: n} for n, id in node_dict.items()})
+    net.add_nodes_from((idx, deepcopy(node_attrs[n])) for n, idx in node_dict.items())
+    net.set_node_attributes({idx: {label_attribute: n} for n, idx in node_dict.items()})
     if isinstance(net, SimplicialComplex):
         net.add_simplices_from(
             (
@@ -442,7 +442,7 @@ def convert_labels_to_integers(net, label_attribute="label", in_place=False):
             for e, edge in edges.items()
         )
 
-    net.set_edge_attributes({id: {label_attribute: e} for e, id in edge_dict.items()})
+    net.set_edge_attributes({idx: {label_attribute: e} for e, idx in edge_dict.items()})
 
     if not in_place:
         return net

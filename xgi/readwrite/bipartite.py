@@ -26,9 +26,9 @@ def generate_bipartite_edgelist(H, delimiter=" "):
     A iterator of strings
         Each entry is a line to be written to the output file.
     """
-    for id in H.edges:
-        for node in H.edges.members(id):
-            yield delimiter.join(map(str, [node, id]))
+    for idx in H.edges:
+        for node in H.edges.members(idx):
+            yield delimiter.join(map(str, [node, idx]))
 
 
 def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):

@@ -80,13 +80,13 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
             "Increasing the degree of random nodes so that it is."
         )
         random_ids = random.sample(list(k.keys()), int(round(m - remainder)))
-        for id in random_ids:
-            k[id] = k[id] + 1
+        for idx in random_ids:
+            k[idx] = k[idx] + 1
 
     stubs = []
     # Creating the list to index through
-    for id in k:
-        stubs.extend([id] * int(k[id]))
+    for idx in k:
+        stubs.extend([idx] * int(k[idx]))
 
     H = empty_hypergraph()
     H.add_nodes_from(k.keys())

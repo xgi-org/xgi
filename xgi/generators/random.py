@@ -394,10 +394,10 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
 
     kappa1 = defaultdict(lambda: 0)
     kappa2 = defaultdict(lambda: 0)
-    for id, g in g1.items():
-        kappa1[g] += k1[id]
-    for id, g in g2.items():
-        kappa2[g] += k2[id]
+    for idx, g in g1.items():
+        kappa1[g] += k1[idx]
+    for idx, g in g2.items():
+        kappa2[g] += k2[idx]
 
     for group1 in community1_nodes.keys():
         for group2 in community2_nodes.keys():

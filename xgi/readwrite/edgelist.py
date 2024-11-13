@@ -25,8 +25,8 @@ def generate_edgelist(H, delimiter=" "):
     iterator of strings
         Each entry is a line for the file to write.
     """
-    for id in H.edges:
-        e = H.edges.members(id)
+    for idx in H.edges:
+        e = H.edges.members(idx)
         yield delimiter.join(map(str, e))
 
 
