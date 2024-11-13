@@ -190,8 +190,8 @@ def test_add_edge():
 
     # check that uid works correctly
     H1 = xgi.Hypergraph()
-    H1.add_edge([1, 2], id=0)
-    H1.add_edge([3, 4], id=2)
+    H1.add_edge([1, 2], idx=0)
+    H1.add_edge([3, 4], idx=2)
     H1.add_edge([5, 6])
     assert H1._edge == {0: {1, 2}, 2: {3, 4}, 3: {5, 6}}
 
@@ -201,14 +201,14 @@ def test_add_edge():
     with pytest.warns(
         UserWarning, match="uid 0 already exists, cannot add edge {5, 6}"
     ):
-        H2.add_edge([5, 6], id=0)
+        H2.add_edge([5, 6], idx=0)
 
     assert H2._edge == {0: {1, 2}, 1: {3, 4}}
 
 
 def test_add_edge_with_id():
     H = xgi.Hypergraph()
-    H.add_edge([1, 2, 3], id="myedge")
+    H.add_edge([1, 2, 3], idx="myedge")
     assert (1 in H) and (2 in H) and (3 in H)
     assert "myedge" in H.edges
     assert {1, 2, 3} in H.edges.members()
@@ -472,7 +472,7 @@ def test_copy(edgelist1):
     assert H._net_attr == copy._net_attr
 
     H1 = xgi.Hypergraph()
-    H1.add_edge((1, 2), id="x")
+    H1.add_edge((1, 2), idx="x")
     copy2 = H1.copy()  # does not throw error because of str id
     assert list(copy2.nodes) == list(H1.nodes)
     assert list(copy2.edges) == list(H1.edges)
@@ -738,8 +738,8 @@ def test_pickle(edgelist1):
 
     assert H1.nodes == H2.nodes
     assert H1.edges == H2.edges
-    assert [H1.edges.members(id) for id in H1.edges] == [
-        H2.edges.members(id) for id in H2.edges
+    assert [H1.edges.members(e) for e in H1.edges] == [
+        H2.edges.members(e) for e in H2.edges
     ]
 
 

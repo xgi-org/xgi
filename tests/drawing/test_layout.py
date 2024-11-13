@@ -250,6 +250,6 @@ def test_edge_positions_from_barycenters(edgelist1):
     edge_pos = xgi.edge_positions_from_barycenters(H, node_pos)
 
     assert len(edge_pos) == H.num_edges
-    for id, e in H.edges.members(dtype=dict).items():
+    for idx, e in H.edges.members(dtype=dict).items():
         mean_pos = np.mean([node_pos[n] for n in e], axis=0)
-        assert np.allclose(edge_pos[id], mean_pos)
+        assert np.allclose(edge_pos[idx], mean_pos)
