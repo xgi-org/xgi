@@ -1238,7 +1238,7 @@ def draw_hyperedge_labels(
 
     return text_items
 
-def create_circle(x, y, z, radius, num_points=30):
+def _create_circle(x, y, z, radius, num_points=30):
     theta = np.linspace(0, 2 * np.pi, num_points)
     circle_x = x + radius * np.cos(theta)
     circle_y = y + radius * np.sin(theta)
@@ -1589,11 +1589,11 @@ def draw_multilayer(
     for d in orders:
         z = [sep * d] * H.num_nodes
         patches = []
-        for id in range(H.num_nodes):
+        for n in range(H.num_nodes):
             # Set radius based on node_size
-            radius = node_size if isinstance(node_size, (int, float)) else node_size[id]
+            radius = node_size if isinstance(node_size, (int, float)) else node_size[n]
             # Create a circle at specified coordinates
-            node = create_circle(xs[id], ys[id], z[id], radius=radius)
+            node = _create_circle(xs[n], ys[n], z[n], radius=radius)
             patches.append(node)
         
         # Create Poly3DCollection with customization options
