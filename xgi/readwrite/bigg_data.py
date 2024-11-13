@@ -126,7 +126,7 @@ def _bigg_to_dihypergraph(d_index, d_model):
             if not reactants and not products:
                 warn(f"{r['id']} is an empty reaction!")
                 continue
-            DH.add_edge((reactants, products), id=r["id"], name=r["name"])
+            DH.add_edge((reactants, products), idx=r["id"], name=r["name"])
 
         # reverse direction
         if l < 0 and u <= 0:
