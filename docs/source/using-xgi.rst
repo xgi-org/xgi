@@ -6,7 +6,7 @@ XGI has been used in a variety of published work and other software. This is a l
 
 Articles are listed by year and then alphabetically by the last name of the first author (and title if necessary).
 
-Published work
+Published Work
 ==============
 
 2024
@@ -134,10 +134,12 @@ Thomas Robiglio, "Higher-order structures in face-to-face interaction networks",
 :bdg-link-primary-line:`Thesis <https://webthesis.biblio.polito.it/27942/>`
 
 
-Software packages
+Software Packages
 =================
 
+- `hoi <https://brainets.github.io/hoi/>`_
 - `hypercontagion <https://hypercontagion.readthedocs.io/en/latest>`_
+- `hyperidpath <https://github.com/922397935/hyperiDPath-master>`_
 - `hyperspec <https://github.com/yaml-programming/hyperspec>`_
 - `pynetflow <https://github.com/anthbapt/pynetflow>`_
 - `segram <https://github.com/sztal/segram>`_
