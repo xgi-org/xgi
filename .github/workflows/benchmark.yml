@@ -18,14 +18,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.13
-      - name: Run XGI benchmarks
+      - name: Run benchmarks
         run: |
           cd benchmarks
           pip install --upgrade pip
           pip install .[benchmark]
           pytest bench.py --benchmark-json output.json
 
-      - name: Store benchmark result
+      - name: Store benchmark results
         uses: benchmark-action/github-action-benchmark@v1
         with:
           name: Python Benchmark with pytest-benchmark
