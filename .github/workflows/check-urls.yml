@@ -14,6 +14,8 @@ jobs:
         # A comma-separated list of file types to cover in the URL checks
         file_types: .md,.py,.rst,.ipynb
 
+        exclude_files: tools/*
+
         # Choose whether to include file with no URLs in the prints.
         print_all: false
 
