@@ -210,8 +210,8 @@ def test_add_edge_rejects_set():
 
 def test_add_edge_handles_uid_correctly():
     H1 = xgi.DiHypergraph()
-    H1.add_edge(([1, 2], [3]), id=0)
-    H1.add_edge(([3, 4], [4, 5]), id=2)
+    H1.add_edge(([1, 2], [3]), idx=0)
+    H1.add_edge(([3, 4], [4, 5]), idx=2)
     H1.add_edge([[5, 6], [2, 3]])
     assert H1.edges.dimembers(dtype=dict) == {
         0: ({1, 2}, {3}),
@@ -225,13 +225,13 @@ def test_add_edge_warns_when_overwriting_edge_id():
     H2.add_edge(([1, 2], [3]))
     H2.add_edge(([3, 4], [5, 6, 7]))
     with pytest.warns(Warning):
-        H2.add_edge(([5, 6], [8]), id=0)
+        H2.add_edge(([5, 6], [8]), idx=0)
     assert {i: e["in"] for i, e in H2._edge.items()} == {0: {1, 2}, 1: {3, 4}}
 
 
 def test_add_edge_with_id():
     H = xgi.DiHypergraph()
-    H.add_edge(([1, 2, 3], [3, 4]), id="myedge")
+    H.add_edge(([1, 2, 3], [3, 4]), idx="myedge")
     assert (1 in H) and (2 in H) and (3 in H) and (4 in H)
     assert "myedge" in H.edges
     assert {1, 2, 3, 4} in H.edges.members()
@@ -432,7 +432,7 @@ def test_copy(diedgelist1):
     assert H._net_attr == copy._net_attr
 
     H1 = xgi.DiHypergraph()
-    H1.add_edge(([1, 2], [3]), id="x")
+    H1.add_edge(([1, 2], [3]), idx="x")
     copy2 = H1.copy()  # does not throw error because of str id
     assert list(copy2.nodes) == list(H1.nodes)
     assert list(copy2.edges) == list(H1.edges)
@@ -563,8 +563,8 @@ def test_pickle(diedgelist1):
 
     assert H1.nodes == H2.nodes
     assert H1.edges == H2.edges
-    assert [H1.edges.members(id) for id in H1.edges] == [
-        H2.edges.members(id) for id in H2.edges
+    assert [H1.edges.members(e) for e in H1.edges] == [
+        H2.edges.members(e) for e in H2.edges
     ]
 
 

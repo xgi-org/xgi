@@ -110,28 +110,28 @@ def from_hypergraph_dict(data, nodetype=None, edgetype=None, max_order=None):
         raise XGIError("Failed to get hypergraph data attributes.")
 
     try:
-        for id, dd in data["node-data"].items():
+        for idx, dd in data["node-data"].items():
             if nodetype is not None:
                 try:
-                    id = nodetype(id)
+                    idx = nodetype(idx)
                 except ValueError as e:
                     raise TypeError(
                         f"Failed to convert edge IDs to type {nodetype}."
                     ) from e
-            H.add_node(id, **dd)
+            H.add_node(idx, **dd)
     except KeyError:
         raise XGIError("Failed to import node attributes.")
 
     try:
-        for id, edge in data["edge-dict"].items():
+        for idx, edge in data["edge-dict"].items():
             if max_order and len(edge) > max_order + 1:
                 continue
             if edgetype is not None:
                 try:
-                    id = edgetype(id)
+                    idx = edgetype(idx)
                 except ValueError as e:
                     raise TypeError(
-                        f"Failed to convert the edge with ID {id} to type {edgetype}."
+                        f"Failed to convert the edge with ID {idx} to type {edgetype}."
                     ) from e
 
             if nodetype is not None:
@@ -141,7 +141,7 @@ def from_hypergraph_dict(data, nodetype=None, edgetype=None, max_order=None):
                     raise TypeError(
                         f"Failed to convert nodes to type {nodetype}."
                     ) from e
-            H.add_edge(edge, id)
+            H.add_edge(edge, idx)
 
     except KeyError as e:
         raise XGIError("Failed to import edge dictionary.") from e

@@ -158,8 +158,8 @@ def test_read_json():
     assert list(H2.nodes) == ["1", "2", "3", "4"]
     assert H1["name"] == "test"
     assert H1["author"] == "Nicholas Landry"
-    assert [H1.edges.members(id) for id in H1.edges] == [{1, 2}, {2, 3, 4}, {1, 4}]
-    assert [H2.edges.members(id) for id in H2.edges] == [
+    assert [H1.edges.members(e) for e in H1.edges] == [{1, 2}, {2, 3, 4}, {1, 4}]
+    assert [H2.edges.members(e) for e in H2.edges] == [
         {"1", "2"},
         {"2", "3", "4"},
         {"1", "4"},
@@ -246,8 +246,8 @@ def test_write_json(edgelist1, edgelist2):
 
     assert set(H1.nodes) == set(H2.nodes)
     assert set(H1.edges) == set(H2.edges)
-    assert {frozenset(H1.edges.members(id)) for id in H1.edges} == {
-        frozenset(H2.edges.members(id)) for id in H2.edges
+    assert {frozenset(H1.edges.members(e)) for e in H1.edges} == {
+        frozenset(H2.edges.members(e)) for e in H2.edges
     }
     assert H2.nodes[2] == {"name": "Ilya"}
     assert H2.edges[1] == {"weight": 2}

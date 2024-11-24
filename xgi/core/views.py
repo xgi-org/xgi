@@ -123,12 +123,12 @@ class IDView(Mapping, Set):
         """Returns an iterator over the IDs."""
         return iter(self._ids)
 
-    def __getitem__(self, id):
+    def __getitem__(self, idx):
         """Get the attributes of the ID.
 
         Parameters
         ----------
-        id : hashable
+        idx : hashable
             node or edge ID
 
         Returns
@@ -143,13 +143,13 @@ class IDView(Mapping, Set):
             hypergraph, or if id is not hashable.
 
         """
-        if id not in self:
-            raise IDNotFound(f"The ID {id} is not in this view")
-        return self._id_attr[id]
+        if idx not in self:
+            raise IDNotFound(f"The ID {idx} is not in this view")
+        return self._id_attr[idx]
 
-    def __contains__(self, id):
+    def __contains__(self, idx):
         """Checks whether the ID is in the hypergraph"""
-        return id in self._ids
+        return idx in self._ids
 
     def __str__(self):
         """Returns a string of the list of IDs."""
@@ -342,14 +342,14 @@ class IDView(Mapping, Set):
             )
         return type(self).from_view(self, bunch)
 
-    def neighbors(self, id, s=1):
+    def neighbors(self, idx, s=1):
         """Find the neighbors of an ID.
 
         The neighbors of an ID are those IDs that share at least one bipartite ID.
 
         Parameters
         ----------
-        id : hashable
+        idx : hashable
             ID to find neighbors of.
         s : int, optional
             The intersection size s for two edges or nodes to be considered neighbors.
@@ -377,15 +377,15 @@ class IDView(Mapping, Set):
         """
         if s == 1:
             return {
-                i for n in self._id_dict[id] for i in self._bi_id_dict[n]
-            }.difference({id})
+                i for n in self._id_dict[idx] for i in self._bi_id_dict[n]
+            }.difference({idx})
         else:
             return {
                 i
-                for n in self._id_dict[id]
+                for n in self._id_dict[idx]
                 for i in self._bi_id_dict[n]
-                if len(self._id_dict[id].intersection(self._id_dict[i])) >= s
-            }.difference({id})
+                if len(self._id_dict[idx].intersection(self._id_dict[i])) >= s
+            }.difference({idx})
 
     def duplicates(self):
         """Find IDs that have a duplicate.

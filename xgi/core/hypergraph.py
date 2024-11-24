@@ -541,14 +541,14 @@ class Hypergraph:
             except (TypeError, ValueError, AttributeError):
                 raise XGIError("Must pass a dictionary of dictionaries")
 
-    def add_edge(self, members, id=None, **attr):
+    def add_edge(self, members, idx=None, **attr):
         """Add one edge with optional attributes.
 
         Parameters
         ----------
         members : Iterable
             An iterable of the ids of the nodes contained in the new edge.
-        id : hashable, optional
+        idx : hashable, optional
             Id of the new edge. If None (default), a unique numeric ID will be created.
         **attr : dict, optional
             Attributes of the new edge.
@@ -571,7 +571,7 @@ class Hypergraph:
         >>> import xgi
         >>> H = xgi.Hypergraph()
         >>> H.add_edge([1, 2, 3])
-        >>> H.add_edge([3, 4], id='myedge')
+        >>> H.add_edge([3, 4], idx='myedge')
         >>> H.edges
         EdgeView((0, 'myedge'))
 
@@ -588,11 +588,11 @@ class Hypergraph:
         """
         members = set(members)
 
-        if id in self._edge.keys():  # check that uid is not present yet
-            warn(f"uid {id} already exists, cannot add edge {members}")
+        if idx in self._edge.keys():  # check that uid is not present yet
+            warn(f"uid {idx} already exists, cannot add edge {members}")
             return
 
-        uid = next(self._edge_uid) if id is None else id
+        uid = next(self._edge_uid) if idx is None else idx
 
         self._edge[uid] = set()
         for node in members:
@@ -605,8 +605,8 @@ class Hypergraph:
         self._edge_attr[uid] = self._edge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
 
-        if id:  # set self._edge_uid correctly
-            update_uid_counter(self, id)
+        if idx:  # set self._edge_uid correctly
+            update_uid_counter(self, idx)
 
     def add_edges_from(self, ebunch_to_add, **attr):
         r"""Add multiple edges with optional attributes.
@@ -709,22 +709,22 @@ class Hypergraph:
         """
         # format 5 is the easiest one
         if isinstance(ebunch_to_add, dict):
-            for id, members in ebunch_to_add.items():
-                if id in self._edge.keys():  # check that uid is not present yet
-                    warn(f"uid {id} already exists, cannot add edge {members}.")
+            for idx, members in ebunch_to_add.items():
+                if idx in self._edge.keys():  # check that uid is not present yet
+                    warn(f"uid {idx} already exists, cannot add edge {members}.")
                     continue
                 try:
-                    self._edge[id] = set(members)
+                    self._edge[idx] = set(members)
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
                 for n in members:
                     if n not in self._node:
                         self._node[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].add(id)
-                self._edge_attr[id] = self._edge_attr_dict_factory()
+                    self._node[n].add(idx)
+                self._edge_attr[idx] = self._edge_attr_dict_factory()
 
-                update_uid_counter(self, id)
+                update_uid_counter(self, idx)
 
             return
 
@@ -762,19 +762,19 @@ class Hypergraph:
         e = first_edge
         while True:
             if format1:
-                members, id, eattr = e, next(self._edge_uid), {}
+                members, idx, eattr = e, next(self._edge_uid), {}
             elif format2:
-                members, id, eattr = e[0], e[1], {}
+                members, idx, eattr = e[0], e[1], {}
             elif format3:
-                members, id, eattr = e[0], next(self._edge_uid), e[1]
+                members, idx, eattr = e[0], next(self._edge_uid), e[1]
             elif format4:
-                members, id, eattr = e[0], e[1], e[2]
+                members, idx, eattr = e[0], e[1], e[2]
 
-            if id in self._edge.keys():  # check that uid is not present yet
-                warn(f"uid {id} already exists, cannot add edge {members}.")
+            if idx in self._edge.keys():  # check that uid is not present yet
+                warn(f"uid {idx} already exists, cannot add edge {members}.")
             else:
                 try:
-                    self._edge[id] = set(members)
+                    self._edge[idx] = set(members)
                 except TypeError as e:
                     raise XGIError("Invalid ebunch format") from e
 
@@ -782,17 +782,17 @@ class Hypergraph:
                     if n not in self._node:
                         self._node[n] = set()
                         self._node_attr[n] = self._node_attr_dict_factory()
-                    self._node[n].add(id)
+                    self._node[n].add(idx)
 
-                self._edge_attr[id] = self._edge_attr_dict_factory()
-                self._edge_attr[id].update(attr)
-                self._edge_attr[id].update(eattr)
+                self._edge_attr[idx] = self._edge_attr_dict_factory()
+                self._edge_attr[idx].update(attr)
+                self._edge_attr[idx].update(eattr)
 
             try:
                 e = next(new_edges)
             except StopIteration:
                 if format2 or format4:
-                    update_uid_counter(self, id)
+                    update_uid_counter(self, idx)
                 break
 
     def add_weighted_edges_from(self, ebunch, weight="weight", **attr):
@@ -1075,7 +1075,7 @@ class Hypergraph:
         >>> H.add_node_to_edge('fruits', 'pear')
         >>> H.add_node_to_edge('veggies', 'lettuce')
         >>> d = H.edges.members(dtype=dict)
-        >>> {id: sorted(list(e)) for id, e in d.items()}
+        >>> {i: sorted(list(e)) for i, e in d.items()}
         {'fruits': ['apple', 'banana', 'pear'], 'veggies': ['lettuce']}
 
         """
@@ -1088,12 +1088,12 @@ class Hypergraph:
         self._edge[edge].add(node)
         self._node[node].add(edge)
 
-    def remove_edge(self, id):
+    def remove_edge(self, idx):
         """Remove one edge.
 
         Parameters
         ----------
-        id : Hashable
+        idx : Hashable
             edge ID to remove
 
         Raises
@@ -1106,10 +1106,10 @@ class Hypergraph:
         remove_edges_from : Remove multiple edges.
 
         """
-        for node in self._edge[id].copy():
-            self._node[node].remove(id)
-        del self._edge[id]
-        del self._edge_attr[id]
+        for node in self._edge[idx].copy():
+            self._node[node].remove(idx)
+        del self._edge[idx]
+        del self._edge_attr[idx]
 
     def remove_edges_from(self, ebunch):
         """Remove multiple edges.
@@ -1129,11 +1129,11 @@ class Hypergraph:
         remove_edge : remove a single edge.
 
         """
-        for id in ebunch:
-            for node in self._edge[id].copy():
-                self._node[node].remove(id)
-            del self._edge[id]
-            del self._edge_attr[id]
+        for idx in ebunch:
+            for node in self._edge[idx].copy():
+                self._node[node].remove(idx)
+            del self._edge[idx]
+            del self._edge_attr[idx]
 
     def remove_node_from_edge(self, edge, node, remove_empty=True):
         """Remove a node from an existing edge.
@@ -1357,18 +1357,18 @@ class Hypergraph:
                     raise XGIError("Invalid ID renaming scheme!")
 
                 if merge_rule == "first":
-                    id = min(dup_ids)
-                    new_attrs = deepcopy(self._edge_attr[id])
+                    idx = min(dup_ids)
+                    new_attrs = deepcopy(self._edge_attr[idx])
                 elif merge_rule == "union":
-                    attrs = {field for id in dup_ids for field in self._edge_attr[id]}
+                    attrs = {field for idx in dup_ids for field in self._edge_attr[idx]}
                     new_attrs = {
-                        attr: {self._edge_attr[id].get(attr) for id in dup_ids}
+                        attr: {self._edge_attr[idx].get(attr) for idx in dup_ids}
                         for attr in attrs
                     }
                 elif merge_rule == "intersection":
-                    attrs = {field for id in dup_ids for field in self._edge_attr[id]}
+                    attrs = {field for idx in dup_ids for field in self._edge_attr[idx]}
                     set_attrs = {
-                        attr: {self._edge_attr[id].get(attr) for id in dup_ids}
+                        attr: {self._edge_attr[idx].get(attr) for idx in dup_ids}
                         for attr in attrs
                     }
                     new_attrs = {
@@ -1406,8 +1406,8 @@ class Hypergraph:
         cp.add_nodes_from((n, deepcopy(attr)) for n, attr in nn.items())
         ee = self.edges
         cp.add_edges_from(
-            (e, id, deepcopy(self.edges[id]))
-            for id, e in ee.members(dtype=dict).items()
+            (e, idx, deepcopy(self.edges[idx]))
+            for idx, e in ee.members(dtype=dict).items()
         )
         cp._net_attr = deepcopy(self._net_attr)
 

@@ -1069,7 +1069,7 @@ def draw_node_labels(
         ax = ax_nodes
 
     if node_labels is True:
-        node_labels = {id: id for id in H.nodes}
+        node_labels = {idx: idx for idx in H.nodes}
 
     # Plot the labels in the last layer
     if zorder is None:
@@ -1175,11 +1175,11 @@ def draw_hyperedge_labels(
         ax = ax_edges
 
     if hyperedge_labels is True:
-        hyperedge_labels = {id: id for id in H.edges}
+        hyperedge_labels = {idx: idx for idx in H.edges}
 
     text_items = {}
-    for id, label in hyperedge_labels.items():
-        he = H.edges.members(id)
+    for idx, label in hyperedge_labels.items():
+        he = H.edges.members(idx)
         coordinates = [[pos[n][0], pos[n][1]] for n in he]
         x, y = np.mean(coordinates, axis=0)
 
@@ -1228,7 +1228,7 @@ def draw_hyperedge_labels(
             bbox=bbox,
             clip_on=clip_on_edges,
         )
-        text_items[id] = t
+        text_items[idx] = t
 
     return text_items
 

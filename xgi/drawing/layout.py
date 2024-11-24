@@ -287,8 +287,8 @@ def edge_positions_from_barycenters(H, node_pos):
 
         H = to_hypergraph(H)
     edge_pos = {}
-    for id, e in H.edges.members(dtype=dict).items():
-        edge_pos[id] = np.mean([node_pos[n] for n in e], axis=0)
+    for idx, e in H.edges.members(dtype=dict).items():
+        edge_pos[idx] = np.mean([node_pos[n] for n in e], axis=0)
 
     return edge_pos
 

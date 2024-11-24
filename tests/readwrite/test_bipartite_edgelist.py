@@ -48,10 +48,10 @@ def test_read_bipartite_edgelist(file_string, extra_kwargs):
 
     H = xgi.read_bipartite_edgelist(filename, nodetype=int, **extra_kwargs)
     int_edgelist = [{0, 1, 2, 3}, {4}, {5, 6}, {6, 7, 8}]
-    assert [H.edges.members(id) for id in H.edges] == int_edgelist
+    assert [H.edges.members(eid) for eid in H.edges] == int_edgelist
     H = xgi.read_bipartite_edgelist(filename, nodetype=str, **extra_kwargs)
     str_edgelist = [{"0", "1", "2", "3"}, {"4"}, {"5", "6"}, {"6", "7", "8"}]
-    assert [H.edges.members(id) for id in H.edges] == str_edgelist
+    assert [H.edges.members(eid) for eid in H.edges] == str_edgelist
 
 
 def test_parse_bipartite_edgelist():
@@ -92,28 +92,15 @@ def test_parse_bipartite_edgelist():
     H = xgi.parse_bipartite_edgelist(lines, nodetype=int, edgetype=int)
     assert list(H.nodes) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
     assert list(H.edges) == [0, 1, 2, 3]
-    assert [H.edges.members(id) for id in H.edges] == [
-        {0, 1, 2, 3},
-        {4},
-        {5, 6},
-        {6, 7, 8},
-    ]
+    edges = [{0, 1, 2, 3}, {4}, {5, 6}, {6, 7, 8}]
+    assert [H.edges.members(eid) for eid in H.edges] == edges
 
     H = xgi.parse_bipartite_edgelist(lines, nodetype=int, edgetype=int, dual=True)
     assert list(H.nodes) == [0, 1, 2, 3]
     assert list(H.edges) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    print([H.edges.members(id) for id in H.edges])
-    assert [H.edges.members(id) for id in H.edges] == [
-        {0},
-        {0},
-        {0},
-        {0},
-        {1},
-        {2},
-        {2, 3},
-        {3},
-        {3},
-    ]
+    print([H.edges.members(eid) for eid in H.edges])
+    edges = [{0}, {0}, {0}, {0}, {1}, {2}, {2, 3}, {3}, {3}]
+    assert [H.edges.members(eid) for eid in H.edges] == edges
 
     # test less than two entries per line
     with pytest.raises(XGIError):
@@ -135,6 +122,6 @@ def test_write_bipartite_edgelist(edgelist1):
     H2 = xgi.read_bipartite_edgelist(filename, nodetype=int, edgetype=int)
     assert H1.nodes == H2.nodes
     assert H1.edges == H2.edges
-    assert [H1.edges.members(id) for id in H1.edges] == [
-        H2.edges.members(id) for id in H2.edges
+    assert [H1.edges.members(e) for e in H1.edges] == [
+        H2.edges.members(e) for e in H2.edges
     ]

@@ -65,7 +65,7 @@ def test_add_simplex():
     S2.add_simplex([1, 2])
     S2.add_simplex([3, 4])
     with pytest.warns(UserWarning, match="uid 1 already exists, cannot add simplex"):
-        S2.add_simplex([5, 6], id=1)
+        S2.add_simplex([5, 6], idx=1)
     assert S2._edge == {0: frozenset({1, 2}), 1: frozenset({3, 4})}
 
 
@@ -410,7 +410,7 @@ def test_copy(edgelist1):
     assert H._net_attr == copy._net_attr
 
     H1 = xgi.SimplicialComplex()
-    H1.add_simplex((1, 2), id="x")
+    H1.add_simplex((1, 2), idx="x")
     copy2 = H1.copy()  # does not throw error because of str id
     assert list(copy2.nodes) == list(H1.nodes)
     assert list(copy2.edges) == list(H1.edges)
@@ -448,8 +448,8 @@ def test_remove_simplex_id(edgelist6):
     S.add_simplices_from(edgelist6)
 
     # remove simplex and others it belongs to
-    id = list(S._edge.values()).index(frozenset({2, 3}))
-    S.remove_simplex_id(id)  # simplex {2, 3}
+    idx = list(S._edge.values()).index(frozenset({2, 3}))
+    S.remove_simplex_id(idx)  # simplex {2, 3}
     edges = [
         frozenset({0, 1, 2}),
         frozenset({0, 1}),

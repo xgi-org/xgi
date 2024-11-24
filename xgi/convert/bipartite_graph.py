@@ -80,7 +80,7 @@ def from_bipartite_graph(G, create_using=None, dual=False):
     H.add_nodes_from(nodes)
     for edge in edges:
         nodes_in_edge = list(G.neighbors(edge))
-        H.add_edge(nodes_in_edge, id=edge)
+        H.add_edge(nodes_in_edge, idx=edge)
     return H.dual() if dual else H
 
 

@@ -98,11 +98,11 @@ def _bigg_to_dihypergraph(d_index, d_model):
 
     DH = DiHypergraph()
 
-    id = d_model["id"]
+    idx = d_model["id"]
 
-    DH["name"] = id
+    DH["name"] = idx
 
-    info = next((item for item in d_index["results"] if item["bigg_id"] == id), None)
+    info = next((item for item in d_index["results"] if item["bigg_id"] == idx), None)
     DH["organism"] = info["organism"]
 
     for m in d_model["metabolites"]:
@@ -126,7 +126,7 @@ def _bigg_to_dihypergraph(d_index, d_model):
             if not reactants and not products:
                 warn(f"{r['id']} is an empty reaction!")
                 continue
-            DH.add_edge((reactants, products), id=r["id"], name=r["name"])
+            DH.add_edge((reactants, products), idx=r["id"], name=r["name"])
 
         # reverse direction
         if l < 0 and u <= 0:
@@ -139,7 +139,7 @@ def _bigg_to_dihypergraph(d_index, d_model):
             if not reactants and not products:
                 warn(f"{r['id']} is an empty reaction!")
                 continue
-            DH.add_edge((reactants, products), id=r["id"], name=r["name"])
+            DH.add_edge((reactants, products), idx=r["id"], name=r["name"])
 
         # reversible
         if l < 0 and u > 0:
@@ -153,10 +153,10 @@ def _bigg_to_dihypergraph(d_index, d_model):
                 warn(f"{r['id']} is an empty reaction!")
                 continue
             # add forward reaction
-            DH.add_edge((reactants, products), id=r["id"], name=r["name"])
+            DH.add_edge((reactants, products), idx=r["id"], name=r["name"])
             # add reverse reaction
             DH.add_edge(
-                (products, reactants), id=str(r["id"]) + "_reverse", name=r["name"]
+                (products, reactants), idx=str(r["id"]) + "_reverse", name=r["name"]
             )
 
     return DH
