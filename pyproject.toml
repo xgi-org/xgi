@@ -61,8 +61,8 @@ PyPI = "https://pypi.org/project/xgi/"
 
 [project.optional-dependencies]
 benchmark = [
-    "hypernetx>=1.0",
-    "asv>=0.5",
+    "pytest>=7.2",
+    "pytest-benchmark>=5.0",
 ]
 developer = [
     "black[jupyter]>=24.3",
