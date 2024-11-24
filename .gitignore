@@ -150,4 +150,4 @@ test.*
 
 # benchmarking files
 .benchmarks
-benchmarks/output.json
+output.json
