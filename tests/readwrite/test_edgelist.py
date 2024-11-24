@@ -34,10 +34,10 @@ def test_read_edgelist(file_string, extra_kwargs):
 
     H = xgi.read_edgelist(filename, nodetype=int, **extra_kwargs)
     int_edgelist = [{1, 2}, {2, 3, 4}, {1, 4, 7, 8}, {2, 3}]
-    assert [H.edges.members(e) for e in H.edges] == int_edgelist
+    assert [H.edges.members(eid) for eid in H.edges] == int_edgelist
     H = xgi.read_edgelist(filename, nodetype=str, **extra_kwargs)
     str_edgelist = [{"1", "2"}, {"2", "3", "4"}, {"1", "4", "7", "8"}, {"2", "3"}]
-    assert [H.edges.members(e) for e in H.edges] == str_edgelist
+    assert [H.edges.members(eid) for eid in H.edges] == str_edgelist
 
 
 def test_parse_edgelist():
@@ -45,7 +45,7 @@ def test_parse_edgelist():
     assert set(H.nodes) == {1, 2, 3, 4, 7, 8}
     assert set(H.edges) == {0, 1, 2, 3}
     edges = [{1, 2}, {2, 3, 4}, {1, 4, 7, 8}, {2, 3}]
-    assert [H.edges.members(e) for e in H.edges] == edges
+    assert [H.edges.members(eid) for eid in H.edges] == edges
 
     # This will fail because the "test" node ID can't be converted to int
     with pytest.raises(TypeError):
