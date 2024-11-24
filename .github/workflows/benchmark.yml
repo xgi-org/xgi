@@ -20,10 +20,9 @@ jobs:
           python-version: 3.13
       - name: Run benchmarks
         run: |
-          cd benchmarks
           pip install --upgrade pip
           pip install .[benchmark]
-          pytest bench.py --benchmark-json output.json
+          pytest benchmarks/bench.py --benchmark-json benchmarks/output.json
 
       - name: Store benchmark results
         uses: benchmark-action/github-action-benchmark@v1
