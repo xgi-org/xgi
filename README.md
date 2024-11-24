@@ -8,6 +8,7 @@
 [![Good First Issue](https://img.shields.io/badge/contribute-Good%20First%20Issue-forest)](https://github.com/xgi-org/xgi/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.05162/status.svg)](https://doi.org/10.21105/joss.05162)
 [![pyOpenSci](https://tinyurl.com/y22nb8up)](https://github.com/pyOpenSci/software-review/issues/115)
+[![Benchmarks](https://img.shields.io/badge/benchmarks-forest)](https://xgi-org.github.io/xgi/dev/bench/)
 
 * [**Source**](https://github.com/xgi-org/xgi)
 * [**Bug reports**](https://github.com/xgi-org/xgi/issues)
