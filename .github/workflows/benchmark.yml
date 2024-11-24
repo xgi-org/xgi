@@ -1,8 +1,8 @@
-name: Python Example with pytest
+name: Benchmark XGI
 on:
   push:
     branches:
-      - master
+      - main
 
 permissions:
   contents: write
@@ -10,14 +10,14 @@ permissions:
 
 jobs:
   benchmark:
-    name: Run pytest-benchmark benchmark example
+    name: Run pytest-benchmark benchmarks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: 3.13
-      - name: Run benchmark
+      - name: Run XGI benchmarks
         run: |
           cd benchmarks
           pip install --upgrade pip
