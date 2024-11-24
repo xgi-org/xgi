@@ -1,7 +1,7 @@
 import xgi
 
 rounds = 10
-fname = "benchmarks/email-eu.json"
+fname = "benchmarks/email-enron.json"
 
 
 def test_connected(benchmark):
