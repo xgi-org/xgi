@@ -134,7 +134,6 @@ from collections import namedtuple
 
 import requests
 
-
 DEFAULT_BRANCH = "main"
 PUBLIC_GITHUB_URL = "https://github.com"
 PUBLIC_GITHUB_API_URL = "https://api.github.com"
@@ -202,17 +201,13 @@ def get_commit_for_tag(github_config, owner, repo, tag):
 
 def get_last_commit(github_config, owner, repo, branch=DEFAULT_BRANCH):
     """Get the last commit sha for the given repo and branch"""
-    commits_url = "/".join(
-        [github_config.api_url, "repos", owner, repo, "commits"]
-    )
+    commits_url = "/".join([github_config.api_url, "repos", owner, repo, "commits"])
     commits_response = requests.get(
         commits_url, params={"sha": branch}, headers=github_config.headers
     )
     commits_json = commits_response.json()
     if commits_response.status_code != 200:
-        raise GitHubError(
-            "Unable to get commits. {}".format(commits_json["message"])
-        )
+        raise GitHubError("Unable to get commits. {}".format(commits_json["message"]))
 
     return commits_json[0]["sha"]
 
@@ -249,14 +244,11 @@ def get_commits_between(github_config, owner, repo, first_commit, last_commit):
 
     if "commits" not in commits_json:
         raise GitHubError(
-            "Commits not found between {} and {}.".format(
-                first_commit, last_commit
-            )
+            "Commits not found between {} and {}.".format(first_commit, last_commit)
         )
 
     commits = [
-        Commit(c["sha"], c["commit"]["message"])
-        for c in commits_json["commits"]
+        Commit(c["sha"], c["commit"]["message"]) for c in commits_json["commits"]
     ]
     return commits
 
@@ -276,13 +268,13 @@ def extract_pr_number(message):
         return numbers[-1]
     elif squash_match is not None:
         numbers = squash_match.groups()
-        
-        return numbers[-1]#PullRequest(number=number, title=title, author=author)
+
+        return numbers[-1]  # PullRequest(number=number, title=title, author=author)
 
     raise Exception("Commit isn't a PR merge, {}".format(message))
 
 
-def prs_from_numbers(github_config, owner,    repo,pr_numbers):
+def prs_from_numbers(github_config, owner, repo, pr_numbers):
     pr_list = []
     for number in pr_numbers:
         pull_url = "/".join(
@@ -302,6 +294,7 @@ def prs_from_numbers(github_config, owner,    repo,pr_numbers):
         pr_list.append(PullRequest(number=number, title=title, author=author))
     return pr_list
 
+
 def fetch_changes(
     github_config,
     owner,
@@ -312,16 +305,12 @@ def fetch_changes(
 ):
     if previous_tag is None:
         previous_tag = get_last_tag(github_config, owner, repo)
-    previous_commit = get_commit_for_tag(
-        github_config, owner, repo, previous_tag
-    )
+    previous_commit = get_commit_for_tag(github_config, owner, repo, previous_tag)
 
     current_commit = None
     if current_tag is not None:
         try:
-            current_commit = get_commit_for_tag(
-                github_config, owner, repo, current_tag
-            )
+            current_commit = get_commit_for_tag(github_config, owner, repo, current_tag)
         except GitHubError:
             # Try to proceed with the given "tag" as a commit sha
             current_commit = current_tag
@@ -333,12 +322,12 @@ def fetch_changes(
     )
 
     # Process the commit list looking for PR merges
-    pr_numbers = [extract_pr_number(c.message) for c in commits_between if is_pr(c.message)]
+    pr_numbers = [
+        extract_pr_number(c.message) for c in commits_between if is_pr(c.message)
+    ]
 
     if len(pr_numbers) == 0 and len(commits_between) > 0:
-        raise Exception(
-            "Lots of commits and no PRs on branch {}".format(branch)
-        )
+        raise Exception("Lots of commits and no PRs on branch {}".format(branch))
     else:
         prs = prs_from_numbers(github_config, owner, repo, pr_numbers)
 
@@ -346,10 +335,11 @@ def fetch_changes(
     return prs
 
 
-def format_changes(github_config, owner, repo, prs, markdown=False):
+def format_changes(github_config, owner, repo, prs, markdown=True):
     """Format the list of prs in either text or markdown"""
     lines = []
     for pr in prs:
+        number = "#{number}".format(number=pr.number)
         if markdown:
             link = "{github_url}/{owner}/{repo}/pull/{number}".format(
                 github_url=github_config.base_url,
@@ -358,9 +348,11 @@ def format_changes(github_config, owner, repo, prs, markdown=False):
                 number=pr.number,
             )
             number = "[{number}]({link})".format(number=number, link=link)
-        print(pr)
+        print(number)
         lines.append(
-            "* {title} #{number}. (@{author})".format(title=pr.title, number=pr.number, author=pr.author)
+            "* {title}. {number} (@{author})".format(
+                title=pr.title, number=number, author=pr.author
+            )
         )
 
     return lines
@@ -371,7 +363,7 @@ def generate_changelog(
     repo,
     previous_tag=None,
     current_tag=None,
-    markdown=False,
+    markdown=True,
     single_line=False,
     branch=None,
     github_base_url=None,
@@ -379,13 +371,9 @@ def generate_changelog(
     github_token=None,
 ):
 
-    github_config = get_github_config(
-        github_base_url, github_api_url, github_token
-    )
+    github_config = get_github_config(github_base_url, github_api_url, github_token)
 
-    prs = fetch_changes(
-        github_config, owner, repo, previous_tag, current_tag, branch
-    )
+    prs = fetch_changes(github_config, owner, repo, previous_tag, current_tag, branch)
     lines = format_changes(github_config, owner, repo, prs, markdown=markdown)
 
     separator = "\\n" if single_line else "\n"
@@ -397,12 +385,8 @@ def main():
         description="Generate a CHANGELOG between two git tags based on GitHub"
         "Pull Request merge commit messages"
     )
-    parser.add_argument(
-        "owner", metavar="OWNER", help="owner of the repo on GitHub"
-    )
-    parser.add_argument(
-        "repo", metavar="REPO", help="name of the repo on GitHub"
-    )
+    parser.add_argument("owner", metavar="OWNER", help="owner of the repo on GitHub")
+    parser.add_argument("repo", metavar="REPO", help="name of the repo on GitHub")
     parser.add_argument(
         "previous_tag",
         metavar="PREVIOUS",
