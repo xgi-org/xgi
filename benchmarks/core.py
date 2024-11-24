@@ -1,6 +1,6 @@
 import xgi
 
-rounds = 5
+rounds = 10
 fname = "benchmarks/email-eu.json"
 
 

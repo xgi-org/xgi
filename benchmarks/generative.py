@@ -1,6 +1,6 @@
 import xgi
 
-rounds = 5
+rounds = 10
 
 
 def test_erdos_renyi(benchmark):
