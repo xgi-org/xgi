@@ -11,19 +11,20 @@ permissions:
 
 jobs:
   benchmark:
-    name: Run pytest-benchmark benchmarks
+    name: Upload XGI benchmarks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: 3.13
-      - name: Run benchmarks
+      - name: Install packages
         run: |
           pip install --upgrade pip
           pip install .[benchmark]
-          pytest benchmarks/bench.py --benchmark-json benchmarks/output.json
-
+      - name: Run benchmarks
+        run: |
+          pytest benchmarks/*.py --benchmark-json benchmarks/output.json
       - name: Store benchmark results
         uses: benchmark-action/github-action-benchmark@v1
         with:

@@ -6,13 +6,14 @@ import pytest
 
 import xgi
 
+rounds = 100
 
 def test_construct_from_edgelist(benchmark):
     def setup():
         H = xgi.read_hif("benchmarks/email-enron.json")
         return (H.edges.members(),), {}
 
-    benchmark.pedantic(xgi.Hypergraph, setup=setup, rounds=10)
+    benchmark.pedantic(xgi.Hypergraph, setup=setup, rounds=rounds)
 
 
 def test_construct_from_edgedict(benchmark):
@@ -20,7 +21,7 @@ def test_construct_from_edgedict(benchmark):
         H = xgi.read_hif("benchmarks/email-enron.json")
         return (H.edges.members(dtype=dict),), {}
 
-    benchmark.pedantic(xgi.Hypergraph, setup=setup, rounds=10)
+    benchmark.pedantic(xgi.Hypergraph, setup=setup, rounds=rounds)
 
 
 def test_construct_from_df(benchmark):
@@ -28,7 +29,7 @@ def test_construct_from_df(benchmark):
         H = xgi.read_hif("benchmarks/email-enron.json")
         return (xgi.to_bipartite_pandas_dataframe(H),), {}
 
-    benchmark.pedantic(xgi.Hypergraph, setup=setup, rounds=10)
+    benchmark.pedantic(xgi.Hypergraph, setup=setup, rounds=rounds)
 
 
 def test_node_memberships(benchmark):
@@ -39,7 +40,7 @@ def test_node_memberships(benchmark):
     def node_memberships(H):
         [H.nodes.memberships(n) for n in H.nodes]
 
-    benchmark.pedantic(node_memberships, setup=setup, rounds=10)
+    benchmark.pedantic(node_memberships, setup=setup, rounds=rounds)
 
 
 def test_edge_members(benchmark):
@@ -50,7 +51,7 @@ def test_edge_members(benchmark):
     def edge_members(H):
         [H.edges.members(eid) for eid in H.edges]
 
-    benchmark.pedantic(edge_members, setup=setup, rounds=10)
+    benchmark.pedantic(edge_members, setup=setup, rounds=rounds)
 
 
 def test_node_attributes(benchmark):
@@ -61,7 +62,7 @@ def test_node_attributes(benchmark):
     def node_attributes(H):
         [H.nodes[nid] for nid in H.nodes]
 
-    benchmark.pedantic(node_attributes, setup=setup, rounds=10)
+    benchmark.pedantic(node_attributes, setup=setup, rounds=rounds)
 
 
 def test_edge_attributes(benchmark):
@@ -72,7 +73,7 @@ def test_edge_attributes(benchmark):
     def edge_attributes(H):
         [H.edges[eid] for eid in H.edges]
 
-    benchmark.pedantic(edge_attributes, setup=setup, rounds=10)
+    benchmark.pedantic(edge_attributes, setup=setup, rounds=rounds)
 
 
 def test_degree(benchmark):
@@ -83,7 +84,7 @@ def test_degree(benchmark):
     def degree(H):
         H.degree()
 
-    benchmark.pedantic(degree, setup=setup, rounds=10)
+    benchmark.pedantic(degree, setup=setup, rounds=rounds)
 
 
 def test_nodestats_degree(benchmark):
@@ -94,7 +95,7 @@ def test_nodestats_degree(benchmark):
     def degree(H):
         H.nodestats.degree.asnumpy()
 
-    benchmark.pedantic(degree, setup=setup, rounds=10)
+    benchmark.pedantic(degree, setup=setup, rounds=rounds)
 
 
 def test_nodestats_degree(benchmark):
@@ -105,7 +106,7 @@ def test_nodestats_degree(benchmark):
     def degree(H):
         H.nodes.degree.asnumpy()
 
-    benchmark.pedantic(degree, setup=setup, rounds=10)
+    benchmark.pedantic(degree, setup=setup, rounds=rounds)
 
 
 def test_edge_size(benchmark):
@@ -116,7 +117,7 @@ def test_edge_size(benchmark):
     def degree(H):
         H.edges.size.asnumpy()
 
-    benchmark.pedantic(degree, setup=setup, rounds=10)
+    benchmark.pedantic(degree, setup=setup, rounds=rounds)
 
 
 def test_isolates(benchmark):
@@ -127,7 +128,7 @@ def test_isolates(benchmark):
     def isolates(H):
         H.nodes.isolates()
 
-    benchmark.pedantic(isolates, setup=setup, rounds=10)
+    benchmark.pedantic(isolates, setup=setup, rounds=rounds)
 
 
 def test_singletons(benchmark):
@@ -138,7 +139,7 @@ def test_singletons(benchmark):
     def singletons(H):
         H.edges.singletons()
 
-    benchmark.pedantic(singletons, setup=setup, rounds=10)
+    benchmark.pedantic(singletons, setup=setup, rounds=rounds)
 
 
 def test_copy(benchmark):
@@ -149,7 +150,7 @@ def test_copy(benchmark):
     def copy(H):
         H.copy()
 
-    benchmark.pedantic(copy, setup=setup, rounds=10)
+    benchmark.pedantic(copy, setup=setup, rounds=rounds)
 
 
 def test_dual(benchmark):
@@ -160,4 +161,4 @@ def test_dual(benchmark):
     def dual(H):
         H.dual()
 
-    benchmark.pedantic(dual, setup=setup, rounds=10)
+    benchmark.pedantic(dual, setup=setup, rounds=rounds)
