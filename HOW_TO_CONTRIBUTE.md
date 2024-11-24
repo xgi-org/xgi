@@ -9,7 +9,7 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 1. Download the dependencies in the developer [requirements file](/requirements/developer.txt).
 2. Add unit tests for features being added or bugs being fixed.
 3. Include any new method/function in the corresponding docs file.
-4. Run `pytest` to verify all unit tests pass. (If you want to see the overall test coverage, run `pytest --cov=xgi tests` and to see the lines of code not covered by tests, run `pytest  --cov-report term-missing --cov=xgi tests`)
+4. Run `pytest` to verify all unit tests pass. (To see what lines are covered, read the [`pytest-cov`](https://pytest-cov.readthedocs.io/en/latest/reporting.html) documentation.)
 5. [OPTIONAL] Format codebase according to the steps below.
 5. Submit Pull Request with a list of changes, links to issues that it addresses (if applicable)
 6. You may merge the Pull Request in once you have the sign-off of at least one other developer, or if you do not have permission to do that, you may request the reviewer to merge it for you.
