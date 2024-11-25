@@ -136,6 +136,22 @@ def bipartite_graph4():
 
 
 @pytest.fixture
+def bipartite_dihypergraph1():
+    G = nx.Graph()
+    G.graph["network-type"] = "directed"
+    G.add_nodes_from([1, 2, 3, 4], bipartite=0)
+    G.add_nodes_from(["a", "b", "c"], bipartite=1)
+    G.add_edges_from([
+        (1, "a"),
+        (1, "b", {"direction": "tail"}),
+        (2, "b"),
+        (2, "c", {"direction": "tail"}),
+        (3, "c"),
+        (4, "a", {"direction": "tail"})])
+    return G
+
+
+@pytest.fixture
 def attr0():
     return {"color": "brown", "name": "camel"}
 

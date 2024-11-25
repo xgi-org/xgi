@@ -81,3 +81,18 @@ def test_from_bipartite_graph(
     # not bipartite
     with pytest.raises(XGIError):
         H = xgi.from_bipartite_graph(bipartite_graph4, dual=True)
+
+
+def test_from_bipartite_graph_to_dihypergraph(
+    bipartite_dihypergraph1
+):
+    H = xgi.from_bipartite_graph(bipartite_dihypergraph1)
+
+    assert set(H.nodes) == {1, 2, 3, 4}
+    assert set(H.edges) == {"a", "b", "c"}
+    assert H.edges.head("a") == {1}
+    assert H.edges.tail("a") == {4}
+    assert H.edges.head("b") == {2}
+    assert H.edges.tail("b") == {1}
+    assert H.edges.head("c") == {3}
+    assert H.edges.tail("c") == {2}
