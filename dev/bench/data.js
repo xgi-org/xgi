@@ -2,7 +2,7 @@ window.BENCHMARK_DATA = {
   "lastUpdate": 1732491847177,
   "repoUrl": "https://github.com/xgi-org/xgi",
   "entries": {
-    "Python Benchmark with pytest-benchmark": [
+    "XGI Benchmarks": [
       {
         "commit": {
           "author": {
