@@ -88,7 +88,6 @@ release = [
     "twine>=3.4",
     "build>=1.2.1",
     "wheel>=0.36",
-    "github-changelog",
 ]
 test = [
     "pytest>=7.2",
