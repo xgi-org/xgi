@@ -30,7 +30,9 @@ See the `load_bigg_data() documentation <api/readwrite/xgi.readwrite.bigg_data.h
 Dataset format
 --------------
 
-XGI-DATA provides higher-order datasets in two formats: (1) Hypergraph Interchange Format (HIF)-compliant JSON (2) XGI-specific JSON format. See the `HIF-standard <https://github.com/pszufe/HIF-standard>`_ documentation on format (1). Format (2) is structured as follows:
+XGI-DATA provides higher-order datasets in two formats: (1) Hypergraph Interchange Format (HIF)-compliant JSON (2) XGI-specific JSON format. See the `HIF-standard <https://github.com/pszufe/HIF-standard>`_ documentation on format (1).
+All future datasets and updates to current datasets will be stored as format (1).
+Format (2) is structured as follows:
 
 * :code:`hypergraph-data`: This tag accesses the attributes of the entire hypergraph dataset such as the authors or dataset name.
 
