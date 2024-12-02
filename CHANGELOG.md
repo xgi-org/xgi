@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.9.3
+* Added the ability for `load_xgi_data` to read HIF and added HIF dicts to the convert module. [#613](https://github.com/xgi-org/xgi/pull/613) (@nwlandry)
+* Added a custom Changelog generator to use XGI formatting. [#626](https://github.com/xgi-org/xgi/pull/626) (@nwlandry)
+* Removed unnecesary asv files and added benchmarks. [#631](https://github.com/xgi-org/xgi/pull/631) (@nwlandry)
+* Added a benchmark GitHub Action with `pytest-benchmark`. [#630](https://github.com/xgi-org/xgi/pull/630) (@nwlandry)
+* Added release hashes for `asv`. [#628](https://github.com/xgi-org/xgi/pull/628) (@nwlandry)
+* [BREAKING] Replaced the `id` variable with `idx` in XGI (Fixes Issue [#619](https://github.com/xgi-org/xgi/issues/619)). [#620](https://github.com/xgi-org/xgi/pull/620) (@nwlandry)
+
 ## v0.9.2
 * Added nonuniform centralities and fixed the `node_edge_centrality` method [#600](https://github.com/xgi-org/xgi/pull/600) (@nwlandry).
 * Fixed Issue [#615](https://github.com/xgi-org/xgi/issues/615). Added a docstring to the `watts_strogatz_hypergraph` method [#618](https://github.com/xgi-org/xgi/pull/618) (@nwlandry).
