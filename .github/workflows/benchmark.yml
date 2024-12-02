@@ -24,11 +24,11 @@ jobs:
           pip install .[benchmark]
       - name: Run benchmarks
         run: |
-          pytest benchmarks/*.py --benchmark-json benchmarks/output.json
+          pytest benchmarks/*.py --benchmark-json --benchmark-time-unit=ms benchmarks/output.json
       - name: Store benchmark results
         uses: benchmark-action/github-action-benchmark@v1
         with:
-          name: Python Benchmark with pytest-benchmark
+          name: XGI Benchmarks
           tool: 'pytest'
           output-file-path: benchmarks/output.json
           # Use personal access token instead of GITHUB_TOKEN due to https://github.community/t/github-action-not-triggering-gh-pages-upon-push/16096
