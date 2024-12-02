@@ -24,7 +24,7 @@ jobs:
           pip install .[benchmark]
       - name: Run benchmarks
         run: |
-          pytest benchmarks/*.py --benchmark-json --benchmark-time-unit=ms benchmarks/output.json
+          pytest benchmarks/*.py --benchmark-json=benchmarks/output.json --benchmark-time-units=ms   
       - name: Store benchmark results
         uses: benchmark-action/github-action-benchmark@v1
         with:
