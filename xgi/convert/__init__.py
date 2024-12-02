@@ -3,6 +3,7 @@ from . import (
     bipartite_graph,
     encapsulation_dag,
     graph,
+    hif_dict,
     higher_order_network,
     hyperedges,
     hypergraph_dict,
@@ -15,6 +16,7 @@ from .bipartite_edges import *
 from .bipartite_graph import *
 from .encapsulation_dag import *
 from .graph import *
+from .hif_dict import *
 from .higher_order_network import *
 from .hyperedges import *
 from .hypergraph_dict import *

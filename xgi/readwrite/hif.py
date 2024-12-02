@@ -6,15 +6,15 @@ HIF `project <https://github.com/pszufe/HIF_validators>`_.
 
 import json
 from collections import defaultdict
+from os.path import dirname, join
 
-from ..convert import to_bipartite_edgelist
-from ..core import DiHypergraph, Hypergraph, SimplicialComplex
-from ..utils import IDDict
+from ..convert import from_hif_dict, to_hif_dict
+from ..exception import XGIError
 
-__all__ = ["write_hif", "read_hif"]
+__all__ = ["write_hif", "write_hif_collection", "read_hif", "read_hif_collection"]
 
 
-def write_hif(G, path):
+def write_hif(H, path):
     """
     A function to write a higher-order network according to the HIF standard.
 
@@ -22,53 +22,61 @@ def write_hif(G, path):
 
     Parameters
     ----------
-    G: Hypergraph, DiHypergraph, or SimplicialComplex object
+    H: Hypergraph, DiHypergraph, or SimplicialComplex object
         The specified higher-order network
     path: string
         The path of the file to read from
     """
-    # initialize empty data
-    data = defaultdict(list)
-
-    data["metadata"] = {}
-    data["metadata"].update(G._net_attr)
-
-    if isinstance(G, SimplicialComplex):
-        data["network-type"] = "asc"
-    elif isinstance(G, Hypergraph):
-        data["network-type"] = "undirected"
-    elif isinstance(G, DiHypergraph):
-        data["network-type"] = "directed"
-
-    # get node data
-    isolates = set(G.nodes.isolates())
-    nodes_with_attrs = set(n for n in G.nodes if G.nodes[n])
-    for n in isolates.union(nodes_with_attrs):
-        attr = {"attrs": G.nodes[n]} if G.nodes[n] else {}
-        data["nodes"].append(IDDict({"node": n}) + attr)
-
-    empty = set(G.edges.empty())
-    edges_with_attrs = set(e for e in G.edges if G.edges[e])
-    for e in empty.union(edges_with_attrs):
-        attr = {"attrs": G.edges[e]} if G.edges[e] else {}
-        data["edges"].append(IDDict({"edge": e}) + attr)
-
-    # hyperedge dict
-    if data["network-type"] == "directed":
-        _convert_d = lambda d: "tail" if d == "in" else "head"
-        data["incidences"] = [
-            IDDict({"edge": e, "node": n, "direction": _convert_d(d)})
-            for n, e, d in to_bipartite_edgelist(G)
-        ]
-    elif data["network-type"] in {"undirected", "asc"}:
-        data["incidences"] = [
-            IDDict({"edge": e, "node": n}) for n, e in to_bipartite_edgelist(G)
-        ]
+    data = to_hif_dict(H)
 
     datastring = json.dumps(data, indent=2)
 
     with open(path, "w") as output_file:
         output_file.write(datastring)
+
+
+def write_hif_collection(H, path, collection_name=""):
+    """
+    A function to write a collection of higher-order network according to the HIF standard.
+
+    For more information, see the HIF `project <https://github.com/pszufe/HIF_validators>`_.
+
+    Parameters
+    ----------
+    H: list or dict of Hypergraph, DiHypergraph, or SimplicialComplex objects
+        The specified higher-order network
+    path: string
+        The path of the file to read from
+    """
+    if isinstance(H, list):
+        collection_data = defaultdict(dict)
+        for i, H in enumerate(H):
+            fname = f"{path}/{collection_name}_{i}.json"
+            collection_data["datasets"][i] = {
+                "relative-path": f"{collection_name}_{i}.json"
+            }
+            write_hif(H, fname)
+        collection_data["type"] = "collection"
+        datastring = json.dumps(collection_data, indent=2)
+        with open(
+            f"{path}/{collection_name}_collection_information.json", "w"
+        ) as output_file:
+            output_file.write(datastring)
+
+    elif isinstance(H, dict):
+        collection_data = defaultdict(dict)
+        for name, H in H.items():
+            fname = f"{path}/{collection_name}_{name}.json"
+            collection_data["datasets"][name] = {
+                "relative-path": f"{collection_name}_{name}.json"
+            }
+            write_hif(H, fname)
+        collection_data["type"] = "collection"
+        datastring = json.dumps(collection_data, indent=2)
+        with open(
+            f"{path}/{collection_name}_collection_information.json", "w"
+        ) as output_file:
+            output_file.write(datastring)
 
 
 def read_hif(path, nodetype=None, edgetype=None):
@@ -79,8 +87,8 @@ def read_hif(path, nodetype=None, edgetype=None):
 
     Parameters
     ----------
-    data: dict
-        A dictionary in the hypergraph JSON format
+    path: str
+        The path to the json file
     nodetype: type, optional
         type that the node IDs will be cast to
     edgetype: type, optional
@@ -94,99 +102,44 @@ def read_hif(path, nodetype=None, edgetype=None):
     with open(path) as file:
         data = json.loads(file.read())
 
-    return _from_dict(data, nodetype=nodetype, edgetype=edgetype)
+    return from_hif_dict(data, nodetype=nodetype, edgetype=edgetype)
 
 
-def _from_dict(data, nodetype=None, edgetype=None):
+def read_hif_collection(path, nodetype=None, edgetype=None):
     """
-    A helper function to read a file created according to the HIF format.
+    A function to read a collection of files created according to the HIF format.
+
+    There must be a collection information JSON file which has a top-level field "datasets"
+    with subfields "relative-path", indicating each dataset's location relative to the
+    collection file
 
     For more information, see the HIF `project <https://github.com/pszufe/HIF_validators>`_.
 
     Parameters
     ----------
-    data: dict
-        A dictionary in the hypergraph JSON format
+    path: str
+        A path to the collection json file.
     nodetype: type, optional
-        Type that the node IDs will be cast to
+        type that the node IDs will be cast to
     edgetype: type, optional
-        Type that the edge IDs will be cast to
+        type that the edge IDs will be cast to
 
     Returns
     -------
-    A Hypergraph, SimplicialComplex, or DiHypergraph object
-        The loaded network
+    A dictionary of Hypergraph, SimplicialComplex, or DiHypergraph objects
+        The collection of networks
     """
+    with open(path) as file:
+        jsondata = json.loads(file.read())
 
-    def _empty_edge(network_type):
-        if network_type in {"asc", "undirected"}:
-            return set()
-        else:
-            return (set(), set())
-
-    def _convert_id(i, idtype):
-        if idtype:
-            try:
-                return idtype(i)
-            except ValueError as e:
-                raise TypeError(f"Failed to convert ID {i} to type {idtype}.") from e
-        else:
-            return i
-
-    _convert_d = lambda d: "in" if d == "tail" else "out"
-
-    if "network-type" in data:
-        network_type = data["network-type"]
-    else:
-        network_type = "undirected"
-
-    if network_type in {"asc", "undirected"}:
-        G = Hypergraph()
-    elif network_type == "directed":
-        G = DiHypergraph()
-
-    # Import network metadata
-    if "metadata" in data:
-        G._net_attr.update(data["metadata"])
-
-    for record in data["incidences"]:
-        n = _convert_id(record["node"], nodetype)
-        e = _convert_id(record["edge"], edgetype)
-
-        if network_type == "directed":
-            d = record["direction"]
-            d = _convert_d(d)  # convert from head/tail to in/out
-            G.add_node_to_edge(e, n, d)
-        else:
-            G.add_node_to_edge(e, n)
-
-    # import node attributes if they exist
-    if "nodes" in data:
-        for record in data["nodes"]:
-            n = _convert_id(record["node"], nodetype)
-            if "attrs" in record:
-                attr = record["attrs"]
-            else:
-                attr = {}
-
-            if n not in G._node:
-                G.add_node(n, **attr)
-            else:
-                G.set_node_attributes({n: attr})
-
-    # import edge attributes if they exist
-    if "edges" in data:
-        for record in data["edges"]:
-            e = _convert_id(record["edge"], edgetype)
-            if "attrs" in record:
-                attr = record["attrs"]
-            else:
-                attr = {}
-            if e not in G._edge:
-                G.add_edge(_empty_edge(network_type), e, **attr)
-            else:
-                G.set_edge_attributes({e: attr})
-
-    if network_type == "asc":
-        G = SimplicialComplex(G)
-    return G
+    try:
+        collection = {}
+        for name, data in jsondata["datasets"].items():
+            relpath = data["relative-path"]
+            H = read_hif(
+                join(dirname(path), relpath), nodetype=nodetype, edgetype=edgetype
+            )
+            collection[name] = H
+        return collection
+    except KeyError:
+        raise XGIError("Data collection is in the wrong format!")

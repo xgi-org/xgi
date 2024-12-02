@@ -1,13 +1,9 @@
-import json
-import tempfile
-from os.path import join
-
 import pytest
 
 import xgi
 
 
-def test_write_hif(
+def test_to_hif_dict(
     edgelist1,
     hyperwithdupsandattrs,
     simplicialcomplex1,
@@ -15,16 +11,13 @@ def test_write_hif(
     dihyperwithattrs,
 ):
     H = xgi.Hypergraph(edgelist1)
-    _, filename = tempfile.mkstemp()
-    xgi.write_hif(H, filename)
-    with open(filename) as file:
-        jsondata = json.loads(file.read())
+    d = xgi.to_hif_dict(H)
 
-    assert "nodes" not in jsondata
-    assert "edges" not in jsondata
-    assert "incidences" in jsondata
-    assert "network-type" in jsondata
-    assert jsondata["network-type"] == "undirected"
+    assert "nodes" not in d
+    assert "edges" not in d
+    assert "incidences" in d
+    assert "network-type" in d
+    assert d["network-type"] == "undirected"
 
     incidences = [
         {"edge": 0, "node": 1},
@@ -37,26 +30,19 @@ def test_write_hif(
         {"edge": 3, "node": 7},
         {"edge": 3, "node": 8},
     ]
-    assert (
-        sorted(jsondata["incidences"], key=lambda x: (x["edge"], x["node"]))
-        == incidences
-    )
+    assert sorted(d["incidences"], key=lambda x: (x["edge"], x["node"])) == incidences
 
     # hypergraph with attributes
-    _, filename = tempfile.mkstemp()
     hyperwithdupsandattrs["name"] = "test"
-    xgi.write_hif(hyperwithdupsandattrs, filename)
+    d = xgi.to_hif_dict(hyperwithdupsandattrs)
 
-    with open(filename) as file:
-        jsondata = json.loads(file.read())
-
-    assert "nodes" in jsondata
-    assert "edges" in jsondata
-    assert "incidences" in jsondata
-    assert "network-type" in jsondata
-    assert jsondata["network-type"] == "undirected"
-    assert "metadata" in jsondata
-    assert jsondata["metadata"] == {"name": "test"}
+    assert "nodes" in d
+    assert "edges" in d
+    assert "incidences" in d
+    assert "network-type" in d
+    assert d["network-type"] == "undirected"
+    assert "metadata" in d
+    assert d["metadata"] == {"name": "test"}
 
     nodes = [
         {"node": 1, "attrs": {"color": "red", "name": "horse"}},
@@ -89,25 +75,18 @@ def test_write_hif(
         {"edge": 4, "node": 5},
     ]
 
-    assert sorted(jsondata["nodes"], key=lambda x: x["node"]) == nodes
-    assert jsondata["edges"] == edges
-    assert (
-        sorted(jsondata["incidences"], key=lambda x: (x["edge"], x["node"]))
-        == incidences
-    )
+    assert sorted(d["nodes"], key=lambda x: x["node"]) == nodes
+    assert d["edges"] == edges
+    assert sorted(d["incidences"], key=lambda x: (x["edge"], x["node"])) == incidences
 
     # Simplicial complexes
-    _, filename = tempfile.mkstemp()
-    xgi.write_hif(simplicialcomplex1, filename)
+    d = xgi.to_hif_dict(simplicialcomplex1)
 
-    with open(filename) as file:
-        jsondata = json.loads(file.read())
-
-    assert "nodes" not in jsondata
-    assert "edges" not in jsondata
-    assert "incidences" in jsondata
-    assert "network-type" in jsondata
-    assert jsondata["network-type"] == "asc"
+    assert "nodes" not in d
+    assert "edges" not in d
+    assert "incidences" in d
+    assert "network-type" in d
+    assert d["network-type"] == "asc"
 
     incidences = [
         {"edge": "e1", "node": 0},
@@ -125,45 +104,36 @@ def test_write_hif(
         return (0, int(ele)) if isinstance(ele, int) else (1, ele)
 
     sorted_incidences = sorted(
-        jsondata["incidences"], key=lambda x: (_mixed(x["edge"]), _mixed(x["node"]))
+        d["incidences"], key=lambda x: (_mixed(x["edge"]), _mixed(x["node"]))
     )
     assert sorted_incidences == incidences
 
     # dihypergraphs without attributes
     H = xgi.DiHypergraph(diedgedict1)
 
-    _, filename = tempfile.mkstemp()
-    xgi.write_hif(H, filename)
+    d = xgi.to_hif_dict(H)
 
-    with open(filename) as file:
-        jsondata = json.loads(file.read())
-
-    assert "nodes" not in jsondata
-    assert "edges" not in jsondata
-    assert "incidences" in jsondata
+    assert "nodes" not in d
+    assert "edges" not in d
+    assert "incidences" in d
 
     # dihypergraphs with attributes
-    _, filename = tempfile.mkstemp()
-    xgi.write_hif(dihyperwithattrs, filename)
+    d = xgi.to_hif_dict(dihyperwithattrs)
 
-    with open(filename) as file:
-        jsondata = json.loads(file.read())
-
-    assert "nodes" in jsondata
-    assert "edges" in jsondata
-    assert "incidences" in jsondata
+    assert "nodes" in d
+    assert "edges" in d
+    assert "incidences" in d
 
 
-def test_read_hif(
+def test_from_hif_dict(
     hyperwithdupsandattrs,
     simplicialcomplex1,
     dihyperwithattrs,
 ):
-    _, filename1 = tempfile.mkstemp()
-    xgi.write_hif(hyperwithdupsandattrs, filename1)
+    d = xgi.to_hif_dict(hyperwithdupsandattrs)
 
     # test basic import
-    H = xgi.read_hif(filename1)
+    H = xgi.from_hif_dict(d)
 
     assert isinstance(H, xgi.Hypergraph)
     assert (H.num_nodes, H.num_edges) == (5, 5)
@@ -185,7 +155,7 @@ def test_read_hif(
     assert H.edges.members(dtype=dict) == edgedict
 
     # cast nodes and edges
-    H = xgi.read_hif(filename1, nodetype=str, edgetype=float)
+    H = xgi.from_hif_dict(d, nodetype=str, edgetype=float)
     assert set(H.nodes) == {"1", "2", "3", "4", "5"}
     assert set(H.edges) == {0.0, 1.0, 2.0, 3.0, 4.0}
 
@@ -201,10 +171,9 @@ def test_read_hif(
     }
     assert H.edges.members(dtype=dict) == edgedict
 
-    _, filename2 = tempfile.mkstemp()
-    xgi.write_hif(simplicialcomplex1, filename2)
+    ds = xgi.to_hif_dict(simplicialcomplex1)
 
-    S = xgi.read_hif(filename2)
+    S = xgi.from_hif_dict(ds)
     assert isinstance(S, xgi.SimplicialComplex)
     assert (S.num_nodes, S.num_edges) == (3, 4)
 
@@ -212,10 +181,9 @@ def test_read_hif(
     assert set(S.edges) == {"e1", "e2", "e3", "e4"}
 
     # dihypergraphs
-    _, filename3 = tempfile.mkstemp()
-    xgi.write_hif(dihyperwithattrs, filename3)
+    d = xgi.to_hif_dict(dihyperwithattrs)
 
-    DH = xgi.read_hif(filename3)
+    DH = xgi.from_hif_dict(d)
     assert (DH.num_nodes, DH.num_edges) == (6, 3)
     assert isinstance(DH, xgi.DiHypergraph)
     assert set(DH.nodes) == {0, 1, 2, 3, 4, 5}
@@ -226,13 +194,12 @@ def test_read_hif(
 
     # test error checking
     with pytest.raises(TypeError):
-        S = xgi.read_hif(filename2, edgetype=int)
+        S = xgi.from_hif_dict(ds, edgetype=int)
 
     # metadata
-    _, filename4 = tempfile.mkstemp()
     hyperwithdupsandattrs["name"] = "test"
-    xgi.write_hif(hyperwithdupsandattrs, filename4)
-    H = xgi.read_hif(filename4)
+    d = xgi.to_hif_dict(hyperwithdupsandattrs)
+    H = xgi.from_hif_dict(d)
 
     assert H["name"] == "test"
 
@@ -241,64 +208,19 @@ def test_read_hif(
     H.add_nodes_from(range(5))
     H.add_edges_from([[1, 2, 3], []])
 
-    _, filename5 = tempfile.mkstemp()
-    xgi.write_hif(H, filename5)
+    d = xgi.to_hif_dict(H)
 
-    H = xgi.read_hif(filename5)
+    H = xgi.from_hif_dict(d)
     assert H.edges.size.aslist() == [3, 0]
     assert set(H.nodes.isolates()) == {0, 4}
 
-    DH = xgi.DiHypergraph()
-    DH.add_nodes_from(range(5))
-    DH.add_edges_from([([1, 2, 3], [2, 4]), [[], []]])
-
-    _, filename6 = tempfile.mkstemp()
-    xgi.write_hif(DH, filename6)
-
-    DH = xgi.read_hif(filename6)
-
-    assert DH.edges.size.aslist() == [4, 0]
-    assert set(DH.nodes.isolates()) == {0}
-
-
-def test_read_hif_collection():
-    # test isolates and empty edges
-    H = xgi.Hypergraph()
+    H = xgi.DiHypergraph()
     H.add_nodes_from(range(5))
-    H.add_edges_from([[1, 2, 3], []])
+    H.add_edges_from([([1, 2, 3], [2, 4]), [[], []]])
 
-    _, filename5 = tempfile.mkstemp()
-    xgi.write_hif(H, filename5)
+    d = xgi.to_hif_dict(H)
 
-    H = xgi.read_hif(filename5)
-    assert H.edges.size.aslist() == [3, 0]
-    assert set(H.nodes.isolates()) == {0, 4}
+    H = xgi.from_hif_dict(d)
 
-    DH = xgi.DiHypergraph()
-    DH.add_nodes_from(range(5))
-    DH.add_edges_from([([1, 2, 3], [2, 4]), [[], []]])
-    # test collections
-
-    # test list collection
-    collection = [H, DH]
-    tempdir = tempfile.mkdtemp()
-
-    xgi.write_hif_collection(collection, tempdir, collection_name="test")
-    collection = xgi.read_hif_collection(
-        join(tempdir, "test_collection_information.json")
-    )
-    assert len(collection) == 2
-    assert isinstance(collection, dict)
-    assert sorted(collection) == ["0", "1"]
-
-    # test dict collection
-    collection = {"dataset1": H, "dataset2": DH}
-    tempdir = tempfile.mkdtemp()
-
-    xgi.write_hif_collection(collection, tempdir, collection_name="test")
-    collection = xgi.read_hif_collection(
-        join(tempdir, "test_collection_information.json")
-    )
-    assert len(collection) == 2
-    assert isinstance(collection, dict)
-    assert sorted(collection) == ["dataset1", "dataset2"]
+    assert H.edges.size.aslist() == [4, 0]
+    assert set(H.nodes.isolates()) == {0}
