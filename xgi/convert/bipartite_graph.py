@@ -1,6 +1,7 @@
 """Methods for converting to and from bipartite graphs."""
 
 import networkx as nx
+import xgi
 from networkx import bipartite
 
 from ..exception import XGIError
@@ -73,19 +74,18 @@ def from_bipartite_graph(G, create_using=None, dual=False):
         else:
             raise XGIError("Invalid type specifier")
 
-    if not bipartite.is_bipartite_node_set(G, nodes):
-        raise XGIError("The network is not bipartite")
-
-    network_type = G.graph.get("network-type")
-    if network_type == "directed":
+    if G.is_directed():
         H = empty_dihypergraph(create_using)
     else:
+        if not bipartite.is_bipartite_node_set(G, nodes):
+            raise XGIError("The network is not bipartite")
+
         H = empty_hypergraph(create_using)
 
     H.add_nodes_from(nodes)
     for edge in edges:
         for u, v, d in G.edges(edge, data="direction"):
-            if network_type == "directed":
+            if isinstance(H, xgi.DiHypergraph):
                 if d == "tail":
                     H.add_node_to_edge(u, v, direction="in")
                 else:
