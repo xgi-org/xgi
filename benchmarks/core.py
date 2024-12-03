@@ -4,6 +4,21 @@ rounds = 10
 fname = "benchmarks/email-enron.json"
 
 
+# Below is an example so I can better understand the control flow
+def test_simple_benchmark(benchmark):
+    """A simple benchmark to test the workflow."""
+    def setup():
+        # No setup needed for this simple test
+        return (), {}
+
+    def run_benchmark():
+        x = 0
+        for i in range(1000):
+            x += i
+        return x
+
+    benchmark.pedantic(run_benchmark, setup=setup, rounds=rounds)
+
 def test_construct_from_edgelist(benchmark):
     def setup():
         H = xgi.read_hif(fname)
