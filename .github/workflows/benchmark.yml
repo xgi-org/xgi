@@ -38,6 +38,3 @@ jobs:
           alert-threshold: '200%'
           comment-on-alert: false
           fail-on-alert: true
-          output-metric: 'mean'
-          metric-unit: 'ms'
-          metric-scale: '1000'
