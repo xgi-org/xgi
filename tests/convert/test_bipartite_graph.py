@@ -83,8 +83,10 @@ def test_from_bipartite_graph(
         H = xgi.from_bipartite_graph(bipartite_graph4, dual=True)
 
 
-def test_from_bipartite_graph_to_dihypergraph(bipartite_dihypergraph1):
-    H = xgi.from_bipartite_graph(bipartite_dihypergraph1)
+def test_from_bipartite_digraph_to_dihypergraph(
+    bipartite_digraph1, bipartite_digraph2, bipartite_graph1
+):
+    H = xgi.from_bipartite_graph(bipartite_digraph1)
 
     assert set(H.nodes) == {1, 2, 3, 4}
     assert set(H.edges) == {"a", "b", "c"}
@@ -94,3 +96,11 @@ def test_from_bipartite_graph_to_dihypergraph(bipartite_dihypergraph1):
     assert H.edges.tail("b") == {1}
     assert H.edges.head("c") == {3}
     assert H.edges.tail("c") == {2}
+
+    # missing direction
+    with pytest.raises(XGIError):
+        H = xgi.from_bipartite_graph(bipartite_graph1, xgi.DiHypergraph)
+
+    # unknown direction
+    with pytest.raises(XGIError):
+        H = xgi.from_bipartite_graph(bipartite_digraph2)

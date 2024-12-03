@@ -136,18 +136,31 @@ def bipartite_graph4():
 
 
 @pytest.fixture
-def bipartite_dihypergraph1():
+def bipartite_digraph1():
     G = nx.DiGraph()
     G.add_nodes_from([1, 2, 3, 4], bipartite=0)
     G.add_nodes_from(["a", "b", "c"], bipartite=1)
     G.add_edges_from(
         [
-            ("a", 1),
+            ("a", 1, {"direction": "head"}),
             ("b", 1, {"direction": "tail"}),
-            ("b", 2),
+            ("b", 2, {"direction": "head"}),
             ("c", 2, {"direction": "tail"}),
-            ("c", 3),
+            ("c", 3, {"direction": "head"}),
             ("a", 4, {"direction": "tail"}),
+        ]
+    )
+    return G
+
+
+@pytest.fixture
+def bipartite_digraph2():
+    G = nx.DiGraph()
+    G.add_nodes_from([1], bipartite=0)
+    G.add_nodes_from(["a"], bipartite=1)
+    G.add_edges_from(
+        [
+            ("a", 1, {"direction": "invalid"}),
         ]
     )
     return G

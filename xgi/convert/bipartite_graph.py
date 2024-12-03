@@ -84,12 +84,19 @@ def from_bipartite_graph(G, create_using=None, dual=False):
 
     H.add_nodes_from(nodes)
     for edge in edges:
-        for u, v, d in G.edges(edge, data="direction"):
+        for u, v, d in G.edges(edge, data=True):
             if isinstance(H, xgi.DiHypergraph):
-                if d == "tail":
+                try:
+                    edge_direction = d["direction"]
+                except KeyError as e:
+                    raise XGIError("direction property not set in bipartite graph") from e
+
+                if edge_direction == "tail":
                     H.add_node_to_edge(u, v, direction="in")
-                else:
+                elif edge_direction == "head":
                     H.add_node_to_edge(u, v, direction="out")
+                else:
+                    raise XGIError("Invalid direction specifier")
             else:
                 H.add_node_to_edge(u, v)
     return H.dual() if dual else H
