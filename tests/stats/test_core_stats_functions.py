@@ -630,6 +630,78 @@ def test_ashist_original_functionality():
     assert "xlabel" in df.attrs
 
 
+def test_ashist_plotting_basic():
+    """Test basic plotting functionality."""
+    H = xgi.sunflower(3, 1, 20)
+
+    # Test that plot=False still returns correct DataFrame
+    df_no_plot = H.edges.size.ashist(plot=False)
+    expected_df = pd.DataFrame([[20.0, 3]], columns=["bin_center", "value"])
+    assert df_no_plot.equals(expected_df)
+
+    # Test that plot=True returns correct DataFrame
+    df_with_plot = H.edges.size.ashist(plot=True)
+    assert df_with_plot.equals(expected_df)
+
+
+def test_ashist_plot_types():
+    """Test different plot types."""
+    H = xgi.sunflower(3, 1, 20)
+
+    # Test valid plot types
+    for plot_type in ["bar", "line", "step"]:
+        df = H.edges.size.ashist(plot=plot_type)
+        expected_df = pd.DataFrame([[20.0, 3]], columns=["bin_center", "value"])
+        assert df.equals(expected_df)
+
+
+def test_ashist_plot_kwargs():
+    """Test plot kwargs functionality."""
+    H = xgi.sunflower(3, 1, 20)
+
+    # Test with valid kwargs
+    df = H.edges.size.ashist(plot="bar", plot_kwargs={"color": "red", "alpha": 0.5})
+    expected_df = pd.DataFrame([[20.0, 3]], columns=["bin_center", "value"])
+    assert df.equals(expected_df)
+
+
+def test_ashist_plot_errors():
+    """Test error handling in plotting."""
+    H = xgi.sunflower(3, 1, 20)
+
+    # Test invalid plot type
+    with pytest.raises(ValueError, match="Unknown plot type"):
+        H.edges.size.ashist(plot="invalid_type")
+
+    # Test with valid matplotlib parameters
+    df = H.edges.size.ashist(
+        plot="bar",
+        plot_kwargs={"color": "red", "alpha": 0.5},  # Known valid parameters
+    )
+    assert isinstance(df, pd.DataFrame)
+
+
+def test_ashist_density_plotting():
+    """Test plotting with density parameter."""
+    H = xgi.sunflower(3, 1, 20)
+
+    # Test with density=True
+    df = H.edges.size.ashist(plot=True, density=True)
+    # Note: actual values will be different with density=True
+    assert "bin_center" in df.columns
+    assert "value" in df.columns
+
+
+def test_ashist_bin_edges_plotting():
+    """Test plotting with bin_edges parameter."""
+    H = xgi.sunflower(3, 1, 20)
+
+    # Test with bin_edges=True
+    df = H.edges.size.ashist(plot=True, bin_edges=True)
+    assert "bin_lo" in df.columns
+    assert "bin_hi" in df.columns
+
+
 def test_ashist_single_unique_value():
     """Test ashist when there is only one unique value and multiple bins."""
     H = xgi.Hypergraph()
