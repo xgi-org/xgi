@@ -167,8 +167,16 @@ class IDStat:
 
         return pd.Series(self._val, name=self.name)
 
-    def ashist(self, bins=10, bin_edges=False, density=False, log_binning=False):
-        """Return the distribution of a numpy array.
+    def ashist(
+        self,
+        bins=10,
+        bin_edges=False,
+        density=False,
+        log_binning=False,
+        plot=False,
+        plot_kwargs=None,
+    ):
+        """Return the distribution of a numpy array and optionally plot it.
 
         Parameters
         ----------
@@ -184,6 +192,13 @@ class IDStat:
         log_binning : bool
             Whether to bin the values with log-sized bins.
             By default, False.
+        plot : bool or str
+            If True (or ``"bar"``), plot the histogram with matplotlib as a bar
+            chart. Can also be ``"line"`` or ``"step"`` to choose the plot type.
+            By default, False.
+        plot_kwargs : dict, optional
+            Additional keyword arguments passed to the matplotlib plotting
+            function. By default, None.
 
         Returns
         -------
@@ -195,20 +210,24 @@ class IDStat:
 
             The DataFrame includes the following attributes:
                 - attrs['xlabel']: Label for x-axis
-            - attrs['ylabel']: 'Count' or 'Probability' based on density parameter
-            - attrs['title']: Plot title
+                - attrs['ylabel']: 'Count' or 'Probability' based on density parameter
+                - attrs['title']: Plot title
 
         Notes
         -----
         Originally from https://github.com/jkbren/networks-and-dataviz
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2], [2, 3, 4], [1, 2, 3]])
+        >>> df = H.nodes.degree.ashist(plot="bar", plot_kwargs={"color": "red"})
         """
 
         # if there is one unique value and more than one bin is specified,
         # sets the number of bins to 1.
         if isinstance(bins, int) and len(set(self.aslist())) == 1:
             bins = 1
-
-        # My modifications below
 
         # Get the histogram Dataframe
         df = hist(self.asnumpy(), bins, bin_edges, density, log_binning)
@@ -217,6 +236,42 @@ class IDStat:
         df.attrs["xlabel"] = "Value"
         df.attrs["ylabel"] = "Probability" if density else "Count"
         df.attrs["title"] = "Histogram"
+
+        # Optionally plot the histogram
+        if plot:
+            try:
+                import matplotlib.pyplot as plt
+            except ImportError:
+                raise ImportError("Matplotlib is required for plotting.")
+
+            plot_kwargs = plot_kwargs or {}
+            plot_type = "bar" if plot is True else plot
+            if plot_type not in ("bar", "line", "step"):
+                raise ValueError(
+                    f"Unknown plot type {plot_type!r}; "
+                    "expected one of 'bar', 'line', or 'step'."
+                )
+
+            fig, ax = plt.subplots()
+
+            if plot_type == "bar":
+                ax.bar(df["bin_center"], df["value"], **plot_kwargs)
+            elif plot_type == "line":
+                ax.plot(df["bin_center"], df["value"], **plot_kwargs)
+            else:  # "step"
+                ax.step(df["bin_center"], df["value"], where="mid", **plot_kwargs)
+
+            ax.set_xlabel(df.attrs["xlabel"])
+            ax.set_ylabel(df.attrs["ylabel"])
+            ax.set_title(df.attrs["title"])
+
+            # Draw the bin edges if they are available
+            if bin_edges:
+                for _, row in df.iterrows():
+                    ax.axvline(row["bin_lo"], color="gray", linestyle="--", alpha=0.5)
+                    ax.axvline(row["bin_hi"], color="gray", linestyle="--", alpha=0.5)
+
+            plt.show()
 
         return df
 
