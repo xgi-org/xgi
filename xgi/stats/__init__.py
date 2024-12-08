@@ -162,8 +162,16 @@ class IDStat:
         """
         return pd.Series(self._val, name=self.name)
 
-    def ashist(self, bins=10, bin_edges=False, density=False, log_binning=False):
-        """Return the distribution of a numpy array.
+    def ashist(
+        self,
+        bins=10,
+        bin_edges=False,
+        density=False,
+        log_binning=False,
+        plot=False,
+        plot_kwargs=None,
+    ):
+        """Return the distribution of a numpy array and optionally plot it.
 
         Parameters
         ----------
@@ -172,34 +180,71 @@ class IDStat:
         bins : int, list, or Numpy array
             The number of bins or the bin edges.
         bin_edges : bool
-            Whether to also output the min and max of each bin,
-            by default, False.
+            Whether to also output the min and max of each bin.
         density : bool
-            Whether to normalize the resulting distribution.
+            Whether to normalize the distribution.
         log_binning : bool
             Whether to bin the values with log-sized bins.
-            By default, False.
-
+        plot : bool or str
+            If True, plots histogram using matplotlib.
+            Can also be 'bar', 'line', or 'step' to specify plot type.
+        plot_kwargs : dict
+            Additional keyword arguments for plotting function.
 
         Returns
         -------
         Pandas DataFrame
-            A two-column table with "bin_center" and "value" columns,
-            where "value" is a count or a probability. If `bin_edges`
-            is True, outputs two additional columns, `bin_lo` and `bin_hi`,
-            which outputs the left and right bin edges respectively.
+            DataFrame with histogram data and optional plot.
 
-        Notes
-        -----
-        Originally from https://github.com/jkbren/networks-and-dataviz
+        Examples
+        --------
+        >>> H.nodes.degree.ashist(plot='bar', plot_kwargs={'color': 'red'})
         """
-
-        # if there is one unique value and more than one bin is specified,
-        # sets the number of bins to 1.
+        # Handle single value case
         if isinstance(bins, int) and len(set(self.aslist())) == 1:
             bins = 1
 
-        return hist(self.asnumpy(), bins, bin_edges, density, log_binning)
+        # Get histogram data
+        df = hist(self.asnumpy(), bins, bin_edges, density, log_binning)
+
+        # Only execute plotting code if plot is True or a string
+        if plot:
+            try:
+                import matplotlib.pyplot as plt
+            except ImportError:
+                raise ImportError("Matplotlib is required for plotting.")
+
+            # Set default plotting parameters
+            plot_kwargs = plot_kwargs or {}
+            plot_type = "bar" if plot is True else plot
+
+            # Create plot
+            fig, ax = plt.subplots()
+
+            # Plot based on type
+            if plot_type == "bar":
+                ax.bar(df["bin_center"], df["value"], **plot_kwargs)
+            elif plot_type == "line":
+                ax.plot(df["bin_center"], df["value"], **plot_kwargs)
+            elif plot_type == "step":
+                ax.step(df["bin_center"], df["value"], where="mid", **plot_kwargs)
+            else:
+                raise ValueError(f"Unknown plot type: {plot_type}")
+
+            # Set labels
+            ax.set_xlabel("Value")
+            ax.set_ylabel("Count" if not density else "Probability")
+            ax.set_title("Histogram")
+
+            # Add bin edges if requested
+            if bin_edges:
+                for _, row in df.iterrows():
+                    ax.axvline(row["bin_lo"], color="gray", linestyle="--", alpha=0.5)
+                    ax.axvline(row["bin_hi"], color="gray", linestyle="--", alpha=0.5)
+
+            plt.show()
+
+        return df
 
     def max(self):
         """The maximum value of this stat."""
