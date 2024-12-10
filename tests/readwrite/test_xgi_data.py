@@ -60,6 +60,12 @@ def test_load_xgi_data(capfd):
     assert collection["as-you-like-it"].num_nodes == 30
     assert collection["as-you-like-it"].num_edges == 80
 
+    # test HIF
+    H = load_xgi_data("recipe-rec")
+    assert H.num_nodes == 9271
+    assert H.num_edges == 77733
+
+
 
 @pytest.mark.skipif(
     sys.version_info != (3, 12) and not platform.system() == "Linux",
