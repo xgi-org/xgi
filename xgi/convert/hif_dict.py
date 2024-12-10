@@ -108,13 +108,13 @@ def from_hif_dict(data, nodetype=None, edgetype=None):
         network_type = "undirected"
 
     if network_type in {"asc", "undirected"}:
-        G = Hypergraph()
+        H = Hypergraph()
     elif network_type == "directed":
-        G = DiHypergraph()
+        H = DiHypergraph()
 
     # Import network metadata
     if "metadata" in data:
-        G._net_attr.update(data["metadata"])
+        H._net_attr.update(data["metadata"])
 
     for record in data["incidences"]:
         n = _convert_id(record["node"], nodetype)
@@ -123,9 +123,9 @@ def from_hif_dict(data, nodetype=None, edgetype=None):
         if network_type == "directed":
             d = record["direction"]
             d = _convert_d(d)  # convert from head/tail to in/out
-            G.add_node_to_edge(e, n, d)
+            H.add_node_to_edge(e, n, d)
         else:
-            G.add_node_to_edge(e, n)
+            H.add_node_to_edge(e, n)
 
     # import node attributes if they exist
     if "nodes" in data:
@@ -136,10 +136,10 @@ def from_hif_dict(data, nodetype=None, edgetype=None):
             else:
                 attr = {}
 
-            if n not in G._node:
-                G.add_node(n, **attr)
+            if n not in H._node:
+                H.add_node(n, **attr)
             else:
-                G.set_node_attributes({n: attr})
+                H.set_node_attributes({n: attr})
 
     # import edge attributes if they exist
     if "edges" in data:
@@ -149,11 +149,11 @@ def from_hif_dict(data, nodetype=None, edgetype=None):
                 attr = record["attrs"]
             else:
                 attr = {}
-            if e not in G._edge:
-                G.add_edge(_empty_edge(network_type), e, **attr)
+            if e not in H._edge:
+                H.add_edge(_empty_edge(network_type), e, **attr)
             else:
-                G.set_edge_attributes({e: attr})
+                H.set_edge_attributes({e: attr})
 
     if network_type == "asc":
-        G = SimplicialComplex(G)
-    return G
+        H = SimplicialComplex(H)
+    return H
