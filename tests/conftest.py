@@ -140,13 +140,16 @@ def bipartite_dihypergraph1():
     G = nx.DiGraph()
     G.add_nodes_from([1, 2, 3, 4], bipartite=0)
     G.add_nodes_from(["a", "b", "c"], bipartite=1)
-    G.add_edges_from([
-        ("a", 1),
-        ("b", 1, {"direction": "tail"}),
-        ("b", 2),
-        ("c", 2, {"direction": "tail"}),
-        ("c", 3),
-        ("a", 4, {"direction": "tail"})])
+    G.add_edges_from(
+        [
+            ("a", 1),
+            ("b", 1, {"direction": "tail"}),
+            ("b", 2),
+            ("c", 2, {"direction": "tail"}),
+            ("c", 3),
+            ("a", 4, {"direction": "tail"}),
+        ]
+    )
     return G
 
 
