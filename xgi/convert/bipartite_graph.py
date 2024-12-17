@@ -1,10 +1,11 @@
 """Methods for converting to and from bipartite graphs."""
 
 import networkx as nx
-from networkx import bipartite
+
+import xgi
 
 from ..exception import XGIError
-from ..generators import empty_hypergraph
+from ..generators import empty_dihypergraph, empty_hypergraph
 
 __all__ = ["from_bipartite_graph", "to_bipartite_graph"]
 
@@ -73,15 +74,42 @@ def from_bipartite_graph(G, create_using=None, dual=False):
         else:
             raise XGIError("Invalid type specifier")
 
-    if not bipartite.is_bipartite_node_set(G, nodes):
+    if not _is_bipartite(G, nodes, edges):
         raise XGIError("The network is not bipartite")
 
-    H = empty_hypergraph(create_using)
+    if G.is_directed():
+        H = empty_dihypergraph(create_using)
+    else:
+        H = empty_hypergraph(create_using)
+
     H.add_nodes_from(nodes)
     for edge in edges:
-        nodes_in_edge = list(G.neighbors(edge))
-        H.add_edge(nodes_in_edge, idx=edge)
+        for u, v, d in G.edges(edge, data=True):
+            if isinstance(H, xgi.DiHypergraph):
+                try:
+                    edge_direction = d["direction"]
+                except KeyError as e:
+                    raise XGIError("direction property not set in bipartite graph") from e
+
+                if edge_direction == "tail":
+                    H.add_node_to_edge(u, v, direction="in")
+                elif edge_direction == "head":
+                    H.add_node_to_edge(u, v, direction="out")
+                else:
+                    raise XGIError("Invalid direction specifier")
+            else:
+                H.add_node_to_edge(u, v)
     return H.dual() if dual else H
+
+
+def _is_bipartite(G, nodes1, nodes2):
+    """Assumption is that nodes1.union(nodes2) == G.nodes"""
+    for i, j in G.edges:
+        cond1 = i in nodes1
+        cond2 = j in nodes2
+        if not cond1 == cond2:  # if not both true or both false
+            return False
+    return True
 
 
 def to_bipartite_graph(H, index=False):
