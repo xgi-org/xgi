@@ -66,7 +66,6 @@ def test_load_xgi_data(capfd):
     assert H.num_edges == 77733
 
 
-
 @pytest.mark.skipif(
     sys.version_info != (3, 12) and not platform.system() == "Linux",
     reason="only need one test",

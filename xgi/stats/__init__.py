@@ -162,7 +162,6 @@ class IDStat:
         """
         return pd.Series(self._val, name=self.name)
 
-
     def ashist(self, bins=10, bin_edges=False, density=False, log_binning=False):
         """Return the distribution of a numpy array.
 
@@ -215,8 +214,6 @@ class IDStat:
         df.attrs["title"] = "Histogram"
 
         return df
-
-
 
     def max(self):
         """The maximum value of this stat."""
