@@ -131,6 +131,7 @@ import argparse
 import os
 import re
 from collections import namedtuple
+from datetime import datetime, timedelta
 
 import requests
 
@@ -140,7 +141,9 @@ PUBLIC_GITHUB_API_URL = "https://api.github.com"
 GitHubConfig = namedtuple("GitHubConfig", ["base_url", "api_url", "headers"])
 
 Commit = namedtuple("Commit", ["sha", "message"])
-PullRequest = namedtuple("PullRequest", ["number", "title", "author"])
+PullRequest = namedtuple(
+    "PullRequest", ["number", "title", "author", "closed_at", "associated_issues"]
+)
 
 # Merge commits use a double linebreak between the branch name and the title
 MERGE_PR_RE = re.compile(r"^Merge pull request #([0-9]+)*")
@@ -188,9 +191,7 @@ def get_commit_for_tag(github_config, owner, repo, tag):
         tag_json = tag_response.json()
 
         if tag_response.status_code != 200:
-            raise GitHubError(
-                "Unable to get tag {}. {}".format(tag, tag_json["message"])
-            )
+            raise GitHubError(f"Unable to get tag {tag}. {tag_json["message"]}")
 
         # If we're given a tag object we have to look up the commit
         if tag_json["object"]["type"] == "tag":
@@ -207,7 +208,7 @@ def get_last_commit(github_config, owner, repo, branch=DEFAULT_BRANCH):
     )
     commits_json = commits_response.json()
     if commits_response.status_code != 200:
-        raise GitHubError("Unable to get commits. {}".format(commits_json["message"]))
+        raise GitHubError(f"Unable to get commits. {commits_json["message"]}")
 
     return commits_json[0]["sha"]
 
@@ -237,14 +238,12 @@ def get_commits_between(github_config, owner, repo, first_commit, last_commit):
     commits_json = commits_response.json()
     if commits_response.status_code != 200:
         raise GitHubError(
-            "Unable to get commits between {} and {}. {}".format(
-                first_commit, last_commit, commits_json["message"]
-            )
+            f"Unable to get commits between {first_commit} and {last_commit}. {commits_json["message"]}"
         )
 
     if "commits" not in commits_json:
         raise GitHubError(
-            "Commits not found between {} and {}.".format(first_commit, last_commit)
+            f"Commits not found between {first_commit} and {last_commit}."
         )
 
     commits = [
@@ -271,7 +270,7 @@ def extract_pr_number(message):
 
         return numbers[-1]  # PullRequest(number=number, title=title, author=author)
 
-    raise Exception("Commit isn't a PR merge, {}".format(message))
+    raise Exception(f"Commit isn't a PR merge, {message}")
 
 
 def prs_from_numbers(github_config, owner, repo, pr_numbers):
@@ -291,8 +290,38 @@ def prs_from_numbers(github_config, owner, repo, pr_numbers):
         pull_json = pull_response.json()
         title = pull_json["title"]
         author = pull_json["user"]["login"]
-        pr_list.append(PullRequest(number=number, title=title, author=author))
+        closed_at = pull_json["closed_at"]
+        pr_list.append(
+            PullRequest(
+                number=number,
+                title=title,
+                author=author,
+                closed_at=closed_at,
+                associated_issues=[],
+            )
+        )
     return pr_list
+
+
+def get_associated_issues(github_config, owner, repo, prs):
+    issues_url = "/".join(
+        [
+            github_config.api_url,
+            "repos",
+            owner,
+            repo,
+            "issues?state=closed",
+        ]
+    )
+    issues_response = requests.get(issues_url, headers=github_config.headers)
+    issues_json = issues_response.json()
+    issues = {entry["number"]: entry["closed_at"] for entry in issues_json}
+    for pr in prs:
+        t_pr = datetime.fromisoformat(pr.closed_at)
+        for i in issues:
+            t_issue = datetime.fromisoformat(issues[i])
+            if abs((t_issue - t_pr).total_seconds()) <= 2 and int(i) != int(pr.number):
+                pr.associated_issues.append(i)
 
 
 def fetch_changes(
@@ -327,7 +356,7 @@ def fetch_changes(
     ]
 
     if len(pr_numbers) == 0 and len(commits_between) > 0:
-        raise Exception("Lots of commits and no PRs on branch {}".format(branch))
+        raise Exception("Lots of commits and no PRs on branch {branch}")
     else:
         prs = prs_from_numbers(github_config, owner, repo, pr_numbers)
 
@@ -339,21 +368,45 @@ def format_changes(github_config, owner, repo, prs, markdown=True):
     """Format the list of prs in either text or markdown"""
     lines = []
     for pr in prs:
-        number = "#{number}".format(number=pr.number)
+        pr_number = f"#{pr.number}"
         if markdown:
-            link = "{github_url}/{owner}/{repo}/pull/{number}".format(
-                github_url=github_config.base_url,
-                owner=owner,
-                repo=repo,
-                number=pr.number,
+            pr_link = f"{github_config.base_url}/{owner}/{repo}/pull/{pr.number}"
+            pr_number = f"[{pr_number}]({pr_link})"
+
+        issues = pr.associated_issues
+
+        if len(issues) == 0:
+            issues_string = ""
+
+        elif len(issues) == 1:
+            issue_number = issues[0]
+            issue_link = (
+                f"{github_config.base_url}/{owner}/{repo}/issues/{issue_number}"
             )
-            number = "[{number}]({link})".format(number=number, link=link)
-        print(number)
-        lines.append(
-            "* {title}. {number} (@{author})".format(
-                title=pr.title, number=number, author=pr.author
+            issues_string = f"(Closes Issue [#{issue_number}]({issue_link})) "
+
+        elif len(issues) == 2:
+            issue_number1, issue_number2 = issues
+            issue_link1 = (
+                f"{github_config.base_url}/{owner}/{repo}/issues/{issue_number1}"
             )
-        )
+            issue_link2 = (
+                f"{github_config.base_url}/{owner}/{repo}/issues/{issue_number2}"
+            )
+            issues_string = f"(Closes Issues [#{issue_number1}]({issue_link1}) and [#{issue_number2}]({issue_link2})) "
+        else:
+            issues_string = "(Closes Issues "
+            for i, issue_number in enumerate(issues):
+                issue_link = (
+                    f"{github_config.base_url}/{owner}/{repo}/issues/{issue_number}"
+                )
+
+                if i < len(issues):
+                    issues_string += f"[#{issue_number}]({issue_link}), "
+                else:
+                    issues_string += f"and [#{issue_number}]({issue_link})) "
+
+        lines.append(f"* {pr.title}. {issues_string}{pr_number} (@{pr.author})")
 
     return lines
 
@@ -374,6 +427,7 @@ def generate_changelog(
     github_config = get_github_config(github_base_url, github_api_url, github_token)
 
     prs = fetch_changes(github_config, owner, repo, previous_tag, current_tag, branch)
+    get_associated_issues(github_config, owner, repo, prs)
     lines = format_changes(github_config, owner, repo, prs, markdown=markdown)
 
     separator = "\\n" if single_line else "\n"
