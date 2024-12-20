@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1734121224220,
+  "lastUpdate": 1734718807577,
   "repoUrl": "https://github.com/xgi-org/xgi",
   "entries": {
     "XGI Benchmarks": [
@@ -959,6 +959,149 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0017333983498968217",
             "extra": "mean: 25.090818799992576 msec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "nicholas.landry.91@gmail.com",
+            "name": "Nicholas Landry",
+            "username": "nwlandry"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ddc5cbb73ac1da6e9f164b46434f21fb43a326e0",
+          "message": "Improve changelog generator (#639)\n\n* format with isort and black\r\n\r\n* associate issues with PRs",
+          "timestamp": "2024-12-20T13:18:55-05:00",
+          "tree_id": "0ef5e10492bf932bfa9a53e7996fde9a917ae3a8",
+          "url": "https://github.com/xgi-org/xgi/commit/ddc5cbb73ac1da6e9f164b46434f21fb43a326e0"
+        },
+        "date": 1734718804501,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/algorithms.py::test_connected",
+            "value": 90.6459810604257,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0006879585634238404",
+            "extra": "mean: 11.031928699998161 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/algorithms.py::test_clustering_coefficient",
+            "value": 59.90111129199528,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00037563806573235665",
+            "extra": "mean: 16.694181100002936 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgelist",
+            "value": 20.592943664758256,
+            "unit": "iter/sec",
+            "range": "stddev: 0.055112650035053945",
+            "extra": "mean: 48.56032319999741 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgedict",
+            "value": 40.659420829887935,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000548467722877444",
+            "extra": "mean: 24.594546100000514 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_df",
+            "value": 21.654428478739717,
+            "unit": "iter/sec",
+            "range": "stddev: 0.03420178191989865",
+            "extra": "mean: 46.17993040000101 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_memberships",
+            "value": 1033.2726182320132,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001573063396742263",
+            "extra": "mean: 967.7988000021287 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_members",
+            "value": 130.8271320400953,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0005833365026021968",
+            "extra": "mean: 7.643674399997735 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_attributes",
+            "value": 11990.68084265124,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000006427011131777534",
+            "extra": "mean: 83.39810000137504 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_attributes",
+            "value": 253.08741335539906,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003503147061626486",
+            "extra": "mean: 3.9512040000019515 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_degree",
+            "value": 8812.27302896715,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000009840756558127338",
+            "extra": "mean: 113.47809999904257 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_nodestats_degree",
+            "value": 8039.903649905054,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000007421545017271623",
+            "extra": "mean: 124.37959999829219 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_size",
+            "value": 213.74182074178387,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002339026308563718",
+            "extra": "mean: 4.678541599999164 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_isolates",
+            "value": 7510.230812020581,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000006636366493941812",
+            "extra": "mean: 133.15169999827958 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_singletons",
+            "value": 171.591005357279,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00012893308173216628",
+            "extra": "mean: 5.82781130000285 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_copy",
+            "value": 11.108059566698621,
+            "unit": "iter/sec",
+            "range": "stddev: 0.06481413291291695",
+            "extra": "mean: 90.02472429999813 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_dual",
+            "value": 11.182822963849473,
+            "unit": "iter/sec",
+            "range": "stddev: 0.07143943902737891",
+            "extra": "mean: 89.42285890000079 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/generators.py::test_erdos_renyi",
+            "value": 51.520063937632436,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0016120100594188935",
+            "extra": "mean: 19.409913800001277 msec\nrounds: 10"
           }
         ]
       }
