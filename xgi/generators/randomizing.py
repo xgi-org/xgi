@@ -15,7 +15,7 @@ __all__ = [
 ]
 
 
-def shuffle_hyperedges(S, order, p):
+def shuffle_hyperedges(S, order, p, seed=None):
     """Shuffle existing hyperdeges of order `order` with probablity `p`.
 
     Parameters
@@ -26,6 +26,8 @@ def shuffle_hyperedges(S, order, p):
         Order of hyperedges to shuffle
     p : float
         Probability of shuffling each hyperedge
+    seed : integer or None (default)
+            Seed for the random number generator.
 
     Returns
     -------
@@ -51,6 +53,9 @@ def shuffle_hyperedges(S, order, p):
     >>> H = xgi.shuffle_hyperedges(S, order=2, p=0.5)
 
     """
+
+    if seed is not None:
+        random.seed(seed)
 
     if (order + 1) not in xgi.unique_edge_sizes(S):
         raise ValueError(f"There is no hyperedge of order {order} is this hypergraph.")
