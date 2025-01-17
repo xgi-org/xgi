@@ -25,6 +25,25 @@ def test_neighbors(edgelist1, edgelist2, edgelist7):
     assert H3.edges.neighbors(3, s=2) == set()
 
 
+def test_hypergraph_eq(edgelist2, edgelist3, edgelist4, hyperwithattrs):
+    H2 = xgi.Hypergraph(edgelist2)
+    H3 = xgi.Hypergraph(edgelist3)
+    assert H2.nodes != H3.nodes
+    assert H2.edges != H3.edges
+
+    H4 = xgi.Hypergraph(edgelist4)
+    assert H4.nodes != hyperwithattrs.nodes
+    assert H4.edges == hyperwithattrs.edges
+
+
+def test_dihypergraph_eq(diedgelist2, diedgelist3, dihyperwithattrs):
+    H2 = xgi.DiHypergraph(diedgelist2)
+    H3 = xgi.DiHypergraph(diedgelist3)
+    assert H2.nodes != H3.nodes
+    assert H2.edges != H3.edges
+    assert H2.edges != dihyperwithattrs.edges
+
+
 def test_edge_order(edgelist3, diedgelist1):
     # undirected
     H = xgi.Hypergraph(edgelist3)

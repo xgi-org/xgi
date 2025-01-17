@@ -250,6 +250,11 @@ def diedgelist2():
 
 
 @pytest.fixture
+def diedgelist3():
+    return [({0}, {1, 2}), ({1}, {2, 4}), ({2, 3, 4}, {4, 5})]
+
+
+@pytest.fixture
 def diedgedict1():
     return {0: ({1, 2, 3}, {4}), 1: ({5, 6}, {6, 7, 8})}
 
