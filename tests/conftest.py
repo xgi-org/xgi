@@ -136,6 +136,37 @@ def bipartite_graph4():
 
 
 @pytest.fixture
+def bipartite_digraph1():
+    G = nx.DiGraph()
+    G.add_nodes_from([1, 2, 3, 4], bipartite=0)
+    G.add_nodes_from(["a", "b", "c"], bipartite=1)
+    G.add_edges_from(
+        [
+            ("a", 1),
+            (1, "b"),
+            ("b", 2),
+            (2, "c"),
+            ("c", 3),
+            (4, "a"),
+        ]
+    )
+    return G
+
+
+@pytest.fixture
+def bipartite_digraph2():
+    G = nx.DiGraph()
+    G.add_nodes_from([1], bipartite=0)
+    G.add_nodes_from(["a"], bipartite=1)
+    G.add_edges_from(
+        [
+            ("a", 1, {"direction": "invalid"}),
+        ]
+    )
+    return G
+
+
+@pytest.fixture
 def attr0():
     return {"color": "brown", "name": "camel"}
 

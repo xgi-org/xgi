@@ -1,10 +1,11 @@
+import networkx as nx
 import pytest
 
 import xgi
 from xgi.exception import XGIError
 
 
-def test_to_bipartite_graph(edgelist1, edgelist3, edgelist4):
+def test_to_bipartite_graph(edgelist1, edgelist3, edgelist4, diedgelist1):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist3)
     H3 = xgi.Hypergraph(edgelist4)
@@ -49,9 +50,26 @@ def test_to_bipartite_graph(edgelist1, edgelist3, edgelist4):
     assert sorted(bi_el3) == sorted(true_bi_el3)
     assert G3.edges() == xgi.to_bipartite_graph(H3, index=False).edges()
 
+    ## Directed
+    H = xgi.DiHypergraph(diedgelist1)
+    G = xgi.to_bipartite_graph(H)
+
+    assert isinstance(G, nx.DiGraph)
+    assert set(G.nodes) == {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+    assert (0, 8) in G.edges
+    assert (8, 0) not in G.edges
+    assert (9, 6) in G.edges
+    assert (6, 9) not in G.edges
+    assert (9, 5) in G.edges
+    assert (9, 5) in G.edges
+
 
 def test_from_bipartite_graph(
-    bipartite_graph1, bipartite_graph2, bipartite_graph3, bipartite_graph4
+    bipartite_graph1,
+    bipartite_graph2,
+    bipartite_graph3,
+    bipartite_graph4,
+    bipartite_digraph1,
 ):
     H = xgi.from_bipartite_graph(bipartite_graph1)
 
@@ -81,3 +99,15 @@ def test_from_bipartite_graph(
     # not bipartite
     with pytest.raises(XGIError):
         H = xgi.from_bipartite_graph(bipartite_graph4, dual=True)
+
+    ### Directed
+    H = xgi.from_bipartite_graph(bipartite_digraph1)
+
+    assert set(H.nodes) == {1, 2, 3, 4}
+    assert set(H.edges) == {"a", "b", "c"}
+    assert H.edges.head("a") == {1}
+    assert H.edges.tail("a") == {4}
+    assert H.edges.head("b") == {2}
+    assert H.edges.tail("b") == {1}
+    assert H.edges.head("c") == {3}
+    assert H.edges.tail("c") == {2}
