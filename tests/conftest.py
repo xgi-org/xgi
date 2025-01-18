@@ -142,12 +142,12 @@ def bipartite_digraph1():
     G.add_nodes_from(["a", "b", "c"], bipartite=1)
     G.add_edges_from(
         [
-            ("a", 1, {"direction": "head"}),
-            ("b", 1, {"direction": "tail"}),
-            ("b", 2, {"direction": "head"}),
-            ("c", 2, {"direction": "tail"}),
-            ("c", 3, {"direction": "head"}),
-            ("a", 4, {"direction": "tail"}),
+            ("a", 1),
+            (1, "b"),
+            ("b", 2),
+            (2, "c"),
+            ("c", 3),
+            (4, "a"),
         ]
     )
     return G

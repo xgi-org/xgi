@@ -4,7 +4,7 @@ import xgi
 from xgi.exception import XGIError
 
 
-def test_to_bipartite_graph(edgelist1, edgelist3, edgelist4):
+def test_to_bipartite_graph(edgelist1, edgelist3, edgelist4, diedgelist1):
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist3)
     H3 = xgi.Hypergraph(edgelist4)
@@ -48,6 +48,11 @@ def test_to_bipartite_graph(edgelist1, edgelist3, edgelist4):
     bi_el3 = [[node_dict[u], edge_dict[v]] for u, v in G3.edges]
     assert sorted(bi_el3) == sorted(true_bi_el3)
     assert G3.edges() == xgi.to_bipartite_graph(H3, index=False).edges()
+
+    ## Directed
+    H = xgi.DiHypergraph(diedgelist1)
+    
+
 
 
 def test_from_bipartite_graph(
