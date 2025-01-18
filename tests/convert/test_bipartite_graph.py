@@ -1,3 +1,4 @@
+import networkx as nx
 import pytest
 
 import xgi
@@ -51,12 +52,24 @@ def test_to_bipartite_graph(edgelist1, edgelist3, edgelist4, diedgelist1):
 
     ## Directed
     H = xgi.DiHypergraph(diedgelist1)
-    
+    G = xgi.to_bipartite_graph(H)
 
+    assert isinstance(G, nx.DiGraph)
+    assert set(G.nodes) == {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+    assert (0, 8) in G.edges
+    assert (8, 0) not in G.edges
+    assert (9, 6) in G.edges
+    assert (6, 9) not in G.edges
+    assert (9, 5) in G.edges
+    assert (9, 5) in G.edges
 
 
 def test_from_bipartite_graph(
-    bipartite_graph1, bipartite_graph2, bipartite_graph3, bipartite_graph4
+    bipartite_graph1,
+    bipartite_graph2,
+    bipartite_graph3,
+    bipartite_graph4,
+    bipartite_digraph1,
 ):
     H = xgi.from_bipartite_graph(bipartite_graph1)
 
@@ -87,10 +100,7 @@ def test_from_bipartite_graph(
     with pytest.raises(XGIError):
         H = xgi.from_bipartite_graph(bipartite_graph4, dual=True)
 
-
-def test_from_bipartite_digraph_to_dihypergraph(
-    bipartite_digraph1, bipartite_digraph2, bipartite_graph1
-):
+    ### Directed
     H = xgi.from_bipartite_graph(bipartite_digraph1)
 
     assert set(H.nodes) == {1, 2, 3, 4}
@@ -101,11 +111,3 @@ def test_from_bipartite_digraph_to_dihypergraph(
     assert H.edges.tail("b") == {1}
     assert H.edges.head("c") == {3}
     assert H.edges.tail("c") == {2}
-
-    # missing direction
-    with pytest.raises(XGIError):
-        H = xgi.from_bipartite_graph(bipartite_graph1, xgi.DiHypergraph)
-
-    # unknown direction
-    with pytest.raises(XGIError):
-        H = xgi.from_bipartite_graph(bipartite_digraph2)

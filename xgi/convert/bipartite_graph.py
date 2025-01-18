@@ -2,9 +2,8 @@
 
 import networkx as nx
 
+from ..core import DiHypergraph, Hypergraph
 from ..exception import XGIError
-from ..generators import empty_dihypergraph, empty_hypergraph
-from ..core import Hypergraph, DiHypergraph
 
 __all__ = ["from_bipartite_graph", "to_bipartite_graph"]
 
@@ -167,7 +166,7 @@ def to_bipartite_graph(H, index=False):
         for e in H.edges:
             for v in H.edges.tail(e):
                 G.add_edge(node_dict[v], edge_dict[e])
-            for n in H.edges.head(e):
+            for v in H.edges.head(e):
                 G.add_edge(edge_dict[e], node_dict[v])
     else:
         for e in H.edges:
@@ -177,8 +176,8 @@ def to_bipartite_graph(H, index=False):
     if index:
         return (
             G,
-            dict(zip(range(n), H.nodes)),
-            dict(zip(range(n, n + m), H.edges)),
+            {v: k for k, v in node_dict.items()},
+            {v: k for k, v in edge_dict.items()},
         )
     else:
         return G
