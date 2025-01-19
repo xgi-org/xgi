@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.9.4
+* Support `DiHypergraph` in the `from_bipartite_graph` and `to_bipartite_graph` methods. [#633](https://github.com/xgi-org/xgi/pull/633) (@colltoaction)
+* feat: added seed to shuffle-hypedges. (Closes Issue [#644](https://github.com/xgi-org/xgi/issues/644)) [#645](https://github.com/xgi-org/xgi/pull/645) (@maximelucas)
+* Improved changelog generator to link issues closed by PRs. (Closes Issue [#627](https://github.com/xgi-org/xgi/issues/627)) [#639](https://github.com/xgi-org/xgi/pull/639) (@nwlandry)
+* Added new publication references. [#638](https://github.com/xgi-org/xgi/pull/638) (@nwlandry)
+* Fix issue with load_xgi_data HIF. [#637](https://github.com/xgi-org/xgi/pull/637) (@nwlandry)
+* Add metadata attributes to ashist() for improved plotting. [#635](https://github.com/xgi-org/xgi/pull/635) (@willcollins10)
+
 ## v0.9.3
 * Added the ability for `load_xgi_data` to read HIF and added HIF dicts to the convert module. [#613](https://github.com/xgi-org/xgi/pull/613) (@nwlandry)
 * Added a custom Changelog generator to use XGI formatting. [#626](https://github.com/xgi-org/xgi/pull/626) (@nwlandry)
