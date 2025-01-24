@@ -217,7 +217,10 @@ def normalized_hypergraph_laplacian(H, weights=None, sparse=True, index=False):
         If there are isolated nodes.
 
     XGIError
-        If there are negative edge weights.
+        If there are an incorrect number of edge weights.
+
+    XGIError
+        If there are non-positive edge weights.
 
     References
     ----------
