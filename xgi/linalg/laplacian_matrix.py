@@ -47,10 +47,15 @@ array([[1, 0, 0],
 from warnings import warn
 
 import numpy as np
-from scipy.sparse import csr_array, diags
+from scipy.sparse import csr_array, diags, identity
 
 from ..exception import XGIError
-from .hypergraph_matrix import adjacency_matrix, clique_motif_matrix, degree_matrix
+from .hypergraph_matrix import (
+    adjacency_matrix,
+    clique_motif_matrix,
+    degree_matrix,
+    incidence_matrix
+)
 
 __all__ = [
     "laplacian",
@@ -183,13 +188,15 @@ def multiorder_laplacian(
     return (L_multi, rowdict) if index else L_multi
 
 
-def normalized_hypergraph_laplacian(H, sparse=True, index=False):
+def normalized_hypergraph_laplacian(H, weights=None, sparse=True, index=False):
     """Compute the normalized Laplacian.
 
     Parameters
     ----------
     H : Hypergraph
         Hypergraph
+    weights : list of floats or None, optional
+        Hyperedge weights, by default None (every edge weighted as 1).
     sparse : bool, optional
         whether or not the laplacian is sparse, by default True
     index : bool, optional
@@ -209,6 +216,9 @@ def normalized_hypergraph_laplacian(H, sparse=True, index=False):
     XGIError
         If there are isolated nodes.
 
+    XGIError
+        If there are negative edge weights.
+
     References
     ----------
     "Learning with Hypergraphs: Clustering, Classification, and Embedding"
@@ -221,16 +231,60 @@ def normalized_hypergraph_laplacian(H, sparse=True, index=False):
             "Every node must be a member of an edge to avoid divide by zero error!"
         )
 
-    D = degree_matrix(H)
-    A, rowdict = clique_motif_matrix(H, sparse=sparse, index=True)
+    if weights is not None:
+        if weights is not list:
+            raise XGIError("Edge weights must be given as a list!")
+        if len(weights) != H.num_edges:
+            raise XGIError("There must be as many edge weights as there are edges!")
+        if np.any(weights <= 0):
+            raise XGIError("Edge weights must be strictly positive!")
+
+
+    Dv = degree_matrix(H)
+    (
+        H_,
+        rowdict,
+        _            # Discard edge name-index mapping
+    ) = incidence_matrix(H, sparse=sparse, index=True)
 
     if sparse:
-        Dinvsqrt = csr_array(diags(np.power(D, -0.5)))
+        Dv_invsqrt = csr_array(diags(np.power(Dv, -0.5)))
+
+        De_inv = diags(list(
+            map(
+                lambda x: 1/x,
+                np.sum(H_, axis=0)
+            )
+        ))
+
+        if weights is not None:
+            W = diags(weights)
+        else:
+            W = identity(H.num_edges)
+
         eye = csr_array((H.num_nodes, H.num_nodes))
         eye.setdiag(1)
     else:
-        Dinvsqrt = np.diag(np.power(D, -0.5))
+        Dv_invsqrt = np.diag(np.power(Dv, -0.5))
+
+        De_inv = np.diag(list(
+            map(
+                lambda x: 1/x,
+                np.sum(H_, axis=0)
+            )
+        ))
+
+        if weights is not None:
+            W = np.diag(weights)
+        else:
+            W = np.identity(H.num_edges)
+
         eye = np.eye(H.num_nodes)
 
-    L = 0.5 * (eye - Dinvsqrt @ A @ Dinvsqrt)
+
+    # PERF: There is a faster way to do this calculation if unweighted.
+    # W can be ignored entirely if unweighted, but it adds a couple conditionals and complicates the code.
+    # It is untested, but I suspect the performance change is negligible.
+    L = (eye - (Dv_invsqrt @ H_ @ W @ De_inv @ np.transpose(H_) @ Dv_invsqrt))
+
     return (L, rowdict) if index else L
