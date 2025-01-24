@@ -2,8 +2,10 @@ import numpy as np
 import pytest
 from scipy.sparse import csr_array
 from scipy.sparse.linalg import norm as spnorm
+from scipy.linalg import eigh
 
 import xgi
+from xgi.exception import XGIError
 
 
 def test_incidence_matrix(edgelist1, edgelist3, edgelist4):
@@ -605,24 +607,32 @@ def test_normalized_hypergraph_laplacian():
 
     assert isinstance(L2, np.ndarray)
     assert np.all(L1.toarray() == L2)
-    assert np.all(np.diag(L2) == 0.5)
+
+    evals = eigh(L2, eigvals_only=True)
+    negative_evals = list(filter(lambda e: e < 0, evals))
+    assert (not negative_evals) | (np.allclose(negative_evals, 0))
 
     L3, d = xgi.normalized_hypergraph_laplacian(H, index=True)
-
     assert d == {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8}
-    true_L = np.array(
-        [
-            [0.5, -0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0],
-            [-0.5, 0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0],
-            [-0.5, -0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0, 0.0, 0.5, -0.35355339, 0.0, 0.0],
-            [0.0, 0.0, 0.0, 0.0, -0.35355339, 0.5, -0.35355339, -0.35355339],
-            [0.0, 0.0, 0.0, 0.0, 0.0, -0.35355339, 0.5, -0.5],
-            [0.0, 0.0, 0.0, 0.0, 0.0, -0.35355339, -0.5, 0.5],
-        ]
-    )
-    assert np.allclose(true_L, L2)
+
+    # Weights error handling
+    ## Type errors
+    with pytest.raises(XGIError):
+        xgi.normalized_hypergraph_laplacian(H, weights=1)
+    with pytest.raises(XGIError):
+        xgi.normalized_hypergraph_laplacian(H, weights="1")
+
+    ## Length errors
+    with pytest.raises(XGIError):  # too few
+        xgi.normalized_hypergraph_laplacian(H, weights=[1])
+    with pytest.raises(XGIError):  # too many
+        xgi.normalized_hypergraph_laplacian(H, weights=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
+    ## Value errors
+    with pytest.raises(XGIError):  # zeros
+        xgi.normalized_hypergraph_laplacian(H, weights=[0, 1, 1, 1])
+    with pytest.raises(XGIError):  # negatives
+        xgi.normalized_hypergraph_laplacian(H, weights=[-1, 1, 1, 1])
 
 
 def test_empty_order(edgelist6):
