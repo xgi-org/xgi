@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
+from scipy.linalg import eigh
 from scipy.sparse import csr_array
 from scipy.sparse.linalg import norm as spnorm
-from scipy.linalg import eigh
 
 import xgi
 from xgi.exception import XGIError
@@ -615,6 +615,19 @@ def test_normalized_hypergraph_laplacian():
     L3, d = xgi.normalized_hypergraph_laplacian(H, index=True)
     assert d == {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8}
 
+    el_mwe = [
+        {1, 2, 3},
+        {1, 4, 5},
+        {1, 6, 7, 8},
+        {4, 9, 10, 11, 12},
+        {1, 13, 14, 15, 16},
+        {4, 17, 18},
+    ]
+    H = xgi.Hypergraph(E)
+    L = xgi.normalized_hypergraph_laplacian(H, sparse=False)
+    evals, evecs = eigh(L)
+    assert np.all(evals >= 0)
+
     # Weights error handling
     ## Type errors
     with pytest.raises(XGIError):
@@ -626,7 +639,9 @@ def test_normalized_hypergraph_laplacian():
     with pytest.raises(XGIError):  # too few
         xgi.normalized_hypergraph_laplacian(H, weights=[1])
     with pytest.raises(XGIError):  # too many
-        xgi.normalized_hypergraph_laplacian(H, weights=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+        xgi.normalized_hypergraph_laplacian(
+            H, weights=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        )
 
     ## Value errors
     with pytest.raises(XGIError):  # zeros
