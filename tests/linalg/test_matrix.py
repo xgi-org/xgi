@@ -610,7 +610,7 @@ def test_normalized_hypergraph_laplacian():
 
     evals = eigh(L2, eigvals_only=True)
     negative_evals = list(filter(lambda e: e < 0, evals))
-    assert (not negative_evals) | (np.allclose(negative_evals, 0))
+    assert (not negative_evals) or (np.allclose(negative_evals, 0))
 
     L3, d = xgi.normalized_hypergraph_laplacian(H, index=True)
     assert d == {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8}
@@ -623,9 +623,9 @@ def test_normalized_hypergraph_laplacian():
         {1, 13, 14, 15, 16},
         {4, 17, 18},
     ]
-    H = xgi.Hypergraph(E)
+    H = xgi.Hypergraph(el_mwe)
     L = xgi.normalized_hypergraph_laplacian(H, sparse=False)
-    evals, evecs = eigh(L)
+    evals = eigh(L, eigvals_only=True)
     assert np.all(evals >= 0)
 
     # Weights error handling
