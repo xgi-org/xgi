@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """Generate requirements/*.txt files from pyproject.toml.
 
+Run from repo root folder.
+
 Copied from NetworkX: https://github.com/networkx/networkx/blob/main/tools/generate_requirements.py
 """
 
