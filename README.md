@@ -1,7 +1,7 @@
 <img src="https://raw.githubusercontent.com/xgi-org/xgi/main/logo/logo.svg" alt="XGI" width="50%"></img>
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Supports Python versions 3.10 and above.](https://img.shields.io/badge/Python%20versions%20supported-3.9%2B-forest
+[![Supports Python versions 3.10 and above.](https://img.shields.io/badge/Python%20versions%20supported-3.10%2B-forest
 )](https://www.repostatus.org/#active)
 [![Test Status](https://github.com/xgi-org/xgi/workflows/test/badge.svg?branch=main)](https://github.com/xgi-org/xgi/actions?query=workflow%3A%22test%22)
 [![codecov](https://codecov.io/gh/xgi-org/xgi/branch/main/graph/badge.svg?token=BI6TX2WDSG)](https://codecov.io/gh/xgi-org/xgi)
@@ -43,7 +43,7 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for higher-
 * Draw higher-order networks in a variety of **visually striking ways** (See our [gallery](https://xgi.readthedocs.io/en/stable/auto_examples/index.html) for several examples.)
 
 ## Installation<a id="installation"></a>
-XGI runs on Python 3.9 or higher.
+XGI runs on Python 3.10 or higher.
 
 To install the latest version of XGI, run the following command:
 ```sh
