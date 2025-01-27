@@ -250,6 +250,18 @@ def test_dihypergraph_stats_items(diedgelist2):
         assert deg[n] == d
 
 
+def test_hypergraph_eq(edgelist2, edgelist3):
+    H2 = xgi.Hypergraph(edgelist2)
+    H3 = xgi.Hypergraph(edgelist3)
+    assert H2.nodes.degree != H3.nodes.degree
+
+
+def test_dihypergraph_eq(diedgelist2, diedgelist3):
+    H2 = xgi.DiHypergraph(diedgelist2)
+    H3 = xgi.DiHypergraph(diedgelist3)
+    assert H2.nodes.out_degree != H3.nodes.out_degree
+
+
 ### Numerical statistics
 
 
