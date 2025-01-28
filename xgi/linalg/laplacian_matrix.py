@@ -54,7 +54,7 @@ from .hypergraph_matrix import (
     adjacency_matrix,
     clique_motif_matrix,
     degree_matrix,
-    incidence_matrix
+    incidence_matrix,
 )
 
 __all__ = [
@@ -188,7 +188,7 @@ def multiorder_laplacian(
     return (L_multi, rowdict) if index else L_multi
 
 
-def normalized_hypergraph_laplacian(H, weights=None, sparse=True, index=False):
+def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False):
     """Compute the normalized Laplacian.
 
     Parameters
@@ -234,34 +234,21 @@ def normalized_hypergraph_laplacian(H, weights=None, sparse=True, index=False):
             "Every node must be a member of an edge to avoid divide by zero error!"
         )
 
-    if weights is not None:
-        if weights is not list:
-            raise XGIError("Edge weights must be given as a list!")
-        if len(weights) != H.num_edges:
-            raise XGIError("There must be as many edge weights as there are edges!")
-        if np.any(weights <= 0):
-            raise XGIError("Edge weights must be strictly positive!")
-
+    (
+        incidence,
+        rowdict,
+        _,  # Discard edge name-index mapping
+    ) = incidence_matrix(H, sparse=sparse, index=True)
 
     Dv = degree_matrix(H)
-    (
-        H_,
-        rowdict,
-        _            # Discard edge name-index mapping
-    ) = incidence_matrix(H, sparse=sparse, index=True)
+    De = np.sum(incidence, axis=0)
 
     if sparse:
         Dv_invsqrt = csr_array(diags(np.power(Dv, -0.5)))
+        De_inv = diags(1 / De)
 
-        De_inv = diags(list(
-            map(
-                lambda x: 1/x,
-                np.sum(H_, axis=0)
-            )
-        ))
-
-        if weights is not None:
-            W = diags(weights)
+        if weighted:
+            W = diags([H.edges[edge_idx].get("weight", 1) for edge_idx in H.edges])
         else:
             W = identity(H.num_edges)
 
@@ -269,21 +256,17 @@ def normalized_hypergraph_laplacian(H, weights=None, sparse=True, index=False):
         eye.setdiag(1)
     else:
         Dv_invsqrt = np.diag(np.power(Dv, -0.5))
-
-        De = np.sum(H_, axis=0)
         De_inv = np.diag(1 / De)
 
-        if weights is not None:
-            W = np.diag(weights)
+        if weighted:
+            W = np.diag([H.edges[edge_idx].get("weight", 1) for edge_idx in H.edges])
         else:
             W = np.identity(H.num_edges)
 
         eye = np.eye(H.num_nodes)
 
-
-    # PERF: There is a faster way to do this calculation if unweighted.
-    # W can be ignored entirely if unweighted, but it adds a couple conditionals and complicates the code.
-    # It is untested, but I suspect the performance change is negligible.
-    L = (eye - (Dv_invsqrt @ H_ @ W @ De_inv @ np.transpose(H_) @ Dv_invsqrt))
+    L = eye - (
+        Dv_invsqrt @ incidence @ W @ De_inv @ np.transpose(incidence) @ Dv_invsqrt
+    )
 
     return (L, rowdict) if index else L
