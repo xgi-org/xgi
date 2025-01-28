@@ -270,12 +270,8 @@ def normalized_hypergraph_laplacian(H, weights=None, sparse=True, index=False):
     else:
         Dv_invsqrt = np.diag(np.power(Dv, -0.5))
 
-        De_inv = np.diag(list(
-            map(
-                lambda x: 1/x,
-                np.sum(H_, axis=0)
-            )
-        ))
+        De = np.sum(H_, axis=0)
+        De_inv = np.diag(1 / De)
 
         if weights is not None:
             W = np.diag(weights)
