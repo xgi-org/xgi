@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from scipy.linalg import eigh
+from scipy.linalg import eigh, eigvalsh
 from scipy.sparse import csr_array
 from scipy.sparse.linalg import norm as spnorm
 
@@ -615,6 +615,24 @@ def test_normalized_hypergraph_laplacian():
     L3, d = xgi.normalized_hypergraph_laplacian(H, index=True)
     assert d == {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8}
 
+    # sqrt(d) is eigenvector with eigenvalue 0
+    sqrt_d = np.array([np.sqrt(d) for d in H.nodes.degree.aslist()])
+    assert np.allclose(L3 @ sqrt_d, 0)
+
+    true_L = np.array(
+        [
+            [0.666667, -0.333333, -0.333333, -0.0, -0.0, -0.0, -0.0, -0.0],
+            [-0.333333, 0.666667, -0.333333, -0.0, -0.0, -0.0, -0.0, -0.0],
+            [-0.333333, -0.333333, 0.666667, -0.0, -0.0, -0.0, -0.0, -0.0],
+            [-0.0, -0.0, -0.0, 0.0, -0.0, -0.0, -0.0, -0.0],
+            [-0.0, -0.0, -0.0, -0.0, 0.5, -0.353553, -0.0, -0.0],
+            [-0.0, -0.0, -0.0, -0.0, -0.353553, 0.583333, -0.235702, -0.235702],
+            [-0.0, -0.0, -0.0, -0.0, -0.0, -0.235702, 0.666667, -0.333333],
+            [-0.0, -0.0, -0.0, -0.0, -0.0, -0.235702, -0.333333, 0.666667],
+        ]
+    )
+    assert np.allclose(true_L, L2)
+
     el_mwe = [
         {1, 2, 3},
         {1, 4, 5},
@@ -625,7 +643,7 @@ def test_normalized_hypergraph_laplacian():
     ]
     H = xgi.Hypergraph(el_mwe)
     L = xgi.normalized_hypergraph_laplacian(H, sparse=False)
-    evals = eigh(L, eigvals_only=True)
+    evals = eigvalsh(L)
     assert np.all(evals >= 0)
 
     # Weights error handling
