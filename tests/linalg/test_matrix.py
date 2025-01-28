@@ -641,31 +641,22 @@ def test_normalized_hypergraph_laplacian():
         {1, 13, 14, 15, 16},
         {4, 17, 18},
     ]
-    H = xgi.Hypergraph(el_mwe)
-    L = xgi.normalized_hypergraph_laplacian(H, sparse=False)
-    evals = eigvalsh(L)
-    assert np.all(evals >= 0)
+    H_mwe = xgi.Hypergraph(el_mwe)
+    L_mwe = xgi.normalized_hypergraph_laplacian(H_mwe, sparse=False)
+    evals_mwe = eigvalsh(L_mwe)
+    assert np.all(evals_mwe >= 0)
 
     # Weights error handling
-    ## Type errors
-    with pytest.raises(XGIError):
-        xgi.normalized_hypergraph_laplacian(H, weights=1)
-    with pytest.raises(XGIError):
-        xgi.normalized_hypergraph_laplacian(H, weights="1")
+    ## Default
+    L_mwe_wtd = xgi.normalized_hypergraph_laplacian(H_mwe, weighted=True, sparse=False)
+    assert np.allclose(L_mwe, L_mwe_wtd)
 
-    ## Length errors
-    with pytest.raises(XGIError):  # too few
-        xgi.normalized_hypergraph_laplacian(H, weights=[1])
-    with pytest.raises(XGIError):  # too many
-        xgi.normalized_hypergraph_laplacian(
-            H, weights=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        )
-
-    ## Value errors
-    with pytest.raises(XGIError):  # zeros
-        xgi.normalized_hypergraph_laplacian(H, weights=[0, 1, 1, 1])
-    with pytest.raises(XGIError):  # negatives
-        xgi.normalized_hypergraph_laplacian(H, weights=[-1, 1, 1, 1])
+    ## Uniform weight
+    H_mwe.set_edge_attributes(2, name="weight")
+    L_mwe_wtd_uni = xgi.normalized_hypergraph_laplacian(
+        H_mwe, weighted=True, sparse=False
+    )
+    assert np.allclose(2 * L_mwe_wtd - np.eye(H_mwe.num_nodes), L_mwe_wtd_uni)
 
 
 def test_empty_order(edgelist6):
