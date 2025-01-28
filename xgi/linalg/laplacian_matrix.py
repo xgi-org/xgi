@@ -195,8 +195,8 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
     ----------
     H : Hypergraph
         Hypergraph
-    weights : list of floats or None, optional
-        Hyperedge weights, by default None (every edge weighted as 1).
+    weighted : bool, optional
+        whether or not to use hyperedge weightr, by default False (every edge weighted as 1).
     sparse : bool, optional
         whether or not the laplacian is sparse, by default True
     index : bool, optional
@@ -215,12 +215,6 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
     ------
     XGIError
         If there are isolated nodes.
-
-    XGIError
-        If there are an incorrect number of edge weights.
-
-    XGIError
-        If there are non-positive edge weights.
 
     References
     ----------
