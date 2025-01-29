@@ -261,8 +261,6 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
 
         eye = np.eye(H.num_nodes)
 
-    L = eye - (
-        Dv_invsqrt @ incidence @ W @ De_inv @ np.transpose(incidence) @ Dv_invsqrt
-    )
+    L = eye - Dv_invsqrt @ incidence @ W @ De_inv @ incidence.T @ Dv_invsqrt
 
     return (L, rowdict) if index else L
