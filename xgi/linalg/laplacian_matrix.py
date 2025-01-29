@@ -249,8 +249,7 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
         else:
             W = identity(H.num_edges)
 
-        eye = csr_array((H.num_nodes, H.num_nodes))
-        eye.setdiag(1)
+        eye = eye_array(H.num_nodes, format="csr")
     else:
         Dv_invsqrt = np.diag(np.power(Dv, -0.5))
         De_inv = np.diag(1 / De)
