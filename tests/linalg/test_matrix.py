@@ -608,18 +608,21 @@ def test_normalized_hypergraph_laplacian():
     assert isinstance(L2, np.ndarray)
     assert np.all(L1.toarray() == L2)
 
+    # Eigenvalues are all non-negative
     evals = eigh(L2, eigvals_only=True)
     negative_evals = list(filter(lambda e: e < 0, evals))
     assert (not negative_evals) or (np.allclose(negative_evals, 0))
 
     L3, d = xgi.normalized_hypergraph_laplacian(H, index=True)
     assert d == {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8}
+    assert np.allclose(L3.toarray(), L2)
 
     # sqrt(d) is eigenvector with eigenvalue 0
     sqrt_d = np.array([np.sqrt(d) for d in H.nodes.degree.aslist()])
     assert np.allclose(L3 @ sqrt_d, 0)
 
-    true_L = np.array(
+    # Exact Laplacian calculation
+    true_L3 = np.array(
         [
             [0.666667, -0.333333, -0.333333, -0.0, -0.0, -0.0, -0.0, -0.0],
             [-0.333333, 0.666667, -0.333333, -0.0, -0.0, -0.0, -0.0, -0.0],
@@ -631,9 +634,11 @@ def test_normalized_hypergraph_laplacian():
             [-0.0, -0.0, -0.0, -0.0, -0.0, -0.235702, -0.333333, 0.666667],
         ]
     )
-    assert np.allclose(true_L, L2)
+    assert np.allclose(true_L3, L3.toarray())
 
-    el_mwe = [
+
+def test_fix_647():
+    el = [
         {1, 2, 3},
         {1, 4, 5},
         {1, 6, 7, 8},
@@ -641,22 +646,25 @@ def test_normalized_hypergraph_laplacian():
         {1, 13, 14, 15, 16},
         {4, 17, 18},
     ]
-    H_mwe = xgi.Hypergraph(el_mwe)
-    L_mwe = xgi.normalized_hypergraph_laplacian(H_mwe, sparse=False)
-    evals_mwe = eigvalsh(L_mwe)
+    H = xgi.Hypergraph(el)
+    L = xgi.normalized_hypergraph_laplacian(H, sparse=False)
+
+    # Eigenvalues non-negative
+    evals_mwe = eigvalsh(L)
     assert np.all(evals_mwe >= 0)
 
     # Weights error handling
-    ## Default
-    L_mwe_wtd = xgi.normalized_hypergraph_laplacian(H_mwe, weighted=True, sparse=False)
-    assert np.allclose(L_mwe, L_mwe_wtd)
+    ## Default value when "weight" attribute unavailable
+    L_wtd = xgi.normalized_hypergraph_laplacian(H, weighted=True, sparse=False)
+    assert np.allclose(L, L_wtd)
 
     ## Uniform weight
-    H_mwe.set_edge_attributes(2, name="weight")
-    L_mwe_wtd_uni = xgi.normalized_hypergraph_laplacian(
-        H_mwe, weighted=True, sparse=False
+    H_wtd = H.copy()
+    H_wtd.set_edge_attributes(2, name="weight")
+    L_wtd_uniform = xgi.normalized_hypergraph_laplacian(
+        H_wtd, weighted=True, sparse=False
     )
-    assert np.allclose(2 * L_mwe_wtd - np.eye(H_mwe.num_nodes), L_mwe_wtd_uni)
+    assert np.allclose(2 * L_wtd - np.eye(H_wtd.num_nodes), L_wtd_uniform)
 
 
 def test_empty_order(edgelist6):
