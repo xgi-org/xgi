@@ -238,7 +238,7 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
     De = np.sum(incidence, axis=0)
 
     if sparse:
-        Dv_invsqrt = csr_array(diags(np.power(Dv, -0.5)))
+        Dv_invsqrt = diags_array(np.power(Dv, -0.5), format="csr")
         De_inv = diags(1 / De)
 
         if weighted:
