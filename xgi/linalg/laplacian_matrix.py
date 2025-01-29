@@ -196,7 +196,7 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
     H : Hypergraph
         Hypergraph
     weighted : bool, optional
-        whether or not to use hyperedge weightr, by default False (every edge weighted as 1).
+        whether or not to use hyperedge weights, by default False (every edge weighted as 1).
     sparse : bool, optional
         whether or not the laplacian is sparse, by default True
     index : bool, optional
@@ -236,31 +236,31 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
 
     Dv = degree_matrix(H)
     De = np.sum(incidence, axis=0)
+    if weighted:
+        weights = [H.edges[edge_idx].get("weight", 1) for edge_idx in H.edges]
+    
 
     if sparse:
-        Dv_invsqrt = csr_array(diags(np.power(Dv, -0.5)))
+        Dv_invsqrt = diags_array(np.power(Dv, -0.5), format="csr")
         De_inv = diags(1 / De)
 
         if weighted:
-            W = diags([H.edges[edge_idx].get("weight", 1) for edge_idx in H.edges])
+            W = diags_array(weights, format="csr")
         else:
-            W = identity(H.num_edges)
+            W = eye_array(H.num_edges, format="csr")
 
-        eye = csr_array((H.num_nodes, H.num_nodes))
-        eye.setdiag(1)
+        eye = eye_array(H.num_nodes, format="csr")
     else:
         Dv_invsqrt = np.diag(np.power(Dv, -0.5))
         De_inv = np.diag(1 / De)
 
         if weighted:
-            W = np.diag([H.edges[edge_idx].get("weight", 1) for edge_idx in H.edges])
+            W = np.diag(weights)
         else:
-            W = np.identity(H.num_edges)
+            W = np.eye(H.num_edges)
 
         eye = np.eye(H.num_nodes)
 
-    L = eye - (
-        Dv_invsqrt @ incidence @ W @ De_inv @ np.transpose(incidence) @ Dv_invsqrt
-    )
+    L = eye - Dv_invsqrt @ incidence @ W @ De_inv @ incidence.T @ Dv_invsqrt
 
     return (L, rowdict) if index else L
