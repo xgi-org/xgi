@@ -196,7 +196,7 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
     H : Hypergraph
         Hypergraph
     weighted : bool, optional
-        whether or not to use hyperedge weightr, by default False (every edge weighted as 1).
+        whether or not to use hyperedge weights, by default False (every edge weighted as 1).
     sparse : bool, optional
         whether or not the laplacian is sparse, by default True
     index : bool, optional
