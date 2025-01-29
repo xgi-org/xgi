@@ -236,6 +236,9 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
 
     Dv = degree_matrix(H)
     De = np.sum(incidence, axis=0)
+    if weighted:
+        weights = [H.edges[edge_idx].get("weight", 1) for edge_idx in H.edges]
+    
 
     if sparse:
         Dv_invsqrt = diags_array(np.power(Dv, -0.5), format="csr")
