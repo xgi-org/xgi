@@ -47,7 +47,7 @@ array([[1, 0, 0],
 from warnings import warn
 
 import numpy as np
-from scipy.sparse import csr_array, diags, identity
+from scipy.sparse import csr_array, diags_array, eye_array
 
 from ..exception import XGIError
 from .hypergraph_matrix import (
@@ -236,31 +236,23 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
 
     Dv = degree_matrix(H)
     De = np.sum(incidence, axis=0)
+
     if weighted:
         weights = [H.edges[edge_idx].get("weight", 1) for edge_idx in H.edges]
-    
+    else:
+        weights = [1] * H.num_edges
 
     if sparse:
         Dv_invsqrt = diags_array(np.power(Dv, -0.5), format="csr")
-        De_inv = diags(1 / De)
-
-        if weighted:
-            W = diags_array(weights, format="csr")
-        else:
-            W = eye_array(H.num_edges, format="csr")
-
+        De_inv = diags_array(1 / De, format="csr")
+        W = diags_array(weights, format="csr")
         eye = eye_array(H.num_nodes, format="csr")
     else:
         Dv_invsqrt = np.diag(np.power(Dv, -0.5))
         De_inv = np.diag(1 / De)
-
-        if weighted:
-            W = np.diag(weights)
-        else:
-            W = np.eye(H.num_edges)
-
+        W = np.diag(weights)
         eye = np.eye(H.num_nodes)
 
-    L = eye - Dv_invsqrt @ incidence @ W @ De_inv @ incidence.T @ Dv_invsqrt
+    L = eye - Dv_invsqrt @ incidence @ W @ De_inv @ np.tranpose(incidence) @ Dv_invsqrt
 
     return (L, rowdict) if index else L
