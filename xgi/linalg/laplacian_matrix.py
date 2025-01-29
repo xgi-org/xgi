@@ -255,7 +255,7 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
         De_inv = np.diag(1 / De)
 
         if weighted:
-            W = np.diag([H.edges[edge_idx].get("weight", 1) for edge_idx in H.edges])
+            W = np.diag(weights)
         else:
             W = np.identity(H.num_edges)
 
