@@ -52,7 +52,6 @@ from scipy.sparse import csr_array, diags_array, eye_array
 from ..exception import XGIError
 from .hypergraph_matrix import (
     adjacency_matrix,
-    clique_motif_matrix,
     degree_matrix,
     incidence_matrix,
 )
@@ -107,7 +106,7 @@ def laplacian(H, order=1, sparse=False, rescale_per_node=False, index=False):
         return (L, {}) if index else L
 
     if sparse:
-        K = csr_array(diags(degree_matrix(H, order=order)))
+        K = csr_array(diags_array(degree_matrix(H, order=order)))
     else:
         K = np.diag(degree_matrix(H, order=order))
 
