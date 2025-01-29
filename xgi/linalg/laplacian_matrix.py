@@ -247,7 +247,7 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
         if weighted:
             W = diags_array(weights, format="csr")
         else:
-            W = identity(H.num_edges)
+            W = eye_array(H.num_edges, format="csr")
 
         eye = eye_array(H.num_nodes, format="csr")
     else:
