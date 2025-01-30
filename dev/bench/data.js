@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1737996809557,
+  "lastUpdate": 1738253861595,
   "repoUrl": "https://github.com/xgi-org/xgi",
   "entries": {
     "XGI Benchmarks": [
@@ -1960,6 +1960,149 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0007172809765750839",
             "extra": "mean: 18.969414499997583 msec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "56703624+kaiser-dan@users.noreply.github.com",
+            "name": "Daniel Kaiser",
+            "username": "kaiser-dan"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d14e3e5ff7d49769812f28abfd6371e59ea1d631",
+          "message": "Fix/normalized hypergraph laplacian (#648)\n\n* fix: rewrite `normalized_hypergraph_laplacian`\r\n\r\nFixes the implementation of `normalized_hypergraph_laplacian` to prevent\r\nnegative eigenvalues. Rewrites core matrix calculations in full\r\ndefinition.\r\n\r\n* test: add unit tests for updated laplacian\r\n\r\nAdds a proprty test for eigenvalue sign.\r\nAdds error tests for new `weights` variable.\r\n\r\n* doc: update `normalized_hypergraph_laplacian` doc\r\n\r\nUpdated 'Raises' portion of function docstring to include type and\r\nlength error catches on `weights` parameter.\r\n\r\n* test: added issue #657 m.w.e. as test\r\n\r\n* fix(test): fix typo in unit test\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nImplement suggestion - Edge weight matrix\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* test: add sqrt(d) eigenvector, true_L tests\r\n\r\n* feat: update weighted argument for laplacian\r\n\r\n* doc: update normalized_hypergraph_laplacian args\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nFix docstring typo\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nImplement suggestion - Edge weight matrix\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* feat: update weighted argument for laplacian\r\n\r\n* doc: update normalized_hypergraph_laplacian args\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nFix docstring typo\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\nUpdate xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\nUpdate xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\nUpdate xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\nUpdate xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\nUpdate xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\nUpdate xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\nUpdate xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\nUpdate xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n* test: separated #647 m.w.e. into new test\r\n\r\nAdd the minimum(?) working example of issue #647 as new `test_`\r\nfunction.\r\nTidied `test_normalized_hypergraph_laplacian` and added L2 and L3\r\ncomparison.\r\n\r\n* feat: update scipy sparse array to modern use\r\n\r\n* chore: update diags_array scipy use in 'laplacian'\r\n\r\n* Update xgi/linalg/laplacian_matrix.py\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>\r\n\r\n---------\r\n\r\nCo-authored-by: Maxime Lucas <maximelucas@users.noreply.github.com>",
+          "timestamp": "2025-01-30T11:16:39-05:00",
+          "tree_id": "0ef687a480689d93dc8eaf152b5df80717829ac3",
+          "url": "https://github.com/xgi-org/xgi/commit/d14e3e5ff7d49769812f28abfd6371e59ea1d631"
+        },
+        "date": 1738253858247,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/algorithms.py::test_connected",
+            "value": 90.93204794460615,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002849675714012341",
+            "extra": "mean: 10.997222899996473 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/algorithms.py::test_clustering_coefficient",
+            "value": 59.05819157756282,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003433937502239907",
+            "extra": "mean: 16.93245210000498 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgelist",
+            "value": 27.421187325898817,
+            "unit": "iter/sec",
+            "range": "stddev: 0.045660267657570225",
+            "extra": "mean: 36.46815099999401 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgedict",
+            "value": 27.611626960114396,
+            "unit": "iter/sec",
+            "range": "stddev: 0.04133231028174423",
+            "extra": "mean: 36.21662720000245 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_df",
+            "value": 20.238855204698098,
+            "unit": "iter/sec",
+            "range": "stddev: 0.04268805485303625",
+            "extra": "mean: 49.40990930000169 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_memberships",
+            "value": 956.1782549496878,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00022589851773273067",
+            "extra": "mean: 1.0458301000085157 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_members",
+            "value": 125.32343943209284,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0006455674148642409",
+            "extra": "mean: 7.979353300001435 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_attributes",
+            "value": 13344.720828686834,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0000065849632910491825",
+            "extra": "mean: 74.93599999861544 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_attributes",
+            "value": 250.95215639826526,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00017145416095638635",
+            "extra": "mean: 3.9848232999958095 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_degree",
+            "value": 8182.1878676937895,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000011820583801474767",
+            "extra": "mean: 122.21670000371886 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_nodestats_degree",
+            "value": 7902.258544675305,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000009122046586848662",
+            "extra": "mean: 126.54609999742661 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_size",
+            "value": 210.95408181490745,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00020854674210992648",
+            "extra": "mean: 4.740368099999159 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_isolates",
+            "value": 7124.785632673542,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000011642477395433723",
+            "extra": "mean: 140.35510000667273 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_singletons",
+            "value": 181.94833773466436,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00021706696625134746",
+            "extra": "mean: 5.496065599996314 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_copy",
+            "value": 11.595594262308628,
+            "unit": "iter/sec",
+            "range": "stddev: 0.06424001304661707",
+            "extra": "mean: 86.23965080000175 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_dual",
+            "value": 10.68520401965807,
+            "unit": "iter/sec",
+            "range": "stddev: 0.068207662894218",
+            "extra": "mean: 93.58735669999874 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/generators.py::test_erdos_renyi",
+            "value": 42.95632619147527,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0013472198482219256",
+            "extra": "mean: 23.27945819999968 msec\nrounds: 10"
           }
         ]
       }
