@@ -106,7 +106,7 @@ def laplacian(H, order=1, sparse=False, rescale_per_node=False, index=False):
         return (L, {}) if index else L
 
     if sparse:
-        K = csr_array(diags_array(degree_matrix(H, order=order)))
+        K = diags_array(degree_matrix(H, order=order), format="csr")
     else:
         K = np.diag(degree_matrix(H, order=order))
 
