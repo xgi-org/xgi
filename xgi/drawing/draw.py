@@ -16,7 +16,13 @@ from mpl_toolkits.mplot3d.art3d import (
     PatchCollection,
     Poly3DCollection,
 )
+from matplotlib.collections import CircleCollection
 from scipy.spatial import ConvexHull
+import copy
+
+from matplotlib.patches import Circle
+from matplotlib.transforms import Affine2D
+import mpl_toolkits.mplot3d.art3d as art3d
 
 chaini = chain.from_iterable
 
@@ -1232,6 +1238,13 @@ def draw_hyperedge_labels(
 
     return text_items
 
+def _create_circle(x, y, z, radius, num_points=30):
+    theta = np.linspace(0, 2 * np.pi, num_points)
+    circle_x = x + radius * np.cos(theta)
+    circle_y = y + radius * np.sin(theta)
+    circle_z = np.full_like(circle_x, z)
+    return np.array([circle_x, circle_y, circle_z]).T
+
 
 def draw_multilayer(
     H,
@@ -1240,8 +1253,7 @@ def draw_multilayer(
     node_fc="white",
     node_ec="black",
     node_lw=1,
-    node_size=5,
-    node_shape="o",
+    node_size=0.1,
     node_fc_cmap="Reds",
     vmin=None,
     vmax=None,
@@ -1295,7 +1307,7 @@ def draw_multilayer(
         Radius of the nodes in pixels.  If int or float, use the same radius for all
         nodes. If iterable or NodeStat, assume the radiuses are specified in the same
         order as the nodes are found in H.nodes. Values are clipped below
-        and above by min_node_size and max_node_size, respectively. By default, 5.
+        and above by min_node_size and max_node_size, respectively. By default, 0.1.
     node_shape :  string, optional
         The shape of the node. Specification is as matplotlib.scatter
         marker. Default is "o".
@@ -1362,8 +1374,8 @@ def draw_multilayer(
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
 
-        * "min_node_size" (default: 10)
-        * "max_node_size" (default: 30)
+        * "min_node_size" (default: 0.01)
+        * "max_node_size" (default: 5)
         * "min_node_lw" (default: 2)
         * "max_node_lw" (default: 10)
         * "min_dyad_lw" (default: 1)
@@ -1381,8 +1393,8 @@ def draw_multilayer(
             Collection containing the edges of size > 2
     """
     settings = {
-        "min_node_size": 10,
-        "max_node_size": 30,
+        "min_node_size": 0.01,
+        "max_node_size": 0.5,
         "min_dyad_lw": 2,
         "max_dyad_lw": 10,
         "min_node_lw": 1,
@@ -1575,25 +1587,31 @@ def draw_multilayer(
 
     # draw nodes (last)
     for d in orders:
-
         z = [sep * d] * H.num_nodes
-
-        node_collection = ax.scatter(
-            xs=xy[:, 0],
-            ys=xy[:, 1],
-            zs=z,
-            s=node_size,
-            marker=node_shape,
-            c=node_fc,
+        patches = []
+        for n in range(H.num_nodes):
+            # Set radius based on node_size
+            radius = node_size if isinstance(node_size, (int, float)) else node_size[n]
+            # Create a circle at specified coordinates
+            node = _create_circle(xs[n], ys[n], z[n], radius=radius)
+            patches.append(node)
+        
+        # Create Poly3DCollection with customization options
+        node_collection = Poly3DCollection(
+            patches,
+            facecolors=node_fc,
+            edgecolor=node_ec,
             cmap=node_fc_cmap,
-            vmin=vmin,
-            vmax=vmax,
-            edgecolors=node_ec,
             linewidths=node_lw,
-            zorder=max_order + 1,
-            plotnonfinite=True,  # plot points with nonfinite color
             alpha=1,
+            zorder=max_order + 2
         )
+        
+        if vmin is not None and vmax is not None:
+            node_collection.set_clim(vmin, vmax)
+
+        ax.add_collection3d(node_collection)
+
 
     ax.view_init(h_angle, v_angle)
     ax.set_ylim(np.min(ys) - ydiff * 0.1, np.max(ys) + ydiff * 0.1)
