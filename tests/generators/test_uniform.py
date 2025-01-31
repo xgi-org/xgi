@@ -197,3 +197,10 @@ def test_uniform_erdos_renyi_hypergraph():
         n = 10
         k = 2
         xgi.uniform_erdos_renyi_hypergraph(n, m, k, p_type="test")
+
+    # test specific case that caused failure previously
+    n = 200
+    k = 2
+    p = 0.0185
+    s = 5
+    xgi.uniform_erdos_renyi_hypergraph(n, k, p, p_type="prob", seed=s)
