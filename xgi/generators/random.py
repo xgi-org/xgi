@@ -273,7 +273,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
             if p != 1:
                 try:
                     j += np.random.geometric(p)
-                except ZeroDivisionError:
+                except ValueError:
                     j = np.inf
 
             if j < m:
@@ -415,7 +415,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                         r = random.random()
                         try:
                             j += np.random.geometric(p)
-                        except ZeroDivisionError:
+                        except ValueError:
                             j = np.inf
                     if j < len(community2_nodes[group2]):
                         v = community2_nodes[group2][j]
