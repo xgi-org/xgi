@@ -74,7 +74,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     >>> H = xgi.fast_random_hypergraph(50, [0.1, 0.01])
     """
     if seed is not None:
-        random.seed(seed)
+        np.random.seed(seed)
 
     ps, order = _check_input_args(ps, order)
 
@@ -246,7 +246,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
 
     """
     if seed is not None:
-        random.seed(seed)
+        np.random.seed(seed)
 
     # sort dictionary by degree in decreasing order
     node_labels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
@@ -355,7 +355,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
 
     """
     if seed is not None:
-        random.seed(seed)
+        np.random.seed(seed)
 
     # sort dictionary by degree in decreasing order
     node_labels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
