@@ -88,9 +88,8 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
         if p == 1:
             H.add_edges_from([e for e in combinations(nodes, d + 1)])
         elif p > 0:
-            r = random.random()
-            index = floor(log(r) / log(1 - p)) - 1  # -1 b/c zero indexing
-            max_index = comb(n, d + 1, exact=True)
+            index = np.random.geometric(p) - 1  # -1 b/c zero indexing
+            max_index = comb(n, d + 1, exact=True) - 1
 
             while index <= max_index:
                 e = set(_index_to_edge_comb(index, n, d + 1))
@@ -99,7 +98,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
                 # value of the right-hand side would be zero, meaning that
                 # we sample the same index multiple times.
                 r = random.random()
-                index += floor(log(r) / log(1 - p))
+                index += np.random.geometric(p)
     return H
 
 
