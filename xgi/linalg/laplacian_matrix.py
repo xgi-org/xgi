@@ -50,11 +50,7 @@ import numpy as np
 from scipy.sparse import csr_array, diags_array, eye_array
 
 from ..exception import XGIError
-from .hypergraph_matrix import (
-    adjacency_matrix,
-    degree_matrix,
-    incidence_matrix,
-)
+from .hypergraph_matrix import adjacency_matrix, degree_matrix, incidence_matrix
 
 __all__ = [
     "laplacian",
