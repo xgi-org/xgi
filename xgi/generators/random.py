@@ -4,7 +4,6 @@ import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
-from math import floor, log
 from warnings import warn
 
 import numpy as np
@@ -97,7 +96,6 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
                 # We no longer subtract 1 because if we did, the minimum
                 # value of the right-hand side would be zero, meaning that
                 # we sample the same index multiple times.
-                r = random.random()
                 index += np.random.geometric(p)
     return H
 
@@ -273,9 +271,8 @@ def chung_lu_hypergraph(k1, k2, seed=None):
 
         while j < m:
             if p != 1:
-                r = random.random()
                 try:
-                    j = j + floor(log(r) / log(1 - p))
+                    j += np.random.geometric(p)
                 except ZeroDivisionError:
                     j = np.inf
 
@@ -287,7 +284,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
                     # no duplicates
                     H.add_node_to_edge(v, u)
                 p = q
-                j = j + 1
+                j += 1
 
     return H
 
@@ -417,7 +414,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                     if p != 1:
                         r = random.random()
                         try:
-                            j = j + floor(log(r) / log(1 - p))
+                            j += np.random.geometric(p)
                         except ZeroDivisionError:
                             j = np.inf
                     if j < len(community2_nodes[group2]):
@@ -428,7 +425,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                             # no duplicates
                             H.add_node_to_edge(v, u)
                         p = q
-                        j = j + 1
+                        j += 1
     return H
 
 
