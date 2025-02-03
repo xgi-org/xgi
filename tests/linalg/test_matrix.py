@@ -257,21 +257,26 @@ def test_adjacency_matrix(edgelist1, edgelist4):
     assert np.all(A7 == A7_sp.todense())
 
 
-def test_fix_649(): # make sure diagonal is fully zero when sparse
+def test_fix_649():  # make sure diagonal is fully zero when sparse
 
     H = xgi.load_xgi_data(dataset="email-enron")
-    H.cleanup(isolates=True, singletons=False, connected=True, relabel=False, multiedges=False)
+    H.cleanup(
+        isolates=True, singletons=False, connected=True, relabel=False, multiedges=False
+    )
 
     weighted = True
     order = 1
 
-    adj = xgi.adjacency_matrix(H, order=order, sparse=False, weighted=weighted, index=False)
+    adj = xgi.adjacency_matrix(
+        H, order=order, sparse=False, weighted=weighted, index=False
+    )
 
-    adj_sparse = xgi.adjacency_matrix(H, order=order, sparse=True, weighted=weighted, index=False)
+    adj_sparse = xgi.adjacency_matrix(
+        H, order=order, sparse=True, weighted=weighted, index=False
+    )
     adj_sparse = adj_sparse.todense()
 
-    assert np.all(np.diag(adj_sparse)==0)
-
+    assert np.all(np.diag(adj_sparse) == 0)
 
 
 def test_laplacian(edgelist2, edgelist6):

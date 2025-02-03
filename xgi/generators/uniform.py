@@ -393,10 +393,10 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     H.add_nodes_from(range(n))
 
     if multiedges:
-        max_index = n**m
+        max_index = n**m - 1
         f = _index_to_edge_prod
     else:
-        max_index = comb(n, m, exact=True)
+        max_index = comb(n, m, exact=True) - 1
         f = _index_to_edge_comb
 
     index = np.random.geometric(q) - 1  # -1 b/c zero indexing
@@ -461,6 +461,12 @@ def _index_to_edge_prod(index, n, m):
     ----------
     https://stackoverflow.com/questions/53834707/element-at-index-in-itertools-product
     """
+    if index < 0 or index >= n**m:
+        warnings.warn(
+            f"_index_to_edge_prod was given index {index} >= {n}**{m}={n**m}."
+            f"Returned hyperedge ({ [(index // (n**r) % n) for r in range(m - 1, -1, -1)] }) may not be correct."
+        )
+
     return [(index // (n**r) % n) for r in range(m - 1, -1, -1)]
 
 
@@ -501,6 +507,11 @@ def _index_to_edge_comb(index, n, m):
     ----------
     https://math.stackexchange.com/questions/1227409/indexing-all-combinations-without-making-list
     """
+    if index < 0 or index >= comb(n, m, exact=True):
+        warnings.warn(
+            f"index {index} >= comb({n}, {m}, exact=True) = {comb(n, m,exact=True)}."
+        )
+
     c = []
     r = index + 1  # makes it zero indexed
     j = -1
