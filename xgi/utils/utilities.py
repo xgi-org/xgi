@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 from copy import deepcopy
-from functools import lru_cache
+from functools import cache
 from itertools import chain, combinations, count
 
 import numpy as np
@@ -272,7 +272,7 @@ def request_json_from_url(url):
         raise XGIError(f"Error: HTTP response {r.status_code}")
 
 
-@lru_cache(maxsize=None)
+@cache
 def request_json_from_url_cached(url):
     """HTTP request json file and return as dict.
 
