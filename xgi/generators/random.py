@@ -9,6 +9,7 @@ from warnings import warn
 import numpy as np
 from scipy.special import comb
 
+from ..utils import geometric
 from .classic import empty_hypergraph
 from .lattice import ring_lattice
 from .uniform import _index_to_edge_comb
@@ -74,7 +75,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     >>> H = xgi.fast_random_hypergraph(50, [0.1, 0.01])
     """
     if seed is not None:
-        np.random.seed(seed)
+        random.seed(seed)
 
     ps, order = _check_input_args(ps, order)
 
@@ -87,7 +88,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
         if p == 1:
             H.add_edges_from([e for e in combinations(nodes, d + 1)])
         elif p > 0:
-            index = np.random.geometric(p) - 1  # -1 b/c zero indexing
+            index = geometric(p) - 1  # -1 b/c zero indexing
             max_index = comb(n, d + 1, exact=True) - 1
 
             while index <= max_index:
@@ -96,7 +97,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
                 # We no longer subtract 1 because if we did, the minimum
                 # value of the right-hand side would be zero, meaning that
                 # we sample the same index multiple times.
-                index += np.random.geometric(p)
+                index += geometric(p)
     return H
 
 
@@ -246,7 +247,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
 
     """
     if seed is not None:
-        np.random.seed(seed)
+        random.seed(seed)
 
     # sort dictionary by degree in decreasing order
     node_labels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
@@ -271,11 +272,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
 
         while j < m:
             if p != 1:
-                try:
-                    j += np.random.geometric(p)
-                except ValueError:
-                    j = np.inf
-
+                j += geometric(p)
             if j < m:
                 v = edge_labels[j]
                 q = min((k1[u] * k2[v]) / S, 1)
@@ -355,7 +352,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
 
     """
     if seed is not None:
-        np.random.seed(seed)
+        random.seed(seed)
 
     # sort dictionary by degree in decreasing order
     node_labels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
@@ -412,11 +409,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                 p = min(k1[u] * k2[v] * group_constant, 1)
                 while j < len(community2_nodes[group2]):
                     if p != 1:
-                        r = random.random()
-                        try:
-                            j += np.random.geometric(p)
-                        except ValueError:
-                            j = np.inf
+                        j += geometric(p)
                     if j < len(community2_nodes[group2]):
                         v = community2_nodes[group2][j]
                         q = min((k1[u] * k2[v]) * group_constant, 1)
