@@ -10,6 +10,7 @@ import numpy as np
 from scipy.special import comb
 
 from ..exception import XGIError
+from ..utils import geometric
 from .classic import complete_hypergraph, empty_hypergraph
 
 __all__ = [
@@ -178,7 +179,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
         raise XGIError("Sum of sizes does not match n")
 
     if seed is not None:
-        np.random.seed(seed)
+        random.seed(seed)
 
     node_labels = range(n)
     H = empty_hypergraph()
@@ -202,7 +203,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
             max_index = reduce(operator.mul, partition_sizes, 1)
             if max_index < 0:
                 raise Exception("Index overflow error!")
-            index = np.random.geometric(p[block]) - 1
+            index = geometric(p[block]) - 1
 
             while index < max_index:
                 indices = _index_to_edge_partition(index, partition_sizes, m)
@@ -215,7 +216,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
                 # will not longer be uniform, so we discard them.
                 if len(e) == m:
                     H.add_edge(e)
-                index += np.random.geometric(p[block])
+                index += geometric(p[block])
     return H
 
 
@@ -367,7 +368,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     https://doi.org/10.1103/PhysRevE.108.034311
     """
     if seed is not None:
-        np.random.seed(seed)
+        random.seed(seed)
 
     if p_type == "degree":
         if multiedges:
@@ -399,7 +400,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
         max_index = comb(n, m, exact=True) - 1
         f = _index_to_edge_comb
 
-    index = np.random.geometric(q) - 1  # -1 b/c zero indexing
+    index = geometric(q) - 1  # -1 b/c zero indexing
     while index <= max_index:
         e = set(f(index, n, m))
         # if f corresponds to _index_to_edge_prod,
@@ -414,7 +415,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
         # We no longer subtract 1 because if we did, the minimum
         # value of the right-hand side would be zero, meaning that
         # we sample the same index multiple times.
-        index += np.random.geometric(q)
+        index += geometric(q)
     return H
 
 
