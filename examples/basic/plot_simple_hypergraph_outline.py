@@ -15,6 +15,6 @@ H = xgi.Hypergraph(hyperedges)
 
 
 pos = xgi.barycenter_spring_layout(H, seed=1)
-xgi.draw(H, pos=pos, hull=True, edge_fc="white", edge_lw=15)
+xgi.draw(H, pos=pos, hull=True, edge_fc="white", edge_lw=1)
 
 plt.show()
