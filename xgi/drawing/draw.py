@@ -74,6 +74,7 @@ def draw(
     edge_vmin=None,
     edge_vmax=None,
     edge_ec=None,
+    edge_lw=0,
     alpha=0.4,
     hull=False,
     radius=0.05,
@@ -188,6 +189,9 @@ def draw(
         If None (default), color by edge size.
         Numerical formats will be mapped to colors using edge_vmin, edge_vmax,
         and edge_fc_cmap.
+    edge_lw : float, optional
+        Linewidth of the edge of hyperedges. By default, 0 (no edge). 
+        Ignored and set to 0 if S is a SimplicialComplex.
     alpha : float, optional
         The edge transparency. By default, 0.4.
     hull : bool, optional
@@ -311,6 +315,7 @@ def draw(
             edge_vmin=edge_vmin,
             edge_vmax=edge_vmax,
             edge_ec=edge_ec,
+            edge_lw=edge_lw,
             max_order=max_order,
             hyperedge_labels=hyperedge_labels,
             hull=hull,
@@ -551,6 +556,7 @@ def draw_hyperedges(
     edge_vmin=None,
     edge_vmax=None,
     edge_ec=None,
+    edge_lw=0,
     alpha=0.4,
     max_order=None,
     params=dict(),
@@ -612,7 +618,7 @@ def draw_hyperedges(
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
     edge_ec : color or list of colors or array-like or dict or EdgeStat, optional
-        Color of the hyperedges.  The accepted formats are the same as
+        Color of the edge of the hyperedges.  The accepted formats are the same as
         matplotlib's scatter, with the addition of dict and IDStat.
         Formats with colors:
 
@@ -630,6 +636,8 @@ def draw_hyperedges(
         If None (default), color by edge size.
         Numerical formats will be mapped to colors using edge_vmin, edge_vmax,
         and edge_fc_cmap.
+    edge_lw : float, optional
+        Linewidth of the edge of hyperedges. By default, 0 (no edge). 
     alpha : float, optional
         The edge transparency. By default, 0.4.
     max_order : int, optional
@@ -806,6 +814,7 @@ def draw_hyperedges(
         edgecolors=edge_ec,
         alpha=alpha,
         zorder=max_order - 2,  # below dyads
+        linewidth=edge_lw,
     )
     # edge_collection.set_cmap(edge_fc_cmap)
     if edge_c_to_map:
@@ -984,6 +993,7 @@ def draw_simplices(
         edge_fc_cmap=edge_fc_cmap,
         edge_vmin=edge_vmin,
         edge_vmax=edge_vmax,
+        edge_lw=0,
         alpha=alpha,
         max_order=max_order,
         params=params,
