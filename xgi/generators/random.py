@@ -4,12 +4,12 @@ import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
-from math import floor, log
 from warnings import warn
 
 import numpy as np
 from scipy.special import comb
 
+from ..utils import geometric
 from .classic import empty_hypergraph
 from .lattice import ring_lattice
 from .uniform import _index_to_edge_comb
@@ -88,9 +88,8 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
         if p == 1:
             H.add_edges_from([e for e in combinations(nodes, d + 1)])
         elif p > 0:
-            r = random.random()
-            index = floor(log(r) / log(1 - p)) - 1  # -1 b/c zero indexing
-            max_index = comb(n, d + 1, exact=True)
+            index = geometric(p) - 1  # -1 b/c zero indexing
+            max_index = comb(n, d + 1, exact=True) - 1
 
             while index <= max_index:
                 e = set(_index_to_edge_comb(index, n, d + 1))
@@ -98,8 +97,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
                 # We no longer subtract 1 because if we did, the minimum
                 # value of the right-hand side would be zero, meaning that
                 # we sample the same index multiple times.
-                r = random.random()
-                index += floor(log(r) / log(1 - p))
+                index += geometric(p)
     return H
 
 
@@ -274,12 +272,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
 
         while j < m:
             if p != 1:
-                r = random.random()
-                try:
-                    j = j + floor(log(r) / log(1 - p))
-                except ZeroDivisionError:
-                    j = np.inf
-
+                j += geometric(p)
             if j < m:
                 v = edge_labels[j]
                 q = min((k1[u] * k2[v]) / S, 1)
@@ -288,7 +281,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
                     # no duplicates
                     H.add_node_to_edge(v, u)
                 p = q
-                j = j + 1
+                j += 1
 
     return H
 
@@ -416,11 +409,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                 p = min(k1[u] * k2[v] * group_constant, 1)
                 while j < len(community2_nodes[group2]):
                     if p != 1:
-                        r = random.random()
-                        try:
-                            j = j + floor(log(r) / log(1 - p))
-                        except ZeroDivisionError:
-                            j = np.inf
+                        j += geometric(p)
                     if j < len(community2_nodes[group2]):
                         v = community2_nodes[group2][j]
                         q = min((k1[u] * k2[v]) * group_constant, 1)
@@ -429,7 +418,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                             # no duplicates
                             H.add_node_to_edge(v, u)
                         p = q
-                        j = j + 1
+                        j += 1
     return H
 
 

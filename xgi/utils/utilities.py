@@ -1,9 +1,11 @@
 """General utilities."""
 
+import random
 from collections import defaultdict
 from copy import deepcopy
 from functools import cache
 from itertools import chain, combinations, count
+from math import floor, log
 
 import numpy as np
 import pandas as pd
@@ -24,6 +26,7 @@ __all__ = [
     "hist",
     "binomial_sequence",
     "get_network_type",
+    "geometric",
 ]
 
 
@@ -553,3 +556,14 @@ def binomial_sequence(k, N):
 
 def get_network_type(H):
     return str(type(H)).split(".")[-1].split("'")[0].lower()
+
+
+def geometric(p):
+    """Generates a sample from a geometric distribution."""
+    r = random.random()
+    try:
+        return floor(log(r) / log(1 - p))
+    except ValueError:
+        return 1
+    except ZeroDivisionError:
+        return np.inf
