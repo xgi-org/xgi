@@ -5,7 +5,7 @@ from collections import defaultdict
 from copy import deepcopy
 from functools import cache
 from itertools import chain, combinations, count
-from math import floor, log
+from math import ceil, log
 
 import numpy as np
 import pandas as pd
@@ -582,7 +582,7 @@ def geometric(p):
     """
     r = random.random()
     try:
-        return floor(log(r) / log(1 - p)) + 1
+        return ceil(log(r) / log(1 - p))
     except ValueError:
         # when p = 1
         return 1
