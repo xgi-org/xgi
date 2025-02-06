@@ -351,3 +351,7 @@ def test_binomial_sequence():
 
 def test_geometric():
     assert min([xgi.geometric(0.1) for i in range(1000000)]) >= 1
+
+    assert np.isinf(xgi.geometric(0))
+
+    assert xgi.geometric(1) == 1
