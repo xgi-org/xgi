@@ -559,7 +559,27 @@ def get_network_type(H):
 
 
 def geometric(p):
-    """Generates a sample from a geometric distribution."""
+    """Generate a sample from the geometric1 distribution.
+
+    Parameters
+    ----------
+    p : float in [0, 1]
+        the probability
+
+    Returns
+    -------
+    int
+        the number of trials for the first success
+
+    Notes
+    -----
+    This sampler can be made deterministic by setting
+    `random.seed()`.
+
+    References
+    ----------
+    https://en.wikipedia.org/wiki/Geometric_distribution
+    """
     r = random.random()
     try:
         return floor(log(r) / log(1 - p))
