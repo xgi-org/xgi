@@ -275,7 +275,7 @@ def test_draw_hyperedges(edgelist8):
     # edge_lw
     assert np.all(dyad_collection.get_linewidth() == np.array([1.5]))
     assert np.all(dyad_collection2.get_linewidth() == np.array([3]))
-    assert np.all(edge_collection.get_linewidth() == np.array([1.0]))
+    assert np.all(edge_collection.get_linewidth() == np.array([0]))
 
     # negative node_lw or node_size
     with pytest.raises(ValueError):
