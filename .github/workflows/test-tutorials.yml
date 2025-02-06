@@ -92,11 +92,7 @@ jobs:
         # run pytest ONLY on the tutorials
         cd tutorials
 
-        # removed this to speed up the tests
-        # cd case_studies
-        # pytest --color=yes
-
-        cd ../focus
+        cd focus
         pytest --color=yes
 
         cd ../getting_started
@@ -104,3 +100,7 @@ jobs:
 
         cd ../in_depth
         pytest --color=yes
+
+        # removed this to speed up the tests
+        # cd ../case_studies
+        # pytest --color=yes
