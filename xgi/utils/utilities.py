@@ -582,8 +582,10 @@ def geometric(p):
     """
     r = random.random()
     try:
-        return floor(log(r) / log(1 - p))
+        return floor(log(r) / log(1 - p)) + 1
     except ValueError:
+        # when p = 1
         return 1
     except ZeroDivisionError:
+        # when p = 0
         return np.inf
