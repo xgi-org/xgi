@@ -129,3 +129,12 @@ def test_fast_random_hypergraph():
 
     with pytest.raises(ValueError):
         xgi.fast_random_hypergraph(10, [-0.1, 1])
+
+
+
+def test_pr_655():
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        # if this throws an error, then PR 655 doesn't fix the issue
+        xgi.fast_random_hypergraph(100, [0.1, 0.001],seed=2)
