@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.9.5
+* Fix `fast_random_hypergraph` fencepost errors. [#655](https://github.com/xgi-org/xgi/pull/655) (@nwlandry)
+* Split the GitHub actions for the tutorials and source code. [#659](https://github.com/xgi-org/xgi/pull/659) (@nwlandry)
+* Added `edgelw` keyword in `draw()`. (Closes Issue [#654](https://github.com/xgi-org/xgi/issues/654)) [#658](https://github.com/xgi-org/xgi/pull/658) (@maximelucas)
+* Switch from `lru_cache` to `cache`. (Closes Issue [#656](https://github.com/xgi-org/xgi/issues/656)) [#657](https://github.com/xgi-org/xgi/pull/657) (@nwlandry)
+* Fix fencepost errors in `uniform_erdos_renyi_hypergraph`. (Closes Issue [#652](https://github.com/xgi-org/xgi/issues/652)) [#653](https://github.com/xgi-org/xgi/pull/653) (@tlarock)
+* Fix/normalized hypergraph laplacian. (Closes Issue [#647](https://github.com/xgi-org/xgi/issues/647)) [#648](https://github.com/xgi-org/xgi/pull/648) (@kaiser-dan)
+* Fix sparse diag by upgrading SciPy and Numpy and dropping Python 3.9. (Closes Issue [#649](https://github.com/xgi-org/xgi/issues/649)) [#650](https://github.com/xgi-org/xgi/pull/650) (@maximelucas)
+
 ## v0.9.4
 * Support `DiHypergraph` in the `from_bipartite_graph` and `to_bipartite_graph` methods. [#633](https://github.com/xgi-org/xgi/pull/633) (@colltoaction)
 * feat: added seed to shuffle-hypedges. (Closes Issue [#644](https://github.com/xgi-org/xgi/issues/644)) [#645](https://github.com/xgi-org/xgi/pull/645) (@maximelucas)
