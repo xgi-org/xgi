@@ -190,7 +190,7 @@ def draw(
         Numerical formats will be mapped to colors using edge_vmin, edge_vmax,
         and edge_fc_cmap.
     edge_lw : float, optional
-        Linewidth of the edge of hyperedges. By default, 0 (no edge). 
+        Linewidth of the edge of hyperedges. By default, 0 (no edge).
         Ignored and set to 0 if S is a SimplicialComplex.
     alpha : float, optional
         The edge transparency. By default, 0.4.
@@ -637,7 +637,7 @@ def draw_hyperedges(
         Numerical formats will be mapped to colors using edge_vmin, edge_vmax,
         and edge_fc_cmap.
     edge_lw : float, optional
-        Linewidth of the edge of hyperedges. By default, 0 (no edge). 
+        Linewidth of the edge of hyperedges. By default, 0 (no edge).
     alpha : float, optional
         The edge transparency. By default, 0.4.
     max_order : int, optional

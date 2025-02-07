@@ -347,3 +347,11 @@ def test_binomial_sequence():
     output = xgi.binomial_sequence(2, 4)
     expected_output = {"1100", "1001", "0011", "1010", "0101", "0110"}
     assert output == expected_output
+
+
+def test_geometric():
+    assert min([xgi.geometric(0.1) for i in range(1000000)]) >= 1
+
+    assert np.isinf(xgi.geometric(0))
+
+    assert xgi.geometric(1) == 1

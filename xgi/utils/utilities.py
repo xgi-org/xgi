@@ -1,9 +1,11 @@
 """General utilities."""
 
+import random
 from collections import defaultdict
 from copy import deepcopy
 from functools import cache
 from itertools import chain, combinations, count
+from math import ceil, log
 
 import numpy as np
 import pandas as pd
@@ -24,6 +26,7 @@ __all__ = [
     "hist",
     "binomial_sequence",
     "get_network_type",
+    "geometric",
 ]
 
 
@@ -553,3 +556,36 @@ def binomial_sequence(k, N):
 
 def get_network_type(H):
     return str(type(H)).split(".")[-1].split("'")[0].lower()
+
+
+def geometric(p):
+    """Generate a sample from the geometric1 distribution.
+
+    Parameters
+    ----------
+    p : float in [0, 1]
+        the probability
+
+    Returns
+    -------
+    int
+        the number of trials for the first success
+
+    Notes
+    -----
+    This sampler can be made deterministic by setting
+    `random.seed()`.
+
+    References
+    ----------
+    https://en.wikipedia.org/wiki/Geometric_distribution
+    """
+    r = random.random()
+    try:
+        return ceil(log(r) / log(1 - p))
+    except ValueError:
+        # when p = 1
+        return 1
+    except ZeroDivisionError:
+        # when p = 0
+        return np.inf
