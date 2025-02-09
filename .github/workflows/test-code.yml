@@ -1,4 +1,4 @@
-name: test-source-code
+name: test
 
 on:
   push:
