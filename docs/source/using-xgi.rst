@@ -90,16 +90,19 @@ Yuanzhao Zhang, Maxime Lucas, and Federico Battiston, "Higher-order interactions
 Preprints
 =========
 
+2025
+----
+
+Xie He, Philip S. Chodrow, and Peter J. Mucha, "Hypergraph Link Prediction via Hyperedge Copying", arXiv:2502.02386 (2025).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2502.02386>`
+
 2024
 ----
 
 Gülşah Akçakır, Amina Azaiez, Alberto Ceria, Clara Eminente, Guglielmo Ferranti, Govind Gandhi, Aishvarya Raj, and Iacopo Iacopini, "Exploring the interplay of individual traits and interaction dynamics in preschool social networks", arXiv:2407.12728 (2024).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2407.12728>`
-
-Jordan Barrett, Paweł Prałat, Aaron Smith, François Théberge, "Counting simplicial pairs in hypergraphs", arXiv:2408.11806 (2024).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2408.11806>`
 
 Robin Delabays, Giulia De Pasquale, Florian Dörfler, and Yuanzhao Zhang, "Hypergraph reconstruction from dynamics", arXiv:2402.00078 (2024).
 
