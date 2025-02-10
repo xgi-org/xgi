@@ -16,7 +16,6 @@ from .classic import complete_hypergraph, empty_hypergraph
 __all__ = [
     "pseudofractal_simplicial_complex",
     "apollonian_complex",
-
 ]
 
 
@@ -31,7 +30,7 @@ def pseudofractal_simplicial_complex(order, n_iter):
     Parameters
     ----------
         order : int
-            The ordder of the simplices to add (e.g., 2 for triangles, 3 for tetrahedra, etc.).
+            The order of the simplices to add (e.g., 2 for triangles, 3 for tetrahedra, etc.).
         n_iter : int
             The number of iterations to generate simplices.
 
@@ -47,10 +46,10 @@ def pseudofractal_simplicial_complex(order, n_iter):
 
     References
     ----------
-    Nurisso, M., Morandini, M., Lucas, M., Vaccarino, F., Gili, T., & Petri, G. (2024). 
-    "Higher-order Laplacian Renormalization."
-    arXiv preprint arXiv:2401.11298.
-    https://arxiv.org/abs/2401.11298
+    Nurisso, M., Morandini, M., Lucas, M., Vaccarino, F., Gili, T., & Petri, G. (2024).   
+    "Higher-order Laplacian Renormalization."  
+    arXiv preprint arXiv:2401.11298.  
+    https://arxiv.org/abs/2401.11298  
     """
 
     S = xgi.SimplicialComplex()
@@ -91,7 +90,7 @@ def apollonian_complex(order, n_iter):
     Parameters
     ----------
         order : int
-            The ordder of the simplices to add (e.g., 2 for triangles, 3 for tetrahedra, etc.).
+            The order of the simplices to add (e.g., 2 for triangles, 3 for tetrahedra, etc.).
         n_iter : int
             The maximum iteration to generate simplices.
 
@@ -106,9 +105,9 @@ def apollonian_complex(order, n_iter):
 
     References
     ----------
-    Nurisso, M., Morandini, M., Lucas, M., Vaccarino, F., Gili, T., & Petri, G. (2024). 
-    "Higher-order Laplacian Renormalization."
-    arXiv preprint arXiv:2401.11298.
+    Nurisso, M., Morandini, M., Lucas, M., Vaccarino, F., Gili, T., & Petri, G. (2024).   
+    "Higher-order Laplacian Renormalization."  
+    arXiv preprint arXiv:2401.11298.  
     https://arxiv.org/abs/2401.11298
     """
     
