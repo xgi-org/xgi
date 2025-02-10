@@ -1,17 +1,6 @@
 """Generate iterative hypergraphs."""
 
-import itertools
-import operator
-import random
-import warnings
-from functools import reduce
-
-import numpy as np
-from scipy.special import comb
-
-from ..exception import XGIError
-from ..utils import geometric
-from .classic import complete_hypergraph, empty_hypergraph
+from ..core import SimplicialComplex
 
 __all__ = [
     "pseudofractal_simplicial_complex",
@@ -23,8 +12,8 @@ def pseudofractal_simplicial_complex(order, n_iter):
     """
     Generate the pseudofractal simplicial complex of order `order`.
 
-    Starting with a single d-simplex, at each iteration, the function adds new (d+1)-simplices 
-    by attaching a new vertex to all existing (d-1)-simplices (as well as all their subfaces). 
+    Starting with a single d-simplex, at each iteration, the function adds new (d+1)-simplices
+    by attaching a new vertex to all existing (d-1)-simplices (as well as all their subfaces).
     This process is deterministic.
 
     Parameters
@@ -46,13 +35,13 @@ def pseudofractal_simplicial_complex(order, n_iter):
 
     References
     ----------
-    Nurisso, M., Morandini, M., Lucas, M., Vaccarino, F., Gili, T., & Petri, G. (2024).   
-    "Higher-order Laplacian Renormalization."  
-    arXiv preprint arXiv:2401.11298.  
-    https://arxiv.org/abs/2401.11298  
+    Nurisso, M., Morandini, M., Lucas, M., Vaccarino, F., Gili, T., & Petri, G. (2024).
+    "Higher-order Laplacian Renormalization."
+    arXiv preprint arXiv:2401.11298.
+    https://arxiv.org/abs/2401.11298
     """
 
-    S = xgi.SimplicialComplex()
+    S = SimplicialComplex()
 
     # initialize the first d-simplex
     first_simplex = tuple(range(order + 1))
@@ -82,9 +71,9 @@ def apollonian_complex(order, n_iter):
     """
     Generate the apollonian complex of order `order`.
 
-    Starting with a single d-simplex, at each iteration, the function adds new (d+1)-simplices  
-    by attaching a new vertex to (d-1)-simplices that contain at least one newly added node.  
-    This process is deterministic and generates a simplicial complex.  
+    Starting with a single d-simplex, at each iteration, the function adds new (d+1)-simplices
+    by attaching a new vertex to (d-1)-simplices that contain at least one newly added node.
+    This process is deterministic and generates a simplicial complex.
 
 
     Parameters
@@ -105,13 +94,13 @@ def apollonian_complex(order, n_iter):
 
     References
     ----------
-    Nurisso, M., Morandini, M., Lucas, M., Vaccarino, F., Gili, T., & Petri, G. (2024).   
-    "Higher-order Laplacian Renormalization."  
-    arXiv preprint arXiv:2401.11298.  
+    Nurisso, M., Morandini, M., Lucas, M., Vaccarino, F., Gili, T., & Petri, G. (2024).
+    "Higher-order Laplacian Renormalization."
+    arXiv preprint arXiv:2401.11298.
     https://arxiv.org/abs/2401.11298
     """
-    
-    S = xgi.SimplicialComplex()
+
+    S = SimplicialComplex()
 
     # initialize the first d-simplex
     first_simplex = tuple(range(order + 1))
