@@ -27,7 +27,7 @@ Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twit
 - [How to Contribute](#how-to-contribute)
 - [How to Cite](#how-to-cite)
 - [License](#license)
-- [Funding](#funding)
+- [Support](#support)
 - [Other Resources](#other-resources)
 
 ## What is XGI?<a id="what-is-xgi"></a>
@@ -108,10 +108,22 @@ We acknowledge the importance of good software to support research, and we note 
 ## License<a id="license"></a>
 Released under the 3-Clause BSD license (see [`LICENSE.md`](https://github.com/xgi-org/xgi/blob/main/LICENSE.md))
 
-Copyright (C) 2021-2024 XGI Developers
+Copyright (C) 2021-2025 XGI Developers
 
-## Funding<a id="funding"></a>
-The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905).
+## Support<a id="support"></a>
+
+XGI has been supported in the following ways:
+
+### Financial
+
+[![NSF](/docs/source/_static/NSF_logo.svg){width=100}](https://www.nsf.gov/)
+
+Funding received:
+* NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905).
+
+### Infrastructure
+
+[![Zulip](https://raw.githubusercontent.com/zulip/zulip/refs/heads/main/static/images/logo/zulip-org-logo.svg){width=100}](https://zulip.com/)
 
 ## Other Resources<a id="other-resources"></a>
 This library may not meet your needs and if this is this case, consider checking out our [list of other resources](https://github.com/xgi-org/xgi/blob/main/OTHER_RESOURCES.md).
