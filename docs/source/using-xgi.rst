@@ -22,7 +22,7 @@ Published Work
 :bdg-link-primary-line:`Paper <https://doi.org/10.1093/comnet/cnae037>`
 :bdg-link-primary-line:`Code <https://github.com/goznalo-git/DirectedHyperCentrality>`
 
-[XGI] Gonzalo Contreras-Aso, Cristian Pérez-Corral, and Miguel Romance, "Uplifting edges in higher order networks: spectral centralities for non-uniform hypergraphs", AIMS Mathematics, Volume 9, Issue 11: 32045-32075 (2024).
+[XGI, XGI-DATA] Gonzalo Contreras-Aso, Cristian Pérez-Corral, and Miguel Romance, "Uplifting edges in higher order networks: spectral centralities for non-uniform hypergraphs", AIMS Mathematics, Volume 9, Issue 11: 32045-32075 (2024).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.3934/math.20241539>`
 :bdg-link-primary-line:`Code <https://github.com/LaComarca-Lab/non-uniform-hypergraphs>`
@@ -52,6 +52,10 @@ Published Work
 :bdg-link-primary-line:`Paper <https://doi.org/10.1126/sciadv.adh4053>`
 :bdg-link-primary-line:`Code <https://git.rwth-aachen.de/netsci/publication-2023-learning-the-effective-order-of-a-hypergraph-dynamical-system>`
 
+[XGI-DATA] Junjie Zhang, Caixia Liu, Shuxin Liu, Yahui Wang, Jie Li, and Weifei Zang, "Robustness of higher-order interdependent networks with reinforced nodes", *Chaos* 34, 083138 (2024)
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1063/5.0217876>`
+
 [XGI] Yuanzhao Zhang, Per Sebastian Skardal, Federico Battiston, Giovanni Petri, and Maxime Lucas, "Deeper but smaller: Higher-order interactions increase linear stability but shrink basins", *Science Advances* **10**,eado8049 (2024).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1126/sciadv.ado8049>`
@@ -76,10 +80,20 @@ Published Work
 :bdg-link-primary-line:`Paper <https://doi.org/10.1088/2632-072X/ad0b39>`
 :bdg-link-primary-line:`Code <https://github.com/tlarock/encapsulation-dynamics>`
 
+[XGI] Marco Mancastroppa, Iacopo Iacopini, Giovanni Petri, and Alain Barrat, "Hyper-cores promote localization and efficient seeding in higher-order processes", *Nature Communications* **14**, 6223 (2023)
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41467-023-41887-2>`
+:bdg-link-primary-line:`Code <https://github.com/marco-mancastroppa/hypercore-decomposition/>`
+
 [XGI] Nicolò Ruggieri, Martina Contisciani, Federico Battiston, and Caterina de Bacco, "Community detection in large hypergraphs", *Science Advances* **9**, eadg9159 (2023).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1126/sciadv.adg9159>`
 :bdg-link-primary-line:`Code <https://github.com/nickruggeri/Hy-MMSBM>`
+
+[XGI-DATA] Guillaume St-Onge, Laurent Hébert-Dufresne, and Antoine Allard, "Nonlinear bias toward complex contagion in uncertain transmission settings", *PNAS* 121 (1) e2312202121 (2024).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1073/pnas.2312202121>`
+:bdg-link-primary-line:`Code <https://github.com/gstonge/heterogeneous-transmission>`
 
 [XGI] Yuanzhao Zhang, Maxime Lucas, and Federico Battiston, "Higher-order interactions shape collective dynamics differently in hypergraphs and simplicial complexes", *Nature Communications* **14**, 1605 (2023).
 
@@ -93,12 +107,16 @@ Preprints
 2025
 ----
 
-[XGI] Xie He, Philip S. Chodrow, and Peter J. Mucha, "Hypergraph Link Prediction via Hyperedge Copying", arXiv:2502.02386 (2025).
+[XGI, XGI-DATA] Xie He, Philip S. Chodrow, and Peter J. Mucha, "Hypergraph Link Prediction via Hyperedge Copying", arXiv:2502.02386 (2025).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2502.02386>`
 
 2024
 ----
+
+[XGI-DATA] Jordan Barrett, Paweł Prałat, Aaron Smith, François Théberge, "Counting simplicial pairs in hypergraphs", arXiv:2408.11806 (2024).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2408.11806>`
 
 [XGI] Gülşah Akçakır, Amina Azaiez, Alberto Ceria, Clara Eminente, Guglielmo Ferranti, Govind Gandhi, Aishvarya Raj, and Iacopo Iacopini, "Exploring the interplay of individual traits and interaction dynamics in preschool social networks", arXiv:2407.12728 (2024).
 
@@ -114,7 +132,7 @@ Preprints
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2412.03421>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/governance>`
 
-[XGI] Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Domenico, "Functional reducibility of higher-order networks", arXiv:2404.08547 (2024).
+[XGI, XGI-DATA] Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Domenico, "Functional reducibility of higher-order networks", arXiv:2404.08547 (2024).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2404.08547>`
 :bdg-link-primary-line:`Code <https://github.com/maximelucas/hypergraph_reducibility>`
@@ -130,14 +148,18 @@ Theses
 2024
 ----
 
-[XGI] Xie He, "Methods, Analyses, and Applications of Multilayer Temporal Link Prediction in Networks", (2024).
+[XGI, XGI-DATA] Xie He, "Methods, Analyses, and Applications of Multilayer Temporal Link Prediction in Networks", (2024).
 
 :bdg-link-primary-line:`Thesis <https://digitalcommons.dartmouth.edu/dissertations/271/>`
 
-[XGI] Yifei (Bell) Luo, "Efficient sampling of configuration model random hypergraphs", (2024).
+[XGI, XGI-DATA] Yifei (Bell) Luo, "Efficient sampling of configuration model random hypergraphs", (2024).
 
 2023
 ----
+
+[XGI] Ward Samoy, "Free word associations for stance detection in education", (2023).
+
+:bdg-link-primary-line:`Thesis <https://libstore.ugent.be/fulltxt/RUG01/003/150/699/RUG01-003150699_2023_0001_AC.pdf>`
 
 [XGI] Leonie Neuhäuser, "Modelling the effect of groups on network structure and dynamics", (2023).
 
