@@ -116,14 +116,16 @@ XGI has been supported in the following ways:
 
 ### Financial
 
-[![NSF](/docs/source/_static/NSF_logo.svg){width=100}](https://www.nsf.gov/)
+<a href="https://www.nsf.gov/"><img src="docs/source/_static/NSF_logo.svg" alt="NSF" width="25%"></img></a>
 
 Funding received:
 * NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905).
 
 ### Infrastructure
+<a href="https://zulip.com/"><img src="docs/source/_static/zulip-org-logo.svg" alt="XGI" width="25%"></img></a>
 
-[![Zulip](https://raw.githubusercontent.com/zulip/zulip/refs/heads/main/static/images/logo/zulip-org-logo.svg){width=100}](https://zulip.com/)
+Zulip is an organized team chat app designed for efficient communication.
+
 
 ## Other Resources<a id="other-resources"></a>
 This library may not meet your needs and if this is this case, consider checking out our [list of other resources](https://github.com/xgi-org/xgi/blob/main/OTHER_RESOURCES.md).
