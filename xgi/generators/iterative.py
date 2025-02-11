@@ -5,6 +5,7 @@ from ..core import SimplicialComplex
 __all__ = [
     "pseudofractal_simplicial_complex",
     "apollonian_complex",
+    "network_geometry_flavor",
 ]
 
 
@@ -31,7 +32,7 @@ def pseudofractal_simplicial_complex(order, n_iter):
     See also
     --------
     apollonian_complex
-
+    network_geometry_flavor
 
     References
     ----------
@@ -91,6 +92,7 @@ def apollonian_complex(order, n_iter):
     See also
     --------
     pseudofractal_simplicial_complex
+    network_geometry_flavor
 
     References
     ----------
@@ -135,5 +137,118 @@ def apollonian_complex(order, n_iter):
             new_indices.append(max_index)
 
         S.add_simplices_from(new_simplices)
+
+    return S
+
+
+def network_geometry_flavor(
+    order, s, beta, n_iter, energy_distribution=None, seed=None
+):
+    """
+    Generate a Network Geometry with Flavor (NGF) simplicial complex.
+
+    The model grows a d-dimensional simplicial complex (where d is `order`) by iteratively attaching
+    d-simplices to existing (d-1)-simplices, with attachment probabilities controlled
+    by the flavor parameter `s` and an energy-based selection process.
+
+    Parameters
+    ----------
+    order : int
+        The order of the simplices to add.
+    s : int
+        The flavor parameter (-1, 0, or 1).
+    beta : float
+        The inverse temperature parameter controlling randomness.
+    n_iter : int
+        The total number of d-simplices to generate.
+    energy_dist : callable, optional
+        A function to sample vertex energies (default: uniform [0,10)).
+    seed : int, optional
+        Random seed for reproducibility.
+
+    Returns
+    -------
+    S : xgi.SimplicialComplex
+        The generated NGF simplicial complex.
+
+    See also
+    --------
+    apollonian_complex
+    pseudofractal_simplicial_complex
+
+    References
+    ----------
+    Bianconi, G., & Rahmede, C. (2016).
+    "Network geometry with flavor: from complexity to quantum geometry."
+    Physical Review E, 93(3), 032315.
+    https://arxiv.org/abs/1511.04539
+    """
+    if seed is not None:
+        np.random.seed(seed)
+
+    # initialize the hypergraph
+    S = xgi.SimplicialComplex()
+
+    # assign energies to vertices
+    if energy_distribution is None:
+        energy_distribution = lambda: np.random.uniform(0, 9)
+
+    energy_nodes = {}
+
+    # create initial d-simplex
+    initial_simplex = list(range(order + 1))
+    for node in initial_simplex:
+        energy_nodes[node] = energy_distribution()
+    S.add_simplex(initial_simplex)
+
+    # track (d-1)-simplices and their counts
+    face_counts = {}
+
+    def count_face(face):
+        """Adds or updates a (d-1)-simplex count."""
+        face = tuple(sorted(face))
+        if face in face_counts:
+            face_counts[face] += 1
+        else:
+            face_counts[face] = 1
+
+    # initialize (d-1)-simplices from the first simplex
+    for face in xgi.subfaces([initial_simplex], order=order - 1):
+        count_face(face)
+
+    # iterative growth
+    for it in range(order + 2, order + 2 + n_iter):
+        # compute attachment probabilities
+        Z = 0
+        probs = {}
+
+        for face, count in face_counts.items():
+            energy = sum(energy_nodes[node] for node in face)
+            weight = np.exp(-beta * energy) * (1 + s * (count - 1))
+            if s == -1 and count >= 2:
+                weight = 0  # Prevent further attachment to these faces
+            probs[face] = weight
+            Z += weight
+
+        # normalize probabilities
+        if Z == 0:
+            break  # no valid attachment sites left
+
+        for face in probs:
+            probs[face] /= Z
+
+        # choose a (d-1)-simplex to attach the new simplex
+        chosen_idx = np.random.choice(len(probs), p=list(probs.values()))
+        chosen_face = list(probs.keys())[chosen_idx]
+
+        # add new node and new simplex
+        new_node = it
+        energy_nodes[new_node] = energy_distribution()
+        new_simplex = list(chosen_face) + [new_node]
+        S.add_simplex(new_simplex)
+
+        # update face counts
+        for face in xgi.subfaces([new_simplex], order=order - 1):
+            count_face(face)
 
     return S
