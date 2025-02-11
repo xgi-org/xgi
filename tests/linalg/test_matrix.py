@@ -758,7 +758,6 @@ def test_empty():
     assert xgi.hodge_laplacian(H).shape == (0, 0)
 
 
-
 def test_adjacency_tensor(edgelist1):
     el1 = edgelist1
     H1 = xgi.Hypergraph(el1)
