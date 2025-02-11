@@ -318,7 +318,15 @@ def adjacency_tensor(H, order, index=False):
         Adjacency tensor
     """
 
-    I, rowdict, _ = xgi.incidence_matrix(H, order=order, sparse=False, index=True)  # (N_nodes x N_hyperedges)
+    I, rowdict, _ = xgi.incidence_matrix(H, order=order, sparse=False, index=True) 
+
+    if I.shape == (0, 0):
+        if not rowdict:
+            B = np.empty((0,) * (order + 1))
+        if not coldict:
+            shape = (H.num_nodes, ) * (order + 1)
+            B = np.zeros(shape, dtype=int)
+        return (B, {}) if index else B
     
     # find nodes participating in each hyperedge
     hyperedges = H.edges.filterby("order", order).members()
