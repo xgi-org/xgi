@@ -44,6 +44,7 @@ array([[1, 0, 0],
 
 """
 
+from itertools import permutations
 from warnings import catch_warnings, warn
 
 import numpy as np
@@ -55,6 +56,7 @@ __all__ = [
     "intersection_profile",
     "degree_matrix",
     "clique_motif_matrix",
+    "adjacency_tensor",
 ]
 
 
@@ -318,7 +320,7 @@ def adjacency_tensor(H, order, index=False):
         Adjacency tensor
     """
 
-    I, rowdict, _ = xgi.incidence_matrix(H, order=order, sparse=False, index=True) 
+    I, rowdict, _ = incidence_matrix(H, order=order, sparse=False, index=True) 
 
     if I.shape == (0, 0):
         if not rowdict:
@@ -341,7 +343,7 @@ def adjacency_tensor(H, order, index=False):
     
     # populate adjacency tensor
     for edge in hyperedges_node_ids:
-        for node_idx in itertools.permutations(edge, order+1):
+        for node_idx in permutations(edge, order+1):
             B[node_idx] = 1
 
     return (B, rowdict) if index else B
