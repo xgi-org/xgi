@@ -294,3 +294,46 @@ def clique_motif_matrix(H, sparse=True, index=False):
     W, rowdict = adjacency_matrix(H, sparse=sparse, weighted=True, index=True)
 
     return (W, rowdict) if index else W
+
+
+def adjacency_tensor(H, order, index=False):
+    """
+    Compute the order-d adjacency tensor of a hypergraph from its incidence matrix.
+
+    The order-d adjacency tensor B is defined as B[i1, i2, ..., id] = 1 if there exists 
+    a hyperedge containing nodes (i1, i2, ..., id), and 0 otherwise.
+
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        The input hypergraph.
+    order : int
+        The order of interactions to consider.
+    index: bool, default: False
+        Specifies whether to output disctionaries mapping the node IDs to indices
+
+    Returns
+    -------
+    B : np.ndarray
+        Adjacency tensor
+    """
+
+    I, rowdict, _ = xgi.incidence_matrix(H, order=order, sparse=False, index=True)  # (N_nodes x N_hyperedges)
+    
+    # find nodes participating in each hyperedge
+    hyperedges = H.edges.filterby("order", order).members()
+
+    map_node2index = {v: k for (k,v) in rowdict.items()}
+    hyperedges_node_ids = [{map_node2index[node] for node in edge} for edge in hyperedges]
+    
+    N = H.num_nodes
+    
+    # initialize adjacency tensor
+    B = np.zeros((N,) * (order+1), dtype=int)
+    
+    # populate adjacency tensor
+    for edge in hyperedges_node_ids:
+        for node_idx in itertools.permutations(edge, order+1):
+            B[node_idx] = 1
+
+    return (B, rowdict) if index else B
