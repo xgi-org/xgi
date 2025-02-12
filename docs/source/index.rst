@@ -114,12 +114,12 @@ Support
 =======
 
 .. image:: _static/nsf-logo.svg
-  :width: 200
+  :height: 50
   :alt: NSF
   :target: https://www.nsf.gov
 
 .. image:: _static/zulip-org-logo.svg
-  :width: 200
+  :height: 50
   :alt: Zulip
   :target: https://zulip.com
 

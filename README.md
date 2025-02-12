@@ -112,8 +112,8 @@ Copyright (C) 2021-2025 XGI Developers
 
 ## Support<a id="support"></a>
 
-<a href="https://www.nsf.gov"><img src="docs/source/_static/nsf-logo.svg" alt="NSF" width="25%"></img></a>
-<a href="https://zulip.com"><img src="docs/source/_static/zulip-org-logo.svg" alt="XGI" width="25%"></img></a>
+<a href="https://www.nsf.gov"><img src="docs/source/_static/nsf-logo.svg" alt="NSF" height=50></img></a>
+<a href="https://zulip.com"><img src="docs/source/_static/zulip-org-logo.svg" alt="XGI" height=50></img></a>
 
 See details [here](https://github.com/xgi-org/xgi/blob/main/SUPPORT.md).
 
