@@ -113,29 +113,18 @@ Academic References
 Support
 =======
 
-XGI has been supported in the following ways:
-
-Financial
----------
-
 .. image:: _static/nsf-logo.svg
   :width: 200
   :alt: NSF
   :target: https://www.nsf.gov
-
-Funding received:
-
-* NSF Grant 2121905, `HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks <https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905>`_.
-
-Infrastructure
---------------
 
 .. image:: _static/zulip-org-logo.svg
   :width: 200
   :alt: Zulip
   :target: https://zulip.com
 
-Zulip is an organized team chat app designed for efficient communication.
+
+See details `here <https://github.com/xgi-org/xgi/blob/main/SUPPORT.md>`_.
 
 License
 =======
