@@ -333,19 +333,16 @@ def adjacency_tensor(H, order, index=False):
     # find nodes participating in each hyperedge
     hyperedges = H.edges.filterby("order", order).members()
 
-    map_node2index = {v: k for (k, v) in rowdict.items()}
-    hyperedges_node_ids = [
-        {map_node2index[node] for node in edge} for edge in hyperedges
-    ]
-
+    nodedict = {v: k for (k, v) in rowdict.items()}
     N = H.num_nodes
 
     # initialize adjacency tensor
     B = np.zeros((N,) * (order + 1), dtype=int)
 
     # populate adjacency tensor
-    for edge in hyperedges_node_ids:
-        for node_idx in permutations(edge, order + 1):
+    for edge in hyperedges:
+        edge_node_ids = [nodedict[node] for node in edge]
+        for node_idx in permutations(edge_node_ids, order + 1):
             B[node_idx] = 1
 
     return (B, rowdict) if index else B
