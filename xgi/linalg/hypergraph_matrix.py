@@ -344,7 +344,8 @@ def adjacency_tensor(H, order, normalized=False, index=False):
     N = H.num_nodes
 
     # initialize adjacency tensor
-    B = np.zeros((N,) * (order + 1), dtype=int)
+    dtype = float if normalized else int
+    B = np.zeros((N,) * (order + 1), dtype=dtype)
 
     # populate adjacency tensor
     for edge in hyperedges:
