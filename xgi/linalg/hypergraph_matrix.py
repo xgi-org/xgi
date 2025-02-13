@@ -327,7 +327,7 @@ def adjacency_tensor(H, order, normalized=False, index=False):
     Linear and Multilinear Algebra, 71(3), 317-347.  
     """
 
-    I, rowdict, _ = incidence_matrix(H, order=order, sparse=False, index=True)
+    I, rowdict, coldict = incidence_matrix(H, order=order, sparse=False, index=True)
 
     if I.shape == (0, 0):
         if not rowdict:
