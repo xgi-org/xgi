@@ -45,6 +45,7 @@ array([[1, 0, 0],
 """
 
 from itertools import permutations
+from math import factorial
 from warnings import catch_warnings, warn
 
 import numpy as np
@@ -298,7 +299,7 @@ def clique_motif_matrix(H, sparse=True, index=False):
     return (W, rowdict) if index else W
 
 
-def adjacency_tensor(H, order, index=False):
+def adjacency_tensor(H, order, normalized=False, index=False):
     """
     Compute the order-d adjacency tensor of a hypergraph from its incidence matrix.
 
@@ -318,6 +319,12 @@ def adjacency_tensor(H, order, index=False):
     -------
     B : np.ndarray
         Adjacency tensor
+
+    References
+    ----------
+    Galuppi, F., Mulas, R., & Venturello, L. (2023).   
+    "Spectral theory of weighted hypergraphs via tensors"  
+    Linear and Multilinear Algebra, 71(3), 317-347.  
     """
 
     I, rowdict, _ = incidence_matrix(H, order=order, sparse=False, index=True)
@@ -344,5 +351,8 @@ def adjacency_tensor(H, order, index=False):
         edge_node_ids = [nodedict[node] for node in edge]
         for node_idx in permutations(edge_node_ids, order + 1):
             B[node_idx] = 1
+
+    if normalized:
+        B /= factorial(order)
 
     return (B, rowdict) if index else B

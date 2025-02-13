@@ -790,3 +790,14 @@ def test_adjacency_tensor(edgelist1):
     assert A12[node_dict1[7], node_dict1[6], node_dict1[8]] == 1
     assert A12[node_dict1[8], node_dict1[6], node_dict1[7]] == 1
     assert A12[node_dict1[8], node_dict1[7], node_dict1[6]] == 1
+
+    # normalization
+    A11_norm = xgi.adjacency_tensor(H1, order=1, normalized=True)
+    assert np.allclose(A11_norm, A11)
+
+    A12_norm = xgi.adjacency_tensor(H1, order=2, normalized=True)
+    assert np.allclose(A12_norm, A12 / 2)
+
+    A13 = xgi.adjacency_tensor(H1, order=3)
+    A13_norm = xgi.adjacency_tensor(H1, order=3, normalized=True)
+    assert np.allclose(A13_norm, A13 / 6)
