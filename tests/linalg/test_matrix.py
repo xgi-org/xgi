@@ -756,3 +756,48 @@ def test_empty():
     assert xgi.boundary_matrix(H).shape == (0, 0)
 
     assert xgi.hodge_laplacian(H).shape == (0, 0)
+
+
+def test_adjacency_tensor(edgelist1):
+    el1 = edgelist1
+    H1 = xgi.Hypergraph(el1)
+
+    A11, node_dict = xgi.adjacency_tensor(H1, order=1, index=True)
+    node_dict1 = {k: v for v, k in node_dict.items()}
+
+    assert type(A11) == np.ndarray
+    assert A11.shape == (8, 8)
+    assert A11.sum() == 2
+    assert list(np.unique(A11)) == [0, 1]
+    assert np.all(A11 == xgi.adjacency_matrix(H1, order=1, sparse=False))
+
+    A12 = xgi.adjacency_tensor(H1, order=2)
+    assert type(A12) == np.ndarray
+    assert A12.shape == (8, 8, 8)
+    assert A12.sum() == 12
+    assert list(np.unique(A12)) == [0, 1]
+
+    assert A12[node_dict1[1], node_dict1[2], node_dict1[3]] == 1
+    assert A12[node_dict1[1], node_dict1[3], node_dict1[2]] == 1
+    assert A12[node_dict1[2], node_dict1[3], node_dict1[1]] == 1
+    assert A12[node_dict1[2], node_dict1[1], node_dict1[3]] == 1
+    assert A12[node_dict1[3], node_dict1[1], node_dict1[2]] == 1
+    assert A12[node_dict1[3], node_dict1[2], node_dict1[1]] == 1
+
+    assert A12[node_dict1[6], node_dict1[7], node_dict1[8]] == 1
+    assert A12[node_dict1[6], node_dict1[8], node_dict1[7]] == 1
+    assert A12[node_dict1[7], node_dict1[8], node_dict1[6]] == 1
+    assert A12[node_dict1[7], node_dict1[6], node_dict1[8]] == 1
+    assert A12[node_dict1[8], node_dict1[6], node_dict1[7]] == 1
+    assert A12[node_dict1[8], node_dict1[7], node_dict1[6]] == 1
+
+    # normalization
+    A11_norm = xgi.adjacency_tensor(H1, order=1, normalized=True)
+    assert np.allclose(A11_norm, A11)
+
+    A12_norm = xgi.adjacency_tensor(H1, order=2, normalized=True)
+    assert np.allclose(A12_norm, A12 / 2)
+
+    A13 = xgi.adjacency_tensor(H1, order=3)
+    A13_norm = xgi.adjacency_tensor(H1, order=3, normalized=True)
+    assert np.allclose(A13_norm, A13 / 6)

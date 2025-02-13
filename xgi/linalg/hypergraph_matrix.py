@@ -44,6 +44,8 @@ array([[1, 0, 0],
 
 """
 
+from itertools import permutations
+from math import factorial
 from warnings import catch_warnings, warn
 
 import numpy as np
@@ -55,6 +57,7 @@ __all__ = [
     "intersection_profile",
     "degree_matrix",
     "clique_motif_matrix",
+    "adjacency_tensor",
 ]
 
 
@@ -294,3 +297,63 @@ def clique_motif_matrix(H, sparse=True, index=False):
     W, rowdict = adjacency_matrix(H, sparse=sparse, weighted=True, index=True)
 
     return (W, rowdict) if index else W
+
+
+def adjacency_tensor(H, order, normalized=False, index=False):
+    """
+    Compute the order-d adjacency tensor of a hypergraph from its incidence matrix.
+
+    The order-d adjacency tensor B is defined as B[i1, i2, ..., id] = 1 if there exists
+    a hyperedge containing nodes (i1, i2, ..., id), and 0 otherwise.
+
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        The input hypergraph.
+    order : int
+        The order of interactions to consider.
+    index: bool, default: False
+        Specifies whether to output disctionaries mapping the node IDs to indices
+
+    Returns
+    -------
+    B : np.ndarray
+        Adjacency tensor
+
+    References
+    ----------
+    Galuppi, F., Mulas, R., & Venturello, L. (2023).   
+    "Spectral theory of weighted hypergraphs via tensors"  
+    Linear and Multilinear Algebra, 71(3), 317-347.  
+    """
+
+    I, rowdict, coldict = incidence_matrix(H, order=order, sparse=False, index=True)
+
+    if I.shape == (0, 0):
+        if not rowdict:
+            B = np.empty((0,) * (order + 1))
+        if not coldict:
+            shape = (H.num_nodes,) * (order + 1)
+            B = np.zeros(shape, dtype=int)
+        return (B, {}) if index else B
+
+    # find nodes participating in each hyperedge
+    hyperedges = H.edges.filterby("order", order).members()
+
+    nodedict = {v: k for (k, v) in rowdict.items()}
+    N = H.num_nodes
+
+    # initialize adjacency tensor
+    dtype = float if normalized else int
+    B = np.zeros((N,) * (order + 1), dtype=dtype)
+
+    # populate adjacency tensor
+    for edge in hyperedges:
+        edge_node_ids = [nodedict[node] for node in edge]
+        for node_idx in permutations(edge_node_ids, order + 1):
+            B[node_idx] = 1
+
+    if normalized:
+        B /= factorial(order)
+
+    return (B, rowdict) if index else B
