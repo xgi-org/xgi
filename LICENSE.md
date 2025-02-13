@@ -1,6 +1,6 @@
 XGI is distributed with the 3-clause BSD license.
 
-Copyright (C) 2024, XGI Developers
+Copyright (C) 2021-2025, XGI Developers
 
 All rights reserved.
 

@@ -58,7 +58,7 @@ More information about the datasets and how to load them is in the `XGI-DATA men
 
 
 Get involved
-==================
+============
 
 To simply getting news and updates, you can sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_!
 
@@ -110,12 +110,21 @@ Academic References
   <https://www.nature.com/articles/s41567-019-0459-y>`_, Lambiotte, R., Rosvall, M. and Scholtes, I., 2019. Nature physics, 15(4), pp.313-320.
 
 
-Funding
+Support
 =======
 
-The XGI package has been supported by NSF Grant 2121905,
-`HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks <https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905>`_.
+.. image:: _static/nsf-logo.svg
+  :height: 50
+  :alt: NSF
+  :target: https://www.nsf.gov
 
+.. image:: _static/zulip-org-logo.svg
+  :height: 50
+  :alt: Zulip
+  :target: https://zulip.com
+
+
+See details `here <https://github.com/xgi-org/xgi/blob/main/SUPPORT.md>`_.
 
 License
 =======
