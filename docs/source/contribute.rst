@@ -36,13 +36,6 @@ Core team
 .. raw:: html
 
     <p>
-        <img src="https://github.com/acuschwarze.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/acuschwarze">@acuschwarze</a>
-    </p>
-
-    <p>
         <img src="https://github.com/alpatania.png"
             width="50" height="50" hspace="5"
             style="border-radius: 50%; vertical-align: middle;"/>
@@ -105,6 +98,13 @@ Core team alumni
 .. raw:: html
 
     <p>
+        <img src="https://github.com/acuschwarze.png"
+            width="50" height="50" hspace="5"
+            style="border-radius: 50%; vertical-align: middle;"/>
+        <a href="https://github.com/acuschwarze">@acuschwarze</a>
+    </p>
+
+    <p>
         <img src="https://github.com/mcontisc.png"
             width="50" height="50" hspace="5"
             style="border-radius: 50%; vertical-align: middle;"/>
@@ -159,6 +159,13 @@ Contributors
     </p>
 
     <p>
+        <img src="https://github.com/kaiser-dan.png"
+            width="50" height="50" hspace="5"
+            style="border-radius: 50%; vertical-align: middle;"/>
+        <a href="https://github.com/kaiser-dan">@kaiser-dan</a>
+    </p>
+
+    <p>
         <img src="https://github.com/marconurisso.png"
             width="50" height="50" hspace="5"
             style="border-radius: 50%; vertical-align: middle;"/>
@@ -184,4 +191,11 @@ Contributors
             width="50" height="50" hspace="5"
             style="border-radius: 50%; vertical-align: middle;"/>
         <a href="https://github.com/saad1282">@saad1282</a>
+    </p>
+
+    <p>
+        <img src="https://github.com/willcollins10.png"
+            width="50" height="50" hspace="5"
+            style="border-radius: 50%; vertical-align: middle;"/>
+        <a href="https://github.com/willcollins10">@willcollins10</a>
     </p>
