@@ -299,7 +299,7 @@ def clique_motif_matrix(H, sparse=True, index=False):
     return (W, rowdict) if index else W
 
 
-def adjacency_tensor(H, order, normalized=False, index=False):
+def adjacency_tensor(H, order, normalized=True, index=False):
     """
     Compute the order-d adjacency tensor of a hypergraph from its incidence matrix.
 
@@ -312,7 +312,7 @@ def adjacency_tensor(H, order, normalized=False, index=False):
         The input hypergraph.
     order : int
         The order of interactions to consider.
-    index: bool, default: False
+    index: bool, default: True
         Specifies whether to output disctionaries mapping the node IDs to indices
 
     Returns
@@ -322,9 +322,15 @@ def adjacency_tensor(H, order, normalized=False, index=False):
 
     References
     ----------
+    Liqun Qi and Ziyan Luo (2017)
+    "Tensor Analysis: Spectral Theory and Special Tensors"
+    Chapter 1: Introduction
+    https://doi.org/10.1137/1.9781611974751.ch1
+    
     Galuppi, F., Mulas, R., & Venturello, L. (2023).   
     "Spectral theory of weighted hypergraphs via tensors"  
-    Linear and Multilinear Algebra, 71(3), 317-347.  
+    Linear and Multilinear Algebra, 71(3), 317-347.
+    https://doi.org/10.1080/03081087.2022.2030659
     """
 
     I, rowdict, coldict = incidence_matrix(H, order=order, sparse=False, index=True)
