@@ -762,7 +762,7 @@ def test_adjacency_tensor(edgelist1):
     el1 = edgelist1
     H1 = xgi.Hypergraph(el1)
 
-    A11, node_dict = xgi.adjacency_tensor(H1, order=1, index=True)
+    A11, node_dict = xgi.adjacency_tensor(H1, order=1, index=True, normalized=False)
     node_dict1 = {k: v for v, k in node_dict.items()}
 
     assert type(A11) == np.ndarray
@@ -771,7 +771,7 @@ def test_adjacency_tensor(edgelist1):
     assert list(np.unique(A11)) == [0, 1]
     assert np.all(A11 == xgi.adjacency_matrix(H1, order=1, sparse=False))
 
-    A12 = xgi.adjacency_tensor(H1, order=2)
+    A12 = xgi.adjacency_tensor(H1, order=2, normalized=False)
     assert type(A12) == np.ndarray
     assert A12.shape == (8, 8, 8)
     assert A12.sum() == 12
@@ -792,12 +792,12 @@ def test_adjacency_tensor(edgelist1):
     assert A12[node_dict1[8], node_dict1[7], node_dict1[6]] == 1
 
     # normalization
-    A11_norm = xgi.adjacency_tensor(H1, order=1, normalized=True)
+    A11_norm = xgi.adjacency_tensor(H1, order=1)
     assert np.allclose(A11_norm, A11)
 
-    A12_norm = xgi.adjacency_tensor(H1, order=2, normalized=True)
+    A12_norm = xgi.adjacency_tensor(H1, order=2)
     assert np.allclose(A12_norm, A12 / 2)
 
     A13 = xgi.adjacency_tensor(H1, order=3)
-    A13_norm = xgi.adjacency_tensor(H1, order=3, normalized=True)
+    A13_norm = xgi.adjacency_tensor(H1, order=3)
     assert np.allclose(A13_norm, A13 / 6)
