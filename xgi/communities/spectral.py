@@ -36,5 +36,5 @@ def spectral_clustering(H, k=None):
 
 def _kmeans(X, k):
     if k == 1:
-        return np.ones(X.shape[0], dtype=int)
+        return {node_idx: 1 for node_idx in range(X.shape[0])}
     pass
