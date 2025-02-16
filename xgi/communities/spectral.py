@@ -29,11 +29,16 @@ def spectral_clustering(H, k=None):
     evals, eigs = eigsh(L, k=k, which="SA")
 
     # Form metric space representation
-    X = np.array(eigs).T  # array instantiates iterable as rows by default
+    X = np.array(eigs)  # .T  # array instantiates iterable as rows by default
+    print(X.shape, X)
 
     # Apply k-means clustering
-    clusters = _kmeans(X, k)
-    pass
+    _clusters = _kmeans(X, k)
+
+    # Remap to node ids
+    clusters = {rowdict[id]: cluster for id, cluster in _clusters.items()}
+
+    return clusters
 
 
 def _kmeans(X, k, seed=37):
