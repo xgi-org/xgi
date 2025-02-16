@@ -55,5 +55,33 @@ class TestSpectralClustering:
         with pytest.raises(XGIError):
             xgi.spectral_clustering(H, 6)
 
-    def test_spectral(self):
-        pass
+    def test_perfectly_separable_low_dimensions(self):
+        H = xgi.Hypergraph(
+            [
+                [1, 2],
+                [2, 3],
+                [3, 4],
+                [4, 5],
+                [1, 3],
+                [2, 4],
+                [1, 5],
+                [6, 7],
+                [7, 8],
+                [8, 9],
+                [9, 10],
+                [6, 8],
+                [7, 9],
+                [6, 10],
+            ]
+        )
+
+        clusters = xgi.communities.spectral.spectral_clustering(H, 2)
+        assert len(clusters) == 10
+
+        c1 = list(filter(lambda node: clusters[node] == 0, clusters.keys()))
+        c2 = list(filter(lambda node: clusters[node] == 1, clusters.keys()))
+        assert len(c1) == 5
+        assert len(c2) == 5
+        assert (set(c1) == {1, 2, 3, 4, 5} and set(c2) == {6, 7, 8, 9, 10}) or (
+            set(c2) == {1, 2, 3, 4, 5} and set(c1) == {6, 7, 8, 9, 10}
+        )
