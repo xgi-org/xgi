@@ -20,7 +20,7 @@ class TestKMeans:
         X[:5, :] = np.random.random((5, 10))
         X[5:10, :] = 37 + np.random.random((5, 10))
 
-        clusters = xgi.communities.spectral._kmeans(X, 2)
+        clusters = xgi.communities.spectral._kmeans(X, 2, seed=2)
         assert len(clusters) == 10
 
         c1 = list(filter(lambda node: clusters[node] == 0, clusters.keys()))
@@ -36,7 +36,7 @@ class TestKMeans:
         X[:5, :] = np.random.random((5, 100))
         X[5:10, :] = 37 + np.random.random((5, 100))
 
-        clusters = xgi.communities.spectral._kmeans(X, 2)
+        clusters = xgi.communities.spectral._kmeans(X, 2, seed=2)
         assert len(clusters) == 10
 
         c1 = list(filter(lambda node: clusters[node] == 0, clusters.keys()))

@@ -36,7 +36,9 @@ def spectral_clustering(H, k=None):
     pass
 
 
-def _kmeans(X, k):
+def _kmeans(X, k, seed=37):
+    rng = np.random.default_rng(seed=seed)
+
     # Handle edge cases
     if k == 1:
         return {node_idx: 1 for node_idx in range(X.shape[0])}
@@ -51,10 +53,10 @@ def _kmeans(X, k):
     width = bounds_sup - bounds_inf
 
     # NOTE: Want Hadamard product here
-    centroids = width * np.random.random((k, X.shape[1]))
+    centroids = width * rng.random((k, X.shape[1]))
 
     # Instantiate random clusters
-    previous_clusters = {node: np.random.randint(0, k) for node in range(X.shape[0])}
+    previous_clusters = {node: rng.integers(0, k) for node in range(X.shape[0])}
 
     # Iterate main kmeans computation
     while (num_cluster_changes > 0) and (num_iterations < MAX_ITERATIONS):
