@@ -23,12 +23,13 @@ class TestKMeans:
         clusters = xgi.communities.spectral._kmeans(X, 2)
         assert len(clusters) == 10
 
-        c1 = list(filter(lambda item: item[1] == 1, clusters.items()))
-        c2 = list(filter(lambda item: item[1] == 2, clusters.items()))
+        c1 = list(filter(lambda node: clusters[node] == 0, clusters.keys()))
+        c2 = list(filter(lambda node: clusters[node] == 1, clusters.keys()))
         assert len(c1) == 5
         assert len(c2) == 5
-        assert set(c1) == {0, 1, 2, 3, 4}
-        assert set(c2) == {5, 6, 7, 8, 9}
+        assert (set(c1) == {0, 1, 2, 3, 4} and set(c2) == {5, 6, 7, 8, 9}) or (
+            set(c2) == {0, 1, 2, 3, 4} and set(c1) == {5, 6, 7, 8, 9}
+        )
 
     def test_perfectly_separable_high_dimensions(self):
         X = np.zeros((10, 100))
@@ -38,12 +39,13 @@ class TestKMeans:
         clusters = xgi.communities.spectral._kmeans(X, 2)
         assert len(clusters) == 10
 
-        c1 = list(filter(lambda item: item[1] == 1, clusters.items()))
-        c2 = list(filter(lambda item: item[1] == 2, clusters.items()))
+        c1 = list(filter(lambda node: clusters[node] == 0, clusters.keys()))
+        c2 = list(filter(lambda node: clusters[node] == 1, clusters.keys()))
         assert len(c1) == 5
         assert len(c2) == 5
-        assert set(c1) == {0, 1, 2, 3, 4}
-        assert set(c2) == {5, 6, 7, 8, 9}
+        assert (set(c1) == {0, 1, 2, 3, 4} and set(c2) == {5, 6, 7, 8, 9}) or (
+            set(c2) == {0, 1, 2, 3, 4} and set(c1) == {5, 6, 7, 8, 9}
+        )
 
 
 class TestSpectralClustering:
