@@ -14,6 +14,35 @@ MAX_ITERATIONS = 10_000
 
 
 def spectral_clustering(H, k=None):
+    """Cluster into k-many groups using spectral techniques.
+
+    Compute a spectral clustering according to the heuristic suggested in [1].
+
+    Parameters
+    ----------
+    H : Hypergraph
+        Hypergraph
+    k : int, optional
+        Number of clusters to find. If unspecified, computes spectral gap.
+
+    Returns
+    -------
+    dict
+        A dictionary mapping node ids to their clusters. Clusters begin at 0.
+
+    Raises
+    ------
+    XGIError
+        If more groups are specified than nodes in the hypergraph.
+
+
+    References
+    ----------
+    .. [1] Zhou, D., Huang, J., & Schölkopf, B. (2006).
+        Learning with Hypergraphs: Clustering, Classification, and Embedding
+        Advances in Neural Information Processing Systems.
+
+    """
     if k is None:
         raise NotImplementedError(
             "Choosing a number of clusters organically is currently unsupported. Please specify an integer value for paramater 'k'!"
@@ -29,7 +58,7 @@ def spectral_clustering(H, k=None):
     evals, eigs = eigsh(L, k=k, which="SA")
 
     # Form metric space representation
-    X = np.array(eigs)  # .T  # array instantiates iterable as rows by default
+    X = np.array(eigs)
     print(X.shape, X)
 
     # Apply k-means clustering
@@ -57,7 +86,6 @@ def _kmeans(X, k, seed=37):
     bounds_sup = X.max(axis=0)
     width = bounds_sup - bounds_inf
 
-    # NOTE: Want Hadamard product here
     centroids = width * rng.random((k, X.shape[1]))
 
     # Instantiate random clusters
