@@ -85,3 +85,33 @@ class TestSpectralClustering:
         assert (set(c1) == {1, 2, 3, 4, 5} and set(c2) == {6, 7, 8, 9, 10}) or (
             set(c2) == {1, 2, 3, 4, 5} and set(c1) == {6, 7, 8, 9, 10}
         )
+
+    def test_strongly_separable_low_dimensions(self):
+        H = xgi.Hypergraph(
+            [
+                [1, 2, 3],
+                [4, 5],
+                [1, 3],
+                [2, 4],
+                [1, 5],
+                [4, 9],
+                [6, 7, 8],
+                [7, 8],
+                [8, 9],
+                [9, 10],
+                [6, 8],
+                [7, 9],
+                [6, 10],
+            ]
+        )
+
+        clusters = xgi.communities.spectral.spectral_clustering(H, 2)
+        assert len(clusters) == 10
+
+        # Some nodes obviously in same cluster
+        assert clusters[1] == clusters[2]
+        assert clusters[2] == clusters[3]
+
+        # Some nodes obviously not
+        assert clusters[1] != clusters[8]
+        assert clusters[2] != clusters[7]
