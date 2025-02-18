@@ -326,9 +326,9 @@ def adjacency_tensor(H, order, normalized=True, index=False):
     "Tensor Analysis: Spectral Theory and Special Tensors"
     Chapter 1: Introduction
     https://doi.org/10.1137/1.9781611974751.ch1
-    
-    Galuppi, F., Mulas, R., & Venturello, L. (2023).   
-    "Spectral theory of weighted hypergraphs via tensors"  
+
+    Galuppi, F., Mulas, R., & Venturello, L. (2023).
+    "Spectral theory of weighted hypergraphs via tensors"
     Linear and Multilinear Algebra, 71(3), 317-347.
     https://doi.org/10.1080/03081087.2022.2030659
     """

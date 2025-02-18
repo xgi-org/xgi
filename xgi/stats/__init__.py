@@ -234,7 +234,7 @@ class IDStat:
     def median(self):
         """The median of this stat."""
         return np.median(self.asnumpy(), axis=0).item()
-    
+
     def mode(self):
         """The mode of this stat."""
         vals, counts = self.unique(return_counts=True)
