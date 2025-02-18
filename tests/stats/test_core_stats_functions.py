@@ -411,6 +411,7 @@ def test_hypergraph_aggregates(edgelist1, edgelist2, edgelist8):
     H = xgi.Hypergraph(edgelist1)
     assert H.nodes.degree.max() == 2
     assert H.nodes.degree.min() == 1
+    assert H.nodes.degree.mode() == 1
     assert H.nodes.degree.argmax() == 6
     assert H.nodes.degree.argmin() == 1
     assert H.nodes.degree.argsort() == list(H.nodes.filterby("degree", 1)) + list(
@@ -436,6 +437,7 @@ def test_hypergraph_aggregates(edgelist1, edgelist2, edgelist8):
     H = xgi.Hypergraph(edgelist2)
     assert H.nodes.degree.max() == 2
     assert H.nodes.degree.min() == 1
+    assert H.nodes.degree.mode() == 1
     assert H.nodes.degree.argmax() == 4
     assert H.nodes.degree.argmin() == 1
     assert H.nodes.degree.argsort() == list(H.nodes.filterby("degree", 1)) + list(
@@ -1046,6 +1048,7 @@ def test_aggregate_stats_types(edgelist1):
     assert isinstance(H.nodes.degree.min(), int)
     assert isinstance(H.nodes.degree.median(), float)
     assert isinstance(H.nodes.degree.mean(), float)
+    assert isinstance(H.nodes.degree.mode(), int)
     assert isinstance(H.nodes.degree.sum(), int)
     assert isinstance(H.nodes.degree.std(), float)
     assert isinstance(H.nodes.degree.var(), float)
