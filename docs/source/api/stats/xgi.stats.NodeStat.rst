@@ -29,6 +29,7 @@
       ~NodeStat.mean
       ~NodeStat.median
       ~NodeStat.min
+      ~NodeStat.mode
       ~NodeStat.std
       ~NodeStat.var
       ~NodeStat.moment

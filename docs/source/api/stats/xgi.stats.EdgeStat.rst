@@ -30,6 +30,7 @@
       ~EdgeStat.mean
       ~EdgeStat.median
       ~EdgeStat.min
+      ~EdgeStat.mode
       ~EdgeStat.std
       ~EdgeStat.var
       ~EdgeStat.moment
