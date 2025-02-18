@@ -235,6 +235,11 @@ class IDStat:
         """The median of this stat."""
         return np.median(self.asnumpy(), axis=0).item()
 
+    def mode(self):
+        """The mode of this stat."""
+        vals, counts = self.unique(return_counts=True)
+        return vals[np.argmax(counts)].item()
+
     def std(self):
         """The standard deviation of this stat.
 
