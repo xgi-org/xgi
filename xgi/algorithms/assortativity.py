@@ -147,7 +147,7 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
             for _ in range(num_samples)
         ]
 
-    rho = np.corrcoef(np.array(k1k2).T)[0, 1]
+    rho = np.corrcoef(np.array(k1k2).T)[0, 1].item()
     if np.isnan(rho):
         return 0
     return rho
