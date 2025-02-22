@@ -94,6 +94,9 @@ class IDStat:
     def __len__(self):
         return len(self.view)
 
+    def __eq__(self, stat):
+        return self.asdict() == stat.asdict()
+
     @property
     def name(self):
         """Name of this stat.
@@ -141,12 +144,12 @@ class IDStat:
 
         """
         val = self._val
-        return {n: val[n] for n in self.view}
+        return {idx: val[idx] for idx in self.view}
 
     def aslist(self):
         """Output the stat as a list."""
         val = self._val
-        return [val[n] for n in self.view]
+        return [val[idx] for idx in self.view]
 
     def asnumpy(self):
         """Output the stat as a numpy array."""
