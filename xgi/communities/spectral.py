@@ -12,8 +12,8 @@ __all__ = [
 
 
 
-def spectral_clustering(H, k=None):
-    """Cluster into k-many groups using spectral techniques.
+def spectral_clustering(H, k=2, **kwargs):
+    """Cluster hypergraph into k-many groups of nodes using spectral techniques.
 
     Compute a spectral clustering according to the heuristic suggested in [1].
 
@@ -22,7 +22,9 @@ def spectral_clustering(H, k=None):
     H : Hypergraph
         Hypergraph
     k : int, optional
-        Number of clusters to find. If unspecified, computes spectral gap.
+        Number of clusters to find, default 2.
+    **kwargs
+        Additional keyword arguments passed to `_kmeans`.
 
     Returns
     -------
@@ -64,6 +66,26 @@ def spectral_clustering(H, k=None):
 
 
 def _kmeans(X, k, max_iter=1_000, seed=None):
+    """Simple k-means clustering of vectors X.
+
+    Uses Forgy method for selecting initial centroids.
+
+    Parameters
+    ----------
+    X : array-like
+        Vectors to cluster.
+    k : int
+        Number of clusters to find.
+    max_iter : int, optional.
+        Maximum number of cluster updates to compute, default 10,000.
+    seed : int, optional
+        Seed used to initialize clusters, optional.
+
+    Returns
+    -------
+    dict
+        A dictionary mapping node ids to their clusters. Clusters begin at 0.
+    """
     rng = np.random.default_rng(seed=seed)
 
     # Handle edge cases
