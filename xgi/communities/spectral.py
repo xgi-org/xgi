@@ -10,7 +10,6 @@ __all__ = [
     "spectral_clustering",
 ]
 
-MAX_ITERATIONS = 10_000
 
 
 def spectral_clustering(H, k=None):
@@ -43,15 +42,10 @@ def spectral_clustering(H, k=None):
         Advances in Neural Information Processing Systems.
 
     """
-    if k is None:
-        raise NotImplementedError(
-            "Choosing a number of clusters organically is currently unsupported. Please specify an integer value for paramater 'k'!"
+    if k > H.num_nodes:
+        raise XGIError(
+            "The number of desired clusters cannot exceed the number of nodes!"
         )
-    else:
-        if k > H.num_nodes:
-            raise XGIError(
-                "The number of desired clusters cannot exceed the number of nodes!"
-            )
 
     # Compute normalize Laplacian and its spectra
     L, rowdict = normalized_hypergraph_laplacian(H, index=True)
@@ -59,7 +53,6 @@ def spectral_clustering(H, k=None):
 
     # Form metric space representation
     X = np.array(eigs)
-    print(X.shape, X)
 
     # Apply k-means clustering
     _clusters = _kmeans(X, k)
@@ -70,7 +63,7 @@ def spectral_clustering(H, k=None):
     return clusters
 
 
-def _kmeans(X, k, seed=37):
+def _kmeans(X, k, max_iter=1_000, seed=None):
     rng = np.random.default_rng(seed=seed)
 
     # Handle edge cases
@@ -92,19 +85,19 @@ def _kmeans(X, k, seed=37):
     previous_clusters = {node: rng.integers(0, k) for node in range(X.shape[0])}
 
     # Iterate main kmeans computation
-    while (num_cluster_changes > 0) and (num_iterations < MAX_ITERATIONS):
+    while (num_cluster_changes > 0) and (num_iterations < max_iter):
         # Find nearest centroid to each point
-        next_clusters = dict()
+        clusters = dict()
         for node, vector in enumerate(X):
             distances = list(
                 map(lambda centroid: np.linalg.norm(vector - centroid), centroids)
             )
             closest_centroid = np.argmin(distances)
-            next_clusters[node] = closest_centroid
+            clusters[node] = closest_centroid
 
         # Update convergence condition
         cluster_changes = {
-            node: next_clusters[node] != previous_clusters[node]
+            node: clusters[node] != previous_clusters[node]
             for node in range(X.shape[0])
         }
         num_cluster_changes = len(
@@ -112,4 +105,4 @@ def _kmeans(X, k, seed=37):
         )
         num_iterations += 1
 
-    return next_clusters
+    return clusters
