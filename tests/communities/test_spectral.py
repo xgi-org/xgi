@@ -9,7 +9,7 @@ from xgi.exception import XGIError
 class TestKMeans:
     def test_k_is_1(self):
         X = np.random.random((3, 3))
-        clusters = xgi.communities.spectral._kmeans(X, 1)
+        clusters = xgi.communities.spectral._kmeans(X, 1, seed=37)
 
         assert len(clusters) == 3
         assert np.all(map(lambda v: v == 1, clusters.values()))
@@ -20,7 +20,7 @@ class TestKMeans:
         X[:5, :] = np.random.random((5, 10))
         X[5:10, :] = 37 + np.random.random((5, 10))
 
-        clusters = xgi.communities.spectral._kmeans(X, 2)
+        clusters = xgi.communities.spectral._kmeans(X, 2, seed=37)
         assert len(clusters) == 10
 
         c1 = list(filter(lambda node: clusters[node] == 0, clusters.keys()))
@@ -36,7 +36,7 @@ class TestKMeans:
         X[:5, :] = np.random.random((5, 100))
         X[5:10, :] = 37 + np.random.random((5, 100))
 
-        clusters = xgi.communities.spectral._kmeans(X, 2)
+        clusters = xgi.communities.spectral._kmeans(X, 2, seed=37)
         assert len(clusters) == 10
 
         c1 = list(filter(lambda node: clusters[node] == 0, clusters.keys()))
@@ -75,7 +75,7 @@ class TestSpectralClustering:
             ]
         )
 
-        clusters = xgi.communities.spectral.spectral_clustering(H, 2)
+        clusters = xgi.communities.spectral.spectral_clustering(H, 2, seed=37)
         assert len(clusters) == 10
 
         c1 = list(filter(lambda node: clusters[node] == 0, clusters.keys()))
@@ -105,7 +105,7 @@ class TestSpectralClustering:
             ]
         )
 
-        clusters = xgi.communities.spectral.spectral_clustering(H, 2)
+        clusters = xgi.communities.spectral.spectral_clustering(H, 2, seed=37)
         assert len(clusters) == 10
 
         # Some nodes obviously in same cluster
@@ -120,7 +120,7 @@ class TestSpectralClustering:
         p = np.array([[0.3, 0.01], [0.01, 0.3]])
         H = xgi.uniform_HSBM(100, 2, p, [50, 50])
 
-        clusters = xgi.communities.spectral.spectral_clustering(H, 2)
+        clusters = xgi.communities.spectral.spectral_clustering(H, 2, seed=37)
 
         group_a = []
         group_b = []
