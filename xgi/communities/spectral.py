@@ -1,10 +1,8 @@
 import numpy as np
 from scipy.sparse.linalg import eigsh
 
-from ..core import Hypergraph
-from ..linalg.laplacian_matrix import normalized_hypergraph_laplacian
-
 from ..exception import XGIError
+from ..linalg.laplacian_matrix import normalized_hypergraph_laplacian
 
 __all__ = [
     "spectral_clustering",
