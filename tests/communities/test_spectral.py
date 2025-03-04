@@ -20,7 +20,7 @@ class TestKMeans:
         X[:5, :] = np.random.random((5, 10))
         X[5:10, :] = 37 + np.random.random((5, 10))
 
-        clusters = xgi.communities.spectral._kmeans(X, 2, seed=2)
+        clusters = xgi.communities.spectral._kmeans(X, 2)
         assert len(clusters) == 10
 
         c1 = list(filter(lambda node: clusters[node] == 0, clusters.keys()))
@@ -36,7 +36,7 @@ class TestKMeans:
         X[:5, :] = np.random.random((5, 100))
         X[5:10, :] = 37 + np.random.random((5, 100))
 
-        clusters = xgi.communities.spectral._kmeans(X, 2, seed=2)
+        clusters = xgi.communities.spectral._kmeans(X, 2)
         assert len(clusters) == 10
 
         c1 = list(filter(lambda node: clusters[node] == 0, clusters.keys()))
@@ -115,3 +115,19 @@ class TestSpectralClustering:
         # Some nodes obviously not
         assert clusters[1] != clusters[8]
         assert clusters[2] != clusters[7]
+
+    def test_strongly_separable_sbm(self):
+        p = np.array([[0.3, 0.01], [0.01, 0.3]])
+        H = xgi.uniform_HSBM(100, 2, p, [50, 50])
+
+        clusters = xgi.communities.spectral.spectral_clustering(H, 2)
+
+        group_a = []
+        group_b = []
+        for node, group in clusters.items():
+            if group == 0:
+                group_a.append(node)
+            else:
+                group_b.append(node)
+
+        assert len(group_a) == len(group_b)
