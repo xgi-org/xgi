@@ -57,7 +57,7 @@ def spectral_clustering(H, k=2, **kwargs):
     X = np.array(eigs)
 
     # Apply k-means clustering
-    _clusters = _kmeans(X, k)
+    _clusters = _kmeans(X, k, **kwargs)
 
     # Remap to node ids
     clusters = {rowdict[id]: cluster for id, cluster in _clusters.items()}
