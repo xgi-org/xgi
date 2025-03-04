@@ -11,7 +11,6 @@ __all__ = [
 ]
 
 
-
 def spectral_clustering(H, k=2, **kwargs):
     """Cluster hypergraph into k-many groups of nodes using spectral techniques.
 
@@ -97,11 +96,7 @@ def _kmeans(X, k, max_iter=1_000, seed=None):
     num_iterations = 0
 
     # Instantiate random centers
-    bounds_inf = X.min(axis=0)
-    bounds_sup = X.max(axis=0)
-    width = bounds_sup - bounds_inf
-
-    centroids = width * rng.random((k, X.shape[1]))
+    centroids = rng.choice(X, size=k, replace=False)
 
     # Instantiate random clusters
     previous_clusters = {node: rng.integers(0, k) for node in range(X.shape[0])}
@@ -110,12 +105,15 @@ def _kmeans(X, k, max_iter=1_000, seed=None):
     while (num_cluster_changes > 0) and (num_iterations < max_iter):
         # Find nearest centroid to each point
         clusters = dict()
+        vectors = {cluster: [] for cluster in range(k)}
         for node, vector in enumerate(X):
-            distances = list(
-                map(lambda centroid: np.linalg.norm(vector - centroid), centroids)
-            )
+            distances = [np.linalg.norm(vector - centroid) for centroid in centroids]
             closest_centroid = np.argmin(distances)
             clusters[node] = closest_centroid
+            vectors[closest_centroid].append(vector)
+
+        # Update centroids
+        centroids = [np.mean(vectors[cluster_id]) for cluster_id in vectors]
 
         # Update convergence condition
         cluster_changes = {
