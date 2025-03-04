@@ -10,9 +10,14 @@ __all__ = [
 
 
 def spectral_clustering(H, k=2, **kwargs):
-    """Cluster hypergraph into k-many groups of nodes using spectral techniques.
+    """Computes a spectral clustering in :math:`k` partitions of the input
+    hypergraph according to the heuristic presented in [1].
 
-    Compute a spectral clustering according to the heuristic suggested in [1].
+    This is done by computing the normalized Laplacian of the input hypergraph
+    and then applying :math:`k`-means clustering on the hypergraph vertices
+    represented in the :math:`k`-dimensional Euclidian space generated
+    by the eigenvectors corresponding to the :math:`k` smallest eigenvalues of the
+    normalized Laplacian.
 
     Parameters
     ----------
@@ -69,7 +74,7 @@ def _kmeans(X, k, max_iter=1_000, seed=None):
 
     Parameters
     ----------
-    X : array-like
+    X : (n, k) array
         Vectors to cluster.
     k : int
         Number of clusters to find.
