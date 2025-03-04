@@ -75,7 +75,7 @@ class TestSpectralClustering:
             ]
         )
 
-        clusters = xgi.communities.spectral.spectral_clustering(H, 2, seed=37)
+        clusters = xgi.spectral_clustering(H, 2, seed=37)
         assert len(clusters) == 10
 
         c1 = list(filter(lambda node: clusters[node] == 0, clusters.keys()))
@@ -105,7 +105,7 @@ class TestSpectralClustering:
             ]
         )
 
-        clusters = xgi.communities.spectral.spectral_clustering(H, 2, seed=37)
+        clusters = xgi.spectral_clustering(H, 2, seed=37)
         assert len(clusters) == 10
 
         # Some nodes obviously in same cluster
@@ -120,7 +120,7 @@ class TestSpectralClustering:
         p = np.array([[0.3, 0.01], [0.01, 0.3]])
         H = xgi.uniform_HSBM(100, 2, p, [50, 50])
 
-        clusters = xgi.communities.spectral.spectral_clustering(H, 2, seed=37)
+        clusters = xgi.spectral_clustering(H, 2, seed=37)
 
         group_a = []
         group_b = []
