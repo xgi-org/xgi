@@ -1,3 +1,5 @@
+"""Community detection via clustering of Laplacian eigenvectors."""
+
 import numpy as np
 from scipy.sparse.linalg import eigsh
 
