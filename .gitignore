@@ -1,5 +1,5 @@
 # Generated while building documentation.
-doc/auto_examples
+docs/source/auto_examples
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

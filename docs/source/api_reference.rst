@@ -7,6 +7,7 @@ This page gives an overview of all public XGI objects, functions and methods. Al
 XGI is organized into the following subpackages:
 
 * ``xgi.algorithms``: Function to compute classic algorightms on higher-order networks
+* ``xgi.communities``:  Functions to detect community structure in higher-order networks
 * ``xgi.convert``:  Functions to convert between different representations of the data
 * ``xgi.core``: Classes for the core datastructures and views
 * ``xgi.drawing``:  Functions for plotting
@@ -32,6 +33,7 @@ XGI is organized into the following subpackages:
    :maxdepth: 2
 
    Algorithms <api/algorithms.rst>
+   Communities <api/communities.rst>
    Convert <api/convert.rst>
    Core functionality <api/core.rst>
    Drawing <api/drawing.rst>

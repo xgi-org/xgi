@@ -8,4 +8,3 @@ xgi.communities.spectral
    .. rubric:: Functions
 
    .. autofunction:: spectral_clustering
-   .. autofunction:: _kmeans
