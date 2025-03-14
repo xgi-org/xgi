@@ -2,6 +2,7 @@ from . import (
     utils,
     core,
     algorithms,
+    communities,
     convert,
     drawing,
     dynamics,
@@ -13,6 +14,7 @@ from . import (
 from .utils import *
 from .core import *
 from .algorithms import *
+from .communities import *
 from .convert import *
 from .drawing import *
 from .dynamics import *
