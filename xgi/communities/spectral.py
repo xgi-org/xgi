@@ -11,7 +11,7 @@ __all__ = [
 ]
 
 
-def spectral_clustering(H, k=2, **kwargs):
+def spectral_clustering(H, k=2, max_iter=1_000, seed=None):
     """Computes a spectral clustering in :math:`k` partitions of the input
     hypergraph according to the heuristic presented in [1].
 
@@ -27,8 +27,10 @@ def spectral_clustering(H, k=2, **kwargs):
         Hypergraph
     k : int, optional
         Number of clusters to find, default 2.
-    **kwargs
-        Additional keyword arguments passed to `_kmeans`.
+    max_iter : int, optional.
+        Maximum number of cluster updates to compute, default 10,000.
+    seed : int, optional
+        Seed used to initialize clusters, optional.
 
     Returns
     -------
@@ -61,7 +63,7 @@ def spectral_clustering(H, k=2, **kwargs):
     X = np.array(eigs)
 
     # Apply k-means clustering
-    _clusters = _kmeans(X, k, **kwargs)
+    _clusters = _kmeans(X, k, max_iter, seed)
 
     # Remap to node ids
     clusters = {rowdict[id]: cluster for id, cluster in _clusters.items()}
