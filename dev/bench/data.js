@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1739903384063,
+  "lastUpdate": 1741967537994,
   "repoUrl": "https://github.com/xgi-org/xgi",
   "entries": {
     "XGI Benchmarks": [
@@ -3753,6 +3753,156 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.001458245933394205",
             "extra": "mean: 30.41189319999944 msec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "56703624+kaiser-dan@users.noreply.github.com",
+            "name": "Daniel Kaiser",
+            "username": "kaiser-dan"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6764dcf3eb643bde3f95654fc6b4ec6ac753a48e",
+          "message": "Feature/spectral clustering (#665)\n\n* feat: add kmeans skeleton\n\nAdd module boilerplate.\nAdd `_kmeans` function with naive signature.\nAdd test class and trivial clustering test case.\n\n* feat: add spectral clustering skeleton\n\nAdd `spectral_clustering` function.\nAdd test class and test overabundant cluster exception.\n\n* refactor: rename `commdetect` to `communities`\n\n* refactor: change `_kmeans` return type to dict\n\n* test(kmeans): add simple unit tests\n\n* test(kmeans): add perfectly separable unit tests\n\n* feat(kmeans): implement kmeans\n\n* refactor(kmeans): add numpy rng, fix seed\n\nAdd `numpy.random.default_rng` to `_kmeans` for random number sampling.\nFixes bug with test cases where clusters could get merged from rare random conditions.\n\n* test(spectral): add spectral clustering test\n\nAdd perfectly separable `spectral_clustering` test.\n\n* fix(spectral): fix node indexing in cluster return\n\n* test(spectral): add spectral clustering test\n\n* doc: Add `spectral_clustering` docstring\n\n* refactor(kmeans): move kwargs to `_kmeans`\n\n* doc: update `_kmeans` docstring\n\n* refactor: propogate kmean kwargs\n\n* fix(kmeans): fix centroid updating\n\n* test(spectral): add sbm test\n\n* test: fix test seeds\n\n* chore: pylint + isort\n\n* Apply suggestions from code review\n\nCo-authored-by: Thomas Robiglio <83019028+thomasrobiglio@users.noreply.github.com>\n\n* doc: expand spectral clustering docstring\n\n* doc: add api reference for communities module\n\nAdd communities section-level API documentation.\nAdd communites.spectral function-level API documentation.\n\n* doc: update spectral docs\n\nAdd communities module to API reference docs.\nRemove _kmeans from doc source.\nRemove auto-generated examples.\nAdd auto-generated examples to .gitignore.\n\n* refactor(spectral): refactor function signature\n\nAdd `_kmeans` kwargs explicitly to `spectral_clustering` arguments.\n\n---------\n\nCo-authored-by: Thomas Robiglio <83019028+thomasrobiglio@users.noreply.github.com>",
+          "timestamp": "2025-03-14T11:51:18-04:00",
+          "tree_id": "5dd4a924d6e3b9599a18608ee406d264c12f6896",
+          "url": "https://github.com/xgi-org/xgi/commit/6764dcf3eb643bde3f95654fc6b4ec6ac753a48e"
+        },
+        "date": 1741967534646,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/algorithms.py::test_connected",
+            "value": 94.42327097020168,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003131648266162609",
+            "extra": "mean: 10.59060959999556 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/algorithms.py::test_clustering_coefficient",
+            "value": 61.49473594296819,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00035225081531166646",
+            "extra": "mean: 16.261554500005104 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgelist",
+            "value": 27.489069926584925,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0461102739648425",
+            "extra": "mean: 36.378095100005226 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgedict",
+            "value": 27.394858532951652,
+            "unit": "iter/sec",
+            "range": "stddev: 0.04191438907974974",
+            "extra": "mean: 36.503199999998515 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_df",
+            "value": 21.65791185286202,
+            "unit": "iter/sec",
+            "range": "stddev: 0.03746593626982887",
+            "extra": "mean: 46.172502999999665 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_memberships",
+            "value": 1231.8056151576413,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000027637855952717728",
+            "extra": "mean: 811.8164000023853 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_members",
+            "value": 132.1427587909258,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0006338035590389037",
+            "extra": "mean: 7.567573199997923 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_attributes",
+            "value": 13793.483958157296,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000007649066361939431",
+            "extra": "mean: 72.49800000010964 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_attributes",
+            "value": 253.30312980576272,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00011952931232347973",
+            "extra": "mean: 3.947839100001715 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_degree",
+            "value": 10142.337565082034,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000014454823757378762",
+            "extra": "mean: 98.59660000302028 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_nodestats_degree",
+            "value": 9219.31741992131,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000006773097719902455",
+            "extra": "mean: 108.46790000300643 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_size",
+            "value": 246.811668356963,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00023405007305577792",
+            "extra": "mean: 4.051672300005293 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_isolates",
+            "value": 8331.847487637195,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000008714302650879356",
+            "extra": "mean: 120.021399993675 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_singletons",
+            "value": 182.1364006027554,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002457234381678739",
+            "extra": "mean: 5.490390699995373 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_copy",
+            "value": 11.33430389355336,
+            "unit": "iter/sec",
+            "range": "stddev: 0.06681455693078353",
+            "extra": "mean: 88.22773850000374 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_dual",
+            "value": 11.54509467047494,
+            "unit": "iter/sec",
+            "range": "stddev: 0.07039695195800846",
+            "extra": "mean: 86.61687309999877 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/generators.py::test_erdos_renyi",
+            "value": 52.85264319449277,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0014929593665745661",
+            "extra": "mean: 18.92052960000683 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/generators.py::test_fast_erdos_renyi",
+            "value": 33.10887743761748,
+            "unit": "iter/sec",
+            "range": "stddev: 0.001157315560864136",
+            "extra": "mean: 30.203379799999652 msec\nrounds: 10"
           }
         ]
       }
