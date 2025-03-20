@@ -9,6 +9,18 @@ Articles are listed by year and then alphabetically by the last name of the firs
 Published Work
 ==============
 
+2025
+----
+
+[XGI-DATA] Marco Nurisso, Marta Morandini, Maxime Lucas, Francesco Vaccarino, Tommaso Gili, and Giovanni Petri. "Higher-order Laplacian renormalization. Nat. Phys. (2025). https://doi.org/10.1038/s41567-025-02784-1, "Competing Social Contagions with Opinion Dependent Infectivity", *Nature Physics* (2025).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41567-025-02784-1>`
+:bdg-link-primary-line:`Code <https://github.com/nplresearch/higher_order_LRG>`
+
+[XGI] Corbit R. Sampson and Juan G. Restrepo, "Competing Social Contagions with Opinion Dependent Infectivity", *Phys. Rev. E* **111**, 024313 (2024).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1103/PhysRevE.111.024313>`
+
 2024
 ----
 
@@ -111,6 +123,10 @@ Preprints
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2502.02386>`
 
+[XGI] Leah A. Keating, Kwang-Il Goh, Mason A. Porter, "An Approximate-Master-Equation Formulation of the Watts Threshold Model on Hypergraphs", arXiv:2503.04020 (2025).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/arXiv:2503.04020>`
+
 2024
 ----
 
@@ -136,10 +152,6 @@ Preprints
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2404.08547>`
 :bdg-link-primary-line:`Code <https://github.com/maximelucas/hypergraph_reducibility>`
-
-[XGI] Corbit R. Sampson, Juan G. Restrepo, "Competing Social Contagions with Opinion Dependent Infectivity", arXiv:2408.10373 (2024).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2408.10373>`
 
 
 Theses
