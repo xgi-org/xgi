@@ -28,7 +28,7 @@ def spectral_clustering(H, k=2, max_iter=1_000, seed=None):
     k : int, optional
         Number of clusters to find, default 2.
     max_iter : int, optional.
-        Maximum number of cluster updates to compute, default 10,000.
+        Maximum number of cluster updates to compute, default 1,000.
     seed : int, optional
         Seed used to initialize clusters, optional.
 
