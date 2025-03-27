@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.10
+* Added a recipe for community detection. [#668](https://github.com/xgi-org/xgi/pull/668) (@nwlandry)
+* Added a community detection module and a method for community detection using spectral clustering. [#665](https://github.com/xgi-org/xgi/pull/665) (@kaiser-dan)
+* Add `mode` to `stats` module. [#667](https://github.com/xgi-org/xgi/pull/667) (@nwlandry)
+* Updated contributors and changed the default behavior of the adjacency tensor to be normalized. [#666](https://github.com/xgi-org/xgi/pull/666) (@nwlandry)
+* Added an adjacency tensor function. [#664](https://github.com/xgi-org/xgi/pull/664) (@maximelucas)
+* Added Zulip as a sponsor and added references to the "Using XGI" page. (Closes Issue [#660](https://github.com/xgi-org/xgi/issues/660)) [#662](https://github.com/xgi-org/xgi/pull/662) (@nwlandry)
+
 ## v0.9.5
 * Fix `fast_random_hypergraph` fencepost errors. [#655](https://github.com/xgi-org/xgi/pull/655) (@nwlandry)
 * Split the GitHub actions for the tutorials and source code. [#659](https://github.com/xgi-org/xgi/pull/659) (@nwlandry)
