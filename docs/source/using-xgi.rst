@@ -12,7 +12,12 @@ Published Work
 2025
 ----
 
-[XGI-DATA] Marco Nurisso, Marta Morandini, Maxime Lucas, Francesco Vaccarino, Tommaso Gili, and Giovanni Petri. "Higher-order Laplacian renormalization. Nat. Phys. (2025). https://doi.org/10.1038/s41567-025-02784-1, "Competing Social Contagions with Opinion Dependent Infectivity", *Nature Physics* (2025).
+[XGI] Robin Delabays, Giulia De Pasquale, Florian Dörfler, and Yuanzhao Zhang, "Hypergraph reconstruction from dynamics", *Nature Communications* **16**, 2691 (2025).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41467-025-57664-2>`
+:bdg-link-primary-line:`Code <https://github.com/TaylorBasedHypergraphInference/THIS>`
+
+[XGI-DATA] Marco Nurisso, Marta Morandini, Maxime Lucas, Francesco Vaccarino, Tommaso Gili, and Giovanni Petri. "Higher-order Laplacian renormalization", *Nature Physics* (2025).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41567-025-02784-1>`
 :bdg-link-primary-line:`Code <https://github.com/nplresearch/higher_order_LRG>`
@@ -119,6 +124,10 @@ Preprints
 2025
 ----
 
+[XGI] Cosimo Agostinelli, Marco Mancastroppa, and Alain Barrat, "Higher-order dissimilarity measures for hypergraph comparison", arXiv:2503.16959 (2025).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2503.16959>`
+
 [XGI, XGI-DATA] Xie He, Philip S. Chodrow, and Peter J. Mucha, "Hypergraph Link Prediction via Hyperedge Copying", arXiv:2502.02386 (2025).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2502.02386>`
@@ -137,11 +146,6 @@ Preprints
 [XGI] Gülşah Akçakır, Amina Azaiez, Alberto Ceria, Clara Eminente, Guglielmo Ferranti, Govind Gandhi, Aishvarya Raj, and Iacopo Iacopini, "Exploring the interplay of individual traits and interaction dynamics in preschool social networks", arXiv:2407.12728 (2024).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2407.12728>`
-
-[XGI] Robin Delabays, Giulia De Pasquale, Florian Dörfler, and Yuanzhao Zhang, "Hypergraph reconstruction from dynamics", arXiv:2402.00078 (2024).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2402.00078>`
-:bdg-link-primary-line:`Code <https://github.com/TaylorBasedHypergraphInference/THIS>`
 
 [XGI] Laurent Hébert-Dufresne, Nicholas W. Landry, Juniper Lovato, Jonathan St-Onge, Jean-Gabriel Young, Marie-Ève Couture-Ménard, Stéphane Bernatchez, Catherine Choquette, and Alan A. Cohen, "Governance as a complex, networked, democratic, satisfiability problem", arXiv:2412.03421 (2024).
 
