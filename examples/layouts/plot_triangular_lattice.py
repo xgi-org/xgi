@@ -12,7 +12,7 @@ import networkx as nx
 import xgi
 
 # generate lattice
-m, n = 10, 20 # lattice dimensions
+m, n = 5, 10 # lattice dimensions
 p = 0.5 # probability to promote 3-clique to 2-simplex
 
 G = nx.triangular_lattice_graph(m, n, with_positions=True)

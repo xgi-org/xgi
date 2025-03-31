@@ -1,9 +1,9 @@
 """
 =================
-Show communities
+Communities
 =================
 
-Draw hypergraph with communities.
+Compute and draw communities.
 """
 
 import matplotlib.pyplot as plt
