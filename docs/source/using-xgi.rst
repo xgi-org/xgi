@@ -17,12 +17,16 @@ Published Work
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41467-025-57664-2>`
 :bdg-link-primary-line:`Code <https://github.com/TaylorBasedHypergraphInference/THIS>`
 
-[XGI-DATA] Marco Nurisso, Marta Morandini, Maxime Lucas, Francesco Vaccarino, Tommaso Gili, and Giovanni Petri. "Higher-order Laplacian renormalization", *Nature Physics* (2025).
+[XGI-DATA] Marco Nurisso, Marta Morandini, Maxime Lucas, Francesco Vaccarino, Tommaso Gili, and Giovanni Petri, "Higher-order Laplacian renormalization", *Nature Physics* (2025).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41567-025-02784-1>`
 :bdg-link-primary-line:`Code <https://github.com/nplresearch/higher_order_LRG>`
 
-[XGI] Corbit R. Sampson and Juan G. Restrepo, "Competing Social Contagions with Opinion Dependent Infectivity", *Phys. Rev. E* **111**, 024313 (2024).
+[XGI] Thomas Robiglio, Matteo Neri, Davide Coppes, Cosimo Agostinelli, Federico Battiston, Maxime Lucas, and Giovanni Petri, "Synergistic Signatures of Group Mechanisms in Higher-Order Systems", *Physical Review Letters* **134**, 137401 (2025).
+
+:bdg-link-primary-line:`Paper <ttps://doi.org/10.1103/PhysRevLett.134.137401>`
+
+[XGI] Corbit R. Sampson and Juan G. Restrepo, "Competing Social Contagions with Opinion Dependent Infectivity", *Physical Review E* **111**, 024313 (2024).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1103/PhysRevE.111.024313>`
 
@@ -54,7 +58,7 @@ Published Work
 :bdg-link-primary-line:`Paper <https://doi.org/10.1088/2632-072X/ad253a>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/filtering-higher-order-datasets>`
 
-[XGI] Nicholas W. Landry, William Thompson, Laurent Hébert-Dufresne, and Jean-Gabriel Young, "Reconstructing networks from simple and complex contagions", Physical Review E **110**, L042301 (2024).
+[XGI] Nicholas W. Landry, William Thompson, Laurent Hébert-Dufresne, and Jean-Gabriel Young, "Reconstructing networks from simple and complex contagions", *Physical Review E* **110**, L042301 (2024).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1103/PhysRevE.110.L042301>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/complex-network-reconstruction>`
