@@ -1,6 +1,6 @@
 """
 =================
-Spiral 
+Spiral
 =================
 
 Draw simple hypergraph with spiral layout.

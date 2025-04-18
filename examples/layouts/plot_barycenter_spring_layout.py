@@ -1,6 +1,6 @@
 """
 =================
-Barycenter spring 
+Barycenter spring
 =================
 
 Draw simple hypergraph with barycenter_spring layout.

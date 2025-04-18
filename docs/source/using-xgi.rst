@@ -12,6 +12,10 @@ Published Work
 2025
 ----
 
+[XGI-DATA] Jordan Barrett, Paweł Prałat, Aaron Smith, François Théberge, "Counting simplicial pairs in hypergraphs", Proceedings of Complex Networks & Their Applications XIII (2025).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1007/978-3-031-82431-9_7>`
+
 [XGI] Robin Delabays, Giulia De Pasquale, Florian Dörfler, and Yuanzhao Zhang, "Hypergraph reconstruction from dynamics", *Nature Communications* **16**, 2691 (2025).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41467-025-57664-2>`
@@ -142,10 +146,6 @@ Preprints
 
 2024
 ----
-
-[XGI-DATA] Jordan Barrett, Paweł Prałat, Aaron Smith, François Théberge, "Counting simplicial pairs in hypergraphs", arXiv:2408.11806 (2024).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2408.11806>`
 
 [XGI] Gülşah Akçakır, Amina Azaiez, Alberto Ceria, Clara Eminente, Guglielmo Ferranti, Govind Gandhi, Aishvarya Raj, and Iacopo Iacopini, "Exploring the interplay of individual traits and interaction dynamics in preschool social networks", arXiv:2407.12728 (2024).
 
