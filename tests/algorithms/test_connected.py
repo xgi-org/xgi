@@ -28,6 +28,10 @@ def test_connected_components(edgelist1, edgelist2, edgelist4):
     assert sorted([len(cc) for cc in cc3]) == [5]
     assert {1, 2, 3, 4, 5} in cc3
 
+    cc4 = list(xgi.connected_components(H3, s=3))
+
+    assert sorted([len(cc) for cc in cc1]) == [1, 3, 4]
+
 
 def test_number_connected_components(edgelist1, edgelist2, edgelist4):
     H1 = xgi.Hypergraph(edgelist1)
