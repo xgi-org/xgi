@@ -11,6 +11,7 @@ from ..exception import IDNotFound, XGIError, frozen
 from ..utils import IDDict, update_uid_counter
 from .views import EdgeView, NodeView
 
+
 __all__ = ["Hypergraph"]
 
 
@@ -193,6 +194,11 @@ class Hypergraph:
             return n in self._node
         except TypeError:
             return False
+
+    def __eq__(self, H):
+        from ..algorithms import equal
+
+        return equal(self, H)
 
     def __len__(self):
         """Number of nodes in the hypergraph.

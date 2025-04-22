@@ -1,12 +1,13 @@
 """Functional interface to hypergraph methods and assorted utilities."""
 
-from collections import Counter
+from collections import Counter, defaultdict
 
 from scipy.special import comb
 
 from ..exception import XGIError
 
 __all__ = [
+    "equal",
     "num_edges_order",
     "max_edge_order",
     "is_uniform",
@@ -18,6 +19,35 @@ __all__ = [
     "density",
     "incidence_density",
 ]
+
+
+def equal(H1, H2, compare_ids=True, compare_attrs=True):
+    if compare_ids:
+        if H1._edge != H2._edge:
+            return False
+    else:
+        edges1_with_counts = defaultdict(lambda: 0)
+        for e in H1.edges.members():
+            edges1_with_counts[frozenset(e)] += 1
+
+        edges2_with_counts = defaultdict(lambda: 0)
+        for e in H2.edges.members():
+            edges2_with_counts[frozenset(e)] += 1
+
+        if edges1_with_counts != edges2_with_counts:
+            return False
+
+    if compare_attrs:
+        if H1._hypergraph != H2._hypergraph:
+            return False
+
+        if H1._node_attrs != H2._node_attrs:
+            return False
+
+        if H1._edge_attrs != H2._edge_attrs:
+            return False
+
+    return True
 
 
 def num_edges_order(H, d=None):
