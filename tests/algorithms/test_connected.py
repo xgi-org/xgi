@@ -9,6 +9,7 @@ def test_is_connected(edgelist1, edgelist3):
     H2 = xgi.Hypergraph(edgelist3)
     assert xgi.is_connected(H1) is False
     assert xgi.is_connected(H2) is True
+    assert xgi.is_connected(H2, s=2) is False
 
 
 def test_connected_components(edgelist1, edgelist2, edgelist4):
@@ -40,6 +41,7 @@ def test_number_connected_components(edgelist1, edgelist2, edgelist4):
     assert xgi.number_connected_components(H1) == 3
     assert xgi.number_connected_components(H2) == 2
     assert xgi.number_connected_components(H3) == 1
+    assert xgi.number_connected_components(H3, s=3) == 2
 
 
 def test_largest_connected_component(edgelist1, edgelist2):
@@ -72,6 +74,9 @@ def test_node_connected_components(edgelist1, edgelist2, edgelist4):
     with pytest.raises(XGIError):
         xgi.node_connected_component(H3, 6)
 
+    
+    assert xgi.node_connected_component(H1, 5, s=3) == {5}
+
 
 def test_largest_connected_hypergraph(edgelist1, edgelist2):
     H1 = xgi.Hypergraph(edgelist1)
@@ -80,6 +85,10 @@ def test_largest_connected_hypergraph(edgelist1, edgelist2):
     H1_lcc = xgi.largest_connected_hypergraph(H1)
     assert xgi.is_connected(H1_lcc)
     assert sorted(H1_lcc.nodes) == [5, 6, 7, 8]
+
+    H2_lcc = xgi.largest_connected_hypergraph(H2, s=3)
+    assert xgi.is_connected(H2_lcc)
+    assert sorted(H2_lcc.nodes) == [4, 5, 6]
 
     xgi.largest_connected_hypergraph(H2, in_place=True)
     assert xgi.is_connected(H2)
