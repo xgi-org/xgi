@@ -175,27 +175,6 @@ class IDView(Mapping, Set):
         """
         return self.from_view(self, bunch)
 
-    def __eq__(self, view):
-        """Checks whether the members and attributes of an IDView are equal.
-
-        Parameters
-        ----------
-        view : IDView
-            the IDView to be compared
-
-        Returns
-        -------
-        bool
-            Whether they are equal
-        """
-        return (
-            {idx: self._id_dict[idx] for idx in self._ids}
-            == {idx: view._id_dict[idx] for idx in view._ids}
-        ) and (
-            {idx: self._id_attr[idx] for idx in self._ids}
-            == {idx: view._id_attr[idx] for idx in view._ids}
-        )
-
     def filterby(self, stat, val, mode="eq"):
         """Filter the IDs in this view by a statistic.
 
