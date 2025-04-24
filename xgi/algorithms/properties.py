@@ -33,19 +33,22 @@ def equal(H1, H2, compare_ids=True, compare_attrs=True):
         edges2_with_counts = defaultdict(lambda: 0)
         for e in H2.edges.members():
             edges2_with_counts[frozenset(e)] += 1
-
+        print(dict(edges1_with_counts), dict(edges2_with_counts))
         if edges1_with_counts != edges2_with_counts:
+            print("hi")
             return False
 
     if compare_attrs:
-        if H1._hypergraph != H2._hypergraph:
+        if H1._net_attr != H2._net_attr:
             return False
 
-        if H1._node_attrs != H2._node_attrs:
+        if H1._node_attr != H2._node_attr:
             return False
 
-        if H1._edge_attrs != H2._edge_attrs:
-            return False
+        # there's no sense in comparing edge attrs if we're not matching on IDs
+        if compare_ids:
+            if H1._edge_attr != H2._edge_attr:
+                return False
 
     return True
 
