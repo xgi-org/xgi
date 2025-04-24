@@ -24,6 +24,11 @@ __all__ = [
 def equal(H1, H2, compare_edge_ids=True, compare_attrs=True):
     """Evaluates whether two networks are equal.
 
+    If `compare_edge_ids=False`, then only the edges and their
+    counts (there might be multi-edges!) are compared. Similarly,
+    when comparing edge attributes in this fashion, the sorted list
+    of edge attributes associated with each edge is compared.
+
     Parameters
     ----------
     H1 : Hypergraph, DiHypergraph, or SimplicialComplex
