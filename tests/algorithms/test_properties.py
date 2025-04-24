@@ -39,6 +39,9 @@ def test_equal(edgelist1, edgelist2, diedgelist1, diedgelist2):
     assert not xgi.equal(H1, H2, compare_edge_ids=True)
     assert xgi.equal(H1, H2, compare_edge_ids=False)
 
+    H1.set_edge_attributes("blue", name="color")
+    assert not xgi.equal(H1, H2, compare_edge_ids=False)
+
     # dihypergraphs
     H1 = xgi.DiHypergraph(diedgelist1)
     H2 = xgi.DiHypergraph(diedgelist1)

@@ -11,7 +11,6 @@ from ..exception import IDNotFound, XGIError, frozen
 from ..utils import IDDict, update_uid_counter
 from .views import EdgeView, NodeView
 
-
 __all__ = ["Hypergraph"]
 
 

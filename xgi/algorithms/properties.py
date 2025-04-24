@@ -24,24 +24,17 @@ __all__ = [
 def equal(H1, H2, compare_edge_ids=True, compare_attrs=True):
     """Evaluates whether two networks are equal.
 
-    Important caveat: when `compare_edge_ids` is False, even
-    if `compare_attrs` is True, it will not compare the network
-    attributes and the node attributes, but not the edge
-    attributes, because there are no edge IDs to match on.
-
     Parameters
     ----------
     H1 : Hypergraph, DiHypergraph, or SimplicialComplex
         Network 1
     H2 : Hypergraph, DiHypergraph, or SimplicialComplex
         Network 2
-    compare_edge_ds : bool, optional
+    compare_edge_ids : bool, optional
         Whether or not to compare edge IDs, by default True
     compare_attrs : bool, optional
         Whether or not to compare attributes, by default True.
-        Note that if `compare_edge_ids` is False, even if `compare_attrs`
-        is True, then all other 
-        
+
 
     Returns
     -------
@@ -69,11 +62,27 @@ def equal(H1, H2, compare_edge_ids=True, compare_attrs=True):
         if H1._node_attr != H2._node_attr:
             return False
 
-        # there's no sense in comparing edge attrs if we're not matching on IDs
         if compare_edge_ids:
             if H1._edge_attr != H2._edge_attr:
                 return False
+        else:
+            edge_attrs1 = defaultdict(list)
+            for e in H1.edges:
+                edge = H1._edge[e]
+                attr = H1._edge_attr[e]
+                edge_attrs1[frozenset(edge)].append(attr)
 
+            edge_attrs2 = defaultdict(list)
+            for e in H2.edges:
+                edge = H2._edge[e]
+                attr = H2._edge_attr[e]
+                edge_attrs2[frozenset(edge)].append(attr)
+
+            for e in edge_attrs1:
+                if sorted(edge_attrs1[e], key=lambda d: str(d)) != sorted(
+                    edge_attrs2[e], key=lambda d: str(d)
+                ):
+                    return False
     return True
 
 
