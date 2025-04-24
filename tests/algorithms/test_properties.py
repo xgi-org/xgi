@@ -4,7 +4,7 @@ import xgi
 from xgi.exception import IDNotFound, XGIError
 
 
-def test_equality(edgelist1, edgelist2, diedgelist1, diedgelist2):
+def test_equal(edgelist1, edgelist2, diedgelist1, diedgelist2):
     # hypergraph
     H1 = xgi.Hypergraph(edgelist1)
     H2 = xgi.Hypergraph(edgelist1)
@@ -16,6 +16,18 @@ def test_equality(edgelist1, edgelist2, diedgelist1, diedgelist2):
     H1["test"] = "this should break equality"
     assert not xgi.equal(H1, H2)
 
+    del H1._net_attr["test"]
+    assert xgi.equal(H1, H2)
+
+    H1.set_node_attributes("blue", name="color")
+    assert not xgi.equal(H1, H2)
+
+    H2.set_node_attributes("blue", name="color")
+    assert xgi.equal(H1, H2)
+
+    H1.set_edge_attributes(1, name="weight")
+    assert not xgi.equal(H1, H2)
+
     assert xgi.equal(H1, H2, compare_attrs=False)
 
     el1 = {0: {1, 2, 3}, 1: {1, 2}}
@@ -24,8 +36,8 @@ def test_equality(edgelist1, edgelist2, diedgelist1, diedgelist2):
     H1 = xgi.Hypergraph(el1)
     H2 = xgi.Hypergraph(el2)
 
-    assert not xgi.equal(H1, H2, compare_ids=True)
-    assert xgi.equal(H1, H2, compare_ids=False)
+    assert not xgi.equal(H1, H2, compare_edge_ids=True)
+    assert xgi.equal(H1, H2, compare_edge_ids=False)
 
     # dihypergraphs
     H1 = xgi.DiHypergraph(diedgelist1)
@@ -46,8 +58,8 @@ def test_equality(edgelist1, edgelist2, diedgelist1, diedgelist2):
     H1 = xgi.DiHypergraph(del1)
     H2 = xgi.DiHypergraph(del2)
 
-    assert not xgi.equal(H1, H2, compare_ids=True)
-    assert xgi.equal(H1, H2, compare_ids=False)
+    assert not xgi.equal(H1, H2, compare_edge_ids=True)
+    assert xgi.equal(H1, H2, compare_edge_ids=False)
 
 
 def test_num_edges_order(edgelist2):

@@ -21,8 +21,34 @@ __all__ = [
 ]
 
 
-def equal(H1, H2, compare_ids=True, compare_attrs=True):
-    if compare_ids:
+def equal(H1, H2, compare_edge_ids=True, compare_attrs=True):
+    """Evaluates whether two networks are equal.
+
+    Important caveat: when `compare_edge_ids` is False, even
+    if `compare_attrs` is True, it will not compare the network
+    attributes and the node attributes, but not the edge
+    attributes, because there are no edge IDs to match on.
+
+    Parameters
+    ----------
+    H1 : Hypergraph, DiHypergraph, or SimplicialComplex
+        Network 1
+    H2 : Hypergraph, DiHypergraph, or SimplicialComplex
+        Network 2
+    compare_edge_ds : bool, optional
+        Whether or not to compare edge IDs, by default True
+    compare_attrs : bool, optional
+        Whether or not to compare attributes, by default True.
+        Note that if `compare_edge_ids` is False, even if `compare_attrs`
+        is True, then all other 
+        
+
+    Returns
+    -------
+    bool
+        Whether the two networks are equal
+    """
+    if compare_edge_ids:
         if H1._edge != H2._edge:
             return False
     else:
@@ -33,9 +59,7 @@ def equal(H1, H2, compare_ids=True, compare_attrs=True):
         edges2_with_counts = defaultdict(lambda: 0)
         for e in H2.edges.members():
             edges2_with_counts[frozenset(e)] += 1
-        print(dict(edges1_with_counts), dict(edges2_with_counts))
         if edges1_with_counts != edges2_with_counts:
-            print("hi")
             return False
 
     if compare_attrs:
@@ -46,7 +70,7 @@ def equal(H1, H2, compare_ids=True, compare_attrs=True):
             return False
 
         # there's no sense in comparing edge attrs if we're not matching on IDs
-        if compare_ids:
+        if compare_edge_ids:
             if H1._edge_attr != H2._edge_attr:
                 return False
 
