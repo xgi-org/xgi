@@ -44,6 +44,18 @@ def test_contains(diedgelist1):
     assert [0] not in H
 
 
+def test_equals(diedgelist1, diedgelist2):
+    H1 = xgi.DiHypergraph(diedgelist1)
+    H2 = xgi.DiHypergraph(diedgelist1)
+    H3 = xgi.DiHypergraph(diedgelist2)
+
+    assert H1 == H2
+    assert H2 != H3
+
+    H1["test"] = "this should break equality"
+    assert H1 != H2
+
+
 def test_string():
     H1 = xgi.DiHypergraph()
     assert str(H1) == "Unnamed DiHypergraph with 0 nodes and 0 hyperedges"

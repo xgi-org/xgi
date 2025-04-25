@@ -194,6 +194,11 @@ class Hypergraph:
         except TypeError:
             return False
 
+    def __eq__(self, H):
+        from ..algorithms import equal
+
+        return equal(self, H)
+
     def __len__(self):
         """Number of nodes in the hypergraph.
 

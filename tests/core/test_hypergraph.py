@@ -85,6 +85,18 @@ def test_lshift(edgelist1, edgelist2, hyperwithattrs):
     assert H.edges.members(7) == {1, 2, 3}
 
 
+def test_equals(edgelist1, edgelist2):
+    H1 = xgi.Hypergraph(edgelist1)
+    H2 = xgi.Hypergraph(edgelist1)
+    H3 = xgi.Hypergraph(edgelist2)
+
+    assert H1 == H2
+    assert H2 != H3
+
+    H1["test"] = "this should break equality"
+    assert H1 != H2
+
+
 def test_string():
     H1 = xgi.Hypergraph()
     assert str(H1) == "Unnamed Hypergraph with 0 nodes and 0 hyperedges"
