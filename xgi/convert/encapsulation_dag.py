@@ -1,4 +1,4 @@
-import networkx as nx
+"""Convert to an encapsulation DAG."""
 
 from ..exception import XGIError
 
@@ -64,9 +64,10 @@ def to_encapsulation_dag(H, subset_types="all"):
             f"{subset_types} not a valid subset_types option. Choices are "
             "'all', 'immediate', and 'empirical'."
         )
+    from networkx import DiGraph
 
     # Construct the dag
-    dag = nx.DiGraph()
+    dag = DiGraph()
     # Loop over hyperedges
     for he_idx in H.edges:
         # Add the hyperedge as a node

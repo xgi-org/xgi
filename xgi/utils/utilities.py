@@ -8,7 +8,6 @@ from itertools import chain, combinations, count
 from math import ceil, log
 
 import numpy as np
-import pandas as pd
 import requests
 
 from xgi.exception import IDNotFound, XGIError
@@ -484,6 +483,8 @@ def hist(vals, bins=10, bin_edges=False, density=False, log_binning=False):
     Originally from https://github.com/jkbren/networks-and-dataviz
 
     """
+    from pandas import DataFrame
+
     # We need to define the support of our distribution
     lower_bound = np.min(vals)
     upper_bound = np.max(vals)
@@ -507,11 +508,11 @@ def hist(vals, bins=10, bin_edges=False, density=False, log_binning=False):
     x = bins[1:] - np.diff(bins) / 2.0
 
     if bin_edges:
-        return pd.DataFrame.from_dict(
+        return DataFrame.from_dict(
             {"bin_center": x, "value": y, "bin_lo": bins[:-1], "bin_hi": bins[1:]}
         )
     else:
-        return pd.DataFrame.from_dict({"bin_center": x, "value": y})
+        return DataFrame.from_dict({"bin_center": x, "value": y})
 
 
 def binomial_sequence(k, N):

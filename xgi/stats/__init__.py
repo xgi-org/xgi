@@ -46,8 +46,6 @@ statistics.  For more details, see the `tutorial
 
 import numpy as np
 import pandas as pd
-from scipy.stats import moment as spmoment
-
 from ..exception import IDNotFound
 from ..utils import hist
 from . import diedgestats, dinodestats, edgestats, nodestats
@@ -276,7 +274,11 @@ class IDStat:
 
         """
         arr = self.asnumpy()
-        return spmoment(arr, moment=order) if center else np.mean(arr**order).item()
+        return (
+            np.power(arr - arr.mean(), order).mean().item()
+            if center
+            else np.mean(arr**order).item()
+        )
 
     def argmin(self):
         """The ID corresponding to the minimum of the stat

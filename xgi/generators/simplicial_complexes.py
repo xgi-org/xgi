@@ -8,7 +8,6 @@ import random
 from collections import defaultdict
 from itertools import combinations
 
-import networkx as nx
 import numpy as np
 from scipy.special import comb
 
@@ -61,7 +60,6 @@ def random_simplicial_complex(N, ps, seed=None):
     >>> H = xgi.random_simplicial_complex(20, [0.1, 0.01])
 
     """
-
     if seed is not None:
         np.random.seed(seed)
 
@@ -232,13 +230,15 @@ def random_flag_complex_d2(N, p, seed=None):
     Computing all cliques quickly becomes heavy for large networks.
 
     """
+    from networkx import fast_gnp_random_graph
+
     if seed is not None:
         random.seed(seed)
 
     if (p < 0) or (p > 1):
         raise ValueError("p must be between 0 and 1 included.")
 
-    G = nx.fast_gnp_random_graph(N, p, seed=seed)
+    G = fast_gnp_random_graph(N, p, seed=seed)
 
     return flag_complex_d2(G)
 
@@ -270,10 +270,12 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     Computing all cliques quickly becomes heavy for large networks.
 
     """
+    from networkx import fast_gnp_random_graph
+
     if (p < 0) or (p > 1):
         raise ValueError("p must be between 0 and 1 included.")
 
-    G = nx.fast_gnp_random_graph(N, p, seed=seed)
+    G = fast_gnp_random_graph(N, p, seed=seed)
 
     nodes = G.nodes()
 
@@ -307,11 +309,13 @@ def _cliques_to_fill(G, max_order):
         List of cliques
 
     """
+    from networkx import enumerate_all_cliques, find_cliques
+
     if max_order is None:
-        cliques = list(nx.find_cliques(G))  # max cliques
+        cliques = list(find_cliques(G))  # max cliques
     else:  # avoid adding many unnecessary redundant cliques
         cliques = []
-        for clique in nx.enumerate_all_cliques(G):  # sorted by size
+        for clique in enumerate_all_cliques(G):  # sorted by size
             if len(clique) == 1:
                 continue  # don't add singletons
             if len(clique) <= max_order + 1:
