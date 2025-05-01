@@ -2,8 +2,6 @@
 
 from collections import defaultdict
 
-import pandas as pd
-
 from ..core import SimplicialComplex
 from ..exception import XGIError
 from ..generators import empty_hypergraph
@@ -89,8 +87,10 @@ def to_bipartite_pandas_dataframe(H):
     XGIError
         Raises an error if the user specifies invalid column names
     """
+    from pandas import DataFrame
+
     data = []
     for id1, members in H._node.items():
         for id2 in members:
             data.append([id1, id2])
-    return pd.DataFrame(data, columns=["Node ID", "Edge ID"])
+    return DataFrame(data, columns=["Node ID", "Edge ID"])

@@ -25,7 +25,7 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 4. Format the source code and notebooks by running `black .` for consistent styling.
 
 ## Profile importing XGI
-Install the `test` dependencis and run
+Install the `test` dependencis and visualize the import times using [tuna](https://github.com/nschloe/tuna):
 ```python
 python3 -X importtime -c "import xgi" 2> test.log
 tuna test.log
