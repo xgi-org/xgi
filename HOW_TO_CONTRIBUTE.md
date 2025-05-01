@@ -24,6 +24,13 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
    2. notebooks by running `nbqa isort .` to sort any new import statements in the source code and tutorials.
 4. Format the source code and notebooks by running `black .` for consistent styling.
 
+## Profile importing XGI
+Install the `test` dependencis and run
+```python
+python3 -X importtime -c "import xgi" 2> test.log
+tuna test.log
+```
+
 ## New Version process
 
 1. Make sure that the Github Actions workflow runs without any errors.
