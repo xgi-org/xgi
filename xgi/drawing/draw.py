@@ -3,8 +3,6 @@
 from inspect import signature
 from itertools import chain
 
-from seaborn import crest_r # Do not remove! Needed for drawing colormap
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,6 +16,7 @@ from mpl_toolkits.mplot3d.art3d import (
     Poly3DCollection,
 )
 from scipy.spatial import ConvexHull
+from seaborn import crest_r  # Do not remove! Needed for drawing colormap
 
 chaini = chain.from_iterable
 
