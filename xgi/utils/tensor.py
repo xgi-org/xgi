@@ -3,7 +3,7 @@ from collections import defaultdict
 from itertools import combinations
 from math import factorial
 
-from numpy import array, prod, zeros
+import numpy as np
 from scipy.sparse import coo_array
 from scipy.special import binom as binomial
 
@@ -116,7 +116,7 @@ def ttsv1(node_dict, edge_dict, r, a):
     https://doi.org/10.1137/23M1584472
     """
     n = len(node_dict)
-    s = zeros(n)
+    s = np.zeros(n)
     r_minus_1_factorial = factorial(r - 1)
     for node, edges in node_dict.items():
         c = 0
@@ -125,7 +125,7 @@ def ttsv1(node_dict, edge_dict, r, a):
             alpha = banerjee_coeff(l, r)
             edge_without_node = [v for v in edge_dict[e] if v != node]
             if l == r:
-                gen_fun_coef = prod(a[edge_without_node])
+                gen_fun_coef = np.prod(a[edge_without_node])
             elif 2 ** (l - 1) < r * (l - 1):
                 gen_fun_coef = _get_gen_coef_subset_expansion(
                     a[edge_without_node], a[node], r - 1
@@ -192,13 +192,13 @@ def ttsv2(pair_dict, edge_dict, r, a, n):
                     coefs = [1]
                     for i in range(1, r - 1):
                         coefs.append(coefs[-1] * (a[v1] + a[v2]) / i)
-                    coefs = array(coefs)
+                    coefs = np.array(coefs)
                     for u in edge_dict[e]:
                         if u != v1 and u != v2:
                             _coefs = [1]
                             for i in range(1, r - l + 2):
                                 _coefs.append(_coefs[-1] * a[u] / i)
-                            _coefs = array(_coefs)
+                            _coefs = np.array(_coefs)
                             _coefs[0] = 0
                             coefs = convolve(coefs, _coefs)[0 : r - 1]
                     gen_fun_coef = coefs[-1]
@@ -211,13 +211,13 @@ def ttsv2(pair_dict, edge_dict, r, a, n):
                     coefs = [1]
                     for i in range(1, r - 1):
                         coefs.append(coefs[-1] * (a[v1]) / i)
-                    coefs = array(coefs)
+                    coefs = np.array(coefs)
                     for u in edge_dict[e]:
                         if u != v1 and u != v2:
                             _coefs = [1]
                             for i in range(1, r - l + 1):
                                 _coefs.append(_coefs[-1] * a[v1] / i)
-                            _coefs = array(_coefs)
+                            _coefs = np.array(_coefs)
                             _coefs[0] = 0
                             coefs = convolve(coefs, _coefs)[0 : r - 1]
                     gen_fun_coef = coefs[-1]
@@ -225,9 +225,9 @@ def ttsv2(pair_dict, edge_dict, r, a, n):
         s[(v1, v2)] = c
         if v1 == v2:
             s[(v1, v2)] /= 2
-    first = zeros(len(s))
-    second = zeros(len(s))
-    value = zeros(len(s))
+    first = np.zeros(len(s))
+    second = np.zeros(len(s))
+    value = np.zeros(len(s))
     for i, k in enumerate(s.keys()):
         first[i] = k[0]
         second[i] = k[1]
@@ -322,12 +322,12 @@ def _get_gen_coef_fft_fast_array(edge_without_node, a, node, l, r):
     coefs = [1]
     for i in range(1, r):
         coefs.append(coefs[-1] * a[node] / i)
-    coefs = array(coefs)
+    coefs = np.array(coefs)
     for u in edge_without_node:
         _coefs = [1]
         for i in range(1, r - l + 2):
             _coefs.append(_coefs[-1] * a[u] / i)
-        _coefs = array(_coefs)
+        _coefs = np.array(_coefs)
         _coefs[0] = 0
         coefs = convolve(coefs, _coefs)[0:r]
     gen_fun_coef = coefs[-1]

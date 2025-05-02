@@ -1002,6 +1002,7 @@ class Hypergraph:
         Example
         -------
         >>> import xgi
+        >>> import random
         >>> random.seed(42)
         >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5]])
         >>> H.random_edge_shuffle()
