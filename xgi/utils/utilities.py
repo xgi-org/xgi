@@ -1,11 +1,11 @@
 """General utilities."""
 
-from random import random
 from collections import defaultdict
 from copy import deepcopy
 from functools import cache
 from itertools import chain, combinations, count
 from math import ceil, log
+from random import random
 
 import numpy as np
 import requests
