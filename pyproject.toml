@@ -48,7 +48,6 @@ dependencies = [
     "networkx>=2.7",
     "requests>=2.0",
     "matplotlib>=3.4",
-    "seaborn>=0.10",
 ]
 
 [project.urls]

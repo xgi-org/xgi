@@ -6,7 +6,6 @@ from itertools import chain
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sb  # This cannot be removed because it is used for cmap "crest"
 from matplotlib import cm
 from matplotlib.colors import is_color_like
 from matplotlib.patches import FancyArrowPatch
@@ -70,7 +69,7 @@ def draw(
     dyad_vmin=None,
     dyad_vmax=None,
     edge_fc=None,
-    edge_fc_cmap="crest_r",
+    edge_fc_cmap="Blues",
     edge_vmin=None,
     edge_vmax=None,
     edge_ec=None,
