@@ -1,7 +1,6 @@
 """Community detection via clustering of Laplacian eigenvectors."""
 
 import numpy as np
-from scipy.sparse.linalg import eigsh
 
 from ..exception import XGIError
 from ..linalg.laplacian_matrix import normalized_hypergraph_laplacian
@@ -50,6 +49,8 @@ def spectral_clustering(H, k=2, max_iter=1_000, seed=None):
         Advances in Neural Information Processing Systems.
 
     """
+    from scipy.sparse.linalg import eigsh
+
     if k > H.num_nodes:
         raise XGIError(
             "The number of desired clusters cannot exceed the number of nodes!"

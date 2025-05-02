@@ -1,10 +1,10 @@
 """Base class for undirected hypergraphs."""
 
-import random
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
 from copy import copy, deepcopy
 from itertools import count
+from random import sample
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError, frozen
@@ -1014,7 +1014,7 @@ class Hypergraph:
 
         # select two random edges
         if e_id1 is None or e_id2 is None:
-            e_id1, e_id2 = random.sample(list(self._edge), 2)
+            e_id1, e_id2 = sample(list(self._edge), 2)
 
         # extract edges (lists of nodes)
         e1 = self._edge[e_id1]
@@ -1029,7 +1029,7 @@ class Hypergraph:
         nodes = e1 | e2
 
         # randomly redistribute nodes between the two edges
-        e1_new = set(random.sample(list(nodes), len(e1)))
+        e1_new = set(sample(list(nodes), len(e1)))
         e2_new = nodes - e1_new
 
         # update edge memberships

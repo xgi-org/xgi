@@ -18,7 +18,7 @@ Examples
 
 """
 
-import numpy as np
+from numpy import nan, power
 
 import xgi
 
@@ -426,10 +426,10 @@ def z_eigenvector_centrality(net, bunch, max_iter=10, tol=1e-6):
 def node_edge_centrality(
     net,
     bunch,
-    f=lambda x: np.power(x, 2),
-    g=lambda x: np.power(x, 0.5),
-    phi=lambda x: np.power(x, 2),
-    psi=lambda x: np.power(x, 0.5),
+    f=lambda x: power(x, 2),
+    g=lambda x: power(x, 0.5),
+    phi=lambda x: power(x, 2),
+    psi=lambda x: power(x, 0.5),
     max_iter=100,
     tol=1e-6,
 ):
@@ -575,7 +575,7 @@ def local_simplicial_fraction(net, bunch, min_size=2, exclude_min_size=True):
     for n in bunch:
         nbrs = net.nodes.neighbors(n)
         if len(nbrs) == 0:
-            s[n] = np.nan
+            s[n] = nan
         else:
             nbrs.add(n)
             sh = xgi.subhypergraph(net, nodes=nbrs)
@@ -613,7 +613,7 @@ def local_edit_simpliciality(net, bunch, min_size=2, exclude_min_size=True):
     for n in bunch:
         nbrs = net.nodes.neighbors(n)
         if len(nbrs) == 0:
-            s[n] = np.nan
+            s[n] = nan
         else:
             nbrs.add(n)
             sh = xgi.subhypergraph(net, nodes=nbrs)
@@ -651,7 +651,7 @@ def local_face_edit_simpliciality(net, bunch, min_size=2, exclude_min_size=True)
     for n in bunch:
         nbrs = net.nodes.neighbors(n)
         if len(nbrs) == 0:
-            s[n] = np.nan
+            s[n] = nan
         else:
             nbrs.add(n)
             sh = xgi.subhypergraph(net, nodes=nbrs)

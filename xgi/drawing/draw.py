@@ -6,7 +6,6 @@ from itertools import chain
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-
 import seaborn as sb  # This cannot be removed because it is used for cmap "crest"
 from matplotlib import cm
 from matplotlib.colors import is_color_like

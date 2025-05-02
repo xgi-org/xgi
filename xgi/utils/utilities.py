@@ -1,6 +1,6 @@
 """General utilities."""
 
-import random
+from random import random
 from collections import defaultdict
 from copy import deepcopy
 from functools import cache
@@ -581,7 +581,7 @@ def geometric(p):
     ----------
     https://en.wikipedia.org/wiki/Geometric_distribution
     """
-    r = random.random()
+    r = random()
     try:
         return ceil(log(r) / log(1 - p))
     except ValueError:

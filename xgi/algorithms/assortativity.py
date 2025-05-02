@@ -3,7 +3,8 @@
 import random
 from itertools import combinations, permutations
 
-import numpy as np
+from numpy import array, corrcoef, isnan, mean
+from numpy.random import permutation, randint
 
 from ..exception import XGIError
 from .properties import is_uniform, unique_edge_sizes
@@ -58,7 +59,7 @@ def dynamical_assortativity(H):
     k = d.asdict()
     k1 = d.mean()
     k2 = d.moment(2)
-    kk1 = np.mean(
+    kk1 = mean(
         [k[n1] * k[n2] for e in H.edges for n1, n2 in combinations(members[e], 2)]
     )
 
@@ -141,14 +142,12 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     else:
         edges = [e for e in H.edges if len(H.edges.members(e)) > 1]
         k1k2 = [
-            np.random.permutation(
-                _choose_degrees(members[random.choice(edges)], k, kind)
-            )
+            permutation(_choose_degrees(members[random.choice(edges)], k, kind))
             for _ in range(num_samples)
         ]
 
-    rho = np.corrcoef(np.array(k1k2).T)[0, 1].item()
-    if np.isnan(rho):
+    rho = corrcoef(array(k1k2).T)[0, 1].item()
+    if isnan(rho):
         return 0
     return rho
 
@@ -190,10 +189,10 @@ def _choose_degrees(e, k, kind="uniform"):
     e = list(e)
     if len(e) > 1:
         if kind == "uniform":
-            i = np.random.randint(len(e))
+            i = randint(len(e))
             j = i
             while i == j:
-                j = np.random.randint(len(e))
+                j = randint(len(e))
             return (k[e[i]], k[e[j]])
 
         elif kind == "top-2":
