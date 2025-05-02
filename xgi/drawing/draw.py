@@ -6,6 +6,7 @@ from itertools import chain
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sb  # Do not remove! Needed for drawing colormap
 from matplotlib import cm
 from matplotlib.colors import is_color_like
 from matplotlib.patches import FancyArrowPatch
@@ -16,7 +17,6 @@ from mpl_toolkits.mplot3d.art3d import (
     Poly3DCollection,
 )
 from scipy.spatial import ConvexHull
-from seaborn import crest_r  # Do not remove! Needed for drawing colormap
 
 chaini = chain.from_iterable
 
