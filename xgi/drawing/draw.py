@@ -3,6 +3,8 @@
 from inspect import signature
 from itertools import chain
 
+from seaborn import crest_r # Do not remove! Needed for drawing colormap
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -69,7 +71,7 @@ def draw(
     dyad_vmin=None,
     dyad_vmax=None,
     edge_fc=None,
-    edge_fc_cmap="Blues",
+    edge_fc_cmap="crest_r",
     edge_vmin=None,
     edge_vmax=None,
     edge_ec=None,
