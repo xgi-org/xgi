@@ -329,5 +329,5 @@ def _get_gen_coef_fft_fast_array(edge_without_node, a, node, l, r):
         _coefs[0] = 0
         coefs = convolve(coefs, _coefs)[0:r]
     gen_fun_coef = coefs[-1]
-    print("hi")
+
     return gen_fun_coef
