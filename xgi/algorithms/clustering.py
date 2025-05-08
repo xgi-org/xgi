@@ -2,7 +2,7 @@
 
 from itertools import combinations
 
-from numpy import errstate, nan, nan_to_num
+import numpy as np
 
 from ..exception import XGIError
 from ..linalg import adjacency_matrix
@@ -69,8 +69,8 @@ def clustering_coefficient(H):
     denom = k * (k - 1) / 2
     mat = adj.dot(adj).dot(adj)
 
-    with errstate(divide="ignore", invalid="ignore"):
-        result = nan_to_num(0.5 * mat.diagonal() / denom)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        result = np.nan_to_num(0.5 * mat.diagonal() / denom)
 
     return {n: float(result[ndict[n]]) if n in ndict else 0 for n in H.nodes}
 
@@ -274,6 +274,6 @@ def _uv_cc(u, v, memberships, kind="union"):
         raise XGIError("Invalid kind of clustering.")
 
     if denom == 0:
-        return nan
+        return np.nan
 
     return num / denom

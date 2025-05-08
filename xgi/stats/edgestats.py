@@ -18,7 +18,7 @@ Examples
 
 """
 
-from numpy import power
+import numpy as np
 
 import xgi
 
@@ -184,10 +184,10 @@ def size(net, bunch, degree=None):
 def node_edge_centrality(
     net,
     bunch,
-    f=lambda x: power(x, 2),
-    g=lambda x: power(x, 0.5),
-    phi=lambda x: power(x, 2),
-    psi=lambda x: power(x, 0.5),
+    f=lambda x: np.power(x, 2),
+    g=lambda x: np.power(x, 0.5),
+    phi=lambda x: np.power(x, 2),
+    psi=lambda x: np.power(x, 0.5),
     max_iter=100,
     tol=1e-6,
 ):

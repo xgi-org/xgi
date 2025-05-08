@@ -1,6 +1,6 @@
 from itertools import chain, combinations
 
-from numpy import nan
+import numpy as np
 from scipy.special import binom
 
 from ..core import Hypergraph
@@ -149,7 +149,7 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
         .members(dtype=dict)
     )
     if not maxH.edges:
-        return nan
+        return np.nan
 
     id_to_num = dict(zip(maxH.edges, range(maxH.num_edges)))
 
@@ -178,7 +178,7 @@ def simplicial_edit_distance(H, min_size=2, exclude_min_size=True, normalize=Tru
         if s - mf + ms > 0:
             return ms / (s - mf + ms)
         else:
-            return nan
+            return np.nan
     else:
         return ms
 
@@ -381,7 +381,7 @@ def simplicial_fraction(H, min_size=2, exclude_min_size=True):
         ps = _potential_simplices(H, min_size, exclude_min_size)
         return ns / ps
     except ZeroDivisionError:
-        return nan
+        return np.nan
 
 
 #### Helper functions

@@ -1,6 +1,6 @@
 """Algorithms for computing shortest paths in a hypergraph."""
 
-from numpy import inf
+import numpy as np
 
 from ..utils import utilities
 
@@ -33,7 +33,7 @@ def single_source_shortest_path_length(H, source):
     # 2. Assign to every node a tentative distance value.
     dists = dict()
     for node in H.nodes:
-        dists[node] = inf
+        dists[node] = np.inf
     dists[source] = 0
     is_unseen[source] = False
     n_unseen -= 1
@@ -59,11 +59,11 @@ def single_source_shortest_path_length(H, source):
 
         # 5. Check for stop condition.
         stop_condition = (n_unseen == 0) or (
-            utilities.min_where(dists, is_unseen) == inf
+            utilities.min_where(dists, is_unseen) == np.inf
         )
 
         # 6. Otherwise, select the unvisited node that is marked with the smallest tentative distance, set it as the new current node, and go back to step 3.
-        min_val = inf
+        min_val = np.inf
         argmin = current
         for node in dists.keys():
             if is_unseen[node]:
