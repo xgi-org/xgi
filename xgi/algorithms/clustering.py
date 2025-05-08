@@ -61,7 +61,6 @@ def clustering_coefficient(H):
     >>> cc
     {0: 1.0, 1: 1.0, 2: 1.0}
     """
-
     adj, index = adjacency_matrix(H, index=True)
     ndict = {n: i for i, n in index.items()}
 
