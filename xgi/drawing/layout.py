@@ -2,7 +2,6 @@
 
 import random
 
-import networkx as nx
 import numpy as np
 from numpy.linalg import inv, svd
 
@@ -69,6 +68,7 @@ def random_layout(H, center=None, seed=None):
 
     """
     import numpy as np
+    from networkx.drawing.layout import _process_params
 
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
@@ -76,7 +76,7 @@ def random_layout(H, center=None, seed=None):
     if seed is not None:
         np.random.seed(seed)
 
-    H, center = nx.drawing.layout._process_params(H, center, 2)
+    H, center = _process_params(H, center, 2)
     pos = np.random.rand(len(H), 2) + center
     pos = pos.astype(np.float32)
     pos = dict(zip(H, pos))
@@ -131,6 +131,7 @@ def pairwise_spring_layout(H, seed=None, k=None, **kwargs):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.pairwise_spring_layout(H)
     """
+    from networkx import spring_layout
 
     if seed is not None:
         random.seed(seed)
@@ -138,7 +139,7 @@ def pairwise_spring_layout(H, seed=None, k=None, **kwargs):
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
     G = convert.to_graph(H)
-    pos = nx.spring_layout(G, seed=seed, k=k, **kwargs)
+    pos = spring_layout(G, seed=seed, k=k, **kwargs)
     return pos
 
 
@@ -161,8 +162,10 @@ def _augmented_projection(H, weighted=False):
     G : networkx.Graph
         The augmented version of the graph projection
     """
+    from networkx import Graph
+
     # Creating the projected networkx Graph, I will fill it manually
-    G = nx.Graph()
+    G = Graph()
 
     # Adding real nodes
     G.add_nodes_from(list(H.nodes), bipartite="node")
@@ -235,6 +238,8 @@ def bipartite_spring_layout(H, seed=None, k=None, **kwargs):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.bipartite_spring_layout(H)
     """
+    from networkx import spring_layout
+
     if seed is not None:
         random.seed(seed)
 
@@ -242,7 +247,7 @@ def bipartite_spring_layout(H, seed=None, k=None, **kwargs):
 
     # Creating a dictionary for the position of the nodes with the standard spring
     # layout
-    pos = nx.spring_layout(G, seed=seed, k=k, **kwargs)
+    pos = spring_layout(G, seed=seed, k=k, **kwargs)
 
     node_pos = {nodedict[i]: pos[i] for i in nodedict}
     edge_pos = {edgedict[i]: pos[i] for i in edgedict}
@@ -344,6 +349,8 @@ def barycenter_spring_layout(
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.barycenter_spring_layout(H)
     """
+    from networkx import spring_layout
+
     if seed is not None:
         random.seed(seed)
 
@@ -354,7 +361,7 @@ def barycenter_spring_layout(
 
     # Creating a dictionary for the position of the nodes with the standard spring
     # layout
-    pos_with_phantom_nodes = nx.spring_layout(G, seed=seed, k=k, **kwargs)
+    pos_with_phantom_nodes = spring_layout(G, seed=seed, k=k, **kwargs)
 
     # Retaining only the positions of the real nodes
     pos = {k: pos_with_phantom_nodes[k] for k in list(H.nodes)}
@@ -419,6 +426,8 @@ def weighted_barycenter_spring_layout(
     >>> pos = xgi.weighted_barycenter_spring_layout(H)
 
     """
+    from networkx import spring_layout
+
     if seed is not None:
         random.seed(seed)
 
@@ -428,9 +437,7 @@ def weighted_barycenter_spring_layout(
     G = _augmented_projection(H, weighted=True)
 
     # Creating a dictionary for node position with the standard spring layout
-    pos_with_phantom_nodes = nx.spring_layout(
-        G, weight="weight", seed=seed, k=k, **kwargs
-    )
+    pos_with_phantom_nodes = spring_layout(G, weight="weight", seed=seed, k=k, **kwargs)
 
     # Retaining only the positions of the real nodes
     pos = {k: pos_with_phantom_nodes[k] for k in list(H.nodes)}
@@ -601,13 +608,15 @@ def barycenter_kamada_kawai_layout(H, return_phantom_graph=False, **kwargs):
     pos : dict
         A dictionary of positions keyed by node
     """
+    from networkx import kamada_kawai_layout
+
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
 
     G = _augmented_projection(H)
 
     # Creating a dictionary for the position of the nodes with the standard spring layout
-    pos_with_phantom_nodes = nx.kamada_kawai_layout(G, **kwargs)
+    pos_with_phantom_nodes = kamada_kawai_layout(G, **kwargs)
 
     # Retaining only the positions of the real nodes
     pos = {k: pos_with_phantom_nodes[k] for k in list(H.nodes)}

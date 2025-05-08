@@ -4,8 +4,6 @@ from itertools import combinations
 from math import factorial
 
 import numpy as np
-from numpy import prod
-from scipy.signal import convolve
 from scipy.sparse import coo_array
 from scipy.special import binom as binomial
 
@@ -127,7 +125,7 @@ def ttsv1(node_dict, edge_dict, r, a):
             alpha = banerjee_coeff(l, r)
             edge_without_node = [v for v in edge_dict[e] if v != node]
             if l == r:
-                gen_fun_coef = prod(a[edge_without_node])
+                gen_fun_coef = np.prod(a[edge_without_node])
             elif 2 ** (l - 1) < r * (l - 1):
                 gen_fun_coef = _get_gen_coef_subset_expansion(
                     a[edge_without_node], a[node], r - 1
@@ -175,6 +173,8 @@ def ttsv2(pair_dict, edge_dict, r, a, n):
     Sinan Aksoy, Ilya Amburg, Stephen Young,
     https://doi.org/10.1137/23M1584472
     """
+    from scipy.signal import convolve
+
     s = {}
     r_minus_2_factorial = factorial(r - 2)
     for (v1, v2), edges in pair_dict.items():
@@ -317,6 +317,8 @@ def _get_gen_coef_fft_fast_array(edge_without_node, a, node, l, r):
     Sinan Aksoy, Ilya Amburg, Stephen Young,
     https://doi.org/10.1137/23M1584472
     """
+    from scipy.signal import convolve
+
     coefs = [1]
     for i in range(1, r):
         coefs.append(coefs[-1] * a[node] / i)

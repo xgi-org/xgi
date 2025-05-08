@@ -2,7 +2,6 @@
 
 from copy import deepcopy
 
-import pandas as pd
 from numpy import matrix, ndarray
 from scipy.sparse import (
     coo_array,
@@ -63,6 +62,8 @@ def to_hypergraph(data, create_using=None):
     ~xgi.utils.utilities.from_max_simplices : Constructs a hypergraph from the maximal simplices of a simplicial complex.
 
     """
+    from pandas import DataFrame
+
     if data is None:
         return empty_hypergraph(create_using)
 
@@ -97,7 +98,7 @@ def to_hypergraph(data, create_using=None):
         if not isinstance(create_using, Hypergraph):
             return result
 
-    elif isinstance(data, pd.DataFrame):
+    elif isinstance(data, DataFrame):
         result = from_bipartite_pandas_dataframe(data, create_using)
         if not isinstance(create_using, Hypergraph):
             return result
@@ -213,6 +214,7 @@ def to_simplicial_complex(data, create_using=None):
         A hypergraph constructed from the data
 
     """
+    from pandas import DataFrame
 
     if data is None:
         return empty_simplicial_complex(create_using)
@@ -242,7 +244,7 @@ def to_simplicial_complex(data, create_using=None):
         if not isinstance(create_using, SimplicialComplex):
             return to_simplicial_complex(result)
 
-    elif isinstance(data, pd.DataFrame):
+    elif isinstance(data, DataFrame):
         result = from_bipartite_pandas_dataframe(data, create_using)
         if not isinstance(create_using, SimplicialComplex):
             return to_simplicial_complex(result)

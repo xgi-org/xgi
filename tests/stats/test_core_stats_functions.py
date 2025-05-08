@@ -94,6 +94,14 @@ def test_dihypergraph_view_val(diedgelist1, diedgelist2):
     assert H.edges([1, 2]).order._val == {1: 2, 2: 3}
 
 
+def test_as_pandas(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    true_series = pd.Series(
+        {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1}, name="degree"
+    )
+    assert H.nodes.degree.aspandas().equals(true_series)
+
+
 def test_hypergraph_stats_are_views(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     ns = H.nodes.degree

@@ -1,7 +1,5 @@
 """Method for projecting a hypergraph to a graph."""
 
-import networkx as nx
-
 from ..linalg import adjacency_matrix
 
 __all__ = ["to_graph"]
@@ -21,8 +19,9 @@ def to_graph(H):
     G : networkx.Graph
         The graph projection
     """
+    from networkx import from_scipy_sparse_array, relabel_nodes
 
     A = adjacency_matrix(H)  # This is unweighted by design
-    G = nx.from_scipy_sparse_array(A)
-    G = nx.relabel_nodes(G, {i: node for i, node in enumerate(H.nodes)})
+    G = from_scipy_sparse_array(A)
+    G = relabel_nodes(G, {i: node for i, node in enumerate(H.nodes)})
     return G

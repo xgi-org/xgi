@@ -2,7 +2,6 @@
 
 from warnings import warn
 
-import networkx as nx
 import numpy as np
 from numpy.linalg import norm
 from scipy.sparse.linalg import eigsh
@@ -175,6 +174,8 @@ def line_vector_centrality(H):
     https://doi.org/10.1016/j.chaos.2022.112397
 
     """
+    from networkx import eigenvector_centrality
+
     # If the hypergraph is empty, then return an empty dictionary
     if H.num_nodes == 0:
         return dict()
@@ -183,7 +184,7 @@ def line_vector_centrality(H):
         raise XGIError("This method is not defined for disconnected hypergraphs.")
 
     LG = to_line_graph(H)
-    LGcent = nx.eigenvector_centrality(LG)
+    LGcent = eigenvector_centrality(LG)
 
     vc = {node: [] for node in H.nodes}
 
