@@ -95,6 +95,7 @@ test = [
 tutorial = [
     "jupyter>=1.0",
     "ipython<=8.12.0",
+    "seaborn>=0.10"
 ]
 all = ["xgi[benchmark,developer,docs,release,test,tutorial]"]
 
