@@ -6,7 +6,6 @@ from itertools import chain
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sb  # This cannot be removed because it is used for cmap "crest"
 from matplotlib import cm
 from matplotlib.colors import is_color_like
 from matplotlib.patches import FancyArrowPatch
@@ -25,7 +24,7 @@ from ..algorithms import max_edge_order, unique_edge_sizes
 from ..convert import to_bipartite_edgelist
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
-from ..utils import subfaces
+from ..utils import subfaces, crest_r
 from .draw_utils import (
     _CCW_sort,
     _draw_arg_to_arr,
@@ -70,7 +69,7 @@ def draw(
     dyad_vmin=None,
     dyad_vmax=None,
     edge_fc=None,
-    edge_fc_cmap="crest_r",
+    edge_fc_cmap=crest_r(),
     edge_vmin=None,
     edge_vmax=None,
     edge_ec=None,
@@ -552,7 +551,7 @@ def draw_hyperedges(
     dyad_vmin=None,
     dyad_vmax=None,
     edge_fc=None,
-    edge_fc_cmap="crest_r",
+    edge_fc_cmap=crest_r(),
     edge_vmin=None,
     edge_vmax=None,
     edge_ec=None,
@@ -614,7 +613,7 @@ def draw_hyperedges(
 
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap
-        Colormap used to map the edge colors. By default, "crest_r".
+        Colormap used to map the edge colors. By default, crest_r().
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
     edge_ec : color or list of colors or array-like or dict or EdgeStat, optional
@@ -849,7 +848,7 @@ def draw_simplices(
     dyad_vmin=None,
     dyad_vmax=None,
     edge_fc=None,
-    edge_fc_cmap="crest_r",
+    edge_fc_cmap=crest_r(),
     edge_vmin=None,
     edge_vmax=None,
     alpha=0.4,
@@ -908,7 +907,7 @@ def draw_simplices(
 
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap
-        Colormap used to map the edge colors. By default, "crest_r".
+        Colormap used to map the edge colors. By default, crest_r().
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
     alpha : float, optional
@@ -1259,12 +1258,12 @@ def draw_multilayer(
     dyad_lw=1.5,
     dyad_style="solid",
     edge_fc=None,
-    edge_fc_cmap="crest_r",
+    edge_fc_cmap=crest_r(),
     edge_vmin=None,
     edge_vmax=None,
     alpha=0.4,
     layer_color="grey",
-    layer_cmap="crest_r",
+    layer_cmap=crest_r(),
     max_order=None,
     conn_lines=True,
     conn_lines_style="dotted",
@@ -1347,7 +1346,7 @@ def draw_multilayer(
 
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap, optional
-        Colormap used to map the edge colors. By default, "crest_r".
+        Colormap used to map the edge colors. By default, crest_r().
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
     alpha : float, optional
@@ -1356,7 +1355,7 @@ def draw_multilayer(
         Color of layers. By default, "grey".
     layer_cmap : colormap, optional
         Colormap to use in case of numerical values in layer_color. Ignored if layer_color
-        does not contain numerical values to be mapped. By default, "crest_r", but ignored.
+        does not contain numerical values to be mapped. By default, crest_r(), but ignored.
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     conn_lines : bool, optional
@@ -1629,12 +1628,12 @@ def draw_bipartite(
     edge_marker_lw=1,
     edge_marker_size=7,
     edge_marker_shape="s",
-    edge_marker_fc_cmap="crest_r",
+    edge_marker_fc_cmap=crest_r(),
     max_order=None,
     dyad_color=None,
     dyad_lw=1,
     dyad_style="solid",
-    dyad_color_cmap="crest_r",
+    dyad_color_cmap=crest_r(),
     node_labels=None,
     hyperedge_labels=None,
     arrowsize=10,
@@ -1952,7 +1951,7 @@ def draw_undirected_dyads(
     dyad_color=None,
     dyad_lw=1,
     dyad_style="solid",
-    dyad_color_cmap="crest_r",
+    dyad_color_cmap=crest_r(),
     rescale_sizes=True,
     **kwargs,
 ):
@@ -2114,7 +2113,7 @@ def draw_directed_dyads(
     dyad_color=None,
     dyad_lw=1,
     dyad_style="solid",
-    dyad_color_cmap="crest_r",
+    dyad_color_cmap=crest_r(),
     arrowsize=10,
     arrowstyle="->",
     connectionstyle="arc3",
