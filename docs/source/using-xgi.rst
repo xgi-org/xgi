@@ -21,6 +21,11 @@ Published Work
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41467-025-57664-2>`
 :bdg-link-primary-line:`Code <https://github.com/TaylorBasedHypergraphInference/THIS>`
 
+[XGI] Laurent Hébert-Dufresne, Nicholas W. Landry, Juniper Lovato, Jonathan St-Onge, Jean-Gabriel Young, Marie-Ève Couture-Ménard, Stéphane Bernatchez, Catherine Choquette, and Alan A. Cohen, "Governance as a complex, networked, democratic, satisfiability problem", *npj Complexity* **2**, 14 (2025)..
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1038/s44260-025-00041-3>`
+:bdg-link-primary-line:`Code <https://github.com/nwlandry/governance>`
+
 [XGI-DATA] Marco Nurisso, Marta Morandini, Maxime Lucas, Francesco Vaccarino, Tommaso Gili, and Giovanni Petri, "Higher-order Laplacian renormalization", *Nature Physics* (2025).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41567-025-02784-1>`
@@ -144,17 +149,17 @@ Preprints
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/arXiv:2503.04020>`
 
+[XGI] Alyssa Smith, Ilya Amburg, Sagar Kumar, Brooke Foucault Welles, Nicholas W. Landry, "A Blue Start: A large-scale pairwise and higher-order social network dataset", arXiv:2505.11608 (2025).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2505.11608>`
+:bdg-link-primary-line:`Code <https://github.com/nwlandry/a-blue-start>`
+
 2024
 ----
 
 [XGI] Gülşah Akçakır, Amina Azaiez, Alberto Ceria, Clara Eminente, Guglielmo Ferranti, Govind Gandhi, Aishvarya Raj, and Iacopo Iacopini, "Exploring the interplay of individual traits and interaction dynamics in preschool social networks", arXiv:2407.12728 (2024).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2407.12728>`
-
-[XGI] Laurent Hébert-Dufresne, Nicholas W. Landry, Juniper Lovato, Jonathan St-Onge, Jean-Gabriel Young, Marie-Ève Couture-Ménard, Stéphane Bernatchez, Catherine Choquette, and Alan A. Cohen, "Governance as a complex, networked, democratic, satisfiability problem", arXiv:2412.03421 (2024).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2412.03421>`
-:bdg-link-primary-line:`Code <https://github.com/nwlandry/governance>`
 
 [XGI, XGI-DATA] Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Domenico, "Functional reducibility of higher-order networks", arXiv:2404.08547 (2024).
 
@@ -165,19 +170,24 @@ Preprints
 Theses
 ======
 
+2025
+----
+
+[XGI] Corbit Sampson, "Complex Social Systems: Emergent Phenomena, Social Contagions, and Opinion Consensus", The University of Colorado at Boulder (2025).
+
 2024
 ----
 
-[XGI, XGI-DATA] Xie He, "Methods, Analyses, and Applications of Multilayer Temporal Link Prediction in Networks", (2024).
+[XGI, XGI-DATA] Xie He, "Methods, Analyses, and Applications of Multilayer Temporal Link Prediction in Networks", Dartmouth College (2024).
 
 :bdg-link-primary-line:`Thesis <https://digitalcommons.dartmouth.edu/dissertations/271/>`
 
-[XGI, XGI-DATA] Yifei (Bell) Luo, "Efficient sampling of configuration model random hypergraphs", (2024).
+[XGI, XGI-DATA] Yifei (Bell) Luo, "Efficient sampling of configuration model random hypergraphs", Middlebury College (2024).
 
 2023
 ----
 
-[XGI] Ward Samoy, "Free word associations for stance detection in education", (2023).
+[XGI] Ward Samoy, "Free word associations for stance detection in education", Ghent University (2023).
 
 :bdg-link-primary-line:`Thesis <https://libstore.ugent.be/fulltxt/RUG01/003/150/699/RUG01-003150699_2023_0001_AC.pdf>`
 
@@ -185,10 +195,16 @@ Theses
 
 :bdg-link-primary-line:`Thesis <https://doi.org/10.18154/RWTH-2023-08686>`
 
-[XGI] Thomas Robiglio, "Higher-order structures in face-to-face interaction networks", (2023).
+[XGI] Thomas Robiglio, "Higher-order structures in face-to-face interaction networks", RWTH Aachen University (2023).
 
 :bdg-link-primary-line:`Thesis <https://webthesis.biblio.polito.it/27942/>`
 
+2022
+----
+
+[XGI, XGI-DATA] Nicholas W. Landry, "Contagion on Complex Systems: Structure and Dynamics", The University of Colorado at Boulder (2022).
+
+:bdg-link-primary-line:`Thesis <https://www.proquest.com/docview/2672014395>`
 
 Software Packages
 =================
