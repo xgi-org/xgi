@@ -191,11 +191,11 @@ Theses
 
 :bdg-link-primary-line:`Thesis <https://libstore.ugent.be/fulltxt/RUG01/003/150/699/RUG01-003150699_2023_0001_AC.pdf>`
 
-[XGI] Leonie Neuhäuser, "Modelling the effect of groups on network structure and dynamics", (2023).
+[XGI] Leonie Neuhäuser, "Modelling the effect of groups on network structure and dynamics", RWTH Aachen University (2023).
 
 :bdg-link-primary-line:`Thesis <https://doi.org/10.18154/RWTH-2023-08686>`
 
-[XGI] Thomas Robiglio, "Higher-order structures in face-to-face interaction networks", RWTH Aachen University (2023).
+[XGI] Thomas Robiglio, "Higher-order structures in face-to-face interaction networks", Politecnico di Torino (2023).
 
 :bdg-link-primary-line:`Thesis <https://webthesis.biblio.polito.it/27942/>`
 
