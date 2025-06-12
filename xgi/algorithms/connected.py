@@ -13,7 +13,7 @@ __all__ = [
 ]
 
 
-def is_connected(H):
+def is_connected(H, s=1):
     """
     A function to determine whether a hypergraph is connected.
 
@@ -21,6 +21,8 @@ def is_connected(H):
     ----------
     H: Hypergraph object
         The hypergraph of interest
+    s: int, optional
+        The overlap parameter
 
     Returns
     -------
@@ -34,6 +36,13 @@ def is_connected(H):
     largest_connected_component
     largest_connected_hypergraph
 
+    References
+    ----------
+    Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al.
+    Hypernetwork science via high-order hypergraph walks.
+    EPJ Data Sci. 9, 16 (2020).
+    https://doi.org/10.1140/epjds/s13688-020-00231-0
+
     Example
     -------
     >>> import xgi
@@ -42,10 +51,10 @@ def is_connected(H):
     True
 
     """
-    return len(_plain_bfs(H, list(H.nodes)[0])) == len(H)
+    return len(_plain_bfs(H, list(H.nodes)[0], s=s)) == len(H)
 
 
-def connected_components(H):
+def connected_components(H, s=1):
     """
     A function to find the connected components of a hypergraph.
 
@@ -53,6 +62,8 @@ def connected_components(H):
     ----------
     H: Hypergraph object
         The hypergraph of interest
+    s: int, optional
+        The overlap parameter
 
     Returns
     -------
@@ -66,6 +77,13 @@ def connected_components(H):
     largest_connected_component
     largest_connected_hypergraph
 
+    References
+    ----------
+    Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al.
+    Hypernetwork science via high-order hypergraph walks.
+    EPJ Data Sci. 9, 16 (2020).
+    https://doi.org/10.1140/epjds/s13688-020-00231-0
+
     Example
     -------
     >>> import xgi
@@ -77,12 +95,12 @@ def connected_components(H):
     seen = set()
     for v in H:
         if v not in seen:
-            c = _plain_bfs(H, v)
+            c = _plain_bfs(H, v, s=s)
             seen.update(c)
             yield c
 
 
-def number_connected_components(H):
+def number_connected_components(H, s=1):
     """
     A function to find the number of connected components of a hypergraph.
 
@@ -90,6 +108,8 @@ def number_connected_components(H):
     ----------
     H: Hypergraph object
         The hypergraph of interest
+    s: int, optional
+        The overlap parameter
 
     Returns
     -------
@@ -103,6 +123,13 @@ def number_connected_components(H):
     largest_connected_component
     largest_connected_hypergraph
 
+    References
+    ----------
+    Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al.
+    Hypernetwork science via high-order hypergraph walks.
+    EPJ Data Sci. 9, 16 (2020).
+    https://doi.org/10.1140/epjds/s13688-020-00231-0
+
     Example
     -------
     >>> import xgi
@@ -115,13 +142,13 @@ def number_connected_components(H):
     seen = set()
     for v in H:
         if v not in seen:
-            c = _plain_bfs(H, v)
+            c = _plain_bfs(H, v, s=s)
             seen.update(c)
             num_cc += 1
     return num_cc
 
 
-def largest_connected_component(H):
+def largest_connected_component(H, s=1):
     """
     A function to find the largest connected component of a hypergraph.
 
@@ -129,6 +156,8 @@ def largest_connected_component(H):
     ----------
     H: Hypergraph object
         The hypergraph of interest
+    s: int, optional
+        The overlap parameter
 
     Returns
     -------
@@ -140,6 +169,13 @@ def largest_connected_component(H):
     connected_components
     largest_connected_hypergraph
 
+    References
+    ----------
+    Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al.
+    Hypernetwork science via high-order hypergraph walks.
+    EPJ Data Sci. 9, 16 (2020).
+    https://doi.org/10.1140/epjds/s13688-020-00231-0
+
     Example
     -------
     >>> import xgi
@@ -148,10 +184,10 @@ def largest_connected_component(H):
     50
 
     """
-    return max(connected_components(H), key=len)
+    return max(connected_components(H, s=s), key=len)
 
 
-def node_connected_component(H, n):
+def node_connected_component(H, n, s=1):
     """
     A function to find the connected component of which a node in the
     hypergraph is a part.
@@ -162,6 +198,8 @@ def node_connected_component(H, n):
         The hypergraph of interest
     n: hashable
         Node label
+    s: int, optional
+        The overlap parameter
 
     See Also
     --------
@@ -173,6 +211,13 @@ def node_connected_component(H, n):
         Returns the connected component of which the specified node in the
         hypergraph is a part.
 
+    References
+    ----------
+    Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al.
+    Hypernetwork science via high-order hypergraph walks.
+    EPJ Data Sci. 9, 16 (2020).
+    https://doi.org/10.1140/epjds/s13688-020-00231-0
+
     Example
     -------
     >>> import xgi
@@ -183,12 +228,12 @@ def node_connected_component(H, n):
 
     """
     if n in H:
-        return _plain_bfs(H, n)
+        return _plain_bfs(H, n, s=s)
     else:
         raise XGIError("Specified node is not in the hypergraph!")
 
 
-def largest_connected_hypergraph(H, in_place=False):
+def largest_connected_hypergraph(H, s=1, in_place=False):
     """
     A function to find the largest connected hypergraph from a data set.
 
@@ -196,6 +241,8 @@ def largest_connected_hypergraph(H, in_place=False):
     ----------
     H: Hypergraph
         The hypergraph of interest
+    s: int, optional
+        The overlap parameter
     in_place: bool, optional
         If False, creates a copy; if True, modifies the existing hypergraph.
         By default, True.
@@ -214,6 +261,13 @@ def largest_connected_hypergraph(H, in_place=False):
     connected_components
     largest_connected_component
 
+    References
+    ----------
+    Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al.
+    Hypernetwork science via high-order hypergraph walks.
+    EPJ Data Sci. 9, 16 (2020).
+    https://doi.org/10.1140/epjds/s13688-020-00231-0
+
     Example
     -------
     >>> import xgi
@@ -221,28 +275,49 @@ def largest_connected_hypergraph(H, in_place=False):
     >>> H_gcc = xgi.largest_connected_hypergraph(H)
     >>> print(H_gcc.num_nodes)
     6
-
     """
-    connected_nodes = max(connected_components(H), key=len)
+    connected_nodes = max(connected_components(H, s=s), key=len)
     if not in_place:
         return subhypergraph(H, nodes=connected_nodes).copy()
     else:
         H.remove_nodes_from(set(H.nodes).difference(connected_nodes))
 
 
-def _plain_bfs(H, source):
-    """A fast BFS node generator
+def _plain_bfs(H, source, s=1):
+    """A helper function to do an edge-first BFS search
 
-    Source:
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        The hypergraph
+    source : hashable
+        The ID of the starting node for the BFS
+    s : int, optional
+        The overlap of edges, by default 1
+
+    Returns
+    -------
+    set
+        A list of all nodes in the s-component.
+
+    References
+    ----------
     https://networkx.org/documentation/stable/_modules/networkx/algorithms/components/connected.html
+
+    Aksoy, S.G., Joslyn, C., Ortiz Marrero, C. et al.
+    Hypernetwork science via high-order hypergraph walks.
+    EPJ Data Sci. 9, 16 (2020).
+    https://doi.org/10.1140/epjds/s13688-020-00231-0
     """
-    seen = set()
-    nextlevel = {source}
+    seen_edges = set()
+    nodes = {source}
+    nextlevel = set(H.edges(H.nodes.memberships(source)).filterby("size", s, "geq"))
     while nextlevel:
         thislevel = nextlevel
         nextlevel = set()
-        for v in thislevel:
-            if v not in seen:
-                seen.add(v)
-                nextlevel.update(H.nodes.neighbors(v))
-    return seen
+        for e in thislevel:
+            if e not in seen_edges:
+                nodes.update(H.edges.members(e))
+                seen_edges.add(e)
+                nextlevel.update(H.edges.neighbors(e, s=s))
+    return nodes
