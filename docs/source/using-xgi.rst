@@ -26,6 +26,10 @@ Published Work
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s44260-025-00041-3>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/governance>`
 
+[XGI] Tianyu Li, Ying Xie, Zhiqiu Ye, Jiapei Zeng, Yingqi Liu, Lu Liu, and Ya Jia, "Analysis of synchronization transitions in higher-order Kuramoto oscillator system with different orders of phase lags", *Chaos, Solitons & Fractals*, Volume 199, Part 1, October 2025, 116749.
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1016/j.chaos.2025.116749>`
+
 [XGI-DATA] Marco Nurisso, Marta Morandini, Maxime Lucas, Francesco Vaccarino, Tommaso Gili, and Giovanni Petri, "Higher-order Laplacian renormalization", *Nature Physics* (2025).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41567-025-02784-1>`
@@ -145,9 +149,17 @@ Preprints
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2502.02386>`
 
+Cameron Ibrahim, S M Ferdous, Ilya Safro, Marco Minutoli, and Mahantesh Halappanavar, "ELRUHNA: Elimination Rule-based Hypergraph Alignment", 
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2506.09866>`
+
 [XGI] Leah A. Keating, Kwang-Il Goh, Mason A. Porter, "An Approximate-Master-Equation Formulation of the Watts Threshold Model on Hypergraphs", arXiv:2503.04020 (2025).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/arXiv:2503.04020>`
+
+[XGI] Timothy LaRock and Renaud Lambiotte, "Exploring the Non-uniqueness of Node Co-occurrence Matrices of Hypergraphs", arXiv:2506.01479 (2025).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2506.01479>`
 
 [XGI] Alyssa Smith, Ilya Amburg, Sagar Kumar, Brooke Foucault Welles, Nicholas W. Landry, "A Blue Start: A large-scale pairwise and higher-order social network dataset", arXiv:2505.11608 (2025).
 
