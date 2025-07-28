@@ -27,7 +27,7 @@ def write_hif(H, path):
     path: string
         The path of the file to read from
     """
-    data = to_hif_dict(H)
+    data = to_hif_dict(H, convert_nans=True)
 
     datastring = json.dumps(data, indent=2)
 

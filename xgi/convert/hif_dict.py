@@ -5,11 +5,12 @@ from collections import defaultdict
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..utils import IDDict
 from .bipartite_edges import to_bipartite_edgelist
+import math
 
 __all__ = ["to_hif_dict", "from_hif_dict"]
 
 
-def to_hif_dict(H):
+def to_hif_dict(H, convert_nans=False):
     """
     A function to create a dictionary according to the HIF standard from a higher-order network.
 
@@ -19,12 +20,26 @@ def to_hif_dict(H):
     ----------
     H: Hypergraph, DiHypergraph, or SimplicialComplex object
         The specified higher-order network
-
+    convert_nans: Bool
+        Whether or not to convert attrs with value NaN to None
     Returns
     -------
     defaultdict
         A dict according to the HIF standard.
     """
+
+    def _replace_nan_with_none(d):
+        new_dict = {}
+        for key, value in d.items():
+            if isinstance(value, float) and math.isnan(value):
+                new_dict[key] = None
+            elif isinstance(value, dict):
+                # Recursively handle nested dictionaries
+                new_dict[key] = _replace_nan_with_none(value)
+            else:
+                new_dict[key] = value
+        return new_dict
+
     data = defaultdict(list)
 
     data["metadata"] = {}
@@ -41,13 +56,29 @@ def to_hif_dict(H):
     isolates = set(H.nodes.isolates())
     nodes_with_attrs = set(n for n in H.nodes if H.nodes[n])
     for n in isolates.union(nodes_with_attrs):
-        attr = {"attrs": H.nodes[n]} if H.nodes[n] else {}
+        attr = (
+            {
+                "attrs": (
+                    _replace_nan_with_none(H.nodes[n]) if convert_nans else H.nodes[n]
+                )
+            }
+            if H.nodes[n]
+            else {}
+        )
         data["nodes"].append(IDDict({"node": n}) + attr)
 
     empty = set(H.edges.empty())
     edges_with_attrs = set(e for e in H.edges if H.edges[e])
     for e in empty.union(edges_with_attrs):
-        attr = {"attrs": H.edges[e]} if H.edges[e] else {}
+        attr = (
+            {
+                "attrs": (
+                    _replace_nan_with_none(H.edges[e]) if convert_nans else H.edges[e]
+                )
+            }
+            if H.edges[e]
+            else {}
+        )
         data["edges"].append(IDDict({"edge": e}) + attr)
 
     # hyperedge dict
