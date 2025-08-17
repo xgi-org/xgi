@@ -12,9 +12,13 @@ Published Work
 2025
 ----
 
-[XGI-DATA] Jordan Barrett, Paweł Prałat, Aaron Smith, François Théberge, "Counting simplicial pairs in hypergraphs", Proceedings of Complex Networks & Their Applications XIII (2025).
+[XGI-DATA] Jordan Barrett, Paweł Prałat, Aaron Smith, François Théberge, "Counting simplicial pairs in hypergraphs", *Proceedings of Complex Networks & Their Applications XIII*, pp 77–88 (2025).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1007/978-3-031-82431-9_7>`
+
+[XGI] Dhrubajyoti Biswas and Soumyajit Seth, "Effect of higher-order interactions on aging transitions of coupled neurons", *Chaos, Solitons & Fractals*, Volume 200, Part 1, 116977 (2025).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1016/j.chaos.2025.116977>`
 
 [XGI] Robin Delabays, Giulia De Pasquale, Florian Dörfler, and Yuanzhao Zhang, "Hypergraph reconstruction from dynamics", *Nature Communications* **16**, 2691 (2025).
 
@@ -145,9 +149,16 @@ Preprints
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2503.16959>`
 
+[XGI, XGI-DATA] Martín Coll, Cliff A. Joslyn, Nicholas W. Landry, Quintino Francesco Lotito, Audun Myers, Joshua Pickard, Brenda Praggastis, and Przemysław Szufel, "HIF: The hypergraph interchange format for higher-order networks", arXiv:2507.11520 (2025).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2503.16959>`
+:bdg-link-primary-line:`Code <https://github.com/pszufe/HIF-standard>`
+
+
 [XGI, XGI-DATA] Xie He, Philip S. Chodrow, and Peter J. Mucha, "Hypergraph Link Prediction via Hyperedge Copying", arXiv:2502.02386 (2025).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2502.02386>`
+:bdg-link-primary-line:`Code <https://github.com/hexie1995/HyperGraph>`
 
 Cameron Ibrahim, S M Ferdous, Ilya Safro, Marco Minutoli, and Mahantesh Halappanavar, "ELRUHNA: Elimination Rule-based Hypergraph Alignment", 
 
