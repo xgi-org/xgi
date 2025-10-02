@@ -31,6 +31,7 @@ __all__ = [
     "crest_r",
 ]
 
+
 class IDDict(dict):
     """A dict that holds (node or edge) IDs.
 
@@ -593,5 +594,9 @@ def geometric(p):
 
 
 def crest_r():
-    palette = [(0.17363177, 0.19076859, 0.44549087), (0.20350004, 0.5231837, 0.55370601), (0.6468274, 0.80289262, 0.56592265)]
+    palette = [
+        (0.17363177, 0.19076859, 0.44549087),
+        (0.20350004, 0.5231837, 0.55370601),
+        (0.6468274, 0.80289262, 0.56592265),
+    ]
     return LinearSegmentedColormap.from_list("crest_r", palette)

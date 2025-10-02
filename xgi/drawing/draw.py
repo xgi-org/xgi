@@ -24,7 +24,7 @@ from ..algorithms import max_edge_order, unique_edge_sizes
 from ..convert import to_bipartite_edgelist
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
-from ..utils import subfaces, crest_r
+from ..utils import crest_r, subfaces
 from .draw_utils import (
     _CCW_sort,
     _draw_arg_to_arr,
