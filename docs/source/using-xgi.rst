@@ -25,10 +25,20 @@ Published Work
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41467-025-57664-2>`
 :bdg-link-primary-line:`Code <https://github.com/TaylorBasedHypergraphInference/THIS>`
 
-[XGI] Laurent Hébert-Dufresne, Nicholas W. Landry, Juniper Lovato, Jonathan St-Onge, Jean-Gabriel Young, Marie-Ève Couture-Ménard, Stéphane Bernatchez, Catherine Choquette, and Alan A. Cohen, "Governance as a complex, networked, democratic, satisfiability problem", *npj Complexity* **2**, 14 (2025)..
+[XGI, XGI-DATA] Xie He, Philip S. Chodrow, and Peter J. Mucha, "Hypergraph Link Prediction via Hyperedge Copying", *Physical Review E* **112**, 024305 (2025).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2502.02386>`
+:bdg-link-primary-line:`Code <https://github.com/hexie1995/HyperGraph>`
+
+[XGI] Laurent Hébert-Dufresne, Nicholas W. Landry, Juniper Lovato, Jonathan St-Onge, Jean-Gabriel Young, Marie-Ève Couture-Ménard, Stéphane Bernatchez, Catherine Choquette, and Alan A. Cohen, "Governance as a complex, networked, democratic, satisfiability problem", *npj Complexity* **2**, 14 (2025).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s44260-025-00041-3>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/governance>`
+
+[XGI, XGI-DATA] Nicholas W. Landry and Laurent Hébert-Dufresne, "Group Science: The Open Source Study of Higher-order Networks With XGI", *SIAM News* **58**, 8 (2025).
+
+:bdg-link-primary-line:`Paper <https://www.siam.org/publications/siam-news/articles/group-science-the-open-source-study-of-higher-order-networks-with-xgi/>`
+:bdg-link-primary-line:`Code <https://github.com/nwlandry/group-science-siam-news>`
 
 [XGI] Tianyu Li, Ying Xie, Zhiqiu Ye, Jiapei Zeng, Yingqi Liu, Lu Liu, and Ya Jia, "Analysis of synchronization transitions in higher-order Kuramoto oscillator system with different orders of phase lags", *Chaos, Solitons & Fractals*, Volume 199, Part 1, October 2025, 116749.
 
@@ -154,11 +164,9 @@ Preprints
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2503.16959>`
 :bdg-link-primary-line:`Code <https://github.com/pszufe/HIF-standard>`
 
+[XGI] Yiwei Huang, Shuqi Xu, Shimin Cai, and Linyuan Lü, "Uncovering multi-technology convergence patterns with hypergraphs: Evolution and prediction using patent data", 	arXiv:2509.15521 (2025).
 
-[XGI, XGI-DATA] Xie He, Philip S. Chodrow, and Peter J. Mucha, "Hypergraph Link Prediction via Hyperedge Copying", arXiv:2502.02386 (2025).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2502.02386>`
-:bdg-link-primary-line:`Code <https://github.com/hexie1995/HyperGraph>`
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2509.15521>`
 
 Cameron Ibrahim, S M Ferdous, Ilya Safro, Marco Minutoli, and Mahantesh Halappanavar, "ELRUHNA: Elimination Rule-based Hypergraph Alignment", 
 
@@ -171,6 +179,11 @@ Cameron Ibrahim, S M Ferdous, Ilya Safro, Marco Minutoli, and Mahantesh Halappan
 [XGI] Timothy LaRock and Renaud Lambiotte, "Exploring the Non-uniqueness of Node Co-occurrence Matrices of Hypergraphs", arXiv:2506.01479 (2025).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2506.01479>`
+
+[XGI-DATA] Hugo P. Maia, Wesley Cota, Yamir Moreno, and Silvio C. Ferreira, "Efficient Gillespie algorithms for spreading phenomena in large and heterogeneous higher-order networks", arXiv:2509.20174 (2025).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2509.20174>`
+:bdg-link-primary-line:`Code <https://github.com/gisc-ufv/hyperSIS>`
 
 [XGI] Alyssa Smith, Ilya Amburg, Sagar Kumar, Brooke Foucault Welles, Nicholas W. Landry, "A Blue Start: A large-scale pairwise and higher-order social network dataset", arXiv:2505.11608 (2025).
 
