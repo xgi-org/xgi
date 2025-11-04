@@ -57,6 +57,10 @@ Published Work
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1103/PhysRevE.111.024313>`
 
+[XGI] Yuyan Tong, Renhao Hong, Meng Li, Na Yang, Weihao Deng, Hui Tang, Tao Zeng, and Rui Liu, "Hi-C3: a statistical inference-based model for reconstructing higher-order cell–cell communication networks", Briefings in Bioinformatics, Volume 26, Issue 5, bbaf568 (2025).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1093/bib/bbaf568>`
+
 2024
 ----
 
@@ -158,6 +162,10 @@ Preprints
 [XGI] Cosimo Agostinelli, Marco Mancastroppa, and Alain Barrat, "Higher-order dissimilarity measures for hypergraph comparison", arXiv:2503.16959 (2025).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2503.16959>`
+
+[XGI-DATA] Margherita Bertè and Tommaso Gili, "Fibration Symmetries and Cluster Synchronization in Multi-Body Systems", arXiv:2510.11207 (2025).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2510.11207>`
 
 [XGI, XGI-DATA] Martín Coll, Cliff A. Joslyn, Nicholas W. Landry, Quintino Francesco Lotito, Audun Myers, Joshua Pickard, Brenda Praggastis, and Przemysław Szufel, "HIF: The hypergraph interchange format for higher-order networks", arXiv:2507.11520 (2025).
 
