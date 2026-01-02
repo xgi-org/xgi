@@ -176,7 +176,7 @@ def ttsv2(pair_dict, edge_dict, r, a, n):
     from scipy.sparse import coo_array
 
     s = {}
-    r_minus_2_factorial = factorial(r - 2)
+    r_minus_2_factorial = math.factorial(r - 2)
     for (v1, v2), edges in pair_dict.items():
         c = 0
         for e in edges:
@@ -282,7 +282,7 @@ def _get_gen_coef_subset_expansion(edge_values, node_value, r):
             for i in range(len(subset_lengths))
         ]
     )
-    return total / factorial(r)
+    return total / math.factorial(r)
 
 
 def _get_gen_coef_fft_fast_array(edge_without_node, a, node, l, r):
