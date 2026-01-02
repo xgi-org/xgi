@@ -297,7 +297,6 @@ def draw(
         )
 
     elif isinstance(H, Hypergraph):
-
         ax, (dyad_collection, edge_collection) = draw_hyperedges(
             H=H,
             pos=pos,
@@ -509,8 +508,8 @@ def draw_nodes(
 
     # plot
     node_collection = ax.scatter(
-        x=xy[:, 0],
-        y=xy[:, 1],
+        xy[:, 0],
+        xy[:, 1],
         s=node_size,
         marker=node_shape,
         c=node_fc,
@@ -774,7 +773,6 @@ def draw_hyperedges(
     edge_ec = edge_ec[ids_sorted] if len(edge_ec) > 1 else edge_ec  # reorder
 
     if edge_ec_to_map:  # edgecolors need to be manually mapped
-
         # create scalarmappable to map floats to colors
         # we use the same vmin, vmax, and cmap as for edge_fc
         norm = mpl.colors.Normalize(vmin=edge_vmin, vmax=edge_vmax)
@@ -1484,7 +1482,6 @@ def draw_multilayer(
 
     # plot layers
     for jj, d in enumerate(orders):
-
         z = [sep * d] * H.num_nodes
 
         # draw surfaces corresponding to the different orders
@@ -1584,7 +1581,6 @@ def draw_multilayer(
 
     # draw nodes (last)
     for d in orders:
-
         z = [sep * d] * H.num_nodes
 
         node_collection = ax.scatter(
@@ -2335,7 +2331,6 @@ def draw_directed_dyads(
                 ems = edge_marker_size
 
             for n in tail:  # lines going towards the center
-
                 xy_source = node_pos[n]
                 xy_target = edge_pos[e]
 
