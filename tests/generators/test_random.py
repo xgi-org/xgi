@@ -131,6 +131,47 @@ def test_fast_random_hypergraph():
         xgi.fast_random_hypergraph(10, [-0.1, 1])
 
 
+def test_simplicial_chung_lu_hypergraph():
+    k1 = {i: random.randint(1, 10) for i in range(20)}
+    k2 = {i: sorted(k1.values())[i] for i in range(20)}
+
+    H = xgi.simplicial_chung_lu_hypergraph(k1, k2, p=0.5)
+    assert H.num_nodes == 20
+
+    # seed reproducibility
+    H1 = xgi.simplicial_chung_lu_hypergraph(k1, k2, p=0.5, seed=2)
+    H2 = xgi.simplicial_chung_lu_hypergraph(k1, k2, p=0.5, seed=2)
+    assert H1._edge == H2._edge
+
+    # warning on mismatched degree/size sums
+    with pytest.warns(Warning):
+        _ = xgi.simplicial_chung_lu_hypergraph({0: 1, 1: 2}, {0: 2, 1: 2}, p=0.5)
+
+    # invalid p
+    with pytest.raises(ValueError):
+        xgi.simplicial_chung_lu_hypergraph(k1, k2, p=-0.1)
+    with pytest.raises(ValueError):
+        xgi.simplicial_chung_lu_hypergraph(k1, k2, p=1.5)
+
+
+def test_random_nested_hypergraph():
+    H = xgi.random_nested_hypergraph(20, 5, 4, [0.8, 0.5])
+    assert H.num_nodes == 20
+
+    # edge sizes should be between 2 and d
+    for edge in H.edges.members():
+        assert 2 <= len(edge) <= 4
+
+    # scalar epsilon
+    H = xgi.random_nested_hypergraph(20, 5, 4, 0.8)
+    assert H.num_nodes == 20
+
+    # seed reproducibility
+    H1 = xgi.random_nested_hypergraph(20, 5, 4, [0.8, 0.5], seed=2)
+    H2 = xgi.random_nested_hypergraph(20, 5, 4, [0.8, 0.5], seed=2)
+    assert H1._edge == H2._edge
+
+
 def test_pr_655():
     import warnings
 
