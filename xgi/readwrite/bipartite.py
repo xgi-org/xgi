@@ -1,5 +1,7 @@
 """Read from and write to bipartite formats."""
 
+from xopen import xopen
+
 from ..exception import XGIError
 from ..generators import empty_hypergraph
 
@@ -111,7 +113,7 @@ def read_bipartite_edgelist(
     >>> # H = xgi.read_bipartite_edgelist("test.csv", delimiter=",")
 
     """
-    with open(path, "rb") as file:
+    with xopen(path, "rb") as file:
         lines = (
             line if isinstance(line, str) else line.decode(encoding) for line in file
         )
