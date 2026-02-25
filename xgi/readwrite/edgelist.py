@@ -1,5 +1,7 @@
 """Read from and write to edgelists."""
 
+from xopen import xopen
+
 from ..generators import empty_hypergraph
 
 __all__ = [
@@ -98,7 +100,7 @@ def read_edgelist(
     >>> # H = xgi.read_edgelist("test.csv", delimiter=",")
 
     """
-    with open(path, "rb") as file:
+    with xopen(path, "rb") as file:
         lines = (
             line if isinstance(line, str) else line.decode(encoding) for line in file
         )
