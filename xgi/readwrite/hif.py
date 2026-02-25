@@ -8,6 +8,8 @@ import json
 from collections import defaultdict
 from os.path import dirname, join
 
+from xopen import xopen
+
 from ..convert import from_hif_dict, to_hif_dict
 from ..exception import XGIError
 
@@ -99,7 +101,7 @@ def read_hif(path, nodetype=None, edgetype=None):
     A Hypergraph, SimplicialComplex, or DiHypergraph object
         The loaded network
     """
-    with open(path) as file:
+    with xopen(path) as file:
         data = json.loads(file.read())
 
     return from_hif_dict(data, nodetype=nodetype, edgetype=edgetype)

@@ -49,6 +49,7 @@ dependencies = [
     "requests>=2.0",
     "matplotlib>=3.4",
     "seaborn>=0.10",
+    "xopen>=2.0.2",
 ]
 
 [project.urls]
