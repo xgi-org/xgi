@@ -10,6 +10,7 @@ from math import ceil, log
 import numpy as np
 import pandas as pd
 import requests
+from matplotlib.colors import LinearSegmentedColormap
 
 from xgi.exception import IDNotFound, XGIError
 
@@ -27,6 +28,7 @@ __all__ = [
     "binomial_sequence",
     "get_network_type",
     "geometric",
+    "crest_r",
 ]
 
 
@@ -589,3 +591,12 @@ def geometric(p):
     except ZeroDivisionError:
         # when p = 0
         return np.inf
+
+
+def crest_r():
+    palette = [
+        (0.17363177, 0.19076859, 0.44549087),
+        (0.20350004, 0.5231837, 0.55370601),
+        (0.6468274, 0.80289262, 0.56592265),
+    ]
+    return LinearSegmentedColormap.from_list("crest_r", palette)

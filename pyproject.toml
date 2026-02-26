@@ -48,7 +48,6 @@ dependencies = [
     "networkx>=2.7",
     "requests>=2.0",
     "matplotlib>=3.4",
-    "seaborn>=0.10",
 ]
 
 [project.urls]
@@ -91,10 +90,12 @@ release = [
 test = [
     "pytest>=7.2",
     "pytest-cov>=4.0",
+    "tuna",
 ]
 tutorial = [
     "jupyter>=1.0",
     "ipython<=8.12.0",
+    "seaborn>=0.10"
 ]
 all = ["xgi[benchmark,developer,docs,release,test,tutorial]"]
 

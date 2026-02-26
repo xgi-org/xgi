@@ -3,7 +3,6 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-import seaborn as sb
 
 import xgi
 from xgi.exception import XGIError
@@ -295,7 +294,7 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
     ax, collections = xgi.draw_hyperedges(H, ax=ax)
     (dyad_collection, edge_collection) = collections
     assert dyad_collection.get_cmap() == plt.cm.Greys
-    assert edge_collection.get_cmap() == sb.color_palette("crest_r", as_cmap=True)
+    assert edge_collection.get_cmap() == xgi.crest_r()
     plt.close("all")
 
     # set cmap
