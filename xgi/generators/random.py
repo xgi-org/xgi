@@ -18,8 +18,10 @@ __all__ = [
     "fast_random_hypergraph",
     "random_hypergraph",
     "chung_lu_hypergraph",
+    "simplicial_chung_lu_hypergraph",
     "dcsbm_hypergraph",
     "watts_strogatz_hypergraph",
+    "random_nested_hypergraph",
 ]
 
 
@@ -468,4 +470,222 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
             to_add.append(np.append(neighbors, node))
     H.remove_edges_from(to_remove)
     H.add_edges_from(to_add)
+    return H
+
+
+def simplicial_chung_lu_hypergraph(k1, k2, p, seed=None):
+    """A function to generate a simplicial Chung-Lu hypergraph.
+
+    Parameters
+    ----------
+    k1 : dictionary
+        Dictionary where the keys are node ids
+        and the values are node degrees.
+    k2 : dictionary
+        Dictionary where the keys are edge ids
+        and the values are edge sizes.
+    p : float
+        Probability (between 0 and 1) of generating a simplicial edge
+        instead of a Chung-Lu edge. Controls the amount of nestedness.
+    seed : integer or None (default)
+            The seed for the random number generator.
+
+    Returns
+    -------
+    Hypergraph object
+        The generated hypergraph
+
+    Warns
+    -----
+    warnings.warn
+        If the sums of the edge sizes and node degrees are not equal, the
+        algorithm still runs, but raises a warning.
+
+    Notes
+    -----
+    The sums of k1 and k2 should be the same. If they are not the same,
+    this function returns a warning but still runs.
+
+    References
+    ----------
+    Jordan Barrett, Paweł Prałat, Aaron Smith, and François Théberge,
+    "Counting simplicial pairs in hypergraphs",
+    J. Complex Netw. **13**, cnaf021 (2025).
+    https://doi.org/10.1093/comnet/cnaf021
+
+    See Also
+    --------
+    chung_lu_hypergraph
+
+    Example
+    -------
+    >>> import xgi
+    >>> import random
+    >>> n = 50
+    >>> k1 = {i : random.randint(1, 10) for i in range(n)}
+    >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
+    >>> H = xgi.simplicial_chung_lu_hypergraph(k1, k2, p=0.5)
+
+    """
+    if not 0 <= p <= 1:
+        raise ValueError("p must be between 0 and 1.")
+
+    if seed is not None:
+        random.seed(seed)
+        np.random.seed(seed)
+
+    if sum(k1.values()) != sum(k2.values()):
+        warnings.warn(
+            "The sum of the degree sequence does not match the sum of the size sequence"
+        )
+
+    node_labels = np.array(list(k1.keys()))
+    degrees = np.array([k1[v] for v in node_labels], dtype=float)
+    S = degrees.sum()
+    if S == 0:
+        H = empty_hypergraph()
+        H.add_nodes_from(k1.keys())
+        return H
+    node_probs = degrees / S
+
+    # Build the edge-size sequence (random permutation) — Algorithm 4, step 1
+    size_sequence = list(k2.values())
+    random.shuffle(size_sequence)
+
+    edges = []  # list of frozensets
+
+    for k in size_sequence:
+        if random.random() < p:
+            # Simplicial edge — Algorithm 3
+            edges_not_k = [e for e in edges if len(e) != k]
+
+            if not edges_not_k:
+                # No edges of different size exist → plain Chung-Lu edge
+                e_new = frozenset(
+                    np.random.choice(node_labels, size=k, replace=True, p=node_probs)
+                )
+            else:
+                # Sample e' uniformly from edges not of size k
+                e_prime = random.choice(edges_not_k)
+                if len(e_prime) > k:
+                    # Return a uniform k-subset of e'
+                    e_new = frozenset(random.sample(sorted(e_prime), k))
+                else:
+                    # |e'| < k: return e' ∪ Chung-Lu edge of size k − |e'|
+                    extra = frozenset(
+                        np.random.choice(
+                            node_labels,
+                            size=k - len(e_prime),
+                            replace=True,
+                            p=node_probs,
+                        )
+                    )
+                    e_new = e_prime | extra
+        else:
+            # Plain Chung-Lu edge — Algorithm 1
+            e_new = frozenset(
+                np.random.choice(node_labels, size=k, replace=True, p=node_probs)
+            )
+
+        edges.append(e_new)
+
+    H = empty_hypergraph()
+    H.add_nodes_from(k1.keys())
+    H.add_edges_from(edges)
+    return H
+
+
+def random_nested_hypergraph(n, m, d, epsilon, seed=None):
+    """A function to generate a random nested hypergraph.
+
+    Parameters
+    ----------
+    n : int
+        Number of nodes.
+    m : int
+        Number of facets.
+    d : int
+        Size of each facet.
+    epsilon : float or list of float
+        Retention probability. If a float, the same retention probability
+        is used for all sub-facet sizes. If a list, ``epsilon[i]`` is the
+        retention probability for hyperedges of size ``i+2``, for
+        ``i = 0, ..., d-3``. Hyperedges of size ``t`` are rewired with
+        probability ``1 - epsilon[t-2]``.
+    seed : integer or None (default)
+            The seed for the random number generator.
+
+    Returns
+    -------
+    Hypergraph object
+        The generated hypergraph
+
+    Notes
+    -----
+    The algorithm proceeds as follows:
+
+    1. Generate m facets of size d by uniform random node assignment,
+       rejecting exact duplicate facets.
+    2. For each facet, enumerate all proper subsets of sizes 2 through
+       d − 1 (singletons excluded). Together with the facets
+       themselves, these form the initial edge set. Duplicates across
+       facets are removed.
+    3. For each hyperedge of size t < d: with probability
+       1 − ``epsilon[t-2]``, rewire the edge by picking one pivot node
+       uniformly at random from the edge and replacing the other t − 1
+       nodes with nodes sampled uniformly from {0, …, n − 1}.
+
+    References
+    ----------
+    Jihye Kim, Deok-Sun Lee, and K-I. Goh,
+    "Contagion dynamics on hypergraphs with nested hyperedges",
+    Phys. Rev. E **108**, 034313 (2023).
+    https://doi.org/10.1103/PhysRevE.108.034313
+
+    Example
+    -------
+    >>> import xgi
+    >>> H = xgi.random_nested_hypergraph(20, 5, 4, 0.8)
+
+    """
+    if isinstance(epsilon, (int, float)):
+        epsilon = [epsilon] * (d - 2)
+
+    if seed is not None:
+        random.seed(seed)
+        np.random.seed(seed)
+
+    nodes = range(n)
+
+    # Step 1: Generate m unique facets of size d
+    facets = set()
+    while len(facets) < m:
+        facet = frozenset(np.random.choice(nodes, size=d, replace=False))
+        facets.add(facet)
+
+    # Step 2: For each facet, enumerate all subsets of sizes 2..d
+    # (facets themselves are included as edges; singletons excluded)
+    all_edges = set()
+    for facet in facets:
+        for size in range(2, d + 1):
+            for subset in combinations(facet, size):
+                all_edges.add(frozenset(subset))
+
+    # Step 3: Rewire hyperedges of size t < d
+    final_edges = set()
+    for e in all_edges:
+        t = len(e)
+        if t < d:
+            eps_t = epsilon[t - 2]
+            if random.random() > eps_t:
+                # Rewire: pick one pivot, replace the rest
+                pivot = random.choice(list(e))
+                others = [v for v in nodes if v != pivot]
+                new_nodes = np.random.choice(others, size=t - 1, replace=False)
+                e = frozenset([pivot, *new_nodes])
+        final_edges.add(e)
+
+    H = empty_hypergraph()
+    H.add_nodes_from(nodes)
+    H.add_edges_from(final_edges)
     return H
