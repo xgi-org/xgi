@@ -113,8 +113,9 @@ class IDStat:
         ('degree', 'degree(order=3)')
         >>> H.nodes.multi([da, d3]).asdict(transpose=True).keys()
         dict_keys(['degree', 'degree(order=3)'])
-        >>> H.nodes.multi([da, d3]).aspandas().columns
-        Index(['degree', 'degree(order=3)'], dtype='object')
+        >>> cols = H.nodes.multi([da, d3]).aspandas().columns
+        >>> list(cols)
+        ['degree', 'degree(order=3)']
 
         """
         name = f"{self.func.__name__}"
