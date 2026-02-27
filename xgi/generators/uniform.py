@@ -9,7 +9,6 @@ from functools import reduce
 import numpy as np
 from scipy.special import comb
 
-from ..exception import XGIError
 from ..utils import geometric
 from .classic import complete_hypergraph, empty_hypergraph
 
@@ -135,7 +134,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
 
     Raises
     ------
-    XGIError
+    ValueError
         - If the length of sizes and p do not match.
         - If p is not a tensor with every dimension equal
         - If p is not m-dimensional
@@ -167,16 +166,16 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
 
     # Check if dimensions match
     if len(sizes) != np.size(p, axis=0):
-        raise XGIError("'sizes' and 'p' do not match.")
+        raise ValueError("'sizes' and 'p' do not match.")
     if len(np.shape(p)) != m:
-        raise XGIError("The dimension of p does not match m")
+        raise ValueError("The dimension of p does not match m")
     # Check that p has the same length over every dimension.
     if len(set(np.shape(p))) != 1:
-        raise XGIError("'p' must be a square tensor.")
+        raise ValueError("'p' must be a square tensor.")
     if np.max(p) > 1 or np.min(p) < 0:
-        raise XGIError("Entries of 'p' not in [0, 1].")
+        raise ValueError("Entries of 'p' not in [0, 1].")
     if np.sum(sizes) != n:
-        raise XGIError("Sum of sizes does not match n")
+        raise ValueError("Sum of sizes does not match n")
 
     if seed is not None:
         random.seed(seed)
@@ -251,7 +250,7 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
 
     Raises
     ------
-    XGIError
+    ValueError
         - If rho is not between 0 and 1
         - If the mean degree is negative.
         - If epsilon is not between 0 and 1
@@ -278,11 +277,11 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
     """
 
     if rho < 0 or rho > 1:
-        raise XGIError("The value of rho must be between 0 and 1")
+        raise ValueError("The value of rho must be between 0 and 1")
     if k < 0:
-        raise XGIError("The mean degree must be non-negative")
+        raise ValueError("The mean degree must be non-negative")
     if epsilon < 0 or epsilon > 1:
-        raise XGIError("epsilon must be between 0 and 1")
+        raise ValueError("epsilon must be between 0 and 1")
 
     sizes = [int(rho * n), n - int(rho * n)]
 
@@ -378,10 +377,10 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     elif p_type == "prob":
         q = p
     else:
-        raise XGIError("Invalid p_type!")
+        raise ValueError("Invalid p_type!")
 
     if q > 1 or q < 0:
-        raise XGIError("Probability not in [0, 1].")
+        raise ValueError("Probability not in [0, 1].")
 
     if q == 1 and not multiedges:
         return complete_hypergraph(n, order=m - 1)

@@ -72,9 +72,9 @@ def test_degree_assortativity(edgelist1, edgelist5):
         xgi.degree_assortativity(H)
 
     # test wrong kind
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         xgi.degree_assortativity(H1, kind="no-idea")
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         xgi.degree_assortativity(H1, kind="no-idea", exact=True)
 
 
@@ -88,7 +88,7 @@ def test_choose_degrees(edgelist1, edgelist6):
         _choose_degrees(e, k)
 
     # invalid choice function
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         e = H1.edges.members(0)
         _choose_degrees(e, k, "test")
 
