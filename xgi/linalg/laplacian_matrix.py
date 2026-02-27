@@ -101,10 +101,11 @@ def laplacian(H, order=1, sparse=False, rescale_per_node=False, index=False):
         L = csr_array((0, 0)) if sparse else np.empty((0, 0))
         return (L, {}) if index else L
 
+    D = np.asarray(degree_matrix(H, order=order), dtype=float)
     if sparse:
-        K = diags_array(degree_matrix(H, order=order), format="csr")
+        K = diags_array(D, format="csr")
     else:
-        K = np.diag(degree_matrix(H, order=order))
+        K = np.diag(D)
 
     L = order * K - A  # ravel needed to convert sparse matrix
 
@@ -233,9 +234,9 @@ def normalized_hypergraph_laplacian(H, weighted=False, sparse=True, index=False)
     De = np.sum(incidence, axis=0)
 
     if weighted:
-        weights = [H.edges[edge_idx].get("weight", 1) for edge_idx in H.edges]
+        weights = [float(H.edges[edge_idx].get("weight", 1)) for edge_idx in H.edges]
     else:
-        weights = [1] * H.num_edges
+        weights = [1.0] * H.num_edges
 
     if sparse:
         Dv_invsqrt = diags_array(np.power(Dv, -0.5), format="csr")
