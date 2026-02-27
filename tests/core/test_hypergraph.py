@@ -547,7 +547,7 @@ def test_random_edge_shuffle(edgelist4):
     assert len(H._edge[1]) == len(S._edge[1])
 
     # verify dual of edge dict is nodes dict
-    assert xgi.utilities.dual_dict(H._edge) == H._node
+    assert xgi.dual_dict(H._edge) == H._node
 
     # hypergraph with more than two edges
     S = xgi.Hypergraph(edgelist4)
@@ -568,7 +568,7 @@ def test_random_edge_shuffle(edgelist4):
         assert len(H._edge[edge_id]) == len(S._edge[edge_id])
 
     # verify dual of edge dict is nodes dict
-    assert xgi.utilities.dual_dict(H._edge) == H._node
+    assert xgi.dual_dict(H._edge) == H._node
 
     # random hypergraph
     S = xgi.random_hypergraph(50, [0.1, 0.01, 0.001], seed=1)
@@ -588,7 +588,7 @@ def test_random_edge_shuffle(edgelist4):
         assert len(H._node[node_id]) == len(S._node[node_id])
 
     # verify dual of edge dict is nodes dict
-    assert xgi.utilities.dual_dict(H._edge) == H._node
+    assert xgi.dual_dict(H._edge) == H._node
 
 
 def test_duplicate_edges(edgelist1):
