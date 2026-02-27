@@ -3,7 +3,6 @@ import pytest
 from scipy.special import comb
 
 import xgi
-from xgi.exception import XGIError
 
 
 def test_uniform_configuration_model_hypergraph():
@@ -23,7 +22,7 @@ def test_uniform_configuration_model_hypergraph():
 
 def test_uniform_HSBM():
     # sum of sizes != n
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         sizes = [4, 5]
@@ -31,7 +30,7 @@ def test_uniform_HSBM():
         xgi.uniform_HSBM(n, m, p, sizes)
 
     # non-square p
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         sizes = [4, 6]
@@ -39,7 +38,7 @@ def test_uniform_HSBM():
         xgi.uniform_HSBM(n, m, p, sizes)
 
     # length of sizes and length of p don't match
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         sizes = [4, 5, 1]
@@ -48,7 +47,7 @@ def test_uniform_HSBM():
 
     # dim of p is not m
     # non-square p
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 3
         n = 10
         sizes = [4, 6]
@@ -56,7 +55,7 @@ def test_uniform_HSBM():
         xgi.uniform_HSBM(n, m, p, sizes)
 
     # test p < 0
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         sizes = [4, 6]
@@ -64,7 +63,7 @@ def test_uniform_HSBM():
         xgi.uniform_HSBM(n, m, p, sizes)
 
     # test p > 1
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         sizes = [4, 6]
@@ -88,7 +87,7 @@ def test_uniform_HSBM():
 
 def test_uniform_HPPM():
     # rho < 0
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         rho = -0.1
@@ -97,7 +96,7 @@ def test_uniform_HPPM():
         xgi.uniform_HPPM(n, m, k, epsilon, rho)
 
     # rho > 1
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         rho = 1.1
@@ -106,7 +105,7 @@ def test_uniform_HPPM():
         xgi.uniform_HPPM(n, m, k, epsilon, rho)
 
     # k < 0
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         rho = 0.5
@@ -115,7 +114,7 @@ def test_uniform_HPPM():
         xgi.uniform_HPPM(n, m, k, epsilon, rho)
 
     # epsilon < 0
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         rho = 0.5
@@ -124,7 +123,7 @@ def test_uniform_HPPM():
         xgi.uniform_HPPM(n, m, k, epsilon)
 
     # epsilon < 0
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         rho = 0.5
@@ -178,21 +177,21 @@ def test_uniform_erdos_renyi_hypergraph():
     assert H1.edges.members(dtype=dict) == H2.edges.members(dtype=dict)
 
     # test p < 0
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         p = -0.1
         xgi.uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob")
 
     # test p > 1
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         p = 1.1
         xgi.uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob")
 
     # test wrong p_type arg
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         m = 2
         n = 10
         k = 2

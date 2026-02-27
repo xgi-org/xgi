@@ -1,7 +1,6 @@
 import pytest
 
 import xgi
-from xgi.exception import XGIError
 
 
 def test_star_clique():
@@ -21,7 +20,7 @@ def test_star_clique():
 
 
 def test_sunflower():
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         H = xgi.sunflower(3, 4, 2)
 
     H = xgi.sunflower(3, 1, 5)
