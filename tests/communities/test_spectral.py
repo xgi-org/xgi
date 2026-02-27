@@ -15,6 +15,7 @@ class TestKMeans:
         assert np.all(map(lambda v: isinstance(v, int), clusters.values()))
 
     def test_perfectly_separable_low_dimensions(self):
+        np.random.seed(37)
         X = np.zeros((10, 10))
         X[:5, :] = np.random.random((5, 10))
         X[5:10, :] = 37 + np.random.random((5, 10))
@@ -31,6 +32,7 @@ class TestKMeans:
         )
 
     def test_perfectly_separable_high_dimensions(self):
+        np.random.seed(37)
         X = np.zeros((10, 100))
         X[:5, :] = np.random.random((5, 100))
         X[5:10, :] = 37 + np.random.random((5, 100))
