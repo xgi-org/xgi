@@ -671,9 +671,9 @@ def test_fix_647():
     H = xgi.Hypergraph(el)
     L = xgi.normalized_hypergraph_laplacian(H, sparse=False)
 
-    # Eigenvalues non-negative
+    # Eigenvalues non-negative (tolerance for floating point)
     evals_mwe = eigvalsh(L)
-    assert np.all(evals_mwe >= 0)
+    assert np.all(evals_mwe >= -1e-12)
 
     # Weights error handling
     ## Default value when "weight" attribute unavailable
