@@ -57,9 +57,8 @@ def spectral_clustering(H, k=2, max_iter=1_000, seed=None):
 
     # Compute normalize Laplacian and its spectra
     L, rowdict = normalized_hypergraph_laplacian(H, index=True)
-    if seed is not None:
-        np.random.seed(seed)
-    evals, eigs = eigsh(L, k=k, which="SA")
+    v0 = np.random.default_rng(seed).random(L.shape[0]) if seed is not None else None
+    evals, eigs = eigsh(L, k=k, which="SA", v0=v0)
 
     # Form metric space representation
     X = np.array(eigs)
