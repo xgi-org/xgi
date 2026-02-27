@@ -1,6 +1,5 @@
 """Algorithms for finding the degree assortativity of a hypergraph."""
 
-import random
 from itertools import combinations, permutations
 
 import numpy as np
@@ -106,9 +105,7 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000, seed=
     DOI: 10.1093/comnet/cnaa018
     """
 
-    if seed is not None:
-        random.seed(seed)
-        np.random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     if H.num_nodes == 0:
         raise XGIError("Hypergraph must contain nodes")
@@ -147,8 +144,13 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000, seed=
     else:
         edges = [e for e in H.edges if len(H.edges.members(e)) > 1]
         k1k2 = [
-            np.random.permutation(
-                _choose_degrees(members[random.choice(edges)], k, kind)
+            rng.permutation(
+                _choose_degrees(
+                    members[edges[rng.integers(len(edges))]],
+                    k,
+                    kind,
+                    rng=rng,
+                )
             )
             for _ in range(num_samples)
         ]
@@ -159,7 +161,7 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000, seed=
     return rho
 
 
-def _choose_degrees(e, k, kind="uniform"):
+def _choose_degrees(e, k, kind="uniform", rng=None):
     """Choose the degrees of two nodes in a hyperedge.
 
     Parameters
@@ -194,12 +196,14 @@ def _choose_degrees(e, k, kind="uniform"):
     DOI: 10.1093/comnet/cnaa018
     """
     e = list(e)
+    if rng is None:
+        rng = np.random.default_rng()
     if len(e) > 1:
         if kind == "uniform":
-            i = np.random.randint(len(e))
+            i = rng.integers(len(e))
             j = i
             while i == j:
-                j = np.random.randint(len(e))
+                j = rng.integers(len(e))
             return (k[e[i]], k[e[j]])
 
         elif kind == "top-2":

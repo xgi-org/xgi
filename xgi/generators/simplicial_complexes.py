@@ -4,7 +4,6 @@ All the functions in this module return a SimplicialComplex class.
 
 """
 
-import random
 from collections import defaultdict
 from itertools import combinations
 
@@ -62,8 +61,7 @@ def random_simplicial_complex(N, ps, seed=None):
 
     """
 
-    if seed is not None:
-        np.random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     if (np.any(np.array(ps) < 0)) or (np.any(np.array(ps) > 1)):
         raise ValueError("All elements of ps must be between 0 and 1 included.")
@@ -76,7 +74,7 @@ def random_simplicial_complex(N, ps, seed=None):
 
         potential_simplices = combinations(nodes, d + 1)
         n_comb = comb(N, d + 1, exact=True)
-        mask = np.random.random(size=n_comb) <= p  # True if simplex to keep
+        mask = rng.random(size=n_comb) <= p  # True if simplex to keep
 
         simplices_to_add = [e for e, val in zip(potential_simplices, mask) if val]
 
@@ -125,8 +123,7 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     # defined.  Otherwise, a circular import error would happen.
     from ..core import SimplicialComplex
 
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     nodes = G.nodes()
     N = len(nodes)
@@ -149,7 +146,7 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     # promote cliques with a given probability
     for i, p in enumerate(ps[: max_order - 1]):
         d = i + 2  # simplex order
-        cliques_d_to_add = [el for el in cliques_d[d + 1] if random.random() <= p]
+        cliques_d_to_add = [el for el in cliques_d[d + 1] if rng.random() <= p]
         S.add_simplices_from(cliques_d_to_add, max_order=max_order)
 
     return S
@@ -185,8 +182,7 @@ def flag_complex_d2(G, p2=None, seed=None):
     # defined.  Otherwise, a circular import error would happen.
     from ..core import SimplicialComplex
 
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     nodes = G.nodes()
     edges = G.edges()
@@ -198,7 +194,7 @@ def flag_complex_d2(G, p2=None, seed=None):
     triangles_empty = find_triangles(G)
 
     if p2 is not None:
-        triangles = [el for el in triangles_empty if random.random() <= p2]
+        triangles = [el for el in triangles_empty if rng.random() <= p2]
     else:
         triangles = triangles_empty
 
@@ -232,9 +228,6 @@ def random_flag_complex_d2(N, p, seed=None):
     Computing all cliques quickly becomes heavy for large networks.
 
     """
-    if seed is not None:
-        random.seed(seed)
-
     if (p < 0) or (p > 1):
         raise ValueError("p must be between 0 and 1 included.")
 

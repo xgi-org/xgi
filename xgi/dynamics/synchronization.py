@@ -76,14 +76,13 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
     theta_time = np.zeros((timesteps, n))
     times = np.arange(timesteps) * dt
 
-    if seed is not None:
-        np.random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     if omega is None:
-        omega = np.random.normal(0, 1, n)
+        omega = rng.normal(0, 1, n)
 
     if theta is None:
-        theta = np.random.random(n) * 2 * np.pi
+        theta = rng.random(n) * 2 * np.pi
 
     for t in range(timesteps):
         theta_time[t] = theta

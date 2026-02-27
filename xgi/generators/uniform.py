@@ -2,7 +2,6 @@
 
 import itertools
 import operator
-import random
 import warnings
 from functools import reduce
 
@@ -70,8 +69,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     >>> H = xgi.uniform_hypergraph_configuration_model(k, m)
 
     """
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     # Making sure we have the right number of stubs
     remainder = sum(k.values()) % m
@@ -80,9 +78,10 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
             "This degree sequence is not realizable. "
             "Increasing the degree of random nodes so that it is."
         )
-        random_ids = random.sample(list(k.keys()), int(round(m - remainder)))
-        for idx in random_ids:
-            k[idx] = k[idx] + 1
+        keys = list(k.keys())
+        chosen = rng.choice(len(keys), size=int(round(m - remainder)), replace=False)
+        for i in chosen:
+            k[keys[i]] = k[keys[i]] + 1
 
     stubs = []
     # Creating the list to index through
@@ -93,7 +92,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     H.add_nodes_from(k.keys())
 
     while len(stubs) != 0:
-        u = random.sample(range(len(stubs)), m)
+        u = rng.choice(len(stubs), size=m, replace=False).tolist()
         edge = set()
         for index in u:
             edge.add(stubs[index])
@@ -178,8 +177,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
     if np.sum(sizes) != n:
         raise XGIError("Sum of sizes does not match n")
 
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     node_labels = range(n)
     H = empty_hypergraph()
@@ -203,20 +201,14 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
             max_index = reduce(operator.mul, partition_sizes, 1)
             if max_index < 0:
                 raise Exception("Index overflow error!")
-            index = geometric(p[block]) - 1
+            index = geometric(p[block], rng=rng) - 1
 
             while index < max_index:
                 indices = _index_to_edge_partition(index, partition_sizes, m)
                 e = {partition[block[i]][indices[i]] for i in range(m)}
-                # edge ids are not guaranteed to be unique
-                # and when casting to a set, they will no
-                # longer be of size m.
-                # for instance (0, 0, 0) becomes {0}
-                # if we accept these edges, the hypergraph
-                # will not longer be uniform, so we discard them.
                 if len(e) == m:
                     H.add_edge(e)
-                index += geometric(p[block])
+                index += geometric(p[block], rng=rng)
     return H
 
 
@@ -367,8 +359,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     Phys. Rev. E **108**, 034311 (2024).
     https://doi.org/10.1103/PhysRevE.108.034311
     """
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     if p_type == "degree":
         if multiedges:
@@ -400,22 +391,15 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
         max_index = comb(n, m, exact=True) - 1
         f = _index_to_edge_comb
 
-    index = geometric(q) - 1  # -1 b/c zero indexing
+    index = geometric(q, rng=rng) - 1  # -1 b/c zero indexing
     while index <= max_index:
         e = set(f(index, n, m))
-        # if f corresponds to _index_to_edge_prod,
-        # edge ids are not guaranteed to be unique
-        # and when casting to a set, they will no
-        # longer be of size m.
-        # for instance (0, 0, 0) becomes {0}
-        # if we accept these edges, the hypergraph
-        # will not longer be uniform, so we discard them.
         if len(e) == m:
             H.add_edge(e)
         # We no longer subtract 1 because if we did, the minimum
         # value of the right-hand side would be zero, meaning that
         # we sample the same index multiple times.
-        index += geometric(q)
+        index += geometric(q, rng=rng)
     return H
 
 
