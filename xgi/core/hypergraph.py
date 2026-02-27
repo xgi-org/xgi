@@ -974,7 +974,7 @@ class Hypergraph:
         self._edge[e_id1] = temp_members1
         self._edge[e_id2] = temp_members2
 
-    def random_edge_shuffle(self, e_id1=None, e_id2=None):
+    def random_edge_shuffle(self, e_id1=None, e_id2=None, seed=None):
         """Randomly redistributes nodes between two hyperedges.
 
         The process is as follows:
@@ -989,6 +989,8 @@ class Hypergraph:
             ID of first edge to shuffle.
         e_id2 : node ID, optional
             ID of second edge to shuffle.
+        seed : int or None, optional
+            The seed for the random number generator. By default, None.
 
         Note
         ----
@@ -1007,13 +1009,15 @@ class Hypergraph:
         Example
         -------
         >>> import xgi
-        >>> random.seed(42)
         >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5]])
-        >>> H.random_edge_shuffle()
+        >>> H.random_edge_shuffle(seed=42)
         >>> H.edges.members()
         [{2, 4, 5}, {3, 4}, {1, 3}]
 
         """
+        if seed is not None:
+            random.seed(seed)
+
         if len(self._edge) < 2:
             raise ValueError("Hypergraph must have at least two edges.")
 

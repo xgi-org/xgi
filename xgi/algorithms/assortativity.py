@@ -65,7 +65,7 @@ def dynamical_assortativity(H):
     return kk1 * k1**2 / k2**2 - 1
 
 
-def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
+def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000, seed=None):
     """Computes the degree assortativity of a hypergraph
 
     Parameters
@@ -81,6 +81,8 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     num_samples : int, optional
         if not exact, specify the number of samples for the computation.
         By default, 1000.
+    seed : int or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -103,6 +105,10 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000):
     Journal of Complex Networks 2020.
     DOI: 10.1093/comnet/cnaa018
     """
+
+    if seed is not None:
+        random.seed(seed)
+        np.random.seed(seed)
 
     if H.num_nodes == 0:
         raise XGIError("Hypergraph must contain nodes")

@@ -294,7 +294,7 @@ def katz_centrality(H, cutoff=100):
     return {nodedict[idx]: c[idx] for idx in nodedict}
 
 
-def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
+def h_eigenvector_centrality(H, max_iter=100, tol=1e-6, seed=None):
     """Compute the H-eigenvector centrality of a hypergraph.
 
     The H-eigenvector terminology comes from Qi (2005) which
@@ -309,6 +309,8 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
         By default, 100.
     tol : float > 0, optional
         The desired convergence tolerance. By default, 1e-6.
+    seed : int or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -353,6 +355,9 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     edge_dict = new_H.edges.members(dtype=dict)
     node_dict = new_H.nodes.memberships()
     r = new_H.edges.size.max()
+
+    if seed is not None:
+        np.random.seed(seed)
 
     x = np.random.uniform(size=(new_H.num_nodes))
     x = x / norm(x, 1)
