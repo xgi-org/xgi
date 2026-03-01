@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772119669270,
+  "lastUpdate": 1772405581103,
   "repoUrl": "https://github.com/xgi-org/xgi",
   "entries": {
     "XGI Benchmarks": [
@@ -1500,6 +1500,156 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0012249226354787307",
             "extra": "mean: 30.425264699999843 msec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "56703624+kaiser-dan@users.noreply.github.com",
+            "name": "Daniel Kaiser",
+            "username": "kaiser-dan"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c71268524fcc1b1baec0df86d681e6a4f77d36f4",
+          "message": "Merge pull request #686 from xgi-org/fix-test-collection\n\nFix slow test collection and matplotlib GUI popups",
+          "timestamp": "2026-03-01T17:52:02-05:00",
+          "tree_id": "debdb060079da77a0ac1849ece6ced2fab3844c4",
+          "url": "https://github.com/xgi-org/xgi/commit/c71268524fcc1b1baec0df86d681e6a4f77d36f4"
+        },
+        "date": 1772405579325,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/algorithms.py::test_connected",
+            "value": 97.40817022523437,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00009194800552431147",
+            "extra": "mean: 10.26607929999841 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/algorithms.py::test_clustering_coefficient",
+            "value": 64.54502021612727,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003117102040207927",
+            "extra": "mean: 15.493062000004443 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgelist",
+            "value": 29.292197230619276,
+            "unit": "iter/sec",
+            "range": "stddev: 0.04024476559488981",
+            "extra": "mean: 34.13878420000174 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgedict",
+            "value": 42.90690193000816,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0006612711578905366",
+            "extra": "mean: 23.306273700004 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_df",
+            "value": 17.757293090743236,
+            "unit": "iter/sec",
+            "range": "stddev: 0.03366696253673715",
+            "extra": "mean: 56.31488959999729 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_memberships",
+            "value": 1269.9515742021867,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000011089728180120255",
+            "extra": "mean: 787.4316000027193 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_members",
+            "value": 129.68118606615323,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000589318584802235",
+            "extra": "mean: 7.711218800002939 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_attributes",
+            "value": 14440.078727808026,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00000463963325085366",
+            "extra": "mean: 69.25169999760783 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_attributes",
+            "value": 244.98009451011018,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0005817784901816937",
+            "extra": "mean: 4.0819642999963435 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_degree",
+            "value": 10262.251846252371,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000010793689731421091",
+            "extra": "mean: 97.44449999686822 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_nodestats_degree",
+            "value": 8392.634288174271,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000008332731174494046",
+            "extra": "mean: 119.15210000381649 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_size",
+            "value": 251.46373899151945,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003971023827776866",
+            "extra": "mean: 3.976716500002908 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_isolates",
+            "value": 8827.231656529188,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000004907561257822254",
+            "extra": "mean: 113.2858000005399 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_singletons",
+            "value": 190.1986815427071,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000301338980919822",
+            "extra": "mean: 5.257660000000897 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_copy",
+            "value": 11.451487359831885,
+            "unit": "iter/sec",
+            "range": "stddev: 0.06308425815450662",
+            "extra": "mean: 87.32490099999382 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_dual",
+            "value": 11.61224512316725,
+            "unit": "iter/sec",
+            "range": "stddev: 0.06846871169640889",
+            "extra": "mean: 86.11599129998808 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/generators.py::test_erdos_renyi",
+            "value": 52.38854407972239,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0011784162586563798",
+            "extra": "mean: 19.088142599997582 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/generators.py::test_fast_erdos_renyi",
+            "value": 33.25062451072892,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0013758222978400645",
+            "extra": "mean: 30.074623100006193 msec\nrounds: 10"
           }
         ]
       }
