@@ -23,4 +23,4 @@ from .linalg import *
 from .readwrite import *
 from .stats import *
 
-__version__ = "0.10"
+__version__ = "0.10.1"
