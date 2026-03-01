@@ -14,7 +14,7 @@ def test_draw(edgelist8):
     fig, ax = plt.subplots()
     ax, collections = xgi.draw(H, ax=ax)
 
-    (node_collection, dyad_collection, edge_collection) = collections
+    node_collection, dyad_collection, edge_collection = collections
 
     # number of elements
     assert len(ax.lines) == 0
@@ -39,7 +39,7 @@ def test_draw(edgelist8):
 
     fig, ax = plt.subplots()
     ax, collections = xgi.draw(S, ax=ax)
-    (node_collection, dyad_collection, edge_collection) = collections
+    node_collection, dyad_collection, edge_collection = collections
 
     # number of elements
     assert len(ax.lines) == 0
@@ -236,12 +236,12 @@ def test_draw_hyperedges(edgelist8):
 
     fig, ax = plt.subplots()
     ax, collections = xgi.draw_hyperedges(H, ax=ax)
-    (dyad_collection, edge_collection) = collections
+    dyad_collection, edge_collection = collections
     fig2, ax2 = plt.subplots()
     ax2, collections2 = xgi.draw_hyperedges(
         H, ax=ax2, dyad_color="r", edge_fc="r", dyad_lw=3, dyad_style="--"
     )
-    (dyad_collection2, edge_collection2) = collections2
+    dyad_collection2, edge_collection2 = collections2
 
     # number of elements
     assert len(ax.lines) == 0
@@ -279,7 +279,7 @@ def test_draw_hyperedges(edgelist8):
     # negative node_lw or node_size
     with pytest.raises(ValueError):
         ax, collections = xgi.draw_hyperedges(H, ax=ax, dyad_lw=-1)
-        (dyad_collection, edge_collection) = collections
+        dyad_collection, edge_collection = collections
         plt.close("all")
 
     plt.close("all")
@@ -292,7 +292,7 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
     # default cmap
     fig, ax = plt.subplots()
     ax, collections = xgi.draw_hyperedges(H, ax=ax)
-    (dyad_collection, edge_collection) = collections
+    dyad_collection, edge_collection = collections
     assert dyad_collection.get_cmap() == plt.cm.Greys
     assert edge_collection.get_cmap() == xgi.crest_r()
     plt.close("all")
@@ -303,7 +303,7 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
     ax, collections = xgi.draw_hyperedges(
         H, ax=ax, dyad_color=dyad_colors, dyad_color_cmap="Greens", edge_fc_cmap="Blues"
     )
-    (dyad_collection, edge_collection) = collections
+    dyad_collection, edge_collection = collections
     assert dyad_collection.get_cmap() == plt.cm.Greens
     assert edge_collection.get_cmap() == plt.cm.Blues
 
@@ -325,7 +325,7 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
         edge_vmin=14,
         edge_vmax=19,
     )
-    (dyad_collection, edge_collection) = collections
+    dyad_collection, edge_collection = collections
     plt.colorbar(dyad_collection)
     plt.colorbar(edge_collection)
     assert (14, 19) == edge_collection.get_clim()
@@ -353,7 +353,7 @@ def test_draw_hyperedges_ec(edgelist8):
     # edge stat color
     fig, ax = plt.subplots()
     ax, collections = xgi.draw_hyperedges(H, ax=ax, edge_ec=H.edges.size, edge_fc="w")
-    (_, edge_collection) = collections
+    _, edge_collection = collections
 
     assert np.all(edge_collection.get_edgecolor() == colors)
     plt.close("all")
@@ -369,7 +369,7 @@ def test_draw_simplices(edgelist8):
 
     fig, ax = plt.subplots()
     ax, collections = xgi.draw_simplices(S, ax=ax)
-    (dyad_collection, edge_collection) = collections
+    dyad_collection, edge_collection = collections
 
     # number of elements
     assert len(ax.lines) == 0
@@ -395,7 +395,7 @@ def test_draw_hypergraph_hull(edgelist8):
     fig, ax = plt.subplots()
     ax, collections = xgi.draw(H, ax=ax, hull=True)
 
-    (node_collection, dyad_collection, edge_collection) = collections
+    node_collection, dyad_collection, edge_collection = collections
 
     # number of elements
     assert len(ax.lines) == 0
