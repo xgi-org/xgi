@@ -1,11 +1,12 @@
 """Base class for undirected hypergraphs."""
 
-import random
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
 from copy import copy, deepcopy
 from itertools import count
 from warnings import warn
+
+import numpy as np
 
 from ..exception import IDNotFound, XGIError, frozen
 from ..utils import IDDict, update_uid_counter
@@ -974,7 +975,7 @@ class Hypergraph:
         self._edge[e_id1] = temp_members1
         self._edge[e_id2] = temp_members2
 
-    def random_edge_shuffle(self, e_id1=None, e_id2=None):
+    def random_edge_shuffle(self, e_id1=None, e_id2=None, seed=None):
         """Randomly redistributes nodes between two hyperedges.
 
         The process is as follows:
@@ -989,6 +990,8 @@ class Hypergraph:
             ID of first edge to shuffle.
         e_id2 : node ID, optional
             ID of second edge to shuffle.
+        seed : int or None, optional
+            The seed for the random number generator. By default, None.
 
         Note
         ----
@@ -1007,19 +1010,22 @@ class Hypergraph:
         Example
         -------
         >>> import xgi
-        >>> random.seed(42)
         >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5]])
-        >>> H.random_edge_shuffle()
+        >>> H.random_edge_shuffle(seed=42)
         >>> H.edges.members()
         [{2, 4, 5}, {3, 4}, {1, 3}]
 
         """
+        rng = np.random.default_rng(seed)
+
         if len(self._edge) < 2:
             raise ValueError("Hypergraph must have at least two edges.")
 
         # select two random edges
         if e_id1 is None or e_id2 is None:
-            e_id1, e_id2 = random.sample(list(self._edge), 2)
+            edge_list = list(self._edge)
+            chosen = rng.choice(len(edge_list), size=2, replace=False)
+            e_id1, e_id2 = edge_list[chosen[0]], edge_list[chosen[1]]
 
         # extract edges (lists of nodes)
         e1 = self._edge[e_id1]
@@ -1034,7 +1040,9 @@ class Hypergraph:
         nodes = e1 | e2
 
         # randomly redistribute nodes between the two edges
-        e1_new = set(random.sample(list(nodes), len(e1)))
+        nodes_list = list(nodes)
+        chosen = rng.choice(len(nodes_list), size=len(e1), replace=False)
+        e1_new = {nodes_list[i] for i in chosen}
         e2_new = nodes - e1_new
 
         # update edge memberships

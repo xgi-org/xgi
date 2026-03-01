@@ -1,7 +1,5 @@
 """Algorithms to compute node positions for drawing."""
 
-import random
-
 import networkx as nx
 import numpy as np
 from numpy.linalg import inv, svd
@@ -73,11 +71,10 @@ def random_layout(H, center=None, seed=None):
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
 
-    if seed is not None:
-        np.random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     H, center = nx.drawing.layout._process_params(H, center, 2)
-    pos = np.random.rand(len(H), 2) + center
+    pos = rng.random((len(H), 2)) + center
     pos = pos.astype(np.float32)
     pos = dict(zip(H, pos))
 
@@ -131,9 +128,6 @@ def pairwise_spring_layout(H, seed=None, k=None, **kwargs):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.pairwise_spring_layout(H)
     """
-
-    if seed is not None:
-        random.seed(seed)
 
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
@@ -235,9 +229,6 @@ def bipartite_spring_layout(H, seed=None, k=None, **kwargs):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.bipartite_spring_layout(H)
     """
-    if seed is not None:
-        random.seed(seed)
-
     G, nodedict, edgedict = to_bipartite_graph(H, index=True)
 
     # Creating a dictionary for the position of the nodes with the standard spring
@@ -344,9 +335,6 @@ def barycenter_spring_layout(
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.barycenter_spring_layout(H)
     """
-    if seed is not None:
-        random.seed(seed)
-
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
 
@@ -419,9 +407,6 @@ def weighted_barycenter_spring_layout(
     >>> pos = xgi.weighted_barycenter_spring_layout(H)
 
     """
-    if seed is not None:
-        random.seed(seed)
-
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
 

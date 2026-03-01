@@ -4,8 +4,9 @@ All the functions in this module return a Hypergraph class (i.e. a simple, undir
 hypergraph).
 """
 
-import random
 from copy import deepcopy
+
+import numpy as np
 
 import xgi
 
@@ -54,8 +55,7 @@ def shuffle_hyperedges(S, order, p, seed=None):
 
     """
 
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     if (order + 1) not in xgi.unique_edge_sizes(S):
         raise ValueError(f"There is no hyperedge of order {order} is this hypergraph.")
@@ -71,14 +71,17 @@ def shuffle_hyperedges(S, order, p, seed=None):
         H = S.copy()
 
     nodes = list(S.nodes)
+    nodes_arr = np.array(nodes)
     d_hyperedges = H.edges.filterby("order", order).members(dtype=dict)
 
     for id_, members in d_hyperedges.items():
-        if random.random() <= p:
+        if rng.random() <= p:
             H.remove_edge(id_)
-            new_hyperedge = tuple(random.sample(nodes, order + 1))
+            new_hyperedge = tuple(rng.choice(nodes_arr, size=order + 1, replace=False))
             while new_hyperedge in H._edge.values():
-                new_hyperedge = tuple(random.sample(nodes, order + 1))
+                new_hyperedge = tuple(
+                    rng.choice(nodes_arr, size=order + 1, replace=False)
+                )
             H.add_edge(new_hyperedge)
 
     return H

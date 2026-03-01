@@ -294,7 +294,7 @@ def katz_centrality(H, cutoff=100):
     return {nodedict[idx]: c[idx] for idx in nodedict}
 
 
-def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
+def h_eigenvector_centrality(H, max_iter=100, tol=1e-6, seed=None):
     """Compute the H-eigenvector centrality of a hypergraph.
 
     The H-eigenvector terminology comes from Qi (2005) which
@@ -309,6 +309,8 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
         By default, 100.
     tol : float > 0, optional
         The desired convergence tolerance. By default, 1e-6.
+    seed : int or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -354,7 +356,9 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     node_dict = new_H.nodes.memberships()
     r = new_H.edges.size.max()
 
-    x = np.random.uniform(size=(new_H.num_nodes))
+    rng = np.random.default_rng(seed)
+
+    x = rng.uniform(size=(new_H.num_nodes))
     x = x / norm(x, 1)
     y = np.abs(np.array(ttsv1(node_dict, edge_dict, r, x)))
 
@@ -470,7 +474,7 @@ def z_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     }
 
 
-def uniform_h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
+def uniform_h_eigenvector_centrality(H, max_iter=100, tol=1e-6, seed=None):
     """Compute the H-eigenvector centrality of a uniform hypergraph.
 
     Parameters
@@ -482,6 +486,8 @@ def uniform_h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
         By default, 100.
     tol : float > 0, optional
         The desired L2 error in the centrality vector. By default, 1e-6.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -521,7 +527,8 @@ def uniform_h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     f = lambda v, m: np.power(v, 1.0 / m)  # noqa: E731
     g = lambda v, x: np.prod(v[list(x)])  # noqa: E731
 
-    x = np.random.uniform(size=(new_H.num_nodes))
+    rng = np.random.default_rng(seed)
+    x = rng.uniform(size=(new_H.num_nodes))
     x = x / norm(x, 1)
 
     for iter in range(max_iter):

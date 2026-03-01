@@ -15,7 +15,7 @@ __all__ = [
 ]
 
 
-def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.002):
+def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.002, seed=None):
     """Simulates the Kuramoto model on hypergraphs.
     This solves the Kuramoto model ODE on hypergraphs with edges of sizes 2 and 3
     using the Euler Method. It returns timeseries of the phases.
@@ -38,6 +38,8 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
         The number of timesteps for Euler Method.
     dt : float greater than 0, default: 0.002
         The size of timesteps for Euler Method.
+    seed : int or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -74,11 +76,13 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
     theta_time = np.zeros((timesteps, n))
     times = np.arange(timesteps) * dt
 
+    rng = np.random.default_rng(seed)
+
     if omega is None:
-        omega = np.random.normal(0, 1, n)
+        omega = rng.normal(0, 1, n)
 
     if theta is None:
-        theta = np.random.random(n) * 2 * np.pi
+        theta = rng.random(n) * 2 * np.pi
 
     for t in range(timesteps):
         theta_time[t] = theta
