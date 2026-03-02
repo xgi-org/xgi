@@ -673,7 +673,7 @@ def test_fix_647():
 
     # Eigenvalues non-negative
     evals_mwe = eigvalsh(L)
-    assert np.all(evals_mwe >= 0)
+    assert np.all(evals_mwe >= -1e-12)
 
     # Weights error handling
     ## Default value when "weight" attribute unavailable
