@@ -36,4 +36,4 @@ jobs:
         pytest --color=yes
         # run doctests
         cd ../xgi/
-        pytest --color=yes
+        pytest --doctest-modules --color=yes

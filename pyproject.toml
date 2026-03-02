@@ -106,8 +106,7 @@ where = ["."]
 attr = "xgi.__version__"
 
 [tool.pytest.ini_options]
-# always run doctests
-addopts = "--doctest-modules --ignore=docs"
+addopts = "--ignore=docs"
 
 # custom markers
 markers = [

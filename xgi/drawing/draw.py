@@ -1084,7 +1084,7 @@ def draw_node_labels(
 
     text_items = {}
     for idx, label in node_labels.items():
-        (x, y) = pos[idx]
+        x, y = pos[idx]
 
         if not isinstance(label, str):
             label = str(label)

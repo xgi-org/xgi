@@ -127,6 +127,7 @@ Modified from https://github.com/cfpb/github-changelog
 This is a script to determine which PRs have been merges since the last
 release, or between two releases on the same branch.
 """
+
 import argparse
 import os
 import re
