@@ -6,6 +6,7 @@ import pytest
 
 import xgi
 from xgi.exception import XGIError
+from xgi.utils.utilities import crest_r
 
 
 def test_draw(edgelist8):
@@ -294,7 +295,7 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
     ax, collections = xgi.draw_hyperedges(H, ax=ax)
     dyad_collection, edge_collection = collections
     assert dyad_collection.get_cmap() == plt.cm.Greys
-    assert edge_collection.get_cmap() == xgi.crest_r()
+    assert edge_collection.get_cmap() == crest_r()
     plt.close("all")
 
     # set cmap
