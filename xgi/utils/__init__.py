@@ -4,11 +4,8 @@ from .trie import *
 from .utilities import *
 
 __all__ = [
-    "IDDict",
-    "Trie",
     "binomial_sequence",
     "convert_labels_to_integers",
-    "crest_r",
     "dual_dict",
     "find_triangles",
     "geometric",
