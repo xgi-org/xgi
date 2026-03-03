@@ -21,8 +21,6 @@ __all__ = [
     "write_hif_collection",
     "read_incidence_matrix",
     "write_incidence_matrix",
-    "read_json",
-    "write_json",
     "load_xgi_data",
     "download_xgi_data",
 ]
