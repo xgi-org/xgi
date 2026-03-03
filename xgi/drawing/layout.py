@@ -36,11 +36,9 @@ def random_layout(H, center=None, seed=None):
     center : array-like, optional
         Coordinate pair around which to center the layout.
         If None (default), does not center the positions.
-    seed : int, optional
+    seed : int, numpy.random.Generator, or None, optional
         Set the random state for deterministic node layouts.
-        If int, `seed` is the seed used by the random number generator,
-        If None (default), random numbers are sampled from the
-        numpy random number generator without initialization.
+        If None (default), the layout is not deterministic.
 
     Returns
     -------

@@ -38,7 +38,7 @@ def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.0
         The number of timesteps for Euler Method.
     dt : float greater than 0, default: 0.002
         The size of timesteps for Euler Method.
-    seed : int or None, optional
+    seed : int, numpy.random.Generator, or None, optional
         The seed for the random number generator. By default, None.
 
     Returns

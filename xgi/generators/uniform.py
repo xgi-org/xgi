@@ -31,8 +31,8 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
         and the values are node degrees.
     m : int
         specifies the hyperedge size
-    seed : integer or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -124,8 +124,8 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
         tensor of probabilities between communities
     sizes : list or 1D numpy array
         The sizes of the community blocks in order
-    seed : integer or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -233,8 +233,8 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
         Imbalance parameter
     rho : float between 0 and 1, optional
         The fraction of nodes in community 1, default 0.5
-    seed : integer or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -326,8 +326,8 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
         For sparse hypergraphs, however, this is unlikely to
         be the case.
         By default, False.
-    seed : integer or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------

@@ -309,7 +309,7 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6, seed=None):
         By default, 100.
     tol : float > 0, optional
         The desired convergence tolerance. By default, 1e-6.
-    seed : int or None, optional
+    seed : int, numpy.random.Generator, or None, optional
         The seed for the random number generator. By default, None.
 
     Returns

@@ -45,8 +45,8 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
         If None (default), ignored. If list or array, generates a hypergraph
         with edges of orders `order[0]`, `order[1]`, etc.
         (The length of `ps` must match the length of `order` in this case).
-    seed : integer or None (default)
-            Seed for the random number generator.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -120,8 +120,8 @@ def random_hypergraph(n, ps, order=None, seed=None):
         If None, ignore. If list or array, generates a hypergraph
         with edges of orders `order[0]`, `order[1]`, etc.
         (The length of `ps` must match the length of `order` in this case).
-    seed : integer, random_state, or None (default)
-            Indicator of random number generation state.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -209,8 +209,8 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     k2 : dictionary
         Dictionary where the keys are edge ids
         and the values are edge sizes.
-    seed : integer or None (default)
-            The seed for the random number generator.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -308,8 +308,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
         The number of rows must match the number of node communities
         and the number of columns must match the number of edge
         communities.
-    seed : int or None (default)
-        Seed for the random number generator.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -432,8 +432,8 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
         Overlap between edges
     p : float
         The rewiring probability
-    seed : int, optional
-        The seed for the random number generator, by default None
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------

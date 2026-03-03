@@ -990,7 +990,7 @@ class Hypergraph:
             ID of first edge to shuffle.
         e_id2 : node ID, optional
             ID of second edge to shuffle.
-        seed : int or None, optional
+        seed : int, numpy.random.Generator, or None, optional
             The seed for the random number generator. By default, None.
 
         Note
@@ -1024,8 +1024,7 @@ class Hypergraph:
         # select two random edges
         if e_id1 is None or e_id2 is None:
             edge_list = list(self._edge)
-            chosen = rng.choice(len(edge_list), size=2, replace=False)
-            e_id1, e_id2 = edge_list[chosen[0]], edge_list[chosen[1]]
+            e_id1, e_id2 = rng.choice(edge_list, size=2, replace=False)
 
         # extract edges (lists of nodes)
         e1 = self._edge[e_id1]

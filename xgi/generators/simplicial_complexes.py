@@ -39,8 +39,8 @@ def random_simplicial_complex(N, ps, seed=None):
         hyperedge at each order d between any d+1 nodes. For example,
         ps[0] is the wiring probability of any edge (2 nodes), ps[1]
         of any triangles (3 nodes).
-    seed : int or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -102,8 +102,8 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
         hyperedge from a clique, at each order d. For example,
         ps[0] is the probability of promoting any 3-node clique (triangle) to
         a 3-hyperedge.
-    seed: int or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -162,8 +162,8 @@ def flag_complex_d2(G, p2=None, seed=None):
         Graph to consider
     p2: float
         Probability (between 0 and 1) of filling empty triangles in graph G
-    seed: int or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -216,8 +216,8 @@ def random_flag_complex_d2(N, p, seed=None):
     p : float
         Probabilities (between 0 and 1) to create an edge
         between any 2 nodes
-    seed : int or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -251,8 +251,8 @@ def random_flag_complex(N, p, max_order=2, seed=None):
         between any 2 nodes
     max_order : int
         maximal dimension of simplices to add to the output simplicial complex
-    seed : int or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------

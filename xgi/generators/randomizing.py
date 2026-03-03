@@ -27,8 +27,8 @@ def shuffle_hyperedges(S, order, p, seed=None):
         Order of hyperedges to shuffle
     p : float
         Probability of shuffling each hyperedge
-    seed : integer or None (default)
-            Seed for the random number generator.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -71,16 +71,15 @@ def shuffle_hyperedges(S, order, p, seed=None):
         H = S.copy()
 
     nodes = list(S.nodes)
-    nodes_arr = np.array(nodes)
     d_hyperedges = H.edges.filterby("order", order).members(dtype=dict)
 
     for id_, members in d_hyperedges.items():
         if rng.random() <= p:
             H.remove_edge(id_)
-            new_hyperedge = tuple(rng.choice(nodes_arr, size=order + 1, replace=False))
+            new_hyperedge = tuple(rng.choice(nodes, size=order + 1, replace=False))
             while new_hyperedge in H._edge.values():
                 new_hyperedge = tuple(
-                    rng.choice(nodes_arr, size=order + 1, replace=False)
+                    rng.choice(nodes, size=order + 1, replace=False)
                 )
             H.add_edge(new_hyperedge)
 

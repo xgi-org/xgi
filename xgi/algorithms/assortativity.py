@@ -80,7 +80,7 @@ def degree_assortativity(H, kind="uniform", exact=False, num_samples=1000, seed=
     num_samples : int, optional
         if not exact, specify the number of samples for the computation.
         By default, 1000.
-    seed : int or None, optional
+    seed : int, numpy.random.Generator, or None, optional
         The seed for the random number generator. By default, None.
 
     Returns
