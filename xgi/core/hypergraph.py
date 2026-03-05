@@ -58,10 +58,16 @@ class Hypergraph:
     The `attr` keyword arguments are added as hypergraph attributes. To add node or edge
     attributes see :meth:`add_node` and :meth:`add_edge`.
 
-    In addition to the methods listed in this page, other methods defined in the `stats`
-    package are also accessible via the `Hypergraph` class.  For more details, see the
-    `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
+    **Per-node and per-edge statistics** are available through the
+    :mod:`~xgi.stats` framework.  Access them via ``H.nodes.<stat>`` and
+    ``H.edges.<stat>`` (e.g., ``H.nodes.degree``,
+    ``H.nodes.clustering_coefficient``, ``H.edges.order``).
+    See :doc:`Tutorial 6 - Statistics </api/tutorials/focus_6>` for details.
+
+    **Algorithms** for analyzing hypergraphs — centrality measures, clustering
+    coefficients, connectivity, assortativity, shortest paths, and more — are in the
+    :mod:`xgi.algorithms` module and can be called as top-level functions, e.g.,
+    ``xgi.connected_components(H)`` or ``xgi.clustering_coefficient(H)``.
 
     Examples
     --------

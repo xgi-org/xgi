@@ -1,3 +1,46 @@
+"""Algorithms for analyzing hypergraphs.
+
+This module collects functions that compute global or local properties of a hypergraph.
+All functions take a :class:`~xgi.core.hypergraph.Hypergraph` (or
+:class:`~xgi.core.simplicialcomplex.SimplicialComplex`) as their first argument.
+
+Connectivity
+    :func:`is_connected`, :func:`connected_components`,
+    :func:`largest_connected_component`, :func:`number_connected_components`,
+    :func:`node_connected_component`, :func:`largest_connected_hypergraph`
+
+Centrality
+    :func:`clique_eigenvector_centrality`, :func:`h_eigenvector_centrality`,
+    :func:`z_eigenvector_centrality`, :func:`node_edge_centrality`,
+    :func:`line_vector_centrality`, :func:`katz_centrality`,
+    :func:`uniform_h_eigenvector_centrality`
+
+Clustering
+    :func:`clustering_coefficient`, :func:`local_clustering_coefficient`,
+    :func:`two_node_clustering_coefficient`
+
+Assortativity
+    :func:`dynamical_assortativity`, :func:`degree_assortativity`
+
+Shortest paths
+    :func:`single_source_shortest_path_length`, :func:`shortest_path_length`
+
+Simpliciality
+    :func:`edit_simpliciality`, :func:`simplicial_edit_distance`,
+    :func:`face_edit_simpliciality`, :func:`mean_face_edit_distance`,
+    :func:`simplicial_fraction`
+
+Structural properties
+    :func:`equal`, :func:`num_edges_order`, :func:`max_edge_order`,
+    :func:`is_uniform`, :func:`is_possible_order`, :func:`edge_neighborhood`,
+    :func:`degree_counts`, :func:`degree_histogram`, :func:`unique_edge_sizes`,
+    :func:`density`, :func:`incidence_density`
+
+Many of these quantities are also available as per-node or per-edge statistics via
+the :mod:`~xgi.stats` framework (e.g., ``H.nodes.degree``,
+``H.nodes.clustering_coefficient``).
+"""
+
 from . import (
     assortativity,
     centrality,
