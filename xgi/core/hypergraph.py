@@ -1040,8 +1040,8 @@ class Hypergraph:
 
         # randomly redistribute nodes between the two edges
         nodes_list = list(nodes)
-        chosen = rng.choice(len(nodes_list), size=len(e1), replace=False)
-        e1_new = {nodes_list[i] for i in chosen}
+        chosen = rng.choice(nodes_list, size=len(e1), replace=False)
+        e1_new = set(chosen)
         e2_new = nodes - e1_new
 
         # update edge memberships
