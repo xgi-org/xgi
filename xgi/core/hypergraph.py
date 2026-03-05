@@ -167,6 +167,16 @@ class Hypergraph:
                 f"{self.num_nodes} nodes and {self.num_edges} hyperedges"
             )
 
+    def __repr__(self):
+        cls = type(self).__name__
+        return f"{cls}({self.edges.members()})"
+
+    def __copy__(self):
+        return self.copy()
+
+    def __deepcopy__(self, memo):
+        return self.copy()
+
     def __iter__(self):
         """Iterate over the nodes.
 
@@ -1040,7 +1050,7 @@ class Hypergraph:
 
         # randomly redistribute nodes between the two edges
         nodes_list = list(nodes)
-        chosen = rng.choice(nodes_list, size=len(e1), replace=False)
+        chosen = rng.choice(nodes_list, size=len(e1), replace=False).tolist()
         e1_new = set(chosen)
         e2_new = nodes - e1_new
 

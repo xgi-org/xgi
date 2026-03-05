@@ -176,6 +176,16 @@ class DiHypergraph:
         except XGIError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
 
+    def __repr__(self):
+        cls = type(self).__name__
+        return f"{cls}({self.edges.dimembers()})"
+
+    def __copy__(self):
+        return self.copy()
+
+    def __deepcopy__(self, memo):
+        return self.copy()
+
     def __iter__(self):
         """Iterate over the nodes.
 
