@@ -29,8 +29,8 @@ def spectral_clustering(H, k=2, max_iter=1_000, seed=None):
         Number of clusters to find, default 2.
     max_iter : int, optional.
         Maximum number of cluster updates to compute, default 1,000.
-    seed : int, optional
-        Seed used to initialize clusters, optional.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -57,7 +57,8 @@ def spectral_clustering(H, k=2, max_iter=1_000, seed=None):
 
     # Compute normalize Laplacian and its spectra
     L, rowdict = normalized_hypergraph_laplacian(H, index=True)
-    evals, eigs = eigsh(L, k=k, which="SA")
+    v0 = np.random.default_rng(seed).random(L.shape[0]) if seed is not None else None
+    evals, eigs = eigsh(L, k=k, which="SA", v0=v0)
 
     # Form metric space representation
     X = np.array(eigs)
@@ -84,8 +85,8 @@ def _kmeans(X, k, max_iter=1_000, seed=None):
         Number of clusters to find.
     max_iter : int, optional.
         Maximum number of cluster updates to compute, default 10,000.
-    seed : int, optional
-        Seed used to initialize clusters, optional.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
