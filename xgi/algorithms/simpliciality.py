@@ -472,11 +472,11 @@ def _missing_subfaces(t, face, min_size=1):
 
 
 def _max_number_of_subfaces(min_size, max_size):
-    from scipy.special import binom
+    from scipy.special import comb
 
     d = 2**max_size - 2  # subtract 2 for the face itself and the empty set
     for i in range(1, min_size):
-        d -= binom(max_size, i)
+        d -= comb(max_size, i, exact=True)
     return int(d)
 
 
