@@ -1,7 +1,5 @@
 """Methods for converting to and from bipartite graphs."""
 
-import networkx as nx
-
 from ..core import DiHypergraph, Hypergraph
 from ..exception import XGIError
 
@@ -54,6 +52,8 @@ def from_bipartite_graph(G, dual=False):
     >>> H = xgi.from_bipartite_graph(G)
 
     """
+    import networkx as nx
+
     if isinstance(G, nx.DiGraph):
         directed = True
     else:
@@ -143,6 +143,8 @@ def to_bipartite_graph(H, index=False):
     >>> G, itn, ite = xgi.to_bipartite_graph(H, index=True)
 
     """
+    import networkx as nx
+
     if isinstance(H, DiHypergraph):
         directed = True
     else:

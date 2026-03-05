@@ -7,9 +7,7 @@ All the functions in this module return a SimplicialComplex class.
 from collections import defaultdict
 from itertools import combinations
 
-import networkx as nx
 import numpy as np
-from scipy.special import comb
 
 from ..core import SimplicialComplex
 from ..utils.utilities import find_triangles
@@ -73,6 +71,8 @@ def random_simplicial_complex(N, ps, seed=None):
         d = i + 1  # order, ps[0] is prob of edges (d=1)
 
         potential_simplices = combinations(nodes, d + 1)
+        from scipy.special import comb
+
         n_comb = comb(N, d + 1, exact=True)
         mask = rng.random(size=n_comb) <= p  # True if simplex to keep
 
@@ -231,6 +231,8 @@ def random_flag_complex_d2(N, p, seed=None):
     if (p < 0) or (p > 1):
         raise ValueError("p must be between 0 and 1 included.")
 
+    import networkx as nx
+
     G = nx.fast_gnp_random_graph(N, p, seed=seed)
 
     return flag_complex_d2(G)
@@ -266,6 +268,8 @@ def random_flag_complex(N, p, max_order=2, seed=None):
     if (p < 0) or (p > 1):
         raise ValueError("p must be between 0 and 1 included.")
 
+    import networkx as nx
+
     G = nx.fast_gnp_random_graph(N, p, seed=seed)
 
     nodes = G.nodes()
@@ -300,6 +304,8 @@ def _cliques_to_fill(G, max_order):
         List of cliques
 
     """
+    import networkx as nx
+
     if max_order is None:
         cliques = list(nx.find_cliques(G))  # max cliques
     else:  # avoid adding many unnecessary redundant cliques
