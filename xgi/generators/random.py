@@ -1,6 +1,5 @@
 """Generate random (non-uniform) hypergraphs."""
 
-import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
@@ -48,8 +47,8 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
         If None (default), ignored. If list or array, generates a hypergraph
         with edges of orders `order[0]`, `order[1]`, etc.
         (The length of `ps` must match the length of `order` in this case).
-    seed : integer or None (default)
-            Seed for the random number generator.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -76,8 +75,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
     >>> import xgi
     >>> H = xgi.fast_random_hypergraph(50, [0.1, 0.01])
     """
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     ps, order = _check_input_args(ps, order)
 
@@ -90,7 +88,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
         if p == 1:
             H.add_edges_from([e for e in combinations(nodes, d + 1)])
         elif p > 0:
-            index = geometric(p) - 1  # -1 b/c zero indexing
+            index = geometric(p, rng=rng) - 1  # -1 b/c zero indexing
             max_index = comb(n, d + 1, exact=True) - 1
 
             while index <= max_index:
@@ -99,7 +97,7 @@ def fast_random_hypergraph(n, ps, order=None, seed=None):
                 # We no longer subtract 1 because if we did, the minimum
                 # value of the right-hand side would be zero, meaning that
                 # we sample the same index multiple times.
-                index += geometric(p)
+                index += geometric(p, rng=rng)
     return H
 
 
@@ -124,8 +122,8 @@ def random_hypergraph(n, ps, order=None, seed=None):
         If None, ignore. If list or array, generates a hypergraph
         with edges of orders `order[0]`, `order[1]`, etc.
         (The length of `ps` must match the length of `order` in this case).
-    seed : integer, random_state, or None (default)
-            Indicator of random number generation state.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -152,8 +150,7 @@ def random_hypergraph(n, ps, order=None, seed=None):
 
     """
     warn("This method is much slower than fast_random_hypergraph")
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     ps, order = _check_input_args(ps, order)
 
@@ -163,7 +160,7 @@ def random_hypergraph(n, ps, order=None, seed=None):
 
     for d, p in zip(order, ps):
         for edge in combinations(nodes, d + 1):
-            if random.random() <= p:
+            if rng.random() <= p:
                 H.add_edge(edge)
     return H
 
@@ -214,8 +211,8 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     k2 : dictionary
         Dictionary where the keys are edge ids
         and the values are edge sizes.
-    seed : integer or None (default)
-            The seed for the random number generator.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -248,8 +245,7 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     >>> H = xgi.chung_lu_hypergraph(k1, k2)
 
     """
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     # sort dictionary by degree in decreasing order
     node_labels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
@@ -274,11 +270,11 @@ def chung_lu_hypergraph(k1, k2, seed=None):
 
         while j < m:
             if p != 1:
-                j += geometric(p)
+                j += geometric(p, rng=rng)
             if j < m:
                 v = edge_labels[j]
                 q = min((k1[u] * k2[v]) / S, 1)
-                r = random.random()
+                r = rng.random()
                 if r < q / p:
                     # no duplicates
                     H.add_node_to_edge(v, u)
@@ -314,8 +310,8 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
         The number of rows must match the number of node communities
         and the number of columns must match the number of edge
         communities.
-    seed : int or None (default)
-        Seed for the random number generator.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -353,8 +349,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     >>> # H = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega)
 
     """
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     # sort dictionary by degree in decreasing order
     node_labels = [n for n, _ in sorted(k1.items(), key=lambda d: d[1], reverse=True)]
@@ -411,11 +406,11 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
                 p = min(k1[u] * k2[v] * group_constant, 1)
                 while j < len(community2_nodes[group2]):
                     if p != 1:
-                        j += geometric(p)
+                        j += geometric(p, rng=rng)
                     if j < len(community2_nodes[group2]):
                         v = community2_nodes[group2][j]
                         q = min((k1[u] * k2[v]) * group_constant, 1)
-                        r = random.random()
+                        r = rng.random()
                         if r < q / p:
                             # no duplicates
                             H.add_node_to_edge(v, u)
@@ -439,8 +434,8 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
         Overlap between edges
     p : float
         The rewiring probability
-    seed : int, optional
-        The seed for the random number generator, by default None
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -457,16 +452,15 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
     Smallworldness in hypergraphs,
     https://doi.org/10.1088/2632-072X/acf430
     """
-    if seed is not None:
-        np.random.seed(seed)
+    rng = np.random.default_rng(seed)
     H = ring_lattice(n, d, k, l)
     to_remove = []
     to_add = []
     for e in H.edges:
-        if np.random.random() < p:
+        if rng.random() < p:
             to_remove.append(e)
             node = min(H.edges.members(e))
-            neighbors = np.random.choice(H.nodes, size=d - 1)
+            neighbors = rng.choice(H.nodes, size=d - 1)
             to_add.append(np.append(neighbors, node))
     H.remove_edges_from(to_remove)
     H.add_edges_from(to_add)

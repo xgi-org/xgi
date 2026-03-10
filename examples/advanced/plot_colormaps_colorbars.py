@@ -24,7 +24,7 @@ ax, collections = xgi.draw(
     node_fc=H.nodes.degree,
     edge_fc=H.edges.size,
     edge_fc_cmap="viridis",
-    node_fc_cmap="mako_r",
+    node_fc_cmap="plasma",
 )
 
 node_col, _, edge_col = collections

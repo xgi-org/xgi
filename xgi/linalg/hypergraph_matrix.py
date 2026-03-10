@@ -312,7 +312,9 @@ def adjacency_tensor(H, order, normalized=True, index=False):
         The input hypergraph.
     order : int
         The order of interactions to consider.
-    index: bool, default: True
+    normalized: bool, default: True
+        Specifies whether to normalize the entries in the tensor
+    index: bool, default: False
         Specifies whether to output disctionaries mapping the node IDs to indices
 
     Returns

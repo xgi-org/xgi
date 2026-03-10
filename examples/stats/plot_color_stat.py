@@ -20,7 +20,7 @@ ax, collections = xgi.draw(
     pos=pos,
     node_fc=H.nodes.degree,
     edge_fc="grey",
-    node_fc_cmap="mako_r",
+    node_fc_cmap="plasma",
 )
 
 node_col, _, edge_col = collections
