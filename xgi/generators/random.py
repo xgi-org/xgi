@@ -1,5 +1,6 @@
 """Generate random (non-uniform) hypergraphs."""
 
+import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
@@ -542,7 +543,7 @@ def simplicial_chung_lu_hypergraph(k1, k2, p, seed=None):
         return H
     node_probs = degrees / S
 
-    # Build the edge-size sequence (random permutation) — Algorithm 4, step 1
+    # Build the edge-size sequence in random order.
     size_sequence = list(k2.values())
     random.shuffle(size_sequence)
 
@@ -550,7 +551,7 @@ def simplicial_chung_lu_hypergraph(k1, k2, p, seed=None):
 
     for k in size_sequence:
         if random.random() < p:
-            # Simplicial edge — Algorithm 3
+            # Generate a simplicial edge.
             edges_not_k = [e for e in edges if len(e) != k]
 
             if not edges_not_k:
@@ -559,13 +560,13 @@ def simplicial_chung_lu_hypergraph(k1, k2, p, seed=None):
                     np.random.choice(node_labels, size=k, replace=True, p=node_probs)
                 )
             else:
-                # Sample e' uniformly from edges not of size k
+                # Sample an existing edge of a different size.
                 e_prime = random.choice(edges_not_k)
                 if len(e_prime) > k:
-                    # Return a uniform k-subset of e'
+                    # Take a random subset of the sampled edge.
                     e_new = frozenset(random.sample(sorted(e_prime), k))
                 else:
-                    # |e'| < k: return e' ∪ Chung-Lu edge of size k − |e'|
+                    # Extend the sampled edge with additional Chung-Lu nodes.
                     extra = frozenset(
                         np.random.choice(
                             node_labels,
@@ -576,7 +577,7 @@ def simplicial_chung_lu_hypergraph(k1, k2, p, seed=None):
                     )
                     e_new = e_prime | extra
         else:
-            # Plain Chung-Lu edge — Algorithm 1
+            # Generate a plain Chung-Lu edge.
             e_new = frozenset(
                 np.random.choice(node_labels, size=k, replace=True, p=node_probs)
             )
