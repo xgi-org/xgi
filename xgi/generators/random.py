@@ -1,6 +1,5 @@
 """Generate random (non-uniform) hypergraphs."""
 
-import random
 import warnings
 from collections import defaultdict
 from itertools import combinations
@@ -482,8 +481,8 @@ def simplicial_chung_lu_hypergraph(k1, k2, p, seed=None):
     p : float
         Probability (between 0 and 1) of generating a simplicial edge
         instead of a Chung-Lu edge. Controls the amount of nestedness.
-    seed : integer or None (default)
-            The seed for the random number generator.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -515,19 +514,17 @@ def simplicial_chung_lu_hypergraph(k1, k2, p, seed=None):
     Example
     -------
     >>> import xgi
-    >>> import random
+    >>> import numpy as np
     >>> n = 50
-    >>> k1 = {i : random.randint(1, 10) for i in range(n)}
+    >>> rng = np.random.default_rng(0)
+    >>> k1 = {i : rng.integers(1, 11) for i in range(n)}
     >>> k2 = {i : sorted(k1.values())[i] for i in range(n)}
     >>> H = xgi.simplicial_chung_lu_hypergraph(k1, k2, p=0.5)
 
     """
     if not 0 <= p <= 1:
         raise ValueError("p must be between 0 and 1.")
-
-    if seed is not None:
-        random.seed(seed)
-        np.random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     if sum(k1.values()) != sum(k2.values()):
         warnings.warn(
@@ -544,43 +541,33 @@ def simplicial_chung_lu_hypergraph(k1, k2, p, seed=None):
     node_probs = degrees / S
 
     # Build the edge-size sequence in random order.
-    size_sequence = list(k2.values())
-    random.shuffle(size_sequence)
+    size_sequence = rng.permutation(list(k2.values())).tolist()
 
     edges = []  # list of frozensets
 
     for k in size_sequence:
-        if random.random() < p:
+        if rng.random() < p:
             # Generate a simplicial edge.
             edges_not_k = [e for e in edges if len(e) != k]
 
             if not edges_not_k:
                 # No edges of different size exist → plain Chung-Lu edge
-                e_new = frozenset(
-                    np.random.choice(node_labels, size=k, replace=True, p=node_probs)
-                )
+                e_new = frozenset(rng.choice(node_labels, size=k, replace=True, p=node_probs))
             else:
                 # Sample an existing edge of a different size.
-                e_prime = random.choice(edges_not_k)
+                e_prime = edges_not_k[rng.integers(len(edges_not_k))]
                 if len(e_prime) > k:
                     # Take a random subset of the sampled edge.
-                    e_new = frozenset(random.sample(sorted(e_prime), k))
+                    e_new = frozenset(rng.choice(list(e_prime), size=k, replace=False))
                 else:
                     # Extend the sampled edge with additional Chung-Lu nodes.
                     extra = frozenset(
-                        np.random.choice(
-                            node_labels,
-                            size=k - len(e_prime),
-                            replace=True,
-                            p=node_probs,
-                        )
+                        rng.choice(node_labels, size=k - len(e_prime), replace=True, p=node_probs)
                     )
                     e_new = e_prime | extra
         else:
             # Generate a plain Chung-Lu edge.
-            e_new = frozenset(
-                np.random.choice(node_labels, size=k, replace=True, p=node_probs)
-            )
+            e_new = frozenset(rng.choice(node_labels, size=k, replace=True, p=node_probs))
 
         edges.append(e_new)
 
@@ -607,8 +594,8 @@ def random_nested_hypergraph(n, m, d, epsilon, seed=None):
         retention probability for hyperedges of size ``i+2``, for
         ``i = 0, ..., d-3``. Hyperedges of size ``t`` are rewired with
         probability ``1 - epsilon[t-2]``.
-    seed : integer or None (default)
-            The seed for the random number generator.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -645,17 +632,14 @@ def random_nested_hypergraph(n, m, d, epsilon, seed=None):
     """
     if isinstance(epsilon, (int, float)):
         epsilon = [epsilon] * (d - 2)
-
-    if seed is not None:
-        random.seed(seed)
-        np.random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     nodes = range(n)
 
     # Step 1: Generate m unique facets of size d
     facets = set()
     while len(facets) < m:
-        facet = frozenset(np.random.choice(nodes, size=d, replace=False))
+        facet = frozenset(rng.choice(nodes, size=d, replace=False))
         facets.add(facet)
 
     # Step 2: For each facet, enumerate all subsets of sizes 2..d
@@ -672,11 +656,11 @@ def random_nested_hypergraph(n, m, d, epsilon, seed=None):
         t = len(e)
         if t < d:
             eps_t = epsilon[t - 2]
-            if random.random() > eps_t:
+            if rng.random() > eps_t:
                 # Rewire: pick one pivot, replace the rest
-                pivot = random.choice(list(e))
+                pivot = rng.choice(list(e))
                 others = [v for v in nodes if v != pivot]
-                new_nodes = np.random.choice(others, size=t - 1, replace=False)
+                new_nodes = rng.choice(others, size=t - 1, replace=False)
                 e = frozenset([pivot, *new_nodes])
         final_edges.add(e)
 

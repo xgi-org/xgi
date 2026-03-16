@@ -139,8 +139,12 @@ def test_simplicial_chung_lu_hypergraph():
     assert H.num_nodes == 20
 
     # seed reproducibility
-    H1 = xgi.simplicial_chung_lu_hypergraph(k1, k2, p=0.5, seed=2)
-    H2 = xgi.simplicial_chung_lu_hypergraph(k1, k2, p=0.5, seed=2)
+    H1 = xgi.simplicial_chung_lu_hypergraph(
+        k1, k2, p=0.5, seed=np.random.default_rng(2)
+    )
+    H2 = xgi.simplicial_chung_lu_hypergraph(
+        k1, k2, p=0.5, seed=np.random.default_rng(2)
+    )
     assert H1._edge == H2._edge
 
     # warning on mismatched degree/size sums
@@ -167,8 +171,12 @@ def test_random_nested_hypergraph():
     assert H.num_nodes == 20
 
     # seed reproducibility
-    H1 = xgi.random_nested_hypergraph(20, 5, 4, [0.8, 0.5], seed=2)
-    H2 = xgi.random_nested_hypergraph(20, 5, 4, [0.8, 0.5], seed=2)
+    H1 = xgi.random_nested_hypergraph(
+        20, 5, 4, [0.8, 0.5], seed=np.random.default_rng(2)
+    )
+    H2 = xgi.random_nested_hypergraph(
+        20, 5, 4, [0.8, 0.5], seed=np.random.default_rng(2)
+    )
     assert H1._edge == H2._edge
 
 
