@@ -2,8 +2,6 @@
 
 from collections import Counter, defaultdict
 
-from scipy.special import comb
-
 from ..exception import XGIError
 
 __all__ = [
@@ -404,6 +402,8 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
         if max_order >= n:
             raise ValueError("max_order must be smaller than the number of nodes")
         numer = len(order_filter(max_order, "leq"))
+        from scipy.special import comb
+
         denom = sum(comb(n, _ord + 1, exact=True) for _ord in range(max_order + 1))
         if ignore_singletons:
             numer -= len(order_filter(0, mode="eq"))
@@ -415,6 +415,8 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
         if ignore_singletons and order == 0:
             return 0.0
         numer = len(order_filter(order, mode="eq"))
+        from scipy.special import comb
+
         denom = comb(n, order + 1, exact=True)
 
     try:
