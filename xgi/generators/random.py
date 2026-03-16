@@ -8,7 +8,7 @@ from warnings import warn
 import numpy as np
 from scipy.special import comb
 
-from ..utils import geometric
+from ..utils import geometric, powerset
 from .classic import empty_hypergraph
 from .lattice import ring_lattice
 from .uniform import _index_to_edge_comb
@@ -652,9 +652,10 @@ def random_nested_hypergraph(n, m, d, epsilon, seed=None):
     # (facets themselves are included as edges; singletons excluded)
     all_edges = set()
     for facet in facets:
-        for size in range(2, d + 1):
-            for subset in combinations(facet, size):
-                all_edges.add(frozenset(subset))
+        all_edges.update(
+            frozenset(subset)
+            for subset in powerset(facet, include_singletons=False, include_full=True)
+        )
 
     # Step 3: Rewire hyperedges of size t < d
     final_edges = set()
