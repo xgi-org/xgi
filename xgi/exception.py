@@ -1,3 +1,15 @@
+"""XGI exception hierarchy.
+
+XGIException
+├── XGIError        — domain-specific hypergraph errors (e.g. modifying a frozen network)
+└── IDNotFound      — also inherits KeyError; raised when a node or edge ID is missing
+
+Use ``ValueError`` (not ``XGIError``) for invalid arguments in public API functions.
+Reserve ``XGIError`` for cases where the hypergraph itself is in a state that
+prevents the operation.
+"""
+
+
 class XGIException(Exception):
     """Base class for exceptions in XGI."""
 
