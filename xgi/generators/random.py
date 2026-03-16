@@ -617,6 +617,12 @@ def random_nested_hypergraph(n, m, d, epsilon, seed=None):
        uniformly at random from the edge and replacing the other t − 1
        nodes with nodes sampled uniformly from {0, …, n − 1}.
 
+    The nestedness is controlled primarily by ``epsilon``: larger values
+    preserve more induced subedges and therefore produce more nested
+    hypergraphs, with ``epsilon=1`` yielding a fully nested construction
+    and ``epsilon=0`` rewiring every non-facet edge. If ``epsilon`` is a
+    list, it tunes nestedness separately for each subedge size.
+
     References
     ----------
     Jihye Kim, Deok-Sun Lee, and K-I. Goh,
