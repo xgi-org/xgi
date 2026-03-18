@@ -67,6 +67,16 @@ class SimplicialComplex(Hypergraph):
     :meth:`add_simplex` replace :class:`Hypergraph` methods such as :meth:`add_edge`
     which here raise an error.
 
+    **Per-node and per-edge statistics** are available through the
+    :mod:`~xgi.stats` framework, just like for :class:`Hypergraph`.
+    Access them via ``S.nodes.<stat>`` and ``S.edges.<stat>``.
+
+    **Algorithms** in :mod:`xgi.algorithms` work on simplicial complexes too, e.g.,
+    ``xgi.connected_components(S)``, ``xgi.clustering_coefficient(S)``.
+    Simpliciality measures (:func:`~xgi.algorithms.simpliciality.edit_simpliciality`,
+    :func:`~xgi.algorithms.simpliciality.simplicial_fraction`, etc.) are
+    particularly relevant for this class.
+
     Examples
     --------
     >>> import xgi
