@@ -122,46 +122,35 @@ class SimplicialComplex(Hypergraph):
                 f" nodes and {self.num_edges} simplices"
             )
 
-    def add_edge(self, edge, idx=None, **attr):
-        """Deprecated in SimplicialComplex. Use add_simplex instead"""
-        warn("add_edge is deprecated in SimplicialComplex. Use add_simplex instead")
-        return self.add_simplex(edge, idx=None, **attr)
-
-    def add_edges_from(self, ebunch_to_add, max_order=None, **attr):
-        """Deprecated in SimplicialComplex. Use add_simplices_from instead"""
-        warn(
-            "add_edges_from is deprecated in SimplicialComplex. "
-            "Use add_simplices_from instead"
-        )
-        return self.add_simplices_from(ebunch_to_add, max_order=None, **attr)
-
-    def add_weighted_edges_from(
-        self, ebunch_to_add, max_order=None, weight="weight", **attr
-    ):
-        """Deprecated in SimplicialComplex. Use add_weighted_simplices_from instead"""
-        warn(
-            "add_weighted_edges_from is deprecated in SimplicialComplex."
-            " Use add_weighted_simplices_from instead"
-        )
-        return self.add_weighted_simplices_from(
-            ebunch_to_add, max_order=max_order, weight=weight, **attr
+    def add_edge(self, *args, **kwargs):
+        raise XGIError(
+            "add_edge is not available for SimplicialComplex. "
+            "Use add_simplex instead."
         )
 
-    def remove_edge(self, idx):
-        """Deprecated in SimplicialComplex. Use remove_simplex_id instead"""
-        warn(
-            "remove_edge is deprecated in SimplicialComplex. "
-            "Use remove_simplex_id instead"
+    def add_edges_from(self, *args, **kwargs):
+        raise XGIError(
+            "add_edges_from is not available for SimplicialComplex. "
+            "Use add_simplices_from instead."
         )
-        return self.remove_simplex_id(idx)
 
-    def remove_edges_from(self, ebunch):
-        """Deprecated in SimplicialComplex. Use remove_simplex_ids_from instead"""
-        warn(
-            "remove_edges_from is deprecated in SimplicialComplex. "
-            "Use remove_simplex_ids_from instead"
+    def add_weighted_edges_from(self, *args, **kwargs):
+        raise XGIError(
+            "add_weighted_edges_from is not available for SimplicialComplex. "
+            "Use add_weighted_simplices_from instead."
         )
-        return self.remove_simplex_ids_from(ebunch)
+
+    def remove_edge(self, *args, **kwargs):
+        raise XGIError(
+            "remove_edge is not available for SimplicialComplex. "
+            "Use remove_simplex_id instead."
+        )
+
+    def remove_edges_from(self, *args, **kwargs):
+        raise XGIError(
+            "remove_edges_from is not available for SimplicialComplex. "
+            "Use remove_simplex_ids_from instead."
+        )
 
     def remove_node(self, n):
         """Remove a single node.
