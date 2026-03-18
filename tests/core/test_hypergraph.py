@@ -1,5 +1,6 @@
 import pickle
 import tempfile
+from copy import copy, deepcopy
 
 import pytest
 
@@ -454,6 +455,35 @@ def test_add_edges_from_wrong_format():
     edges = ["foo", [1, 2], [2, 3, 4]]
     with pytest.raises(XGIError):
         xgi.Hypergraph().add_edges_from(edges)
+
+
+def test_repr(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    r = repr(H)
+    assert r.startswith("Hypergraph([")
+
+    H_empty = xgi.Hypergraph()
+    assert repr(H_empty) == "Hypergraph([])"
+
+
+def test_copy_dunder(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    H["key"] = "value"
+    c = copy(H)
+    assert list(c.edges.members()) == list(H.edges.members())
+    assert c._net_attr == H._net_attr
+    H.add_node(99)
+    assert 99 not in c.nodes
+
+
+def test_deepcopy_dunder(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    H["key"] = "value"
+    c = deepcopy(H)
+    assert list(c.edges.members()) == list(H.edges.members())
+    assert c._net_attr == H._net_attr
+    H.add_node(99)
+    assert 99 not in c.nodes
 
 
 def test_copy(edgelist1):
