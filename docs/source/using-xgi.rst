@@ -20,6 +20,11 @@ Published Work
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1016/j.chaos.2025.116977>`
 
+[XGI, XGI-DATA] Martín Coll, Cliff A. Joslyn, Nicholas W. Landry, Quintino Francesco Lotito, Audun Myers, Joshua Pickard, Brenda Praggastis, and Przemysław Szufel, "HIF: The hypergraph interchange format for higher-order networks", arXiv:2507.11520 (2025).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2503.16959>`
+:bdg-link-primary-line:`Code <https://github.com/pszufe/HIF-standard>`
+
 [XGI] Robin Delabays, Giulia De Pasquale, Florian Dörfler, and Yuanzhao Zhang, "Hypergraph reconstruction from dynamics", *Nature Communications* **16**, 2691 (2025).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41467-025-57664-2>`
@@ -167,28 +172,15 @@ Preprints
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2510.11207>`
 
-[XGI, XGI-DATA] Martín Coll, Cliff A. Joslyn, Nicholas W. Landry, Quintino Francesco Lotito, Audun Myers, Joshua Pickard, Brenda Praggastis, and Przemysław Szufel, "HIF: The hypergraph interchange format for higher-order networks", arXiv:2507.11520 (2025).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2503.16959>`
-:bdg-link-primary-line:`Code <https://github.com/pszufe/HIF-standard>`
-
-[XGI] Yiwei Huang, Shuqi Xu, Shimin Cai, and Linyuan Lü, "Uncovering multi-technology convergence patterns with hypergraphs: Evolution and prediction using patent data", 	arXiv:2509.15521 (2025).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2509.15521>`
-
-Cameron Ibrahim, S M Ferdous, Ilya Safro, Marco Minutoli, and Mahantesh Halappanavar, "ELRUHNA: Elimination Rule-based Hypergraph Alignment", 
+[XGI-DATA] Cameron Ibrahim, S M Ferdous, Ilya Safro, Marco Minutoli, and Mahantesh Halappanavar, "ELRUHNA: Elimination Rule-based Hypergraph Alignment",
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2506.09866>`
-
-[XGI] Leah A. Keating, Kwang-Il Goh, Mason A. Porter, "An Approximate-Master-Equation Formulation of the Watts Threshold Model on Hypergraphs", arXiv:2503.04020 (2025).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/arXiv:2503.04020>`
 
 [XGI] Timothy LaRock and Renaud Lambiotte, "Exploring the Non-uniqueness of Node Co-occurrence Matrices of Hypergraphs", arXiv:2506.01479 (2025).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2506.01479>`
 
-[XGI-DATA] Hugo P. Maia, Wesley Cota, Yamir Moreno, and Silvio C. Ferreira, "Efficient Gillespie algorithms for spreading phenomena in large and heterogeneous higher-order networks", arXiv:2509.20174 (2025).
+[XGI, XGI-DATA] Hugo P. Maia, Wesley Cota, Yamir Moreno, and Silvio C. Ferreira, "Efficient Gillespie algorithms for spreading phenomena in large and heterogeneous higher-order networks", arXiv:2509.20174 (2025).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2509.20174>`
 :bdg-link-primary-line:`Code <https://github.com/gisc-ufv/hyperSIS>`
