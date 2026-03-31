@@ -543,3 +543,54 @@ def test_edge_head(diedgelist2):
 
     with pytest.raises(IDNotFound):
         H.edges.head("test")
+
+
+def test_stat_discoverability():
+    """Built-in stats should be visible in dir() for IDE and tab completion."""
+    H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4]])
+
+    # Node stats should appear in dir()
+    node_dir = dir(H.nodes)
+    assert "degree" in node_dir
+    assert "clustering_coefficient" in node_dir
+    assert "average_neighbor_degree" in node_dir
+
+    # Edge stats should appear in dir()
+    edge_dir = dir(H.edges)
+    assert "order" in edge_dir
+    assert "size" in edge_dir
+
+    # They should still work as before
+    assert H.nodes.degree.asdict() == {1: 1, 2: 2, 3: 2, 4: 1}
+    assert H.edges.order.asdict() == {0: 2, 1: 2}
+
+    # Directed hypergraph stats should also be discoverable
+    DH = xgi.DiHypergraph([[{1, 2}, {3}]])
+    dinode_dir = dir(DH.nodes)
+    assert "degree" in dinode_dir
+    assert "in_degree" in dinode_dir
+    assert "out_degree" in dinode_dir
+
+    diedge_dir = dir(DH.edges)
+    assert "order" in diedge_dir
+    assert "size" in diedge_dir
+    assert "head_order" in diedge_dir
+    assert "tail_size" in diedge_dir
+
+
+def test_stat_caching():
+    """Accessing a stat twice should return the same cached object."""
+    H = xgi.Hypergraph([[1, 2, 3]])
+    stat1 = H.nodes.degree
+    stat2 = H.nodes.degree
+    assert stat1 is stat2
+
+
+def test_custom_stat_still_works():
+    """User-defined stats via @nodestat_func should still work via __getattr__."""
+    @xgi.nodestat_func
+    def my_custom_stat(net, bunch):
+        return {n: 42 for n in bunch}
+
+    H = xgi.Hypergraph([[1, 2]])
+    assert H.nodes.my_custom_stat.asdict() == {1: 42, 2: 42}
