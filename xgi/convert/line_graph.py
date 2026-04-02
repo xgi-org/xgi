@@ -1,5 +1,6 @@
 """Method for converting to a line graph."""
 
+from collections import defaultdict
 from itertools import combinations
 
 import networkx as nx
@@ -54,24 +55,59 @@ def to_line_graph(H, s=1, weights=None):
     LG = nx.Graph()
 
     LG.add_nodes_from([(k, {"original_hyperedge": v}) for k, v in H._edge.items()])
+    edge_order = {edge: idx for idx, edge in enumerate(H._edge)}
 
-    for e1, e2 in combinations(H._edge, 2):
-        # Check that the intersection size is larger than s
-        intersection_size = len(H._edge[e1].intersection(H._edge[e2]))
-        if intersection_size >= s:
+    # Preserve the current behavior for s <= 0, which includes disjoint pairs.
+    if s <= 0:
+        for e1, e2 in combinations(H._edge, 2):
+            intersection_size = len(H._edge[e1].intersection(H._edge[e2]))
             if not weights:
-                # Add unweighted edge
                 LG.add_edge(e1, e2)
             else:
-                # Compute the (normalized) weight
                 weight = intersection_size
                 if weights == "normalized":
-                    weight /= min([len(H._edge[e1]), len(H._edge[e2])])
-                # Add edge with weight
+                    weight /= min(len(H._edge[e1]), len(H._edge[e2]))
                 LG.add_edge(
                     e1,
                     e2,
                     weight=weight,
                 )
+        return LG
+
+    overlap_sizes = defaultdict(int)
+
+    for memberships in H._node.values():
+        if len(memberships) < 2:
+            continue
+
+        for e1, e2 in combinations(memberships, 2):
+            if edge_order[e1] > edge_order[e2]:
+                e1, e2 = e2, e1
+            overlap_sizes[(e1, e2)] += 1
+
+    if weights == "normalized":
+        edge_sizes = {e: len(members) for e, members in H._edge.items()}
+
+    for e1, e2 in sorted(
+        overlap_sizes, key=lambda pair: (edge_order[pair[0]], edge_order[pair[1]])
+    ):
+        intersection_size = overlap_sizes[(e1, e2)]
+        if intersection_size < s:
+            continue
+
+        if not weights:
+            # Add unweighted edge
+            LG.add_edge(e1, e2)
+        else:
+            # Compute the (normalized) weight
+            weight = intersection_size
+            if weights == "normalized":
+                weight /= min(edge_sizes[e1], edge_sizes[e2])
+            # Add edge with weight
+            LG.add_edge(
+                e1,
+                e2,
+                weight=weight,
+            )
 
     return LG
