@@ -13,7 +13,6 @@
 
    installing
    user_guides
-   stats_cheatsheet
    api_reference
    xgi-data
    auto_examples/index
