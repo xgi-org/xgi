@@ -4,6 +4,14 @@ stats package
 
 .. automodule:: xgi.stats
 
+.. seealso::
+
+   :doc:`/stats_cheatsheet`
+      Quick reference for output formats, filtering, custom stats, and more.
+
+   :doc:`/api/tutorials/focus_6`
+      Step-by-step tutorial on the stats interface.
+
 .. admonition:: Available statistics
    
    .. rubric:: Hypergraphs and simplicial complexes
