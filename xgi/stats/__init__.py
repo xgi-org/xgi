@@ -71,6 +71,7 @@ class IDStat:
         self.args = () if args is None else args
         self.kwargs = {} if kwargs is None else kwargs
         self.func = func
+        self.__doc__ = func.__doc__
 
     def __call__(self, *args, **kwargs):
         return self.__class__(self.net, self.view, self.func, args=args, kwargs=kwargs)
