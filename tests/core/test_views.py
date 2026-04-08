@@ -594,3 +594,26 @@ def test_custom_stat_still_works():
 
     H = xgi.Hypergraph([[1, 2]])
     assert H.nodes.my_custom_stat.asdict() == {1: 42, 2: 42}
+
+
+def test_stat_docstring_forwarding():
+    """Stat objects should expose the underlying function's docstring."""
+    H = xgi.Hypergraph([[1, 2, 3], [3, 4, 5]])
+
+    assert "degree" in H.nodes.degree.__doc__.lower()
+    assert "order" in H.edges.order.__doc__.lower()
+
+    # Calling with args should preserve the docstring
+    assert H.nodes.degree(order=2).__doc__ == H.nodes.degree.__doc__
+
+    # Custom stats should forward their docstring too
+    @xgi.nodestat_func
+    def my_stat(net, bunch):
+        """My custom docstring."""
+        return {n: 1 for n in bunch}
+
+    assert H.nodes.my_stat.__doc__ == "My custom docstring."
+
+    # Directed hypergraph stats
+    DH = xgi.DiHypergraph([([1, 2], [3, 4])])
+    assert "in-degree" in DH.nodes.in_degree.__doc__.lower()
