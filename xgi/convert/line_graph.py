@@ -2,8 +2,6 @@
 
 from itertools import combinations
 
-import networkx as nx
-
 from ..exception import XGIError
 
 __all__ = ["to_line_graph"]
@@ -51,6 +49,8 @@ def to_line_graph(H, s=1, weights=None):
             f"{weights} not a valid weights option. Choices are "
             "None, 'absolute', and 'normalized'."
         )
+    import networkx as nx
+
     LG = nx.Graph()
 
     LG.add_nodes_from([(k, {"original_hyperedge": v}) for k, v in H._edge.items()])

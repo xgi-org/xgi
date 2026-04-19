@@ -1,7 +1,6 @@
 import pytest
 
 import xgi
-from xgi.exception import XGIError
 
 
 def test_ring_lattice():
@@ -27,5 +26,5 @@ def test_ring_lattice():
         xgi.ring_lattice(5, 2, 3, 0)
 
     # k < 0 test
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         xgi.ring_lattice(5, 2, -1, 0)

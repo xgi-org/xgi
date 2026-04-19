@@ -2,10 +2,8 @@
 
 from warnings import warn
 
-import networkx as nx
 import numpy as np
 from numpy.linalg import norm
-from scipy.sparse.linalg import eigsh
 
 from ..convert import to_line_graph
 from ..exception import XGIError
@@ -59,6 +57,8 @@ def clique_eigenvector_centrality(H, tol=1e-6):
     # this metric doesn't make sense and should return nan.
     if not is_connected(H):
         return {n: np.nan for n in H.nodes}
+    from scipy.sparse.linalg import eigsh
+
     W, node_dict = clique_motif_matrix(H, index=True)
     _, v = eigsh(W.astype(float), k=1, which="LM", tol=tol)
 
@@ -182,6 +182,8 @@ def line_vector_centrality(H):
     if not is_connected(H):
         raise XGIError("This method is not defined for disconnected hypergraphs.")
 
+    import networkx as nx
+
     LG = to_line_graph(H)
     LGcent = nx.eigenvector_centrality(LG)
 
@@ -294,7 +296,7 @@ def katz_centrality(H, cutoff=100):
     return {nodedict[idx]: c[idx] for idx in nodedict}
 
 
-def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
+def h_eigenvector_centrality(H, max_iter=100, tol=1e-6, seed=None):
     """Compute the H-eigenvector centrality of a hypergraph.
 
     The H-eigenvector terminology comes from Qi (2005) which
@@ -309,6 +311,8 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
         By default, 100.
     tol : float > 0, optional
         The desired convergence tolerance. By default, 1e-6.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -354,7 +358,9 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     node_dict = new_H.nodes.memberships()
     r = new_H.edges.size.max()
 
-    x = np.random.uniform(size=(new_H.num_nodes))
+    rng = np.random.default_rng(seed)
+
+    x = rng.uniform(size=(new_H.num_nodes))
     x = x / norm(x, 1)
     y = np.abs(np.array(ttsv1(node_dict, edge_dict, r, x)))
 
@@ -441,6 +447,8 @@ def z_eigenvector_centrality(H, max_iter=100, tol=1e-6):
 
     def LR_evec(A):
         """Compute the largest real eigenvalue of the matrix A"""
+        from scipy.sparse.linalg import eigsh
+
         _, v = eigsh(A, k=1, which="LM", tol=1e-5, maxiter=200)
         evec = np.array([_v for _v in v[:, 0]])
         if evec[0] < 0:
@@ -470,7 +478,7 @@ def z_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     }
 
 
-def uniform_h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
+def uniform_h_eigenvector_centrality(H, max_iter=100, tol=1e-6, seed=None):
     """Compute the H-eigenvector centrality of a uniform hypergraph.
 
     Parameters
@@ -482,6 +490,8 @@ def uniform_h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
         By default, 100.
     tol : float > 0, optional
         The desired L2 error in the centrality vector. By default, 1e-6.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -521,7 +531,8 @@ def uniform_h_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     f = lambda v, m: np.power(v, 1.0 / m)  # noqa: E731
     g = lambda v, x: np.prod(v[list(x)])  # noqa: E731
 
-    x = np.random.uniform(size=(new_H.num_nodes))
+    rng = np.random.default_rng(seed)
+    x = rng.uniform(size=(new_H.num_nodes))
     x = x / norm(x, 1)
 
     for iter in range(max_iter):

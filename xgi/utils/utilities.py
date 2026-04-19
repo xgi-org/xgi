@@ -1,6 +1,5 @@
 """General utilities."""
 
-import random
 from collections import defaultdict
 from copy import deepcopy
 from functools import cache
@@ -8,9 +7,6 @@ from itertools import chain, combinations, count
 from math import ceil, log
 
 import numpy as np
-import pandas as pd
-import requests
-from matplotlib.colors import LinearSegmentedColormap
 
 from xgi.exception import IDNotFound, XGIError
 
@@ -266,6 +262,8 @@ def request_json_from_url(url):
         If the connection fails or if there is a bad HTTP request.
     """
 
+    import requests
+
     try:
         r = requests.get(url)
     except requests.ConnectionError:
@@ -296,6 +294,7 @@ def request_json_from_url_cached(url):
     XGIError
         If the connection fails or if there is a bad HTTP request.
     """
+    import requests
 
     try:
         r = requests.get(url)
@@ -508,6 +507,8 @@ def hist(vals, bins=10, bin_edges=False, density=False, log_binning=False):
     # Now, we need to compute for each y the bin centers
     x = bins[1:] - np.diff(bins) / 2.0
 
+    import pandas as pd
+
     if bin_edges:
         return pd.DataFrame.from_dict(
             {"bin_center": x, "value": y, "bin_lo": bins[:-1], "bin_hi": bins[1:]}
@@ -560,29 +561,29 @@ def get_network_type(H):
     return str(type(H)).split(".")[-1].split("'")[0].lower()
 
 
-def geometric(p):
+def geometric(p, rng=None):
     """Generate a sample from the geometric1 distribution.
 
     Parameters
     ----------
     p : float in [0, 1]
         the probability
+    rng : numpy.random.Generator or None, optional
+        A random number generator instance. If None, a new unseeded
+        instance is used. By default, None.
 
     Returns
     -------
     int
         the number of trials for the first success
 
-    Notes
-    -----
-    This sampler can be made deterministic by setting
-    `random.seed()`.
-
     References
     ----------
     https://en.wikipedia.org/wiki/Geometric_distribution
     """
-    r = random.random()
+    if rng is None:
+        rng = np.random.default_rng()
+    r = rng.random()
     try:
         return ceil(log(r) / log(1 - p))
     except ValueError:
@@ -599,4 +600,6 @@ def crest_r():
         (0.20350004, 0.5231837, 0.55370601),
         (0.6468274, 0.80289262, 0.56592265),
     ]
+    from matplotlib.colors import LinearSegmentedColormap
+
     return LinearSegmentedColormap.from_list("crest_r", palette)

@@ -1,11 +1,12 @@
 """Base class for undirected hypergraphs."""
 
-import random
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
 from copy import copy, deepcopy
 from itertools import count
 from warnings import warn
+
+import numpy as np
 
 from ..exception import IDNotFound, XGIError, frozen
 from ..utils import IDDict, update_uid_counter
@@ -57,10 +58,16 @@ class Hypergraph:
     The `attr` keyword arguments are added as hypergraph attributes. To add node or edge
     attributes see :meth:`add_node` and :meth:`add_edge`.
 
-    In addition to the methods listed in this page, other methods defined in the `stats`
-    package are also accessible via the `Hypergraph` class.  For more details, see the
-    `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
+    **Per-node and per-edge statistics** are available through the
+    :mod:`~xgi.stats` framework.  Access them via ``H.nodes.<stat>`` and
+    ``H.edges.<stat>`` (e.g., ``H.nodes.degree``,
+    ``H.nodes.clustering_coefficient``, ``H.edges.order``).
+    See :doc:`Tutorial 6 - Statistics </api/tutorials/focus_6>` for details.
+
+    **Algorithms** for analyzing hypergraphs — centrality measures, clustering
+    coefficients, connectivity, assortativity, shortest paths, and more — are in the
+    :mod:`xgi.algorithms` module and can be called as top-level functions, e.g.,
+    ``xgi.connected_components(H)`` or ``xgi.clustering_coefficient(H)``.
 
     Examples
     --------
@@ -165,6 +172,16 @@ class Hypergraph:
                 f"Unnamed {type(self).__name__} with "
                 f"{self.num_nodes} nodes and {self.num_edges} hyperedges"
             )
+
+    def __repr__(self):
+        cls = type(self).__name__
+        return f"{cls}({self.edges.members()})"
+
+    def __copy__(self):
+        return self.copy()
+
+    def __deepcopy__(self, memo):
+        return self.copy()
 
     def __iter__(self):
         """Iterate over the nodes.
@@ -974,7 +991,7 @@ class Hypergraph:
         self._edge[e_id1] = temp_members1
         self._edge[e_id2] = temp_members2
 
-    def random_edge_shuffle(self, e_id1=None, e_id2=None):
+    def random_edge_shuffle(self, e_id1=None, e_id2=None, seed=None):
         """Randomly redistributes nodes between two hyperedges.
 
         The process is as follows:
@@ -989,6 +1006,8 @@ class Hypergraph:
             ID of first edge to shuffle.
         e_id2 : node ID, optional
             ID of second edge to shuffle.
+        seed : int, numpy.random.Generator, or None, optional
+            The seed for the random number generator. By default, None.
 
         Note
         ----
@@ -1007,19 +1026,21 @@ class Hypergraph:
         Example
         -------
         >>> import xgi
-        >>> random.seed(42)
         >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5]])
-        >>> H.random_edge_shuffle()
+        >>> H.random_edge_shuffle(seed=42)
         >>> H.edges.members()
         [{2, 4, 5}, {3, 4}, {1, 3}]
 
         """
+        rng = np.random.default_rng(seed)
+
         if len(self._edge) < 2:
             raise ValueError("Hypergraph must have at least two edges.")
 
         # select two random edges
         if e_id1 is None or e_id2 is None:
-            e_id1, e_id2 = random.sample(list(self._edge), 2)
+            edge_list = list(self._edge)
+            e_id1, e_id2 = rng.choice(edge_list, size=2, replace=False)
 
         # extract edges (lists of nodes)
         e1 = self._edge[e_id1]
@@ -1034,7 +1055,9 @@ class Hypergraph:
         nodes = e1 | e2
 
         # randomly redistribute nodes between the two edges
-        e1_new = set(random.sample(list(nodes), len(e1)))
+        nodes_list = list(nodes)
+        chosen = rng.choice(nodes_list, size=len(e1), replace=False).tolist()
+        e1_new = set(chosen)
         e2_new = nodes - e1_new
 
         # update edge memberships

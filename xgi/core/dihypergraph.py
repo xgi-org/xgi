@@ -64,10 +64,10 @@ class DiHypergraph:
     The `attr` keyword arguments are added as hypergraph attributes. To add node or edge
     attributes see :meth:`add_node` and :meth:`add_edge`.
 
-    In addition to the methods listed in this page, other methods defined in the `stats`
-    package are also accessible via the `DiHypergraph` class.  For more details, see the
-    `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
+    **Per-node and per-edge statistics** are available through the
+    :mod:`~xgi.stats` framework.  Access them via ``DH.nodes.<stat>`` and
+    ``DH.edges.<stat>`` (e.g., ``DH.nodes.degree``, ``DH.edges.order``).
+    See :doc:`Tutorial 6 - Statistics </api/tutorials/focus_6>` for details.
 
     References
     ----------
@@ -175,6 +175,16 @@ class DiHypergraph:
             return f"{type(self).__name__} named {self['name']} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
         except XGIError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
+
+    def __repr__(self):
+        cls = type(self).__name__
+        return f"{cls}({self.edges.dimembers()})"
+
+    def __copy__(self):
+        return self.copy()
+
+    def __deepcopy__(self, memo):
+        return self.copy()
 
     def __iter__(self):
         """Iterate over the nodes.

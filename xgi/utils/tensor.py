@@ -74,10 +74,10 @@ def banerjee_coeff(size, max_size):
     Sinan Aksoy, Ilya Amburg, Stephen Young,
     https://doi.org/10.1137/23M1584472
     """
-    from scipy.special import binom
+    from scipy.special import comb
 
     return sum(
-        ((-1) ** j) * binom(size, j) * (size - j) ** max_size for j in range(size + 1)
+        ((-1) ** j) * comb(size, j) * (size - j) ** max_size for j in range(size + 1)
     )
 
 

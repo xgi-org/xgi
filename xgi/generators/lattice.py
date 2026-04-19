@@ -7,7 +7,6 @@ hypergraph).
 
 from warnings import warn
 
-from ..exception import XGIError
 
 __all__ = [
     "ring_lattice",
@@ -38,7 +37,7 @@ def ring_lattice(n, d, k, l):
 
     Raises
     ------
-    XGIError
+    ValueError
         If k is negative.
 
     Notes
@@ -50,7 +49,7 @@ def ring_lattice(n, d, k, l):
     from ..core import Hypergraph
 
     if k < 0:
-        raise XGIError("Invalid k value!")
+        raise ValueError("Invalid k value!")
 
     if k < 2:
         warn("This creates a completely disconnected hypergraph!")

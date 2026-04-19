@@ -220,7 +220,7 @@ def largest_connected_hypergraph(H, in_place=False):
     >>> H = xgi.random_hypergraph(10, [0.1, 0.01], seed=1)
     >>> H_gcc = xgi.largest_connected_hypergraph(H)
     >>> print(H_gcc.num_nodes)
-    6
+    8
 
     """
     connected_nodes = max(connected_components(H), key=len)

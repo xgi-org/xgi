@@ -1,5 +1,6 @@
 import pickle
 import tempfile
+from copy import copy, deepcopy
 
 import pytest
 
@@ -414,6 +415,35 @@ def test_remove_edges_from(diedgelist2):
     assert 1 not in H.edges and 2 not in H.edges
     assert sorted(H.nodes) == list(range(6))
     assert H.nodes.memberships(2) == {0}
+
+
+def test_repr(diedgelist1):
+    H = xgi.DiHypergraph(diedgelist1)
+    r = repr(H)
+    assert r.startswith("DiHypergraph(")
+
+    H_empty = xgi.DiHypergraph()
+    assert repr(H_empty) == "DiHypergraph([])"
+
+
+def test_copy_dunder(diedgelist1):
+    H = xgi.DiHypergraph(diedgelist1)
+    H["key"] = "value"
+    c = copy(H)
+    assert list(c.edges.members()) == list(H.edges.members())
+    assert c._net_attr == H._net_attr
+    H.add_node(99)
+    assert 99 not in c.nodes
+
+
+def test_deepcopy_dunder(diedgelist1):
+    H = xgi.DiHypergraph(diedgelist1)
+    H["key"] = "value"
+    c = deepcopy(H)
+    assert list(c.edges.members()) == list(H.edges.members())
+    assert c._net_attr == H._net_attr
+    H.add_node(99)
+    assert 99 not in c.nodes
 
 
 def test_copy(diedgelist1):

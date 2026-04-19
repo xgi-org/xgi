@@ -2,19 +2,6 @@
 
 from copy import deepcopy
 
-import pandas as pd
-from numpy import matrix, ndarray
-from scipy.sparse import (
-    coo_array,
-    coo_matrix,
-    csc_array,
-    csc_matrix,
-    csr_array,
-    csr_matrix,
-    lil_array,
-    lil_matrix,
-)
-
 from ..algorithms.properties import max_edge_order
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
@@ -97,36 +84,14 @@ def to_hypergraph(data, create_using=None):
         if not isinstance(create_using, Hypergraph):
             return result
 
-    elif isinstance(data, pd.DataFrame):
-        result = from_bipartite_pandas_dataframe(data, create_using)
-        if not isinstance(create_using, Hypergraph):
-            return result
-
     elif isinstance(data, dict):
         # edge dict in the form we need
         result = from_hyperedge_dict(data, create_using)
         if not isinstance(create_using, Hypergraph):
             return result
 
-    elif isinstance(
-        data,
-        (
-            ndarray,
-            matrix,
-            csr_array,
-            csc_array,
-            coo_array,
-            lil_array,
-            csr_matrix,
-            csc_matrix,
-            coo_matrix,
-            lil_matrix,
-        ),
-    ):
-        from_incidence_matrix(data, create_using)
-
     else:
-        raise XGIError("Input data has unsupported type.")
+        return _to_hypergraph_from_external_type(data, create_using)
 
 
 def to_dihypergraph(data, create_using=None):
@@ -242,36 +207,13 @@ def to_simplicial_complex(data, create_using=None):
         if not isinstance(create_using, SimplicialComplex):
             return to_simplicial_complex(result)
 
-    elif isinstance(data, pd.DataFrame):
-        result = from_bipartite_pandas_dataframe(data, create_using)
-        if not isinstance(create_using, SimplicialComplex):
-            return to_simplicial_complex(result)
-
     elif isinstance(data, dict):
         result = from_simplex_dict(data, create_using)
         if not isinstance(create_using, SimplicialComplex):
             return to_simplicial_complex(result)
-    elif isinstance(
-        data,
-        (
-            ndarray,
-            matrix,
-            csr_array,
-            csc_array,
-            coo_array,
-            lil_array,
-            csr_matrix,
-            csc_matrix,
-            coo_matrix,
-            lil_matrix,
-        ),
-    ):
-        # incidence matrix
-        raise XGIError(
-            "Not implemented: construction of a SimplicialComplex from incidence matrix"
-        )
+
     else:
-        raise XGIError("Input data has unsupported type.")
+        return _to_sc_from_external_type(data, create_using)
 
 
 def cut_to_order(H, order):
@@ -300,3 +242,86 @@ def cut_to_order(H, order):
         else:
             _H.remove_edges_from(bunch)
     return _H
+
+
+def _to_hypergraph_from_external_type(data, create_using):
+    """Handle pandas DataFrame and scipy/numpy matrix inputs for to_hypergraph."""
+    import pandas as pd
+    from numpy import matrix, ndarray
+    from scipy.sparse import (
+        coo_array,
+        coo_matrix,
+        csc_array,
+        csc_matrix,
+        csr_array,
+        csr_matrix,
+        lil_array,
+        lil_matrix,
+    )
+
+    if isinstance(data, pd.DataFrame):
+        result = from_bipartite_pandas_dataframe(data, create_using)
+        if not isinstance(create_using, Hypergraph):
+            return result
+
+    elif isinstance(
+        data,
+        (
+            ndarray,
+            matrix,
+            csr_array,
+            csc_array,
+            coo_array,
+            lil_array,
+            csr_matrix,
+            csc_matrix,
+            coo_matrix,
+            lil_matrix,
+        ),
+    ):
+        from_incidence_matrix(data, create_using)
+
+    else:
+        raise XGIError("Input data has unsupported type.")
+
+
+def _to_sc_from_external_type(data, create_using):
+    """Handle pandas DataFrame and scipy/numpy matrix inputs for to_simplicial_complex."""
+    import pandas as pd
+    from numpy import matrix, ndarray
+    from scipy.sparse import (
+        coo_array,
+        coo_matrix,
+        csc_array,
+        csc_matrix,
+        csr_array,
+        csr_matrix,
+        lil_array,
+        lil_matrix,
+    )
+
+    if isinstance(data, pd.DataFrame):
+        result = from_bipartite_pandas_dataframe(data, create_using)
+        if not isinstance(create_using, SimplicialComplex):
+            return to_simplicial_complex(result)
+
+    elif isinstance(
+        data,
+        (
+            ndarray,
+            matrix,
+            csr_array,
+            csc_array,
+            coo_array,
+            lil_array,
+            csr_matrix,
+            csc_matrix,
+            coo_matrix,
+            lil_matrix,
+        ),
+    ):
+        raise XGIError(
+            "Not implemented: construction of a SimplicialComplex from incidence matrix"
+        )
+    else:
+        raise XGIError("Input data has unsupported type.")

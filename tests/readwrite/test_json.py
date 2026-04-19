@@ -5,6 +5,7 @@ import pytest
 
 import xgi
 from xgi.exception import XGIError
+from xgi.readwrite.json import read_json, write_json
 
 json_string1 = """
 {
@@ -149,8 +150,8 @@ def test_read_json():
     with open(filename, "w") as file:
         file.write(json_string1)
 
-    H1 = xgi.read_json(filename, nodetype=int)
-    H2 = xgi.read_json(filename)
+    H1 = read_json(filename, nodetype=int)
+    H2 = read_json(filename)
 
     assert list(H1.nodes) == [1, 2, 3, 4]
     assert list(H1.edges) == ["edge1", "edge2", "edge3"]
@@ -174,7 +175,7 @@ def test_read_json():
         with open(filename, "w") as file:
             file.write(json_string2)
 
-        xgi.read_json(filename)
+        read_json(filename)
 
     # Test missing node-data
     with pytest.raises(XGIError):
@@ -182,7 +183,7 @@ def test_read_json():
         with open(filename, "w") as file:
             file.write(json_string3)
 
-        xgi.read_json(filename)
+        read_json(filename)
 
     # Test failed node type conversion
     with pytest.raises(TypeError):
@@ -190,7 +191,7 @@ def test_read_json():
         with open(filename, "w") as file:
             file.write(json_string4)
 
-        xgi.read_json(filename, nodetype=int)
+        read_json(filename, nodetype=int)
 
     # Test missing edge dict
     with pytest.raises(XGIError):
@@ -198,7 +199,7 @@ def test_read_json():
         with open(filename, "w") as file:
             file.write(json_string5)
 
-        xgi.read_json(filename)
+        read_json(filename)
 
     # Test missing edge-data
     with pytest.raises(XGIError):
@@ -206,7 +207,7 @@ def test_read_json():
         with open(filename, "w") as file:
             file.write(json_string6)
 
-        xgi.read_json(filename)
+        read_json(filename)
 
     # Test failed edge type conversion
     with pytest.raises(TypeError):
@@ -214,7 +215,7 @@ def test_read_json():
         with open(filename, "w") as file:
             file.write(json_string1)
 
-        xgi.read_json(filename, edgetype=int)
+        read_json(filename, edgetype=int)
 
 
 def test_write_json(edgelist1, edgelist2):
@@ -240,9 +241,9 @@ def test_write_json(edgelist1, edgelist2):
     }
     H1.set_edge_attributes(edge_attr_dict)
 
-    xgi.write_json(H1, filename)
+    write_json(H1, filename)
 
-    H2 = xgi.read_json(filename, nodetype=int, edgetype=int)
+    H2 = read_json(filename, nodetype=int, edgetype=int)
 
     assert set(H1.nodes) == set(H2.nodes)
     assert set(H1.edges) == set(H2.edges)
@@ -257,20 +258,20 @@ def test_write_json(edgelist1, edgelist2):
     # duplicate node IDs when casting to a string
     badH.add_nodes_from(["2", 2])
     with pytest.raises(XGIError):
-        xgi.write_json(badH, "test.json")
+        write_json(badH, "test.json")
 
     badH = xgi.Hypergraph()
     # duplicate edge IDs when casting to a string
     badH.add_edges_from({"2": [1, 2, 3], 2: [4, 5, 6]})
     with pytest.raises(XGIError):
-        xgi.write_json(badH, "test.json")
+        write_json(badH, "test.json")
 
     # test list collection
     H2 = xgi.Hypergraph(edgelist2)
     collection = [H1, H2]
     dir = tempfile.mkdtemp()
 
-    xgi.write_json(collection, dir, collection_name="test")
-    collection = xgi.read_json(join(dir, "test_collection_information.json"))
+    write_json(collection, dir, collection_name="test")
+    collection = read_json(join(dir, "test_collection_information.json"))
     assert len(collection) == 2
     assert isinstance(collection, dict)

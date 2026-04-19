@@ -1,5 +1,6 @@
 import pickle
 import tempfile
+from copy import copy, deepcopy
 
 import pytest
 
@@ -456,6 +457,35 @@ def test_add_edges_from_wrong_format():
         xgi.Hypergraph().add_edges_from(edges)
 
 
+def test_repr(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    r = repr(H)
+    assert r.startswith("Hypergraph([")
+
+    H_empty = xgi.Hypergraph()
+    assert repr(H_empty) == "Hypergraph([])"
+
+
+def test_copy_dunder(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    H["key"] = "value"
+    c = copy(H)
+    assert list(c.edges.members()) == list(H.edges.members())
+    assert c._net_attr == H._net_attr
+    H.add_node(99)
+    assert 99 not in c.nodes
+
+
+def test_deepcopy_dunder(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    H["key"] = "value"
+    c = deepcopy(H)
+    assert list(c.edges.members()) == list(H.edges.members())
+    assert c._net_attr == H._net_attr
+    H.add_node(99)
+    assert 99 not in c.nodes
+
+
 def test_copy(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     H["key"] = "value"
@@ -547,7 +577,7 @@ def test_random_edge_shuffle(edgelist4):
     assert len(H._edge[1]) == len(S._edge[1])
 
     # verify dual of edge dict is nodes dict
-    assert xgi.utilities.dual_dict(H._edge) == H._node
+    assert xgi.dual_dict(H._edge) == H._node
 
     # hypergraph with more than two edges
     S = xgi.Hypergraph(edgelist4)
@@ -568,7 +598,7 @@ def test_random_edge_shuffle(edgelist4):
         assert len(H._edge[edge_id]) == len(S._edge[edge_id])
 
     # verify dual of edge dict is nodes dict
-    assert xgi.utilities.dual_dict(H._edge) == H._node
+    assert xgi.dual_dict(H._edge) == H._node
 
     # random hypergraph
     S = xgi.random_hypergraph(50, [0.1, 0.01, 0.001], seed=1)
@@ -588,7 +618,7 @@ def test_random_edge_shuffle(edgelist4):
         assert len(H._node[node_id]) == len(S._node[node_id])
 
     # verify dual of edge dict is nodes dict
-    assert xgi.utilities.dual_dict(H._edge) == H._node
+    assert xgi.dual_dict(H._edge) == H._node
 
 
 def test_duplicate_edges(edgelist1):

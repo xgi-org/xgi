@@ -2,14 +2,12 @@
 
 import itertools
 import operator
-import random
 import warnings
 from functools import reduce
 
 import numpy as np
 from scipy.special import comb
 
-from ..exception import XGIError
 from ..utils import geometric
 from .classic import complete_hypergraph, empty_hypergraph
 
@@ -32,8 +30,8 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
         and the values are node degrees.
     m : int
         specifies the hyperedge size
-    seed : integer or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -70,8 +68,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     >>> H = xgi.uniform_hypergraph_configuration_model(k, m)
 
     """
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     # Making sure we have the right number of stubs
     remainder = sum(k.values()) % m
@@ -80,9 +77,10 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
             "This degree sequence is not realizable. "
             "Increasing the degree of random nodes so that it is."
         )
-        random_ids = random.sample(list(k.keys()), int(round(m - remainder)))
-        for idx in random_ids:
-            k[idx] = k[idx] + 1
+        keys = list(k.keys())
+        chosen = rng.choice(len(keys), size=int(round(m - remainder)), replace=False)
+        for i in chosen:
+            k[keys[i]] = k[keys[i]] + 1
 
     stubs = []
     # Creating the list to index through
@@ -93,7 +91,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     H.add_nodes_from(k.keys())
 
     while len(stubs) != 0:
-        u = random.sample(range(len(stubs)), m)
+        u = rng.choice(len(stubs), size=m, replace=False).tolist()
         edge = set()
         for index in u:
             edge.add(stubs[index])
@@ -125,8 +123,8 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
         tensor of probabilities between communities
     sizes : list or 1D numpy array
         The sizes of the community blocks in order
-    seed : integer or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -135,7 +133,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
 
     Raises
     ------
-    XGIError
+    ValueError
         - If the length of sizes and p do not match.
         - If p is not a tensor with every dimension equal
         - If p is not m-dimensional
@@ -167,19 +165,18 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
 
     # Check if dimensions match
     if len(sizes) != np.size(p, axis=0):
-        raise XGIError("'sizes' and 'p' do not match.")
+        raise ValueError("'sizes' and 'p' do not match.")
     if len(np.shape(p)) != m:
-        raise XGIError("The dimension of p does not match m")
+        raise ValueError("The dimension of p does not match m")
     # Check that p has the same length over every dimension.
     if len(set(np.shape(p))) != 1:
-        raise XGIError("'p' must be a square tensor.")
+        raise ValueError("'p' must be a square tensor.")
     if np.max(p) > 1 or np.min(p) < 0:
-        raise XGIError("Entries of 'p' not in [0, 1].")
+        raise ValueError("Entries of 'p' not in [0, 1].")
     if np.sum(sizes) != n:
-        raise XGIError("Sum of sizes does not match n")
+        raise ValueError("Sum of sizes does not match n")
 
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     node_labels = range(n)
     H = empty_hypergraph()
@@ -203,20 +200,14 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
             max_index = reduce(operator.mul, partition_sizes, 1)
             if max_index < 0:
                 raise Exception("Index overflow error!")
-            index = geometric(p[block]) - 1
+            index = geometric(p[block], rng=rng) - 1
 
             while index < max_index:
                 indices = _index_to_edge_partition(index, partition_sizes, m)
                 e = {partition[block[i]][indices[i]] for i in range(m)}
-                # edge ids are not guaranteed to be unique
-                # and when casting to a set, they will no
-                # longer be of size m.
-                # for instance (0, 0, 0) becomes {0}
-                # if we accept these edges, the hypergraph
-                # will not longer be uniform, so we discard them.
                 if len(e) == m:
                     H.add_edge(e)
-                index += geometric(p[block])
+                index += geometric(p[block], rng=rng)
     return H
 
 
@@ -241,8 +232,8 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
         Imbalance parameter
     rho : float between 0 and 1, optional
         The fraction of nodes in community 1, default 0.5
-    seed : integer or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -251,7 +242,7 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
 
     Raises
     ------
-    XGIError
+    ValueError
         - If rho is not between 0 and 1
         - If the mean degree is negative.
         - If epsilon is not between 0 and 1
@@ -278,11 +269,11 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
     """
 
     if rho < 0 or rho > 1:
-        raise XGIError("The value of rho must be between 0 and 1")
+        raise ValueError("The value of rho must be between 0 and 1")
     if k < 0:
-        raise XGIError("The mean degree must be non-negative")
+        raise ValueError("The mean degree must be non-negative")
     if epsilon < 0 or epsilon > 1:
-        raise XGIError("epsilon must be between 0 and 1")
+        raise ValueError("epsilon must be between 0 and 1")
 
     sizes = [int(rho * n), n - int(rho * n)]
 
@@ -334,8 +325,8 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
         For sparse hypergraphs, however, this is unlikely to
         be the case.
         By default, False.
-    seed : integer or None (default)
-        The seed for the random number generator
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -367,8 +358,7 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     Phys. Rev. E **108**, 034311 (2024).
     https://doi.org/10.1103/PhysRevE.108.034311
     """
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     if p_type == "degree":
         if multiedges:
@@ -378,10 +368,10 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
     elif p_type == "prob":
         q = p
     else:
-        raise XGIError("Invalid p_type!")
+        raise ValueError("Invalid p_type!")
 
     if q > 1 or q < 0:
-        raise XGIError("Probability not in [0, 1].")
+        raise ValueError("Probability not in [0, 1].")
 
     if q == 1 and not multiedges:
         return complete_hypergraph(n, order=m - 1)
@@ -400,22 +390,15 @@ def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, see
         max_index = comb(n, m, exact=True) - 1
         f = _index_to_edge_comb
 
-    index = geometric(q) - 1  # -1 b/c zero indexing
+    index = geometric(q, rng=rng) - 1  # -1 b/c zero indexing
     while index <= max_index:
         e = set(f(index, n, m))
-        # if f corresponds to _index_to_edge_prod,
-        # edge ids are not guaranteed to be unique
-        # and when casting to a set, they will no
-        # longer be of size m.
-        # for instance (0, 0, 0) becomes {0}
-        # if we accept these edges, the hypergraph
-        # will not longer be uniform, so we discard them.
         if len(e) == m:
             H.add_edge(e)
         # We no longer subtract 1 because if we did, the minimum
         # value of the right-hand side would be zero, meaning that
         # we sample the same index multiple times.
-        index += geometric(q)
+        index += geometric(q, rng=rng)
     return H
 
 
