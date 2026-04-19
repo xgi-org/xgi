@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.10.1
+
+* Fix slow test collection and matplotlib GUI popups. [#686](https://github.com/xgi-org/xgi/pull/686) (@leotrs)
+* Speedup imports. [#676](https://github.com/xgi-org/xgi/pull/676) (@nwlandry)
+* Update hypergraph_matrix.py. [#682](https://github.com/xgi-org/xgi/pull/682) (@GavinAnderberg)
+* fix JSON error. [#677](https://github.com/xgi-org/xgi/pull/677) (@nwlandry)
+* Improved the hypergraph equality method. [#671](https://github.com/xgi-org/xgi/pull/671) (@nwlandry)
+* Add eq methods to IDView and IDStat. [#646](https://github.com/xgi-org/xgi/pull/646) (@nwlandry)
+* added 2 gallery examples. [#669](https://github.com/xgi-org/xgi/pull/669) (@maximelucas)
+
 ## v0.10
 * Added a recipe for community detection. [#668](https://github.com/xgi-org/xgi/pull/668) (@nwlandry)
 * Added a community detection module and a method for community detection using spectral clustering. [#665](https://github.com/xgi-org/xgi/pull/665) (@kaiser-dan)

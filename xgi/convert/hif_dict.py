@@ -1,11 +1,11 @@
 """Methods for converting to/from HIF standard."""
 
+import math
 from collections import defaultdict
 
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..utils import IDDict
 from .bipartite_edges import to_bipartite_edgelist
-import math
 
 __all__ = ["to_hif_dict", "from_hif_dict"]
 
