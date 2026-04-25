@@ -1,4 +1,5 @@
-from . import tensor, trie, utilities
+from . import readwrite, tensor, trie, utilities
+from .readwrite import *
 from .tensor import *
 from .trie import *
 from .utilities import *
@@ -6,11 +7,13 @@ from .utilities import *
 __all__ = [
     "binomial_sequence",
     "convert_labels_to_integers",
+    "COMPRESSED_EXTENSIONS",
     "dual_dict",
     "find_triangles",
     "geometric",
     "get_network_type",
     "hist",
+    "is_compressed_path",
     "pairwise_incidence",
     "powerset",
     "request_json_from_url",
