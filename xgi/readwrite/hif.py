@@ -12,11 +12,12 @@ from xopen import xopen
 
 from ..convert import from_hif_dict, to_hif_dict
 from ..exception import XGIError
+from ..utils import is_compressed_path
 
 __all__ = ["write_hif", "write_hif_collection", "read_hif", "read_hif_collection"]
 
 
-def write_hif(H, path):
+def write_hif(H, path, **kwargs):
     """
     A function to write a higher-order network according to the HIF standard.
 
@@ -28,16 +29,24 @@ def write_hif(H, path):
         The specified higher-order network
     path: string
         The path of the file to read from
+    **kwargs : keyword arguments
+        Additional keyword arguments to pass to xopen for compression options
+        (e.g., compresslevel, threads, format). Only used when writing to a
+        compressed file (ending in .gz, .bz2, .xz, or .zst).
     """
     data = to_hif_dict(H, convert_nans=True)
 
     datastring = json.dumps(data, indent=2)
 
-    with open(path, "w") as output_file:
-        output_file.write(datastring)
+    if is_compressed_path(path, kwargs):
+        with xopen(path, "w", **kwargs) as output_file:
+            output_file.write(datastring)
+    else:
+        with open(path, "w") as output_file:
+            output_file.write(datastring)
 
 
-def write_hif_collection(H, path, collection_name=""):
+def write_hif_collection(H, path, collection_name="", **kwargs):
     """
     A function to write a collection of higher-order network according to the HIF standard.
 
@@ -49,6 +58,12 @@ def write_hif_collection(H, path, collection_name=""):
         The specified higher-order network
     path: string
         The path of the file to read from
+    collection_name : str, optional
+        Name for the collection (used in file names)
+    **kwargs : keyword arguments
+        Additional keyword arguments to pass to xopen for compression options
+        (e.g., compresslevel, threads, format). Only used when writing to a
+        compressed file (ending in .gz, .bz2, .xz, or .zst).
     """
     if isinstance(H, list):
         collection_data = defaultdict(dict)
@@ -57,13 +72,16 @@ def write_hif_collection(H, path, collection_name=""):
             collection_data["datasets"][i] = {
                 "relative-path": f"{collection_name}_{i}.json"
             }
-            write_hif(H, fname)
+            write_hif(H, fname, **kwargs)
         collection_data["type"] = "collection"
         datastring = json.dumps(collection_data, indent=2)
-        with open(
-            f"{path}/{collection_name}_collection_information.json", "w"
-        ) as output_file:
-            output_file.write(datastring)
+        coll_path = f"{path}/{collection_name}_collection_information.json"
+        if is_compressed_path(coll_path, kwargs):
+            with xopen(coll_path, "w", **kwargs) as output_file:
+                output_file.write(datastring)
+        else:
+            with open(coll_path, "w") as output_file:
+                output_file.write(datastring)
 
     elif isinstance(H, dict):
         collection_data = defaultdict(dict)
@@ -72,13 +90,16 @@ def write_hif_collection(H, path, collection_name=""):
             collection_data["datasets"][name] = {
                 "relative-path": f"{collection_name}_{name}.json"
             }
-            write_hif(H, fname)
+            write_hif(H, fname, **kwargs)
         collection_data["type"] = "collection"
         datastring = json.dumps(collection_data, indent=2)
-        with open(
-            f"{path}/{collection_name}_collection_information.json", "w"
-        ) as output_file:
-            output_file.write(datastring)
+        coll_path = f"{path}/{collection_name}_collection_information.json"
+        if is_compressed_path(coll_path, kwargs):
+            with xopen(coll_path, "w", **kwargs) as output_file:
+                output_file.write(datastring)
+        else:
+            with open(coll_path, "w") as output_file:
+                output_file.write(datastring)
 
 
 def read_hif(path, nodetype=None, edgetype=None):

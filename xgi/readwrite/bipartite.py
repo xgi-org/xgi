@@ -4,6 +4,7 @@ from xopen import xopen
 
 from ..exception import XGIError
 from ..generators import empty_hypergraph
+from ..utils import is_compressed_path
 
 __all__ = [
     "read_bipartite_edgelist",
@@ -33,7 +34,7 @@ def generate_bipartite_edgelist(H, delimiter=" "):
             yield delimiter.join(map(str, [node, idx]))
 
 
-def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
+def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8", **kwargs):
     """Write a Hypergraph object to a file
     as a bipartite edgelist.
 
@@ -47,6 +48,11 @@ def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
         Specifies the delimiter between hyperedge members
     encoding: string, default: "utf-8"
         Encoding of the file
+    **kwargs : keyword arguments
+        Additional keyword arguments to pass to xopen for compression options
+        (e.g., compresslevel, threads, format). Only used when writing to a
+        compressed file (ending in .gz, .bz2, .xz, or .zst) or when format
+        is explicitly specified.
 
     See Also
     --------
@@ -59,10 +65,16 @@ def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     >>> # xgi.write_bipartite_edgelist(H, "test.csv", delimiter=",")
 
     """
-    with open(path, "wb") as file:
-        for line in generate_bipartite_edgelist(H, delimiter):
-            line += "\n"
-            file.write(line.encode(encoding))
+    if is_compressed_path(path, kwargs):
+        with xopen(path, "wb", **kwargs) as file:
+            for line in generate_bipartite_edgelist(H, delimiter):
+                line += "\n"
+                file.write(line.encode(encoding))
+    else:
+        with open(path, "wb") as file:
+            for line in generate_bipartite_edgelist(H, delimiter):
+                line += "\n"
+                file.write(line.encode(encoding))
 
 
 def read_bipartite_edgelist(
