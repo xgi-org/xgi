@@ -1,3 +1,4 @@
+import gzip
 import json
 import tempfile
 from os.path import join
@@ -302,3 +303,32 @@ def test_read_hif_collection():
     assert len(collection) == 2
     assert isinstance(collection, dict)
     assert sorted(collection) == ["dataset1", "dataset2"]
+
+
+def test_write_hif_compressed(hyperwithdupsandattrs):
+    # test gzip compressed write
+    _, filename = tempfile.mkstemp(suffix=".gz")
+    xgi.write_hif(hyperwithdupsandattrs, filename, compresslevel=3)
+    H = xgi.read_hif(filename)
+    assert isinstance(H, xgi.Hypergraph)
+    assert (H.num_nodes, H.num_edges) == (5, 5)
+    assert set(H.nodes) == {1, 2, 3, 4, 5}
+
+    # check compressed file
+    with gzip.open(filename, "rb") as f:
+        jsondata = json.loads(f.read())
+    assert "incidences" in jsondata
+    assert jsondata["network-type"] == "undirected"
+
+
+def test_write_hif_collection_compressed():
+    H = xgi.Hypergraph()
+    H.add_nodes_from(range(5))
+    H.add_edges_from([[1, 2, 3], []])
+
+    tempdir = tempfile.mkdtemp()
+    xgi.write_hif_collection([H], tempdir, collection_name="test", compresslevel=3)
+    collection = xgi.read_hif_collection(
+        join(tempdir, "test_collection_information.json")
+    )
+    assert len(collection) == 1

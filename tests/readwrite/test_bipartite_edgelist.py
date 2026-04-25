@@ -1,3 +1,4 @@
+import gzip
 import tempfile
 
 import pytest
@@ -125,3 +126,27 @@ def test_write_bipartite_edgelist(edgelist1):
     assert [H1.edges.members(e) for e in H1.edges] == [
         H2.edges.members(e) for e in H2.edges
     ]
+
+
+def test_write_bipartite_edgelist_compressed(edgelist1):
+    H1 = xgi.Hypergraph(edgelist1)
+
+    # test gzip compressed write
+    _, filename = tempfile.mkstemp(suffix=".gz")
+    xgi.write_bipartite_edgelist(H1, filename, compresslevel=3)
+    H2 = xgi.read_bipartite_edgelist(filename, nodetype=int, edgetype=int)
+    assert H1.nodes == H2.nodes
+    assert H1.edges == H2.edges
+    assert [H1.edges.members(e) for e in H1.edges] == [
+        H2.edges.members(e) for e in H2.edges
+    ]
+
+
+def test_write_bipartite_edgelist_compressed_format(edgelist1):
+    H1 = xgi.Hypergraph(edgelist1)
+
+    # test format parameter for explicit format specification
+    _, filename = tempfile.mkstemp(suffix=".txt")
+    xgi.write_bipartite_edgelist(H1, filename, format="gz", compresslevel=3)
+    H2 = xgi.read_bipartite_edgelist(filename, nodetype=int, edgetype=int)
+    assert H1.nodes == H2.nodes
