@@ -48,6 +48,7 @@ dependencies = [
     "networkx>=2.7",
     "requests>=2.0",
     "matplotlib>=3.4",
+    "xopen>=2.0",
 ]
 
 [project.urls]
