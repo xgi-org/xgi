@@ -1,0 +1,68 @@
+sampson_complex_2025:
+  tags:
+  - XGI
+  authors:
+  - Corbit Sampson
+  title: 'Complex Social Systems: Emergent Phenomena, Social Contagions, and Opinion
+    Consensus'
+  year: 2025
+  university: 'The University of Colorado at Boulder'
+
+he_methods_2024:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Xie He
+  title: Methods, Analyses, and Applications of Multilayer Temporal Link Prediction
+    in Networks
+  year: 2024
+  university: 'Dartmouth College'
+  links:
+    thesis: https://digitalcommons.dartmouth.edu/dissertations/271/
+
+luo_efficient_2024:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Yifei (Bell) Luo
+  title: Efficient sampling of configuration model random hypergraphs
+  year: 2024
+  university: 'Middlebury College'
+  links:
+    thesis: https://libstore.ugent.be/fulltxt/RUG01/003/150/699/RUG01-003150699_2023_0001_AC.pdf
+
+neuhäuser_modelling_2023:
+  tags:
+  - XGI
+  authors:
+  - Leonie Neuhäuser
+  title: Modelling the effect of groups on network structure and dynamics
+  year: 2023
+  university: 'RWTH Aachen University'
+  links:
+    thesis: https://doi.org/10.18154/RWTH-2023-08686
+
+robiglio_higher-order_2023:
+  tags:
+  - XGI
+  authors:
+  - Thomas Robiglio
+  title: Higher-order structures in face-to-face interaction networks
+  year: 2023
+  university: 'Politecnico di Torino'
+  links:
+    thesis: https://webthesis.biblio.polito.it/27942/
+
+landry_contagion_2022:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Nicholas W. Landry
+  title: 'Contagion on Complex Systems: Structure and Dynamics'
+  year: 2022
+  university: 'The University of Colorado at Boulder'
+  links:
+    thesis: https://www.proquest.com/docview/2672014395

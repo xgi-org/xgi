@@ -15,7 +15,7 @@
 * [**GitHub Discussions**](https://github.com/xgi-org/xgi/discussions)
 * [**Documentation**](https://xgi.readthedocs.io)
 * [**Contribute**](https://xgi.readthedocs.io/en/stable/contribute.html)
-* [**Projects using XGI**](https://xgi.readthedocs.io/en/stable/using-xgi.html)
+* [**Projects using XGI**](https://xgi.readthedocs.io/en/stable/using_xgi.html)
 
 Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twitter](https://twitter.com/xginets) or [Mastodon](https://mathstodon.xyz/@xginets)!
 

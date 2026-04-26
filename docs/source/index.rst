@@ -17,7 +17,7 @@
    xgi-data
    auto_examples/index
    contribute
-   using-xgi
+   using_xgi
 
 |release_announcement|
 

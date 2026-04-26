@@ -1,0 +1,116 @@
+cao_identifying_2026:
+  tags:
+  - XGI
+  authors:
+  - Kun Cao
+  - Guangzu Bai
+  - Li Li
+  title: Identifying Disruptive Technologies via Dynamic Hypergraph Modeling and Large
+    Language Models
+  year: 2026
+  reference: 'TechRxiv'
+  links:
+    paper: https://doi.org/10.36227/techrxiv.177223104.47525491/v1
+
+zajdela_higher-order_2026:
+  tags:
+  - XGI
+  authors:
+  - Emma Zajdela
+  - Nicholas W. Landry
+  title: Higher-order interactions at scientific conferences influence team formation
+  year: 2026
+  reference: 'arXiv:2603.02571'
+  links:
+    paper: https://arxiv.org/abs/2603.02571
+    code: https://github.com/nwlandry/higher-order-team-formation
+
+berte_fibration_2025:
+  tags:
+  - XGI-DATA
+  authors:
+  - Margherita Bertè
+  - Tommaso Gili
+  title: Fibration Symmetries and Cluster Synchronization in Multi-Body Systems
+  year: 2025
+  reference: 'arXiv:2510.11207'
+  links:
+    paper: https://arxiv.org/abs/2510.11207
+
+ibrahim_elruhna_2025:
+  tags:
+  - XGI-DATA
+  authors:
+  - Cameron Ibrahim
+  - S M Ferdous
+  - Ilya Safro
+  - Marco Minutoli
+  - Mahantesh Halappanavar
+  title: 'ELRUHNA: Elimination Rule-based Hypergraph Alignment'
+  year: 2025
+  reference: 'arXiv:2506.09866'
+  links:
+    paper: https://arxiv.org/abs/2506.09866
+
+keating_approximate-master-equation_2025:
+  tags:
+  - XGI
+  authors:
+  - Leah A. Keating
+  - Kwang-Il Goh
+  - Mason A. Porter
+  title: An Approximate-Master-Equation Formulation of the Watts Threshold Model on
+    Hypergraphs
+  year: 2025
+  reference: 'arXiv:2503.04020'
+  links:
+    paper: https://arxiv.org/abs/2503.04020
+    code: https://github.com/leahkeating/threshold_AME
+
+larock_exploring_2025:
+  tags:
+  - XGI
+  authors:
+  - Timothy LaRock
+  - Renaud Lambiotte
+  title: Exploring the Non-uniqueness of Node Co-occurrence Matrices of Hypergraphs
+  year: 2025
+  reference: 'arXiv:2506.01479'
+  links:
+    paper: https://arxiv.org/abs/2506.01479
+
+maia_efficient_2025:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Hugo P. Maia
+  - Wesley Cota
+  - Yamir Moreno
+  - Silvio C. Ferreira
+  title: Efficient Gillespie algorithms for spreading phenomena in large and heterogeneous
+    higher-order networks
+  year: 2025
+  reference: 'arXiv:2509.20174'
+  links:
+    paper: https://arxiv.org/abs/2509.20174
+    code: https://github.com/gisc-ufv/hyperSIS
+
+akcakir_exploring_2024:
+  tags:
+  - XGI
+  authors:
+  - Gülşah Akçakır
+  - Amina Azaiez
+  - Alberto Ceria
+  - Clara Eminente
+  - Guglielmo Ferranti
+  - Govind Gandhi
+  - Aishvarya Raj
+  - Iacopo Iacopini
+  title: Exploring the interplay of individual traits and interaction dynamics in
+    preschool social networks
+  year: 2024
+  reference: 'arXiv:2407.12728'
+  links:
+    paper: https://arxiv.org/abs/2407.12728
