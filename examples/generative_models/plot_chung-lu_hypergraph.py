@@ -25,6 +25,6 @@ H = xgi.chung_lu_hypergraph(k1, k2, seed=rng)
 
 # draw hypergraph
 pos = xgi.barycenter_spring_layout(H, seed=seed)
-xgi.draw(H, pos=pos)
+xgi.draw(H, pos=pos, alpha=0.3)
 
 plt.show()
