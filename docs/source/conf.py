@@ -273,6 +273,7 @@ sphinx_gallery_conf = {
     "subsection_order": ExplicitOrder(
         [
             "../../examples/basic",
+            "../../examples/structures",
             "../../examples/layouts",
             "../../examples/stats",
             "../../examples/advanced",
