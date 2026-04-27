@@ -24,7 +24,7 @@ k2 = {i: sorted(k1.values())[i] for i in range(n)} # degree distribution
 H = xgi.chung_lu_hypergraph(k1, k2, seed=rng)
 
 # draw hypergraph
-pos = xgi.barycenter_spring_layout(H, seed=rng)
+pos = xgi.barycenter_spring_layout(H, seed=seed)
 xgi.draw(H, pos=pos)
 
 plt.show()
