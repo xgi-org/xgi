@@ -107,9 +107,7 @@ def render_software(software_dict):
     lines = []
 
     items = list(software_dict.items())
-
-    # reverse alphabetical just to mimic descending numbering feel
-    items = sorted(items, key=lambda x: x[0], reverse=True)
+    items = sorted(items, key=lambda x: x[0], reverse=False)
 
     counter = len(items)
 
