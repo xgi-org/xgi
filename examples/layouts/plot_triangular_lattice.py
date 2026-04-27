@@ -1,6 +1,6 @@
 """
 =======================
-Show triangular lattice
+Triangular lattice
 =======================
 
 Draw triangular lattice.
