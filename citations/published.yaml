@@ -72,8 +72,7 @@ barrett_counting_2025:
   - François Théberge
   title: Counting simplicial pairs in hypergraphs
   year: 2025
-  reference: 'Proceedings of Complex Networks & Their Applications XIII'
-  pages: 77–88
+  reference: 'Proceedings of Complex Networks & Their Applications XIII, pp 77–88'
   links:
     paper: https://doi.org/10.1007/978-3-031-82431-9_7
 
@@ -104,9 +103,9 @@ coll_hif_2025:
   - Przemysław Szufel
   title: 'HIF: The hypergraph interchange format for higher-order networks'
   year: 2025
-  reference: Network Science
+  reference: "*Network Science* **13**, e21"
   links:
-    paper: https://arxiv.org/abs/2503.16959
+    paper: https://doi.org/10.1017/nws.2025.10018
     code: https://github.com/pszufe/HIF-standard
 
 delabays_hypergraph_2025:
@@ -282,7 +281,7 @@ tong_hic3_2025:
   title: 'Hi-C3: a statistical inference-based model for reconstructing higher-order
     cell–cell communication networks'
   year: 2025
-  reference: 'Briefings in Bioinformatics, Volume 26, Issue 5, bbaf568'
+  reference: '*Briefings in Bioinformatics*, Volume 26, Issue 5, bbaf568'
   links:
     paper: https://doi.org/10.1093/bib/bbaf568
 
@@ -326,7 +325,7 @@ contreras-aso_uplifting_2024:
   title: 'Uplifting edges in higher order networks: spectral centralities for non-uniform
     hypergraphs'
   year: 2024
-  reference: 'AIMS Mathematics, Volume 9, Issue 11: 32045-32075'
+  reference: '*AIMS Mathematics*, Volume 9, Issue 11: 32045-32075'
   links:
     paper: https://doi.org/10.3934/math.20241539
     code: https://github.com/LaComarca-Lab/non-uniform-hypergraphs
@@ -418,7 +417,7 @@ zhang_robustness_2024:
   - Weifei Zang
   title: Robustness of higher-order interdependent networks with reinforced nodes
   year: 2024
-  reference: '*Chaos* 34, 083138'
+  reference: '*Chaos* **34**, 083138'
   links:
     paper: https://doi.org/10.1063/5.0217876
 

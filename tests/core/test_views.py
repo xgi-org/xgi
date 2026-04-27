@@ -588,6 +588,7 @@ def test_stat_caching():
 
 def test_custom_stat_still_works():
     """User-defined stats via @nodestat_func should still work via __getattr__."""
+
     @xgi.nodestat_func
     def my_custom_stat(net, bunch):
         return {n: 42 for n in bunch}

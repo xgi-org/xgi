@@ -40,3 +40,7 @@ tuna test.log
 4. Commit these changes.
 5. Create a new release on GitHub by selecting "Releases", then clicking "Draft a new release". Click "Choose a tag" and type "v" followed by the version number and then click "Create new tag". The release title will be this same string. Paste the contents of the CHANGELOG into the "Describe this release" field. Click "Publish release". This will trigger a GitHub action that will publish the new version on PyPI.
 6. The new version is now on PyPI.
+
+## Adding papers to the *Projects Using XGI* page
+
+See the associated [README](/citations/adding_citations.md).

@@ -1,12 +1,14 @@
-import yaml
 from collections import defaultdict
 from pathlib import Path
+
+import yaml
 
 DATA_DIR = Path("citations")
 OUTPUT = Path("docs/source/using_xgi.rst")
 
 
 # ---------- Loaders ----------
+
 
 def load_yaml(name):
     with open(DATA_DIR / name, "r") as f:
@@ -15,10 +17,18 @@ def load_yaml(name):
 
 # ---------- Formatting ----------
 
+
 def format_authors(authors):
     if len(authors) <= 2:
         return " and ".join(authors)
-    return ", ".join(authors[:-1]) + ", and " + authors[-1]
+    if len(authors) > 2:
+        return ", ".join(authors[:-1]) + ", and " + authors[-1]
+    elif len(authors) == 1:
+        return authors[0]
+    elif len(authors) == 2:
+        return " and ".join(authors)
+    else:
+        return ""  # no authors provided
 
 
 def format_tags(tags):
@@ -41,6 +51,7 @@ def group_by_year(entries):
 
 
 # ---------- Renderers ----------
+
 
 def render_entries(entries_dict, kind="published"):
     entries = list(entries_dict.values())
@@ -69,7 +80,7 @@ def render_entries(entries_dict, kind="published"):
             else:
                 venue = e.get("reference", "")
 
-            venue_str = f"*{venue}*" if venue else ""
+            venue_str = f"{venue}" if venue else ""
 
             # main line
             line = f"{counter}. {tags} {authors}, {title}"
@@ -107,10 +118,11 @@ def render_software(software_dict):
         lines.append(f"{counter}. `{name} <{url}>`_")
         counter -= 1
 
-    return "\n".join(lines)
+    return "\n\n".join(lines)
 
 
 # ---------- Main ----------
+
 
 def main():
     published = load_yaml("published.yaml")
