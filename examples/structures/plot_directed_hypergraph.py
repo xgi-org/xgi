@@ -1,6 +1,6 @@
 """
 =======================
-Directed hypegraph
+Directed hypergraph
 =======================
 
 Draw a directed hypergraph.

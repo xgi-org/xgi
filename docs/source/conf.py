@@ -276,6 +276,7 @@ sphinx_gallery_conf = {
             "../../examples/structures",
             "../../examples/layouts",
             "../../examples/generative_models",
+            "../../examples/algorithms",
             "../../examples/stats",
             "../../examples/advanced",
         ]
