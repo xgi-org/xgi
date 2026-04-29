@@ -153,7 +153,7 @@ def main():
     out.append("=" * length)
     out.append("")
     out.append(render_software(software))
-    
+
     # Published
     published_header = f"Published Work ({len(published)} total)"
     length = len(published_header)
