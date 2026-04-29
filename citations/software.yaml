@@ -10,6 +10,9 @@ hyperidpath:
 hyperspec:
   url: https://github.com/yaml-programming/hyperspec
 
+hypersync:
+  url: https://github.com/maximelucas/hypersync
+
 pynetflow:
   url: https://github.com/anthbapt/pynetflow
 

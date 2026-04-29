@@ -146,6 +146,14 @@ def main():
         "of the first author (and title if necessary).\n"
     )
 
+    # Software
+    software_header = f"Software Packages ({len(software)} total)"
+    length = len(software_header)
+    out.append(software_header)
+    out.append("=" * length)
+    out.append("")
+    out.append(render_software(software))
+    
     # Published
     published_header = f"Published Work ({len(published)} total)"
     length = len(published_header)
@@ -169,14 +177,6 @@ def main():
     out.append("=" * length)
     out.append("")
     out.append(render_entries(theses, kind="theses"))
-
-    # Software
-    software_header = f"Software Packages ({len(software)} total)"
-    length = len(software_header)
-    out.append(software_header)
-    out.append("=" * length)
-    out.append("")
-    out.append(render_software(software))
 
     OUTPUT.write_text("\n".join(out))
     print(f"Wrote {OUTPUT}")
