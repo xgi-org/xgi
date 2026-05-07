@@ -4,7 +4,6 @@ from xopen import xopen
 
 from ..exception import XGIError
 from ..generators import empty_hypergraph
-from ..utils import is_compressed_path
 
 __all__ = [
     "read_bipartite_edgelist",
@@ -50,9 +49,8 @@ def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8", **kwargs)
         Encoding of the file
     **kwargs : keyword arguments
         Additional keyword arguments to pass to xopen for compression options
-        (e.g., compresslevel, threads, format). Only used when writing to a
-        compressed file (ending in .gz, .bz2, .xz, or .zst) or when format
-        is explicitly specified.
+        (e.g., compresslevel, threads, format).
+        Ignored when writing to plain-text.
 
     See Also
     --------
@@ -65,16 +63,10 @@ def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8", **kwargs)
     >>> # xgi.write_bipartite_edgelist(H, "test.csv", delimiter=",")
 
     """
-    if is_compressed_path(path, kwargs):
-        with xopen(path, "wb", **kwargs) as file:
-            for line in generate_bipartite_edgelist(H, delimiter):
-                line += "\n"
-                file.write(line.encode(encoding))
-    else:
-        with open(path, "wb") as file:
-            for line in generate_bipartite_edgelist(H, delimiter):
-                line += "\n"
-                file.write(line.encode(encoding))
+    with xopen(path, "wb", **kwargs) as file:
+        for line in generate_bipartite_edgelist(H, delimiter):
+            line += "\n"
+            file.write(line.encode(encoding))
 
 
 def read_bipartite_edgelist(
