@@ -78,9 +78,7 @@ def shuffle_hyperedges(S, order, p, seed=None):
             H.remove_edge(id_)
             new_hyperedge = tuple(rng.choice(nodes, size=order + 1, replace=False))
             while new_hyperedge in H._edge.values():
-                new_hyperedge = tuple(
-                    rng.choice(nodes, size=order + 1, replace=False)
-                )
+                new_hyperedge = tuple(rng.choice(nodes, size=order + 1, replace=False))
             H.add_edge(new_hyperedge)
 
     return H

@@ -7,7 +7,6 @@ hypergraph).
 
 from warnings import warn
 
-
 __all__ = [
     "ring_lattice",
 ]

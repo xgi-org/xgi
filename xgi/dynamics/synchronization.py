@@ -15,7 +15,9 @@ __all__ = [
 ]
 
 
-def simulate_kuramoto(H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.002, seed=None):
+def simulate_kuramoto(
+    H, k2, k3, omega=None, theta=None, timesteps=10000, dt=0.002, seed=None
+):
     """Simulates the Kuramoto model on hypergraphs.
     This solves the Kuramoto model ODE on hypergraphs with edges of sizes 2 and 3
     using the Euler Method. It returns timeseries of the phases.
