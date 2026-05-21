@@ -1000,3 +1000,27 @@ def test_cleanup():
     assert cleanH["name"] == "test"
 
     assert cleanH._edge == xgi.dual_dict(cleanH._node)
+
+
+def test_fix_720():
+    # idx=0 must be treated as a valid user-provided ID, not as "no ID given"
+
+    # Hypergraph.add_edge: counter must advance past 0 so the next auto-ID doesn't collide
+    H = xgi.Hypergraph()
+    H.add_edge([1, 2], idx=0)
+    H.add_edge([2, 3])
+    assert H.edges.members(dtype=dict) == {0: {1, 2}, 1: {2, 3}}
+
+    # DiHypergraph.add_edge: same check for directed hypergraphs
+    D = xgi.DiHypergraph()
+    D.add_edge(([1], [2]), idx=0)
+    D.add_edge(([2], [3]))
+    assert D.edges.members(dtype=dict) == {0: {1, 2}, 1: {2, 3}}
+
+    # SimplicialComplex.add_simplex: idx=0 must not be replaced by an auto-generated ID.
+    # Use idx=3 first to advance the counter past 0; without the fix, the subsequent
+    # add_simplex with idx=0 would silently use the counter value instead.
+    S = xgi.SimplicialComplex()
+    S.add_simplex([1, 2], idx=3)
+    S.add_simplex([3, 4], idx=0)
+    assert S.edges.members(dtype=dict)[0] == {3, 4}
