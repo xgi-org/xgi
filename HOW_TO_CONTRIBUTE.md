@@ -26,7 +26,7 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 
 ## Profile importing XGI
 
-Install the `test` dependencis and visualize the import times using [tuna](https://github.com/nschloe/tuna):
+Install the `test` dependencies and visualize the import times using [tuna](https://github.com/nschloe/tuna):
 ```python
 python3 -X importtime -c "import xgi" 2> test.log
 tuna test.log
@@ -34,9 +34,14 @@ tuna test.log
 
 ## New Version process
 
-1. Make sure that the Github Actions workflow runs without any errors.
-2. Run `python tools/generate_changelog.py -m xgi-org xgi [last release tag]` to get the merged pull requests with their links. Paste this into the changelog file under a new heading and edit to make more legible. Associate a GitHub username with each pull request.
-3. Increase the version number in [\_\_init\_\_.py](xgi/__init__.py.py) to the new version agreed upon by the core developers. The versioning scheme we use is [SemVer](http://semver.org/).
-4. Commit these changes.
-5. Create a new release on GitHub by selecting "Releases", then clicking "Draft a new release". Click "Choose a tag" and type "v" followed by the version number and then click "Create new tag". The release title will be this same string. Paste the contents of the CHANGELOG into the "Describe this release" field. Click "Publish release". This will trigger a GitHub action that will publish the new version on PyPI.
-6. The new version is now on PyPI.
+New releases should be drawn from the development branch when appropriate and only after the CI workflow runs without errors and all documentation for new/updated features is updated.
+Once you have a content on `dev` that you wish to include into a release, do the following steps to create a new release:
+
+1. Open a new PR from the `dev` branch to the `main` branch. Title the PR "vMAJOR.MINOR.PATCH-rc" where the MAJOR, MINOR, and PATCH version identifiers conform to [SemVer](http://semver.org/) (the 'rc' stands for 'release candidate').
+2. Make sure that the Github Actions workflow runs without any errors. Iterate development further if needed.
+3. Run `python tools/generate_changelog.py -m xgi-org xgi [last release tag]` to get the merged pull requests with their links. Paste this into the changelog file under a new heading and edit to make more legible. Associate a GitHub username with each pull request.
+4. Increase the version number in [\_\_init\_\_.py](xgi/__init__.py.py) to the new version agreed upon by the core developers. The versioning scheme we use is [SemVer](http://semver.org/).
+5. Commit these changes with the commit message "bump: v[last release] -> v[proposed release]". Merge the PR or request a review.
+6. Create a new release on GitHub by selecting "Releases", then clicking "Draft a new release". Click "Choose a tag" and type "v" followed by the version number and then click "Create new tag". The release title will be this same string. Paste the contents of the CHANGELOG into the "Describe this release" field. Click "Publish release". This will trigger a GitHub action that will publish the new version on PyPI.
+
+The new version is now on PyPI! Make sure to update wherever you use xgi :)
