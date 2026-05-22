@@ -1110,6 +1110,7 @@ class Hypergraph:
         if edge not in self._edge:
             self._edge[edge] = set()
             self._edge_attr[edge] = {}
+            update_uid_counter(self, edge)
         if node not in self._node:
             self._node[node] = set()
             self._node_attr[node] = {}

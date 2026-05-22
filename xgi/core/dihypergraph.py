@@ -824,6 +824,7 @@ class DiHypergraph:
         if edge not in self._edge:
             self._edge[edge] = {"in": set(), "out": set()}
             self._edge_attr[edge] = {}
+            update_uid_counter(self, edge)
         if node not in self._node:
             self._node[node] = {"in": set(), "out": set()}
             self._node_attr[node] = {}
