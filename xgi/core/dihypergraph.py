@@ -581,7 +581,7 @@ class DiHypergraph:
         self._edge_attr[uid] = self._edge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
 
-        if idx:  # set self._edge_uid correctly
+        if idx is not None:  # set self._edge_uid correctly
             update_uid_counter(self, idx)
 
     def add_edges_from(self, ebunch_to_add, **attr):

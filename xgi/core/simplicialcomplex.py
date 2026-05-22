@@ -314,7 +314,7 @@ class SimplicialComplex(Hypergraph):
             warn(f"uid {idx} already exists, cannot add simplex {members}")
             return
 
-        idx = next(self._edge_uid) if not idx else idx
+        idx = next(self._edge_uid) if idx is None else idx
 
         self._add_simplex(members, idx, **attr)
 
