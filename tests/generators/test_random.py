@@ -179,6 +179,14 @@ def test_random_nested_hypergraph():
     )
     assert H1._edge == H2._edge
 
+    # too many facets
+    with pytest.raises(ValueError):
+        xgi.random_nested_hypergraph(4, 5, 3, 0.8)
+
+    # force dense facet sampling
+    H = xgi.random_nested_hypergraph(5, 9, 3, 1, seed=np.random.default_rng(1))
+    assert sum(1 for edge in H.edges.members() if len(edge) == 3) == 9
+
 
 def test_pr_655():
     import warnings

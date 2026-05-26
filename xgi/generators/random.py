@@ -641,12 +641,28 @@ def random_nested_hypergraph(n, m, d, epsilon, seed=None):
     rng = np.random.default_rng(seed)
 
     nodes = range(n)
+    num_facets = comb(n, d, exact=True)
+    if m > num_facets:
+        raise ValueError("m cannot exceed the number of possible facets.")
 
     # Step 1: Generate m unique facets of size d
-    facets = set()
-    while len(facets) < m:
-        facet = frozenset(rng.choice(nodes, size=d, replace=False))
-        facets.add(facet)
+    if m > num_facets // 2:
+        # Sample the complement if the hypergraph is dense.
+        excluded_facets = set()
+        while len(excluded_facets) < num_facets - m:
+            facet = frozenset(rng.choice(nodes, size=d, replace=False))
+            excluded_facets.add(facet)
+
+        facets = set()
+        for facet in combinations(nodes, d):
+            facet = frozenset(facet)
+            if facet not in excluded_facets:
+                facets.add(facet)
+    else:
+        facets = set()
+        while len(facets) < m:
+            facet = frozenset(rng.choice(nodes, size=d, replace=False))
+            facets.add(facet)
 
     # Step 2: For each facet, enumerate all subsets of sizes 2..d
     # (facets themselves are included as edges; singletons excluded)
