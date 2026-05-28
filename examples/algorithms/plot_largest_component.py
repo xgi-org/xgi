@@ -12,7 +12,7 @@ import xgi
 
 
 # generate hypergraph
-seed = 9
+seed = 12
 H = xgi.fast_random_hypergraph(20, [0.05, 0.01], seed=seed)
 
 # compute the largest component hypergraph
