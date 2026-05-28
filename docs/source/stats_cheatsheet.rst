@@ -96,6 +96,8 @@ Available node statistics
      - ``H.nodes.katz_centrality``
    * - ``attrs``
      - ``H.nodes.attrs('color')``
+   * - ``pos``
+     - ``H.nodes.pos`` (shortcut for ``H.nodes.attrs('pos')``)
 
 Available edge statistics
 -------------------------

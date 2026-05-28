@@ -92,7 +92,8 @@ def draw(
     pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the
         0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
-        the positions.
+        the positions. If positions are stored as the ``"pos"`` node attribute, you
+        can pass ``H.nodes.pos.asdict()`` directly.
     ax : matplotlib.pyplot.axes, optional
         Axis to draw on. If None (default), get the current axes.
     node_fc : str, dict, iterable, or NodeStat, optional

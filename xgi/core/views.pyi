@@ -45,6 +45,7 @@ class NodeView(IDView):
     local_simplicial_fraction: NodeStat
     local_edit_simpliciality: NodeStat
     local_face_edit_simpliciality: NodeStat
+    pos: NodeStat
 
     def memberships(self, n: Hashable | None = None) -> dict | set: ...
     def isolates(self, ignore_singletons: bool = False) -> NodeView: ...
@@ -69,6 +70,7 @@ class DiNodeView(IDView):
     degree: DiNodeStat
     in_degree: DiNodeStat
     out_degree: DiNodeStat
+    pos: DiNodeStat
 
     def dimemberships(self, n: Hashable | None = None) -> dict | tuple[set, set]: ...
     def memberships(self, n: Hashable | None = None) -> dict | set: ...
