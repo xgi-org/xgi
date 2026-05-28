@@ -1,9 +1,9 @@
 """
 =======================
-Ring latting hypergraph
+Ring lattice hypergraph
 =======================
 
-Generate a ring-lattice hypergraph
+Generate a ring lattice hypergraph
 """
 
 import matplotlib.pyplot as plt
