@@ -14,7 +14,7 @@ import xgi
 # generate hypergraph
 n = 20
 ps = [0.15, 0.01]
-H = xgi.random_hypergraph(n, ps, seed=1)
+H = xgi.fast_random_hypergraph(n, ps, seed=1)
 
 # visualize hypergraph and centrality
 pos = xgi.barycenter_spring_layout(H, seed=1)
