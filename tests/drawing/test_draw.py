@@ -768,3 +768,105 @@ def test_issue_515(edgelist8):
         xgi.draw_multilayer(H, node_fc=["black"] * H.num_nodes)
 
     plt.close("all")
+
+
+def test_draw_kwargs_validation(edgelist8):
+    """Regression tests for kwarg validation bugs fixed in issues #730 and #731."""
+    H = xgi.Hypergraph(edgelist8)
+    S = xgi.SimplicialComplex(edgelist8)
+
+    # issue #731: typo is caught even when labels are off (the default)
+    with pytest.raises(TypeError):
+        xgi.draw(H, font_siz_nodes=20)
+    plt.close("all")
+
+    # issue #731: same typo is caught consistently when labels are on
+    with pytest.raises(TypeError):
+        xgi.draw(H, node_labels=True, font_siz_nodes=20)
+    plt.close("all")
+
+    # issue #730 bug A: a valid edge-label kwarg must not be rejected when
+    # node_labels=True (previously the node-label validator ran first and
+    # rejected kwargs intended for draw_hyperedge_labels)
+    xgi.draw(H, node_labels=True, hyperedge_labels=True, font_size_edges=14)
+    plt.close("all")
+
+    # issue #730 bug A: same for SimplicialComplex
+    xgi.draw(S, node_labels=True, hyperedge_labels=True, font_size_edges=14)
+    plt.close("all")
+
+    # issue #730 bug B: a settings kwarg must not be rejected when node_labels=True
+    # (previously min_node_size was not in draw_node_labels' signature and raised)
+    xgi.draw(H, node_labels=True, min_node_size=3)
+    plt.close("all")
+
+    # issue #730 bug C: unknown kwargs raise TypeError, not ValueError
+    with pytest.raises(TypeError):
+        xgi.draw(H, not_a_real_kwarg=99)
+    plt.close("all")
+
+    # valid label kwargs are accepted even when labels are off — draw() validates
+    # against all known keys unconditionally, so users can pass label kwargs
+    # without having to enable labels first
+    xgi.draw(H, node_labels=False, font_size_nodes=14)
+    plt.close("all")
+    xgi.draw(H, hyperedge_labels=False, font_size_edges=14)
+    plt.close("all")
+
+    # mixing all three kwarg buckets at once works without error
+    xgi.draw(
+        H,
+        node_labels=True,
+        hyperedge_labels=True,
+        min_node_size=3,
+        font_size_nodes=12,
+        font_size_edges=10,
+    )
+    plt.close("all")
+
+
+def test_draw_kwargs_forwarding(edgelist8):
+    """Check that label kwargs are actually applied to the rendered text objects."""
+    H = xgi.Hypergraph(edgelist8)
+
+    # node-label font size and color are forwarded to the Text objects on the axes
+    fig, ax = plt.subplots()
+    xgi.draw(H, ax=ax, node_labels=True, font_size_nodes=18, font_color_nodes="red")
+    for text in ax.texts:
+        assert text.get_fontsize() == 18
+        assert text.get_color() == "red"
+    plt.close("all")
+
+    # edge-label font size and color are forwarded to the Text objects on the axes
+    fig, ax = plt.subplots()
+    xgi.draw(H, ax=ax, hyperedge_labels=True, font_size_edges=14, font_color_edges="blue")
+    for text in ax.texts:
+        assert text.get_fontsize() == 14
+        assert text.get_color() == "blue"
+    plt.close("all")
+
+    # when both label types are drawn, each uses its own kwargs
+    fig, ax = plt.subplots()
+    xgi.draw(
+        H,
+        ax=ax,
+        node_labels=True,
+        hyperedge_labels=True,
+        font_size_nodes=16,
+        font_size_edges=10,
+    )
+    font_sizes = {text.get_fontsize() for text in ax.texts}
+    assert 16 in font_sizes
+    assert 10 in font_sizes
+    plt.close("all")
+
+    # when labels are off, no text is rendered regardless of label kwargs passed
+    fig, ax = plt.subplots()
+    xgi.draw(H, ax=ax, node_labels=False, font_size_nodes=18, font_color_nodes="red")
+    assert len(ax.texts) == 0
+    plt.close("all")
+
+    fig, ax = plt.subplots()
+    xgi.draw(H, ax=ax, hyperedge_labels=False, font_size_edges=14, font_color_edges="blue")
+    assert len(ax.texts) == 0
+    plt.close("all")
