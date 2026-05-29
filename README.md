@@ -15,7 +15,7 @@
 * [**GitHub Discussions**](https://github.com/xgi-org/xgi/discussions)
 * [**Documentation**](https://xgi.readthedocs.io)
 * [**Contribute**](https://xgi.readthedocs.io/en/stable/contribute.html)
-* [**Projects using XGI**](https://xgi.readthedocs.io/en/stable/using-xgi.html)
+* [**Projects using XGI**](https://xgi.readthedocs.io/en/stable/using_xgi.html)
 
 Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twitter](https://twitter.com/xginets) or [Mastodon](https://mathstodon.xyz/@xginets)!
 
@@ -84,6 +84,7 @@ Some concrete ways that you can get involved:
 * **Spread the word** when you use XGI by sharing with your colleagues and friends.
 * **Request a new feature or report a bug** by raising a [new issue](https://github.com/xgi-org/xgi/issues/new).
 * **Create a Pull Request (PR)** to address an [open issue](https://github.com/xgi-org/xgi/issues) or add a feature.
+* **Add a paper or software package using XGI to the "Projects using XGI" page** with the following [instructions](/citations/adding_citations.md)!
 * **Join our [Zulip channel](https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/)** to be a part of the daily goings-on of XGI.
 
 

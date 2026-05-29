@@ -1470,6 +1470,7 @@ class Hypergraph:
         self,
         isolates=False,
         singletons=False,
+        empties=False,
         multiedges=False,
         connected=True,
         relabel=True,
@@ -1483,6 +1484,8 @@ class Hypergraph:
             Whether isolated nodes are allowed, by default False.
         singletons : bool, optional
             Whether singleton edges are allowed, by default False.
+        empties : bool, optional
+            Whether empty edges (edges with no nodes) are allowed, by default False.
         multiedges : bool, optional
             Whether multiedges are allowed, by default False.
         connected : bool, optional
@@ -1505,6 +1508,8 @@ class Hypergraph:
             _H.merge_duplicate_edges()
         if not singletons:
             _H.remove_edges_from(_H.edges.singletons())
+        if not empties:
+            _H.remove_edges_from(_H.edges.empty())
         if not isolates:
             _H.remove_nodes_from(_H.nodes.isolates())
         if connected:

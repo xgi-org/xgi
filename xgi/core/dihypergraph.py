@@ -1042,12 +1042,14 @@ class DiHypergraph:
 
         return cp
 
-    def cleanup(self, isolates=False, relabel=True, in_place=True):
+    def cleanup(self, isolates=False, empties=False, relabel=True, in_place=True):
         if in_place:
             _DH = self
         else:
             _DH = self.copy()
 
+        if not empties:
+            _DH.remove_edges_from(_DH.edges.empty())
         if not isolates:
             _DH.remove_nodes_from(_DH.nodes.isolates())
         if relabel:

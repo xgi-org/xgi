@@ -253,3 +253,58 @@ def test_edge_positions_from_barycenters(edgelist1):
     for idx, e in H.edges.members(dtype=dict).items():
         mean_pos = np.mean([node_pos[n] for n in e], axis=0)
         assert np.allclose(edge_pos[idx], mean_pos)
+
+
+def test_spring_layouts_accept_rng(edgelist1):
+    """Spring layouts should accept np.random.Generator as seed (issue #712)."""
+    H = xgi.Hypergraph(edgelist1)
+    rng = np.random.default_rng(42)
+
+    # All four spring layouts should accept a Generator without erroring
+    xgi.pairwise_spring_layout(H, seed=rng)
+    xgi.barycenter_spring_layout(H, seed=rng)
+    xgi.weighted_barycenter_spring_layout(H, seed=rng)
+    xgi.bipartite_spring_layout(H, seed=rng)
+
+    # int seed still works
+    xgi.barycenter_spring_layout(H, seed=42)
+    # None still works
+    xgi.barycenter_spring_layout(H, seed=None)
+
+
+def test_spring_layouts_rng_semantics(edgelist1):
+    """Document expected reproducibility semantics for the seed argument.
+
+    The conventions mirror sklearn / scipy:
+
+    * Reusing the same `Generator` instance advances its state, so two
+      consecutive calls produce different layouts.
+    * Two fresh `Generator`s constructed from the same seed produce identical
+      layouts.
+    * Passing an int seed reproduces itself, but is not equivalent to passing a
+      `Generator` constructed from that same int (the conversion path differs).
+    """
+    H = xgi.Hypergraph(edgelist1)
+
+    # Reusing one rng across calls: state advances → different outputs
+    rng = np.random.default_rng(42)
+    pos_a = xgi.barycenter_spring_layout(H, seed=rng)
+    pos_b = xgi.barycenter_spring_layout(H, seed=rng)
+    assert any(not np.allclose(pos_a[n], pos_b[n]) for n in pos_a)
+
+    # Two fresh rngs from the same seed → identical outputs
+    pos_c = xgi.barycenter_spring_layout(H, seed=np.random.default_rng(42))
+    pos_d = xgi.barycenter_spring_layout(H, seed=np.random.default_rng(42))
+    for n in pos_c:
+        assert np.allclose(pos_c[n], pos_d[n])
+
+    # Same int seed reused → identical outputs
+    pos_e = xgi.barycenter_spring_layout(H, seed=42)
+    pos_f = xgi.barycenter_spring_layout(H, seed=42)
+    for n in pos_e:
+        assert np.allclose(pos_e[n], pos_f[n])
+
+    # int seed vs rng built from same seed → NOT equivalent (different paths)
+    pos_g = xgi.barycenter_spring_layout(H, seed=42)
+    pos_h = xgi.barycenter_spring_layout(H, seed=np.random.default_rng(42))
+    assert any(not np.allclose(pos_g[n], pos_h[n]) for n in pos_g)

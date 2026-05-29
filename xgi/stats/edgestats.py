@@ -191,51 +191,27 @@ def node_edge_centrality(
     max_iter=100,
     tol=1e-6,
 ):
-    """Computes edge centralities.
+    """Edge component of the nonlinear node-edge centrality.
+
+    See :func:`xgi.algorithms.centrality.node_edge_centrality` for the definition,
+    parameters, and references.
 
     Parameters
     ----------
     net : Hypergraph
-        The hypergraph of interest
+        The hypergraph of interest.
     bunch : Iterable
-        Edges in `net`
-    f : lambda function, default: x^2
-        The function f as described in Tudisco and Higham.
-        Must accept a numpy array.
-    g : lambda function, default: x^0.5
-        The function g as described in Tudisco and Higham.
-        Must accept a numpy array.
-    phi : lambda function, default: x^2
-        The function phi as described in Tudisco and Higham.
-        Must accept a numpy array.
-    psi : lambda function, default: x^0.5
-        The function psi as described in Tudisco and Higham.
-        Must accept a numpy array.
-    max_iter : int, default: 100
-        Number of iterations at which the algorithm terminates
-        if convergence is not reached.
-    tol : float > 0, default: 1e-6
-        The total allowable error in the node and edge centralities.
+        Edges in `net`.
 
     Returns
     -------
-    dict, dict
-        The edge centrality where keys are the edge IDs and values are
-        associated centralities.
+    dict
+        Edge centralities.
 
-    Notes
-    -----
-    In the paper from which this was taken, it is more general in that it includes
-    general functions for both nodes and edges, nodes and edges may be weighted,
-    and one can choose different norms for normalization.
+    See Also
+    --------
+    ~xgi.algorithms.centrality.node_edge_centrality
 
-    This method does not output the node centralities even though they are computed.
-
-    References
-    ----------
-    Node and edge nonlinear eigenvector centrality for hypergraphs,
-    Francesco Tudisco & Desmond J. Higham,
-    https://doi.org/10.1038/s42005-021-00704-2
     """
     _, c = xgi.node_edge_centrality(net, f, g, phi, psi, max_iter, tol)
     return {e: c[e] for e in c if e in bunch}

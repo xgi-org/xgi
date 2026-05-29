@@ -39,6 +39,11 @@ def clique_eigenvector_centrality(H, tol=1e-6):
         Centrality, where keys are node IDs and values are centralities. The
         centralities are 1-normalized.
 
+    Notes
+    -----
+    Also accessible via the stats interface as
+    ``H.nodes.clique_eigenvector_centrality``.
+
     See Also
     --------
     h_eigenvector_centrality
@@ -114,6 +119,9 @@ def node_edge_centrality(
     In the paper from which this was taken, it is more general in that it includes
     general functions for both nodes and edges, nodes and edges may be weighted,
     and one can choose different norms for normalization.
+
+    Also accessible via the stats interface: ``H.nodes.node_edge_centrality`` for the
+    node component and ``H.edges.node_edge_centrality`` for the edge component.
 
     References
     ----------
@@ -271,6 +279,8 @@ def katz_centrality(H, cutoff=100):
     [2] The Katz-centrality of isolated nodes (no hyperedges contains them) is
     zero. The Katz-centrality of an empty hypergraph is not defined.
 
+    Also accessible via the stats interface as ``H.nodes.katz_centrality``.
+
     References
     ----------
     See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited
@@ -319,6 +329,10 @@ def h_eigenvector_centrality(H, max_iter=100, tol=1e-6, seed=None):
     dict
         Centrality, where keys are node IDs and values are centralities. The
         centralities are 1-normalized.
+
+    Notes
+    -----
+    Also accessible via the stats interface as ``H.nodes.h_eigenvector_centrality``.
 
     See Also
     --------
@@ -408,6 +422,10 @@ def z_eigenvector_centrality(H, max_iter=100, tol=1e-6):
     ------
     XGIError
         If the hypergraph is not uniform.
+
+    Notes
+    -----
+    Also accessible via the stats interface as ``H.nodes.z_eigenvector_centrality``.
 
     See Also
     --------

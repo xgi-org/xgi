@@ -831,11 +831,15 @@ class SimplicialComplex(Hypergraph):
 
         return cp
 
-    def cleanup(self, isolates=False, connected=True, relabel=True, in_place=True):
+    def cleanup(
+        self, isolates=False, empties=False, connected=True, relabel=True, in_place=True
+    ):
         if in_place:
             _S = self
         else:
             _S = self.copy()
+        if not empties:
+            _S.remove_simplex_ids_from(_S.edges.empty())
         if not isolates:
             _S.remove_nodes_from(_S.nodes.isolates())
         if connected:

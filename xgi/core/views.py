@@ -13,6 +13,25 @@ from functools import reduce
 from ..exception import IDNotFound, XGIError
 from ..stats import IDStat, dispatch_many_stats, dispatch_stat
 
+
+class _stat_property:
+    """Non-data descriptor that exposes a stat as a class-level attribute.
+
+    Makes built-in stats visible to dir(), tab completion, and IDE autocomplete
+    while preserving the instance-level caching behavior of the stats system.
+    """
+
+    def __init__(self, stat_name):
+        self.stat_name = stat_name
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        stat = dispatch_stat(obj._id_kind, obj._net, obj, self.stat_name)
+        obj.__dict__[self.stat_name] = stat
+        return stat
+
+
 __all__ = [
     "NodeView",
     "EdgeView",
@@ -124,23 +143,43 @@ class IDView(Mapping, Set):
         return iter(self._ids)
 
     def __getitem__(self, idx):
-        """Get the attributes of the ID.
+        """Get the attribute dictionary of the node or edge with the given ID.
+
+        Note that this returns the **attributes** (a dict of metadata), not the
+        members of an edge or the edges containing a node. If no attributes have
+        been set, the returned dict is empty.
 
         Parameters
         ----------
         idx : hashable
-            node or edge ID
+            Node or edge ID.
 
         Returns
         -------
         dict
-            attributes associated to the ID.
+            Attributes associated with `idx`. Empty if none have been set.
 
         Raises
         ------
-        XGIError
-            If the id is not being kept track of by this view, or if id is not in the
-            hypergraph, or if id is not hashable.
+        IDNotFound
+            If `idx` is not in this view.
+
+        See Also
+        --------
+        :meth:`EdgeView.members` : Get the nodes that make up an edge.
+        :meth:`NodeView.memberships` : Get the edges containing a node.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4]])
+        >>> H.edges[0]                  # attribute dict (empty by default)
+        {}
+        >>> H.edges.members(0)          # the actual members of edge 0
+        {1, 2, 3}
+        >>> H.add_edge([5, 6], idx="e1", color="red")
+        >>> H.edges["e1"]               # attributes set at creation
+        {'color': 'red'}
 
         """
         if idx not in self:
@@ -557,9 +596,27 @@ class NodeView(IDView):
     `tutorial
     <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
+    Indexing with ``H.nodes[id]`` returns the node's **attribute dictionary**,
+    not the edges it belongs to. Use :meth:`memberships` for the latter.
+
     """
 
     _id_kind = "node"
+
+    attrs = _stat_property("attrs")
+    degree = _stat_property("degree")
+    average_neighbor_degree = _stat_property("average_neighbor_degree")
+    clustering_coefficient = _stat_property("clustering_coefficient")
+    local_clustering_coefficient = _stat_property("local_clustering_coefficient")
+    two_node_clustering_coefficient = _stat_property("two_node_clustering_coefficient")
+    clique_eigenvector_centrality = _stat_property("clique_eigenvector_centrality")
+    h_eigenvector_centrality = _stat_property("h_eigenvector_centrality")
+    z_eigenvector_centrality = _stat_property("z_eigenvector_centrality")
+    node_edge_centrality = _stat_property("node_edge_centrality")
+    katz_centrality = _stat_property("katz_centrality")
+    local_simplicial_fraction = _stat_property("local_simplicial_fraction")
+    local_edit_simpliciality = _stat_property("local_edit_simpliciality")
+    local_face_edit_simpliciality = _stat_property("local_face_edit_simpliciality")
 
     def __init__(self, H, bunch=None):
         if H is None:
@@ -654,9 +711,17 @@ class EdgeView(IDView):
     `tutorial
     <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
+    Indexing with ``H.edges[id]`` returns the edge's **attribute dictionary**,
+    not its members. Use :meth:`members` for the latter.
+
     """
 
     _id_kind = "edge"
+
+    attrs = _stat_property("attrs")
+    order = _stat_property("order")
+    size = _stat_property("size")
+    node_edge_centrality = _stat_property("node_edge_centrality")
 
     def __init__(self, H, bunch=None):
         if H is None:
@@ -836,6 +901,11 @@ class DiNodeView(IDView):
 
     _id_kind = "dinode"
 
+    attrs = _stat_property("attrs")
+    degree = _stat_property("degree")
+    in_degree = _stat_property("in_degree")
+    out_degree = _stat_property("out_degree")
+
     def __init__(self, H, bunch=None):
         if H is None:
             super().__init__(None, bunch)
@@ -955,6 +1025,14 @@ class DiEdgeView(IDView):
     """
 
     _id_kind = "diedge"
+
+    attrs = _stat_property("attrs")
+    order = _stat_property("order")
+    size = _stat_property("size")
+    head_order = _stat_property("head_order")
+    head_size = _stat_property("head_size")
+    tail_order = _stat_property("tail_order")
+    tail_size = _stat_property("tail_size")
 
     def __init__(self, H, bunch=None):
         if H is None:
