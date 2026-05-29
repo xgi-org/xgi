@@ -218,7 +218,9 @@ def draw(
         If those are single values, `interpolate_sizes` is ignored
         for it. By default, True.
     **kwargs : optional args
-        Alternate default values. Values that can be overwritten are the following:
+        Accepts three non-overlapping groups of keyword arguments:
+
+        Size-rescaling settings (see also ``rescale_sizes``):
 
         * "min_node_size" (default: 5)
         * "max_node_size" (default: 30)
@@ -226,6 +228,15 @@ def draw(
         * "max_node_lw" (default: 5)
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
+
+        Node-label styling (only used when ``node_labels`` is enabled);
+        see :func:`draw_node_labels` for the full list.
+
+        Hyperedge-label styling (only used when ``hyperedge_labels`` is enabled);
+        see :func:`draw_hyperedge_labels` for the full list.
+
+        Passing an argument that does not belong to any of these three groups
+        raises a ``TypeError``.
 
     Returns
     -------
@@ -266,7 +277,29 @@ def draw(
         "max_node_lw": 5,
     }
 
-    settings.update(kwargs)
+    # Split **kwargs into three non-overlapping buckets and validate upfront.
+    # Doing this here — unconditionally and against all valid keys at once —
+    # catches typos even when labels are off, and prevents cross-bucket confusion
+    # (e.g. a valid edge-label kwarg being rejected by node-label validation).
+    _settings_keys = set(settings)
+    _node_label_keys = (
+        signature(draw_node_labels).parameters.keys()
+        - {"H", "pos", "ax_nodes", "node_labels"}
+    )
+    _edge_label_keys = (
+        signature(draw_hyperedge_labels).parameters.keys()
+        - {"H", "pos", "ax_edges", "hyperedge_labels"}
+    )
+    unknown = set(kwargs) - (_settings_keys | _node_label_keys | _edge_label_keys)
+    if unknown:
+        raise TypeError(
+            f"draw() got unexpected keyword argument(s): {', '.join(sorted(unknown))}"
+        )
+    settings_kwargs = {k: v for k, v in kwargs.items() if k in _settings_keys}
+    node_label_kwargs = {k: v for k, v in kwargs.items() if k in _node_label_keys}
+    edge_label_kwargs = {k: v for k, v in kwargs.items() if k in _edge_label_keys}
+
+    settings.update(settings_kwargs)
 
     ax, pos = _draw_init(H, ax, pos)
 
@@ -293,7 +326,7 @@ def draw(
             max_order=max_order,
             hyperedge_labels=hyperedge_labels,
             rescale_sizes=rescale_sizes,
-            **kwargs,
+            **edge_label_kwargs,
         )
 
     elif isinstance(H, Hypergraph):
@@ -319,7 +352,7 @@ def draw(
             hull=hull,
             radius=radius,
             rescale_sizes=rescale_sizes,
-            **kwargs,
+            **edge_label_kwargs,
         )
     else:
         raise XGIError("The input must be a SimplicialComplex or Hypergraph")
@@ -340,7 +373,7 @@ def draw(
         params=settings,
         node_labels=node_labels,
         rescale_sizes=rescale_sizes,
-        **kwargs,
+        **node_label_kwargs,
     )
 
     # compute axis limits
@@ -467,7 +500,9 @@ def draw_nodes(
     }
 
     settings.update(params)
-    settings.update(kwargs)
+    # Only absorb recognised settings keys from kwargs so that label kwargs
+    # passed via a direct call to draw_nodes() don't pollute the settings dict.
+    settings.update({k: v for k, v in kwargs.items() if k in settings})
 
     ax, pos = _draw_init(H, ax, pos)
 
@@ -523,15 +558,9 @@ def draw_nodes(
     )
 
     if node_labels:
-        # Get all valid keywords by inspecting the signatures of draw_node_labels
-        valid_label_kwds = signature(draw_node_labels).parameters.keys()
-        # Remove the arguments of this function (draw_networkx)
-        valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "node_labels"}
-        if any([k not in valid_label_kwds for k in kwargs]):
-            invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
-            raise ValueError(f"Received invalid argument(s): {invalid_args}")
-        label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
-        draw_node_labels(H, pos, node_labels, ax_nodes=ax, **label_kwds)
+        # kwargs here are already validated and filtered to node-label keys by
+        # draw() when called from there; for direct calls they are passed as-is.
+        draw_node_labels(H, pos, node_labels, ax_nodes=ax, **kwargs)
 
     # compute axis limits
     _update_lims(pos, ax)
@@ -694,7 +723,9 @@ def draw_hyperedges(
     }
 
     settings.update(params)
-    settings.update(kwargs)
+    # Only absorb recognised settings keys from kwargs so that label kwargs
+    # passed via a direct call to draw_hyperedges() don't pollute the settings dict.
+    settings.update({k: v for k, v in kwargs.items() if k in settings})
 
     ax, pos = _draw_init(H, ax, pos)
 
@@ -819,15 +850,9 @@ def draw_hyperedges(
     ax.add_collection(edge_collection)
 
     if hyperedge_labels:
-        # Get all valid keywords by inspecting the signatures of draw_node_labels
-        valid_label_kwds = signature(draw_hyperedge_labels).parameters.keys()
-        # Remove the arguments of this function (draw_networkx)
-        valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "hyperedge_labels"}
-        if any([k not in valid_label_kwds for k in kwargs]):
-            invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
-            raise ValueError(f"Received invalid argument(s): {invalid_args}")
-        label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
-        draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
+        # kwargs here are already validated and filtered to edge-label keys by
+        # draw() when called from there; for direct calls they are passed as-is.
+        draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **kwargs)
 
     # compute axis limits
     _update_lims(pos, ax)
