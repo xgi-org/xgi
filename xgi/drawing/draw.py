@@ -258,6 +258,12 @@ def draw(
     >>> H.add_edges_from([[1,2,3],[3,4],[4,5,6,7],[7,8,9,10,11]])
     >>> ax = xgi.draw(H, pos=xgi.barycenter_spring_layout(H))
 
+    Notes
+    -----
+    For finer control over node or hyperedge label appearance, call
+    :func:`draw_node_labels` or :func:`draw_hyperedge_labels` directly after
+    ``draw()``.
+
     See Also
     --------
     draw_nodes
