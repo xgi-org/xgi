@@ -45,9 +45,12 @@ class SimplicialComplex(Hypergraph):
         * simplex list
         * simplex dictionary
         * 2-column Pandas dataframe (bipartite edges)
-        * Incidence matrix: numpy ndarray or scipy.sparse array
         * SimplicialComplex object
         * Hypergraph object
+
+        .. note::
+            Construction from an incidence matrix (numpy ndarray or scipy.sparse
+            array) is not yet implemented and will raise an error.
 
     **attr : dict, optional
         Attributes to add to the simplicial complex as key, value pairs.

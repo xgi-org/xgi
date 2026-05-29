@@ -40,6 +40,8 @@ class Hypergraph:
         * Incidence matrix: numpy ndarray or scipy.sparse array
         * Hypergraph object
         * SimplicialComplex object
+        * DiHypergraph object: each directed edge (tail, head) is converted to
+          an undirected edge containing the union of its tail and head members.
 
     **attr : dict, optional
         Attributes to add to the hypergraph as key, value pairs.

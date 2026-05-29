@@ -30,6 +30,8 @@ def to_hypergraph(data, create_using=None):
         Current known types are:
          * a Hypergraph object
          * a SimplicialComplex object
+         * a DiHypergraph object: each directed edge (tail, head) is converted
+           to an undirected edge containing the union of its tail and head members
          * list-of-iterables
          * dict-of-iterables
          * Pandas DataFrame (bipartite edgelist)
@@ -104,13 +106,12 @@ def to_dihypergraph(data, create_using=None):
     data : object to be converted
         Current known types are:
          * a DiHypergraph object
-         * a SimplicialComplex object
          * list-of-iterables
          * dict-of-iterables
-         * Pandas DataFrame (bipartite edgelist)
-         * numpy matrix
-         * numpy ndarray
-         * scipy sparse matrix
+
+        .. note::
+            Pandas DataFrame, numpy, and scipy sparse inputs are not yet
+            implemented and will raise an error.
     create_using : Hypergraph constructor, optional (default=Hypergraph)
         Hypergraph type to create. If hypergraph instance, then cleared before populated.
 
@@ -165,9 +166,10 @@ def to_simplicial_complex(data, create_using=None):
          * list-of-iterables
          * dict-of-iterables
          * Pandas DataFrame (bipartite edgelist)
-         * numpy matrix
-         * numpy ndarray
-         * scipy sparse matrix
+
+        .. note::
+            Construction from an incidence matrix (numpy ndarray or scipy.sparse
+            array) is not yet implemented and will raise an error.
     create_using : Hypergraph graph constructor, optional (default=Hypergraph)
         Hypergraph type to create. If hypergraph instance, then cleared before
         populated.
