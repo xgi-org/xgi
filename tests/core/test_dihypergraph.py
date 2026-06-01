@@ -779,3 +779,44 @@ def test_cleanup(dihypergraph1):
     assert edge_in == xgi.dual_dict(node_out)
     assert edge_out == xgi.dual_dict(node_in)
     assert cleanDH["name"] == "test"
+
+
+def test_getattr_only_proxies_stats():
+    """DiHypergraph.__getattr__ must only delegate to actual stats, not arbitrary
+    view methods. See issue #408."""
+    DH = xgi.DiHypergraph([([1, 2], [3, 4]), ([2], [5, 6])])
+
+    # Built-in stats remain accessible
+    assert DH.degree(1) == 1
+    assert DH.in_degree(3) == 1
+    assert DH.out_degree(1) == 1
+    assert DH.size(0) == 4
+
+    # User-defined stats remain accessible
+    @xgi.dinodestat_func
+    def my_stat(net, bunch):
+        return {n: 7 for n in bunch}
+
+    assert all(v == 7 for v in DH.my_stat().values())
+
+    # Non-stat view methods are NOT exposed via DiHypergraph
+    for name in (
+        "filterby",
+        "filterby_attr",
+        "neighbors",
+        "memberships",
+        "dimemberships",
+        "isolates",
+        "members",
+        "dimembers",
+        "head",
+        "tail",
+        "lookup",
+        "duplicates",
+    ):
+        with pytest.raises(AttributeError):
+            getattr(DH, name)
+
+    # Sanity: unknown attribute still raises
+    with pytest.raises(AttributeError):
+        DH.this_does_not_exist

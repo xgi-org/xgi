@@ -9,6 +9,7 @@ from warnings import warn
 import numpy as np
 
 from ..exception import IDNotFound, XGIError, frozen
+from ..stats import IDStat
 from ..utils import IDDict, update_uid_counter
 from .views import EdgeView, NodeView
 
@@ -244,12 +245,16 @@ class Hypergraph:
         self._net_attr[attr] = val
 
     def __getattr__(self, attr):
+        # Only proxy actual stats (NodeStat / EdgeStat).  Without the IDStat
+        # check, every IDView method (filterby, neighbors, memberships, ...)
+        # would be exposed via Hypergraph and fail with confusing errors when
+        # called.  See issue #408.
         stat = getattr(self.nodes, attr, None)
         word = "nodes"
-        if stat is None:
+        if not isinstance(stat, IDStat):
             stat = getattr(self.edges, attr, None)
             word = "edges"
-        if stat is None:
+        if not isinstance(stat, IDStat):
             word = None
             raise AttributeError(
                 f"{attr} is not a method of Hypergraph or a "
