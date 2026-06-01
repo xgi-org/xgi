@@ -649,7 +649,7 @@ def test_ashist_plot_types():
     H = xgi.sunflower(3, 1, 20)
 
     # Test valid plot types
-    for plot_type in ["bar", "line", "step"]:
+    for plot_type in ["bar", "line", "scatter", "step"]:
         df = H.edges.size.ashist(plot=plot_type)
         expected_df = pd.DataFrame([[20.0, 3]], columns=["bin_center", "value"])
         assert df.equals(expected_df)
@@ -700,6 +700,27 @@ def test_ashist_bin_edges_plotting():
     df = H.edges.size.ashist(plot=True, bin_edges=True)
     assert "bin_lo" in df.columns
     assert "bin_hi" in df.columns
+
+
+def test_plot_hist_helper():
+    """Test the _plot_hist helper directly."""
+    import matplotlib.pyplot as plt
+
+    from xgi.stats import _plot_hist
+
+    H = xgi.sunflower(3, 1, 20)
+    df = H.edges.size.ashist(bin_edges=True)
+
+    for plot_type in ["bar", "line", "scatter", "step"]:
+        ax = _plot_hist(df, plot_type=plot_type, bin_edges=True)
+        assert isinstance(ax, plt.Axes)
+        assert ax.get_xlabel() == df.attrs["xlabel"]
+        assert ax.get_ylabel() == df.attrs["ylabel"]
+        assert ax.get_title() == df.attrs["title"]
+        plt.close(ax.figure)
+
+    with pytest.raises(ValueError, match="Unknown plot type"):
+        _plot_hist(df, plot_type="invalid_type")
 
 
 def test_ashist_single_unique_value():

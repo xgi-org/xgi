@@ -194,8 +194,8 @@ class IDStat:
             By default, False.
         plot : bool or str
             If True (or ``"bar"``), plot the histogram with matplotlib as a bar
-            chart. Can also be ``"line"`` or ``"step"`` to choose the plot type.
-            By default, False.
+            chart. Can also be ``"line"``, ``"scatter"``, or ``"step"`` to choose
+            the plot type. By default, False.
         plot_kwargs : dict, optional
             Additional keyword arguments passed to the matplotlib plotting
             function. By default, None.
@@ -213,6 +213,10 @@ class IDStat:
                 - attrs['ylabel']: 'Count' or 'Probability' based on density parameter
                 - attrs['title']: Plot title
 
+        See Also
+        --------
+        ~xgi.stats._plot_hist
+
         Notes
         -----
         Originally from https://github.com/jkbren/networks-and-dataviz
@@ -220,8 +224,9 @@ class IDStat:
         Examples
         --------
         >>> import xgi
-        >>> H = xgi.Hypergraph([[1, 2], [2, 3, 4], [1, 2, 3]])
+        >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [1, 3, 6]])
         >>> df = H.nodes.degree.ashist(plot="bar", plot_kwargs={"color": "red"})
+
         """
 
         # if there is one unique value and more than one bin is specified,
@@ -239,39 +244,8 @@ class IDStat:
 
         # Optionally plot the histogram
         if plot:
-            try:
-                import matplotlib.pyplot as plt
-            except ImportError:
-                raise ImportError("Matplotlib is required for plotting.")
-
-            plot_kwargs = plot_kwargs or {}
             plot_type = "bar" if plot is True else plot
-            if plot_type not in ("bar", "line", "step"):
-                raise ValueError(
-                    f"Unknown plot type {plot_type!r}; "
-                    "expected one of 'bar', 'line', or 'step'."
-                )
-
-            fig, ax = plt.subplots()
-
-            if plot_type == "bar":
-                ax.bar(df["bin_center"], df["value"], **plot_kwargs)
-            elif plot_type == "line":
-                ax.plot(df["bin_center"], df["value"], **plot_kwargs)
-            else:  # "step"
-                ax.step(df["bin_center"], df["value"], where="mid", **plot_kwargs)
-
-            ax.set_xlabel(df.attrs["xlabel"])
-            ax.set_ylabel(df.attrs["ylabel"])
-            ax.set_title(df.attrs["title"])
-
-            # Draw the bin edges if they are available
-            if bin_edges:
-                for _, row in df.iterrows():
-                    ax.axvline(row["bin_lo"], color="gray", linestyle="--", alpha=0.5)
-                    ax.axvline(row["bin_hi"], color="gray", linestyle="--", alpha=0.5)
-
-            plt.show()
+            _plot_hist(df, plot_type, plot_kwargs=plot_kwargs, bin_edges=bin_edges)
 
         return df
 
@@ -709,6 +683,70 @@ _dispatch_data = {
         "multistatclass": MultiDiEdgeStat,
     },
 }
+
+
+def _plot_hist(df, plot_type="bar", plot_kwargs=None, bin_edges=False):
+    """Plot a histogram DataFrame produced by :meth:`IDStat.ashist`.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Output of :func:`~xgi.utils.hist`, with "bin_center" and "value" columns
+        and "xlabel", "ylabel", and "title" entries in ``df.attrs``.
+    plot_type : str
+        The type of plot to draw, one of "bar", "line", "scatter", or "step".
+        By default, "bar".
+    plot_kwargs : dict, optional
+        Additional keyword arguments passed to the matplotlib plotting function.
+        By default, None.
+    bin_edges : bool
+        Whether to draw vertical dashed lines at the bin edges. Requires the
+        "bin_lo" and "bin_hi" columns in `df`. By default, False.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The axes the histogram was drawn on.
+
+    Raises
+    ------
+    ValueError
+        If `plot_type` is not one of "bar", "line", "scatter", or "step".
+
+    """
+    import matplotlib.pyplot as plt
+
+    valid_types = ("bar", "line", "scatter", "step")
+    if plot_type not in valid_types:
+        raise ValueError(
+            f"Unknown plot type {plot_type!r}; expected one of {valid_types}."
+        )
+
+    plot_kwargs = plot_kwargs or {}
+    _, ax = plt.subplots()
+
+    if plot_type == "bar":
+        ax.bar(df["bin_center"], df["value"], **plot_kwargs)
+    elif plot_type == "line":
+        ax.plot(df["bin_center"], df["value"], **plot_kwargs)
+    elif plot_type == "scatter":
+        ax.scatter(df["bin_center"], df["value"], **plot_kwargs)
+    else:  # "step"
+        ax.step(df["bin_center"], df["value"], where="mid", **plot_kwargs)
+
+    ax.set_xlabel(df.attrs["xlabel"])
+    ax.set_ylabel(df.attrs["ylabel"])
+    ax.set_title(df.attrs["title"])
+
+    # Draw the bin edges if they are available
+    if bin_edges:
+        for _, row in df.iterrows():
+            ax.axvline(row["bin_lo"], color="gray", linestyle="--", alpha=0.5)
+            ax.axvline(row["bin_hi"], color="gray", linestyle="--", alpha=0.5)
+
+    plt.show()
+
+    return ax
 
 
 def dispatch_stat(kind, net, view, name):
