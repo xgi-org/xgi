@@ -361,7 +361,7 @@ def draw(
             **edge_label_kwargs,
         )
     else:
-        raise XGIError("The input must be a SimplicialComplex or Hypergraph")
+        raise TypeError("The input must be a SimplicialComplex or Hypergraph")
 
     ax, node_collection = draw_nodes(
         H=H,
@@ -1834,7 +1834,7 @@ def draw_bipartite(
         is_directed = True
 
     if not isinstance(H, Hypergraph):
-        raise XGIError("The input must be a Hypergraph")
+        raise TypeError("The input must be a Hypergraph")
 
     settings = {
         "min_node_lw": 0,
@@ -1870,7 +1870,7 @@ def draw_bipartite(
     if not pos:
         pos = bipartite_spring_layout(H)
     elif not (isinstance(pos[0], dict) and isinstance(pos[1], dict)):
-        raise XGIError("Position must be a 2-tuple of dictionaries!")
+        raise TypeError("Position must be a 2-tuple of dictionaries!")
 
     node_pos, edge_pos = pos
 
@@ -2048,7 +2048,7 @@ def draw_undirected_dyads(
     settings.update(kwargs)
 
     if not isinstance(H, Hypergraph):
-        raise XGIError("The input must be a Hypergraph")
+        raise TypeError("The input must be a Hypergraph")
 
     if not pos:
         pos = bipartite_spring_layout(H)
@@ -2249,7 +2249,7 @@ def draw_directed_dyads(
     settings.update(kwargs)
 
     if not isinstance(H, DiHypergraph):
-        raise XGIError("Input must be a DiHypergraph")
+        raise TypeError("Input must be a DiHypergraph")
 
     if not pos:
         from ..convert import to_hypergraph

@@ -309,7 +309,7 @@ class SimplicialComplex(Hypergraph):
         try:
             members = frozenset(members)
         except TypeError:
-            raise XGIError("The simplex cannot be cast to a frozenset.")
+            raise TypeError("The simplex cannot be cast to a frozenset.")
 
         if self.has_simplex(members):
             return
@@ -501,7 +501,7 @@ class SimplicialComplex(Hypergraph):
                 try:
                     _ = frozenset(members)
                 except TypeError as e:
-                    raise XGIError("Invalid ebunch format") from e
+                    raise ValueError("Invalid ebunch format") from e
 
                 self._add_simplex(frozenset(members), idx)
 
@@ -549,7 +549,7 @@ class SimplicialComplex(Hypergraph):
         if (format1 and isinstance(first_edge, str)) or (
             not format1 and isinstance(first_elem, str)
         ):
-            raise XGIError("Members cannot be specified as a string")
+            raise TypeError("Members cannot be specified as a string")
 
         faces = []
         # now we may iterate over the rest
@@ -569,7 +569,7 @@ class SimplicialComplex(Hypergraph):
             try:
                 _ = iter(members)
             except TypeError as e:
-                raise XGIError("Invalid ebunch format") from e
+                raise ValueError("Invalid ebunch format") from e
 
             # check that it does not exist yet (based on members, not ID)
             if not members or self.has_simplex(members):
@@ -611,7 +611,7 @@ class SimplicialComplex(Hypergraph):
             try:
                 self._edge[idx] = frozenset(members)
             except TypeError as e:
-                raise XGIError("Invalid ebunch format") from e
+                raise ValueError("Invalid ebunch format") from e
 
             for n in members:
                 if n not in self._node:

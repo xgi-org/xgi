@@ -557,7 +557,7 @@ class DiHypergraph:
             tail = members[0]
             head = members[1]
         else:
-            raise XGIError("Directed edge must be a list or tuple!")
+            raise TypeError("Directed edge must be a list or tuple!")
 
         if idx is None:
             uid = self._edge_uid
@@ -702,12 +702,12 @@ class DiHypergraph:
                     tail = members[0]
                     head = members[1]
                 else:
-                    raise XGIError("Directed edge must be a list or tuple!")
+                    raise TypeError("Directed edge must be a list or tuple!")
 
                 try:
                     self._edge[idx] = {"in": set(tail), "out": set(head)}
                 except TypeError as e:
-                    raise XGIError("Invalid ebunch format") from e
+                    raise ValueError("Invalid ebunch format") from e
 
                 for n in tail:
                     if n not in self._node:
@@ -773,7 +773,7 @@ class DiHypergraph:
                     head = members[1]
                     self._edge[idx] = {"in": set(tail), "out": set(head)}
                 except TypeError as e:
-                    raise XGIError("Invalid ebunch format") from e
+                    raise ValueError("Invalid ebunch format") from e
 
                 for node in tail:
                     if node not in self._node:
@@ -828,7 +828,7 @@ class DiHypergraph:
             ed = "out"
             nd = "in"
         else:
-            raise XGIError("Invalid direction!")
+            raise ValueError("Invalid direction!")
 
         if edge not in self._edge:
             self._edge[edge] = {"in": set(), "out": set()}
@@ -935,7 +935,7 @@ class DiHypergraph:
             ed = "out"
             nd = "in"
         else:
-            raise XGIError("Invalid direction!")
+            raise ValueError("Invalid direction!")
 
         if edge not in self._edge:
             raise XGIError(f"Edge {edge} not in the hypergraph")

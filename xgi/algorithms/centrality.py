@@ -210,10 +210,10 @@ def line_vector_centrality(H):
             for node in edge:
                 try:
                     c_i[node] += LGcent[edge_label_dict[edge]]
-                except IndexError:
-                    raise Exception(
+                except IndexError as e:
+                    raise ValueError(
                         "Nodes must be written with the Pythonic indexing (0,1,2...)"
-                    )
+                    ) from e
 
         c_i *= 1 / k
 

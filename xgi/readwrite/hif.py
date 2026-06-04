@@ -152,5 +152,5 @@ def read_hif_collection(path, nodetype=None, edgetype=None):
             )
             collection[name] = H
         return collection
-    except KeyError:
-        raise XGIError("Data collection is in the wrong format!")
+    except KeyError as e:
+        raise ValueError("Data collection is in the wrong format!") from e
