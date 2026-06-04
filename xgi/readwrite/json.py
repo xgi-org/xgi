@@ -1,19 +1,24 @@
-"""Read from and write to JSON."""
+"""Internal JSON readers/writers used by xgi_data.
+
+These functions are private to xgi.readwrite. Public users should use
+``read_hif`` / ``write_hif`` from :mod:`xgi.readwrite.hif`. They remain
+here only because the xgi-data repository still stores datasets in the
+legacy hypergraph-dict JSON format, and :mod:`xgi.readwrite.xgi_data`
+needs to read and write that format.
+"""
 
 import json
 from collections import defaultdict
 from os.path import dirname, join
-from warnings import warn
 
 from ..convert import from_hypergraph_dict, to_hypergraph_dict
 from ..core import Hypergraph, SimplicialComplex
 
-__all__ = ["write_json", "read_json"]
+__all__ = []
 
 
-def write_json(H, path, collection_name=""):
-    """
-    A function to write a file in a standardized JSON format.
+def _write_json(H, path, collection_name=""):
+    """Write a hypergraph to the legacy xgi-data JSON format.
 
     If the dataset is a collection, makes local copies of all the
     datasets in the collection and a main file pointing to all of
@@ -37,7 +42,6 @@ def write_json(H, path, collection_name=""):
         to strings, e.g., node IDs "2" and 2.
 
     """
-    warn("This function is deprecated in favor of the 'write_hif()' function")
     if collection_name:
         collection_name += "_"
 
@@ -48,7 +52,7 @@ def write_json(H, path, collection_name=""):
             collection_data["datasets"][i] = {
                 "relative-path": f"{collection_name}{i}.json"
             }
-            write_json(H, fname)
+            _write_json(H, fname)
         collection_data["type"] = "collection"
         datastring = json.dumps(collection_data, indent=2)
         with open(
@@ -63,7 +67,7 @@ def write_json(H, path, collection_name=""):
             collection_data["datasets"][name] = {
                 "relative-path": f"{collection_name}{name}.json"
             }
-            write_json(H, fname)
+            _write_json(H, fname)
         collection_data["type"] = "collection"
         datastring = json.dumps(collection_data, indent=2)
         with open(
@@ -78,14 +82,13 @@ def write_json(H, path, collection_name=""):
             output_file.write(datastring)
 
 
-def read_json(path, nodetype=None, edgetype=None):
-    """
-    A function to read a file in a standardized JSON format.
+def _read_json(path, nodetype=None, edgetype=None):
+    """Read a hypergraph from the legacy xgi-data JSON format.
 
     Parameters
     ----------
-    data: dict
-        A dictionary in the hypergraph JSON format
+    path: str
+        Path to a JSON file in the hypergraph-dict format.
     nodetype: type, optional
         type that the node IDs will be cast to
     edgetype: type, optional
@@ -103,7 +106,6 @@ def read_json(path, nodetype=None, edgetype=None):
         If the JSON is not in a format that can be loaded.
 
     """
-    warn("This function is deprecated in favor of the 'read_hif()' function")
     with open(path) as file:
         jsondata = json.loads(file.read())
 
@@ -111,7 +113,7 @@ def read_json(path, nodetype=None, edgetype=None):
         collection = {}
         for name, data in jsondata["datasets"].items():
             relpath = data["relative-path"]
-            H = read_json(
+            H = _read_json(
                 join(dirname(path), relpath), nodetype=nodetype, edgetype=edgetype
             )
             collection[name] = H

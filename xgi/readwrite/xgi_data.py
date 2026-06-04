@@ -58,9 +58,9 @@ def load_xgi_data(
     if read:
         cfp = join(path, dataset + ".json")
         if exists(cfp):
-            from ..readwrite import read_json
+            from .json import _read_json
 
-            return read_json(cfp, nodetype=nodetype, edgetype=edgetype)
+            return _read_json(cfp, nodetype=nodetype, edgetype=edgetype)
         else:
             warn(
                 f"No local copy was found at {cfp}. The data is requested "
@@ -108,7 +108,7 @@ def download_xgi_data(dataset, path="", collection_name=""):
         The name of the collection of data (if any). If `dataset` is not
         a collection, this argument is unused.
     """
-    from ..readwrite import write_json
+    from .json import _write_json
 
     index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
     index_data = request_json_from_url(index_url)
@@ -125,10 +125,10 @@ def download_xgi_data(dataset, path="", collection_name=""):
         url, nodetype=None, edgetype=None, max_order=None, cache=True
     )
     if isinstance(H, dict):
-        write_json(H, path, collection_name=collection_name)
+        _write_json(H, path, collection_name=collection_name)
     else:
         filename = join(path, key + ".json")
-        write_json(H, filename)
+        _write_json(H, filename)
 
 
 def _request_from_xgi_data(
