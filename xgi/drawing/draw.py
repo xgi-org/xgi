@@ -227,6 +227,10 @@ def draw(
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
 
+        When ``node_labels`` is enabled, keyword arguments accepted by
+        :func:`draw_node_labels` can also be passed here. For example,
+        ``font_size_nodes=12`` changes the node label font size.
+
     Returns
     -------
     ax : matplotlib Axes
