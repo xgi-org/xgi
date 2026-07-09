@@ -1,5 +1,32 @@
 # Changelog
 
+## v0.10.2
+
+* Feature: Added compressed file I/O. [#709](https://github.com/xgi-org/xgi/pull/709) (@kaiser-dan)
+* Docs: automated the generation of the "Using XGI" page. [#710](https://github.com/xgi-org/xgi/pull/710) (@nwlandry)
+* Optimized line graph construction. [#706](https://github.com/xgi-org/xgi/pull/706) (@Ved235)
+* Added examples to the gallery. [#711](https://github.com/xgi-org/xgi/pull/711) (@maximelucas)
+* Feature: add type stubs for stats on view classes. [#700](https://github.com/xgi-org/xgi/pull/700) (@leotrs)
+* Docs: introduce stats earlier, add cheat sheet, link quickstart. [#701](https://github.com/xgi-org/xgi/pull/701) (@leotrs)
+* Feature: forward stat function docstrings to stat objects. [#708](https://github.com/xgi-org/xgi/pull/708) (@leotrs)
+* Docs: added references to using-xgi.rst. [#698](https://github.com/xgi-org/xgi/pull/698) (@jbd7qp)
+* Feature: make built-in stats discoverable in dir() and IDE autocomplete. [#699](https://github.com/xgi-org/xgi/pull/699) (@leotrs)
+* Fix: update ReadTheDocs OS to ubuntu-24.04. (Closes Issue [#702](https://github.com/xgi-org/xgi/issues/702)) [#703](https://github.com/xgi-org/xgi/pull/703) (@leotrs)
+* Feature: add `__repr__`, `__copy__`, `__deepcopy__` to core classes. [#693](https://github.com/xgi-org/xgi/pull/693) (@leotrs)
+* Docs: cross-reference algorithms and stats from core classes. [#695](https://github.com/xgi-org/xgi/pull/695) (@leotrs)
+* Performance: reduce import time by deferring heavy dependencies. [#692](https://github.com/xgi-org/xgi/pull/692) (@leotrs)
+* Migrate all seeded functions from global random state to local RNG instances. [#689](https://github.com/xgi-org/xgi/pull/689) (@leotrs)
+* Docs: document exception hierarchy in module docstring. [#691](https://github.com/xgi-org/xgi/pull/691) (@leotrs)
+* Migrate all seeded functions from global random state to local RNG instances. [#689](https://github.com/xgi-org/xgi/pull/689) (@leotrs)
+* Docs: document exception hierarchy in module docstring. [#691](https://github.com/xgi-org/xgi/pull/691) (@leotrs)
+* Migrate all seeded functions from global random state to local RNG instances. [#689](https://github.com/xgi-org/xgi/pull/689) (@leotrs)
+* Fix: remove deprecated edge methods from SimplicialComplex. [#696](https://github.com/xgi-org/xgi/pull/696) (@leotrs)
+* Docs: document exception hierarchy in module docstring. [#691](https://github.com/xgi-org/xgi/pull/691) (@leotrs)
+* Migrate all seeded functions from global random state to local RNG instances. [#689](https://github.com/xgi-org/xgi/pull/689) (@leotrs)
+* Define `__all__` across all subpackage `__init__.py` files. [#688](https://github.com/xgi-org/xgi/pull/688) (@leotrs)
+* Clean up exception hierarchy for v1.0. [#687](https://github.com/xgi-org/xgi/pull/687) (@leotrs)
+* Fix scipy FutureWarning in laplacian_matrix. [#685](https://github.com/xgi-org/xgi/pull/685) (@leotrs)
+
 ## v0.10.1
 
 * Fix slow test collection and matplotlib GUI popups. [#686](https://github.com/xgi-org/xgi/pull/686) (@leotrs)

@@ -253,7 +253,7 @@ html_sidebars = {
     "gallery": [],
     "contribute": [],
     "user_guides": [],
-    "using-xgi": [],
+    "using_xgi": [],
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -276,6 +276,7 @@ sphinx_gallery_conf = {
             "../../examples/structures",
             "../../examples/layouts",
             "../../examples/generative_models",
+            "../../examples/algorithms",
             "../../examples/stats",
             "../../examples/advanced",
         ]

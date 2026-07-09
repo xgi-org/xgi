@@ -1,0 +1,539 @@
+agostinelli_higher-order_2026:
+  tags:
+  - XGI
+  authors:
+  - Cosimo Agostinelli
+  - Marco Mancastroppa
+  - Alain Barrat
+  title: Higher-order dissimilarity measures for hypergraph comparison
+  year: 2026
+  reference: '*Journal of Complex Networks*, Volume 14, Issue 1, cnaf048'
+  links:
+    paper: https://doi.org/10.1093/comnet/cnaf048
+    code: https://github.com/cosimoagostinelli/Hor_dissimilarity_measures
+
+de_caro_evaluating_2026:
+  tags:
+  - XGI-DATA
+  authors:
+  - Antonio De Caro
+  - Dario De Maio
+  - Francesco Monzillo
+  - Alessia Antelmi
+  - Biagio Cosenza
+  title: Evaluating Portable Programming Models for Hypergraph Label Propagation on
+    GPUs
+  year: 2026
+  reference: '*Proceedings of PDP 2026: 34th Euromicro International Conference on Parallel,
+    Distributed, and Network-Based Processing*'
+  links:
+    paper: https://doi.org/10.1109/PDP55228.2026.00024
+
+lucas_functional_2026:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Maxime Lucas
+  - Luca Gallo
+  - Arsham Ghavasieh
+  - Federico Battiston
+  - Manlio De Domenico
+  title: Functional reducibility of higher-order networks
+  year: 2026
+  reference: '*Nature Communications* **17**, 1551'
+  links:
+    paper: https://doi.org/10.1038/s41467-025-68273-4
+    code: https://github.com/maximelucas/hypergraph_reducibility
+
+smith_blue_2026:
+  tags:
+  - XGI
+  authors:
+  - Alyssa Smith
+  - Ilya Amburg
+  - Sagar Kumar
+  - Brooke Foucault Welles
+  - Nicholas W. Landry
+  title: 'A Blue Start: A large-scale pairwise and higher-order social network dataset'
+  year: 2026
+  reference: '*Scientific Data* **13**, 585'
+  links:
+    paper: https://doi.org/10.1038/s41597-026-06920-1
+    code: https://github.com/nwlandry/a-blue-start
+
+barrett_counting_2025:
+  tags:
+  - XGI-DATA
+  authors:
+  - Jordan Barrett
+  - Paweł Prałat
+  - Aaron Smith
+  - François Théberge
+  title: Counting simplicial pairs in hypergraphs
+  year: 2025
+  reference: 'Proceedings of Complex Networks & Their Applications XIII, pp 77–88'
+  links:
+    paper: https://doi.org/10.1007/978-3-031-82431-9_7
+
+biswas_effect_2025:
+  tags:
+  - XGI
+  authors:
+  - Dhrubajyoti Biswas
+  - Soumyajit Seth
+  title: Effect of higher-order interactions on aging transitions of coupled neurons
+  year: 2025
+  reference: '*Chaos, Solitons & Fractals*, Volume 200, Part 1, 116977'
+  links:
+    paper: https://doi.org/10.1016/j.chaos.2025.116977
+
+coll_hif_2025:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Martín Coll
+  - Cliff A. Joslyn
+  - Nicholas W. Landry
+  - Quintino Francesco Lotito
+  - Audun Myers
+  - Joshua Pickard
+  - Brenda Praggastis
+  - Przemysław Szufel
+  title: 'HIF: The hypergraph interchange format for higher-order networks'
+  year: 2025
+  reference: "*Network Science* **13**, e21"
+  links:
+    paper: https://doi.org/10.1017/nws.2025.10018
+    code: https://github.com/pszufe/HIF-standard
+
+delabays_hypergraph_2025:
+  tags:
+  - XGI
+  authors:
+  - Robin Delabays
+  - Giulia De Pasquale
+  - Florian Dörfler
+  - Yuanzhao Zhang
+  title: Hypergraph reconstruction from dynamics
+  year: 2025
+  reference: '*Nature Communications* **16**, 2691'
+  links:
+    paper: https://doi.org/10.1038/s41467-025-57664-2
+    code: https://github.com/TaylorBasedHypergraphInference/THIS
+
+he_hypergraph_2025:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Xie He
+  - Philip S. Chodrow
+  - Peter J. Mucha
+  title: Hypergraph Link Prediction via Hyperedge Copying
+  year: 2025
+  reference: '*Physical Review E* **112**, 024305'
+  links:
+    paper: https://arxiv.org/abs/2502.02386
+    code: https://github.com/hexie1995/HyperGraph
+
+hebert-dufresne_governance_2025:
+  tags:
+  - XGI
+  authors:
+  - Laurent Hébert-Dufresne
+  - Nicholas W. Landry
+  - Juniper Lovato
+  - Jonathan St-Onge
+  - Jean-Gabriel Young
+  - Marie-Ève Couture-Ménard
+  - Stéphane Bernatchez
+  - Catherine Choquette
+  - Alan A. Cohen
+  title: Governance as a complex, networked, democratic, satisfiability problem
+  year: 2025
+  reference: '*npj Complexity* **2**, 14'
+  links:
+    paper: https://doi.org/10.1038/s44260-025-00041-3
+    code: https://github.com/nwlandry/governance
+
+kirkley_structural_2025:
+  tags:
+  - XGI-DATA
+  authors:
+  - Alec Kirkley
+  - Helcio Felippe
+  - Federico Battiston
+  title: Structural Reducibility of Hypergraphs
+  year: 2025
+  reference: '*Physical Review Letters* **135**, 247401'
+  links:
+    paper: https://doi.org/10.1103/xrn7-cz8v
+
+landry_group_2025:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Nicholas W. Landry
+  - Laurent Hébert-Dufresne
+  title: 'Group Science: The Open Source Study of Higher-order Networks With XGI'
+  year: 2025
+  reference: '*SIAM News* **58**, 8'
+  links:
+    paper: https://www.siam.org/publications/siam-news/articles/group-science-the-open-source-study-of-higher-order-networks-with-xgi/
+    code: https://github.com/nwlandry/group-science-siam-news
+
+li_analysis_2025:
+  tags:
+  - XGI
+  authors:
+  - Tianyu Li
+  - Ying Xie
+  - Zhiqiu Ye
+  - Jiapei Zeng
+  - Yingqi Liu
+  - Lu Liu
+  - Ya Jia
+  title: Analysis of synchronization transitions in higher-order Kuramoto oscillator
+    system with different orders of phase lags
+  year: 2025
+  reference: ', *Chaos, Solitons & Fractals*, Volume 199, Part 1, October 2025, 116749.'
+  links:
+    paper: https://doi.org/10.1016/j.chaos.2025.116749
+
+malizia_disentangling_2025:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Federico Malizia
+  - Andrés Guzmán
+  - Iacopo Iacopini
+  - István Z. Kiss
+  title: Disentangling the Role of Heterogeneity and Hyperedge Overlap in Explosive
+    Contagion on Higher-Order Networks
+  year: 2025
+  reference: '*Physical Review Letters* **135**, 207401'
+  links:
+    paper: https://doi.org/10.1103/z3d5-94zb
+    code: https://github.com/federicomalizia/disentangling-the-role-of-heterogeneity-and-hyperedge-overlap-in-explosive-contagion
+
+nurisso_higher-order_2025:
+  tags:
+  - XGI-DATA
+  authors:
+  - Marco Nurisso
+  - Marta Morandini
+  - Maxime Lucas
+  - Francesco Vaccarino
+  - Tommaso Gili
+  - Giovanni Petri
+  title: Higher-order Laplacian renormalization
+  year: 2025
+  reference: '*Nature Physics*'
+  links:
+    paper: https://doi.org/10.1038/s41567-025-02784-1
+    code: https://github.com/nplresearch/higher_order_LRG
+
+robiglio_synergistic_2025:
+  tags:
+  - XGI
+  authors:
+  - Thomas Robiglio
+  - Matteo Neri
+  - Davide Coppes
+  - Cosimo Agostinelli
+  - Federico Battiston
+  - Maxime Lucas
+  - Giovanni Petri
+  title: Synergistic Signatures of Group Mechanisms in Higher-Order Systems
+  year: 2025
+  reference: '*Physical Review Letters* **134**, 137401'
+  links:
+    paper: ttps://doi.org/10.1103/PhysRevLett.134.137401
+
+sampson_competing_2024:
+  tags:
+  - XGI
+  authors:
+  - Corbit R. Sampson
+  - Juan G. Restrepo
+  title: Competing Social Contagions with Opinion Dependent Infectivity
+  year: 2024
+  reference: '*Physical Review E* **111**, 024313'
+  links:
+    paper: https://doi.org/10.1103/PhysRevE.111.024313
+
+tong_hic3_2025:
+  tags:
+  - XGI
+  authors:
+  - Yuyan Tong
+  - Renhao Hong
+  - Meng Li
+  - Na Yang
+  - Weihao Deng
+  - Hui Tang
+  - Tao Zeng
+  - Rui Liu
+  title: 'Hi-C3: a statistical inference-based model for reconstructing higher-order
+    cell–cell communication networks'
+  year: 2025
+  reference: '*Briefings in Bioinformatics*, Volume 26, Issue 5, bbaf568'
+  links:
+    paper: https://doi.org/10.1093/bib/bbaf568
+
+aksoy_scalable_2024:
+  tags:
+  - XGI
+  authors:
+  - Sinan G. Aksoy
+  - Ilya Amburg
+  - Stephen J. Young
+  title: Scalable Tensor Methods for Nonuniform Hypergraphs
+  year: 2024
+  reference: '*SIAM Journal on Mathematics of Data Science*, Vol. 6, Iss. 2, 481-503
+   '
+  links:
+    paper: https://doi.org/10.1137/23M1584472
+    code: https://github.com/pnnl/GENTTSV
+
+contreras-aso_beyond_2024:
+  tags:
+  - XGI
+  authors:
+  - Gonzalo Contreras-Aso
+  - Regino Criado
+  - Miguel Romance
+  title: 'Beyond directed hypergraphs: heterogeneous hypergraphs and spectral centralities'
+  year: 2024
+  reference: '*Journal of Complex Networks*, Volume 12, Issue 4, cnae037'
+  links:
+    paper: https://doi.org/10.1093/comnet/cnae037
+    code: https://github.com/goznalo-git/DirectedHyperCentrality
+
+contreras-aso_uplifting_2024:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Gonzalo Contreras-Aso
+  - Cristian Pérez-Corral
+  - Miguel Romance
+  title: 'Uplifting edges in higher order networks: spectral centralities for non-uniform
+    hypergraphs'
+  year: 2024
+  reference: '*AIMS Mathematics*, Volume 9, Issue 11: 32045-32075'
+  links:
+    paper: https://doi.org/10.3934/math.20241539
+    code: https://github.com/LaComarca-Lab/non-uniform-hypergraphs
+
+iacopini_temporal_2024:
+  tags:
+  - XGI
+  authors:
+  - Iacopo Iacopini
+  - Márton Karsai
+  - Alain Barrat
+  title: The temporal dynamics of group interactions in higher-order social networks
+  year: 2024
+  reference: '*Nature Communications* **15**, 7391'
+  links:
+    paper: https://doi.org/10.1038/s41467-024-50918-5
+    code: https://github.com/iaciac/temporal-group-interactions
+
+landry_filtering_2024:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Nicholas W. Landry
+  - Ilya Amburg
+  - Mirah Shi
+  - Sinan Aksoy
+  title: Filtering higher-order datasets
+  year: 2024
+  reference: '*Journal of Physics: Complexity* **5**, 015006'
+  links:
+    paper: https://doi.org/10.1088/2632-072X/ad253a
+    code: https://github.com/nwlandry/filtering-higher-order-datasets
+
+landry_reconstructing_2024:
+  tags:
+  - XGI
+  authors:
+  - Nicholas W. Landry
+  - William Thompson
+  - Laurent Hébert-Dufresne
+  - Jean-Gabriel Young
+  title: Reconstructing networks from simple and complex contagions
+  year: 2024
+  reference: '*Physical Review E* **110**, L042301'
+  links:
+    paper: https://doi.org/10.1103/PhysRevE.110.L042301
+    code: https://github.com/nwlandry/complex-network-reconstruction
+
+landry_simpliciality_2024:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Nicholas W. Landry
+  - Jean-Gabriel Young
+  - Nicole Eikmeier
+  title: The simpliciality of higher-order networks
+  year: 2024
+  reference: '*EPJ Data Science* **13**, 17'
+  links:
+    paper: https://doi.org/10.1140/epjds/s13688-024-00458-1
+    code: https://github.com/nwlandry/the-simpliciality-of-higher-order-networks
+
+neuhauser_learning_2024:
+  tags:
+  - XGI
+  authors:
+  - Leonie Neuhäuser
+  - Michael Scholkemper
+  - Francesco Tudisco
+  - Michael T. Schaub
+  title: Learning the effective order of a hypergraph dynamical system
+  year: 2024
+  reference: '*Science Advances* **10**, eadh4053'
+  links:
+    paper: https://doi.org/10.1126/sciadv.adh4053
+    code: https://git.rwth-aachen.de/netsci/publication-2023-learning-the-effective-order-of-a-hypergraph-dynamical-system
+
+zhang_robustness_2024:
+  tags:
+  - XGI-DATA
+  authors:
+  - Junjie Zhang
+  - Caixia Liu
+  - Shuxin Liu
+  - Yahui Wang
+  - Jie Li
+  - Weifei Zang
+  title: Robustness of higher-order interdependent networks with reinforced nodes
+  year: 2024
+  reference: '*Chaos* **34**, 083138'
+  links:
+    paper: https://doi.org/10.1063/5.0217876
+
+zhang_deeper_2024:
+  tags:
+  - XGI
+  authors:
+  - Yuanzhao Zhang
+  - Per Sebastian Skardal
+  - Federico Battiston
+  - Giovanni Petri
+  - Maxime Lucas
+  title: 'Deeper but smaller: Higher-order interactions increase linear stability
+    but shrink basins'
+  year: 2024
+  reference: '*Science Advances* **10**,eado8049'
+  links:
+    paper: https://doi.org/10.1126/sciadv.ado8049
+    code: https://github.com/maximelucas/basins_and_triangles
+
+contreras-aso_detecting_2023:
+  tags:
+  - XGI
+  authors:
+  - Gonzalo Contreras-Aso
+  - Regino Criado
+  - Guillermo Vera de Salas
+  - Jinling Yang
+  title: Detecting communities in higher-order networks by using their derivative
+    graphs
+  year: 2023
+  reference: '*Chaos, Solitons, and Fractals* **177**, 114200'
+  links:
+    paper: https://doi.org/10.1016/j.chaos.2023.114200
+    code: https://github.com/LaComarca-Lab/HyperGraph-Communities
+
+landry_opinion_2023:
+  tags:
+  - XGI
+  authors:
+  - Nicholas W. Landry
+  - Juan Restrepo
+  title: Opinion disparity in hypergraphs with community structure
+  year: 2023
+  reference: '*Physical Review E* **108**, 034311'
+  links:
+    paper: https://doi.org/10.1103/PhysRevE.108.034311
+    code: https://github.com/nwlandry/opinion-disparity-in-hypergraphs
+
+larock_encapsulation_2023:
+  tags:
+  - XGI
+  authors:
+  - Timothy LaRock and Renaud Lambiotte
+  title: Encapsulation Structure and Dynamics in Hypergraphs
+  year: 2023
+  reference: '*Journal of Physics: Complexity* **4**, 045007'
+  links:
+    paper: https://doi.org/10.1088/2632-072X/ad0b39
+    code: https://github.com/tlarock/encapsulation-dynamics
+
+mancastroppa_hyper-cores_2023:
+  tags:
+  - XGI
+  authors:
+  - Marco Mancastroppa
+  - Iacopo Iacopini
+  - Giovanni Petri
+  - Alain Barrat
+  title: Hyper-cores promote localization and efficient seeding in higher-order processes
+  year: 2023
+  reference: '*Nature Communications* **14**, 6223'
+  links:
+    paper: https://doi.org/10.1038/s41467-023-41887-2
+    code: https://github.com/marco-mancastroppa/hypercore-decomposition/
+
+ruggieri_community_2023:
+  tags:
+  - XGI
+  authors:
+  - Nicolò Ruggieri
+  - Martina Contisciani
+  - Federico Battiston
+  - Caterina de Bacco
+  title: Community detection in large hypergraphs
+  year: 2023
+  reference: '*Science Advances* **9**, eadg9159'
+  links:
+    paper: https://doi.org/10.1126/sciadv.adg9159
+    code: https://github.com/nickruggeri/Hy-MMSBM
+
+st-onge_nonlinear_2024:
+  tags:
+  - XGI-DATA
+  authors:
+  - Guillaume St-Onge
+  - Laurent Hébert-Dufresne
+  - Antoine Allard
+  title: Nonlinear bias toward complex contagion in uncertain transmission settings
+  year: 2024
+  reference: '*PNAS* 121 (1) e2312202121'
+  links:
+    paper: https://doi.org/10.1073/pnas.2312202121
+    code: https://github.com/gstonge/heterogeneous-transmission
+
+zhang_higher-order_2023:
+  tags:
+  - XGI
+  authors:
+  - Yuanzhao Zhang
+  - Maxime Lucas
+  - Federico Battiston
+  title: Higher-order interactions shape collective dynamics differently in hypergraphs
+    and simplicial complexes
+  year: 2023
+  reference: '*Nature Communications* **14**, 1605'
+  links:
+    paper: http://doi.org/10.1038/s41467-023-37190-9
+    code: https://github.com/maximelucas/HOI_shape_sync_differently

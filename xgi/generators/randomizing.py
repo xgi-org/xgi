@@ -4,8 +4,6 @@ All the functions in this module return a Hypergraph class (i.e. a simple, undir
 hypergraph).
 """
 
-from copy import deepcopy
-
 import numpy as np
 
 import xgi
@@ -84,7 +82,7 @@ def shuffle_hyperedges(S, order, p, seed=None):
     return H
 
 
-def node_swap(H, nid1, nid2, id_temp=-1, order=None):
+def node_swap(H, nid1, nid2, order=None):
     """Swap nodes `nid1` and node `nid2` in all edges of order `order`.
 
     Parameters
@@ -95,8 +93,6 @@ def node_swap(H, nid1, nid2, id_temp=-1, order=None):
         ID of first node to swap
     nid2: node ID
         ID of second node to swap
-    id_temp: node ID
-        Temporary ID given to nodes when swapping
     order: {int, None}, default: None
         If None, consider all orders. If an integer,
         consider edges of that order.
@@ -127,10 +123,6 @@ def node_swap(H, nid1, nid2, id_temp=-1, order=None):
                 f"There is no hyperedge of order {order} is this hypergraph."
             )
 
-    # make sure id_temps does not exist yet
-    while id_temp in H.edges:
-        id_temp -= 1
-
     # get edges of given order
     if order:
         edge_dict = H.edges.filterby("order", order).members(dtype=dict).copy()
@@ -147,29 +139,14 @@ def node_swap(H, nid1, nid2, id_temp=-1, order=None):
             f"Node {nid2} is not part of any hyperedge of the specified order"
         )
 
-    new_edge_dict = deepcopy(edge_dict)
     HH = H.copy()
 
-    # replace nid1 by temporary id in edges
-    for key, members in edge_dict.items():
-        if nid1 in members:
-            members.remove(nid1)
-            members.add(id_temp)
-        new_edge_dict[key] = members
-
-    # replace nid2 by nid1 in edges
-    for key, members in new_edge_dict.items():
-        if nid2 in members:
-            members.remove(nid2)
-            members.add(nid1)
-        new_edge_dict[key] = members
-
-    # replace temporary id by nid2 in edges
-    for key, members in new_edge_dict.items():
-        if id_temp in members:
-            members.remove(id_temp)
-            members.add(nid2)
-        new_edge_dict[key] = members
+    # single-pass swap using a mapping dict
+    swap_map = {nid1: nid2, nid2: nid1}
+    new_edge_dict = {
+        key: {swap_map.get(n, n) for n in members}
+        for key, members in edge_dict.items()
+    }
 
     # update hypergraph with new edges
     HH.remove_edges_from(edge_dict)

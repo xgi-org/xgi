@@ -193,15 +193,10 @@ def average_neighbor_degree(net, bunch):
 
 
 def clustering_coefficient(net, bunch):
-    """Local clustering coefficient.
+    """Clustering coefficient based on the pairwise projection of the hypergraph.
 
-    This clustering coefficient is defined as the
-    clustering coefficient of the unweighted pairwise
-    projection of the hypergraph, i.e., `num / denom`,
-    where `num` equals `A^3[n, n]` and `denom` equals
-    `nu*(nu-1)/2`.  Here `A` is the adjacency matrix
-    of the network and `nu` is the number of pairwise
-    neighbors of `n`.
+    See :func:`xgi.algorithms.clustering.clustering_coefficient` for the definition,
+    formula, and references.
 
     Parameters
     ----------
@@ -214,17 +209,11 @@ def clustering_coefficient(net, bunch):
     -------
     dict
 
-    Notes
-    -----
-    This is a direct generalization of the definition of local clustering coefficient
-    for graphs.  It has not been tested on hypergraphs.
-
-    Examples
+    See Also
     --------
-    >>> import xgi, numpy as np
-    >>> H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4, 5], [3, 4, 5]])
-    >>> H.nodes.two_node_clustering_coefficient.asnumpy()
-    array([0.41666667, 0.45833333, 0.58333333, 0.66666667, 0.66666667])
+    ~xgi.algorithms.clustering.clustering_coefficient
+    local_clustering_coefficient
+    two_node_clustering_coefficient
 
     """
     cc = xgi.clustering_coefficient(net)
@@ -232,11 +221,10 @@ def clustering_coefficient(net, bunch):
 
 
 def local_clustering_coefficient(net, bunch):
-    """Compute the local clustering coefficient.
+    """Local clustering coefficient based on edge overlap.
 
-    This clustering coefficient is based on the
-    overlap of the edges connected to a given node,
-    normalized by the size of the node's neighborhood.
+    See :func:`xgi.algorithms.clustering.local_clustering_coefficient` for the
+    definition and references.
 
     Parameters
     ----------
@@ -248,25 +236,13 @@ def local_clustering_coefficient(net, bunch):
     Returns
     -------
     dict
-        keys are node IDs and values are the
-        clustering coefficients.
+        keys are node IDs and values are the clustering coefficients.
 
-    References
-    ----------
-    "Properties of metabolic graphs: biological organization or representation
-    artifacts?"  by Wanding Zhou and Luay Nakhleh.
-    https://doi.org/10.1186/1471-2105-12-132
-
-    "Hypergraphs for predicting essential genes using multiprotein complex data"
-    by Florian Klimm, Charlotte M. Deane, and Gesine Reinert.
-    https://doi.org/10.1093/comnet/cnaa028
-
-    Example
-    -------
-    >>> import xgi
-    >>> H = xgi.random_hypergraph(3, [1, 1])
-    >>> H.nodes.local_clustering_coefficient.asdict()
-    {0: 0.3333333333333333, 1: 0.3333333333333333, 2: 0.3333333333333333}
+    See Also
+    --------
+    ~xgi.algorithms.clustering.local_clustering_coefficient
+    clustering_coefficient
+    two_node_clustering_coefficient
 
     """
     cc = xgi.local_clustering_coefficient(net)
@@ -274,11 +250,10 @@ def local_clustering_coefficient(net, bunch):
 
 
 def two_node_clustering_coefficient(net, bunch, kind="union"):
-    """Return the clustering coefficients for
-    each node in a Hypergraph.
+    """Average over all two-node clustering coefficients involving each node.
 
-    This definition averages over all of the
-    two-node clustering coefficients involving the node.
+    See :func:`xgi.algorithms.clustering.two_node_clustering_coefficient` for the
+    definition and references.
 
     Parameters
     ----------
@@ -287,39 +262,30 @@ def two_node_clustering_coefficient(net, bunch, kind="union"):
     bunch : Iterable
         Nodes in `net`.
     kind : str
-        The type of two-node clustering coefficient.
-        Types are:
-
-        * "union"
-        * "min"
-        * "max"
-
-    by default, "union".
+        The type of two-node clustering coefficient: "union", "min", or "max".
+        By default, "union".
 
     Returns
     -------
     dict
         nodes are keys, clustering coefficients are values.
 
-    References
-    ----------
-    "Clustering Coefficients in Protein Interaction Hypernetworks"
-    by Suzanne Gallagher and Debra Goldberg.
-    DOI: 10.1145/2506583.2506635
+    See Also
+    --------
+    ~xgi.algorithms.clustering.two_node_clustering_coefficient
+    clustering_coefficient
+    local_clustering_coefficient
 
-    Example
-    -------
-    >>> import xgi
-    >>> H = xgi.random_hypergraph(3, [1, 1])
-    >>> H.nodes.two_node_clustering_coefficient.asdict()
-    {0: 0.5, 1: 0.5, 2: 0.5}
     """
     cc = xgi.two_node_clustering_coefficient(net, kind=kind)
     return {n: cc[n] for n in cc if n in bunch}
 
 
 def clique_eigenvector_centrality(net, bunch, tol=1e-6):
-    """Compute the clique motif eigenvector centrality of a hypergraph.
+    """Clique motif eigenvector centrality of a hypergraph.
+
+    See :func:`xgi.algorithms.centrality.clique_eigenvector_centrality` for the
+    definition and references.
 
     Parameters
     ----------
@@ -335,21 +301,20 @@ def clique_eigenvector_centrality(net, bunch, tol=1e-6):
     dict
         Centrality, where keys are node IDs and values are centralities.
 
-    References
-    ----------
-    Three Hypergraph Eigenvector Centralities,
-    Austin R. Benson,
-    https://doi.org/10.1137/18M1203031
+    See Also
+    --------
+    ~xgi.algorithms.centrality.clique_eigenvector_centrality
+
     """
     c = xgi.clique_eigenvector_centrality(net, tol)
     return {n: c[n] for n in c if n in bunch}
 
 
 def h_eigenvector_centrality(net, bunch, max_iter=10, tol=1e-6):
-    """Compute the H-eigenvector centrality of a hypergraph.
+    """H-eigenvector centrality of a hypergraph.
 
-    The H-eigenvector terminology comes from Qi (2005) which
-    defines a "tensor H-eigenpair".
+    See :func:`xgi.algorithms.centrality.h_eigenvector_centrality` for the definition
+    and references.
 
     Parameters
     ----------
@@ -367,30 +332,20 @@ def h_eigenvector_centrality(net, bunch, max_iter=10, tol=1e-6):
     dict
         Centrality, where keys are node IDs and values are centralities.
 
-    References
-    ----------
-    Three Hypergraph Eigenvector Centralities,
-    Austin R. Benson,
-    https://doi.org/10.1137/18M1203031
+    See Also
+    --------
+    ~xgi.algorithms.centrality.h_eigenvector_centrality
 
-    Scalable Tensor Methods for Nonuniform Hypergraphs,
-    Sinan Aksoy, Ilya Amburg, Stephen Young,
-    https://doi.org/10.1137/23M1584472
-
-    Liqun Qi
-    "Eigenvalues of a real supersymmetric tensor"
-    Journal of Symbolic Computation, **40**, *6* (2005).
-    https://doi.org/10.1016/j.jsc.2005.05.007.
     """
     c = xgi.h_eigenvector_centrality(net, max_iter, tol)
     return {n: c[n] for n in c if n in bunch}
 
 
 def z_eigenvector_centrality(net, bunch, max_iter=10, tol=1e-6):
-    r"""Compute the Z-eigenvector centrality of a hypergraph.
+    """Z-eigenvector centrality of a hypergraph.
 
-    The Z-eigenvector terminology comes from Qi (2005) which
-    defines a "tensor Z-eigenpair".
+    See :func:`xgi.algorithms.centrality.z_eigenvector_centrality` for the definition
+    and references.
 
     Parameters
     ----------
@@ -408,16 +363,10 @@ def z_eigenvector_centrality(net, bunch, max_iter=10, tol=1e-6):
     dict
         Centrality, where keys are node IDs and values are centralities.
 
-    References
-    ----------
-    Three Hypergraph Eigenvector Centralities,
-    Austin R. Benson,
-    https://doi.org/10.1137/18M1203031
+    See Also
+    --------
+    ~xgi.algorithms.centrality.z_eigenvector_centrality
 
-    Liqun Qi
-    "Eigenvalues of a real supersymmetric tensor"
-    Journal of Symbolic Computation, **40**, *6* (2005).
-    https://doi.org/10.1016/j.jsc.2005.05.007.
     """
     c = xgi.z_eigenvector_centrality(net, max_iter, tol)
     return {n: c[n] for n in c if n in bunch}
@@ -433,60 +382,37 @@ def node_edge_centrality(
     max_iter=100,
     tol=1e-6,
 ):
-    """Computes nonlinear node-edge centralities.
+    """Node component of the nonlinear node-edge centrality.
+
+    See :func:`xgi.algorithms.centrality.node_edge_centrality` for the definition,
+    parameters, and references.
 
     Parameters
     ----------
     net : Hypergraph
-        The hypergraph of interest
+        The hypergraph of interest.
     bunch : Iterable
-        Edges in `net`
-    f : lambda function, default: x^2
-        The function f as described in Tudisco and Higham.
-        Must accept a numpy array.
-    g : lambda function, default: x^0.5
-        The function g as described in Tudisco and Higham.
-        Must accept a numpy array.
-    phi : lambda function, default: x^2
-        The function phi as described in Tudisco and Higham.
-        Must accept a numpy array.
-    psi : lambda function, default: x^0.5
-        The function psi as described in Tudisco and Higham.
-        Must accept a numpy array.
-    max_iter : int, default: 100
-        Number of iterations at which the algorithm terminates
-        if convergence is not reached.
-    tol : float > 0, default: 1e-6
-        The total allowable error in the node and edge centralities.
+        Nodes in `net`.
 
     Returns
     -------
-    dict, dict
-        The node centrality where keys are node IDs and values are associated
-        centralities and the edge centrality where keys are the edge IDs and
-        values are associated centralities.
+    dict
+        Node centralities.
 
-    Notes
-    -----
-    In the paper from which this was taken, it includes general functions
-    for both nodes and edges, nodes and edges may be weighted, and one can
-    choose different norms for normalization, all of which are not yet
-    implemented.
+    See Also
+    --------
+    ~xgi.algorithms.centrality.node_edge_centrality
 
-    This method does not output the node centralities even though they are computed.
-
-    References
-    ----------
-    Node and edge nonlinear eigenvector centrality for hypergraphs,
-    Francesco Tudisco & Desmond J. Higham,
-    https://doi.org/10.1038/s42005-021-00704-2
     """
     c, _ = xgi.node_edge_centrality(net, f, g, phi, psi, max_iter, tol)
     return {n: c[n] for n in c if n in bunch}
 
 
 def katz_centrality(net, bunch, cutoff=100):
-    r"""Compute the Katz centrality of a hypergraph.
+    """Katz centrality of a hypergraph.
+
+    See :func:`xgi.algorithms.centrality.katz_centrality` for the definition, formula,
+    and references.
 
     Parameters
     ----------
@@ -495,51 +421,22 @@ def katz_centrality(net, bunch, cutoff=100):
     bunch : Iterable
         Nodes in `net`.
     cutoff : int
-        Power at which to stop the series :math:`A + \alpha A^2 + \alpha^2 A^3 + \dots`
-        Default value is 100.
+        Power at which to truncate the underlying series. Default 100.
 
     Returns
     -------
     dict
-        node IDs are keys and centrality values
-        are values. The centralities are 1-normalized.
+        Node IDs are keys and centrality values are values (1-normalized).
 
     Raises
     ------
     XGIError
         If the hypergraph is empty.
 
-    Notes
-    -----
-    [1] The Katz-centrality is defined as
+    See Also
+    --------
+    ~xgi.algorithms.centrality.katz_centrality
 
-    .. math::
-        c = [(I - \alpha A^{t})^{-1} - I]{\bf 1},
-
-    where :math:`A` is the adjacency matrix of the the (hyper)graph.
-    Since :math:`A^{t} = A` for undirected graphs (our case), we have:
-
-
-    .. math::
-        &[I + A + \alpha A^2 + \alpha^2 A^3 + \dots](I - \alpha A^{t})
-
-        & = [I + A + \alpha A^2 + \alpha^2 A^3 + \dots](I - \alpha A)
-
-        & = (I + A + \alpha A^2 + \alpha^2 A^3 + \dots) - A - \alpha A^2
-
-        & - \alpha^2 A^3 - \alpha^3 A^4 - \dots
-
-        & = I
-
-    And :math:`(I - \alpha A^{t})^{-1} = I + A + \alpha A^2 + \alpha^2 A^3 + \dots`
-    Thus we can use the power series to compute the Katz-centrality.
-    [2] The Katz-centrality of isolated nodes (no hyperedges contains them) is
-    zero. The Katz-centrality of an empty hypergraph is not defined.
-
-    References
-    ----------
-    See https://en.wikipedia.org/wiki/Katz_centrality#Alpha_centrality (visited
-    May 20 2023) for a clear definition of Katz centrality.
     """
     c = xgi.katz_centrality(net, cutoff=cutoff)
     return {n: c[n] for n in c if n in bunch}
@@ -547,6 +444,9 @@ def katz_centrality(net, bunch, cutoff=100):
 
 def local_simplicial_fraction(net, bunch, min_size=2, exclude_min_size=True):
     """The local simplicial fraction.
+
+    For each node, computes :func:`xgi.algorithms.simpliciality.simplicial_fraction`
+    on the subhypergraph induced by the node and its neighbors.
 
     Parameters
     ----------
@@ -564,6 +464,10 @@ def local_simplicial_fraction(net, bunch, min_size=2, exclude_min_size=True):
     Returns
     -------
     dict
+
+    See Also
+    --------
+    ~xgi.algorithms.simpliciality.simplicial_fraction
 
     References
     ----------
@@ -586,6 +490,9 @@ def local_simplicial_fraction(net, bunch, min_size=2, exclude_min_size=True):
 def local_edit_simpliciality(net, bunch, min_size=2, exclude_min_size=True):
     """The local edit simpliciality.
 
+    For each node, computes :func:`xgi.algorithms.simpliciality.edit_simpliciality`
+    on the subhypergraph induced by the node and its neighbors.
+
     Parameters
     ----------
     net : xgi.Hypergraph
@@ -602,6 +509,10 @@ def local_edit_simpliciality(net, bunch, min_size=2, exclude_min_size=True):
     Returns
     -------
     dict
+
+    See Also
+    --------
+    ~xgi.algorithms.simpliciality.edit_simpliciality
 
     References
     ----------
@@ -624,6 +535,10 @@ def local_edit_simpliciality(net, bunch, min_size=2, exclude_min_size=True):
 def local_face_edit_simpliciality(net, bunch, min_size=2, exclude_min_size=True):
     """The local face edit simpliciality.
 
+    For each node, computes
+    :func:`xgi.algorithms.simpliciality.face_edit_simpliciality` on the subhypergraph
+    induced by the node and its neighbors.
+
     Parameters
     ----------
     net : xgi.Hypergraph
@@ -640,6 +555,10 @@ def local_face_edit_simpliciality(net, bunch, min_size=2, exclude_min_size=True)
     Returns
     -------
     dict
+
+    See Also
+    --------
+    ~xgi.algorithms.simpliciality.face_edit_simpliciality
 
     References
     ----------

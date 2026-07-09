@@ -23,7 +23,7 @@ from .linalg import *
 from .readwrite import *
 from .stats import *
 
-__version__ = "0.10.1"
+__version__ = "0.10.2"
 
 __all__ = (
     core.__all__

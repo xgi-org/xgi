@@ -22,6 +22,15 @@ __all__ = [
 ]
 
 
+def _to_nx_seed(seed):
+    # NetworkX's spring_layout doesn't accept np.random.Generator yet
+    # (it calls seed.rand(...), which only exists on legacy RandomState).
+    # Draw a fresh int from the rng so the user's Generator still advances.
+    if isinstance(seed, np.random.Generator):
+        return int(seed.integers(0, 2**32 - 1))
+    return seed
+
+
 def random_layout(H, center=None, seed=None):
     """Position nodes uniformly at random in the unit square.
 
@@ -130,7 +139,7 @@ def pairwise_spring_layout(H, seed=None, k=None, **kwargs):
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
     G = convert.to_graph(H)
-    pos = nx.spring_layout(G, seed=seed, k=k, **kwargs)
+    pos = nx.spring_layout(G, seed=_to_nx_seed(seed), k=k, **kwargs)
     return pos
 
 
@@ -231,7 +240,7 @@ def bipartite_spring_layout(H, seed=None, k=None, **kwargs):
 
     # Creating a dictionary for the position of the nodes with the standard spring
     # layout
-    pos = nx.spring_layout(G, seed=seed, k=k, **kwargs)
+    pos = nx.spring_layout(G, seed=_to_nx_seed(seed), k=k, **kwargs)
 
     node_pos = {nodedict[i]: pos[i] for i in nodedict}
     edge_pos = {edgedict[i]: pos[i] for i in edgedict}
@@ -340,7 +349,7 @@ def barycenter_spring_layout(
 
     # Creating a dictionary for the position of the nodes with the standard spring
     # layout
-    pos_with_phantom_nodes = nx.spring_layout(G, seed=seed, k=k, **kwargs)
+    pos_with_phantom_nodes = nx.spring_layout(G, seed=_to_nx_seed(seed), k=k, **kwargs)
 
     # Retaining only the positions of the real nodes
     pos = {k: pos_with_phantom_nodes[k] for k in list(H.nodes)}
@@ -412,7 +421,7 @@ def weighted_barycenter_spring_layout(
 
     # Creating a dictionary for node position with the standard spring layout
     pos_with_phantom_nodes = nx.spring_layout(
-        G, weight="weight", seed=seed, k=k, **kwargs
+        G, weight="weight", seed=_to_nx_seed(seed), k=k, **kwargs
     )
 
     # Retaining only the positions of the real nodes
