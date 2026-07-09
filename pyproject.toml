@@ -105,7 +105,7 @@ all = ["xgi[benchmark,developer,docs,release,test,tutorial]"]
 where = ["."]
 
 [tool.setuptools.package-data]
-xgi = ["py.typed", "**/*.pyi"]
+xgi = ["py.typed", "**/*.pyi", "skill/*.md"]
 
 [tool.setuptools.dynamic.version]
 attr = "xgi.__version__"

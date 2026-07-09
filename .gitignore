@@ -156,3 +156,6 @@ output.json
 .dolt/
 *.db
 .beads-credential-key
+
+# local task tracking (beads) — not part of xgi
+.beads/
