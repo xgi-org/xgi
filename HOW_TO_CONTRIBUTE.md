@@ -34,7 +34,7 @@ tuna test.log
 
 ## New Version process
 
-New releases should be drawn from the development branch when appropriate and only after the CI workflow runs without errors and all documentation for new/updated features is updated.
+New releases should be drawn from the development branch `dev` when appropriate and only after the CI workflow runs without errors and all documentation for new/updated features is updated.
 Once you have a content on `dev` that you wish to include into a release, do the following steps to create a new release:
 
 1. Open a new PR from the `dev` branch to the `main` branch. Title the PR `vMAJOR.MINOR.PATCH-rc` where the MAJOR, MINOR, and PATCH version identifiers conform to [SemVer](http://semver.org/) (the 'rc' stands for 'release candidate').
