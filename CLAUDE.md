@@ -66,4 +66,33 @@ _Add a brief overview of your project architecture_
 
 ## Conventions & Patterns
 
-_Add your project-specific conventions here_
+### Git workflow: ALL PRs target `dev`, not `main`
+
+`main` is for releases only. Every feature, fix, doc change, and test change must
+target the `dev` branch. The GitHub default base is currently `main`, so this is
+easy to get wrong — you MUST verify the base every time.
+
+**When opening a PR:**
+
+```bash
+gh pr create --base dev --title "..." --body "..."
+```
+
+`--base dev` is not optional. If you omit it, the PR will silently default to
+`main` and break the release workflow. (See #717 for the team's documented
+process and the iambic-pentameter reply for the squash/merge policy.)
+
+**When fixing an already-open PR that targets the wrong base:**
+
+```bash
+gh pr edit <PR#> --base dev
+```
+
+**When merging:**
+
+- Feature branch → `dev`: squash or merge, fine for small fixes
+- `dev` → `main`: regular merge (preserves history) at release time
+- After a release: backmerge `main` → `dev` to keep them in sync
+
+**Do not:** open a PR against `main`, merge a feature PR into `main`, force-push
+`main`, or change branch settings without team agreement.
