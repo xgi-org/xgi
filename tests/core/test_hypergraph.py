@@ -1043,3 +1043,42 @@ def test_cleanup_empties():
     cleanH = H.cleanup(connected=False, empties=True, relabel=False, in_place=False)
     assert cleanH.num_edges == 3
     assert set(cleanH.edges.empty()) == {2}
+
+
+def test_getattr_only_proxies_stats():
+    """Hypergraph.__getattr__ must only delegate to actual stats, not arbitrary
+    view methods. See issue #408."""
+    H = xgi.Hypergraph([[1, 2, 3], [3, 4, 5]])
+
+    # Built-in stats remain accessible
+    assert H.degree() == {1: 1, 2: 1, 3: 2, 4: 1, 5: 1}
+    assert H.size() == {0: 3, 1: 3}
+    assert H.attrs() == {1: {}, 2: {}, 3: {}, 4: {}, 5: {}}
+
+    # User-defined stats remain accessible
+    @xgi.nodestat_func
+    def my_stat(net, bunch):
+        return {n: 42 for n in bunch}
+
+    assert H.my_stat() == {1: 42, 2: 42, 3: 42, 4: 42, 5: 42}
+
+    # Non-stat view methods are NOT exposed via Hypergraph
+    for name in (
+        "filterby",
+        "filterby_attr",
+        "neighbors",
+        "memberships",
+        "isolates",
+        "singletons",
+        "empty",
+        "maximal",
+        "members",
+        "lookup",
+        "duplicates",
+    ):
+        with pytest.raises(AttributeError):
+            getattr(H, name)
+
+    # Sanity: unknown attribute still raises
+    with pytest.raises(AttributeError):
+        H.this_does_not_exist
