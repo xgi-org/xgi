@@ -61,6 +61,18 @@ def test_draw(edgelist8):
     plt.close("all")
 
 
+def test_draw_forwards_node_label_keywords(edgelist8):
+    H = xgi.Hypergraph(edgelist8)
+
+    fig, ax = plt.subplots()
+    xgi.draw(H, ax=ax, node_labels=True, font_size_nodes=14)
+
+    assert len(ax.texts) == H.num_nodes
+    assert all(text.get_fontsize() == 14 for text in ax.texts)
+
+    plt.close("all")
+
+
 def test_draw_nodes(edgelist8):
 
     H = xgi.Hypergraph(edgelist8)
