@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
+from copy import deepcopy
 from itertools import count
 from warnings import warn
 
@@ -10,7 +10,12 @@ import numpy as np
 
 from ..exception import IDNotFound, XGIError, frozen
 from ..stats import IDStat
-from ..utils import IDDict, update_uid_counter
+from ..utils import (
+    IDDict,
+    uid_counter_from_value,
+    uid_counter_value,
+    update_uid_counter,
+)
 from .views import EdgeView, NodeView
 
 __all__ = ["Hypergraph"]
@@ -104,7 +109,7 @@ class Hypergraph:
 
         """
         return {
-            "_edge_uid": self._edge_uid,
+            "_edge_uid": uid_counter_value(self),
             "_net_attr": self._net_attr,
             "_node": self._node,
             "_node_attr": self._node_attr,
@@ -125,7 +130,7 @@ class Hypergraph:
         -----
         This allows the python multiprocessing module to be used.
         """
-        self._edge_uid = state["_edge_uid"]
+        self._edge_uid = uid_counter_from_value(state["_edge_uid"])
         self._net_attr = state["_net_attr"]
         self._node = state["_node"]
         self._node_attr = state["_node_attr"]
@@ -1447,7 +1452,7 @@ class Hypergraph:
         )
         cp._net_attr = deepcopy(self._net_attr)
 
-        cp._edge_uid = copy(self._edge_uid)
+        cp._edge_uid = count(uid_counter_value(self))
 
         return cp
 

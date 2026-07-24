@@ -1,3 +1,5 @@
+import pickle
+from copy import copy, deepcopy
 from warnings import warn
 
 import pytest
@@ -601,3 +603,15 @@ def test_issue_445(edgelist1):
     assert 1 not in S
     assert 0 not in S.edges
     assert S._edge == xgi.dual_dict(S._node)
+
+
+def test_uid_counter_survives_copy_and_pickle(edgelist1):
+    """copy/deepcopy/pickle must work and must preserve the next edge uid (see #746)."""
+    SC = xgi.SimplicialComplex(edgelist1)
+    expected = max(SC.edges) + 1
+
+    for clone in (SC.copy(), copy(SC), deepcopy(SC), pickle.loads(pickle.dumps(SC))):
+        # a simplex that is not already present as an auto-added subface
+        clone.add_simplex([90, 91])
+        assert expected in clone.edges
+        assert clone._edge_uid is not SC._edge_uid

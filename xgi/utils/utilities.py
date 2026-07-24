@@ -15,6 +15,8 @@ __all__ = [
     "dual_dict",
     "powerset",
     "update_uid_counter",
+    "uid_counter_value",
+    "uid_counter_from_value",
     "find_triangles",
     "request_json_from_url",
     "request_json_from_url_cached",
@@ -184,6 +186,62 @@ def update_uid_counter(H, idx):
     else:
         start = uid
     H._edge_uid = count(start=start)
+
+
+def uid_counter_value(H):
+    """Return the next edge uid of ``H`` without advancing its counter.
+
+    ``itertools.count`` objects cannot be copied or pickled on Python 3.14 and
+    later, so a network's uid counter has to be stored as a plain integer and
+    rebuilt with :func:`uid_counter_from_value` when it is restored.
+
+    A counter cannot be read without consuming a value, so this takes one and
+    immediately replaces the counter with an equivalent one starting there.
+    ``H`` is left yielding exactly the same sequence it would have yielded.
+
+    Parameters
+    ----------
+    H : xgi.Hypergraph, xgi.DiHypergraph or xgi.SimplicialComplex
+        Network whose uid counter to read.
+
+    Returns
+    -------
+    int
+        The value ``next(H._edge_uid)`` would return.
+
+    See Also
+    --------
+    uid_counter_from_value
+
+    """
+    value = next(H._edge_uid)
+    H._edge_uid = count(value)
+    return value
+
+
+def uid_counter_from_value(value):
+    """Rebuild an edge uid counter from a stored value.
+
+    Parameters
+    ----------
+    value : int or itertools.count
+        A value produced by :func:`uid_counter_value`. A counter is accepted
+        and returned unchanged so that pickles written before uid counters
+        were stored as integers can still be read.
+
+    Returns
+    -------
+    itertools.count
+        A counter starting at ``value``.
+
+    See Also
+    --------
+    uid_counter_value
+
+    """
+    if isinstance(value, count):
+        return value
+    return count(value)
 
 
 def find_triangles(G):

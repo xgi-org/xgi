@@ -820,3 +820,14 @@ def test_getattr_only_proxies_stats():
     # Sanity: unknown attribute still raises
     with pytest.raises(AttributeError):
         DH.this_does_not_exist
+
+
+def test_uid_counter_survives_copy_and_pickle(diedgelist1):
+    """copy/deepcopy/pickle must work and must preserve the next edge uid (see #746)."""
+    H = xgi.DiHypergraph(diedgelist1)
+    expected = H.num_edges
+
+    for clone in (H.copy(), copy(H), deepcopy(H), pickle.loads(pickle.dumps(H))):
+        clone.add_edge([[1], [2]])
+        assert expected in clone.edges
+        assert clone._edge_uid is not H._edge_uid

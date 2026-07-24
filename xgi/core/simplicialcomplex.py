@@ -8,12 +8,12 @@ Multi-simplices are not allowed.
 """
 
 from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
+from copy import deepcopy
 from itertools import combinations, count
 from warnings import warn
 
 from ..exception import XGIError, frozen
-from ..utils.utilities import powerset, update_uid_counter
+from ..utils.utilities import powerset, uid_counter_value, update_uid_counter
 from .hypergraph import Hypergraph
 from .views import EdgeView, NodeView
 
@@ -830,7 +830,7 @@ class SimplicialComplex(Hypergraph):
         )
         cp._net_attr = deepcopy(self._net_attr)
 
-        cp._edge_uid = copy(self._edge_uid)
+        cp._edge_uid = count(uid_counter_value(self))
 
         return cp
 
