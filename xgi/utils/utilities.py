@@ -3,7 +3,7 @@
 from collections import defaultdict
 from copy import deepcopy
 from functools import cache
-from itertools import chain, combinations, count
+from itertools import chain, combinations
 from math import ceil, log
 
 import numpy as np
@@ -15,8 +15,6 @@ __all__ = [
     "dual_dict",
     "powerset",
     "update_uid_counter",
-    "uid_counter_value",
-    "uid_counter_from_value",
     "find_triangles",
     "request_json_from_url",
     "request_json_from_url_cached",
@@ -158,7 +156,7 @@ def update_uid_counter(H, idx):
     Helper function to make sure the uid counter is set correctly after
     adding an edge with a user-provided ID.
 
-    If we don't set the start of self._edge_uid correctly, it will start at 0,
+    If we don't set self._edge_uid correctly, it will start at 0,
     which will overwrite any existing edges when calling add_edge().  First, we
     use the somewhat convoluted float(e).is_integer() instead of using
     isinstance(e, int) because there exist integer-like numeric types (such as
@@ -172,76 +170,16 @@ def update_uid_counter(H, idx):
         User-provided ID.
 
     """
-    uid = next(H._edge_uid)
     if (
         not isinstance(idx, str)
         and not isinstance(idx, tuple)
         and float(idx).is_integer()
-        and uid <= idx
+        and H._edge_uid <= idx
     ):
         # tuple comes from merging edges and doesn't have as as_integer() method.
-        start = int(idx) + 1
-        # we set the start at one plus the maximum edge ID that is an integer,
-        # because count() only yields integer IDs.
-    else:
-        start = uid
-    H._edge_uid = count(start=start)
-
-
-def uid_counter_value(H):
-    """Return the next edge uid of ``H`` without advancing its counter.
-
-    ``itertools.count`` objects cannot be copied or pickled on Python 3.14 and
-    later, so a network's uid counter has to be stored as a plain integer and
-    rebuilt with :func:`uid_counter_from_value` when it is restored.
-
-    A counter cannot be read without consuming a value, so this takes one and
-    immediately replaces the counter with an equivalent one starting there.
-    ``H`` is left yielding exactly the same sequence it would have yielded.
-
-    Parameters
-    ----------
-    H : xgi.Hypergraph, xgi.DiHypergraph or xgi.SimplicialComplex
-        Network whose uid counter to read.
-
-    Returns
-    -------
-    int
-        The value ``next(H._edge_uid)`` would return.
-
-    See Also
-    --------
-    uid_counter_from_value
-
-    """
-    value = next(H._edge_uid)
-    H._edge_uid = count(value)
-    return value
-
-
-def uid_counter_from_value(value):
-    """Rebuild an edge uid counter from a stored value.
-
-    Parameters
-    ----------
-    value : int or itertools.count
-        A value produced by :func:`uid_counter_value`. A counter is accepted
-        and returned unchanged so that pickles written before uid counters
-        were stored as integers can still be read.
-
-    Returns
-    -------
-    itertools.count
-        A counter starting at ``value``.
-
-    See Also
-    --------
-    uid_counter_value
-
-    """
-    if isinstance(value, count):
-        return value
-    return count(value)
+        # We set the counter to one plus the maximum edge ID that is an integer,
+        # because only integer IDs are ever issued automatically.
+        H._edge_uid = int(idx) + 1
 
 
 def find_triangles(G):

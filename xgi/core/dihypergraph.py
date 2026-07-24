@@ -7,17 +7,11 @@
 
 from collections.abc import Hashable, Iterable
 from copy import deepcopy
-from itertools import count
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError, frozen
 from ..stats import IDStat
-from ..utils import (
-    IDDict,
-    uid_counter_from_value,
-    uid_counter_value,
-    update_uid_counter,
-)
+from ..utils import IDDict, update_uid_counter
 from .views import DiEdgeView, DiNodeView
 
 __all__ = ["DiHypergraph"]
@@ -114,7 +108,7 @@ class DiHypergraph:
 
         """
         return {
-            "_edge_uid": uid_counter_value(self),
+            "_edge_uid": self._edge_uid,
             "_net_attr": self._net_attr,
             "_node": self._node,
             "_node_attr": self._node_attr,
@@ -135,7 +129,7 @@ class DiHypergraph:
         -----
         This allows the python multiprocessing module to be used.
         """
-        self._edge_uid = uid_counter_from_value(state["_edge_uid"])
+        self._edge_uid = state["_edge_uid"]
         self._net_attr = state["_net_attr"]
         self._node = state["_node"]
         self._node_attr = state["_node_attr"]
@@ -145,7 +139,7 @@ class DiHypergraph:
         self._edgeview = DiEdgeView(self)
 
     def __init__(self, incoming_data=None, **attr):
-        self._edge_uid = count()
+        self._edge_uid = 0
         self._net_attr = self._net_attr_dict_factory()
 
         self._node = self._node_dict_factory()
@@ -565,7 +559,11 @@ class DiHypergraph:
         else:
             raise XGIError("Directed edge must be a list or tuple!")
 
-        uid = next(self._edge_uid) if idx is None else idx
+        if idx is None:
+            uid = self._edge_uid
+            self._edge_uid += 1
+        else:
+            uid = idx
 
         if idx in self._edge.keys():  # check that uid is not present yet
             warn(f"uid {idx} already exists, cannot add edge {members}")
@@ -757,11 +755,13 @@ class DiHypergraph:
         e = first_edge
         while True:
             if format1:
-                members, idx, eattr = e, next(self._edge_uid), {}
+                members, idx, eattr = e, self._edge_uid, {}
+                self._edge_uid += 1
             elif format2:
                 members, idx, eattr = e[0], e[1], {}
             elif format3:
-                members, idx, eattr = e[0], next(self._edge_uid), e[1]
+                members, idx, eattr = e[0], self._edge_uid, e[1]
+                self._edge_uid += 1
             elif format4:
                 members, idx, eattr = e[0], e[1], e[2]
 
@@ -1047,7 +1047,7 @@ class DiHypergraph:
         )
         cp._net_attr = deepcopy(self._net_attr)
 
-        cp._edge_uid = count(uid_counter_value(self))
+        cp._edge_uid = self._edge_uid
 
         return cp
 

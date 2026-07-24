@@ -830,4 +830,5 @@ def test_uid_counter_survives_copy_and_pickle(diedgelist1):
     for clone in (H.copy(), copy(H), deepcopy(H), pickle.loads(pickle.dumps(H))):
         clone.add_edge([[1], [2]])
         assert expected in clone.edges
-        assert clone._edge_uid is not H._edge_uid
+        # the clone owns its counter: advancing it must not move the original's
+        assert H._edge_uid == expected

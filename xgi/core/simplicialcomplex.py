@@ -9,11 +9,11 @@ Multi-simplices are not allowed.
 
 from collections.abc import Hashable, Iterable
 from copy import deepcopy
-from itertools import combinations, count
+from itertools import combinations
 from warnings import warn
 
 from ..exception import XGIError, frozen
-from ..utils.utilities import powerset, uid_counter_value, update_uid_counter
+from ..utils.utilities import powerset, update_uid_counter
 from .hypergraph import Hypergraph
 from .views import EdgeView, NodeView
 
@@ -92,7 +92,7 @@ class SimplicialComplex(Hypergraph):
     """
 
     def __init__(self, incoming_data=None, **attr):
-        self._edge_uid = count()
+        self._edge_uid = 0
         self._net_attr = self._net_attr_dict_factory()
         self._node = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
@@ -241,7 +241,8 @@ class SimplicialComplex(Hypergraph):
         """Helper function to add a face to a simplicial complex, without any
         check, and without attributes. Automatically updates self._edge_uid"""
 
-        idx = next(self._edge_uid)
+        idx = self._edge_uid
+        self._edge_uid += 1
         self._edge[idx] = frozenset(members)
 
         for n in members:
@@ -317,7 +318,9 @@ class SimplicialComplex(Hypergraph):
             warn(f"uid {idx} already exists, cannot add simplex {members}")
             return
 
-        idx = next(self._edge_uid) if idx is None else idx
+        if idx is None:
+            idx = self._edge_uid
+            self._edge_uid += 1
 
         self._add_simplex(members, idx, **attr)
 
@@ -580,7 +583,8 @@ class SimplicialComplex(Hypergraph):
             # needs to go after the check for existence, otherwise
             # we're skipping ID numbers when edges already exist
             if format1 or format3:
-                idx = next(self._edge_uid)
+                idx = self._edge_uid
+                self._edge_uid += 1
 
             if max_order is not None:
                 if len(members) > max_order + 1:
@@ -830,7 +834,7 @@ class SimplicialComplex(Hypergraph):
         )
         cp._net_attr = deepcopy(self._net_attr)
 
-        cp._edge_uid = count(uid_counter_value(self))
+        cp._edge_uid = self._edge_uid
 
         return cp
 

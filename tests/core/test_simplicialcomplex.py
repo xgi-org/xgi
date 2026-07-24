@@ -183,7 +183,7 @@ def test_add_simplices_from_format2():
 
     # check counter
     H.add_simplex([1, 9, 2])
-    assert next(H._edge_uid) == 107
+    assert H._edge_uid == 107
 
     H1 = xgi.SimplicialComplex([{1, 2}, {2, 3, 4}])
     with pytest.warns(
@@ -224,7 +224,7 @@ def test_add_simplices_from_format3():
     assert H.edges[4] == dict()
     # check counter
     H.add_simplex([1, 9, 2])
-    assert next(H._edge_uid) == 8
+    assert H._edge_uid == 8
 
 
 def test_add_simplices_from_format4():
@@ -252,14 +252,14 @@ def test_add_simplices_from_format4():
     assert H.edges[1] == dict()
     # check counter
     H.add_simplex([1, 9, 2])
-    assert next(H._edge_uid) == 5
+    assert H._edge_uid == 5
 
     H1 = xgi.SimplicialComplex([{1, 2}, {2, 3, 4}])
     with pytest.warns(
         UserWarning, match="uid 0 already exists, cannot add simplex {0, 1}."
     ):
         H1.add_simplices_from([({0, 1}, 0, {"color": "red"})])
-    assert next(H1._edge_uid) == 5
+    assert H1._edge_uid == 5
 
 
 def test_add_edges_from_dict():
@@ -285,7 +285,7 @@ def test_add_edges_from_dict():
         UserWarning, match="uid 0 already exists, cannot add simplex {1, 3}"
     ):
         H1.add_simplices_from({0: {1, 3}})
-    assert next(H1._edge_uid) == 5
+    assert H1._edge_uid == 5
 
 
 def test_add_simplices_from(edgelist5):
@@ -614,4 +614,5 @@ def test_uid_counter_survives_copy_and_pickle(edgelist1):
         # a simplex that is not already present as an auto-added subface
         clone.add_simplex([90, 91])
         assert expected in clone.edges
-        assert clone._edge_uid is not SC._edge_uid
+        # the clone owns its counter: advancing it must not move the original's
+        assert SC._edge_uid == expected
