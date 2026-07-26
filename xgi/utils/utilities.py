@@ -3,7 +3,7 @@
 from collections import defaultdict
 from copy import deepcopy
 from functools import cache
-from itertools import chain, combinations, count
+from itertools import chain, combinations
 from math import ceil, log
 
 import numpy as np
@@ -156,7 +156,7 @@ def update_uid_counter(H, idx):
     Helper function to make sure the uid counter is set correctly after
     adding an edge with a user-provided ID.
 
-    If we don't set the start of self._edge_uid correctly, it will start at 0,
+    If we don't set self._edge_uid correctly, it will start at 0,
     which will overwrite any existing edges when calling add_edge().  First, we
     use the somewhat convoluted float(e).is_integer() instead of using
     isinstance(e, int) because there exist integer-like numeric types (such as
@@ -170,20 +170,16 @@ def update_uid_counter(H, idx):
         User-provided ID.
 
     """
-    uid = next(H._edge_uid)
     if (
         not isinstance(idx, str)
         and not isinstance(idx, tuple)
         and float(idx).is_integer()
-        and uid <= idx
+        and H._edge_uid <= idx
     ):
         # tuple comes from merging edges and doesn't have as as_integer() method.
-        start = int(idx) + 1
-        # we set the start at one plus the maximum edge ID that is an integer,
-        # because count() only yields integer IDs.
-    else:
-        start = uid
-    H._edge_uid = count(start=start)
+        # We set the counter to one plus the maximum edge ID that is an integer,
+        # because only integer IDs are ever issued automatically.
+        H._edge_uid = int(idx) + 1
 
 
 def find_triangles(G):
