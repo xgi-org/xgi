@@ -8,5 +8,4 @@ Case studies
    :maxdepth: 1
 
    case_study_1
-   case_study_2
    case_study_3

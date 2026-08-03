@@ -15,6 +15,7 @@
    user_guides
    api_reference
    xgi-data
+   dynamics_integrations
    auto_examples/index
    contribute
    using_xgi

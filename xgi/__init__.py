@@ -5,7 +5,6 @@ from . import (
     communities,
     convert,
     drawing,
-    dynamics,
     generators,
     linalg,
     readwrite,
@@ -17,7 +16,6 @@ from .algorithms import *
 from .communities import *
 from .convert import *
 from .drawing import *
-from .dynamics import *
 from .generators import *
 from .linalg import *
 from .readwrite import *
@@ -31,7 +29,6 @@ __all__ = (
     + communities.__all__
     + convert.__all__
     + drawing.__all__
-    + dynamics.__all__
     + generators.__all__
     + linalg.__all__
     + readwrite.__all__
