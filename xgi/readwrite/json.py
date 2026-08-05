@@ -84,8 +84,8 @@ def read_json(path, nodetype=None, edgetype=None):
 
     Parameters
     ----------
-    data: dict
-        A dictionary in the hypergraph JSON format
+    path: string
+        The path of the file to read from
     nodetype: type, optional
         type that the node IDs will be cast to
     edgetype: type, optional
