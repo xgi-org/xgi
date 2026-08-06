@@ -64,7 +64,7 @@ def laplacian(H, order=1, sparse=False, rescale_per_node=False, index=False):
 
     Parameters
     ----------
-    HG : Hypergraph
+    H : Hypergraph
         Hypergraph
     order : int
         Order of interactions to consider. If order=1 (default),
@@ -122,7 +122,7 @@ def multiorder_laplacian(
 
     Parameters
     ----------
-    HG : Hypergraph
+    H : Hypergraph
         Hypergraph
     orders : list of int
         Orders of interactions to consider.

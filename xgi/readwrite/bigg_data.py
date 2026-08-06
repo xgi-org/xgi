@@ -77,8 +77,10 @@ def _bigg_to_dihypergraph(d_index, d_model):
 
     Parameters
     ----------
-    d : dict
-        A BIGG-formatted dict
+    d_index : dict
+        The BIGG index, used to look up the model name
+    d_model : dict
+        A BIGG-formatted model dict
 
     Returns
     -------
