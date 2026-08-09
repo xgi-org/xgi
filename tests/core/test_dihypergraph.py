@@ -163,7 +163,7 @@ def test_add_node_to_edge():
     assert H.nodes["E"] == {}
 
     # test bad direction
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         H.add_node_to_edge(0, 1, "test")
 
 
@@ -171,7 +171,7 @@ def test_remove_node_from_edge(diedgelist1, diedgelist2):
     H = xgi.DiHypergraph(diedgelist1)
 
     # test bad direction
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         H.remove_node_from_edge(0, 1, "test")
 
     # test non-existent node
@@ -217,7 +217,7 @@ def test_remove_node_from_edge(diedgelist1, diedgelist2):
 
 def test_add_edge_rejects_set():
     H = xgi.DiHypergraph()
-    with pytest.raises(XGIError):
+    with pytest.raises(TypeError):
         H.add_edge({(1, 2), (3, 4)})
 
 

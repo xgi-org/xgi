@@ -677,7 +677,7 @@ def test_draw_bipartite(diedgelist2, edgelist8):
     plt.close("all")
 
     # test type
-    with pytest.raises(XGIError):
+    with pytest.raises(TypeError):
         xgi.draw_bipartite([0, 1, 2])
 
     # test gca

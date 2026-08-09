@@ -350,17 +350,19 @@ def test_add_simplices_from(edgelist5):
 
 
 def test_add_simplices_from_wrong_format():
+    # non-iterable members → ValueError (bad value)
     edges = [0, 1, 2]
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         xgi.SimplicialComplex().add_simplices_from(edges)
 
+    # string members → TypeError (wrong type)
     edges = [
         ("foo", {"color": "red"}),
         ("bar", {"age": 30}),
         ("baz", {"color": "blue", "age": 40}),
     ]
 
-    with pytest.raises(XGIError):
+    with pytest.raises(TypeError):
         xgi.SimplicialComplex().add_simplices_from(edges)
 
     edges = [
@@ -368,19 +370,19 @@ def test_add_simplices_from_wrong_format():
         ("bar", "two", {"age": 30}),
         ("baz", "three", {"color": "blue", "age": 40}),
     ]
-    with pytest.raises(XGIError):
+    with pytest.raises(TypeError):
         xgi.SimplicialComplex().add_simplices_from(edges)
 
     edges = ["a", "b", "c"]
-    with pytest.raises(XGIError):
+    with pytest.raises(TypeError):
         xgi.SimplicialComplex().add_simplices_from(edges)
 
     edges = ["foo", "bar", "baz"]
-    with pytest.raises(XGIError):
+    with pytest.raises(TypeError):
         xgi.SimplicialComplex().add_simplices_from(edges)
 
     edges = ["foo", [1, 2], [2, 3, 4]]
-    with pytest.raises(XGIError):
+    with pytest.raises(TypeError):
         xgi.SimplicialComplex().add_simplices_from(edges)
 
 

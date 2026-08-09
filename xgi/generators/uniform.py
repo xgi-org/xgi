@@ -199,7 +199,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
             partition_sizes = [len(partition[i]) for i in block]
             max_index = reduce(operator.mul, partition_sizes, 1)
             if max_index < 0:
-                raise Exception("Index overflow error!")
+                raise OverflowError("Edge index overflowed integer range.")
             index = geometric(p[block], rng=rng) - 1
 
             while index < max_index:
@@ -551,5 +551,5 @@ def _index_to_edge_partition(index, partition_sizes, m):
             int(index // np.prod(partition_sizes[r + 1 :]) % partition_sizes[r])
             for r in range(m)
         ]
-    except KeyError:
-        raise Exception("Invalid parameters")
+    except KeyError as e:
+        raise ValueError("Invalid parameters") from e
