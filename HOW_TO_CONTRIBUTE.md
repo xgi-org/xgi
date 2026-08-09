@@ -11,8 +11,8 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 3. Include any new method/function in the corresponding docs file.
 4. Run `pytest` to verify all unit tests pass. (To see what lines are covered, read the [`pytest-cov`](https://pytest-cov.readthedocs.io/en/latest/reporting.html) documentation.)
 5. [OPTIONAL] Format codebase according to the steps below.
-5. Submit Pull Request with a list of changes, links to issues that it addresses (if applicable)
-6. You may merge the Pull Request in once you have the sign-off of at least one other developer, or if you do not have permission to do that, you may request the reviewer to merge it for you.
+6. Submit Pull Request with a list of changes, links to issues that it addresses (if applicable)
+7. You may merge the Pull Request in once you have the sign-off of at least one other developer, or if you do not have permission to do that, you may request the reviewer to merge it for you.
 
 ## Format codebase
 1. Identify the unnecessary imports in the
@@ -38,7 +38,7 @@ New releases should be drawn from the development branch `dev` when appropriate 
 Once you have a content on `dev` that you wish to include into a release, do the following steps to create a new release:
 
 1. Open a new PR from the `dev` branch to the `main` branch. Title the PR `vMAJOR.MINOR.PATCH-rc` where the MAJOR, MINOR, and PATCH version identifiers conform to [SemVer](http://semver.org/) (the 'rc' stands for 'release candidate').
-2. Ensure release candidate is stable and ready for production. If needed, iterate development further while this PR is open. You must ensure:
+2. **While on the `dev` branch**, ensure release candidate is stable and ready for production. If needed, iterate development further while this PR is open. You must ensure:
    - CI workflow runs without errors
    - All new/updated features have updated docstrings
    - Style is maintained (see 'Format codebase' above)
