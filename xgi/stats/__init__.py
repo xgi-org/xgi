@@ -180,8 +180,6 @@ class IDStat:
 
         Parameters
         ----------
-        vals : Numpy array
-            The array of values
         bins : int, list, or Numpy array
             The number of bins or the bin edges.
         bin_edges : bool
@@ -580,8 +578,6 @@ class MultiIDStat(IDStat):
 
         Parameters
         ----------
-        vals : Numpy array
-            The array of values
         bins : int, list, or Numpy array
             The number of bins or the bin edges.
         bin_edges : bool

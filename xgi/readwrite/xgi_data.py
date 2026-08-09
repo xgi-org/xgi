@@ -138,10 +138,8 @@ def _request_from_xgi_data(
 
     Parameters
     ----------
-    dataset : str, optional
-        Dataset name. Valid options are the top-level tags of the
-        index.json file in the xgi-data repository. If None, prints
-        the list of available datasets.
+    url : str
+        Address of the dataset in the xgi-data repository.
     cache : bool, optional
         Whether or not to cache the output
 

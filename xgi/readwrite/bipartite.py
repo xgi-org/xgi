@@ -163,8 +163,8 @@ def parse_bipartite_edgelist(
         type that the node labels will be cast to
     edgetype: type
         type that the edge labels will be cast to
-    data: bool, default: False
-        Specifies whether there is a dictionary of data at the end of the line.
+    dual: bool, default: False
+        Specifies whether the node and edge columns are swapped.
 
     Raises
     ------
