@@ -1,32 +1,39 @@
+:orphan:
+
 Dynamics on higher-order networks
 =================================
 
 XGI does not itself provide solvers for dynamical processes on higher-order
-networks. The scope was minimal (a few Kuramoto helpers) and the value was
-low compared to keeping the core library tight. Instead, we recommend using
-one of the maintained companion packages below, all of which either build on
-XGI directly or interoperate with it via standard formats.
+networks. Instead, we recommend using one of the maintained companion
+packages below, all of which either build on XGI directly or interoperate
+with it via standard formats.
 
 Contagion / spreading
 ---------------------
 
 `hypercontagion <https://github.com/nwlandry/hypercontagion>`_
-   SIR, SIS, and other epidemic models on hypergraphs. Interoperates with
-   XGI hypergraph objects.
+   SIR, SIS, and other epidemic models.
 
 Synchronization (Kuramoto, oscillators)
 ---------------------------------------
 
 `hypersynchronization <https://github.com/maximelucas/hypersynchronization>`_
-   Kuramoto-type synchronization models on hypergraphs, including the
-   two-body / three-body coupling explored in
-   `Adhikari, Restrepo, and Skardal (2023) <https://doi.org/10.48550/arXiv.2208.00909>`_.
+   Kuramoto-type synchronization dynamics on hypergraphs, where oscillators
+   are associated with nodes. See
+   `Skardal and Skardal (2019) <https://doi.org/10.1103/PhysRevLett.122.248301>`_
+   for an example model, or
+   `Battiston et al. (2026) <https://doi.org/10.1038/s42254-025-00916-3>`_
+   for a review.
 
 `simplicial-kuramoto <https://github.com/arnaudon/simplicial-kuramoto>`_
-   Simplicial Kuramoto model on oriented simplicial complexes, from
+   Simplicial Kuramoto dynamics on simplicial complexes, where oscillators
+   are associated with simplices rather than just nodes. See
    `Millán, Torres, and Bianconi (2020) <https://doi.org/10.1103/PhysRevLett.124.218301>`_
-   and the Hodge-Sakaguchi framework of
-   `Arnaudon, Peach, Petri, and Expert (2022) <https://doi.org/10.1038/s42005-022-00963-7>`_.
+   and
+   `Arnaudon, Peach, Petri, and Expert (2022) <https://doi.org/10.1038/s42005-022-00963-7>`_
+   for example models, and
+   `Nurisso et al. (2024) <https://doi.org/10.1016/j.chaos.2024.115198>`_
+   for a review.
 
 Contributing
 ------------
