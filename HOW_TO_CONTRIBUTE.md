@@ -6,12 +6,18 @@ Please note we have a [code of conduct](/CODE_OF_CONDUCT.md), please follow it i
 
 ## Pull Request process
 
+Pull requests should be made by forking the repository, making the changes, and requesting to merge back.
+All pull requests should branch off of the `dev` branch with a descriptive prefix, e.g. `feat/new_feature` or `fix/fix_issue_number`.
+Additionally, all pull requests should target back into the `dev` branch.
+
+Once you have a new branch with the appropriate name, originating from `dev`, on a fork of the repository, complete the following steps.
+
 1. Download the dependencies in the developer [requirements file](/requirements/developer.txt).
 2. Add unit tests for features being added or bugs being fixed.
 3. Include any new method/function in the corresponding docs file.
 4. Run `pytest` to verify all unit tests pass. (To see what lines are covered, read the [`pytest-cov`](https://pytest-cov.readthedocs.io/en/latest/reporting.html) documentation.)
 5. [OPTIONAL] Format codebase according to the steps below.
-6. Submit Pull Request with a list of changes, links to issues that it addresses (if applicable)
+6. Submit pull request with a list of changes, links to issues that it addresses (if applicable)
 7. You may merge the Pull Request in once you have the sign-off of at least one other developer, or if you do not have permission to do that, you may request the reviewer to merge it for you.
 
 ## Format codebase
