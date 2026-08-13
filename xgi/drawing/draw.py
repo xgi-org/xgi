@@ -1240,6 +1240,15 @@ def draw_hyperedge_labels(
     return text_items
 
 
+def _circle_verts_3d(x, y, z, radius, num_points=30):
+    """Vertices of a circle of the given radius, embedded in the plane at
+    height `z`, so that it foreshortens correctly under any 3D view angle."""
+    theta = np.linspace(0, 2 * np.pi, num_points, endpoint=False)
+    return np.column_stack(
+        [x + radius * np.cos(theta), y + radius * np.sin(theta), np.full(num_points, z)]
+    )
+
+
 def draw_multilayer(
     H,
     pos=None,
@@ -1247,8 +1256,7 @@ def draw_multilayer(
     node_fc="white",
     node_ec="black",
     node_lw=1,
-    node_size=5,
-    node_shape="o",
+    node_size=0.1,
     node_fc_cmap="Reds",
     vmin=None,
     vmax=None,
@@ -1299,13 +1307,12 @@ def draw_multilayer(
         in the same order as the nodes are found in H.nodes. Values are clipped below
         and above by min_node_lw and max_node_lw, respectively. By default, 1.
     node_size : int, float, iterable, or NodeStat, optional
-        Radius of the nodes in pixels.  If int or float, use the same radius for all
-        nodes. If iterable or NodeStat, assume the radiuses are specified in the same
-        order as the nodes are found in H.nodes. Values are clipped below
-        and above by min_node_size and max_node_size, respectively. By default, 5.
-    node_shape :  string, optional
-        The shape of the node. Specification is as matplotlib.scatter
-        marker. Default is "o".
+        Radius of the nodes, in data coordinates (unlike in `draw_nodes`, where it is
+        in pixels), since nodes are drawn as circles embedded in their layer. If int
+        or float, use the same radius for all nodes. If iterable or NodeStat, assume
+        the radiuses are specified in the same order as the nodes are found in
+        H.nodes. Values are clipped below and above by min_node_size and
+        max_node_size, respectively. By default, 0.1.
     node_fc_cmap : colormap
         Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is
         a str (single color).
@@ -1369,8 +1376,8 @@ def draw_multilayer(
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
 
-        * "min_node_size" (default: 10)
-        * "max_node_size" (default: 30)
+        * "min_node_size" (default: 0.01)
+        * "max_node_size" (default: 0.5)
         * "min_node_lw" (default: 2)
         * "max_node_lw" (default: 10)
         * "min_dyad_lw" (default: 1)
@@ -1382,14 +1389,15 @@ def draw_multilayer(
         The subplot with the multilayer network visualization.
     collections : a tuple of 2 collections:
 
-        * node_collection : matplotlib PathCollection
-            Collection containing the nodes one the top layer
-        * edge_collection : matplotlib PathCollection
+        * node_collection : matplotlib Poly3DCollection
+            Collection containing the nodes, drawn as circles embedded in
+            their layer
+        * edge_collection : matplotlib Poly3DCollection
             Collection containing the edges of size > 2
     """
     settings = {
-        "min_node_size": 10,
-        "max_node_size": 30,
+        "min_node_size": 0.01,
+        "max_node_size": 0.5,
         "min_dyad_lw": 2,
         "max_dyad_lw": 10,
         "min_node_lw": 1,
@@ -1429,16 +1437,9 @@ def draw_multilayer(
 
     # convert all formats to ndarray
     node_size = _draw_arg_to_arr(node_size)
-    node_fc = _draw_arg_to_arr(node_fc)
     node_lw = _draw_arg_to_arr(node_lw)
     dyad_lw = _draw_arg_to_arr(dyad_lw)
     layer_color = _draw_arg_to_arr(layer_color)
-
-    # avoid matplotlib scatter UserWarning "Parameters 'cmap' will be ignored"
-    if isinstance(node_fc, str) or (
-        isinstance(node_fc, np.ndarray) and is_color_like(node_fc[0])
-    ):
-        node_fc_cmap = None
 
     # check validity of input values
     if np.any(node_size < 0):
@@ -1468,8 +1469,7 @@ def draw_multilayer(
     dyad_color, dyad_c_to_map = _parse_color_arg(dyad_color, list(dyads))
     edge_fc, edge_c_to_map = _parse_color_arg(edge_fc, list(edges))
     layer_color, layer_c_to_map = _parse_color_arg(layer_color, orders)
-
-    node_size = np.array(node_size) ** 2
+    node_fc, node_c_to_map = _parse_color_arg(node_fc, list(H.nodes), id_kind="nodes")
 
     # compute ax limits
     xdiff = np.max(xs) - np.min(xs)
@@ -1579,26 +1579,37 @@ def draw_multilayer(
         )
         ax.add_collection3d(between_lines)
 
-    # draw nodes (last)
-    for d in orders:
-        z = [sep * d] * H.num_nodes
+    # draw nodes as circles embedded in each layer.
+    node_radii = (
+        np.full(H.num_nodes, node_size) if np.isscalar(node_size) else node_size
+    )
+    node_patches = [
+        _circle_verts_3d(xy[i, 0], xy[i, 1], sep * d, node_radii[i])
+        for d in orders
+        for i in range(H.num_nodes)
+    ]
 
-        node_collection = ax.scatter(
-            xs=xy[:, 0],
-            ys=xy[:, 1],
-            zs=z,
-            s=node_size,
-            marker=node_shape,
-            c=node_fc,
-            cmap=node_fc_cmap,
-            vmin=vmin,
-            vmax=vmax,
-            edgecolors=node_ec,
-            linewidths=node_lw,
-            zorder=max_order + 1,
-            plotnonfinite=True,  # plot points with nonfinite color
-            alpha=1,
-        )
+    if node_c_to_map:
+        node_fc_arr = np.tile(node_fc, len(orders))
+        node_fc_colors = None
+    else:
+        node_fc_arr = None
+        node_fc_colors = node_fc
+
+    node_collection = Poly3DCollection(
+        node_patches,
+        facecolors=node_fc_colors,
+        array=node_fc_arr,
+        cmap=node_fc_cmap,
+        edgecolors=node_ec,
+        linewidths=node_lw,
+        alpha=1,
+        zorder=max_order + 1,
+    )
+    node_collection.set_cmap(node_fc_cmap)
+    if node_c_to_map:
+        node_collection.set_clim(vmin, vmax)
+    ax.add_collection3d(node_collection)
 
     ax.view_init(h_angle, v_angle)
     ax.set_ylim(np.min(ys) - ydiff * 0.1, np.max(ys) + ydiff * 0.1)
