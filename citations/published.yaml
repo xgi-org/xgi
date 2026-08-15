@@ -12,6 +12,19 @@ agostinelli_higher-order_2026:
     paper: https://doi.org/10.1093/comnet/cnaf048
     code: https://github.com/cosimoagostinelli/Hor_dissimilarity_measures
 
+berte_fibration_2026:
+  tags:
+  - XGI-DATA
+  authors:
+  - Margherita Bertè
+  - Tommaso Gili
+  title: Fibration Symmetries and Cluster Synchronization in Multi-Body Systems
+  year: 2026
+  reference: '*Scientific Reports*'
+  links:
+    paper: https://doi.org/10.1038/s41598-026-61679-0
+    code: https://github.com/margheritaberte/Fibration_symmetries_cluster_synchronization
+
 de_caro_evaluating_2026:
   tags:
   - XGI-DATA
@@ -29,7 +42,7 @@ de_caro_evaluating_2026:
   links:
     paper: https://doi.org/10.1109/PDP55228.2026.00024
 
-lucas_functional_2026:
+lucas_reducibility_2026:
   tags:
   - XGI
   - XGI-DATA
@@ -39,12 +52,29 @@ lucas_functional_2026:
   - Arsham Ghavasieh
   - Federico Battiston
   - Manlio De Domenico
-  title: Functional reducibility of higher-order networks
+  title: Reducibility of higher-order networks from dynamics
   year: 2026
   reference: '*Nature Communications* **17**, 1551'
   links:
     paper: https://doi.org/10.1038/s41467-025-68273-4
     code: https://github.com/maximelucas/hypergraph_reducibility
+
+maia_efficient_2026:
+  tags:
+  - XGI
+  - XGI-DATA
+  authors:
+  - Hugo P. Maia
+  - Wesley Cota
+  - Yamir Moreno
+  - Silvio C. Ferreira
+  title: Efficient Gillespie algorithms for spreading phenomena in large and heterogeneous
+    higher-order networks
+  year: 2026
+  reference: '*Nature Communications*'
+  links:
+    paper: https://doi.org/10.1038/s41467-026-75402-0
+    code: https://github.com/gisc-ufv/hyperSIS
 
 smith_blue_2026:
   tags:
@@ -61,6 +91,40 @@ smith_blue_2026:
   links:
     paper: https://doi.org/10.1038/s41597-026-06920-1
     code: https://github.com/nwlandry/a-blue-start
+
+santoro_higher-order_2026:
+  tags:
+  - XGI
+  authors:
+  - Andrea Santoro
+  - Matteo Neri
+  - Simone Poetto
+  - Davide Orsenigo
+  - Matteo Diano
+  - Marilyn Gatica
+  - Giovanni Petri
+  title: Charting higher-order models of brain function beyond pairwise interactions
+  year: 2026
+  reference: '*Nature Communications*'
+  links:
+    paper: https://doi.org/10.1038/s41467-026-75959-w
+    code: https://github.com/nplresearch/HOI_lenses_analysis
+
+tang_deep_2026:
+  tags:
+  - XGI
+  authors:
+  - Bin Tang
+  - Hanqiang Deng
+  - Yuxian Duan
+  - Heng Zhang
+  - Jian Huang
+  - Jiarui Zhang
+  title: Deep learning-based hypernetwork dismantling for effectively hindering structural recovery
+  year: 2026
+  reference: '*Information Processing & Management*, Volume 63, Issue 3, 104551'
+  links:
+    paper: https://doi.org/10.1016/j.ipm.2025.104551
 
 barrett_counting_2025:
   tags:
