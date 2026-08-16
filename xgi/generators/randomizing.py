@@ -144,8 +144,7 @@ def node_swap(H, nid1, nid2, order=None):
     # single-pass swap using a mapping dict
     swap_map = {nid1: nid2, nid2: nid1}
     new_edge_dict = {
-        key: {swap_map.get(n, n) for n in members}
-        for key, members in edge_dict.items()
+        key: {swap_map.get(n, n) for n in members} for key, members in edge_dict.items()
     }
 
     # update hypergraph with new edges

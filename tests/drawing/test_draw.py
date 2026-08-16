@@ -839,7 +839,9 @@ def test_draw_kwargs_forwarding(edgelist8):
 
     # edge-label font size and color are forwarded to the Text objects on the axes
     fig, ax = plt.subplots()
-    xgi.draw(H, ax=ax, hyperedge_labels=True, font_size_edges=14, font_color_edges="blue")
+    xgi.draw(
+        H, ax=ax, hyperedge_labels=True, font_size_edges=14, font_color_edges="blue"
+    )
     for text in ax.texts:
         assert text.get_fontsize() == 14
         assert text.get_color() == "blue"
@@ -867,6 +869,8 @@ def test_draw_kwargs_forwarding(edgelist8):
     plt.close("all")
 
     fig, ax = plt.subplots()
-    xgi.draw(H, ax=ax, hyperedge_labels=False, font_size_edges=14, font_color_edges="blue")
+    xgi.draw(
+        H, ax=ax, hyperedge_labels=False, font_size_edges=14, font_color_edges="blue"
+    )
     assert len(ax.texts) == 0
     plt.close("all")

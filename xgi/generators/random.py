@@ -552,7 +552,9 @@ def simplicial_chung_lu_hypergraph(k1, k2, p, seed=None):
 
             if not edges_not_k:
                 # No edges of different size exist → plain Chung-Lu edge
-                e_new = frozenset(rng.choice(node_labels, size=k, replace=True, p=node_probs))
+                e_new = frozenset(
+                    rng.choice(node_labels, size=k, replace=True, p=node_probs)
+                )
             else:
                 # Sample an existing edge of a different size.
                 e_prime = edges_not_k[rng.integers(len(edges_not_k))]
@@ -562,12 +564,19 @@ def simplicial_chung_lu_hypergraph(k1, k2, p, seed=None):
                 else:
                     # Extend the sampled edge with additional Chung-Lu nodes.
                     extra = frozenset(
-                        rng.choice(node_labels, size=k - len(e_prime), replace=True, p=node_probs)
+                        rng.choice(
+                            node_labels,
+                            size=k - len(e_prime),
+                            replace=True,
+                            p=node_probs,
+                        )
                     )
                     e_new = e_prime | extra
         else:
             # Generate a plain Chung-Lu edge.
-            e_new = frozenset(rng.choice(node_labels, size=k, replace=True, p=node_probs))
+            e_new = frozenset(
+                rng.choice(node_labels, size=k, replace=True, p=node_probs)
+            )
 
         edges.append(e_new)
 

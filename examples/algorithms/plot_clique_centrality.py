@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 
 import xgi
 
-
 # generate hypergraph
 n = 20
 ps = [0.15, 0.01]

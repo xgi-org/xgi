@@ -288,14 +288,18 @@ def draw(
     # catches typos even when labels are off, and prevents cross-bucket confusion
     # (e.g. a valid edge-label kwarg being rejected by node-label validation).
     _settings_keys = set(settings)
-    _node_label_keys = (
-        signature(draw_node_labels).parameters.keys()
-        - {"H", "pos", "ax_nodes", "node_labels"}
-    )
-    _edge_label_keys = (
-        signature(draw_hyperedge_labels).parameters.keys()
-        - {"H", "pos", "ax_edges", "hyperedge_labels"}
-    )
+    _node_label_keys = signature(draw_node_labels).parameters.keys() - {
+        "H",
+        "pos",
+        "ax_nodes",
+        "node_labels",
+    }
+    _edge_label_keys = signature(draw_hyperedge_labels).parameters.keys() - {
+        "H",
+        "pos",
+        "ax_edges",
+        "hyperedge_labels",
+    }
     unknown = set(kwargs) - (_settings_keys | _node_label_keys | _edge_label_keys)
     if unknown:
         raise TypeError(
