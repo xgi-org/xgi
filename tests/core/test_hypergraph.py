@@ -654,6 +654,45 @@ def test_duplicate_nodes(edgelist1):
     assert set(H.nodes.duplicates()) == {2}
 
 
+def test_duplicate_groups_edges():
+    H = xgi.Hypergraph([[0, 1], [1, 2]])
+    assert H.edges.duplicate_groups() == []
+
+    H = xgi.Hypergraph([[0, 1, 2], [3, 4, 2], [0, 1, 2]])
+    groups = H.edges.duplicate_groups()
+    assert len(groups) == 1
+    assert set(groups[0]) == {0, 2}
+
+    H = xgi.Hypergraph([[0, 1], [2, 3], [1, 0], [3, 2], [4, 5]])
+    groups = H.edges.duplicate_groups()
+    assert len(groups) == 2
+    assert {frozenset(g) for g in groups} == {frozenset({0, 2}), frozenset({1, 3})}
+
+    H = xgi.Hypergraph([[1, 2, 3, 3], [3, 1, 2, 3]])
+    groups = H.edges.duplicate_groups()
+    assert len(groups) == 1
+    assert set(groups[0]) == {0, 1}
+
+
+def test_duplicate_groups_nodes(edgelist1):
+    H = xgi.Hypergraph(edgelist1)
+    groups = H.nodes.duplicate_groups()
+    ids_in_groups = {i for g in groups for i in g}
+    assert {2, 3, 8}.issubset(ids_in_groups)
+
+    H = xgi.Hypergraph([[0, 1], [1, 2]])
+    assert H.nodes.duplicate_groups() == []
+
+
+def test_duplicates_matches_duplicate_groups():
+    H = xgi.Hypergraph([[0, 1], [2, 3], [1, 0], [3, 2], [4, 5]])
+    from_flat = set(H.edges.duplicates())
+    from_groups = set()
+    for group in H.edges.duplicate_groups():
+        from_groups.update(sorted(group)[1:])
+    assert from_flat == from_groups
+
+
 def test_remove_node_weak(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     assert 1 in H
