@@ -9,12 +9,12 @@ from ..utils import request_json_from_url, request_json_from_url_cached
 
 __all__ = ["load_xgi_data", "download_xgi_data"]
 
+_INDEX_URL = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
+
 
 def load_xgi_data(
     dataset=None,
     cache=True,
-    read=False,
-    path="",
     nodetype=None,
     edgetype=None,
     max_order=None,
@@ -53,27 +53,12 @@ def load_xgi_data(
     XGIError
        The specified dataset does not exist.
     """
-    index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
-
-    if read:
-        cfp = join(path, dataset + ".json")
-        if exists(cfp):
-            from ..readwrite import read_json
-
-            return read_json(cfp, nodetype=nodetype, edgetype=edgetype)
-        else:
-            warn(
-                f"No local copy was found at {cfp}. The data is requested "
-                "from the xgi-data repository instead. To download a local "
-                "copy, use `download_xgi_data`."
-            )
-
     # If no dataset is specified, print a list of the available datasets.
-    index_data = request_json_from_url(index_url)
+    index_data = request_json_from_url(_INDEX_URL)
     if dataset is None:
         print("Available datasets are the following:")
         print(*index_data, sep="\n")
-        return
+        return index_data
 
     key = dataset.lower()
     if key not in index_data:
@@ -110,8 +95,7 @@ def download_xgi_data(dataset, path="", collection_name=""):
     """
     from ..readwrite import write_json
 
-    index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
-    index_data = request_json_from_url(index_url)
+    index_data = request_json_from_url(_INDEX_URL)
 
     key = dataset.lower()
     if key not in index_data:
@@ -181,7 +165,3 @@ def _request_from_xgi_data(
             )
             collection[name] = H
         return collection
-
-    return from_hypergraph_dict(
-        jsondata, nodetype=nodetype, edgetype=edgetype, max_order=max_order
-    )

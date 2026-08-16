@@ -1,4 +1,14 @@
-from . import bigg_data, bipartite, edgelist, hif, incidence, json, xgi_data
+from . import (
+    bigg_data,
+    bipartite,
+    edgelist,
+    hif,
+    incidence,
+    json,
+    xgi_data,
+    hypergraphx_data,
+    ahorn_data,
+)
 from .bigg_data import *
 from .bipartite import *
 from .edgelist import *
@@ -6,6 +16,8 @@ from .hif import *
 from .incidence import *
 from .json import *
 from .xgi_data import *
+from .hypergraphx_data import *
+from .ahorn_data import *
 
 __all__ = [
     "load_bigg_data",
@@ -23,4 +35,6 @@ __all__ = [
     "write_incidence_matrix",
     "load_xgi_data",
     "download_xgi_data",
+    "load_hypergraphx_data",
+    "load_ahorn_data",
 ]
