@@ -5,7 +5,7 @@ from warnings import warn
 
 from ..convert import cut_to_order, from_hif_dict, from_hypergraph_dict
 from ..exception import XGIError
-from ..utils import request_json_from_url, request_json_from_url_cached
+from ..utils import request_from_url, request_from_url_cached
 
 __all__ = ["load_xgi_data", "download_xgi_data"]
 
@@ -29,12 +29,6 @@ def load_xgi_data(
         the list of available datasets.
     cache : bool, optional
         Whether to cache the input data, by default True.
-    read : bool, optional
-        If read==True, search for a local copy of the data set. Use the local
-        copy if it exists, otherwise use the xgi-data repository.
-        By default, False.
-    path : str, optional
-        Path to a local copy of the data set
     nodetype : type, optional
         Type to cast the node ID to, by default None.
     edgetype : type, optional
@@ -54,7 +48,7 @@ def load_xgi_data(
        The specified dataset does not exist.
     """
     # If no dataset is specified, print a list of the available datasets.
-    index_data = request_json_from_url(_INDEX_URL)
+    index_data = request_from_url(_INDEX_URL)
     if dataset is None:
         print("Available datasets are the following:")
         print(*index_data, sep="\n")
@@ -95,7 +89,7 @@ def download_xgi_data(dataset, path="", collection_name=""):
     """
     from ..readwrite import write_json
 
-    index_data = request_json_from_url(_INDEX_URL)
+    index_data = request_from_url(_INDEX_URL)
 
     key = dataset.lower()
     if key not in index_data:
@@ -142,9 +136,9 @@ def _request_from_xgi_data(
     load_xgi_data
     """
     if cache:
-        jsondata = request_json_from_url_cached(url)
+        jsondata = request_from_url_cached(url)
     else:
-        jsondata = request_json_from_url(url)
+        jsondata = request_from_url(url)
 
     if "incidences" in jsondata:
         H = from_hif_dict(jsondata, nodetype=nodetype, edgetype=edgetype)

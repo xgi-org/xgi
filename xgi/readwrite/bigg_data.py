@@ -2,7 +2,7 @@
 
 from warnings import warn
 
-from ..utils import request_json_from_url, request_json_from_url_cached
+from ..utils import request_from_url, request_from_url_cached
 
 __all__ = ["load_bigg_data"]
 
@@ -53,7 +53,7 @@ def load_bigg_data(
     index_url = "http://bigg.ucsd.edu/api/v2/models"
     base_url = "http://bigg.ucsd.edu/static/models/"
 
-    index_data = request_json_from_url(index_url)
+    index_data = request_from_url(index_url, mode="json")
 
     # If no dataset is specified, print a list of the available datasets.
     if dataset is None:
@@ -65,9 +65,9 @@ def load_bigg_data(
         return
 
     if cache:
-        model_data = request_json_from_url_cached(base_url + dataset + ".json")
+        model_data = request_from_url_cached(base_url + dataset + ".json", mode="json")
     else:
-        model_data = request_json_from_url(base_url + dataset + ".json")
+        model_data = request_from_url(base_url + dataset + ".json", mode="json")
 
     return _bigg_to_dihypergraph(index_data, model_data)
 
