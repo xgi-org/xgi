@@ -617,6 +617,7 @@ class NodeView(IDView):
     local_simplicial_fraction = _stat_property("local_simplicial_fraction")
     local_edit_simpliciality = _stat_property("local_edit_simpliciality")
     local_face_edit_simpliciality = _stat_property("local_face_edit_simpliciality")
+    pos = _stat_property("pos")
 
     def __init__(self, H, bunch=None):
         if H is None:
@@ -905,6 +906,7 @@ class DiNodeView(IDView):
     degree = _stat_property("degree")
     in_degree = _stat_property("in_degree")
     out_degree = _stat_property("out_degree")
+    pos = _stat_property("pos")
 
     def __init__(self, H, bunch=None):
         if H is None:

@@ -618,3 +618,29 @@ def test_stat_docstring_forwarding():
     # Directed hypergraph stats
     DH = xgi.DiHypergraph([([1, 2], [3, 4])])
     assert "in-degree" in DH.nodes.in_degree.__doc__.lower()
+
+
+def test_pos_stat():
+    """H.nodes.pos accesses the 'pos' node attribute."""
+    H = xgi.Hypergraph([[1, 2, 3]])
+    positions = {1: (0.0, 0.0), 2: (1.0, 0.5), 3: (0.5, 1.0)}
+    H.set_node_attributes(positions, name="pos")
+
+    assert H.nodes.pos.asdict() == positions
+
+    # Nodes without 'pos' attribute return None
+    H2 = xgi.Hypergraph([[1, 2]])
+    assert H2.nodes.pos.asdict() == {1: None, 2: None}
+
+    # Discoverable via dir() and accessible as descriptor
+    assert "pos" in dir(H.nodes)
+
+    # Equivalent to attrs("pos")
+    H.set_node_attributes(positions, name="pos")
+    assert H.nodes.pos.asdict() == H.nodes.attrs("pos").asdict()
+
+    # DiHypergraph too
+    DH = xgi.DiHypergraph([([1, 2], [3, 4])])
+    DH.set_node_attributes({1: (0, 0), 2: (1, 0), 3: (0, 1), 4: (1, 1)}, name="pos")
+    assert DH.nodes.pos.asdict() == {1: (0, 0), 2: (1, 0), 3: (0, 1), 4: (1, 1)}
+    assert "pos" in dir(DH.nodes)

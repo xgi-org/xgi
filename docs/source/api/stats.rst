@@ -28,6 +28,7 @@ stats package
       ~xgi.stats.nodestats.h_eigenvector_centrality
       ~xgi.stats.nodestats.local_clustering_coefficient
       ~xgi.stats.nodestats.node_edge_centrality
+      ~xgi.stats.nodestats.pos
       ~xgi.stats.nodestats.two_node_clustering_coefficient
 
    *Statistics of edges*
@@ -78,6 +79,7 @@ stats package
       ~xgi.stats.dinodestats.degree
       ~xgi.stats.dinodestats.in_degree
       ~xgi.stats.dinodestats.out_degree
+      ~xgi.stats.dinodestats.pos
 
    *Statistics of edges*
 
