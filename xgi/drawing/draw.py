@@ -1635,7 +1635,7 @@ def draw_multilayer(
     ax.set_ylim(np.min(ys) - ydiff * 0.1, np.max(ys) + ydiff * 0.1)
     ax.set_xlim(np.min(xs) - xdiff * 0.1, np.max(xs) + xdiff * 0.1)
     ax.set_axis_off()
-    ax.set_aspect("equal")
+    ax.set_box_aspect((1, 1, 1))
 
     return ax, (node_collection, edge_collection)
 
