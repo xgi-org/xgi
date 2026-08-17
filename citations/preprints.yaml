@@ -12,6 +12,23 @@ cao_identifying_2026:
   links:
     paper: https://doi.org/10.36227/techrxiv.177223104.47525491/v1
 
+larock_nestedness_2026:
+  tags:
+  - XGI
+  authors:
+  - Timothy LaRock
+  - Yanting Zhang
+  - Jean-Gabriel Young
+  - Nicole Eikmeier
+  - Renaud Lambiotte
+  - Nicholas W. Landry
+  title: The nestedness of higher-order networks
+  year: 2026
+  reference: 'arXiv:2605.18420'
+  links:
+    paper: https://arxiv.org/abs/2605.18420
+    code: https://github.com/tlarock/hypergraph-nestedness
+
 maia_nesting_2026:
   tags:
   - XGI-DATA
@@ -26,6 +43,19 @@ maia_nesting_2026:
   links:
     paper: https://doi.org/10.48550/arXiv.2604.23337
 
+ross_growing_2026:
+  tags:
+  - XGI
+  authors:
+  - Violet Ross
+  - Francis Cataldo
+  - Philip S. Chodrow
+  title: Growing Hypergraphs with Homophily
+  year: 2026
+  reference: 'arXiv:2607.16046'
+  links:
+    paper: https://arxiv.org/abs/2607.16046
+
 zajdela_higher-order_2026:
   tags:
   - XGI
@@ -38,19 +68,6 @@ zajdela_higher-order_2026:
   links:
     paper: https://arxiv.org/abs/2603.02571
     code: https://github.com/nwlandry/higher-order-team-formation
-
-berte_fibration_2025:
-  tags:
-  - XGI-DATA
-  authors:
-  - Margherita Bertè
-  - Tommaso Gili
-  title: Fibration Symmetries and Cluster Synchronization in Multi-Body Systems
-  year: 2025
-  reference: 'arXiv:2510.11207'
-  links:
-    paper: https://arxiv.org/abs/2510.11207
-    code: https://github.com/margheritaberte/Fibration_symmetries_cluster_synchronization
 
 ibrahim_elruhna_2025:
   tags:
@@ -94,23 +111,6 @@ larock_exploring_2025:
   links:
     paper: https://arxiv.org/abs/2506.01479
     code: https://github.com/tlarock/twin_search/
-
-maia_efficient_2025:
-  tags:
-  - XGI
-  - XGI-DATA
-  authors:
-  - Hugo P. Maia
-  - Wesley Cota
-  - Yamir Moreno
-  - Silvio C. Ferreira
-  title: Efficient Gillespie algorithms for spreading phenomena in large and heterogeneous
-    higher-order networks
-  year: 2025
-  reference: 'arXiv:2509.20174'
-  links:
-    paper: https://arxiv.org/abs/2509.20174
-    code: https://github.com/gisc-ufv/hyperSIS
 
 akcakir_exploring_2024:
   tags:
