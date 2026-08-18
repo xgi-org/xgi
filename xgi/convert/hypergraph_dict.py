@@ -31,8 +31,8 @@ def to_hypergraph_dict(H):
 
     See Also
     --------
-    ~xgi.readwrite.json.read_json
-    ~xgi.readwrite.json.write_json
+    ~xgi.readwrite.hif.read_hif
+    ~xgi.readwrite.hif.write_hif
     """
     data = {}
     data["type"] = get_network_type(H)
