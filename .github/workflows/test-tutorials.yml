@@ -2,12 +2,9 @@ name: Test tutorials
 
 on:
   push:
-    branches:
-      - main
+    branches: [main, dev]
   pull_request:
-    branches:
-      - main
-      - dev
+    branches: [main, dev]
 
 jobs:
   test:

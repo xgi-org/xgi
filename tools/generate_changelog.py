@@ -357,7 +357,7 @@ def fetch_changes(
     ]
 
     if len(pr_numbers) == 0 and len(commits_between) > 0:
-        raise Exception("Lots of commits and no PRs on branch {branch}")
+        raise Exception(f"Lots of commits and no PRs on branch {branch}")
     else:
         prs = prs_from_numbers(github_config, owner, repo, pr_numbers)
 
