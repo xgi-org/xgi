@@ -3,7 +3,7 @@
 from os.path import dirname, exists, join
 from warnings import warn
 
-from ..convert import cut_to_order, from_hif_dict, from_hypergraph_dict
+from ..convert import cut_to_order, from_hif_dict
 from ..exception import XGIError
 from ..utils import request_json_from_url, request_json_from_url_cached
 
@@ -181,7 +181,3 @@ def _request_from_xgi_data(
             )
             collection[name] = H
         return collection
-
-    return from_hypergraph_dict(
-        jsondata, nodetype=nodetype, edgetype=edgetype, max_order=max_order
-    )
