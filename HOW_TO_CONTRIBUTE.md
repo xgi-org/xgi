@@ -54,4 +54,8 @@ Once you have a content on `dev` that you wish to include into a release, do the
 5. Merge the PR.
 6. Create a new release on GitHub by selecting "Releases", then clicking "Draft a new release". Click "Choose a tag" and type "v" followed by the version number and then click "Create new tag". The release title will be this same string. Paste the contents of the CHANGELOG into the "Describe this release" field. Click "Publish release". This will trigger a GitHub action that will publish the new version on PyPI.
 
-The new version is now on PyPI! Make sure to update wherever you use xgi :)
+The new version is now on PyPI! Make sure to update wherever you use XGI :)
+
+## If you commit straight to the `main` branch
+
+The only commits on the `main` branch should be those merged from `dev`. However, if commits have been made straight to `main`, the preferred method of resolution is to backmerge to `dev` to re-sync the two branches; create a pull request from `main` with `dev` as the base branch and then squash and merge.
