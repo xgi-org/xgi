@@ -5,7 +5,8 @@ import pytest
 
 import xgi
 from xgi.exception import XGIError
-from xgi.readwrite.json import _read_json as read_json, _write_json as write_json
+from xgi.readwrite.json import _read_json as read_json
+from xgi.readwrite.json import _write_json as write_json
 
 json_string1 = """
 {
