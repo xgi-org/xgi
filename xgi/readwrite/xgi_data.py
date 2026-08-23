@@ -102,7 +102,7 @@ def download_xgi_data(dataset, path="", collection_name=""):
         url, nodetype=None, edgetype=None, max_order=None, cache=True
     )
     if isinstance(H, dict):
-        write_hif_collection(H, path, collection_name=collection_name)
+        write_hif_collection(H, path, collection_name or key)
     else:
         filename = join(path, key + ".json")
         write_hif(H, filename)
