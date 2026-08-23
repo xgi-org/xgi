@@ -1,4 +1,3 @@
-from os import read
 import platform
 import sys
 import tempfile
