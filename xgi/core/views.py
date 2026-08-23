@@ -426,6 +426,55 @@ class IDView(Mapping, Set):
                 if len(self._id_dict[idx].intersection(self._id_dict[i])) >= s
             }.difference({idx})
 
+    def duplicate_groups(self):
+        """Group IDs that share the same bipartite neighbors.
+
+        Two IDs are in the same group if they have the same set of bipartite
+        neighbors. Only groups containing more than one ID are returned, so
+        the result is empty when there are no duplicates.
+
+        Returns
+        -------
+        list of IDView
+            One view per group of IDs sharing the same bipartite neighbors.
+            Groups are returned in the order of first occurrence in the
+            underlying collection; within each group, IDs iterate in
+            insertion order.
+
+        See Also
+        --------
+        IDView.duplicates
+        IDView.lookup
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[0, 1, 2], [3, 4, 2], [0, 1, 2]])
+        >>> [list(g) for g in H.edges.duplicate_groups()]
+        [[0, 2]]
+
+        Multiple independent groups:
+
+        >>> H = xgi.Hypergraph([[0, 1], [2, 3], [1, 0], [3, 2]])
+        >>> [sorted(g) for g in H.edges.duplicate_groups()]
+        [[0, 2], [1, 3]]
+
+        No duplicates gives an empty list:
+
+        >>> H = xgi.Hypergraph([[0, 1], [1, 2]])
+        >>> H.edges.duplicate_groups()
+        []
+
+        """
+        hashes = defaultdict(list)
+        for idx, members in self._id_dict.items():
+            hashes[frozenset(members)].append(idx)
+        return [
+            self.__class__.from_view(self, bunch=edges)
+            for edges in hashes.values()
+            if len(edges) > 1
+        ]
+
     def duplicates(self):
         """Find IDs that have a duplicate.
 
@@ -450,6 +499,7 @@ class IDView(Mapping, Set):
 
         See Also
         --------
+        IDView.duplicate_groups
         IDView.lookup
 
         Examples
@@ -473,15 +523,13 @@ class IDView(Mapping, Set):
 
         """
         dups = []
-        hashes = defaultdict(list)
-        for idx, members in self._id_dict.items():
-            hashes[frozenset(members)].append(idx)
-        for _, edges in hashes.items():
-            if len(edges) > 1:
-                try:
-                    dups.extend(sorted(edges)[1:])
-                except TypeError:
-                    dups.extend(edges[1:])
+        for group in self.duplicate_groups():
+            edges = list(group)
+            try:
+                edges = sorted(edges)
+            except TypeError:
+                pass
+            dups.extend(edges[1:])
         return self.__class__.from_view(self, bunch=dups)
 
     def lookup(self, neighbors):
