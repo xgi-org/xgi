@@ -13,6 +13,8 @@ __all__ = ["load_xgi_data", "download_xgi_data"]
 def load_xgi_data(
     dataset=None,
     cache=True,
+    read=False,
+    path="",
     nodetype=None,
     edgetype=None,
     max_order=None,
@@ -27,6 +29,12 @@ def load_xgi_data(
         the list of available datasets.
     cache : bool, optional
         Whether to cache the input data, by default True.
+    read : bool, optional
+        DEPRECATED: If read==True, search for a local copy of the data set. Use the local
+        copy if it exists, otherwise use the xgi-data repository.
+        By default, False.
+    path : str, optional
+        DEPRECATED: Path to a local copy of the data set
     nodetype : type, optional
         Type to cast the node ID to, by default None.
     edgetype : type, optional
@@ -45,6 +53,14 @@ def load_xgi_data(
     XGIError
        The specified dataset does not exist.
     """
+    if read:
+        raise XGIError(
+            "The `read` argument is deprecated. Use `download_xgi_data` to download a local copy of the dataset."
+        )
+    if path:
+        raise XGIError(
+            "The `path` argument is deprecated. Use `download_xgi_data` to download a local copy of the dataset."
+        )
     index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
 
     # If no dataset is specified, print a list of the available datasets.
