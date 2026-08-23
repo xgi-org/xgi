@@ -159,3 +159,4 @@ output.json
 
 # local task tracking (beads) — not part of xgi
 .beads/
+.claude/
