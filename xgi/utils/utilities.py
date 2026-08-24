@@ -16,8 +16,8 @@ __all__ = [
     "powerset",
     "update_uid_counter",
     "find_triangles",
-    "request_json_from_url",
-    "request_json_from_url_cached",
+    "request_from_url",
+    "request_from_url_cached",
     "subfaces",
     "convert_labels_to_integers",
     "hist",
@@ -239,13 +239,19 @@ def min_where(dicty, where):
     return min_val
 
 
-def request_json_from_url(url):
+def request_from_url(url, mode="json"):
     """HTTP request json file and return as dict.
 
     Parameters
     ----------
     url : str
         The url where the json file is located.
+    mode : str, optional
+        The mode of the request. Can be "json", "raw", or "text".
+        If "json", the response is parsed as JSON and
+        returned as a dict. If "raw", the raw response
+        content is returned. If "text", the response is returned as a string.
+        By default, "json".
 
     Returns
     -------
@@ -266,19 +272,35 @@ def request_json_from_url(url):
         raise XGIError("Connection Error!")
 
     if r.ok:
-        return r.json()
+        match mode:
+            case "json":
+                return r.json()
+            case "raw":
+                return r.content
+            case "text":
+                return r.text
+            case _:
+                raise ValueError(
+                    f"Invalid mode: {mode}. Must be 'json', 'raw', or 'text'."
+                )
     else:
         raise XGIError(f"Error: HTTP response {r.status_code}")
 
 
 @cache
-def request_json_from_url_cached(url):
+def request_from_url_cached(url, mode="json"):
     """HTTP request json file and return as dict.
 
     Parameters
     ----------
     url : str
         The url where the json file is located.
+    mode : str, optional
+        The mode of the request. Can be "json", "raw", or "text".
+        If "json", the response is parsed as JSON and
+        returned as a dict. If "raw", the raw response
+        content is returned. If "text", the response is returned as a string.
+        By default, "json".
 
     Returns
     -------
@@ -298,7 +320,17 @@ def request_json_from_url_cached(url):
         raise XGIError("Connection Error!")
 
     if r.ok:
-        return r.json()
+        match mode:
+            case "json":
+                return r.json()
+            case "raw":
+                return r.content
+            case "text":
+                return r.text
+            case _:
+                raise ValueError(
+                    f"Invalid mode: {mode}. Must be 'json', 'raw', or 'text'."
+                )
     else:
         raise XGIError(f"Error: HTTP response {r.status_code}")
 
