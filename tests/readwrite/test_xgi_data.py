@@ -5,13 +5,12 @@ from os.path import join
 
 import pytest
 
-from xgi import download_xgi_data, load_xgi_data
+from xgi import download_xgi_data, load_xgi_data, read_hif, read_hif_collection
 from xgi.exception import XGIError
-from xgi.readwrite.json import _read_json as read_json
 
 
 @pytest.mark.skipif(
-    sys.version_info != (3, 12) and not platform.system() == "Linux",
+    sys.version_info != (3, 14) and not platform.system() == "Linux",
     reason="only need one test",
 )
 @pytest.mark.webtest
@@ -40,14 +39,6 @@ def test_load_xgi_data(capfd):
     # test the empty argument
     assert load_xgi_data() is None
 
-    with pytest.warns(Warning):
-        load_xgi_data("email-enron", read=True)
-
-    dir = tempfile.mkdtemp()
-    download_xgi_data("email-enron", dir)
-    H4 = load_xgi_data("email-enron", read=True, path=dir)
-    assert H1.edges.members() == H4.edges.members()
-
     load_xgi_data()
     out, _ = capfd.readouterr()
     assert "Available datasets are the following:" in out
@@ -68,7 +59,7 @@ def test_load_xgi_data(capfd):
 
 
 @pytest.mark.skipif(
-    sys.version_info != (3, 12) and not platform.system() == "Linux",
+    sys.version_info != (3, 14) and not platform.system() == "Linux",
     reason="only need one test",
 )
 @pytest.mark.webtest
@@ -76,13 +67,13 @@ def test_load_xgi_data(capfd):
 def test_download_xgi_data():
     dir = tempfile.mkdtemp()
     download_xgi_data("email-enron", dir)
-    H = read_json(join(dir, "email-enron.json"))
+    H = read_hif(join(dir, "email-enron.json"))
     H_online = load_xgi_data("email-enron")
     assert H.edges.members() == H_online.edges.members()
 
     dir = tempfile.mkdtemp()
-    download_xgi_data("hyperbard", dir)
-    collection = read_json(join(dir, "collection_information.json"))
+    download_xgi_data("hyperbard", dir, collection_name="hyperbard")
+    collection = read_hif_collection(join(dir, "hyperbard_collection_information.json"))
 
     print(collection)
     assert len(collection) == 37

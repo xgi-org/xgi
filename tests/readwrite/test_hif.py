@@ -284,7 +284,7 @@ def test_read_hif_collection():
     collection = [H, DH]
     tempdir = tempfile.mkdtemp()
 
-    xgi.write_hif_collection(collection, tempdir, collection_name="test")
+    xgi.write_hif_collection(collection, tempdir, "test")
     collection = xgi.read_hif_collection(
         join(tempdir, "test_collection_information.json")
     )
@@ -296,7 +296,7 @@ def test_read_hif_collection():
     collection = {"dataset1": H, "dataset2": DH}
     tempdir = tempfile.mkdtemp()
 
-    xgi.write_hif_collection(collection, tempdir, collection_name="test")
+    xgi.write_hif_collection(collection, tempdir, "test")
     collection = xgi.read_hif_collection(
         join(tempdir, "test_collection_information.json")
     )
@@ -327,7 +327,7 @@ def test_write_hif_collection_compressed():
     H.add_edges_from([[1, 2, 3], []])
 
     tempdir = tempfile.mkdtemp()
-    xgi.write_hif_collection([H], tempdir, collection_name="test", compresslevel=3)
+    xgi.write_hif_collection([H], tempdir, "test", compresslevel=3)
     collection = xgi.read_hif_collection(
         join(tempdir, "test_collection_information.json")
     )

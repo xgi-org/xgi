@@ -6,7 +6,6 @@ from . import (
     hif_dict,
     higher_order_network,
     hyperedges,
-    hypergraph_dict,
     incidence,
     line_graph,
     pandas,
@@ -19,7 +18,6 @@ from .graph import *
 from .hif_dict import *
 from .higher_order_network import *
 from .hyperedges import *
-from .hypergraph_dict import *
 from .incidence import *
 from .line_graph import *
 from .pandas import *
@@ -43,8 +41,6 @@ __all__ = [
     "to_hyperedge_dict",
     "from_hyperedge_list",
     "to_hyperedge_list",
-    "to_hypergraph_dict",
-    "from_hypergraph_dict",
     "from_incidence_matrix",
     "to_incidence_matrix",
     "to_line_graph",
