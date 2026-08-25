@@ -1256,7 +1256,7 @@ def draw_multilayer(
     node_fc="white",
     node_ec="black",
     node_lw=1,
-    node_size=0.1,
+    node_size=0.05,
     node_fc_cmap="Reds",
     vmin=None,
     vmax=None,
