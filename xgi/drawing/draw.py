@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 from matplotlib.colors import is_color_like
-from matplotlib.patches import FancyArrowPatch
+from matplotlib.patches import FancyArrowPatch, Circle
 from mpl_toolkits.mplot3d.art3d import (
     Line3DCollection,
     LineCollection,
@@ -1240,13 +1240,10 @@ def draw_hyperedge_labels(
     return text_items
 
 
-def _circle_verts_3d(x, y, z, radius, num_points=30):
-    """Vertices of a circle of the given radius, embedded in the plane at
-    height `z`, so that it renders correctly under any 3D view angle."""
-    theta = np.linspace(0, 2 * np.pi, num_points, endpoint=False)
-    return np.column_stack(
-        [x + radius * np.cos(theta), y + radius * np.sin(theta), np.full(num_points, z)]
-    )
+def _circle_verts_3d(x, y, z, radius):
+    circle = Circle((x, y), radius)
+    verts = circle.get_patch_transform().transform(circle.get_path().vertices)
+    return np.column_stack([verts, np.full(len(verts), z)])
 
 
 def draw_multilayer(
