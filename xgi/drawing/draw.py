@@ -1242,7 +1242,7 @@ def draw_hyperedge_labels(
 
 def _circle_verts_3d(x, y, z, radius, num_points=30):
     """Vertices of a circle of the given radius, embedded in the plane at
-    height `z`, so that it foreshortens correctly under any 3D view angle."""
+    height `z`, so that it renders correctly under any 3D view angle."""
     theta = np.linspace(0, 2 * np.pi, num_points, endpoint=False)
     return np.column_stack(
         [x + radius * np.cos(theta), y + radius * np.sin(theta), np.full(num_points, z)]
