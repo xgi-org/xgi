@@ -49,7 +49,7 @@ def test_load_ahorn_data(capfd):
     assert H2.edges.members() == H3.edges.members()
 
     # invalid dataset
-    with pytest.raises(KeyError):
+    with pytest.raises(XGIError):
         load_ahorn_data("this-dataset-does-not-exist")
 
     # dataset listing
