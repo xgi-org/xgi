@@ -197,7 +197,11 @@ def _download(url, *, timeout=30, verify_ssl=False):
 
     except HTTPError as exc:
         raise HTTPError(
-            f"Could not download dataset from {url} " f"(HTTP {exc.code})."
+            exc.url,
+            exc.code,
+            f"Could not download dataset from {url} (HTTP {exc.code}).",
+            exc.headers,
+            None,
         ) from exc
 
     except URLError as exc:
