@@ -4,11 +4,13 @@ import gzip
 import json
 import re
 import ssl
+from functools import cache
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from ..convert import cut_to_order
 from ..core import Hypergraph
+from ..exception import XGIError
 from ..utils import request_from_url
 
 __all__ = ["load_hypergraphx_data"]
@@ -19,6 +21,7 @@ _CATALOG_URL = "https://hgx-team.github.io/hypergraphx-data/static/js/related-da
 
 def load_hypergraphx_data(
     dataset=None,
+    cache=True,
     nodetype=None,
     edgetype=None,
     max_order=None,
@@ -30,6 +33,8 @@ def load_hypergraphx_data(
     dataset : str, optional
         Dataset name. If None (default), prints and returns the list of
         available datasets.
+    cache : bool, optional
+        Whether to cache the input data, by default True.
     nodetype : type, optional
         Type to cast the node ID to, by default None.
     edgetype : type, optional
@@ -58,12 +63,15 @@ def load_hypergraphx_data(
     if dataset not in index_data:
         print("Valid dataset names:")
         print(*index_data, sep="\n")
-        raise KeyError("Must choose a valid dataset name!")
+        raise XGIError(
+            f"Dataset '{dataset}' does not exist in hypergraphx-data."
+        )
 
     url = f"{_BASE_URL}/{dataset}/{dataset}.json.gz"
 
     return _request_from_hypergraphx_data(
         url,
+        cache=cache,
         nodetype=nodetype,
         edgetype=edgetype,
         max_order=max_order,
@@ -72,12 +80,13 @@ def load_hypergraphx_data(
 
 def _request_from_hypergraphx_data(
     url,
+    cache=True,
     nodetype=None,
     edgetype=None,
     max_order=None,
 ):
     """Request a data set from hypergraphx-data."""
-    rawdata = _download(url)
+    rawdata = _download_cached(url) if cache else _download(url)
 
     jsondata = json.loads(gzip.decompress(rawdata).decode("utf-8"))
 
@@ -91,6 +100,12 @@ def _request_from_hypergraphx_data(
         H = cut_to_order(H, order=max_order)
 
     return H
+
+
+@cache
+def _download_cached(url):
+    """Cached wrapper around :func:`_download`."""
+    return _download(url)
 
 
 def _load_hypergraph(jsondata, nodetype=None, edgetype=None):

@@ -46,7 +46,8 @@ def load_ahorn_data(
     XGIError
         If the specified dataset does not exist.
     """
-    index_data = list(request_from_url(_CATALOG_URL)["datasets"].keys())
+    catalog = request_from_url(_CATALOG_URL)["datasets"]
+    index_data = list(catalog)
 
     if dataset is None:
         print("Available datasets are the following:")
@@ -56,7 +57,7 @@ def load_ahorn_data(
     if dataset not in index_data:
         print("Valid dataset names:")
         print(*index_data, sep="\n")
-        raise KeyError("Must choose a valid dataset name!")
+        raise XGIError(f"Dataset '{dataset}' does not exist in AHORN.")
 
     return _request_from_ahorn_data(
         dataset,
@@ -64,6 +65,7 @@ def load_ahorn_data(
         edgetype=edgetype,
         max_order=max_order,
         cache=cache,
+        catalog=catalog,
     )
 
 
@@ -73,9 +75,10 @@ def _request_from_ahorn_data(
     edgetype=None,
     max_order=None,
     cache=True,
+    catalog=None,
 ):
     """Request a data set from AHORN."""
-    dataset_data = _get_dataset_data(dataset)
+    dataset_data = _get_dataset_data(dataset, catalog=catalog)
 
     format, url = _get_dataset_url(dataset_data)
 
@@ -105,17 +108,21 @@ def _request_from_ahorn_data(
     return H
 
 
-def _get_dataset_data(dataset):
-    """Get metadata for a dataset from the AHORN catalog."""
-    index_data = request_from_url(_CATALOG_URL)["datasets"]
+def _get_dataset_data(dataset, catalog=None):
+    """Get metadata for a dataset from the AHORN catalog.
+
+    If ``catalog`` is provided, use it directly; otherwise fetch it.
+    """
+    if catalog is None:
+        catalog = request_from_url(_CATALOG_URL)["datasets"]
 
     key = dataset.lower()
-    datasets = {name.lower(): name for name in index_data}
+    datasets = {name.lower(): name for name in catalog}
 
     if key not in datasets:
         raise XGIError(f"Dataset '{dataset}' does not exist in AHORN.")
 
-    return index_data[datasets[key]]
+    return catalog[datasets[key]]
 
 
 def _get_dataset_url(dataset_data, revision=None):
@@ -157,13 +164,19 @@ def _get_dataset_url(dataset_data, revision=None):
 
 
 def _from_ahorn_text(data, nodetype=None, edgetype=None):
-    """Parse a hypergraph from a requests.Response object.
+    """Parse a hypergraph from an AHORN plain-text payload.
 
     Parameters
     ----------
-    response : requests.Response
-        Response returned by requests.get() containing the hypergraph
-        in the expected text format.
+    data : str
+        The decoded AHORN text payload.
+    nodetype : type, optional
+        Type to cast node IDs to. Defaults to ``int``, matching the AHORN
+        text format's numeric-string convention.
+    edgetype : type, optional
+        Currently unused. Edges receive auto-assigned ids from the
+        ``Hypergraph`` and the text format does not carry explicit edge
+        ids to cast.
 
     Returns
     -------
@@ -183,6 +196,8 @@ def _from_ahorn_text(data, nodetype=None, edgetype=None):
     # Store metadata on the hypergraph
     H._net_attr.update(metadata)
 
+    _cast_node = nodetype if nodetype is not None else int
+
     for line in lines:
         # Split the node/edge specification from its metadata
         ids, metadata_str = line.split(maxsplit=1)
@@ -190,12 +205,11 @@ def _from_ahorn_text(data, nodetype=None, edgetype=None):
 
         # Node
         if "," not in ids:
-            node = int(ids)
-            H.add_node(node, **metadata)
+            H.add_node(_cast_node(ids), **metadata)
 
         # Hyperedge
         else:
-            edge = [int(node) for node in ids.split(",")]
+            edge = [_cast_node(node) for node in ids.split(",")]
             H.add_edge(edge, **metadata)
 
     return H

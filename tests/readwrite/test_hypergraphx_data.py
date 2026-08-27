@@ -6,11 +6,21 @@ from urllib.error import HTTPError, URLError
 import pytest
 
 from xgi import load_hypergraphx_data
+from xgi.exception import XGIError
 from xgi.readwrite.hypergraphx_data import (
     _download,
+    _download_cached,
     _load_hypergraph,
     _parse_remote_dataset_catalog,
 )
+
+
+@pytest.fixture(autouse=True)
+def _clear_download_cache():
+    """Reset the download cache between tests so patches take effect."""
+    _download_cached.cache_clear()
+    yield
+    _download_cached.cache_clear()
 
 
 @pytest.mark.parametrize(
@@ -174,11 +184,75 @@ def test_load_hypergraphx_data_invalid_dataset(capfd):
         "xgi.readwrite.hypergraphx_data.request_from_url",
         return_value=catalog_payload,
     ):
-        with pytest.raises(KeyError, match="valid dataset name"):
+        with pytest.raises(XGIError, match="does not exist in hypergraphx-data"):
             load_hypergraphx_data("nonexistent")
 
     out, _ = capfd.readouterr()
     assert "Valid dataset names:" in out
+
+
+def test_load_hypergraphx_data_cache_false_bypasses_cache():
+    """When ``cache=False`` the loader must call `_download` directly, not
+    the memoized wrapper."""
+    catalog_payload = b'[{"name": "dataset-a"}]'
+    hgx_payload = [
+        {"type": "node", "idx": 1},
+        {"type": "node", "idx": 2},
+        {"type": "edge", "interaction": [1, 2]},
+    ]
+    gzipped = gzip.compress(json.dumps(hgx_payload).encode("utf-8"))
+
+    def _fail_if_called(*args, **kwargs):
+        raise AssertionError("_download_cached should not run when cache=False")
+
+    with (
+        patch(
+            "xgi.readwrite.hypergraphx_data.request_from_url",
+            return_value=catalog_payload,
+        ),
+        patch(
+            "xgi.readwrite.hypergraphx_data._download",
+            return_value=gzipped,
+        ),
+        patch(
+            "xgi.readwrite.hypergraphx_data._download_cached",
+            side_effect=_fail_if_called,
+        ),
+    ):
+        H = load_hypergraphx_data("dataset-a", cache=False)
+
+    assert H.num_nodes == 2
+
+
+def test_load_hypergraphx_data_cache_true_reuses_result():
+    """When ``cache=True`` (the default) repeated calls hit `_download` once."""
+    catalog_payload = b'[{"name": "dataset-a"}]'
+    hgx_payload = [
+        {"type": "node", "idx": 1},
+        {"type": "edge", "interaction": [1]},
+    ]
+    gzipped = gzip.compress(json.dumps(hgx_payload).encode("utf-8"))
+
+    download_calls = []
+
+    def _record(url):
+        download_calls.append(url)
+        return gzipped
+
+    with (
+        patch(
+            "xgi.readwrite.hypergraphx_data.request_from_url",
+            return_value=catalog_payload,
+        ),
+        patch(
+            "xgi.readwrite.hypergraphx_data._download",
+            side_effect=_record,
+        ),
+    ):
+        load_hypergraphx_data("dataset-a")
+        load_hypergraphx_data("dataset-a")
+
+    assert len(download_calls) == 1
 
 
 def test_load_hypergraphx_data_dispatches_to_downloader():

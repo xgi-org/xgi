@@ -216,11 +216,54 @@ def test_load_ahorn_data_invalid_dataset(capfd):
         "xgi.readwrite.ahorn_data.request_from_url",
         return_value=catalog,
     ):
-        with pytest.raises(KeyError, match="valid dataset name"):
+        with pytest.raises(XGIError, match="does not exist in AHORN"):
             load_ahorn_data("not-a-real-dataset")
 
     out, _ = capfd.readouterr()
     assert "Valid dataset names:" in out
+
+
+def test_load_ahorn_data_fetches_catalog_once():
+    """`load_ahorn_data` should hit the AHORN catalog exactly once per call."""
+    hif_dict = {
+        "network-type": "undirected",
+        "incidences": [{"edge": 0, "node": 1}, {"edge": 0, "node": 2}],
+        "nodes": [{"node": 1}, {"node": 2}],
+        "edges": [{"edge": 0}],
+    }
+    catalog = _mock_catalog(
+        {
+            "example": {
+                "slug": "example",
+                "attachments": {
+                    "revision-1": {"hif": {"url": "https://ahorn/example.hif.gz"}}
+                },
+            }
+        }
+    )
+
+    call_count = 0
+
+    def _catalog_or_data(url, mode="json"):
+        nonlocal call_count
+        if url == "https://ahorn.rwth-aachen.de/api/datasets.json":
+            call_count += 1
+            return catalog
+        return _hif_payload(hif_dict)
+
+    with (
+        patch(
+            "xgi.readwrite.ahorn_data.request_from_url",
+            side_effect=_catalog_or_data,
+        ),
+        patch(
+            "xgi.readwrite.ahorn_data.request_from_url_cached",
+            return_value=_hif_payload(hif_dict),
+        ),
+    ):
+        load_ahorn_data("example")
+
+    assert call_count == 1
 
 
 def test_load_ahorn_data_hif_format():
@@ -414,3 +457,17 @@ def test_from_ahorn_text_skips_blank_lines():
     H = _from_ahorn_text(text)
 
     assert set(H.nodes) == {1, 2}
+
+
+def test_from_ahorn_text_respects_nodetype():
+    """When `nodetype` is passed, node IDs are cast to that type."""
+    text = (
+        '{}\n'
+        '1 {}\n'
+        '2 {}\n'
+        '1,2 {}\n'
+    )
+    H = _from_ahorn_text(text, nodetype=str)
+
+    assert set(H.nodes) == {"1", "2"}
+    assert H.edges.members(0) == {"1", "2"}
