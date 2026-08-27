@@ -424,7 +424,7 @@ def test_draw_multilayer(edgelist8):
     ax1, (node_coll, edge_coll) = xgi.draw_multilayer(H)
     sizes = xgi.unique_edge_sizes(H)
     num_layers = max(sizes) - min(sizes) + 1
-    num_node_collections = max(sizes) - min(sizes) + 1
+    num_node_collections = 1  # nodes of all layers are embedded in a single collection
     num_edge_collections = 1
     num_dyad_collections = 1
     num_interlayer_collections = 1
@@ -441,9 +441,7 @@ def test_draw_multilayer(edgelist8):
     # number of elements
     assert len(ax1.lines) == 0
     assert len(ax1.patches) == 0
-    offsets = node_coll.get_offsets()
-    assert offsets.shape[0] == H.num_nodes  # nodes
-    assert len(ax1.collections) == 11
+    assert len(ax1.collections) == 8
 
     # zorder
     assert node_coll.get_zorder() == 5  # nodes
@@ -458,8 +456,8 @@ def test_draw_multilayer(edgelist8):
     # node_lw
     assert np.all(node_coll.get_linewidth() == np.array([1]))
 
-    # node_size
-    assert np.all(node_coll.get_sizes() == np.array([5**2]))
+    # node_size: one circle per node, per layer
+    assert len(node_coll.get_paths()) == H.num_nodes * num_layers
 
     plt.close("all")
 
@@ -468,7 +466,7 @@ def test_draw_multilayer(edgelist8):
     ax2, (node_coll2, edge_coll2) = xgi.draw_multilayer(H, max_order=max_order)
     sizes = [2, 3]
     num_layers = max(sizes) - min(sizes) + 1
-    num_node_collections = max(sizes) - min(sizes) + 1
+    num_node_collections = 1
     num_edge_collections = 1
     num_dyad_collections = 1
     num_interlayer_collections = 1
@@ -482,15 +480,15 @@ def test_draw_multilayer(edgelist8):
         == len(ax2.collections)
     )
 
-    offsets = node_coll2.get_offsets()
-    assert offsets.shape[0] == H.num_nodes  # nodes
+    node_coll2.get_facecolor()  # force the 3D projection of the node patches
+    assert len(node_coll2.get_paths()) == H.num_nodes * num_layers  # nodes
     plt.close("all")
 
     # conn_lines parameter
     ax3, (node_coll3, edge_coll3) = xgi.draw_multilayer(H, conn_lines=False)
     sizes = xgi.unique_edge_sizes(H)
     num_layers = max(sizes) - min(sizes) + 1
-    num_node_collections = max(sizes) - min(sizes) + 1
+    num_node_collections = 1
     num_edge_collections = 1
     num_dyad_collections = 1
     num_interlayer_collections = 0
@@ -512,15 +510,15 @@ def test_draw_multilayer(edgelist8):
         pos=pos,
         node_fc="red",
         node_ec="blue",
-        node_size=10,
+        node_size=0.2,
         conn_lines_style="dashed",
         h_angle=30,
         v_angle=15,
         sep=2,
     )
     sizes = xgi.unique_edge_sizes(H)
-    nnum_layers = max(sizes) - min(sizes) + 1
-    num_node_collections = max(sizes) - min(sizes) + 1
+    num_layers = max(sizes) - min(sizes) + 1
+    num_node_collections = 1
     num_edge_collections = 1
     num_dyad_collections = 1
     num_interlayer_collections = 1
@@ -542,9 +540,6 @@ def test_draw_multilayer(edgelist8):
 
     # node_lw
     assert np.all(node_coll4.get_linewidth() == np.array([1]))
-
-    # node_size
-    assert np.all(node_coll4.get_sizes() == np.array([10**2]))
 
     plt.close("all")
 
