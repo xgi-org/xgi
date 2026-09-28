@@ -429,6 +429,9 @@ class Hypergraph:
 
         Examples
         --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph()
+
         Add nodes without attributes:
 
         >>> H.add_nodes_from([1, 2, 3])

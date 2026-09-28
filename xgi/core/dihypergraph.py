@@ -376,6 +376,9 @@ class DiHypergraph:
 
         Examples
         --------
+        >>> import xgi
+        >>> H = xgi.DiHypergraph()
+        
         Add nodes without attributes:
 
         >>> H.add_nodes_from([1, 2, 3])
