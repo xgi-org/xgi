@@ -1,4 +1,4 @@
-"""Draw hypergraphs and simplicial complexes with matplotlib."""
+"""Draw hypergraphs, directed hypergraphs, and simplicial complexes with matplotlib."""
 
 from inspect import signature
 from itertools import chain
@@ -87,8 +87,8 @@ def draw(
 
     Parameters
     ----------
-    H : Hypergraph or SimplicialComplex.
-        Hypergraph to draw
+    H : Hypergraph, DiHypergraph, or SimplicialComplex.
+        Network to draw
     pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the
         0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
