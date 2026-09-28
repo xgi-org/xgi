@@ -262,8 +262,9 @@ every id" follow one contract:
 | `H.degree(node=None)` (proxy) | `dict[node_id, int]` | int |
 | `H.size(edge=None)` (proxy) | `dict[edge_id, int]` | int |
 
-`members`, `dimembers`, `head`, and `tail` also accept `dtype=list` if you
-want a plain list of the values without ids (e.g. `for e in H.edges.members(dtype=list)`).
+All of `members`, `dimembers`, `head`, `tail`, `memberships`, and
+`dimemberships` also accept `dtype=list` if you want a plain list of the
+values without ids (e.g. `for e in H.edges.members(dtype=list)`).
 
 ### Random number generators
 

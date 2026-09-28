@@ -673,7 +673,7 @@ class NodeView(IDView):
         else:
             super().__init__(H, bunch)
 
-    def memberships(self, n=None):
+    def memberships(self, n=None, dtype=dict):
         """Get the edge ids of which a node is a member.
 
         Gets all the node memberships for all nodes in the view if n
@@ -683,23 +683,35 @@ class NodeView(IDView):
         ----------
         n : hashable, optional
             Node ID. By default, None.
+        dtype : {dict, list}, optional
+            Container type for the no-arg call. By default, dict, giving
+            ``{node_id: set_of_edges}``. Pass ``list`` for a plain list
+            of edge sets, without node ids.
 
         Returns
         -------
-        dict of sets if n is None, otherwise a set
-            Edge memberships.
+        dict (if dtype is dict, default)
+            Mapping from node id to the set of edge memberships.
+        list (if dtype is list)
+            List of edge sets, in view iteration order.
+        set (if n is not None)
+            Edge memberships of node n.
 
         Raises
         ------
         XGIError
-            If `n` is not hashable or if it is not in the hypergraph.
+            If `n` is not hashable or if it is not in the hypergraph, or
+            if `dtype` is not dict or list.
 
         """
-        return (
-            {key: self._id_dict[key].copy() for key in self}
-            if n is None
-            else self._id_dict[n].copy()
-        )
+        if n is None:
+            if dtype is dict:
+                return {key: self._id_dict[key].copy() for key in self}
+            elif dtype is list:
+                return [self._id_dict[key].copy() for key in self]
+            else:
+                raise XGIError(f"Unrecognized dtype {dtype}")
+        return self._id_dict[n].copy()
 
     def isolates(self, ignore_singletons=False):
         """Nodes that belong to no edges.
@@ -963,7 +975,7 @@ class DiNodeView(IDView):
         else:
             super().__init__(H, bunch)
 
-    def dimemberships(self, n=None):
+    def dimemberships(self, n=None, dtype=dict):
         """Get the edge ids of which a node is a member.
 
         Gets all the node memberships for all nodes in the view if n
@@ -973,58 +985,96 @@ class DiNodeView(IDView):
         ----------
         n : hashable, optional
             Node ID. By default, None.
+        dtype : {dict, list}, optional
+            Container type for the no-arg call. By default, dict, giving
+            ``{node_id: (in_edges, out_edges)}``. Pass ``list`` for a plain
+            list of ``(in_edges, out_edges)`` tuples, without node ids.
 
         Returns
         -------
-        dict of directed node memberships if n is None,
-            otherwise the directed memberships of a single node.
+        dict (if dtype is dict, default)
+            Mapping from node id to a ``(in_edges, out_edges)`` tuple of
+            edge sets.
+        list (if dtype is list)
+            List of ``(in_edges, out_edges)`` tuples, in view iteration
+            order.
+        tuple (if n is not None)
+            Directed memberships of node n as an ``(in_edges, out_edges)``
+            tuple of edge sets.
 
         Raises
         ------
         XGIError
-            If `n` is not hashable or if it is not in the hypergraph.
+            If `n` is not hashable or if it is not in the hypergraph, or
+            if `dtype` is not dict or list.
 
         """
-        return (
-            {
-                key: (self._id_dict[key]["in"].copy(), self._id_dict[key]["out"].copy())
-                for key in self
-            }
-            if n is None
-            else (self._id_dict[n]["in"].copy(), self._id_dict[n]["out"].copy())
-        )
+        if n is None:
+            if dtype is dict:
+                return {
+                    key: (
+                        self._id_dict[key]["in"].copy(),
+                        self._id_dict[key]["out"].copy(),
+                    )
+                    for key in self
+                }
+            elif dtype is list:
+                return [
+                    (self._id_dict[key]["in"].copy(), self._id_dict[key]["out"].copy())
+                    for key in self
+                ]
+            else:
+                raise XGIError(f"Unrecognized dtype {dtype}")
+        return (self._id_dict[n]["in"].copy(), self._id_dict[n]["out"].copy())
 
-    def memberships(self, n=None):
+    def memberships(self, n=None, dtype=dict):
         """Get the edge ids of which a node is a member.
 
         Gets all the node memberships for all nodes in the view if n
-        not specified.
+        not specified. For a directed hypergraph, this counts a node as a
+        member of any edge whose head or tail contains it. See
+        :meth:`DiNodeView.dimemberships` for the head/tail breakdown.
 
         Parameters
         ----------
         n : hashable, optional
             Node ID. By default, None.
+        dtype : {dict, list}, optional
+            Container type for the no-arg call. By default, dict, giving
+            ``{node_id: set_of_edges}``. Pass ``list`` for a plain list
+            of edge sets, without node ids.
 
         Returns
         -------
-        dict of sets if n is None, otherwise a set
-            Node memberships, regardless of whether
-            that node is a sender or receiver.
+        dict (if dtype is dict, default)
+            Mapping from node id to the set of edge memberships.
+        list (if dtype is list)
+            List of edge sets, in view iteration order.
+        set (if n is not None)
+            Node memberships, regardless of whether that node is a sender
+            or receiver.
 
         Raises
         ------
         XGIError
-            If `n` is not hashable or if it is not in the dihypergraph.
+            If `n` is not hashable or if it is not in the dihypergraph, or
+            if `dtype` is not dict or list.
 
         """
-        return (
-            {
-                key: set(self._id_dict[key]["in"].union(self._id_dict[key]["out"]))
-                for key in self
-            }
-            if n is None
-            else set(self._id_dict[n]["in"].union(self._id_dict[n]["out"]))
-        )
+        if n is None:
+            if dtype is dict:
+                return {
+                    key: set(self._id_dict[key]["in"].union(self._id_dict[key]["out"]))
+                    for key in self
+                }
+            elif dtype is list:
+                return [
+                    set(self._id_dict[key]["in"].union(self._id_dict[key]["out"]))
+                    for key in self
+                ]
+            else:
+                raise XGIError(f"Unrecognized dtype {dtype}")
+        return set(self._id_dict[n]["in"].union(self._id_dict[n]["out"]))
 
     def isolates(self):
         """Nodes that belong to no edges.

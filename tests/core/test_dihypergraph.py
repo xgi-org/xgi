@@ -110,6 +110,12 @@ def test_memberships(diedgelist1):
     with pytest.raises(IDNotFound):
         H.nodes.memberships(0)
 
+    # dtype kwarg mirrors members() (see #740)
+    assert H.nodes([1, 2, 6]).memberships(dtype=dict) == {1: {0}, 2: {0}, 6: {1}}
+    assert H.nodes([1, 2, 6]).memberships(dtype=list) == [{0}, {0}, {1}]
+    with pytest.raises(XGIError):
+        H.nodes.memberships(dtype=set)
+
 
 def test_dimemberships(diedgelist1):
     H = xgi.DiHypergraph(diedgelist1)
@@ -125,6 +131,20 @@ def test_dimemberships(diedgelist1):
     }
     with pytest.raises(IDNotFound):
         H.nodes.memberships(0)
+
+    # dtype kwarg mirrors dimembers() (see #740)
+    assert H.nodes([1, 2, 6]).dimemberships(dtype=dict) == {
+        1: (set(), {0}),
+        2: (set(), {0}),
+        6: ({1}, {1}),
+    }
+    assert H.nodes([1, 2, 6]).dimemberships(dtype=list) == [
+        (set(), {0}),
+        (set(), {0}),
+        ({1}, {1}),
+    ]
+    with pytest.raises(XGIError):
+        H.nodes.dimemberships(dtype=set)
 
 
 def test_add_edge_accepts_different_types():

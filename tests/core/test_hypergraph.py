@@ -183,6 +183,12 @@ def test_memberships(edgelist1):
     with pytest.raises(IDNotFound):
         H.nodes.memberships(0)
 
+    # dtype kwarg mirrors members() (see #740)
+    assert H.nodes([1, 2, 6]).memberships(dtype=dict) == {1: {0}, 2: {0}, 6: {2, 3}}
+    assert H.nodes([1, 2, 6]).memberships(dtype=list) == [{0}, {0}, {2, 3}]
+    with pytest.raises(XGIError):
+        H.nodes.memberships(dtype=set)
+
 
 def test_add_edge():
     for edge in [[1, 2, 3], {1, 2, 3}, iter([1, 2, 3])]:
