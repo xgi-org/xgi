@@ -274,6 +274,38 @@ def draw(
     draw_hyperedge_labels
 
     """
+    if isinstance(H, DiHypergraph):
+        ax, (node_collection, edge_marker_collection) = draw_bipartite(
+            H,
+            pos=None,
+            ax=None,
+            node_fc="white",
+            node_ec="black",
+            node_lw=1,
+            node_size=7,
+            node_shape="o",
+            node_fc_cmap="Reds",
+            edge_marker_fc=None,
+            edge_marker_ec="black",
+            edge_marker_lw=1,
+            edge_marker_size=7,
+            edge_marker_shape="s",
+            edge_marker_fc_cmap=crest_r(),
+            max_order=None,
+            dyad_color=None,
+            dyad_lw=1,
+            dyad_style="solid",
+            dyad_color_cmap=crest_r(),
+            node_labels=None,
+            hyperedge_labels=None,
+            arrowsize=10,
+            arrowstyle="->",
+            connectionstyle="arc3",
+            rescale_sizes=True,
+            aspect="equal",
+            **kwargs,
+        )
+        return ax, (node_collection, edge_marker_collection)
 
     settings = {
         "min_node_size": 5,
