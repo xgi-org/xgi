@@ -425,7 +425,7 @@ class DiHypergraph:
 
             # Initialize new node if it doesn't already exist
             if n not in self._node:
-                self._node[n] = set()
+                self._node[n] = {"in": set(), "out": set()}
                 self._node_attr[n] = self._node_attr_dict_factory()
 
             self._node_attr[n].update(newdict)
