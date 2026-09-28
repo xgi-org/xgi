@@ -177,7 +177,9 @@ class Hypergraph:
 
     def __repr__(self):
         cls = type(self).__name__
-        return f"{cls}({self.edges.members()})"
+        # Preserve the historical list-of-sets display for repr; see #764
+        # for whether to switch this to the dict shape in a future release.
+        return f"{cls}({self.edges.members(dtype=list)})"
 
     def __copy__(self):
         return self.copy()
@@ -266,8 +268,17 @@ class Hypergraph:
             val = stat(*args, **kwargs).asdict()
             return val if node is None else val[node]
 
-        func.__doc__ = f"""Equivalent to H.{word}.{attr}.asdict(). For accepted *args and
-        **kwargs, see documentation of H.{word}.{attr}."""
+        # Standardized return contract (see #740):
+        #   H.<stat>()  -> dict[id, T]
+        #   H.<stat>(x) -> T
+        # For parametric stats, pass parameters as keyword arguments (e.g.
+        # H.katz_centrality(cutoff=50)) because the first positional argument
+        # is captured as `node`.
+        func.__doc__ = f"""Equivalent to H.{word}.{attr}.asdict().
+
+        Standardized return shape: no-arg call returns dict[id, value]; with-id
+        call returns the value for that id. For accepted *args and **kwargs,
+        see documentation of H.{word}.{attr}."""
 
         return func
 
@@ -306,7 +317,7 @@ class Hypergraph:
         >>> H2 = xgi.Hypergraph([[1, 3, 4]])
         >>> H = H1 << H2
         >>> H.edges.members()
-        [{1, 2}, {2, 3}, {1, 3, 4}]
+        {0: {1, 2}, 1: {2, 3}, 2: {1, 3, 4}}
         """
         tempH = Hypergraph()
 
@@ -955,7 +966,7 @@ class Hypergraph:
         >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4]])
         >>> H.double_edge_swap(1, 4, 0, 1)
         >>> H.edges.members()
-        [{2, 3, 4}, {1, 3}]
+        {0: {2, 3, 4}, 1: {1, 3}}
 
         """
         # Assign edges to modify
@@ -1041,7 +1052,7 @@ class Hypergraph:
         >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5]])
         >>> H.random_edge_shuffle(seed=42)
         >>> H.edges.members()
-        [{2, 4, 5}, {3, 4}, {1, 3}]
+        {0: {2, 4, 5}, 1: {3, 4}, 2: {1, 3}}
 
         """
         rng = np.random.default_rng(seed)

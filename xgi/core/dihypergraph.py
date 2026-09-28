@@ -81,9 +81,9 @@ class DiHypergraph:
     DiNodeView((1, 2, 3, 4, 5, 6, 7, 8))
     >>> DH.edges
     DiEdgeView((0, 1))
-    >>> [[sorted(h), sorted(t)] for h, t in DH.edges.dimembers()]
+    >>> [[sorted(h), sorted(t)] for h, t in DH.edges.dimembers(dtype=list)]
     [[[1, 2, 3], [4]], [[5, 6], [6, 7, 8]]]
-    >>> [sorted(e) for e in DH.edges.members()]
+    >>> [sorted(e) for e in DH.edges.members(dtype=list)]
     [[1, 2, 3, 4], [5, 6, 7, 8]]
     """
 
@@ -178,7 +178,9 @@ class DiHypergraph:
 
     def __repr__(self):
         cls = type(self).__name__
-        return f"{cls}({self.edges.dimembers()})"
+        # Preserve the historical list-of-tuples display for repr; see #764
+        # for whether to switch this to the dict shape in a future release.
+        return f"{cls}({self.edges.dimembers(dtype=list)})"
 
     def __copy__(self):
         return self.copy()
@@ -265,8 +267,16 @@ class DiHypergraph:
             val = stat(*args, **kwargs).asdict()
             return val if node is None else val[node]
 
-        func.__doc__ = f"""Equivalent to DH.{word}.{attr}.asdict(). For accepted *args and
-        **kwargs, see documentation of DH.{word}.{attr}."""
+        # Standardized return contract (see #740):
+        #   DH.<stat>()  -> dict[id, T]
+        #   DH.<stat>(x) -> T
+        # For parametric stats, pass parameters as keyword arguments because
+        # the first positional argument is captured as `node`.
+        func.__doc__ = f"""Equivalent to DH.{word}.{attr}.asdict().
+
+        Standardized return shape: no-arg call returns dict[id, value]; with-id
+        call returns the value for that id. For accepted *args and **kwargs,
+        see documentation of DH.{word}.{attr}."""
 
         return func
 

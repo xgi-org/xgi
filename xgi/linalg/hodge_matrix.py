@@ -151,7 +151,7 @@ def boundary_matrix(S, order=1, orientations=None, index=False):
                     for i in range(order + 1)
                 ]
                 for count, subf in enumerate(u_simplex_subfaces):
-                    subface_ID = list(S.edges)[S.edges.members().index(frozenset(subf))]
+                    subface_ID = list(S.edges)[S.edges.members(dtype=list).index(frozenset(subf))]
                     B[simplices_d_dict[subface_ID], matrix_id] = (-1) ** (
                         subfaces_induced_orientation[count] + orientations[subface_ID]
                     )

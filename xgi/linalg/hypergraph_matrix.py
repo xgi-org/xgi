@@ -346,7 +346,7 @@ def adjacency_tensor(H, order, normalized=True, index=False):
         return (B, {}) if index else B
 
     # find nodes participating in each hyperedge
-    hyperedges = H.edges.filterby("order", order).members()
+    hyperedges = H.edges.filterby("order", order).members(dtype=list)
 
     nodedict = {v: k for (k, v) in rowdict.items()}
     N = H.num_nodes

@@ -33,8 +33,8 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     S_h = xgi.SimplicialComplex(H)
 
     assert set(S_h.nodes) == set(H.nodes) == set(S_list.nodes)
-    assert S_h.edges.members() == S_list.edges.members()
-    assert H.edges.members() <= S_h.edges.members()  # check it's a subset
+    assert S_h.edges.members(dtype=list) == S_list.edges.members(dtype=list)
+    assert H.edges.members(dtype=list) <= S_h.edges.members(dtype=list)  # check it's a subset
 
 
 def test_string():
@@ -57,10 +57,10 @@ def test_add_simplex():
 
     assert S.num_nodes == 3
     assert list(S.edges) == list(range(4))
-    assert set(S.edges.members()) == set(edges)
+    assert set(S.edges.members(dtype=list)) == set(edges)
 
     S.add_simplex([2, 1])
-    assert set(S.edges.members()) == set(edges)
+    assert set(S.edges.members(dtype=list)) == set(edges)
 
     # check uid
     S2 = xgi.SimplicialComplex()
@@ -95,7 +95,7 @@ def test_add_simplices_from_iterable_of_members():
     ]
     S = xgi.SimplicialComplex()
     S.add_simplices_from(edges)
-    assert set(S.edges.members()) == set(simplices1)
+    assert set(S.edges.members(dtype=list)) == set(simplices1)
 
     S1 = xgi.SimplicialComplex(edges)
     with pytest.raises(XGIError):
@@ -105,12 +105,12 @@ def test_add_simplices_from_iterable_of_members():
 
     S = xgi.SimplicialComplex()
     S.add_simplices_from(edges)
-    assert set(S.edges.members()) == set(simplices1)
+    assert set(S.edges.members(dtype=list)) == set(simplices1)
 
     edges = [[0, 1], {1, 2}, (1, 2, 4)]
     S = xgi.SimplicialComplex()
     S.add_simplices_from(edges)
-    assert set(S.edges.members()) == set(simplices1)
+    assert set(S.edges.members(dtype=list)) == set(simplices1)
 
     edges = [{"foo", "bar"}, {"bar", "baz"}, {"foo", "bar", "baz"}]
     simplices3 = [
@@ -122,7 +122,7 @@ def test_add_simplices_from_iterable_of_members():
     S = xgi.SimplicialComplex()
     S.add_simplices_from(edges)
     assert set(S.nodes) == {"foo", "bar", "baz"}
-    assert S.edges.members() == simplices3
+    assert S.edges.members(dtype=list) == simplices3
 
     edges = [{"a", "b"}, {"b", "c"}, {"c", "d", "e"}]
     simplices4 = [
@@ -137,7 +137,7 @@ def test_add_simplices_from_iterable_of_members():
     S = xgi.SimplicialComplex()
     S.add_simplices_from(edges)
     assert set(S.nodes) == {"a", "b", "c", "d", "e"}
-    assert set(S.edges.members()) == set(simplices4)
+    assert set(S.edges.members(dtype=list)) == set(simplices4)
 
 
 def test_add_simplices_from_format2():
@@ -179,7 +179,7 @@ def test_add_simplices_from_format2():
     H = xgi.SimplicialComplex()
     H.add_simplices_from(edges)
     assert list(H.edges) == ["a", "b", 100, 101, 102, 103]
-    assert set(H.edges.members()) == set(simplices)
+    assert set(H.edges.members(dtype=list)) == set(simplices)
 
     # check counter
     H.add_simplex([1, 9, 2])
@@ -197,7 +197,7 @@ def test_add_simplices_from_format2():
         frozenset({2, 4}),
         frozenset({3, 4}),
     ]
-    assert set(H1.edges.members()) == set(simplices)
+    assert set(H1.edges.members(dtype=list)) == set(simplices)
 
 
 def test_add_simplices_from_format3():
@@ -302,8 +302,8 @@ def test_add_simplices_from(edgelist5):
 
     s1o1, s1o2 = S1.edges.filterby("order", 1), S1.edges.filterby("order", 2)
     s2o1, s2o2 = S2.edges.filterby("order", 1), S2.edges.filterby("order", 2)
-    assert set(s1o1.members()) == set(s2o1.members())
-    assert set(s1o2.members()) == set(s2o2.members())
+    assert set(s1o1.members(dtype=list)) == set(s2o1.members(dtype=list))
+    assert set(s1o2.members(dtype=list)) == set(s2o2.members(dtype=list))
 
     S3 = xgi.SimplicialComplex()
     simplex = ((1, 2, 3), {"color": "red"})
@@ -316,7 +316,7 @@ def test_add_simplices_from(edgelist5):
         frozenset({1, 3}),
     ]
 
-    assert set(S3.edges.members()) == set(simplices)
+    assert set(S3.edges.members(dtype=list)) == set(simplices)
 
     assert S3.edges[0] == {"color": "red"}
     assert S3.edges[1] == {}
@@ -392,7 +392,7 @@ def test_copy(edgelist1):
     copy = H.copy()
     assert list(copy.nodes) == list(H.nodes)
     assert list(copy.edges) == list(H.edges)
-    assert list(copy.edges.members()) == list(H.edges.members())
+    assert list(copy.edges.members(dtype=list)) == list(H.edges.members(dtype=list))
     assert H._net_attr == copy._net_attr
 
     H.add_node(10)
@@ -410,7 +410,7 @@ def test_copy(edgelist1):
     copy["key2"] = "value2"
     assert list(copy.nodes) == list(H.nodes)
     assert list(copy.edges) == list(H.edges)
-    assert list(copy.edges.members()) == list(H.edges.members())
+    assert list(copy.edges.members(dtype=list)) == list(H.edges.members(dtype=list))
     assert H._net_attr == copy._net_attr
 
     H1 = xgi.SimplicialComplex()
@@ -418,7 +418,7 @@ def test_copy(edgelist1):
     copy2 = H1.copy()  # does not throw error because of str id
     assert list(copy2.nodes) == list(H1.nodes)
     assert list(copy2.edges) == list(H1.edges)
-    assert list(copy2.edges.members()) == list(H1.edges.members())
+    assert list(copy2.edges.members(dtype=list)) == list(H1.edges.members(dtype=list))
     assert H1._net_attr == copy2._net_attr
 
 
@@ -463,7 +463,7 @@ def test_remove_simplex_id(edgelist6):
         frozenset({0, 2}),
         frozenset({1, 3}),
     ]
-    assert set(S.edges.members()) == set(edges)
+    assert set(S.edges.members(dtype=list)) == set(edges)
 
 
 def test_remove_simplex_ids_from(edgelist6, edgelist4):
@@ -482,7 +482,7 @@ def test_remove_simplex_ids_from(edgelist6, edgelist4):
         frozenset({0, 2}),
         frozenset({1, 3}),
     ]
-    assert set(S.edges.members()) == set(edges)
+    assert set(S.edges.members(dtype=list)) == set(edges)
 
     # test issue 580
     S1 = xgi.SimplicialComplex(edgelist4)
@@ -532,7 +532,7 @@ def test_cleanup():
     cleanSC = SC.cleanup(connected=False, relabel=False, in_place=False)
     assert set(cleanSC.nodes) == {"a", "b", "c", "e", "f"}
     assert set(cleanSC.edges) == {0, 1, 2, 3, 4}
-    simplices = cleanSC.edges.members()
+    simplices = cleanSC.edges.members(dtype=list)
     assert frozenset({"a", "b", "c"}) in simplices
     assert frozenset({"e", "f"}) in simplices
     assert frozenset({"a", "b"}) in simplices
@@ -548,7 +548,7 @@ def test_cleanup():
     cleanSC = SC.cleanup(isolates=True, connected=False, in_place=False)
     assert set(cleanSC.nodes) == {0, 1, 2, 3, 4, 5, 6}
     assert cleanSC.num_edges == 5
-    simplices = cleanSC.edges.members()
+    simplices = cleanSC.edges.members(dtype=list)
     assert frozenset({0, 1, 2}) in simplices
     assert frozenset({3, 4}) in simplices
     assert frozenset({0, 1}) in simplices
@@ -562,7 +562,7 @@ def test_cleanup():
     cleanSC.cleanup(connected=False, relabel=False)
     assert set(cleanSC.nodes) == {"a", "b", "c", "e", "f"}
     assert set(cleanSC.edges) == {0, 1, 2, 3, 4}
-    simplices = cleanSC.edges.members()
+    simplices = cleanSC.edges.members(dtype=list)
     assert frozenset({"a", "b", "c"}) in simplices
     assert frozenset({"e", "f"}) in simplices
     assert frozenset({"a", "b"}) in simplices
@@ -582,7 +582,7 @@ def test_cleanup():
     assert cleanSC["name"] == "test"
     assert set(cleanSC.nodes) == {0, 1, 2, 3, 4}
     assert cleanSC.num_edges == 5
-    simplices = cleanSC.edges.members()
+    simplices = cleanSC.edges.members(dtype=list)
     assert frozenset({0, 1, 2}) in simplices
     assert frozenset({3, 4}) in simplices
     assert frozenset({0, 1}) in simplices

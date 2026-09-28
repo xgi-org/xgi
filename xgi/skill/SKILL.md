@@ -244,17 +244,27 @@ stats. So `H.filterby(...)`, `H.neighbors(...)`, `H.memberships(...)`,
 `H.isolates(...)` etc. will not work. Always go through the view:
 `H.nodes.filterby(...)`, `H.nodes.neighbors(...)`, etc.
 
-### Output container types differ across view methods
+### Standardized view-method return shapes
+
+As of v1.0, view methods that "get the thing for one id, or the thing for
+every id" follow one contract:
+
+- No-arg call returns `dict[id, T]`, keyed by id.
+- Call with an id returns `T` directly.
 
 | API | No-arg returns | With-id returns |
 |---|---|---|
-| `H.edges.members(e=None)` | **list** | set |
-| `H.edges.members(e=None, dtype=dict)` | dict | dict |
-| `H.nodes.memberships(n=None)` | dict | set |
+| `H.edges.members(e=None)` | `dict[edge_id, set]` | set |
+| `H.nodes.memberships(n=None)` | `dict[node_id, set]` | set |
+| `H.edges.dimembers(e=None)` (DiHypergraph) | `dict[edge_id, (set, set)]` | `(set, set)` |
+| `H.edges.head(e=None)` / `.tail(e=None)` (DiHypergraph) | `dict[edge_id, set]` | set |
 | `H.nodes.neighbors(id)` | n/a (id required) | set |
+| `H.degree(node=None)` (proxy) | `dict[node_id, int]` | int |
+| `H.size(edge=None)` (proxy) | `dict[edge_id, int]` | int |
 
-Note `members()` defaults to a list, `memberships()` defaults to a dict.
-If you want a uniform dict from members, pass `dtype=dict`.
+All of `members`, `dimembers`, `head`, `tail`, `memberships`, and
+`dimemberships` also accept `dtype=list` if you want a plain list of the
+values without ids (e.g. `for e in H.edges.members(dtype=list)`).
 
 ### Random number generators
 
