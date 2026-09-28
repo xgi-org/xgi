@@ -43,9 +43,9 @@ def test_complete_hypergraph():
 
     assert H3._edge == H03._edge
 
-    assert H1.edges.members() == [{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}]
-    assert H2.edges.members() == [{0, 1, 2}, {0, 1, 3}, {0, 2, 3}, {1, 2, 3}]
-    assert H3.edges.members() == [{0, 1, 2, 3}]
+    assert H1.edges.members(dtype=list) == [{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}]
+    assert H2.edges.members(dtype=list) == [{0, 1, 2}, {0, 1, 3}, {0, 2, 3}, {1, 2, 3}]
+    assert H3.edges.members(dtype=list) == [{0, 1, 2, 3}]
 
     assert xgi.unique_edge_sizes(H1) == [2]
     assert xgi.unique_edge_sizes(H2) == [3]

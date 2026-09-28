@@ -656,7 +656,7 @@ class SimplicialComplex(Hypergraph):
         cannot add empty simplices; the method skips over them.
 
         """
-        ebunch_to_close = list(map(list, self.edges.members()))
+        ebunch_to_close = list(map(list, self.edges.members(dtype=list)))
         for simplex in ebunch_to_close:
             if isinstance(simplex[-1], dict):
                 dd = simplex[-1]

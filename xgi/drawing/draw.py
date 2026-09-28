@@ -772,7 +772,7 @@ def draw_hyperedges(
         )
 
     # convert dyad pos to format convenient for scatter
-    dyad_pos = np.asarray([(pos[list(e)[0]], pos[list(e)[1]]) for e in dyads.members()])
+    dyad_pos = np.asarray([(pos[list(e)[0]], pos[list(e)[1]]) for e in dyads.members(dtype=list)])
 
     # plot dyads
     if dyad_c_to_map:
@@ -823,7 +823,7 @@ def draw_hyperedges(
         edge_ec = sm_edgecolors.to_rgba(edge_ec)  # map to colors
 
     patches = []
-    for he in np.array(edges.members())[ids_sorted]:
+    for he in np.array(edges.members(dtype=list))[ids_sorted]:
         d = len(he) - 1
         he = list(he)
         coordinates = [[pos[n][0], pos[n][1]] for n in he]
@@ -991,14 +991,14 @@ def draw_simplices(
     """
 
     if max_order:
-        max_edges = SC.edges.filterby("order", max_order, "leq").members()
+        max_edges = SC.edges.filterby("order", max_order, "leq").members(dtype=list)
         SC = SimplicialComplex(max_edges)  # SC without simplices larger than max_order
 
     # Plot only the maximal simplices, thus let's convert the SC to H
     H_ = convert.from_max_simplices(SC)
 
     # add the projected pairwise interactions
-    dyads = subfaces(H_.edges.members(), order=1)
+    dyads = subfaces(H_.edges.members(dtype=list), order=1)
     H_.add_edges_from(dyads)
     H_.cleanup(
         multiedges=False,
@@ -1544,7 +1544,7 @@ def draw_multilayer(
     # convert dyad pos to format convenient for scatter
     dyad_pos = [
         (np.append(pos[list(e)[0]], sep), np.append(pos[list(e)[1]], sep))
-        for e in dyads.members()
+        for e in dyads.members(dtype=list)
     ]
 
     # plot dyads
@@ -1577,7 +1577,7 @@ def draw_multilayer(
 
     patches = []
     zs = []
-    for he in np.array(edges.members())[ids_sorted]:
+    for he in np.array(edges.members(dtype=list))[ids_sorted]:
         d = len(he) - 1
         zs.append(d * sep)
         he = list(he)

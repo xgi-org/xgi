@@ -133,7 +133,7 @@ def test_add_edge_accepts_different_types():
         H.add_edge(edge)
         assert (1 in H) and (2 in H) and (3 in H) and (4 in H)
         assert 0 in H.edges
-        assert {1, 2, 3, 4} in H.edges.members()
+        assert {1, 2, 3, 4} in H.edges.members(dtype=list)
         assert {1, 2, 3, 4} == H.edges.members(0)
         assert H.edges.members(dtype=dict) == {0: {1, 2, 3, 4}}
         assert H.edges.tail(dtype=dict) == {0: {1, 2, 3}}
@@ -247,9 +247,9 @@ def test_add_edge_with_id():
     H.add_edge(([1, 2, 3], [3, 4]), idx="myedge")
     assert (1 in H) and (2 in H) and (3 in H) and (4 in H)
     assert "myedge" in H.edges
-    assert {1, 2, 3, 4} in H.edges.members()
+    assert {1, 2, 3, 4} in H.edges.members(dtype=list)
     assert {1, 2, 3, 4} == H.edges.members("myedge")
-    assert ({1, 2, 3}, {3, 4}) in H.edges.dimembers()
+    assert ({1, 2, 3}, {3, 4}) in H.edges.dimembers(dtype=list)
     assert ({1, 2, 3}, {3, 4}) == H.edges.dimembers("myedge")
     assert H.edges.members(dtype=dict) == {"myedge": {1, 2, 3, 4}}
 
@@ -259,9 +259,9 @@ def test_add_edge_with_attr():
     H.add_edge(([1, 2, 3], [1, 4]), color="red", place="peru")
     assert (1 in H) and (2 in H) and (3 in H) and (4 in H)
     assert 0 in H.edges
-    assert {1, 2, 3, 4} in H.edges.members()
+    assert {1, 2, 3, 4} in H.edges.members(dtype=list)
     assert {1, 2, 3, 4} == H.edges.members(0)
-    assert ({1, 2, 3}, {1, 4}) in H.edges.dimembers()
+    assert ({1, 2, 3}, {1, 4}) in H.edges.dimembers(dtype=list)
     assert ({1, 2, 3}, {1, 4}) == H.edges.dimembers(0)
     assert H.edges.members(dtype=dict) == {0: {1, 2, 3, 4}}
     assert H.edges[0] == {"color": "red", "place": "peru"}
@@ -271,7 +271,7 @@ def test_add_edges_from_iterable_of_members():
     edges = [({0, 1}, {2}), ({1, 2}, {4}), ({2, 3, 4}, {1})]
     H = xgi.DiHypergraph()
     H.add_edges_from(edges)
-    assert H.edges.dimembers() == edges
+    assert H.edges.dimembers(dtype=list) == edges
 
     H1 = xgi.DiHypergraph(edges)
     with pytest.raises(XGIError):
@@ -284,12 +284,12 @@ def test_add_edges_from_iterable_of_members():
     }
     H = xgi.DiHypergraph()
     H.add_edges_from(edges)
-    assert H.edges.dimembers() == [(set(e[0]), set(e[1])) for e in edges]
+    assert H.edges.dimembers(dtype=list) == [(set(e[0]), set(e[1])) for e in edges]
 
     edges = [([0, 1], {2}), [{1, 2}, [4]], ((2, 3, 4), [1])]
     H = xgi.DiHypergraph()
     H.add_edges_from(edges)
-    assert H.edges.dimembers() == [(set(e[0]), set(e[1])) for e in edges]
+    assert H.edges.dimembers(dtype=list) == [(set(e[0]), set(e[1])) for e in edges]
 
 
 def test_add_edges_from_format2():
@@ -330,7 +330,7 @@ def test_add_edges_from_format3():
     H = xgi.DiHypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == list(range(len(edges)))
-    assert H.edges.dimembers() == [(e[0][0], e[0][1]) for e in edges]
+    assert H.edges.dimembers(dtype=list) == [(e[0][0], e[0][1]) for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][1]
     # check counter
@@ -347,7 +347,7 @@ def test_add_edges_from_format4():
     H = xgi.DiHypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
-    assert H.edges.dimembers() == [(e[0][0], e[0][1]) for e in edges]
+    assert H.edges.dimembers(dtype=list) == [(e[0][0], e[0][1]) for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][2]
     # check counter
@@ -364,7 +364,7 @@ def test_add_edges_from_dict(diedgedict1):
     H = xgi.DiHypergraph()
     H.add_edges_from(diedgedict1)
     assert list(H.edges) == [0, 1]
-    assert H.edges.members() == [{1, 2, 3, 4}, {5, 6, 7, 8}]
+    assert H.edges.members(dtype=list) == [{1, 2, 3, 4}, {5, 6, 7, 8}]
     # check counter
     H.add_edge(([1, 9, 2], [10]))
     assert H.edges.members(2) == {1, 2, 9, 10}
@@ -430,7 +430,7 @@ def test_copy_dunder(diedgelist1):
     H = xgi.DiHypergraph(diedgelist1)
     H["key"] = "value"
     c = copy(H)
-    assert list(c.edges.members()) == list(H.edges.members())
+    assert list(c.edges.members(dtype=list)) == list(H.edges.members(dtype=list))
     assert c._net_attr == H._net_attr
     H.add_node(99)
     assert 99 not in c.nodes
@@ -440,7 +440,7 @@ def test_deepcopy_dunder(diedgelist1):
     H = xgi.DiHypergraph(diedgelist1)
     H["key"] = "value"
     c = deepcopy(H)
-    assert list(c.edges.members()) == list(H.edges.members())
+    assert list(c.edges.members(dtype=list)) == list(H.edges.members(dtype=list))
     assert c._net_attr == H._net_attr
     H.add_node(99)
     assert 99 not in c.nodes
@@ -452,7 +452,7 @@ def test_copy(diedgelist1):
     copy = H.copy()
     assert list(copy.nodes) == list(H.nodes)
     assert list(copy.edges) == list(H.edges)
-    assert list(copy.edges.members()) == list(H.edges.members())
+    assert list(copy.edges.members(dtype=list)) == list(H.edges.members(dtype=list))
     assert H._net_attr == copy._net_attr
 
     H.add_node(10)
@@ -470,7 +470,7 @@ def test_copy(diedgelist1):
     copy["key2"] = "value2"
     assert list(copy.nodes) == list(H.nodes)
     assert list(copy.edges) == list(H.edges)
-    assert list(copy.edges.members()) == list(H.edges.members())
+    assert list(copy.edges.members(dtype=list)) == list(H.edges.members(dtype=list))
     assert H._net_attr == copy._net_attr
 
     H1 = xgi.DiHypergraph()
@@ -478,7 +478,7 @@ def test_copy(diedgelist1):
     copy2 = H1.copy()  # does not throw error because of str id
     assert list(copy2.nodes) == list(H1.nodes)
     assert list(copy2.edges) == list(H1.edges)
-    assert list(copy2.edges.members()) == list(H1.edges.members())
+    assert list(copy2.edges.members(dtype=list)) == list(H1.edges.members(dtype=list))
     assert H1._net_attr == copy2._net_attr
 
 

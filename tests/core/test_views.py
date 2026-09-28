@@ -206,8 +206,11 @@ def test_edge_members(edgelist3, diedgelist2):
     # undirected
     H = xgi.Hypergraph(edgelist3)
     assert H.edges.members(0) == {1, 2, 3}
-    assert H.edges.members() == [{1, 2, 3}, {3, 4}, {4, 5, 6}]
+    # no-arg default is now dict[edge_id, set] (see #740)
+    assert H.edges.members() == {0: {1, 2, 3}, 1: {3, 4}, 2: {4, 5, 6}}
     assert H.edges.members(dtype=dict) == {0: {1, 2, 3}, 1: {3, 4}, 2: {4, 5, 6}}
+    # dtype=list remains available as an escape hatch
+    assert H.edges.members(dtype=list) == [{1, 2, 3}, {3, 4}, {4, 5, 6}]
     with pytest.raises(XGIError):
         H.edges.members(dtype=np.array)
 
@@ -220,8 +223,9 @@ def test_edge_members(edgelist3, diedgelist2):
     # directed
     H = xgi.DiHypergraph(diedgelist2)
     assert H.edges.members(0) == {0, 1, 2}
-    assert H.edges.members() == [{0, 1, 2}, {1, 2, 4}, {2, 3, 4, 5}]
+    assert H.edges.members() == {0: {0, 1, 2}, 1: {1, 2, 4}, 2: {2, 3, 4, 5}}
     assert H.edges.members(dtype=dict) == {0: {0, 1, 2}, 1: {1, 2, 4}, 2: {2, 3, 4, 5}}
+    assert H.edges.members(dtype=list) == [{0, 1, 2}, {1, 2, 4}, {2, 3, 4, 5}]
     with pytest.raises(XGIError):
         H.edges.members(dtype=np.array)
 
@@ -238,11 +242,17 @@ def test_members_read_only(edgelist3):
     H.edges.members(0).add("a")
     assert "a" not in H.edges.members(0)
 
+    # default (dict) is still a copy
     e = H.edges.members()
     e[0].add("a")
     assert "a" not in H.edges.members(0)
 
     e = H.edges.members(dtype=dict)
+    e[0].add("a")
+    assert "a" not in H.edges.members(0)
+
+    # dtype=list also returns copies
+    e = H.edges.members(dtype=list)
     e[0].add("a")
     assert "a" not in H.edges.members(0)
 
@@ -425,8 +435,8 @@ def test_maximal(edgelist5, edgelist8):
     m1 = S1.edges.maximal()
     m2 = S2.edges.maximal()
 
-    simp1 = S1.edges(m1).members()
-    simp2 = S2.edges(m2).members()
+    simp1 = S1.edges(m1).members(dtype=list)
+    simp2 = S2.edges(m2).members(dtype=list)
 
     assert len(m1) == 4
     assert {0, 1, 2, 3} in simp1
@@ -496,12 +506,22 @@ def test_view_custom_filterby_attr(hyperwithattrs, dihyperwithattrs):
 def test_edge_dimembers(diedgelist2):
     H = xgi.DiHypergraph(diedgelist2)
     assert H.edges.dimembers(0) == ({0, 1}, {2})
-    assert H.edges.dimembers() == [({0, 1}, {2}), ({1, 2}, {4}), ({2, 3, 4}, {4, 5})]
+    # no-arg default is now dict[edge_id, tuple(set, set)] (see #740)
+    assert H.edges.dimembers() == {
+        0: ({0, 1}, {2}),
+        1: ({1, 2}, {4}),
+        2: ({2, 3, 4}, {4, 5}),
+    }
     assert H.edges.dimembers(dtype=dict) == {
         0: ({0, 1}, {2}),
         1: ({1, 2}, {4}),
         2: ({2, 3, 4}, {4, 5}),
     }
+    assert H.edges.dimembers(dtype=list) == [
+        ({0, 1}, {2}),
+        ({1, 2}, {4}),
+        ({2, 3, 4}, {4, 5}),
+    ]
     with pytest.raises(XGIError):
         H.edges.dimembers(dtype=np.array)
 
@@ -516,8 +536,10 @@ def test_edge_tail(diedgelist2):
     H = xgi.DiHypergraph(diedgelist2)
 
     assert H.edges.tail(0) == {0, 1}
-    assert H.edges.tail() == [{0, 1}, {1, 2}, {2, 3, 4}]
+    # no-arg default is now dict[edge_id, set] (see #740)
+    assert H.edges.tail() == {0: {0, 1}, 1: {1, 2}, 2: {2, 3, 4}}
     assert H.edges.tail(dtype=dict) == {0: {0, 1}, 1: {1, 2}, 2: {2, 3, 4}}
+    assert H.edges.tail(dtype=list) == [{0, 1}, {1, 2}, {2, 3, 4}]
 
     with pytest.raises(XGIError):
         H.edges.tail(dtype=np.array)
@@ -533,8 +555,10 @@ def test_edge_head(diedgelist2):
     H = xgi.DiHypergraph(diedgelist2)
 
     assert H.edges.head(0) == {2}
-    assert H.edges.head() == [{2}, {4}, {4, 5}]
+    # no-arg default is now dict[edge_id, set] (see #740)
+    assert H.edges.head() == {0: {2}, 1: {4}, 2: {4, 5}}
     assert H.edges.head(dtype=dict) == {0: {2}, 1: {4}, 2: {4, 5}}
+    assert H.edges.head(dtype=list) == [{2}, {4}, {4, 5}]
     with pytest.raises(XGIError):
         H.edges.head(dtype=np.array)
 

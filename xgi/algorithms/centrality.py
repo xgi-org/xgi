@@ -199,7 +199,7 @@ def line_vector_centrality(H):
 
     edge_label_dict = {tuple(edge): index for index, edge in H._edge.items()}
 
-    hyperedge_dims = {tuple(edge): len(edge) for edge in H.edges.members()}
+    hyperedge_dims = {tuple(edge): len(edge) for edge in H.edges.members(dtype=list)}
 
     D = H.edges.size.max()
 
@@ -584,7 +584,7 @@ def apply(H, x, g=lambda v, e: np.sum(v[list(e)])):
         vector post application
     """
     new_x = np.zeros(H.num_nodes)
-    for edge in H.edges.members():
+    for edge in H.edges.members(dtype=list):
         edge = list(edge)
         # ordered permutations
         for shift in range(len(edge)):
