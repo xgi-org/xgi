@@ -356,33 +356,78 @@ class DiHypergraph:
 
         Parameters
         ----------
-        nodes_for_adding : iterable
-            An iterable of nodes (list, dict, set, etc.).
+        nodes_for_adding : iterable or dict
+            An iterable of nodes (list, set, etc.).
             OR
             An iterable of (node, attribute dict) tuples.
+            OR
+            A dict mapping node IDs to attribute dictionaries.
+
             Node attributes are updated using the attribute dict.
-        attr : keyword arguments, optional (default= no attributes)
+        attr : keyword arguments, optional (default=no attributes)
             Update attributes for all nodes in nodes.
-            Node attributes specified in nodes as a tuple take
-            precedence over attributes specified via keyword arguments.
+            Node attributes specified for individual nodes take precedence
+            over attributes specified via keyword arguments.
 
         See Also
         --------
         add_node
+        set_node_attributes
 
+        Examples
+        --------
+        Add nodes without attributes:
+
+        >>> H.add_nodes_from([1, 2, 3])
+
+        Add nodes with attributes shared by all nodes:
+
+        >>> H.add_nodes_from([1, 2, 3], color="red", weight=1)
+
+        Add nodes with individual attributes using (node, attribute dict)
+        tuples:
+
+        >>> H.add_nodes_from([
+        ...     (1, {"color": "red"}),
+        ...     (2, {"color": "blue"}),
+        ...     (3, {"color": "green"}),
+        ... ])
+
+        Add nodes using a dict mapping node IDs to attribute dictionaries:
+
+        >>> H.add_nodes_from({
+        ...     1: {"color": "red", "weight": 2},
+        ...     2: {"color": "blue", "weight": 5},
+        ...     3: {"color": "green"},
+        ... })
+
+        Global attributes can also be combined with individual node
+        attributes. Individual node attributes take precedence:
+
+        >>> H.add_nodes_from(
+        ...     {
+        ...         1: {"color": "red"},
+        ...         2: {"color": "blue"},
+        ...     },
+        ...     weight=1,
+        ... )
         """
+        if isinstance(nodes_for_adding, dict):
+            nodes_for_adding = nodes_for_adding.items()
+
         for n in nodes_for_adding:
-            try:
-                newnode = n not in self._node
-                newdict = attr
-            except TypeError:
+            if isinstance(n, tuple) and len(n) == 2 and isinstance(n[1], dict):
                 n, ndict = n
-                newnode = n not in self._node
                 newdict = attr.copy()
                 newdict.update(ndict)
-            if newnode:
-                self._node[n] = {"in": set(), "out": set()}
+            else:
+                newdict = attr
+
+            # Initialize new node if it doesn't already exist
+            if n not in self._node:
+                self._node[n] = set()
                 self._node_attr[n] = self._node_attr_dict_factory()
+
             self._node_attr[n].update(newdict)
 
     def remove_node(self, n, strong=False, remove_empty=True):

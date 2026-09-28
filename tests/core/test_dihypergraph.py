@@ -81,6 +81,11 @@ def test_add_nodes_from(attr1, attr2, attr3):
     assert H.nodes[1]["color"] == attr2["color"]
     assert H.nodes[2]["color"] == attr3["color"]
 
+    H = xgi.DiHypergraph()
+    H.add_nodes_from({0: {"color": "black"}}, weight=1, color="grey")
+    assert H.nodes[0]["color"] == "black"
+    assert H.nodes[0]["weight"] == 1
+
 
 def test_add_node_attr(diedgelist1):
     H = xgi.DiHypergraph(diedgelist1)
