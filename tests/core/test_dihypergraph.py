@@ -85,6 +85,8 @@ def test_add_nodes_from(attr1, attr2, attr3):
     H.add_nodes_from({0: {"color": "black"}}, weight=1, color="grey")
     assert H.nodes[0]["color"] == "black"
     assert H.nodes[0]["weight"] == 1
+    H.add_nodes_from({0: {"weight": 2}})
+    assert H.nodes[0]["weight"] == 2
 
 
 def test_add_node_attr(diedgelist1):
