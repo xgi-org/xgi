@@ -378,7 +378,7 @@ class DiHypergraph:
         --------
         >>> import xgi
         >>> H = xgi.DiHypergraph()
-        
+
         Add nodes without attributes:
 
         >>> H.add_nodes_from([1, 2, 3])
@@ -419,8 +419,16 @@ class DiHypergraph:
             nodes_for_adding = nodes_for_adding.items()
 
         for n in nodes_for_adding:
-            if isinstance(n, tuple) and len(n) == 2 and isinstance(n[1], dict):
-                n, ndict = n
+            if isinstance(n, tuple) and len(n) == 2:
+                if not n[1]:  # Handles the None case
+                    n, ndict = n[0], {}
+                elif isinstance(n[1], dict):
+                    n, ndict = n
+                else:
+                    raise TypeError(
+                        "If nodes are specified as (node, attribute dict) tuples, "
+                        "the second element must be a dictionary or None."
+                    )
                 newdict = attr.copy()
                 newdict.update(ndict)
             else:

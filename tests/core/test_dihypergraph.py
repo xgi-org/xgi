@@ -88,6 +88,12 @@ def test_add_nodes_from(attr1, attr2, attr3):
     H.add_nodes_from({0: {"weight": 2}})
     assert H.nodes[0]["weight"] == 2
 
+    with pytest.raises(TypeError):
+        H.add_nodes_from([(0, "not a dict"), (1, {"color": "red"})])
+
+    H.add_nodes_from([(5, None), (1, {"color": "red"})])
+    assert H.nodes[5] == {}
+
 
 def test_add_node_attr(diedgelist1):
     H = xgi.DiHypergraph(diedgelist1)
