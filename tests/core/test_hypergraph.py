@@ -143,6 +143,19 @@ def test_add_nodes_from(attr1, attr2, attr3):
     assert H.nodes[1]["color"] == attr2["color"]
     assert H.nodes[2]["color"] == attr3["color"]
 
+    H = xgi.Hypergraph()
+    H.add_nodes_from({0: {"color": "black"}}, weight=1, color="grey")
+    assert H.nodes[0]["color"] == "black"
+    assert H.nodes[0]["weight"] == 1
+    H.add_nodes_from({0: {"weight": 2}})
+    assert H.nodes[0]["weight"] == 2
+
+    with pytest.raises(TypeError):
+        H.add_nodes_from([(0, "not a dict"), (1, {"color": "red"})])
+
+    H.add_nodes_from([(5, None), (1, {"color": "red"})])
+    assert H.nodes[5] == {}
+
 
 def test_remove_singleton_edges(edgelist1, edgelist2):
     H1 = xgi.Hypergraph(edgelist1)
