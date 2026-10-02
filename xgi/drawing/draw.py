@@ -83,7 +83,9 @@ def draw(
     aspect="equal",
     **kwargs,
 ):
-    """Draw hypergraph or simplicial complex.
+    """Draw hypergraph, directed hypergraph, or simplicial complex.
+
+    Note that when a directed hypergraph is drawn, it calls `draw_bipartite`.
 
     Parameters
     ----------
@@ -275,37 +277,28 @@ def draw(
 
     """
     if isinstance(H, DiHypergraph):
-        ax, (node_collection, edge_marker_collection) = draw_bipartite(
+        return draw_bipartite(
             H,
-            pos=None,
-            ax=None,
-            node_fc="white",
-            node_ec="black",
-            node_lw=1,
-            node_size=7,
-            node_shape="o",
-            node_fc_cmap="Reds",
-            edge_marker_fc=None,
-            edge_marker_ec="black",
-            edge_marker_lw=1,
-            edge_marker_size=7,
-            edge_marker_shape="s",
-            edge_marker_fc_cmap=crest_r(),
-            max_order=None,
-            dyad_color=None,
-            dyad_lw=1,
-            dyad_style="solid",
-            dyad_color_cmap=crest_r(),
-            node_labels=None,
-            hyperedge_labels=None,
-            arrowsize=10,
-            arrowstyle="->",
-            connectionstyle="arc3",
-            rescale_sizes=True,
-            aspect="equal",
+            pos=pos,
+            ax=ax,
+            node_fc=node_fc,
+            node_ec=node_ec,
+            node_lw=node_lw,
+            node_size=node_size,
+            node_shape=node_shape,
+            node_fc_cmap=node_fc_cmap,
+            max_order=max_order,
+            dyad_color=dyad_color,
+            dyad_lw=dyad_lw,
+            dyad_style=dyad_style,
+            dyad_color_cmap=dyad_color_cmap,
+            node_labels=node_labels,
+            hyperedge_labels=hyperedge_labels,
+            rescale_sizes=rescale_sizes,
+            aspect=aspect,
+            # only bipartite-specific kwargs go through **kwargs
             **kwargs,
         )
-        return ax, (node_collection, edge_marker_collection)
 
     settings = {
         "min_node_size": 5,
