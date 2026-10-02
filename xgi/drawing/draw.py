@@ -86,6 +86,11 @@ def draw(
     """Draw hypergraph, directed hypergraph, or simplicial complex.
 
     Note that when a directed hypergraph is drawn, it calls `draw_bipartite`.
+    When this is the case, the following arguments are not used:
+    `vmin`, `vmax`, `dyad_vmin`, `dyad_vmax`, `edge_fc`, `edge_fc_cmap`,
+    `edge_vmin`, `edge_vmax`, `edge_ec`, `edge_lw`, `alpha`, `hull`, and `radius`.
+    See this function for more information on the parameters that are specific
+    to directed hypergraphs.
 
     Parameters
     ----------
