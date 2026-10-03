@@ -1,4 +1,4 @@
-"""Draw hypergraphs and simplicial complexes with matplotlib."""
+"""Draw hypergraphs, directed hypergraphs, and simplicial complexes with matplotlib."""
 
 from inspect import signature
 from itertools import chain
@@ -83,12 +83,19 @@ def draw(
     aspect="equal",
     **kwargs,
 ):
-    """Draw hypergraph or simplicial complex.
+    """Draw hypergraph, directed hypergraph, or simplicial complex.
+
+    Note that when a directed hypergraph is drawn, it calls `draw_bipartite`.
+    When this is the case, the following arguments are not used:
+    `vmin`, `vmax`, `dyad_vmin`, `dyad_vmax`, `edge_fc`, `edge_fc_cmap`,
+    `edge_vmin`, `edge_vmax`, `edge_ec`, `edge_lw`, `alpha`, `hull`, and `radius`.
+    See this function for more information on the parameters that are specific
+    to directed hypergraphs.
 
     Parameters
     ----------
-    H : Hypergraph or SimplicialComplex.
-        Hypergraph to draw
+    H : Hypergraph, DiHypergraph, or SimplicialComplex.
+        Network to draw
     pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the
         0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
@@ -274,6 +281,29 @@ def draw(
     draw_hyperedge_labels
 
     """
+    if isinstance(H, DiHypergraph):
+        return draw_bipartite(
+            H,
+            pos=pos,
+            ax=ax,
+            node_fc=node_fc,
+            node_ec=node_ec,
+            node_lw=node_lw,
+            node_size=node_size,
+            node_shape=node_shape,
+            node_fc_cmap=node_fc_cmap,
+            max_order=max_order,
+            dyad_color=dyad_color,
+            dyad_lw=dyad_lw,
+            dyad_style=dyad_style,
+            dyad_color_cmap=dyad_color_cmap,
+            node_labels=node_labels,
+            hyperedge_labels=hyperedge_labels,
+            rescale_sizes=rescale_sizes,
+            aspect=aspect,
+            # only bipartite-specific kwargs go through **kwargs
+            **kwargs,
+        )
 
     settings = {
         "min_node_size": 5,
