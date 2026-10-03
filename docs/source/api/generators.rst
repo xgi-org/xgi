@@ -20,4 +20,5 @@ generators package
    ~xgi.generators.uniform
    ~xgi.generators.simplicial_complexes
    ~xgi.generators.randomizing
+   ~xgi.generators.iterative
    
