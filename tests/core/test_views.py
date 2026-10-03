@@ -569,6 +569,28 @@ def test_edge_head(diedgelist2):
         H.edges.head("test")
 
 
+def test_sources_targets_deprecated(diedgelist2):
+    """DiEdgeView.sources / targets are deprecated aliases of tail / head (#765)."""
+    H = xgi.DiHypergraph(diedgelist2)
+
+    with pytest.warns(DeprecationWarning, match="sources is deprecated"):
+        result = H.edges.sources(0)
+    assert result == H.edges.tail(0)
+
+    with pytest.warns(DeprecationWarning, match="targets is deprecated"):
+        result = H.edges.targets(0)
+    assert result == H.edges.head(0)
+
+    # dtype kwarg still forwards correctly
+    with pytest.warns(DeprecationWarning):
+        result = H.edges.sources(dtype=list)
+    assert result == H.edges.tail(dtype=list)
+
+    with pytest.warns(DeprecationWarning):
+        result = H.edges.targets(dtype=list)
+    assert result == H.edges.head(dtype=list)
+
+
 def test_stat_discoverability():
     """Built-in stats should be visible in dir() for IDE and tab completion."""
     H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4]])
