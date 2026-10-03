@@ -26,25 +26,30 @@ Software Packages (8 total)
 1. `simplicial-kuramoto <https://arnaudon.github.io/simplicial-kuramoto>`_
 
 
-Published Work (39 total)
+Published Work (40 total)
 =========================
 
 2026
 ----
 
-39. [XGI] Cosimo Agostinelli, Marco Mancastroppa, and Alain Barrat, "Higher-order dissimilarity measures for hypergraph comparison", *Journal of Complex Networks*, Volume 14, Issue 1, cnaf048 (2026).
+40. [XGI] Cosimo Agostinelli, Marco Mancastroppa, and Alain Barrat, "Higher-order dissimilarity measures for hypergraph comparison", *Journal of Complex Networks*, Volume 14, Issue 1, cnaf048 (2026).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1093/comnet/cnaf048>`
 :bdg-link-primary-line:`Code <https://github.com/cosimoagostinelli/Hor_dissimilarity_measures>`
 
-38. [XGI-DATA] Margherita Bertè and Tommaso Gili, "Fibration Symmetries and Cluster Synchronization in Multi-Body Systems", *Scientific Reports* (2026).
+39. [XGI-DATA] Margherita Bertè and Tommaso Gili, "Fibration Symmetries and Cluster Synchronization in Multi-Body Systems", *Scientific Reports* (2026).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41598-026-61679-0>`
 :bdg-link-primary-line:`Code <https://github.com/margheritaberte/Fibration_symmetries_cluster_synchronization>`
 
-37. [XGI-DATA] Antonio De Caro, Dario De Maio, Francesco Monzillo, Alessia Antelmi, and Biagio Cosenza, "Evaluating Portable Programming Models for Hypergraph Label Propagation on GPUs", *Proceedings of PDP 2026: 34th Euromicro International Conference on Parallel, Distributed, and Network-Based Processing* (2026).
+38. [XGI-DATA] Antonio De Caro, Dario De Maio, Francesco Monzillo, Alessia Antelmi, and Biagio Cosenza, "Evaluating Portable Programming Models for Hypergraph Label Propagation on GPUs", *Proceedings of PDP 2026: 34th Euromicro International Conference on Parallel, Distributed, and Network-Based Processing* (2026).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1109/PDP55228.2026.00024>`
+
+37. [XGI] Jaewan Chun, Fanchen Bu, Yeongho Kim, Atsushi Miyauchi, Francesco Bonchi, and Kijung Shin, "A Survey on Centrality and Importance Measures in Hypergraphs: Categorization and Empirical Insights", *ACM Computing Surveys*, Volume 58, Issue 16, Article 414 (2026).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1145/3843227>`
+:bdg-link-primary-line:`Code <https://github.com/jaewan01/hypergraph-centrality-survey>`
 
 36. [XGI, XGI-DATA] Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Domenico, "Reducibility of higher-order networks from dynamics", *Nature Communications* **17**, 1551 (2026).
 
@@ -227,28 +232,32 @@ Published Work (39 total)
 :bdg-link-primary-line:`Code <https://github.com/maximelucas/HOI_shape_sync_differently>`
 
 
-Preprints (9 total)
-===================
+Preprints (10 total)
+====================
 
 2026
 ----
 
-9. [XGI] Kun Cao, Guangzu Bai, and Li Li, "Identifying Disruptive Technologies via Dynamic Hypergraph Modeling and Large Language Models", TechRxiv (2026).
+10. [XGI] Kun Cao, Guangzu Bai, and Li Li, "Identifying Disruptive Technologies via Dynamic Hypergraph Modeling and Large Language Models", TechRxiv (2026).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.36227/techrxiv.177223104.47525491/v1>`
 
-8. [XGI] Timothy LaRock, Yanting Zhang, Jean-Gabriel Young, Nicole Eikmeier, Renaud Lambiotte, and Nicholas W. Landry, "The nestedness of higher-order networks", arXiv:2605.18420 (2026).
+9. [XGI] Timothy LaRock, Yanting Zhang, Jean-Gabriel Young, Nicole Eikmeier, Renaud Lambiotte, and Nicholas W. Landry, "The nestedness of higher-order networks", arXiv:2605.18420 (2026).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2605.18420>`
 :bdg-link-primary-line:`Code <https://github.com/tlarock/hypergraph-nestedness>`
 
-7. [XGI-DATA] Hugo P. Maia, Guilherme Ferraz de Arruda, Silvio C. Ferreira, and Yamir Moreno, "Nesting Controls Phase Transitions in Higher-Order Contagion", arXiv:2604.23337 (2026).
+8. [XGI-DATA] Hugo P. Maia, Guilherme Ferraz de Arruda, Silvio C. Ferreira, and Yamir Moreno, "Nesting Controls Phase Transitions in Higher-Order Contagion", arXiv:2604.23337 (2026).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.48550/arXiv.2604.23337>`
 
-6. [XGI] Violet Ross, Francis Cataldo, and Philip S. Chodrow, "Growing Hypergraphs with Homophily", arXiv:2607.16046 (2026).
+7. [XGI] Violet Ross, Francis Cataldo, and Philip S. Chodrow, "Growing Hypergraphs with Homophily", arXiv:2607.16046 (2026).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2607.16046>`
+
+6. [XGI-DATA] Jason P. Smith, Celia Hacker, Jānis Lazovskis, Florian Unger, Keith M. Smith, and Daniela Egas Santander, "Higher-order rich clubs and configuration models on general directed hypergraphs", arXiv:2609.01624 (2026).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2609.01624>`
 
 5. [XGI] Emma Zajdela and Nicholas W. Landry, "Higher-order interactions at scientific conferences influence team formation", arXiv:2603.02571 (2026).
 
