@@ -4,7 +4,7 @@ from os.path import dirname, join
 
 from ..convert import cut_to_order, from_hif_dict
 from ..exception import XGIError
-from ..utils import request_json_from_url, request_json_from_url_cached
+from ..utils import request_from_url, request_from_url_cached
 from .hif import write_hif, write_hif_collection
 
 __all__ = ["load_xgi_data", "download_xgi_data"]
@@ -64,7 +64,7 @@ def load_xgi_data(
     index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
 
     # If no dataset is specified, print a list of the available datasets.
-    index_data = request_json_from_url(index_url)
+    index_data = request_from_url(index_url)
     if dataset is None:
         print("Available datasets are the following:")
         print(*index_data, sep="\n")
@@ -104,7 +104,7 @@ def download_xgi_data(dataset, path="", collection_name=""):
         a collection, this argument is unused.
     """
     index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
-    index_data = request_json_from_url(index_url)
+    index_data = request_from_url(index_url)
 
     key = dataset.lower()
     if key not in index_data:
@@ -151,9 +151,9 @@ def _request_from_xgi_data(
     load_xgi_data
     """
     if cache:
-        jsondata = request_json_from_url_cached(url)
+        jsondata = request_from_url_cached(url)
     else:
-        jsondata = request_json_from_url(url)
+        jsondata = request_from_url(url)
 
     if "incidences" in jsondata:
         H = from_hif_dict(jsondata, nodetype=nodetype, edgetype=edgetype)
