@@ -178,9 +178,7 @@ class DiHypergraph:
 
     def __repr__(self):
         cls = type(self).__name__
-        # Preserve the historical list-of-tuples display for repr; see #764
-        # for whether to switch this to the dict shape in a future release.
-        return f"{cls}({self.edges.dimembers(dtype=list)})"
+        return f"{cls}({self.edges.dimembers()})"
 
     def __copy__(self):
         return self.copy()
