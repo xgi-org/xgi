@@ -56,6 +56,22 @@ ross_growing_2026:
   links:
     paper: https://arxiv.org/abs/2607.16046
 
+smith_higher-order_2026:
+  tags:
+  - XGI-DATA
+  authors:
+  - Jason P. Smith
+  - Celia Hacker
+  - Jānis Lazovskis
+  - Florian Unger
+  - Keith M. Smith
+  - Daniela Egas Santander
+  title: Higher-order rich clubs and configuration models on general directed hypergraphs
+  year: 2026
+  reference: 'arXiv:2609.01624'
+  links:
+    paper: https://arxiv.org/abs/2609.01624
+
 zajdela_higher-order_2026:
   tags:
   - XGI
