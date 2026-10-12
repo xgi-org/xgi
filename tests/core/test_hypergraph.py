@@ -479,10 +479,11 @@ def test_add_edges_from_wrong_format():
 def test_repr(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     r = repr(H)
-    assert r.startswith("Hypergraph([")
+    # Repr matches the dict shape of .members() (see #764).
+    assert r.startswith("Hypergraph({")
 
     H_empty = xgi.Hypergraph()
-    assert repr(H_empty) == "Hypergraph([])"
+    assert repr(H_empty) == "Hypergraph({})"
 
 
 def test_copy_dunder(edgelist1):

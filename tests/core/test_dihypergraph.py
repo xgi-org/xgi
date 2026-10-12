@@ -453,10 +453,11 @@ def test_remove_edges_from(diedgelist2):
 def test_repr(diedgelist1):
     H = xgi.DiHypergraph(diedgelist1)
     r = repr(H)
-    assert r.startswith("DiHypergraph(")
+    # Repr matches the dict shape of .dimembers() (see #764).
+    assert r.startswith("DiHypergraph({")
 
     H_empty = xgi.DiHypergraph()
-    assert repr(H_empty) == "DiHypergraph([])"
+    assert repr(H_empty) == "DiHypergraph({})"
 
 
 def test_copy_dunder(diedgelist1):
