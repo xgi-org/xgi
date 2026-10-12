@@ -9,6 +9,7 @@ Views are automatically updaed when the hypergraph changes.
 from collections import defaultdict
 from collections.abc import Mapping, Set
 from functools import reduce
+from warnings import warn
 
 from ..exception import IDNotFound, XGIError
 from ..stats import IDStat, dispatch_many_stats, dispatch_stat
@@ -1334,24 +1335,42 @@ class DiEdgeView(IDView):
         return self._id_dict[e]["in"].copy()
 
     def sources(self, e=None, dtype=dict):
-        """Get the nodes that are sources (senders)
-        in the directed edges.
+        """Get the nodes that are sources (senders) in the directed edges.
+
+        .. deprecated:: 1.0
+            Use :meth:`tail` instead. ``sources`` will be removed in a future
+            release. See xgi-org/xgi#765.
 
         See Also
         --------
         tail: identical method
         """
+        warn(
+            "DiEdgeView.sources is deprecated and will be removed in a future "
+            "release. Use DiEdgeView.tail instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return self.tail(e=e, dtype=dtype)
 
     def targets(self, e=None, dtype=dict):
-        """Get the nodes that are sources (senders)
-        in the directed edges.
+        """Get the nodes that are targets (receivers) in the directed edges.
+
+        .. deprecated:: 1.0
+            Use :meth:`head` instead. ``targets`` will be removed in a future
+            release. See xgi-org/xgi#765.
 
         See Also
         --------
         head: identical method
 
         """
+        warn(
+            "DiEdgeView.targets is deprecated and will be removed in a future "
+            "release. Use DiEdgeView.head instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return self.head(e=e, dtype=dtype)
 
     def empty(self):
