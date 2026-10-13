@@ -386,6 +386,15 @@ def test_add_simplices_from_wrong_format():
         xgi.SimplicialComplex().add_simplices_from(edges)
 
 
+def test_add_weighted_simplices_from():
+    S = xgi.SimplicialComplex()
+    S.add_weighted_simplices_from([(0, 1, 0.3), (0, 2, 0.8)])
+    assert S.edges.attrs("weight").aslist() == [0.3, 0.8]
+
+    with pytest.raises(ValueError):
+        xgi.SimplicialComplex().add_weighted_simplices_from([()])
+
+
 def test_copy(edgelist1):
     H = xgi.SimplicialComplex(edgelist1)
     H["key"] = "value"

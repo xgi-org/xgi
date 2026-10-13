@@ -712,8 +712,8 @@ class SimplicialComplex(Hypergraph):
                 max_order=max_order,
                 **attr,
             )
-        except KeyError:
-            XGIError("Empty or invalid simplices specified.")
+        except (IndexError, KeyError) as e:
+            raise ValueError("Empty or invalid simplices specified.") from e
 
     def _remove_simplex_id(self, idx):
         """Helper function to remove a simplex with a given id
