@@ -1,5 +1,6 @@
 """General utilities."""
 
+import time
 from collections import defaultdict
 from copy import deepcopy
 from functools import cache
@@ -9,6 +10,13 @@ from math import ceil, log
 import numpy as np
 
 from xgi.exception import IDNotFound, XGIError
+
+# Retry policy for HTTP requests against external hosts.
+# 5xx responses and connection errors retry with exponential backoff.
+# 4xx responses do not retry: those indicate a real client-side problem
+# (bad URL, missing dataset) that will not be fixed by waiting.
+_HTTP_RETRY_ATTEMPTS = 3
+_HTTP_RETRY_BACKOFF_SECONDS = (1.0, 2.0, 4.0)
 
 __all__ = [
     "IDDict",
@@ -239,8 +247,42 @@ def min_where(dicty, where):
     return min_val
 
 
+def _get_with_retry(url, sleep=time.sleep):
+    """Issue an HTTP GET with retry on 5xx responses and connection errors.
+
+    4xx responses are not retried: a bad URL or missing dataset will not
+    heal with a wait. Connection errors and 5xx responses are retried up to
+    ``_HTTP_RETRY_ATTEMPTS`` times with exponential backoff from
+    ``_HTTP_RETRY_BACKOFF_SECONDS``.
+    """
+    import requests
+
+    last_status = None
+    for attempt in range(_HTTP_RETRY_ATTEMPTS):
+        try:
+            r = requests.get(url)
+        except requests.ConnectionError:
+            if attempt == _HTTP_RETRY_ATTEMPTS - 1:
+                raise XGIError("Connection Error!")
+            sleep(_HTTP_RETRY_BACKOFF_SECONDS[attempt])
+            continue
+
+        if r.ok:
+            return r
+        last_status = r.status_code
+        if 500 <= r.status_code < 600 and attempt < _HTTP_RETRY_ATTEMPTS - 1:
+            sleep(_HTTP_RETRY_BACKOFF_SECONDS[attempt])
+            continue
+        break
+
+    raise XGIError(f"Error: HTTP response {last_status}")
+
+
 def request_json_from_url(url):
     """HTTP request json file and return as dict.
+
+    Retries once per entry in ``_HTTP_RETRY_BACKOFF_SECONDS`` on 5xx
+    responses or connection errors to absorb transient outages.
 
     Parameters
     ----------
@@ -255,25 +297,19 @@ def request_json_from_url(url):
     Raises
     ------
     XGIError
-        If the connection fails or if there is a bad HTTP request.
+        If the connection fails after retries or if there is a bad HTTP
+        request.
     """
-
-    import requests
-
-    try:
-        r = requests.get(url)
-    except requests.ConnectionError:
-        raise XGIError("Connection Error!")
-
-    if r.ok:
-        return r.json()
-    else:
-        raise XGIError(f"Error: HTTP response {r.status_code}")
+    return _get_with_retry(url).json()
 
 
 @cache
 def request_json_from_url_cached(url):
-    """HTTP request json file and return as dict.
+    """HTTP request json file and return as dict, cached by URL.
+
+    Retries on 5xx responses or connection errors (see
+    :func:`request_json_from_url` for the policy). Successful responses
+    are cached for the lifetime of the process.
 
     Parameters
     ----------
@@ -288,19 +324,10 @@ def request_json_from_url_cached(url):
     Raises
     ------
     XGIError
-        If the connection fails or if there is a bad HTTP request.
+        If the connection fails after retries or if there is a bad HTTP
+        request.
     """
-    import requests
-
-    try:
-        r = requests.get(url)
-    except requests.ConnectionError:
-        raise XGIError("Connection Error!")
-
-    if r.ok:
-        return r.json()
-    else:
-        raise XGIError(f"Error: HTTP response {r.status_code}")
+    return _get_with_retry(url).json()
 
 
 def subfaces(edges, order=None):

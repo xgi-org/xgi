@@ -1,3 +1,6 @@
+import platform
+import sys
+
 import numpy as np
 import pytest
 from scipy.linalg import eigh, eigvalsh
@@ -269,6 +272,12 @@ def test_adjacency_matrix(edgelist1, edgelist4):
     assert np.all(A7 == A7_sp.todense())
 
 
+@pytest.mark.skipif(
+    sys.version_info != (3, 14) and not platform.system() == "Linux",
+    reason="only need one test",
+)
+@pytest.mark.webtest
+@pytest.mark.slow
 def test_fix_649():  # make sure diagonal is fully zero when sparse
 
     H = xgi.load_xgi_data(dataset="email-enron")
