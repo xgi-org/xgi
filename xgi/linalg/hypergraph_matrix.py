@@ -125,11 +125,14 @@ def incidence_matrix(
             cols.append(edge_dict[edge])
             data.append(weight(node, edge, H))
 
+    # Infer the dtype from the weights so that non-integer weights are not truncated
+    dtype = np.asarray(data).dtype if data else int
+
     # Create the incidence matrix as a CSR matrix
     if sparse:
-        I = csr_array((data, (rows, cols)), shape=(num_nodes, num_edges), dtype=int)
+        I = csr_array((data, (rows, cols)), shape=(num_nodes, num_edges), dtype=dtype)
     else:
-        I = np.zeros((num_nodes, num_edges), dtype=int)
+        I = np.zeros((num_nodes, num_edges), dtype=dtype)
         I[rows, cols] = data
 
     return (I, rowdict, coldict) if index else I

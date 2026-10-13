@@ -1,5 +1,7 @@
 # Changelog
 
+* Fix: keep non-integer weights in incidence_matrix, which were previously mapped to zero values. [#770](https://github.com/xgi-org/xgi/pull/770) (@raashish1601)
+
 ## v0.10.2
 
 * Feature: Added compressed file I/O. [#709](https://github.com/xgi-org/xgi/pull/709) (@kaiser-dan)
