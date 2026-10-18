@@ -934,8 +934,8 @@ class Hypergraph:
             self.add_edges_from(
                 ((edge[:-1], {weight: edge[-1]}) for edge in ebunch), **attr
             )
-        except KeyError:
-            XGIError("Empty or invalid edges specified.")
+        except (IndexError, KeyError) as e:
+            raise ValueError("Empty or invalid edges specified.") from e
 
     def set_edge_attributes(self, values, name=None):
         """Set the edge attributes from a value or a dictionary of values.
