@@ -247,47 +247,64 @@ def min_where(dicty, where):
     return min_val
 
 
-def _get_with_retry(url, sleep=time.sleep):
+def _get_with_retry(url, retries=_HTTP_RETRY_ATTEMPTS, sleep=time.sleep):
     """Issue an HTTP GET with retry on 5xx responses and connection errors.
 
     4xx responses are not retried: a bad URL or missing dataset will not
     heal with a wait. Connection errors and 5xx responses are retried up to
-    ``_HTTP_RETRY_ATTEMPTS`` times with exponential backoff from
-    ``_HTTP_RETRY_BACKOFF_SECONDS``.
+    ``retries`` times total with exponential backoff from
+    ``_HTTP_RETRY_BACKOFF_SECONDS``. Values of ``retries`` larger than the
+    backoff schedule reuse the last entry.
     """
     import requests
 
+    retries = max(1, int(retries))
     last_status = None
-    for attempt in range(_HTTP_RETRY_ATTEMPTS):
+    for attempt in range(retries):
         try:
             r = requests.get(url)
         except requests.ConnectionError:
-            if attempt == _HTTP_RETRY_ATTEMPTS - 1:
+            if attempt == retries - 1:
                 raise XGIError("Connection Error!")
-            sleep(_HTTP_RETRY_BACKOFF_SECONDS[attempt])
+            sleep(_backoff_for_attempt(attempt))
             continue
 
         if r.ok:
             return r
         last_status = r.status_code
-        if 500 <= r.status_code < 600 and attempt < _HTTP_RETRY_ATTEMPTS - 1:
-            sleep(_HTTP_RETRY_BACKOFF_SECONDS[attempt])
+        if 500 <= r.status_code < 600 and attempt < retries - 1:
+            sleep(_backoff_for_attempt(attempt))
             continue
         break
 
     raise XGIError(f"Error: HTTP response {last_status}")
 
 
-def request_json_from_url(url):
+def _backoff_for_attempt(attempt):
+    """Pick the backoff seconds for a given attempt index.
+
+    Attempts beyond the configured schedule reuse the final entry so that
+    callers who set ``retries`` higher than the default do not fall off
+    the schedule.
+    """
+    idx = min(attempt, len(_HTTP_RETRY_BACKOFF_SECONDS) - 1)
+    return _HTTP_RETRY_BACKOFF_SECONDS[idx]
+
+
+def request_json_from_url(url, retries=_HTTP_RETRY_ATTEMPTS):
     """HTTP request json file and return as dict.
 
-    Retries once per entry in ``_HTTP_RETRY_BACKOFF_SECONDS`` on 5xx
-    responses or connection errors to absorb transient outages.
+    Retries on 5xx responses or connection errors with exponential backoff
+    to absorb transient outages.
 
     Parameters
     ----------
     url : str
         The url where the json file is located.
+    retries : int, optional
+        Maximum number of attempts, including the first. Defaults to
+        ``_HTTP_RETRY_ATTEMPTS``. 4xx responses never retry regardless of
+        this value.
 
     Returns
     -------
@@ -300,11 +317,11 @@ def request_json_from_url(url):
         If the connection fails after retries or if there is a bad HTTP
         request.
     """
-    return _get_with_retry(url).json()
+    return _get_with_retry(url, retries=retries).json()
 
 
 @cache
-def request_json_from_url_cached(url):
+def request_json_from_url_cached(url, retries=_HTTP_RETRY_ATTEMPTS):
     """HTTP request json file and return as dict, cached by URL.
 
     Retries on 5xx responses or connection errors (see
@@ -315,6 +332,10 @@ def request_json_from_url_cached(url):
     ----------
     url : str
         The url where the json file is located.
+    retries : int, optional
+        Maximum number of attempts, including the first. Defaults to
+        ``_HTTP_RETRY_ATTEMPTS``. Note that the cache key includes
+        ``retries``, so calls with different values are cached separately.
 
     Returns
     -------
@@ -327,7 +348,7 @@ def request_json_from_url_cached(url):
         If the connection fails after retries or if there is a bad HTTP
         request.
     """
-    return _get_with_retry(url).json()
+    return _get_with_retry(url, retries=retries).json()
 
 
 def subfaces(edges, order=None):
