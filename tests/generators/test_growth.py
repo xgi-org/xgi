@@ -97,3 +97,13 @@ def test_apollonian():
         frozenset({0, 1, 3}),
         frozenset({0, 4, 7}),
     }
+
+
+@pytest.mark.parametrize(
+    "generator",
+    [xgi.pseudofractal_simplicial_complex, xgi.apollonian_complex],
+)
+def test_order_too_small(generator):
+    for order in [0, 1]:
+        with pytest.raises(ValueError):
+            generator(order=order, n_iter=1)

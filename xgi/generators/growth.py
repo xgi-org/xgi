@@ -10,12 +10,12 @@ __all__ = [
 
 
 def pseudofractal_simplicial_complex(order, n_iter):
-    """
+    r"""
     Generate the pseudofractal simplicial complex of order `order`.
 
-    Starting with a single d-simplex, at each iteration, the function adds new (d+1)-simplices
-    by attaching a new vertex to all existing (d-1)-simplices (as well as all their subfaces).
-    This process is deterministic.
+    Starting with a single d-simplex (d = `order`), at each iteration a new
+    node is attached to every existing (d-1)-simplex, forming a new d-simplex
+    (with all its subfaces). This process is deterministic.
 
     Parameters
     ----------
@@ -29,6 +29,19 @@ def pseudofractal_simplicial_complex(order, n_iter):
         S : xgi.SimplicialComplex
             Generated simplicial complex
 
+    Raises
+    ------
+    ValueError
+        If `order` is less than 2.
+
+    Notes
+    -----
+    The size grows exponentially with `n_iter`. After :math:`t` iterations, the
+    complex has :math:`((d+1)^{t+1} - 1)/d` simplices of order :math:`d`, i.e.,
+    :math:`\mathcal{O}((d+1)^t)`, and :math:`d` more nodes than that.
+    For example, ``order=2, n_iter=10`` gives 88,573 triangles and
+    ``order=3, n_iter=10`` gives 1,398,101 tetrahedra.
+
     See also
     --------
     apollonian_complex
@@ -41,6 +54,9 @@ def pseudofractal_simplicial_complex(order, n_iter):
     arXiv preprint arXiv:2401.11298.
     https://arxiv.org/abs/2401.11298
     """
+
+    if order < 2:
+        raise ValueError("order must be at least 2.")
 
     S = SimplicialComplex()
 
@@ -69,13 +85,13 @@ def pseudofractal_simplicial_complex(order, n_iter):
 
 
 def apollonian_complex(order, n_iter):
-    """
+    r"""
     Generate the apollonian complex of order `order`.
 
-    Starting with a single d-simplex, at each iteration, the function adds new (d+1)-simplices
-    by attaching a new vertex to (d-1)-simplices that contain at least one newly added node.
-    This process is deterministic and generates a simplicial complex.
-
+    Starting with a single d-simplex (d = `order`), at each iteration a new
+    node is attached to every (d-1)-simplex that contains a node added in the
+    previous iteration, forming a new d-simplex (with all its subfaces).
+    This process is deterministic.
 
     Parameters
     ----------
@@ -89,6 +105,20 @@ def apollonian_complex(order, n_iter):
         S : xgi.SimplicialComplex
             Generated simplicial complex
 
+    Raises
+    ------
+    ValueError
+        If `order` is less than 2.
+
+    Notes
+    -----
+    The size grows exponentially with `n_iter`, but more slowly than for
+    :func:`pseudofractal_simplicial_complex`. After :math:`t` iterations, the
+    complex has :math:`1 + (d+1)(d^t - 1)/(d-1)` simplices of order :math:`d`,
+    i.e., :math:`\mathcal{O}(d^t)`, and :math:`d` more nodes than that.
+    For example, ``order=2, n_iter=10`` gives 3,070 triangles and
+    ``order=3, n_iter=10`` gives 118,097 tetrahedra.
+
     See also
     --------
     pseudofractal_simplicial_complex
@@ -101,6 +131,9 @@ def apollonian_complex(order, n_iter):
     arXiv preprint arXiv:2401.11298.
     https://arxiv.org/abs/2401.11298
     """
+
+    if order < 2:
+        raise ValueError("order must be at least 2.")
 
     S = SimplicialComplex()
 
