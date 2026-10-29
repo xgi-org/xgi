@@ -20,25 +20,32 @@ stats package
 
    .. autosummary::
       :nosignatures:
-      
+
+      ~xgi.stats.nodestats.attrs
       ~xgi.stats.nodestats.average_neighbor_degree
       ~xgi.stats.nodestats.clique_eigenvector_centrality
       ~xgi.stats.nodestats.clustering_coefficient
       ~xgi.stats.nodestats.degree
       ~xgi.stats.nodestats.h_eigenvector_centrality
+      ~xgi.stats.nodestats.katz_centrality
       ~xgi.stats.nodestats.local_clustering_coefficient
+      ~xgi.stats.nodestats.local_edit_simpliciality
+      ~xgi.stats.nodestats.local_face_edit_simpliciality
+      ~xgi.stats.nodestats.local_simplicial_fraction
       ~xgi.stats.nodestats.node_edge_centrality
       ~xgi.stats.nodestats.pos
       ~xgi.stats.nodestats.two_node_clustering_coefficient
+      ~xgi.stats.nodestats.z_eigenvector_centrality
 
    *Statistics of edges*
 
    .. autosummary::
       :nosignatures:
 
+      ~xgi.stats.edgestats.attrs
+      ~xgi.stats.edgestats.node_edge_centrality
       ~xgi.stats.edgestats.order
       ~xgi.stats.edgestats.size
-      ~xgi.stats.edgestats.node_edge_centrality
 
    *Corresponding decorators*
 
@@ -76,6 +83,7 @@ stats package
    .. autosummary::
       :nosignatures:
 
+      ~xgi.stats.dinodestats.attrs
       ~xgi.stats.dinodestats.degree
       ~xgi.stats.dinodestats.in_degree
       ~xgi.stats.dinodestats.out_degree
@@ -86,10 +94,11 @@ stats package
    .. autosummary::
       :nosignatures:
 
-      ~xgi.stats.diedgestats.order
-      ~xgi.stats.diedgestats.size
+      ~xgi.stats.diedgestats.attrs
       ~xgi.stats.diedgestats.head_order
       ~xgi.stats.diedgestats.head_size
+      ~xgi.stats.diedgestats.order
+      ~xgi.stats.diedgestats.size
       ~xgi.stats.diedgestats.tail_order
       ~xgi.stats.diedgestats.tail_size
 
