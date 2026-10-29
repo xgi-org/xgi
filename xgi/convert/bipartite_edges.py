@@ -11,7 +11,7 @@ def from_bipartite_edgelist(edges):
 
     Parameters
     ----------
-    e : tuple, list, or array of tuples, lists, or arrays, each of size 2
+    edges : tuple, list, or array of tuples, lists, or arrays, each of size 2
         A bipartite edgelist
 
     Returns

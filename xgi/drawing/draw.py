@@ -1,4 +1,4 @@
-"""Draw hypergraphs and simplicial complexes with matplotlib."""
+"""Draw hypergraphs, directed hypergraphs, and simplicial complexes with matplotlib."""
 
 from inspect import signature
 from itertools import chain
@@ -6,10 +6,9 @@ from itertools import chain
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sb  # This cannot be removed because it is used for cmap "crest"
 from matplotlib import cm
 from matplotlib.colors import is_color_like
-from matplotlib.patches import FancyArrowPatch
+from matplotlib.patches import FancyArrowPatch, Circle
 from mpl_toolkits.mplot3d.art3d import (
     Line3DCollection,
     LineCollection,
@@ -25,7 +24,7 @@ from ..algorithms import max_edge_order, unique_edge_sizes
 from ..convert import to_bipartite_edgelist
 from ..core import DiHypergraph, Hypergraph, SimplicialComplex
 from ..exception import XGIError
-from ..utils import subfaces
+from ..utils import crest_r, subfaces
 from .draw_utils import (
     _CCW_sort,
     _draw_arg_to_arr,
@@ -70,7 +69,7 @@ def draw(
     dyad_vmin=None,
     dyad_vmax=None,
     edge_fc=None,
-    edge_fc_cmap="crest_r",
+    edge_fc_cmap=crest_r(),
     edge_vmin=None,
     edge_vmax=None,
     edge_ec=None,
@@ -84,16 +83,24 @@ def draw(
     aspect="equal",
     **kwargs,
 ):
-    """Draw hypergraph or simplicial complex.
+    """Draw hypergraph, directed hypergraph, or simplicial complex.
+
+    Note that when a directed hypergraph is drawn, it calls `draw_bipartite`.
+    When this is the case, the following arguments are not used:
+    `vmin`, `vmax`, `dyad_vmin`, `dyad_vmax`, `edge_fc`, `edge_fc_cmap`,
+    `edge_vmin`, `edge_vmax`, `edge_ec`, `edge_lw`, `alpha`, `hull`, and `radius`.
+    See this function for more information on the parameters that are specific
+    to directed hypergraphs.
 
     Parameters
     ----------
-    H : Hypergraph or SimplicialComplex.
-        Hypergraph to draw
+    H : Hypergraph, DiHypergraph, or SimplicialComplex.
+        Network to draw
     pos : dict, optional
         If passed, this dictionary of positions node_id:(x,y) is used for placing the
         0-simplices.  If None (default), use the `barycenter_spring_layout` to compute
-        the positions.
+        the positions. If positions are stored as the ``"pos"`` node attribute, you
+        can pass ``H.nodes.pos.asdict()`` directly.
     ax : matplotlib.pyplot.axes, optional
         Axis to draw on. If None (default), get the current axes.
     node_fc : str, dict, iterable, or NodeStat, optional
@@ -219,7 +226,9 @@ def draw(
         If those are single values, `interpolate_sizes` is ignored
         for it. By default, True.
     **kwargs : optional args
-        Alternate default values. Values that can be overwritten are the following:
+        Accepts three non-overlapping groups of keyword arguments:
+
+        Size-rescaling settings (see also ``rescale_sizes``):
 
         * "min_node_size" (default: 5)
         * "max_node_size" (default: 30)
@@ -227,6 +236,15 @@ def draw(
         * "max_node_lw" (default: 5)
         * "min_dyad_lw" (default: 1)
         * "max_dyad_lw" (default: 10)
+
+        Node-label styling (only used when ``node_labels`` is enabled);
+        see :func:`draw_node_labels` for the full list.
+
+        Hyperedge-label styling (only used when ``hyperedge_labels`` is enabled);
+        see :func:`draw_hyperedge_labels` for the full list.
+
+        Passing an argument that does not belong to any of these three groups
+        raises a ``TypeError``.
 
     Returns
     -------
@@ -248,6 +266,12 @@ def draw(
     >>> H.add_edges_from([[1,2,3],[3,4],[4,5,6,7],[7,8,9,10,11]])
     >>> ax = xgi.draw(H, pos=xgi.barycenter_spring_layout(H))
 
+    Notes
+    -----
+    For finer control over node or hyperedge label appearance, call
+    :func:`draw_node_labels` or :func:`draw_hyperedge_labels` directly after
+    ``draw()``.
+
     See Also
     --------
     draw_nodes
@@ -257,6 +281,29 @@ def draw(
     draw_hyperedge_labels
 
     """
+    if isinstance(H, DiHypergraph):
+        return draw_bipartite(
+            H,
+            pos=pos,
+            ax=ax,
+            node_fc=node_fc,
+            node_ec=node_ec,
+            node_lw=node_lw,
+            node_size=node_size,
+            node_shape=node_shape,
+            node_fc_cmap=node_fc_cmap,
+            max_order=max_order,
+            dyad_color=dyad_color,
+            dyad_lw=dyad_lw,
+            dyad_style=dyad_style,
+            dyad_color_cmap=dyad_color_cmap,
+            node_labels=node_labels,
+            hyperedge_labels=hyperedge_labels,
+            rescale_sizes=rescale_sizes,
+            aspect=aspect,
+            # only bipartite-specific kwargs go through **kwargs
+            **kwargs,
+        )
 
     settings = {
         "min_node_size": 5,
@@ -267,7 +314,33 @@ def draw(
         "max_node_lw": 5,
     }
 
-    settings.update(kwargs)
+    # Split **kwargs into three non-overlapping buckets and validate upfront.
+    # Doing this here — unconditionally and against all valid keys at once —
+    # catches typos even when labels are off, and prevents cross-bucket confusion
+    # (e.g. a valid edge-label kwarg being rejected by node-label validation).
+    _settings_keys = set(settings)
+    _node_label_keys = signature(draw_node_labels).parameters.keys() - {
+        "H",
+        "pos",
+        "ax_nodes",
+        "node_labels",
+    }
+    _edge_label_keys = signature(draw_hyperedge_labels).parameters.keys() - {
+        "H",
+        "pos",
+        "ax_edges",
+        "hyperedge_labels",
+    }
+    unknown = set(kwargs) - (_settings_keys | _node_label_keys | _edge_label_keys)
+    if unknown:
+        raise TypeError(
+            f"draw() got unexpected keyword argument(s): {', '.join(sorted(unknown))}"
+        )
+    settings_kwargs = {k: v for k, v in kwargs.items() if k in _settings_keys}
+    node_label_kwargs = {k: v for k, v in kwargs.items() if k in _node_label_keys}
+    edge_label_kwargs = {k: v for k, v in kwargs.items() if k in _edge_label_keys}
+
+    settings.update(settings_kwargs)
 
     ax, pos = _draw_init(H, ax, pos)
 
@@ -294,11 +367,10 @@ def draw(
             max_order=max_order,
             hyperedge_labels=hyperedge_labels,
             rescale_sizes=rescale_sizes,
-            **kwargs,
+            **edge_label_kwargs,
         )
 
     elif isinstance(H, Hypergraph):
-
         ax, (dyad_collection, edge_collection) = draw_hyperedges(
             H=H,
             pos=pos,
@@ -321,10 +393,10 @@ def draw(
             hull=hull,
             radius=radius,
             rescale_sizes=rescale_sizes,
-            **kwargs,
+            **edge_label_kwargs,
         )
     else:
-        raise XGIError("The input must be a SimplicialComplex or Hypergraph")
+        raise TypeError("The input must be a SimplicialComplex or Hypergraph")
 
     ax, node_collection = draw_nodes(
         H=H,
@@ -342,7 +414,7 @@ def draw(
         params=settings,
         node_labels=node_labels,
         rescale_sizes=rescale_sizes,
-        **kwargs,
+        **node_label_kwargs,
     )
 
     # compute axis limits
@@ -469,7 +541,9 @@ def draw_nodes(
     }
 
     settings.update(params)
-    settings.update(kwargs)
+    # Only absorb recognised settings keys from kwargs so that label kwargs
+    # passed via a direct call to draw_nodes() don't pollute the settings dict.
+    settings.update({k: v for k, v in kwargs.items() if k in settings})
 
     ax, pos = _draw_init(H, ax, pos)
 
@@ -510,8 +584,8 @@ def draw_nodes(
 
     # plot
     node_collection = ax.scatter(
-        x=xy[:, 0],
-        y=xy[:, 1],
+        xy[:, 0],
+        xy[:, 1],
         s=node_size,
         marker=node_shape,
         c=node_fc,
@@ -525,15 +599,9 @@ def draw_nodes(
     )
 
     if node_labels:
-        # Get all valid keywords by inspecting the signatures of draw_node_labels
-        valid_label_kwds = signature(draw_node_labels).parameters.keys()
-        # Remove the arguments of this function (draw_networkx)
-        valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "node_labels"}
-        if any([k not in valid_label_kwds for k in kwargs]):
-            invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
-            raise ValueError(f"Received invalid argument(s): {invalid_args}")
-        label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
-        draw_node_labels(H, pos, node_labels, ax_nodes=ax, **label_kwds)
+        # kwargs here are already validated and filtered to node-label keys by
+        # draw() when called from there; for direct calls they are passed as-is.
+        draw_node_labels(H, pos, node_labels, ax_nodes=ax, **kwargs)
 
     # compute axis limits
     _update_lims(pos, ax)
@@ -552,7 +620,7 @@ def draw_hyperedges(
     dyad_vmin=None,
     dyad_vmax=None,
     edge_fc=None,
-    edge_fc_cmap="crest_r",
+    edge_fc_cmap=crest_r(),
     edge_vmin=None,
     edge_vmax=None,
     edge_ec=None,
@@ -614,7 +682,7 @@ def draw_hyperedges(
 
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap
-        Colormap used to map the edge colors. By default, "crest_r".
+        Colormap used to map the edge colors. By default, crest_r().
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
     edge_ec : color or list of colors or array-like or dict or EdgeStat, optional
@@ -696,7 +764,9 @@ def draw_hyperedges(
     }
 
     settings.update(params)
-    settings.update(kwargs)
+    # Only absorb recognised settings keys from kwargs so that label kwargs
+    # passed via a direct call to draw_hyperedges() don't pollute the settings dict.
+    settings.update({k: v for k, v in kwargs.items() if k in settings})
 
     ax, pos = _draw_init(H, ax, pos)
 
@@ -732,7 +802,7 @@ def draw_hyperedges(
         )
 
     # convert dyad pos to format convenient for scatter
-    dyad_pos = np.asarray([(pos[list(e)[0]], pos[list(e)[1]]) for e in dyads.members()])
+    dyad_pos = np.asarray([(pos[list(e)[0]], pos[list(e)[1]]) for e in dyads.members(dtype=list)])
 
     # plot dyads
     if dyad_c_to_map:
@@ -775,7 +845,6 @@ def draw_hyperedges(
     edge_ec = edge_ec[ids_sorted] if len(edge_ec) > 1 else edge_ec  # reorder
 
     if edge_ec_to_map:  # edgecolors need to be manually mapped
-
         # create scalarmappable to map floats to colors
         # we use the same vmin, vmax, and cmap as for edge_fc
         norm = mpl.colors.Normalize(vmin=edge_vmin, vmax=edge_vmax)
@@ -784,7 +853,7 @@ def draw_hyperedges(
         edge_ec = sm_edgecolors.to_rgba(edge_ec)  # map to colors
 
     patches = []
-    for he in np.array(edges.members())[ids_sorted]:
+    for he in np.array(edges.members(dtype=list))[ids_sorted]:
         d = len(he) - 1
         he = list(he)
         coordinates = [[pos[n][0], pos[n][1]] for n in he]
@@ -822,15 +891,9 @@ def draw_hyperedges(
     ax.add_collection(edge_collection)
 
     if hyperedge_labels:
-        # Get all valid keywords by inspecting the signatures of draw_node_labels
-        valid_label_kwds = signature(draw_hyperedge_labels).parameters.keys()
-        # Remove the arguments of this function (draw_networkx)
-        valid_label_kwds = valid_label_kwds - {"H", "pos", "ax", "hyperedge_labels"}
-        if any([k not in valid_label_kwds for k in kwargs]):
-            invalid_args = ", ".join([k for k in kwargs if k not in valid_label_kwds])
-            raise ValueError(f"Received invalid argument(s): {invalid_args}")
-        label_kwds = {k: v for k, v in kwargs.items() if k in valid_label_kwds}
-        draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **label_kwds)
+        # kwargs here are already validated and filtered to edge-label keys by
+        # draw() when called from there; for direct calls they are passed as-is.
+        draw_hyperedge_labels(H, pos, hyperedge_labels, ax_edges=ax, **kwargs)
 
     # compute axis limits
     _update_lims(pos, ax)
@@ -849,7 +912,7 @@ def draw_simplices(
     dyad_vmin=None,
     dyad_vmax=None,
     edge_fc=None,
-    edge_fc_cmap="crest_r",
+    edge_fc_cmap=crest_r(),
     edge_vmin=None,
     edge_vmax=None,
     alpha=0.4,
@@ -908,7 +971,7 @@ def draw_simplices(
 
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap
-        Colormap used to map the edge colors. By default, "crest_r".
+        Colormap used to map the edge colors. By default, crest_r().
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
     alpha : float, optional
@@ -958,14 +1021,14 @@ def draw_simplices(
     """
 
     if max_order:
-        max_edges = SC.edges.filterby("order", max_order, "leq").members()
+        max_edges = SC.edges.filterby("order", max_order, "leq").members(dtype=list)
         SC = SimplicialComplex(max_edges)  # SC without simplices larger than max_order
 
     # Plot only the maximal simplices, thus let's convert the SC to H
     H_ = convert.from_max_simplices(SC)
 
     # add the projected pairwise interactions
-    dyads = subfaces(H_.edges.members(), order=1)
+    dyads = subfaces(H_.edges.members(dtype=list), order=1)
     H_.add_edges_from(dyads)
     H_.cleanup(
         multiedges=False,
@@ -1087,7 +1150,7 @@ def draw_node_labels(
 
     text_items = {}
     for idx, label in node_labels.items():
-        (x, y) = pos[idx]
+        x, y = pos[idx]
 
         if not isinstance(label, str):
             label = str(label)
@@ -1243,15 +1306,20 @@ def draw_hyperedge_labels(
     return text_items
 
 
+def _circle_verts_3d(x, y, z, radius):
+    circle = Circle((x, y), radius)
+    verts = circle.get_patch_transform().transform(circle.get_path().vertices)
+    return np.column_stack([verts, np.full(len(verts), z)])
+
+
 def draw_multilayer(
     H,
     pos=None,
     ax=None,
     node_fc="white",
     node_ec="black",
-    node_lw=1,
-    node_size=5,
-    node_shape="o",
+    node_lw=0.5,
+    node_size=0.05,
     node_fc_cmap="Reds",
     vmin=None,
     vmax=None,
@@ -1259,17 +1327,17 @@ def draw_multilayer(
     dyad_lw=1.5,
     dyad_style="solid",
     edge_fc=None,
-    edge_fc_cmap="crest_r",
+    edge_fc_cmap=crest_r(),
     edge_vmin=None,
     edge_vmax=None,
     alpha=0.4,
     layer_color="grey",
-    layer_cmap="crest_r",
+    layer_cmap=crest_r(),
     max_order=None,
     conn_lines=True,
     conn_lines_style="dotted",
-    h_angle=10,
-    v_angle=20,
+    h_angle=20,
+    v_angle=30,
     sep=0.4,
     rescale_sizes=True,
     **kwargs,
@@ -1300,15 +1368,14 @@ def draw_multilayer(
         Line width of the node borders in pixels.  If int or float, use the same width
         for all node borders.  If iterable or NodeStat, assume the widths are specified
         in the same order as the nodes are found in H.nodes. Values are clipped below
-        and above by min_node_lw and max_node_lw, respectively. By default, 1.
+        and above by min_node_lw and max_node_lw, respectively. By default, 0.5.
     node_size : int, float, iterable, or NodeStat, optional
-        Radius of the nodes in pixels.  If int or float, use the same radius for all
-        nodes. If iterable or NodeStat, assume the radiuses are specified in the same
-        order as the nodes are found in H.nodes. Values are clipped below
-        and above by min_node_size and max_node_size, respectively. By default, 5.
-    node_shape :  string, optional
-        The shape of the node. Specification is as matplotlib.scatter
-        marker. Default is "o".
+        Radius of the nodes, in data coordinates (unlike in `draw_nodes`, where it is
+        in pixels), since nodes are drawn as circles embedded in their layer. If int
+        or float, use the same radius for all nodes. If iterable or NodeStat, assume
+        the radiuses are specified in the same order as the nodes are found in
+        H.nodes. Values are clipped below and above by min_node_size and
+        max_node_size, respectively. By default, 0.1.
     node_fc_cmap : colormap
         Colormap for mapping node colors. By default, "Reds". Ignored, if `node_fc` is
         a str (single color).
@@ -1347,7 +1414,7 @@ def draw_multilayer(
 
         If None (default), color by edge size.
     edge_fc_cmap: matplotlib colormap, optional
-        Colormap used to map the edge colors. By default, "crest_r".
+        Colormap used to map the edge colors. By default, crest_r().
     edge_vmin, edge_vmax : float, optional
         Minimum and maximum for edge colormap scaling. By default, None.
     alpha : float, optional
@@ -1356,7 +1423,7 @@ def draw_multilayer(
         Color of layers. By default, "grey".
     layer_cmap : colormap, optional
         Colormap to use in case of numerical values in layer_color. Ignored if layer_color
-        does not contain numerical values to be mapped. By default, "crest_r", but ignored.
+        does not contain numerical values to be mapped. By default, crest_r(), but ignored.
     max_order : int, optional
         Maximum of hyperedges to plot. If None (default), plots all orders.
     conn_lines : bool, optional
@@ -1364,16 +1431,16 @@ def draw_multilayer(
     conn_lines_style : str, optional
         The linestyle of the connections between layers. Default is 'dotted'.
     h_angle : float, optional
-        The rotation angle around the horizontal axis in degrees. Default is 10.
+        The rotation angle around the horizontal axis in degrees. Default is 20.
     v_angle : float, optional
-        The rotation angle around the vertical axis in degrees. Default is 0.
+        The rotation angle around the vertical axis in degrees. Default is 30.
     sep : float, optional
         The separation between layers. Default is 0.4.
     **kwargs : optional args
         Alternate default values. Values that can be overwritten are the following:
 
-        * "min_node_size" (default: 10)
-        * "max_node_size" (default: 30)
+        * "min_node_size" (default: 0.01)
+        * "max_node_size" (default: 0.5)
         * "min_node_lw" (default: 2)
         * "max_node_lw" (default: 10)
         * "min_dyad_lw" (default: 1)
@@ -1385,14 +1452,15 @@ def draw_multilayer(
         The subplot with the multilayer network visualization.
     collections : a tuple of 2 collections:
 
-        * node_collection : matplotlib PathCollection
-            Collection containing the nodes one the top layer
-        * edge_collection : matplotlib PathCollection
+        * node_collection : matplotlib Poly3DCollection
+            Collection containing the nodes, drawn as circles embedded in
+            their layer
+        * edge_collection : matplotlib Poly3DCollection
             Collection containing the edges of size > 2
     """
     settings = {
-        "min_node_size": 10,
-        "max_node_size": 30,
+        "min_node_size": 0.01,
+        "max_node_size": 0.5,
         "min_dyad_lw": 2,
         "max_dyad_lw": 10,
         "min_node_lw": 1,
@@ -1432,16 +1500,9 @@ def draw_multilayer(
 
     # convert all formats to ndarray
     node_size = _draw_arg_to_arr(node_size)
-    node_fc = _draw_arg_to_arr(node_fc)
     node_lw = _draw_arg_to_arr(node_lw)
     dyad_lw = _draw_arg_to_arr(dyad_lw)
     layer_color = _draw_arg_to_arr(layer_color)
-
-    # avoid matplotlib scatter UserWarning "Parameters 'cmap' will be ignored"
-    if isinstance(node_fc, str) or (
-        isinstance(node_fc, np.ndarray) and is_color_like(node_fc[0])
-    ):
-        node_fc_cmap = None
 
     # check validity of input values
     if np.any(node_size < 0):
@@ -1471,8 +1532,7 @@ def draw_multilayer(
     dyad_color, dyad_c_to_map = _parse_color_arg(dyad_color, list(dyads))
     edge_fc, edge_c_to_map = _parse_color_arg(edge_fc, list(edges))
     layer_color, layer_c_to_map = _parse_color_arg(layer_color, orders)
-
-    node_size = np.array(node_size) ** 2
+    node_fc, node_c_to_map = _parse_color_arg(node_fc, list(H.nodes), id_kind="nodes")
 
     # compute ax limits
     xdiff = np.max(xs) - np.min(xs)
@@ -1485,7 +1545,6 @@ def draw_multilayer(
 
     # plot layers
     for jj, d in enumerate(orders):
-
         z = [sep * d] * H.num_nodes
 
         # draw surfaces corresponding to the different orders
@@ -1512,7 +1571,7 @@ def draw_multilayer(
     # convert dyad pos to format convenient for scatter
     dyad_pos = [
         (np.append(pos[list(e)[0]], sep), np.append(pos[list(e)[1]], sep))
-        for e in dyads.members()
+        for e in dyads.members(dtype=list)
     ]
 
     # plot dyads
@@ -1545,7 +1604,7 @@ def draw_multilayer(
 
     patches = []
     zs = []
-    for he in np.array(edges.members())[ids_sorted]:
+    for he in np.array(edges.members(dtype=list))[ids_sorted]:
         d = len(he) - 1
         zs.append(d * sep)
         he = list(he)
@@ -1583,33 +1642,43 @@ def draw_multilayer(
         )
         ax.add_collection3d(between_lines)
 
-    # draw nodes (last)
-    for d in orders:
+    # draw nodes as circles embedded in each layer.
+    node_radii = (
+        np.full(H.num_nodes, node_size) if np.isscalar(node_size) else node_size
+    )
+    node_patches = [
+        _circle_verts_3d(xy[i, 0], xy[i, 1], sep * d, node_radii[i])
+        for d in orders
+        for i in range(H.num_nodes)
+    ]
 
-        z = [sep * d] * H.num_nodes
+    if node_c_to_map:
+        node_fc_arr = np.tile(node_fc, len(orders))
+        node_fc_colors = None
+    else:
+        node_fc_arr = None
+        node_fc_colors = node_fc
 
-        node_collection = ax.scatter(
-            xs=xy[:, 0],
-            ys=xy[:, 1],
-            zs=z,
-            s=node_size,
-            marker=node_shape,
-            c=node_fc,
-            cmap=node_fc_cmap,
-            vmin=vmin,
-            vmax=vmax,
-            edgecolors=node_ec,
-            linewidths=node_lw,
-            zorder=max_order + 1,
-            plotnonfinite=True,  # plot points with nonfinite color
-            alpha=1,
-        )
+    node_collection = Poly3DCollection(
+        node_patches,
+        facecolors=node_fc_colors,
+        array=node_fc_arr,
+        cmap=node_fc_cmap,
+        edgecolors=node_ec,
+        linewidths=node_lw,
+        alpha=1,
+        zorder=max_order + 1,
+    )
+    node_collection.set_cmap(node_fc_cmap)
+    if node_c_to_map:
+        node_collection.set_clim(vmin, vmax)
+    ax.add_collection3d(node_collection)
 
     ax.view_init(h_angle, v_angle)
     ax.set_ylim(np.min(ys) - ydiff * 0.1, np.max(ys) + ydiff * 0.1)
     ax.set_xlim(np.min(xs) - xdiff * 0.1, np.max(xs) + xdiff * 0.1)
     ax.set_axis_off()
-    ax.set_aspect("equal")
+    ax.set_box_aspect((1, 1, 1))
 
     return ax, (node_collection, edge_collection)
 
@@ -1629,12 +1698,12 @@ def draw_bipartite(
     edge_marker_lw=1,
     edge_marker_size=7,
     edge_marker_shape="s",
-    edge_marker_fc_cmap="crest_r",
+    edge_marker_fc_cmap=crest_r(),
     max_order=None,
     dyad_color=None,
     dyad_lw=1,
     dyad_style="solid",
-    dyad_color_cmap="crest_r",
+    dyad_color_cmap=crest_r(),
     node_labels=None,
     hyperedge_labels=None,
     arrowsize=10,
@@ -1808,7 +1877,7 @@ def draw_bipartite(
         is_directed = True
 
     if not isinstance(H, Hypergraph):
-        raise XGIError("The input must be a Hypergraph")
+        raise TypeError("The input must be a Hypergraph")
 
     settings = {
         "min_node_lw": 0,
@@ -1844,7 +1913,7 @@ def draw_bipartite(
     if not pos:
         pos = bipartite_spring_layout(H)
     elif not (isinstance(pos[0], dict) and isinstance(pos[1], dict)):
-        raise XGIError("Position must be a 2-tuple of dictionaries!")
+        raise TypeError("Position must be a 2-tuple of dictionaries!")
 
     node_pos, edge_pos = pos
 
@@ -1952,7 +2021,7 @@ def draw_undirected_dyads(
     dyad_color=None,
     dyad_lw=1,
     dyad_style="solid",
-    dyad_color_cmap="crest_r",
+    dyad_color_cmap=crest_r(),
     rescale_sizes=True,
     **kwargs,
 ):
@@ -2022,7 +2091,7 @@ def draw_undirected_dyads(
     settings.update(kwargs)
 
     if not isinstance(H, Hypergraph):
-        raise XGIError("The input must be a Hypergraph")
+        raise TypeError("The input must be a Hypergraph")
 
     if not pos:
         pos = bipartite_spring_layout(H)
@@ -2114,7 +2183,7 @@ def draw_directed_dyads(
     dyad_color=None,
     dyad_lw=1,
     dyad_style="solid",
-    dyad_color_cmap="crest_r",
+    dyad_color_cmap=crest_r(),
     arrowsize=10,
     arrowstyle="->",
     connectionstyle="arc3",
@@ -2223,7 +2292,7 @@ def draw_directed_dyads(
     settings.update(kwargs)
 
     if not isinstance(H, DiHypergraph):
-        raise XGIError("Input must be a DiHypergraph")
+        raise TypeError("Input must be a DiHypergraph")
 
     if not pos:
         from ..convert import to_hypergraph
@@ -2336,7 +2405,6 @@ def draw_directed_dyads(
                 ems = edge_marker_size
 
             for n in tail:  # lines going towards the center
-
                 xy_source = node_pos[n]
                 xy_target = edge_pos[e]
 

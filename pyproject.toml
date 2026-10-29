@@ -7,7 +7,7 @@ name = "xgi"
 dynamic = ["version"]
 description = "XGI is a Python package for higher-order networks."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11,<3.15"
 license = {file = "LICENSE.md"}
 authors = [
     {name = "XGI Developers", email = "nicholas.landry@virginia.edu"}
@@ -30,10 +30,10 @@ classifiers = [
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
@@ -48,7 +48,7 @@ dependencies = [
     "networkx>=2.7",
     "requests>=2.0",
     "matplotlib>=3.4",
-    "seaborn>=0.10",
+    "xopen>=2.0",
 ]
 
 [project.urls]
@@ -82,6 +82,7 @@ docs = [
     "nbsphinx-link",
     "pydata-sphinx-theme",
     "sphinx-gallery",
+    "pyyaml",
 ]
 release = [
     "twine>=3.4",
@@ -91,22 +92,26 @@ release = [
 test = [
     "pytest>=7.2",
     "pytest-cov>=4.0",
+    "tuna",
 ]
 tutorial = [
     "jupyter>=1.0",
     "ipython<=8.12.0",
+    "seaborn>=0.10"
 ]
 all = ["xgi[benchmark,developer,docs,release,test,tutorial]"]
 
 [tool.setuptools.packages.find]
 where = ["."]
 
+[tool.setuptools.package-data]
+xgi = ["py.typed", "**/*.pyi", "skill/*.md"]
+
 [tool.setuptools.dynamic.version]
 attr = "xgi.__version__"
 
 [tool.pytest.ini_options]
-# always run doctests
-addopts = "--doctest-modules --ignore=docs"
+addopts = "--ignore=docs"
 
 # custom markers
 markers = [

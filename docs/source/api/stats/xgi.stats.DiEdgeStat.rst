@@ -30,6 +30,7 @@
       ~DiEdgeStat.mean
       ~DiEdgeStat.median
       ~DiEdgeStat.min
+      ~DiEdgeStat.mode
       ~DiEdgeStat.std
       ~DiEdgeStat.var
       ~DiEdgeStat.moment

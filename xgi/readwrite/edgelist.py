@@ -1,5 +1,7 @@
 """Read from and write to edgelists."""
 
+from xopen import xopen
+
 from ..generators import empty_hypergraph
 
 __all__ = [
@@ -30,7 +32,7 @@ def generate_edgelist(H, delimiter=" "):
         yield delimiter.join(map(str, e))
 
 
-def write_edgelist(H, path, delimiter=" ", encoding="utf-8"):
+def write_edgelist(H, path, delimiter=" ", encoding="utf-8", **kwargs):
     """Create a file containing a hyperedge list from a Hypergraph object.
 
     Parameters
@@ -43,6 +45,10 @@ def write_edgelist(H, path, delimiter=" ", encoding="utf-8"):
         Specifies the delimiter between hyperedge members
     encoding: string, default: "utf-8"
         Encoding of the file
+    **kwargs : keyword arguments
+        Additional keyword arguments to pass to xopen for compression options
+        (e.g., compresslevel, threads, format).
+        Ignored when writing to plain-text.
 
     Examples
     --------
@@ -51,7 +57,7 @@ def write_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     >>> # xgi.write_edgelist(H, "test.csv", delimiter=",")
 
     """
-    with open(path, "wb") as file:
+    with xopen(path, "wb", **kwargs) as file:
         for line in generate_edgelist(H, delimiter):
             line += "\n"
             file.write(line.encode(encoding))
@@ -98,7 +104,7 @@ def read_edgelist(
     >>> # H = xgi.read_edgelist("test.csv", delimiter=",")
 
     """
-    with open(path, "rb") as file:
+    with xopen(path, "rb") as file:
         lines = (
             line if isinstance(line, str) else line.decode(encoding) for line in file
         )

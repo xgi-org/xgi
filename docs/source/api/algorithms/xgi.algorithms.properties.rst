@@ -11,6 +11,7 @@ xgi.algorithms.properties
    .. autofunction:: degree_histogram
    .. autofunction:: density
    .. autofunction:: edge_neighborhood
+   .. autofunction:: equal
    .. autofunction:: incidence_density
    .. autofunction:: is_possible_order
    .. autofunction:: is_uniform

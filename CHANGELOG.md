@@ -1,5 +1,52 @@
 # Changelog
 
+* Fix: keep non-integer weights in incidence_matrix, which were previously mapped to zero values. [#770](https://github.com/xgi-org/xgi/pull/770) (@raashish1601)
+
+## v0.10.2
+
+* Feature: Added compressed file I/O. [#709](https://github.com/xgi-org/xgi/pull/709) (@kaiser-dan)
+* Docs: automated the generation of the "Using XGI" page. [#710](https://github.com/xgi-org/xgi/pull/710) (@nwlandry)
+* Optimized line graph construction. [#706](https://github.com/xgi-org/xgi/pull/706) (@Ved235)
+* Added examples to the gallery. [#711](https://github.com/xgi-org/xgi/pull/711) (@maximelucas)
+* Feature: add type stubs for stats on view classes. [#700](https://github.com/xgi-org/xgi/pull/700) (@leotrs)
+* Docs: introduce stats earlier, add cheat sheet, link quickstart. [#701](https://github.com/xgi-org/xgi/pull/701) (@leotrs)
+* Feature: forward stat function docstrings to stat objects. [#708](https://github.com/xgi-org/xgi/pull/708) (@leotrs)
+* Docs: added references to using-xgi.rst. [#698](https://github.com/xgi-org/xgi/pull/698) (@jbd7qp)
+* Feature: make built-in stats discoverable in dir() and IDE autocomplete. [#699](https://github.com/xgi-org/xgi/pull/699) (@leotrs)
+* Fix: update ReadTheDocs OS to ubuntu-24.04. (Closes Issue [#702](https://github.com/xgi-org/xgi/issues/702)) [#703](https://github.com/xgi-org/xgi/pull/703) (@leotrs)
+* Feature: add `__repr__`, `__copy__`, `__deepcopy__` to core classes. [#693](https://github.com/xgi-org/xgi/pull/693) (@leotrs)
+* Docs: cross-reference algorithms and stats from core classes. [#695](https://github.com/xgi-org/xgi/pull/695) (@leotrs)
+* Performance: reduce import time by deferring heavy dependencies. [#692](https://github.com/xgi-org/xgi/pull/692) (@leotrs)
+* Migrate all seeded functions from global random state to local RNG instances. [#689](https://github.com/xgi-org/xgi/pull/689) (@leotrs)
+* Docs: document exception hierarchy in module docstring. [#691](https://github.com/xgi-org/xgi/pull/691) (@leotrs)
+* Migrate all seeded functions from global random state to local RNG instances. [#689](https://github.com/xgi-org/xgi/pull/689) (@leotrs)
+* Docs: document exception hierarchy in module docstring. [#691](https://github.com/xgi-org/xgi/pull/691) (@leotrs)
+* Migrate all seeded functions from global random state to local RNG instances. [#689](https://github.com/xgi-org/xgi/pull/689) (@leotrs)
+* Fix: remove deprecated edge methods from SimplicialComplex. [#696](https://github.com/xgi-org/xgi/pull/696) (@leotrs)
+* Docs: document exception hierarchy in module docstring. [#691](https://github.com/xgi-org/xgi/pull/691) (@leotrs)
+* Migrate all seeded functions from global random state to local RNG instances. [#689](https://github.com/xgi-org/xgi/pull/689) (@leotrs)
+* Define `__all__` across all subpackage `__init__.py` files. [#688](https://github.com/xgi-org/xgi/pull/688) (@leotrs)
+* Clean up exception hierarchy for v1.0. [#687](https://github.com/xgi-org/xgi/pull/687) (@leotrs)
+* Fix scipy FutureWarning in laplacian_matrix. [#685](https://github.com/xgi-org/xgi/pull/685) (@leotrs)
+
+## v0.10.1
+
+* Fix slow test collection and matplotlib GUI popups. [#686](https://github.com/xgi-org/xgi/pull/686) (@leotrs)
+* Speedup imports. [#676](https://github.com/xgi-org/xgi/pull/676) (@nwlandry)
+* Update hypergraph_matrix.py. [#682](https://github.com/xgi-org/xgi/pull/682) (@GavinAnderberg)
+* fix JSON error. [#677](https://github.com/xgi-org/xgi/pull/677) (@nwlandry)
+* Improved the hypergraph equality method. [#671](https://github.com/xgi-org/xgi/pull/671) (@nwlandry)
+* Add eq methods to IDView and IDStat. [#646](https://github.com/xgi-org/xgi/pull/646) (@nwlandry)
+* added 2 gallery examples. [#669](https://github.com/xgi-org/xgi/pull/669) (@maximelucas)
+
+## v0.10
+* Added a recipe for community detection. [#668](https://github.com/xgi-org/xgi/pull/668) (@nwlandry)
+* Added a community detection module and a method for community detection using spectral clustering. [#665](https://github.com/xgi-org/xgi/pull/665) (@kaiser-dan)
+* Add `mode` to `stats` module. [#667](https://github.com/xgi-org/xgi/pull/667) (@nwlandry)
+* Updated contributors and changed the default behavior of the adjacency tensor to be normalized. [#666](https://github.com/xgi-org/xgi/pull/666) (@nwlandry)
+* Added an adjacency tensor function. [#664](https://github.com/xgi-org/xgi/pull/664) (@maximelucas)
+* Added Zulip as a sponsor and added references to the "Using XGI" page. (Closes Issue [#660](https://github.com/xgi-org/xgi/issues/660)) [#662](https://github.com/xgi-org/xgi/pull/662) (@nwlandry)
+
 ## v0.9.5
 * Fix `fast_random_hypergraph` fencepost errors. [#655](https://github.com/xgi-org/xgi/pull/655) (@nwlandry)
 * Split the GitHub actions for the tutorials and source code. [#659](https://github.com/xgi-org/xgi/pull/659) (@nwlandry)

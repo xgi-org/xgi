@@ -1,17 +1,22 @@
 """General utilities."""
 
-import random
+import time
 from collections import defaultdict
 from copy import deepcopy
 from functools import cache
-from itertools import chain, combinations, count
+from itertools import chain, combinations
 from math import ceil, log
 
 import numpy as np
-import pandas as pd
-import requests
 
 from xgi.exception import IDNotFound, XGIError
+
+# Retry policy for HTTP requests against external hosts.
+# 5xx responses and connection errors retry with exponential backoff.
+# 4xx responses do not retry: those indicate a real client-side problem
+# (bad URL, missing dataset) that will not be fixed by waiting.
+_HTTP_RETRY_ATTEMPTS = 3
+_HTTP_RETRY_BACKOFF_SECONDS = (1.0, 2.0, 4.0)
 
 __all__ = [
     "IDDict",
@@ -19,14 +24,15 @@ __all__ = [
     "powerset",
     "update_uid_counter",
     "find_triangles",
-    "request_json_from_url",
-    "request_json_from_url_cached",
+    "request_from_url",
+    "request_from_url_cached",
     "subfaces",
     "convert_labels_to_integers",
     "hist",
     "binomial_sequence",
     "get_network_type",
     "geometric",
+    "crest_r",
 ]
 
 
@@ -158,7 +164,7 @@ def update_uid_counter(H, idx):
     Helper function to make sure the uid counter is set correctly after
     adding an edge with a user-provided ID.
 
-    If we don't set the start of self._edge_uid correctly, it will start at 0,
+    If we don't set self._edge_uid correctly, it will start at 0,
     which will overwrite any existing edges when calling add_edge().  First, we
     use the somewhat convoluted float(e).is_integer() instead of using
     isinstance(e, int) because there exist integer-like numeric types (such as
@@ -172,20 +178,16 @@ def update_uid_counter(H, idx):
         User-provided ID.
 
     """
-    uid = next(H._edge_uid)
     if (
         not isinstance(idx, str)
         and not isinstance(idx, tuple)
         and float(idx).is_integer()
-        and uid <= idx
+        and H._edge_uid <= idx
     ):
         # tuple comes from merging edges and doesn't have as as_integer() method.
-        start = int(idx) + 1
-        # we set the start at one plus the maximum edge ID that is an integer,
-        # because count() only yields integer IDs.
-    else:
-        start = uid
-    H._edge_uid = count(start=start)
+        # We set the counter to one plus the maximum edge ID that is an integer,
+        # because only integer IDs are ever issued automatically.
+        H._edge_uid = int(idx) + 1
 
 
 def find_triangles(G):
@@ -245,65 +247,135 @@ def min_where(dicty, where):
     return min_val
 
 
-def request_json_from_url(url):
-    """HTTP request json file and return as dict.
+def _get_with_retry(url, retries=_HTTP_RETRY_ATTEMPTS, sleep=time.sleep):
+    """Issue an HTTP GET with retry on 5xx responses and connection errors.
+
+    4xx responses are not retried: a bad URL or missing dataset will not
+    heal with a wait. Connection errors and 5xx responses are retried up to
+    ``retries`` times total with exponential backoff from
+    ``_HTTP_RETRY_BACKOFF_SECONDS``. Values of ``retries`` larger than the
+    backoff schedule reuse the last entry.
+    """
+    import requests
+
+    retries = max(1, int(retries))
+    last_status = None
+    for attempt in range(retries):
+        try:
+            r = requests.get(url)
+        except requests.ConnectionError:
+            if attempt == retries - 1:
+                raise XGIError("Connection Error!")
+            sleep(_backoff_for_attempt(attempt))
+            continue
+
+        if r.ok:
+            return r
+        last_status = r.status_code
+        if 500 <= r.status_code < 600 and attempt < retries - 1:
+            sleep(_backoff_for_attempt(attempt))
+            continue
+        break
+
+    raise XGIError(f"Error: HTTP response {last_status}")
+
+
+def _backoff_for_attempt(attempt):
+    """Pick the backoff seconds for a given attempt index.
+
+    Attempts beyond the configured schedule reuse the final entry so that
+    callers who set ``retries`` higher than the default do not fall off
+    the schedule.
+    """
+    idx = min(attempt, len(_HTTP_RETRY_BACKOFF_SECONDS) - 1)
+    return _HTTP_RETRY_BACKOFF_SECONDS[idx]
+
+
+def _parse_response(r, mode):
+    match mode:
+        case "json":
+            return r.json()
+        case "raw":
+            return r.content
+        case "text":
+            return r.text
+        case _:
+            raise ValueError(
+                f"Invalid mode: {mode}. Must be 'json', 'raw', or 'text'."
+            )
+
+
+def request_from_url(url, mode="json", retries=_HTTP_RETRY_ATTEMPTS):
+    """HTTP request a URL and return its parsed content.
+
+    Retries on 5xx responses or connection errors with exponential backoff
+    to absorb transient outages.
 
     Parameters
     ----------
     url : str
-        The url where the json file is located.
+        The url to request.
+    mode : str, optional
+        The mode of the request. Can be "json", "raw", or "text".
+        If "json", the response is parsed as JSON and returned as a dict.
+        If "raw", the raw response content is returned as bytes.
+        If "text", the response is returned as a string.
+        By default, "json".
+    retries : int, optional
+        Maximum number of attempts, including the first. Defaults to
+        ``_HTTP_RETRY_ATTEMPTS``. 4xx responses never retry regardless of
+        this value.
 
     Returns
     -------
-    dict
-        A dictionary of the JSON requested.
+    dict, bytes, or str
+        The parsed response in the format selected by ``mode``.
 
     Raises
     ------
     XGIError
-        If the connection fails or if there is a bad HTTP request.
+        If the connection fails after retries or if there is a bad HTTP
+        request.
     """
-
-    try:
-        r = requests.get(url)
-    except requests.ConnectionError:
-        raise XGIError("Connection Error!")
-
-    if r.ok:
-        return r.json()
-    else:
-        raise XGIError(f"Error: HTTP response {r.status_code}")
+    return _parse_response(_get_with_retry(url, retries=retries), mode)
 
 
 @cache
-def request_json_from_url_cached(url):
-    """HTTP request json file and return as dict.
+def request_from_url_cached(url, mode="json", retries=_HTTP_RETRY_ATTEMPTS):
+    """HTTP request a URL and return its parsed content, cached by URL.
+
+    Retries on 5xx responses or connection errors (see
+    :func:`request_from_url` for the policy). Successful responses are
+    cached for the lifetime of the process.
 
     Parameters
     ----------
     url : str
-        The url where the json file is located.
+        The url to request.
+    mode : str, optional
+        The mode of the request. Can be "json", "raw", or "text".
+        If "json", the response is parsed as JSON and returned as a dict.
+        If "raw", the raw response content is returned as bytes.
+        If "text", the response is returned as a string.
+        By default, "json".
+    retries : int, optional
+        Maximum number of attempts, including the first. Defaults to
+        ``_HTTP_RETRY_ATTEMPTS``. Note that the cache key includes
+        ``mode`` and ``retries``, so calls with different values are
+        cached separately.
 
     Returns
     -------
-    dict
-        A dictionary of the JSON requested.
+    dict, bytes, or str
+        The parsed response in the format selected by ``mode``.
 
     Raises
     ------
     XGIError
-        If the connection fails or if there is a bad HTTP request.
+        If the connection fails after retries or if there is a bad HTTP
+        request.
     """
-
-    try:
-        r = requests.get(url)
-    except requests.ConnectionError:
-        raise XGIError("Connection Error!")
-
-    if r.ok:
-        return r.json()
-    else:
-        raise XGIError(f"Error: HTTP response {r.status_code}")
+    return _parse_response(_get_with_retry(url, retries=retries), mode)
 
 
 def subfaces(edges, order=None):
@@ -506,6 +578,8 @@ def hist(vals, bins=10, bin_edges=False, density=False, log_binning=False):
     # Now, we need to compute for each y the bin centers
     x = bins[1:] - np.diff(bins) / 2.0
 
+    import pandas as pd
+
     if bin_edges:
         return pd.DataFrame.from_dict(
             {"bin_center": x, "value": y, "bin_lo": bins[:-1], "bin_hi": bins[1:]}
@@ -558,29 +632,29 @@ def get_network_type(H):
     return str(type(H)).split(".")[-1].split("'")[0].lower()
 
 
-def geometric(p):
+def geometric(p, rng=None):
     """Generate a sample from the geometric1 distribution.
 
     Parameters
     ----------
     p : float in [0, 1]
         the probability
+    rng : numpy.random.Generator or None, optional
+        A random number generator instance. If None, a new unseeded
+        instance is used. By default, None.
 
     Returns
     -------
     int
         the number of trials for the first success
 
-    Notes
-    -----
-    This sampler can be made deterministic by setting
-    `random.seed()`.
-
     References
     ----------
     https://en.wikipedia.org/wiki/Geometric_distribution
     """
-    r = random.random()
+    if rng is None:
+        rng = np.random.default_rng()
+    r = rng.random()
     try:
         return ceil(log(r) / log(1 - p))
     except ValueError:
@@ -589,3 +663,14 @@ def geometric(p):
     except ZeroDivisionError:
         # when p = 0
         return np.inf
+
+
+def crest_r():
+    palette = [
+        (0.17363177, 0.19076859, 0.44549087),
+        (0.20350004, 0.5231837, 0.55370601),
+        (0.6468274, 0.80289262, 0.56592265),
+    ]
+    from matplotlib.colors import LinearSegmentedColormap
+
+    return LinearSegmentedColormap.from_list("crest_r", palette)

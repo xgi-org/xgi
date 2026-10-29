@@ -29,6 +29,7 @@
       ~DiNodeStat.mean
       ~DiNodeStat.median
       ~DiNodeStat.min
+      ~DiNodeStat.mode
       ~DiNodeStat.std
       ~DiNodeStat.var
       ~DiNodeStat.moment

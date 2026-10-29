@@ -127,6 +127,7 @@ Modified from https://github.com/cfpb/github-changelog
 This is a script to determine which PRs have been merges since the last
 release, or between two releases on the same branch.
 """
+
 import argparse
 import os
 import re
@@ -356,7 +357,7 @@ def fetch_changes(
     ]
 
     if len(pr_numbers) == 0 and len(commits_between) > 0:
-        raise Exception("Lots of commits and no PRs on branch {branch}")
+        raise Exception(f"Lots of commits and no PRs on branch {branch}")
     else:
         prs = prs_from_numbers(github_config, owner, repo, pr_numbers)
 

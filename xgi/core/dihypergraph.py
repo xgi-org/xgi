@@ -1,16 +1,11 @@
-"""Base class for directed hypergraphs.
-
-.. warning::
-    This is currently an experimental feature.
-
-"""
+"""Base class for directed hypergraphs."""
 
 from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
-from itertools import count
+from copy import deepcopy
 from warnings import warn
 
 from ..exception import IDNotFound, XGIError, frozen
+from ..stats import IDStat
 from ..utils import IDDict, update_uid_counter
 from .views import DiEdgeView, DiNodeView
 
@@ -19,9 +14,6 @@ __all__ = ["DiHypergraph"]
 
 class DiHypergraph:
     r"""A dihypergraph is a collection of directed interactions of arbitrary size.
-
-    .. warning::
-        This is currently an experimental feature.
 
     More formally, a directed hypergraph (dihypergraph) is a pair :math:`(V, E)`,
     where :math:`V` is a set of elements called *nodes* or *vertices*,
@@ -64,10 +56,10 @@ class DiHypergraph:
     The `attr` keyword arguments are added as hypergraph attributes. To add node or edge
     attributes see :meth:`add_node` and :meth:`add_edge`.
 
-    In addition to the methods listed in this page, other methods defined in the `stats`
-    package are also accessible via the `DiHypergraph` class.  For more details, see the
-    `tutorial
-    <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
+    **Per-node and per-edge statistics** are available through the
+    :mod:`~xgi.stats` framework.  Access them via ``DH.nodes.<stat>`` and
+    ``DH.edges.<stat>`` (e.g., ``DH.nodes.degree``, ``DH.edges.order``).
+    See :doc:`Tutorial 6 - Statistics </api/tutorials/focus_6>` for details.
 
     References
     ----------
@@ -81,9 +73,9 @@ class DiHypergraph:
     DiNodeView((1, 2, 3, 4, 5, 6, 7, 8))
     >>> DH.edges
     DiEdgeView((0, 1))
-    >>> [[sorted(h), sorted(t)] for h, t in DH.edges.dimembers()]
+    >>> [[sorted(h), sorted(t)] for h, t in DH.edges.dimembers(dtype=list)]
     [[[1, 2, 3], [4]], [[5, 6], [6, 7, 8]]]
-    >>> [sorted(e) for e in DH.edges.members()]
+    >>> [sorted(e) for e in DH.edges.members(dtype=list)]
     [[1, 2, 3, 4], [5, 6, 7, 8]]
     """
 
@@ -139,7 +131,7 @@ class DiHypergraph:
         self._edgeview = DiEdgeView(self)
 
     def __init__(self, incoming_data=None, **attr):
-        self._edge_uid = count()
+        self._edge_uid = 0
         self._net_attr = self._net_attr_dict_factory()
 
         self._node = self._node_dict_factory()
@@ -176,6 +168,16 @@ class DiHypergraph:
         except XGIError:
             return f"Unnamed {type(self).__name__} with {self.num_nodes} nodes and {self.num_edges} hyperedges"
 
+    def __repr__(self):
+        cls = type(self).__name__
+        return f"{cls}({self.edges.dimembers()})"
+
+    def __copy__(self):
+        return self.copy()
+
+    def __deepcopy__(self, memo):
+        return self.copy()
+
     def __iter__(self):
         """Iterate over the nodes.
 
@@ -203,6 +205,11 @@ class DiHypergraph:
             return n in self._node
         except TypeError:
             return False
+
+    def __eq__(self, H):
+        from ..algorithms import equal
+
+        return equal(self, H)
 
     def __len__(self):
         """Number of nodes in the dihypergraph.
@@ -232,12 +239,15 @@ class DiHypergraph:
         self._net_attr[attr] = val
 
     def __getattr__(self, attr):
+        # Only proxy actual stats (DiNodeStat / DiEdgeStat).  Without the
+        # IDStat check, every view method would be exposed via DiHypergraph and
+        # fail with confusing errors when called.  See issue #408.
         stat = getattr(self.nodes, attr, None)
         word = "nodes"
-        if stat is None:
+        if not isinstance(stat, IDStat):
             stat = getattr(self.edges, attr, None)
             word = "edges"
-        if stat is None:
+        if not isinstance(stat, IDStat):
             word = None
             raise AttributeError(
                 f"{attr} is not a method of DiHypergraph or a recognized DiNodeStat or DiEdgeStat"
@@ -247,8 +257,16 @@ class DiHypergraph:
             val = stat(*args, **kwargs).asdict()
             return val if node is None else val[node]
 
-        func.__doc__ = f"""Equivalent to DH.{word}.{attr}.asdict(). For accepted *args and
-        **kwargs, see documentation of DH.{word}.{attr}."""
+        # Standardized return contract (see #740):
+        #   DH.<stat>()  -> dict[id, T]
+        #   DH.<stat>(x) -> T
+        # For parametric stats, pass parameters as keyword arguments because
+        # the first positional argument is captured as `node`.
+        func.__doc__ = f"""Equivalent to DH.{word}.{attr}.asdict().
+
+        Standardized return shape: no-arg call returns dict[id, value]; with-id
+        call returns the value for that id. For accepted *args and **kwargs,
+        see documentation of DH.{word}.{attr}."""
 
         return func
 
@@ -338,33 +356,89 @@ class DiHypergraph:
 
         Parameters
         ----------
-        nodes_for_adding : iterable
-            An iterable of nodes (list, dict, set, etc.).
+        nodes_for_adding : iterable or dict
+            An iterable of nodes (list, set, etc.).
             OR
             An iterable of (node, attribute dict) tuples.
+            OR
+            A dict mapping node IDs to attribute dictionaries.
+
             Node attributes are updated using the attribute dict.
-        attr : keyword arguments, optional (default= no attributes)
+        attr : keyword arguments, optional (default=no attributes)
             Update attributes for all nodes in nodes.
-            Node attributes specified in nodes as a tuple take
-            precedence over attributes specified via keyword arguments.
+            Node attributes specified for individual nodes take precedence
+            over attributes specified via keyword arguments.
 
         See Also
         --------
         add_node
+        set_node_attributes
 
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.DiHypergraph()
+
+        Add nodes without attributes:
+
+        >>> H.add_nodes_from([1, 2, 3])
+
+        Add nodes with attributes shared by all nodes:
+
+        >>> H.add_nodes_from([1, 2, 3], color="red", weight=1)
+
+        Add nodes with individual attributes using (node, attribute dict)
+        tuples:
+
+        >>> H.add_nodes_from([
+        ...     (1, {"color": "red"}),
+        ...     (2, {"color": "blue"}),
+        ...     (3, {"color": "green"}),
+        ... ])
+
+        Add nodes using a dict mapping node IDs to attribute dictionaries:
+
+        >>> H.add_nodes_from({
+        ...     1: {"color": "red", "weight": 2},
+        ...     2: {"color": "blue", "weight": 5},
+        ...     3: {"color": "green"},
+        ... })
+
+        Global attributes can also be combined with individual node
+        attributes. Individual node attributes take precedence:
+
+        >>> H.add_nodes_from(
+        ...     {
+        ...         1: {"color": "red"},
+        ...         2: {"color": "blue"},
+        ...     },
+        ...     weight=1,
+        ... )
         """
+        if isinstance(nodes_for_adding, dict):
+            nodes_for_adding = nodes_for_adding.items()
+
         for n in nodes_for_adding:
-            try:
-                newnode = n not in self._node
-                newdict = attr
-            except TypeError:
-                n, ndict = n
-                newnode = n not in self._node
+            if isinstance(n, tuple) and len(n) == 2:
+                if not n[1]:  # Handles the None case
+                    n, ndict = n[0], {}
+                elif isinstance(n[1], dict):
+                    n, ndict = n
+                else:
+                    raise TypeError(
+                        "If nodes are specified as (node, attribute dict) tuples, "
+                        "the second element must be a dictionary or None."
+                    )
                 newdict = attr.copy()
                 newdict.update(ndict)
-            if newnode:
+            else:
+                newdict = attr
+
+            # Initialize new node if it doesn't already exist
+            if n not in self._node:
                 self._node[n] = {"in": set(), "out": set()}
                 self._node_attr[n] = self._node_attr_dict_factory()
+
             self._node_attr[n].update(newdict)
 
     def remove_node(self, n, strong=False, remove_empty=True):
@@ -539,9 +613,13 @@ class DiHypergraph:
             tail = members[0]
             head = members[1]
         else:
-            raise XGIError("Directed edge must be a list or tuple!")
+            raise TypeError("Directed edge must be a list or tuple!")
 
-        uid = next(self._edge_uid) if idx is None else idx
+        if idx is None:
+            uid = self._edge_uid
+            self._edge_uid += 1
+        else:
+            uid = idx
 
         if idx in self._edge.keys():  # check that uid is not present yet
             warn(f"uid {idx} already exists, cannot add edge {members}")
@@ -566,7 +644,7 @@ class DiHypergraph:
         self._edge_attr[uid] = self._edge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
 
-        if idx:  # set self._edge_uid correctly
+        if idx is not None:  # set self._edge_uid correctly
             update_uid_counter(self, idx)
 
     def add_edges_from(self, ebunch_to_add, **attr):
@@ -680,12 +758,12 @@ class DiHypergraph:
                     tail = members[0]
                     head = members[1]
                 else:
-                    raise XGIError("Directed edge must be a list or tuple!")
+                    raise TypeError("Directed edge must be a list or tuple!")
 
                 try:
                     self._edge[idx] = {"in": set(tail), "out": set(head)}
                 except TypeError as e:
-                    raise XGIError("Invalid ebunch format") from e
+                    raise ValueError("Invalid ebunch format") from e
 
                 for n in tail:
                     if n not in self._node:
@@ -733,11 +811,13 @@ class DiHypergraph:
         e = first_edge
         while True:
             if format1:
-                members, idx, eattr = e, next(self._edge_uid), {}
+                members, idx, eattr = e, self._edge_uid, {}
+                self._edge_uid += 1
             elif format2:
                 members, idx, eattr = e[0], e[1], {}
             elif format3:
-                members, idx, eattr = e[0], next(self._edge_uid), e[1]
+                members, idx, eattr = e[0], self._edge_uid, e[1]
+                self._edge_uid += 1
             elif format4:
                 members, idx, eattr = e[0], e[1], e[2]
 
@@ -749,7 +829,7 @@ class DiHypergraph:
                     head = members[1]
                     self._edge[idx] = {"in": set(tail), "out": set(head)}
                 except TypeError as e:
-                    raise XGIError("Invalid ebunch format") from e
+                    raise ValueError("Invalid ebunch format") from e
 
                 for node in tail:
                     if node not in self._node:
@@ -804,11 +884,12 @@ class DiHypergraph:
             ed = "out"
             nd = "in"
         else:
-            raise XGIError("Invalid direction!")
+            raise ValueError("Invalid direction!")
 
         if edge not in self._edge:
             self._edge[edge] = {"in": set(), "out": set()}
             self._edge_attr[edge] = {}
+            update_uid_counter(self, edge)
         if node not in self._node:
             self._node[node] = {"in": set(), "out": set()}
             self._node_attr[node] = {}
@@ -910,7 +991,7 @@ class DiHypergraph:
             ed = "out"
             nd = "in"
         else:
-            raise XGIError("Invalid direction!")
+            raise ValueError("Invalid direction!")
 
         if edge not in self._edge:
             raise XGIError(f"Edge {edge} not in the hypergraph")
@@ -1022,16 +1103,18 @@ class DiHypergraph:
         )
         cp._net_attr = deepcopy(self._net_attr)
 
-        cp._edge_uid = copy(self._edge_uid)
+        cp._edge_uid = self._edge_uid
 
         return cp
 
-    def cleanup(self, isolates=False, relabel=True, in_place=True):
+    def cleanup(self, isolates=False, empties=False, relabel=True, in_place=True):
         if in_place:
             _DH = self
         else:
             _DH = self.copy()
 
+        if not empties:
+            _DH.remove_edges_from(_DH.edges.empty())
         if not isolates:
             _DH.remove_nodes_from(_DH.nodes.isolates())
         if relabel:

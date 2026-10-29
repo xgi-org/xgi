@@ -2,8 +2,6 @@
 
 from collections import defaultdict
 
-import pandas as pd
-
 from ..core import SimplicialComplex
 from ..exception import XGIError
 from ..generators import empty_hypergraph
@@ -93,4 +91,6 @@ def to_bipartite_pandas_dataframe(H):
     for id1, members in H._node.items():
         for id2 in members:
             data.append([id1, id2])
+    import pandas as pd
+
     return pd.DataFrame(data, columns=["Node ID", "Edge ID"])

@@ -1,0 +1,23 @@
+hoi:
+  url: https://brainets.github.io/hoi/
+
+hypercontagion:
+  url: https://hypercontagion.readthedocs.io/en/latest
+
+hyperidpath:
+  url: https://github.com/922397935/hyperiDPath-master
+
+hyperspec:
+  url: https://github.com/yaml-programming/hyperspec
+
+hypersync:
+  url: https://github.com/maximelucas/hypersync
+
+pynetflow:
+  url: https://github.com/anthbapt/pynetflow
+
+segram:
+  url: https://github.com/sztal/segram
+
+simplicial-kuramoto:
+  url: https://arnaudon.github.io/simplicial-kuramoto

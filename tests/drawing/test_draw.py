@@ -3,19 +3,19 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-import seaborn as sb
 
 import xgi
 from xgi.exception import XGIError
+from xgi.utils.utilities import crest_r
 
 
-def test_draw(edgelist8):
+def test_draw(edgelist8, diedgelist2):
     H = xgi.Hypergraph(edgelist8)
 
     fig, ax = plt.subplots()
     ax, collections = xgi.draw(H, ax=ax)
 
-    (node_collection, dyad_collection, edge_collection) = collections
+    node_collection, dyad_collection, edge_collection = collections
 
     # number of elements
     assert len(ax.lines) == 0
@@ -40,7 +40,7 @@ def test_draw(edgelist8):
 
     fig, ax = plt.subplots()
     ax, collections = xgi.draw(S, ax=ax)
-    (node_collection, dyad_collection, edge_collection) = collections
+    node_collection, dyad_collection, edge_collection = collections
 
     # number of elements
     assert len(ax.lines) == 0
@@ -57,6 +57,22 @@ def test_draw(edgelist8):
         assert line.get_zorder() == 3
     for patch, z in zip(ax.patches, [0, 2, 2]):  # hyperedges
         assert patch.get_zorder() == z
+
+    DH = xgi.DiHypergraph(diedgelist2)
+
+    fig, ax = plt.subplots()
+    ax, collections = xgi.draw(DH, ax=ax)
+    node_collection, edge_marker_collection = collections
+
+    # number of elements
+    assert len(ax.lines) == 0
+    offsets = node_collection.get_offsets()
+    assert offsets.shape[0] == DH.num_nodes  # nodes
+
+    offsets = edge_marker_collection.get_offsets()
+    assert offsets.shape[0] == DH.num_edges  # edges
+
+    assert len(ax.collections) == 2
 
     plt.close("all")
 
@@ -237,12 +253,12 @@ def test_draw_hyperedges(edgelist8):
 
     fig, ax = plt.subplots()
     ax, collections = xgi.draw_hyperedges(H, ax=ax)
-    (dyad_collection, edge_collection) = collections
+    dyad_collection, edge_collection = collections
     fig2, ax2 = plt.subplots()
     ax2, collections2 = xgi.draw_hyperedges(
         H, ax=ax2, dyad_color="r", edge_fc="r", dyad_lw=3, dyad_style="--"
     )
-    (dyad_collection2, edge_collection2) = collections2
+    dyad_collection2, edge_collection2 = collections2
 
     # number of elements
     assert len(ax.lines) == 0
@@ -280,7 +296,7 @@ def test_draw_hyperedges(edgelist8):
     # negative node_lw or node_size
     with pytest.raises(ValueError):
         ax, collections = xgi.draw_hyperedges(H, ax=ax, dyad_lw=-1)
-        (dyad_collection, edge_collection) = collections
+        dyad_collection, edge_collection = collections
         plt.close("all")
 
     plt.close("all")
@@ -293,9 +309,9 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
     # default cmap
     fig, ax = plt.subplots()
     ax, collections = xgi.draw_hyperedges(H, ax=ax)
-    (dyad_collection, edge_collection) = collections
+    dyad_collection, edge_collection = collections
     assert dyad_collection.get_cmap() == plt.cm.Greys
-    assert edge_collection.get_cmap() == sb.color_palette("crest_r", as_cmap=True)
+    assert edge_collection.get_cmap() == crest_r()
     plt.close("all")
 
     # set cmap
@@ -304,7 +320,7 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
     ax, collections = xgi.draw_hyperedges(
         H, ax=ax, dyad_color=dyad_colors, dyad_color_cmap="Greens", edge_fc_cmap="Blues"
     )
-    (dyad_collection, edge_collection) = collections
+    dyad_collection, edge_collection = collections
     assert dyad_collection.get_cmap() == plt.cm.Greens
     assert edge_collection.get_cmap() == plt.cm.Blues
 
@@ -326,7 +342,7 @@ def test_draw_hyperedges_fc_cmap(edgelist8):
         edge_vmin=14,
         edge_vmax=19,
     )
-    (dyad_collection, edge_collection) = collections
+    dyad_collection, edge_collection = collections
     plt.colorbar(dyad_collection)
     plt.colorbar(edge_collection)
     assert (14, 19) == edge_collection.get_clim()
@@ -354,7 +370,7 @@ def test_draw_hyperedges_ec(edgelist8):
     # edge stat color
     fig, ax = plt.subplots()
     ax, collections = xgi.draw_hyperedges(H, ax=ax, edge_ec=H.edges.size, edge_fc="w")
-    (_, edge_collection) = collections
+    _, edge_collection = collections
 
     assert np.all(edge_collection.get_edgecolor() == colors)
     plt.close("all")
@@ -370,7 +386,7 @@ def test_draw_simplices(edgelist8):
 
     fig, ax = plt.subplots()
     ax, collections = xgi.draw_simplices(S, ax=ax)
-    (dyad_collection, edge_collection) = collections
+    dyad_collection, edge_collection = collections
 
     # number of elements
     assert len(ax.lines) == 0
@@ -396,7 +412,7 @@ def test_draw_hypergraph_hull(edgelist8):
     fig, ax = plt.subplots()
     ax, collections = xgi.draw(H, ax=ax, hull=True)
 
-    (node_collection, dyad_collection, edge_collection) = collections
+    node_collection, dyad_collection, edge_collection = collections
 
     # number of elements
     assert len(ax.lines) == 0
@@ -424,7 +440,7 @@ def test_draw_multilayer(edgelist8):
     ax1, (node_coll, edge_coll) = xgi.draw_multilayer(H)
     sizes = xgi.unique_edge_sizes(H)
     num_layers = max(sizes) - min(sizes) + 1
-    num_node_collections = max(sizes) - min(sizes) + 1
+    num_node_collections = 1  # nodes of all layers are embedded in a single collection
     num_edge_collections = 1
     num_dyad_collections = 1
     num_interlayer_collections = 1
@@ -441,9 +457,7 @@ def test_draw_multilayer(edgelist8):
     # number of elements
     assert len(ax1.lines) == 0
     assert len(ax1.patches) == 0
-    offsets = node_coll.get_offsets()
-    assert offsets.shape[0] == H.num_nodes  # nodes
-    assert len(ax1.collections) == 11
+    assert len(ax1.collections) == 8
 
     # zorder
     assert node_coll.get_zorder() == 5  # nodes
@@ -456,10 +470,10 @@ def test_draw_multilayer(edgelist8):
     assert np.all(node_coll.get_edgecolor() == np.array([[0, 0, 0, 1]]))  # black
 
     # node_lw
-    assert np.all(node_coll.get_linewidth() == np.array([1]))
+    assert np.all(node_coll.get_linewidth() == np.array([0.5]))
 
-    # node_size
-    assert np.all(node_coll.get_sizes() == np.array([5**2]))
+    # node_size: one circle per node, per layer
+    assert len(node_coll.get_paths()) == H.num_nodes * num_layers
 
     plt.close("all")
 
@@ -468,7 +482,7 @@ def test_draw_multilayer(edgelist8):
     ax2, (node_coll2, edge_coll2) = xgi.draw_multilayer(H, max_order=max_order)
     sizes = [2, 3]
     num_layers = max(sizes) - min(sizes) + 1
-    num_node_collections = max(sizes) - min(sizes) + 1
+    num_node_collections = 1
     num_edge_collections = 1
     num_dyad_collections = 1
     num_interlayer_collections = 1
@@ -482,15 +496,15 @@ def test_draw_multilayer(edgelist8):
         == len(ax2.collections)
     )
 
-    offsets = node_coll2.get_offsets()
-    assert offsets.shape[0] == H.num_nodes  # nodes
+    node_coll2.get_facecolor()  # force the 3D projection of the node patches
+    assert len(node_coll2.get_paths()) == H.num_nodes * num_layers  # nodes
     plt.close("all")
 
     # conn_lines parameter
     ax3, (node_coll3, edge_coll3) = xgi.draw_multilayer(H, conn_lines=False)
     sizes = xgi.unique_edge_sizes(H)
     num_layers = max(sizes) - min(sizes) + 1
-    num_node_collections = max(sizes) - min(sizes) + 1
+    num_node_collections = 1
     num_edge_collections = 1
     num_dyad_collections = 1
     num_interlayer_collections = 0
@@ -512,15 +526,15 @@ def test_draw_multilayer(edgelist8):
         pos=pos,
         node_fc="red",
         node_ec="blue",
-        node_size=10,
+        node_size=0.2,
         conn_lines_style="dashed",
         h_angle=30,
         v_angle=15,
         sep=2,
     )
     sizes = xgi.unique_edge_sizes(H)
-    nnum_layers = max(sizes) - min(sizes) + 1
-    num_node_collections = max(sizes) - min(sizes) + 1
+    num_layers = max(sizes) - min(sizes) + 1
+    num_node_collections = 1
     num_edge_collections = 1
     num_dyad_collections = 1
     num_interlayer_collections = 1
@@ -541,10 +555,7 @@ def test_draw_multilayer(edgelist8):
     assert np.all(node_coll4.get_edgecolor() == np.array([[0, 0, 1, 1]]))  # blue
 
     # node_lw
-    assert np.all(node_coll4.get_linewidth() == np.array([1]))
-
-    # node_size
-    assert np.all(node_coll4.get_sizes() == np.array([10**2]))
+    assert np.all(node_coll4.get_linewidth() == np.array([0.5]))
 
     plt.close("all")
 
@@ -677,7 +688,7 @@ def test_draw_bipartite(diedgelist2, edgelist8):
     plt.close("all")
 
     # test type
-    with pytest.raises(XGIError):
+    with pytest.raises(TypeError):
         xgi.draw_bipartite([0, 1, 2])
 
     # test gca
@@ -767,4 +778,110 @@ def test_issue_515(edgelist8):
         warnings.simplefilter("error")
         xgi.draw_multilayer(H, node_fc=["black"] * H.num_nodes)
 
+    plt.close("all")
+
+
+def test_draw_kwargs_validation(edgelist8):
+    """Regression tests for kwarg validation bugs fixed in issues #730 and #731."""
+    H = xgi.Hypergraph(edgelist8)
+    S = xgi.SimplicialComplex(edgelist8)
+
+    # issue #731: typo is caught even when labels are off (the default)
+    with pytest.raises(TypeError):
+        xgi.draw(H, font_siz_nodes=20)
+    plt.close("all")
+
+    # issue #731: same typo is caught consistently when labels are on
+    with pytest.raises(TypeError):
+        xgi.draw(H, node_labels=True, font_siz_nodes=20)
+    plt.close("all")
+
+    # issue #730 bug A: a valid edge-label kwarg must not be rejected when
+    # node_labels=True (previously the node-label validator ran first and
+    # rejected kwargs intended for draw_hyperedge_labels)
+    xgi.draw(H, node_labels=True, hyperedge_labels=True, font_size_edges=14)
+    plt.close("all")
+
+    # issue #730 bug A: same for SimplicialComplex
+    xgi.draw(S, node_labels=True, hyperedge_labels=True, font_size_edges=14)
+    plt.close("all")
+
+    # issue #730 bug B: a settings kwarg must not be rejected when node_labels=True
+    # (previously min_node_size was not in draw_node_labels' signature and raised)
+    xgi.draw(H, node_labels=True, min_node_size=3)
+    plt.close("all")
+
+    # issue #730 bug C: unknown kwargs raise TypeError, not ValueError
+    with pytest.raises(TypeError):
+        xgi.draw(H, not_a_real_kwarg=99)
+    plt.close("all")
+
+    # valid label kwargs are accepted even when labels are off — draw() validates
+    # against all known keys unconditionally, so users can pass label kwargs
+    # without having to enable labels first
+    xgi.draw(H, node_labels=False, font_size_nodes=14)
+    plt.close("all")
+    xgi.draw(H, hyperedge_labels=False, font_size_edges=14)
+    plt.close("all")
+
+    # mixing all three kwarg buckets at once works without error
+    xgi.draw(
+        H,
+        node_labels=True,
+        hyperedge_labels=True,
+        min_node_size=3,
+        font_size_nodes=12,
+        font_size_edges=10,
+    )
+    plt.close("all")
+
+
+def test_draw_kwargs_forwarding(edgelist8):
+    """Check that label kwargs are actually applied to the rendered text objects."""
+    H = xgi.Hypergraph(edgelist8)
+
+    # node-label font size and color are forwarded to the Text objects on the axes
+    fig, ax = plt.subplots()
+    xgi.draw(H, ax=ax, node_labels=True, font_size_nodes=18, font_color_nodes="red")
+    for text in ax.texts:
+        assert text.get_fontsize() == 18
+        assert text.get_color() == "red"
+    plt.close("all")
+
+    # edge-label font size and color are forwarded to the Text objects on the axes
+    fig, ax = plt.subplots()
+    xgi.draw(
+        H, ax=ax, hyperedge_labels=True, font_size_edges=14, font_color_edges="blue"
+    )
+    for text in ax.texts:
+        assert text.get_fontsize() == 14
+        assert text.get_color() == "blue"
+    plt.close("all")
+
+    # when both label types are drawn, each uses its own kwargs
+    fig, ax = plt.subplots()
+    xgi.draw(
+        H,
+        ax=ax,
+        node_labels=True,
+        hyperedge_labels=True,
+        font_size_nodes=16,
+        font_size_edges=10,
+    )
+    font_sizes = {text.get_fontsize() for text in ax.texts}
+    assert 16 in font_sizes
+    assert 10 in font_sizes
+    plt.close("all")
+
+    # when labels are off, no text is rendered regardless of label kwargs passed
+    fig, ax = plt.subplots()
+    xgi.draw(H, ax=ax, node_labels=False, font_size_nodes=18, font_color_nodes="red")
+    assert len(ax.texts) == 0
+    plt.close("all")
+
+    fig, ax = plt.subplots()
+    xgi.draw(
+        H, ax=ax, hyperedge_labels=False, font_size_edges=14, font_color_edges="blue"
+    )
+    assert len(ax.texts) == 0
     plt.close("all")

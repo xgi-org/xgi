@@ -1,8 +1,7 @@
 name: Benchmark XGI
 on:
   push:
-    branches:
-      - main
+    branches: [main, dev]
   workflow_dispatch:
 
 permissions:
@@ -14,10 +13,10 @@ jobs:
     name: Upload XGI benchmarks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
-          python-version: 3.13
+          python-version: 3.14
       - name: Install packages
         run: |
           pip install --upgrade pip

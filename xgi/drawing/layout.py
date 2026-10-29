@@ -1,7 +1,5 @@
 """Algorithms to compute node positions for drawing."""
 
-import random
-
 import networkx as nx
 import numpy as np
 from numpy.linalg import inv, svd
@@ -24,6 +22,15 @@ __all__ = [
 ]
 
 
+def _to_nx_seed(seed):
+    # NetworkX's spring_layout doesn't accept np.random.Generator yet
+    # (it calls seed.rand(...), which only exists on legacy RandomState).
+    # Draw a fresh int from the rng so the user's Generator still advances.
+    if isinstance(seed, np.random.Generator):
+        return int(seed.integers(0, 2**32 - 1))
+    return seed
+
+
 def random_layout(H, center=None, seed=None):
     """Position nodes uniformly at random in the unit square.
 
@@ -38,11 +45,9 @@ def random_layout(H, center=None, seed=None):
     center : array-like, optional
         Coordinate pair around which to center the layout.
         If None (default), does not center the positions.
-    seed : int, optional
+    seed : int, numpy.random.Generator, or None, optional
         Set the random state for deterministic node layouts.
-        If int, `seed` is the seed used by the random number generator,
-        If None (default), random numbers are sampled from the
-        numpy random number generator without initialization.
+        If None (default), the layout is not deterministic.
 
     Returns
     -------
@@ -73,11 +78,10 @@ def random_layout(H, center=None, seed=None):
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
 
-    if seed is not None:
-        np.random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     H, center = nx.drawing.layout._process_params(H, center, 2)
-    pos = np.random.rand(len(H), 2) + center
+    pos = rng.random((len(H), 2)) + center
     pos = pos.astype(np.float32)
     pos = dict(zip(H, pos))
 
@@ -132,13 +136,10 @@ def pairwise_spring_layout(H, seed=None, k=None, **kwargs):
     >>> pos = xgi.pairwise_spring_layout(H)
     """
 
-    if seed is not None:
-        random.seed(seed)
-
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
     G = convert.to_graph(H)
-    pos = nx.spring_layout(G, seed=seed, k=k, **kwargs)
+    pos = nx.spring_layout(G, seed=_to_nx_seed(seed), k=k, **kwargs)
     return pos
 
 
@@ -235,14 +236,11 @@ def bipartite_spring_layout(H, seed=None, k=None, **kwargs):
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.bipartite_spring_layout(H)
     """
-    if seed is not None:
-        random.seed(seed)
-
     G, nodedict, edgedict = to_bipartite_graph(H, index=True)
 
     # Creating a dictionary for the position of the nodes with the standard spring
     # layout
-    pos = nx.spring_layout(G, seed=seed, k=k, **kwargs)
+    pos = nx.spring_layout(G, seed=_to_nx_seed(seed), k=k, **kwargs)
 
     node_pos = {nodedict[i]: pos[i] for i in nodedict}
     edge_pos = {edgedict[i]: pos[i] for i in edgedict}
@@ -344,9 +342,6 @@ def barycenter_spring_layout(
     >>> H = xgi.random_hypergraph(N, ps)
     >>> pos = xgi.barycenter_spring_layout(H)
     """
-    if seed is not None:
-        random.seed(seed)
-
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
 
@@ -354,7 +349,7 @@ def barycenter_spring_layout(
 
     # Creating a dictionary for the position of the nodes with the standard spring
     # layout
-    pos_with_phantom_nodes = nx.spring_layout(G, seed=seed, k=k, **kwargs)
+    pos_with_phantom_nodes = nx.spring_layout(G, seed=_to_nx_seed(seed), k=k, **kwargs)
 
     # Retaining only the positions of the real nodes
     pos = {k: pos_with_phantom_nodes[k] for k in list(H.nodes)}
@@ -419,9 +414,6 @@ def weighted_barycenter_spring_layout(
     >>> pos = xgi.weighted_barycenter_spring_layout(H)
 
     """
-    if seed is not None:
-        random.seed(seed)
-
     if isinstance(H, SimplicialComplex):
         H = convert.from_max_simplices(H)
 
@@ -429,7 +421,7 @@ def weighted_barycenter_spring_layout(
 
     # Creating a dictionary for node position with the standard spring layout
     pos_with_phantom_nodes = nx.spring_layout(
-        G, weight="weight", seed=seed, k=k, **kwargs
+        G, weight="weight", seed=_to_nx_seed(seed), k=k, **kwargs
     )
 
     # Retaining only the positions of the real nodes

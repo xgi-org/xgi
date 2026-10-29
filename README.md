@@ -1,7 +1,7 @@
 <img src="https://raw.githubusercontent.com/xgi-org/xgi/main/logo/logo.svg" alt="XGI" width="50%"></img>
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Supports Python versions 3.10 and above.](https://img.shields.io/badge/Python%20versions%20supported-3.10%2B-forest
+[![Supports Python versions 3.11 and above.](https://img.shields.io/badge/Python%20versions%20supported-3.11%2B-forest
 )](https://www.repostatus.org/#active)
 [![Test Status](https://github.com/xgi-org/xgi/actions/workflows/test-code.yml/badge.svg)](https://github.com/xgi-org/xgi/actions/workflows/test-code.yml)
 [![codecov](https://codecov.io/gh/xgi-org/xgi/branch/main/graph/badge.svg?token=BI6TX2WDSG)](https://codecov.io/gh/xgi-org/xgi)
@@ -15,7 +15,7 @@
 * [**GitHub Discussions**](https://github.com/xgi-org/xgi/discussions)
 * [**Documentation**](https://xgi.readthedocs.io)
 * [**Contribute**](https://xgi.readthedocs.io/en/stable/contribute.html)
-* [**Projects using XGI**](https://xgi.readthedocs.io/en/stable/using-xgi.html)
+* [**Projects using XGI**](https://xgi.readthedocs.io/en/stable/using_xgi.html)
 
 Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twitter](https://twitter.com/xginets) or [Mastodon](https://mathstodon.xyz/@xginets)!
 
@@ -27,7 +27,7 @@ Sign up for our [mailing list](http://eepurl.com/igE6ez) and follow XGI on [Twit
 - [How to Contribute](#how-to-contribute)
 - [How to Cite](#how-to-cite)
 - [License](#license)
-- [Funding](#funding)
+- [Support](#support)
 - [Other Resources](#other-resources)
 
 ## What is XGI?<a id="what-is-xgi"></a>
@@ -43,7 +43,7 @@ Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for higher-
 * Draw higher-order networks in a variety of **visually striking ways** (See our [gallery](https://xgi.readthedocs.io/en/stable/auto_examples/index.html) for several examples.)
 
 ## Installation<a id="installation"></a>
-XGI runs on Python 3.10 or higher.
+XGI runs on Python 3.11 or higher.
 
 To install the latest version of XGI, run the following command:
 ```sh
@@ -84,6 +84,7 @@ Some concrete ways that you can get involved:
 * **Spread the word** when you use XGI by sharing with your colleagues and friends.
 * **Request a new feature or report a bug** by raising a [new issue](https://github.com/xgi-org/xgi/issues/new).
 * **Create a Pull Request (PR)** to address an [open issue](https://github.com/xgi-org/xgi/issues) or add a feature.
+* **Add a paper or software package using XGI to the "Projects using XGI" page** with the following [instructions](/citations/adding_citations.md)!
 * **Join our [Zulip channel](https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/)** to be a part of the daily goings-on of XGI.
 
 
@@ -108,10 +109,14 @@ We acknowledge the importance of good software to support research, and we note 
 ## License<a id="license"></a>
 Released under the 3-Clause BSD license (see [`LICENSE.md`](https://github.com/xgi-org/xgi/blob/main/LICENSE.md))
 
-Copyright (C) 2021-2024 XGI Developers
+Copyright (C) 2021-2025 XGI Developers
 
-## Funding<a id="funding"></a>
-The XGI package has been supported by NSF Grant 2121905, ["HNDS-I: Using Hypergraphs to Study Spreading Processes in Complex Social Networks"](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2121905).
+## Support<a id="support"></a>
+
+<a href="https://www.nsf.gov"><img src="docs/source/_static/nsf-logo.svg" alt="NSF" height=50></img></a>
+<a href="https://zulip.com"><img src="docs/source/_static/zulip-org-logo.svg" alt="XGI" height=50></img></a>
+
+See details [here](https://github.com/xgi-org/xgi/blob/main/SUPPORT.md).
 
 ## Other Resources<a id="other-resources"></a>
 This library may not meet your needs and if this is this case, consider checking out our [list of other resources](https://github.com/xgi-org/xgi/blob/main/OTHER_RESOURCES.md).

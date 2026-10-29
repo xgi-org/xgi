@@ -2,22 +2,20 @@ name: Test tutorials
 
 on:
   push:
-    branches:
-      - main
+    branches: [main, dev]
   pull_request:
-    branches:
-      - main
+    branches: [main, dev]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
-    - name: Set up Python 3.13
-      uses: actions/setup-python@v5
+    - name: Set up Python 3.14
+      uses: actions/setup-python@v7
       with:
-        python-version: "3.13"
+        python-version: 3.14
 
     - name: Install packages
       run: |

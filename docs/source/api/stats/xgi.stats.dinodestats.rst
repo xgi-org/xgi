@@ -11,3 +11,4 @@
    .. autofunction:: degree
    .. autofunction:: in_degree
    .. autofunction:: out_degree
+   .. autofunction:: pos

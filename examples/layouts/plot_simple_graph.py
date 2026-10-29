@@ -1,6 +1,6 @@
 """
 =================
-Circular 
+Circular
 =================
 
 Draw simple hypergraph with circular layout.

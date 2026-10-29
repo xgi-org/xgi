@@ -7,7 +7,6 @@ hypergraph).
 
 from itertools import combinations
 
-from ..exception import XGIError
 from .classic import empty_hypergraph
 
 __all__ = [
@@ -96,7 +95,7 @@ def sunflower(l, c, m):
 
     Raises
     ------
-    XGIError
+    ValueError
         If the edge size is smaller than the core.
 
     Returns
@@ -106,7 +105,7 @@ def sunflower(l, c, m):
     from ..core import Hypergraph
 
     if m < c:
-        raise XGIError("m cannot be smaller than c.")
+        raise ValueError("m cannot be smaller than c.")
 
     core_nodes = list(range(c))
 

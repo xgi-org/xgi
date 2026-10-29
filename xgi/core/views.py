@@ -9,9 +9,29 @@ Views are automatically updaed when the hypergraph changes.
 from collections import defaultdict
 from collections.abc import Mapping, Set
 from functools import reduce
+from warnings import warn
 
 from ..exception import IDNotFound, XGIError
 from ..stats import IDStat, dispatch_many_stats, dispatch_stat
+
+
+class _stat_property:
+    """Non-data descriptor that exposes a stat as a class-level attribute.
+
+    Makes built-in stats visible to dir(), tab completion, and IDE autocomplete
+    while preserving the instance-level caching behavior of the stats system.
+    """
+
+    def __init__(self, stat_name):
+        self.stat_name = stat_name
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        stat = dispatch_stat(obj._id_kind, obj._net, obj, self.stat_name)
+        obj.__dict__[self.stat_name] = stat
+        return stat
+
 
 __all__ = [
     "NodeView",
@@ -124,23 +144,43 @@ class IDView(Mapping, Set):
         return iter(self._ids)
 
     def __getitem__(self, idx):
-        """Get the attributes of the ID.
+        """Get the attribute dictionary of the node or edge with the given ID.
+
+        Note that this returns the **attributes** (a dict of metadata), not the
+        members of an edge or the edges containing a node. If no attributes have
+        been set, the returned dict is empty.
 
         Parameters
         ----------
         idx : hashable
-            node or edge ID
+            Node or edge ID.
 
         Returns
         -------
         dict
-            attributes associated to the ID.
+            Attributes associated with `idx`. Empty if none have been set.
 
         Raises
         ------
-        XGIError
-            If the id is not being kept track of by this view, or if id is not in the
-            hypergraph, or if id is not hashable.
+        IDNotFound
+            If `idx` is not in this view.
+
+        See Also
+        --------
+        :meth:`EdgeView.members` : Get the nodes that make up an edge.
+        :meth:`NodeView.memberships` : Get the edges containing a node.
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4]])
+        >>> H.edges[0]                  # attribute dict (empty by default)
+        {}
+        >>> H.edges.members(0)          # the actual members of edge 0
+        {1, 2, 3}
+        >>> H.add_edge([5, 6], idx="e1", color="red")
+        >>> H.edges["e1"]               # attributes set at creation
+        {'color': 'red'}
 
         """
         if idx not in self:
@@ -178,10 +218,15 @@ class IDView(Mapping, Set):
     def filterby(self, stat, val, mode="eq"):
         """Filter the IDs in this view by a statistic.
 
+        For the complete list of built-in statistics that can be passed by name
+        as ``stat``, see the "Available statistics" admonition on the
+        :doc:`stats package page </api/stats>`.
+
         Parameters
         ----------
         stat : str or :class:`xgi.stats.NodeStat`/:class:`xgi.stats.EdgeStat`
             `NodeStat`/`EdgeStat` object, or name of a `NodeStat`/`EdgeStat`.
+            See :doc:`/api/stats` for the complete list of available names.
         val : Any
             Value of the statistic.  Usually a single numeric value.  When mode is
             'between', must be a tuple of exactly two values.
@@ -387,6 +432,55 @@ class IDView(Mapping, Set):
                 if len(self._id_dict[idx].intersection(self._id_dict[i])) >= s
             }.difference({idx})
 
+    def duplicate_groups(self):
+        """Group IDs that share the same bipartite neighbors.
+
+        Two IDs are in the same group if they have the same set of bipartite
+        neighbors. Only groups containing more than one ID are returned, so
+        the result is empty when there are no duplicates.
+
+        Returns
+        -------
+        list of IDView
+            One view per group of IDs sharing the same bipartite neighbors.
+            Groups are returned in the order of first occurrence in the
+            underlying collection; within each group, IDs iterate in
+            insertion order.
+
+        See Also
+        --------
+        IDView.duplicates
+        IDView.lookup
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph([[0, 1, 2], [3, 4, 2], [0, 1, 2]])
+        >>> [list(g) for g in H.edges.duplicate_groups()]
+        [[0, 2]]
+
+        Multiple independent groups:
+
+        >>> H = xgi.Hypergraph([[0, 1], [2, 3], [1, 0], [3, 2]])
+        >>> [sorted(g) for g in H.edges.duplicate_groups()]
+        [[0, 2], [1, 3]]
+
+        No duplicates gives an empty list:
+
+        >>> H = xgi.Hypergraph([[0, 1], [1, 2]])
+        >>> H.edges.duplicate_groups()
+        []
+
+        """
+        hashes = defaultdict(list)
+        for idx, members in self._id_dict.items():
+            hashes[frozenset(members)].append(idx)
+        return [
+            self.__class__.from_view(self, bunch=edges)
+            for edges in hashes.values()
+            if len(edges) > 1
+        ]
+
     def duplicates(self):
         """Find IDs that have a duplicate.
 
@@ -411,6 +505,7 @@ class IDView(Mapping, Set):
 
         See Also
         --------
+        IDView.duplicate_groups
         IDView.lookup
 
         Examples
@@ -434,15 +529,13 @@ class IDView(Mapping, Set):
 
         """
         dups = []
-        hashes = defaultdict(list)
-        for idx, members in self._id_dict.items():
-            hashes[frozenset(members)].append(idx)
-        for _, edges in hashes.items():
-            if len(edges) > 1:
-                try:
-                    dups.extend(sorted(edges)[1:])
-                except TypeError:
-                    dups.extend(edges[1:])
+        for group in self.duplicate_groups():
+            edges = list(group)
+            try:
+                edges = sorted(edges)
+            except TypeError:
+                pass
+            dups.extend(edges[1:])
         return self.__class__.from_view(self, bunch=dups)
 
     def lookup(self, neighbors):
@@ -557,9 +650,28 @@ class NodeView(IDView):
     `tutorial
     <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
+    Indexing with ``H.nodes[id]`` returns the node's **attribute dictionary**,
+    not the edges it belongs to. Use :meth:`memberships` for the latter.
+
     """
 
     _id_kind = "node"
+
+    attrs = _stat_property("attrs")
+    degree = _stat_property("degree")
+    average_neighbor_degree = _stat_property("average_neighbor_degree")
+    clustering_coefficient = _stat_property("clustering_coefficient")
+    local_clustering_coefficient = _stat_property("local_clustering_coefficient")
+    two_node_clustering_coefficient = _stat_property("two_node_clustering_coefficient")
+    clique_eigenvector_centrality = _stat_property("clique_eigenvector_centrality")
+    h_eigenvector_centrality = _stat_property("h_eigenvector_centrality")
+    z_eigenvector_centrality = _stat_property("z_eigenvector_centrality")
+    node_edge_centrality = _stat_property("node_edge_centrality")
+    katz_centrality = _stat_property("katz_centrality")
+    local_simplicial_fraction = _stat_property("local_simplicial_fraction")
+    local_edit_simpliciality = _stat_property("local_edit_simpliciality")
+    local_face_edit_simpliciality = _stat_property("local_face_edit_simpliciality")
+    pos = _stat_property("pos")
 
     def __init__(self, H, bunch=None):
         if H is None:
@@ -567,7 +679,7 @@ class NodeView(IDView):
         else:
             super().__init__(H, bunch)
 
-    def memberships(self, n=None):
+    def memberships(self, n=None, dtype=dict):
         """Get the edge ids of which a node is a member.
 
         Gets all the node memberships for all nodes in the view if n
@@ -577,23 +689,35 @@ class NodeView(IDView):
         ----------
         n : hashable, optional
             Node ID. By default, None.
+        dtype : {dict, list}, optional
+            Container type for the no-arg call. By default, dict, giving
+            ``{node_id: set_of_edges}``. Pass ``list`` for a plain list
+            of edge sets, without node ids.
 
         Returns
         -------
-        dict of sets if n is None, otherwise a set
-            Edge memberships.
+        dict (if dtype is dict, default)
+            Mapping from node id to the set of edge memberships.
+        list (if dtype is list)
+            List of edge sets, in view iteration order.
+        set (if n is not None)
+            Edge memberships of node n.
 
         Raises
         ------
         XGIError
-            If `n` is not hashable or if it is not in the hypergraph.
+            If `n` is not hashable or if it is not in the hypergraph, or
+            if `dtype` is not dict or list.
 
         """
-        return (
-            {key: self._id_dict[key].copy() for key in self}
-            if n is None
-            else self._id_dict[n].copy()
-        )
+        if n is None:
+            if dtype is dict:
+                return {key: self._id_dict[key].copy() for key in self}
+            elif dtype is list:
+                return [self._id_dict[key].copy() for key in self]
+            else:
+                raise XGIError(f"Unrecognized dtype {dtype}")
+        return self._id_dict[n].copy()
 
     def isolates(self, ignore_singletons=False):
         """Nodes that belong to no edges.
@@ -654,9 +778,17 @@ class EdgeView(IDView):
     `tutorial
     <https://xgi.readthedocs.io/en/stable/api/tutorials/focus_6.html>`_.
 
+    Indexing with ``H.edges[id]`` returns the edge's **attribute dictionary**,
+    not its members. Use :meth:`members` for the latter.
+
     """
 
     _id_kind = "edge"
+
+    attrs = _stat_property("attrs")
+    order = _stat_property("order")
+    size = _stat_property("size")
+    node_edge_centrality = _stat_property("node_edge_centrality")
 
     def __init__(self, H, bunch=None):
         if H is None:
@@ -664,23 +796,24 @@ class EdgeView(IDView):
         else:
             super().__init__(H, bunch)
 
-    def members(self, e=None, dtype=list):
+    def members(self, e=None, dtype=dict):
         """Get the node ids that are members of an edge.
 
         Parameters
         ----------
         e : hashable, optional
             Edge ID. By default, None.
-        dtype : {list, dict}, optional
-            Specify the type of the return value.
-            By default, list.
+        dtype : {dict, list}, optional
+            Container type for the no-arg call. By default, dict, giving
+            ``{edge_id: set_of_nodes}``. Pass ``list`` for a plain list
+            of member sets, without edge ids.
 
         Returns
         -------
-        list (if dtype is list, default)
-            Edge members.
-        dict (if dtype is dict)
-            Edge members.
+        dict (if dtype is dict, default)
+            Mapping from edge id to the set of node members.
+        list (if dtype is list)
+            List of member sets, in view iteration order.
         set (if e is not None)
             Members of edge e.
 
@@ -780,7 +913,7 @@ class EdgeView(IDView):
         >>> H.edges.maximal()
         EdgeView((0, 5, 6))
         >>> H.edges.maximal().members()
-        [{1, 2, 3}, {3, 4}, {1, 2, 3}]
+        {0: {1, 2, 3}, 5: {3, 4}, 6: {1, 2, 3}}
         """
         edges = self._id_dict
         nodes = self._bi_id_dict
@@ -836,13 +969,19 @@ class DiNodeView(IDView):
 
     _id_kind = "dinode"
 
+    attrs = _stat_property("attrs")
+    degree = _stat_property("degree")
+    in_degree = _stat_property("in_degree")
+    out_degree = _stat_property("out_degree")
+    pos = _stat_property("pos")
+
     def __init__(self, H, bunch=None):
         if H is None:
             super().__init__(None, bunch)
         else:
             super().__init__(H, bunch)
 
-    def dimemberships(self, n=None):
+    def dimemberships(self, n=None, dtype=dict):
         """Get the edge ids of which a node is a member.
 
         Gets all the node memberships for all nodes in the view if n
@@ -852,58 +991,96 @@ class DiNodeView(IDView):
         ----------
         n : hashable, optional
             Node ID. By default, None.
+        dtype : {dict, list}, optional
+            Container type for the no-arg call. By default, dict, giving
+            ``{node_id: (in_edges, out_edges)}``. Pass ``list`` for a plain
+            list of ``(in_edges, out_edges)`` tuples, without node ids.
 
         Returns
         -------
-        dict of directed node memberships if n is None,
-            otherwise the directed memberships of a single node.
+        dict (if dtype is dict, default)
+            Mapping from node id to a ``(in_edges, out_edges)`` tuple of
+            edge sets.
+        list (if dtype is list)
+            List of ``(in_edges, out_edges)`` tuples, in view iteration
+            order.
+        tuple (if n is not None)
+            Directed memberships of node n as an ``(in_edges, out_edges)``
+            tuple of edge sets.
 
         Raises
         ------
         XGIError
-            If `n` is not hashable or if it is not in the hypergraph.
+            If `n` is not hashable or if it is not in the hypergraph, or
+            if `dtype` is not dict or list.
 
         """
-        return (
-            {
-                key: (self._id_dict[key]["in"].copy(), self._id_dict[key]["out"].copy())
-                for key in self
-            }
-            if n is None
-            else (self._id_dict[n]["in"].copy(), self._id_dict[n]["out"].copy())
-        )
+        if n is None:
+            if dtype is dict:
+                return {
+                    key: (
+                        self._id_dict[key]["in"].copy(),
+                        self._id_dict[key]["out"].copy(),
+                    )
+                    for key in self
+                }
+            elif dtype is list:
+                return [
+                    (self._id_dict[key]["in"].copy(), self._id_dict[key]["out"].copy())
+                    for key in self
+                ]
+            else:
+                raise XGIError(f"Unrecognized dtype {dtype}")
+        return (self._id_dict[n]["in"].copy(), self._id_dict[n]["out"].copy())
 
-    def memberships(self, n=None):
+    def memberships(self, n=None, dtype=dict):
         """Get the edge ids of which a node is a member.
 
         Gets all the node memberships for all nodes in the view if n
-        not specified.
+        not specified. For a directed hypergraph, this counts a node as a
+        member of any edge whose head or tail contains it. See
+        :meth:`DiNodeView.dimemberships` for the head/tail breakdown.
 
         Parameters
         ----------
         n : hashable, optional
             Node ID. By default, None.
+        dtype : {dict, list}, optional
+            Container type for the no-arg call. By default, dict, giving
+            ``{node_id: set_of_edges}``. Pass ``list`` for a plain list
+            of edge sets, without node ids.
 
         Returns
         -------
-        dict of sets if n is None, otherwise a set
-            Node memberships, regardless of whether
-            that node is a sender or receiver.
+        dict (if dtype is dict, default)
+            Mapping from node id to the set of edge memberships.
+        list (if dtype is list)
+            List of edge sets, in view iteration order.
+        set (if n is not None)
+            Node memberships, regardless of whether that node is a sender
+            or receiver.
 
         Raises
         ------
         XGIError
-            If `n` is not hashable or if it is not in the dihypergraph.
+            If `n` is not hashable or if it is not in the dihypergraph, or
+            if `dtype` is not dict or list.
 
         """
-        return (
-            {
-                key: set(self._id_dict[key]["in"].union(self._id_dict[key]["out"]))
-                for key in self
-            }
-            if n is None
-            else set(self._id_dict[n]["in"].union(self._id_dict[n]["out"]))
-        )
+        if n is None:
+            if dtype is dict:
+                return {
+                    key: set(self._id_dict[key]["in"].union(self._id_dict[key]["out"]))
+                    for key in self
+                }
+            elif dtype is list:
+                return [
+                    set(self._id_dict[key]["in"].union(self._id_dict[key]["out"]))
+                    for key in self
+                ]
+            else:
+                raise XGIError(f"Unrecognized dtype {dtype}")
+        return set(self._id_dict[n]["in"].union(self._id_dict[n]["out"]))
 
     def isolates(self):
         """Nodes that belong to no edges.
@@ -956,35 +1133,40 @@ class DiEdgeView(IDView):
 
     _id_kind = "diedge"
 
+    attrs = _stat_property("attrs")
+    order = _stat_property("order")
+    size = _stat_property("size")
+    head_order = _stat_property("head_order")
+    head_size = _stat_property("head_size")
+    tail_order = _stat_property("tail_order")
+    tail_size = _stat_property("tail_size")
+
     def __init__(self, H, bunch=None):
         if H is None:
             super().__init__(None, bunch)
         else:
             super().__init__(H, bunch)
 
-    def dimembers(self, e=None, dtype=list):
+    def dimembers(self, e=None, dtype=dict):
         """Get the node ids that are members of an edge.
 
         Parameters
         ----------
         e : hashable, optional
             Edge ID. By default, None.
-        dtype : {list, dict}, optional
-            Specify the type of the return value.
-            By default, list.
+        dtype : {dict, list}, optional
+            Container type for the no-arg call. By default, dict, giving
+            ``{edge_id: (tail_set, head_set)}``. Pass ``list`` for a plain
+            list of ``(tail, head)`` tuples without edge ids.
 
         Returns
         -------
-        list (if dtype is list, default)
-            Directed edges.
-        dict (if dtype is dict)
-            Directed edges.
-        set (if e is not None)
-            A single directed edge.
-
-        In all of these cases, a directed edge is
-        a 2-tuple of sets, where the first entry
-        is the tail, and the second entry is the head.
+        dict (if dtype is dict, default)
+            Mapping from edge id to a ``(tail, head)`` tuple of node sets.
+        list (if dtype is list)
+            List of ``(tail, head)`` tuples, in view iteration order.
+        tuple (if e is not None)
+            A single directed edge as a ``(tail, head)`` tuple of node sets.
 
         Raises
         ------
@@ -1018,28 +1200,28 @@ class DiEdgeView(IDView):
 
         return (self._id_dict[e]["in"].copy(), self._id_dict[e]["out"].copy())
 
-    def members(self, e=None, dtype=list):
+    def members(self, e=None, dtype=dict):
         """Get the edges of a directed hypergraph.
+
+        The members of an edge are the union of its head and tail sets.
 
         Parameters
         ----------
         e : hashable, optional
             Edge ID. By default, None.
-        dtype : {list, dict}, optional
-            Specify the type of the return value.
-            By default, list.
+        dtype : {dict, list}, optional
+            Container type for the no-arg call. By default, dict, giving
+            ``{edge_id: head_union_tail}``. Pass ``list`` for a plain list
+            of member sets, without edge ids.
 
         Returns
         -------
-        list (if dtype is list, default)
-            Edge members.
-        dict (if dtype is dict)
-            Edge members.
+        dict (if dtype is dict, default)
+            Mapping from edge id to the set of node members.
+        list (if dtype is list)
+            List of member sets, in view iteration order.
         set (if e is not None)
             Members of edge e.
-
-        The members of an edge are the union of
-        its head and tail sets.
 
         Raises
         ------
@@ -1069,23 +1251,24 @@ class DiEdgeView(IDView):
 
         return set(self._id_dict[e]["in"].union(self._id_dict[e]["out"]))
 
-    def head(self, e=None, dtype=list):
+    def head(self, e=None, dtype=dict):
         """Get the node ids that are in the head of a directed edge.
 
         Parameters
         ----------
         e : hashable, optional
             Edge ID. By default, None.
-        dtype : {list, dict}, optional
-            Specify the type of the return value.
-            By default, list.
+        dtype : {dict, list}, optional
+            Container type for the no-arg call. By default, dict, giving
+            ``{edge_id: head_set}``. Pass ``list`` for a plain list of
+            head sets, without edge ids.
 
         Returns
         -------
-        list (if dtype is list, default)
-            Head members.
-        dict (if dtype is dict)
-            Head members.
+        dict (if dtype is dict, default)
+            Mapping from edge id to the set of head members.
+        list (if dtype is list)
+            List of head sets, in view iteration order.
         set (if e is not None)
             Members of the head of edge e.
 
@@ -1112,23 +1295,24 @@ class DiEdgeView(IDView):
 
         return self._id_dict[e]["out"].copy()
 
-    def tail(self, e=None, dtype=list):
+    def tail(self, e=None, dtype=dict):
         """Get the node ids that are in the tail of a directed edge.
 
         Parameters
         ----------
         e : hashable, optional
             Edge ID. By default, None.
-        dtype : {list, dict}, optional
-            Specify the type of the return value.
-            By default, list.
+        dtype : {dict, list}, optional
+            Container type for the no-arg call. By default, dict, giving
+            ``{edge_id: tail_set}``. Pass ``list`` for a plain list of
+            tail sets, without edge ids.
 
         Returns
         -------
-        list (if dtype is list, default)
-            Tail members.
-        dict (if dtype is dict)
-            Tail members.
+        dict (if dtype is dict, default)
+            Mapping from edge id to the set of tail members.
+        list (if dtype is list)
+            List of tail sets, in view iteration order.
         set (if e is not None)
             Tail members of edge e.
 
@@ -1155,25 +1339,43 @@ class DiEdgeView(IDView):
 
         return self._id_dict[e]["in"].copy()
 
-    def sources(self, e=None, dtype=list):
-        """Get the nodes that are sources (senders)
-        in the directed edges.
+    def sources(self, e=None, dtype=dict):
+        """Get the nodes that are sources (senders) in the directed edges.
+
+        .. deprecated:: 1.0
+            Use :meth:`tail` instead. ``sources`` will be removed in a future
+            release. See xgi-org/xgi#765.
 
         See Also
         --------
         tail: identical method
         """
+        warn(
+            "DiEdgeView.sources is deprecated and will be removed in a future "
+            "release. Use DiEdgeView.tail instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return self.tail(e=e, dtype=dtype)
 
-    def targets(self, e=None, dtype=list):
-        """Get the nodes that are sources (senders)
-        in the directed edges.
+    def targets(self, e=None, dtype=dict):
+        """Get the nodes that are targets (receivers) in the directed edges.
+
+        .. deprecated:: 1.0
+            Use :meth:`head` instead. ``targets`` will be removed in a future
+            release. See xgi-org/xgi#765.
 
         See Also
         --------
         head: identical method
 
         """
+        warn(
+            "DiEdgeView.targets is deprecated and will be removed in a future "
+            "release. Use DiEdgeView.head instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return self.head(e=e, dtype=dtype)
 
     def empty(self):

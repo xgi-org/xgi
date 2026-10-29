@@ -1,6 +1,7 @@
 import numpy as np
 
 import xgi
+from xgi.utils.trie import Trie
 
 
 def test_edit_simpliciality(
@@ -287,8 +288,8 @@ def test_simplicial_fraction(
 
 
 def test_is_simplex(sc1_with_singletons, h_missing_one_singleton):
-    t = xgi.Trie()
-    edges = sc1_with_singletons.edges.members()
+    t = Trie()
+    edges = sc1_with_singletons.edges.members(dtype=list)
     t.build_trie(edges)
 
     is_simplex = xgi.algorithms.simpliciality._is_simplex
@@ -297,8 +298,8 @@ def test_is_simplex(sc1_with_singletons, h_missing_one_singleton):
     assert is_simplex(t, {1, 2, 3}, min_size=1)
     assert is_simplex(t, {1, 2}, min_size=1)
 
-    t = xgi.Trie()
-    edges = h_missing_one_singleton.edges.members()
+    t = Trie()
+    edges = h_missing_one_singleton.edges.members(dtype=list)
     t.build_trie(edges)
 
     assert is_simplex(t, {1, 2, 3})
@@ -376,8 +377,8 @@ def test_powerset():
 
 def test_count_missing_subfaces(h_missing_one_link):
     count_missing_subfaces = xgi.algorithms.simpliciality._count_missing_subfaces
-    t = xgi.Trie()
-    t.build_trie(h_missing_one_link.edges.members())
+    t = Trie()
+    t.build_trie(h_missing_one_link.edges.members(dtype=list))
     assert count_missing_subfaces(t, {1}, min_size=2) == 0
     assert count_missing_subfaces(t, {2, 3}, min_size=2) == 0
     assert count_missing_subfaces(t, {2, 3}) == 0

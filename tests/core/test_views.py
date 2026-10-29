@@ -206,8 +206,11 @@ def test_edge_members(edgelist3, diedgelist2):
     # undirected
     H = xgi.Hypergraph(edgelist3)
     assert H.edges.members(0) == {1, 2, 3}
-    assert H.edges.members() == [{1, 2, 3}, {3, 4}, {4, 5, 6}]
+    # no-arg default is now dict[edge_id, set] (see #740)
+    assert H.edges.members() == {0: {1, 2, 3}, 1: {3, 4}, 2: {4, 5, 6}}
     assert H.edges.members(dtype=dict) == {0: {1, 2, 3}, 1: {3, 4}, 2: {4, 5, 6}}
+    # dtype=list remains available as an escape hatch
+    assert H.edges.members(dtype=list) == [{1, 2, 3}, {3, 4}, {4, 5, 6}]
     with pytest.raises(XGIError):
         H.edges.members(dtype=np.array)
 
@@ -220,8 +223,9 @@ def test_edge_members(edgelist3, diedgelist2):
     # directed
     H = xgi.DiHypergraph(diedgelist2)
     assert H.edges.members(0) == {0, 1, 2}
-    assert H.edges.members() == [{0, 1, 2}, {1, 2, 4}, {2, 3, 4, 5}]
+    assert H.edges.members() == {0: {0, 1, 2}, 1: {1, 2, 4}, 2: {2, 3, 4, 5}}
     assert H.edges.members(dtype=dict) == {0: {0, 1, 2}, 1: {1, 2, 4}, 2: {2, 3, 4, 5}}
+    assert H.edges.members(dtype=list) == [{0, 1, 2}, {1, 2, 4}, {2, 3, 4, 5}]
     with pytest.raises(XGIError):
         H.edges.members(dtype=np.array)
 
@@ -238,11 +242,17 @@ def test_members_read_only(edgelist3):
     H.edges.members(0).add("a")
     assert "a" not in H.edges.members(0)
 
+    # default (dict) is still a copy
     e = H.edges.members()
     e[0].add("a")
     assert "a" not in H.edges.members(0)
 
     e = H.edges.members(dtype=dict)
+    e[0].add("a")
+    assert "a" not in H.edges.members(0)
+
+    # dtype=list also returns copies
+    e = H.edges.members(dtype=list)
     e[0].add("a")
     assert "a" not in H.edges.members(0)
 
@@ -425,8 +435,8 @@ def test_maximal(edgelist5, edgelist8):
     m1 = S1.edges.maximal()
     m2 = S2.edges.maximal()
 
-    simp1 = S1.edges(m1).members()
-    simp2 = S2.edges(m2).members()
+    simp1 = S1.edges(m1).members(dtype=list)
+    simp2 = S2.edges(m2).members(dtype=list)
 
     assert len(m1) == 4
     assert {0, 1, 2, 3} in simp1
@@ -496,12 +506,22 @@ def test_view_custom_filterby_attr(hyperwithattrs, dihyperwithattrs):
 def test_edge_dimembers(diedgelist2):
     H = xgi.DiHypergraph(diedgelist2)
     assert H.edges.dimembers(0) == ({0, 1}, {2})
-    assert H.edges.dimembers() == [({0, 1}, {2}), ({1, 2}, {4}), ({2, 3, 4}, {4, 5})]
+    # no-arg default is now dict[edge_id, tuple(set, set)] (see #740)
+    assert H.edges.dimembers() == {
+        0: ({0, 1}, {2}),
+        1: ({1, 2}, {4}),
+        2: ({2, 3, 4}, {4, 5}),
+    }
     assert H.edges.dimembers(dtype=dict) == {
         0: ({0, 1}, {2}),
         1: ({1, 2}, {4}),
         2: ({2, 3, 4}, {4, 5}),
     }
+    assert H.edges.dimembers(dtype=list) == [
+        ({0, 1}, {2}),
+        ({1, 2}, {4}),
+        ({2, 3, 4}, {4, 5}),
+    ]
     with pytest.raises(XGIError):
         H.edges.dimembers(dtype=np.array)
 
@@ -516,8 +536,10 @@ def test_edge_tail(diedgelist2):
     H = xgi.DiHypergraph(diedgelist2)
 
     assert H.edges.tail(0) == {0, 1}
-    assert H.edges.tail() == [{0, 1}, {1, 2}, {2, 3, 4}]
+    # no-arg default is now dict[edge_id, set] (see #740)
+    assert H.edges.tail() == {0: {0, 1}, 1: {1, 2}, 2: {2, 3, 4}}
     assert H.edges.tail(dtype=dict) == {0: {0, 1}, 1: {1, 2}, 2: {2, 3, 4}}
+    assert H.edges.tail(dtype=list) == [{0, 1}, {1, 2}, {2, 3, 4}]
 
     with pytest.raises(XGIError):
         H.edges.tail(dtype=np.array)
@@ -533,8 +555,10 @@ def test_edge_head(diedgelist2):
     H = xgi.DiHypergraph(diedgelist2)
 
     assert H.edges.head(0) == {2}
-    assert H.edges.head() == [{2}, {4}, {4, 5}]
+    # no-arg default is now dict[edge_id, set] (see #740)
+    assert H.edges.head() == {0: {2}, 1: {4}, 2: {4, 5}}
     assert H.edges.head(dtype=dict) == {0: {2}, 1: {4}, 2: {4, 5}}
+    assert H.edges.head(dtype=list) == [{2}, {4}, {4, 5}]
     with pytest.raises(XGIError):
         H.edges.head(dtype=np.array)
 
@@ -543,3 +567,126 @@ def test_edge_head(diedgelist2):
 
     with pytest.raises(IDNotFound):
         H.edges.head("test")
+
+
+def test_sources_targets_deprecated(diedgelist2):
+    """DiEdgeView.sources / targets are deprecated aliases of tail / head (#765)."""
+    H = xgi.DiHypergraph(diedgelist2)
+
+    with pytest.warns(DeprecationWarning, match="sources is deprecated"):
+        result = H.edges.sources(0)
+    assert result == H.edges.tail(0)
+
+    with pytest.warns(DeprecationWarning, match="targets is deprecated"):
+        result = H.edges.targets(0)
+    assert result == H.edges.head(0)
+
+    # dtype kwarg still forwards correctly
+    with pytest.warns(DeprecationWarning):
+        result = H.edges.sources(dtype=list)
+    assert result == H.edges.tail(dtype=list)
+
+    with pytest.warns(DeprecationWarning):
+        result = H.edges.targets(dtype=list)
+    assert result == H.edges.head(dtype=list)
+
+
+def test_stat_discoverability():
+    """Built-in stats should be visible in dir() for IDE and tab completion."""
+    H = xgi.Hypergraph([[1, 2, 3], [2, 3, 4]])
+
+    # Node stats should appear in dir()
+    node_dir = dir(H.nodes)
+    assert "degree" in node_dir
+    assert "clustering_coefficient" in node_dir
+    assert "average_neighbor_degree" in node_dir
+
+    # Edge stats should appear in dir()
+    edge_dir = dir(H.edges)
+    assert "order" in edge_dir
+    assert "size" in edge_dir
+
+    # They should still work as before
+    assert H.nodes.degree.asdict() == {1: 1, 2: 2, 3: 2, 4: 1}
+    assert H.edges.order.asdict() == {0: 2, 1: 2}
+
+    # Directed hypergraph stats should also be discoverable
+    DH = xgi.DiHypergraph([[{1, 2}, {3}]])
+    dinode_dir = dir(DH.nodes)
+    assert "degree" in dinode_dir
+    assert "in_degree" in dinode_dir
+    assert "out_degree" in dinode_dir
+
+    diedge_dir = dir(DH.edges)
+    assert "order" in diedge_dir
+    assert "size" in diedge_dir
+    assert "head_order" in diedge_dir
+    assert "tail_size" in diedge_dir
+
+
+def test_stat_caching():
+    """Accessing a stat twice should return the same cached object."""
+    H = xgi.Hypergraph([[1, 2, 3]])
+    stat1 = H.nodes.degree
+    stat2 = H.nodes.degree
+    assert stat1 is stat2
+
+
+def test_custom_stat_still_works():
+    """User-defined stats via @nodestat_func should still work via __getattr__."""
+
+    @xgi.nodestat_func
+    def my_custom_stat(net, bunch):
+        return {n: 42 for n in bunch}
+
+    H = xgi.Hypergraph([[1, 2]])
+    assert H.nodes.my_custom_stat.asdict() == {1: 42, 2: 42}
+
+
+def test_stat_docstring_forwarding():
+    """Stat objects should expose the underlying function's docstring."""
+    H = xgi.Hypergraph([[1, 2, 3], [3, 4, 5]])
+
+    assert "degree" in H.nodes.degree.__doc__.lower()
+    assert "order" in H.edges.order.__doc__.lower()
+
+    # Calling with args should preserve the docstring
+    assert H.nodes.degree(order=2).__doc__ == H.nodes.degree.__doc__
+
+    # Custom stats should forward their docstring too
+    @xgi.nodestat_func
+    def my_stat(net, bunch):
+        """My custom docstring."""
+        return {n: 1 for n in bunch}
+
+    assert H.nodes.my_stat.__doc__ == "My custom docstring."
+
+    # Directed hypergraph stats
+    DH = xgi.DiHypergraph([([1, 2], [3, 4])])
+    assert "in-degree" in DH.nodes.in_degree.__doc__.lower()
+
+
+def test_pos_stat():
+    """H.nodes.pos accesses the 'pos' node attribute."""
+    H = xgi.Hypergraph([[1, 2, 3]])
+    positions = {1: (0.0, 0.0), 2: (1.0, 0.5), 3: (0.5, 1.0)}
+    H.set_node_attributes(positions, name="pos")
+
+    assert H.nodes.pos.asdict() == positions
+
+    # Nodes without 'pos' attribute return None
+    H2 = xgi.Hypergraph([[1, 2]])
+    assert H2.nodes.pos.asdict() == {1: None, 2: None}
+
+    # Discoverable via dir() and accessible as descriptor
+    assert "pos" in dir(H.nodes)
+
+    # Equivalent to attrs("pos")
+    H.set_node_attributes(positions, name="pos")
+    assert H.nodes.pos.asdict() == H.nodes.attrs("pos").asdict()
+
+    # DiHypergraph too
+    DH = xgi.DiHypergraph([([1, 2], [3, 4])])
+    DH.set_node_attributes({1: (0, 0), 2: (1, 0), 3: (0, 1), 4: (1, 1)}, name="pos")
+    assert DH.nodes.pos.asdict() == {1: (0, 0), 2: (1, 0), 3: (0, 1), 4: (1, 1)}
+    assert "pos" in dir(DH.nodes)

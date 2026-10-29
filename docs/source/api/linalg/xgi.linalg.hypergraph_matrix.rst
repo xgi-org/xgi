@@ -8,6 +8,7 @@
    .. rubric:: Functions
    
    .. autofunction:: adjacency_matrix
+   .. autofunction:: adjacency_tensor
    .. autofunction:: clique_motif_matrix
    .. autofunction:: degree_matrix
    .. autofunction:: incidence_matrix

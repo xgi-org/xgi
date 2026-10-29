@@ -2,6 +2,11 @@
 User Guides
 ***********
 
+.. toctree::
+   :hidden:
+
+   stats_cheatsheet
+   randomness
 
 .. grid::
 	
@@ -92,5 +97,43 @@ User Guides
             :click-parent:
 
             To the cookbook
+
+.. grid::
+
+    .. grid-item-card::
+    	:text-align: center
+
+    	Stats Cheat Sheet
+    	^^^
+
+    	Quick reference for all node and edge statistics,
+    	output formats, filtering, and more.
+
+    	+++
+
+        .. button-ref:: stats_cheatsheet
+            :expand:
+            :color: secondary
+            :click-parent:
+
+            To the stats cheat sheet
+
+    .. grid-item-card::
+    	:text-align: center
+
+    	Randomness
+    	^^^
+
+    	How ``seed`` arguments work across XGI: int seeds,
+    	NumPy ``Generator``, and reproducibility semantics.
+
+    	+++
+
+        .. button-ref:: randomness
+            :expand:
+            :color: secondary
+            :click-parent:
+
+            To the randomness guide
 
 For all specifications and options of a particular function, or to explore all existing functions, see the `API Reference <reference.html>`_.

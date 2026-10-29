@@ -1,5 +1,3 @@
-import networkx as nx
-
 from ..exception import XGIError
 
 __all__ = ["to_encapsulation_dag", "empirical_subsets_filter"]
@@ -66,6 +64,8 @@ def to_encapsulation_dag(H, subset_types="all"):
         )
 
     # Construct the dag
+    import networkx as nx
+
     dag = nx.DiGraph()
     # Loop over hyperedges
     for he_idx in H.edges:

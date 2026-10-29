@@ -42,6 +42,8 @@ def clustering_coefficient(H):
     to 0 in these cases. For more discussion, see
     https://arxiv.org/abs/0802.2512
 
+    Also accessible via the stats interface as ``H.nodes.clustering_coefficient``.
+
     See Also
     --------
     local_clustering_coefficient
@@ -98,6 +100,9 @@ def local_clustering_coefficient(H):
     neighbors is 0 or 1, but we set the clustering coefficient
     to 0 in these cases. For more discussion, see
     https://arxiv.org/abs/0802.2512
+
+    Also accessible via the stats interface as
+    ``H.nodes.local_clustering_coefficient``.
 
     See Also
     --------
@@ -190,6 +195,9 @@ def two_node_clustering_coefficient(H, kind="union"):
     neighbors is 0 or 1, but we set the clustering coefficient
     to 0 in these cases. For more discussion, see
     https://arxiv.org/abs/0802.2512
+
+    Also accessible via the stats interface as
+    ``H.nodes.two_node_clustering_coefficient``.
 
     See Also
     --------

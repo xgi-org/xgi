@@ -1,7 +1,6 @@
 import pytest
 
 import xgi
-from xgi.exception import XGIError
 
 
 def test_ring_lattice():
@@ -27,5 +26,21 @@ def test_ring_lattice():
         xgi.ring_lattice(5, 2, 3, 0)
 
     # k < 0 test
-    with pytest.raises(XGIError):
+    with pytest.raises(ValueError):
         xgi.ring_lattice(5, 2, -1, 0)
+
+
+def test_ring_lattice_with_positions():
+    from math import cos, pi, sin
+
+    # default: no pos stored
+    H = xgi.ring_lattice(5, 2, 2, 0)
+    assert H.nodes.attrs("pos").asdict() == {i: None for i in range(5)}
+
+    # with_positions=True: each node has a unit-circle coordinate
+    H = xgi.ring_lattice(8, 3, 2, 0, with_positions=True)
+    pos = H.nodes.attrs("pos").asdict()
+    assert set(pos.keys()) == set(range(8))
+    for i, p in pos.items():
+        expected = (cos(2 * pi * i / 8), sin(2 * pi * i / 8))
+        assert p == pytest.approx(expected)

@@ -19,16 +19,16 @@ def test_flag_complex():
 
     simplices_3 = simplices_2 + [frozenset({0, 1, 2})]
 
-    assert S.edges.members() == simplices_3
+    assert S.edges.members(dtype=list) == simplices_3
 
     # ps
     S1 = xgi.flag_complex(G, ps=[1], seed=42)
     S2 = xgi.flag_complex(G, ps=[0.5], seed=42)
     S3 = xgi.flag_complex(G, ps=[0], seed=42)
 
-    assert S1.edges.members() == simplices_3
-    assert S2.edges.members() == simplices_2
-    assert S3.edges.members() == simplices_2
+    assert S1.edges.members(dtype=list) == simplices_3
+    assert S2.edges.members(dtype=list) == simplices_2
+    assert S3.edges.members(dtype=list) == simplices_2
 
     # complete graph
     G1 = nx.complete_graph(4)
@@ -36,7 +36,7 @@ def test_flag_complex():
     S5 = xgi.flag_complex(G1, ps=[1])
     assert S4.num_nodes == S5.num_nodes
     assert S4.num_edges == S5.num_edges
-    assert set(S4.edges.members()) == set(S5.edges.members())
+    assert set(S4.edges.members(dtype=list)) == set(S5.edges.members(dtype=list))
 
 
 def test_flag_complex_d2():
@@ -45,7 +45,7 @@ def test_flag_complex_d2():
     S = xgi.flag_complex(G, max_order=2)
     S2 = xgi.flag_complex_d2(G)
 
-    assert set(S.edges.members()) == set(S2.edges.members())
+    assert set(S.edges.members(dtype=list)) == set(S2.edges.members(dtype=list))
 
 
 def test_random_simplicial_complex():
@@ -91,11 +91,11 @@ def test_random_flag_complex():
         frozenset({6, 7, 8}),
     }
 
-    assert set(S.edges.members()) == simplices
+    assert set(S.edges.members(dtype=list)) == simplices
 
     # max_order
     S = xgi.random_flag_complex(10, 0.4, seed=2, max_order=3)
-    assert set(S.edges.members()) == simplices.union({frozenset({3, 6, 7, 8})})
+    assert set(S.edges.members(dtype=list)) == simplices.union({frozenset({3, 6, 7, 8})})
 
     # seed
     S1 = xgi.random_flag_complex(10, 0.1, seed=1)
@@ -139,12 +139,12 @@ def test_random_flag_complex_d2():
         frozenset({6, 7, 8}),
     }
 
-    assert set(S.edges.members()) == simplices
+    assert set(S.edges.members(dtype=list)) == simplices
 
     # consistency with other function
     S = xgi.random_flag_complex(10, 0.4, seed=3, max_order=2)
     S0 = xgi.random_flag_complex_d2(10, 0.4, seed=3)
-    assert set(S.edges.members()) == set(S0.edges.members())
+    assert set(S.edges.members(dtype=list)) == set(S0.edges.members(dtype=list))
 
     # seed
     S1 = xgi.random_flag_complex_d2(10, 0.1, seed=1)

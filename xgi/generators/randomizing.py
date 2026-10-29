@@ -4,8 +4,7 @@ All the functions in this module return a Hypergraph class (i.e. a simple, undir
 hypergraph).
 """
 
-import random
-from copy import deepcopy
+import numpy as np
 
 import xgi
 
@@ -26,8 +25,8 @@ def shuffle_hyperedges(S, order, p, seed=None):
         Order of hyperedges to shuffle
     p : float
         Probability of shuffling each hyperedge
-    seed : integer or None (default)
-            Seed for the random number generator.
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
@@ -54,8 +53,7 @@ def shuffle_hyperedges(S, order, p, seed=None):
 
     """
 
-    if seed is not None:
-        random.seed(seed)
+    rng = np.random.default_rng(seed)
 
     if (order + 1) not in xgi.unique_edge_sizes(S):
         raise ValueError(f"There is no hyperedge of order {order} is this hypergraph.")
@@ -74,17 +72,17 @@ def shuffle_hyperedges(S, order, p, seed=None):
     d_hyperedges = H.edges.filterby("order", order).members(dtype=dict)
 
     for id_, members in d_hyperedges.items():
-        if random.random() <= p:
+        if rng.random() <= p:
             H.remove_edge(id_)
-            new_hyperedge = tuple(random.sample(nodes, order + 1))
+            new_hyperedge = tuple(rng.choice(nodes, size=order + 1, replace=False))
             while new_hyperedge in H._edge.values():
-                new_hyperedge = tuple(random.sample(nodes, order + 1))
+                new_hyperedge = tuple(rng.choice(nodes, size=order + 1, replace=False))
             H.add_edge(new_hyperedge)
 
     return H
 
 
-def node_swap(H, nid1, nid2, id_temp=-1, order=None):
+def node_swap(H, nid1, nid2, order=None):
     """Swap nodes `nid1` and node `nid2` in all edges of order `order`.
 
     Parameters
@@ -95,8 +93,6 @@ def node_swap(H, nid1, nid2, id_temp=-1, order=None):
         ID of first node to swap
     nid2: node ID
         ID of second node to swap
-    id_temp: node ID
-        Temporary ID given to nodes when swapping
     order: {int, None}, default: None
         If None, consider all orders. If an integer,
         consider edges of that order.
@@ -127,10 +123,6 @@ def node_swap(H, nid1, nid2, id_temp=-1, order=None):
                 f"There is no hyperedge of order {order} is this hypergraph."
             )
 
-    # make sure id_temps does not exist yet
-    while id_temp in H.edges:
-        id_temp -= 1
-
     # get edges of given order
     if order:
         edge_dict = H.edges.filterby("order", order).members(dtype=dict).copy()
@@ -147,29 +139,13 @@ def node_swap(H, nid1, nid2, id_temp=-1, order=None):
             f"Node {nid2} is not part of any hyperedge of the specified order"
         )
 
-    new_edge_dict = deepcopy(edge_dict)
     HH = H.copy()
 
-    # replace nid1 by temporary id in edges
-    for key, members in edge_dict.items():
-        if nid1 in members:
-            members.remove(nid1)
-            members.add(id_temp)
-        new_edge_dict[key] = members
-
-    # replace nid2 by nid1 in edges
-    for key, members in new_edge_dict.items():
-        if nid2 in members:
-            members.remove(nid2)
-            members.add(nid1)
-        new_edge_dict[key] = members
-
-    # replace temporary id by nid2 in edges
-    for key, members in new_edge_dict.items():
-        if id_temp in members:
-            members.remove(id_temp)
-            members.add(nid2)
-        new_edge_dict[key] = members
+    # single-pass swap using a mapping dict
+    swap_map = {nid1: nid2, nid2: nid1}
+    new_edge_dict = {
+        key: {swap_map.get(n, n) for n in members} for key, members in edge_dict.items()
+    }
 
     # update hypergraph with new edges
     HH.remove_edges_from(edge_dict)

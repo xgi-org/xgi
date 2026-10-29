@@ -1,5 +1,5 @@
 # Generated while building documentation.
-doc/auto_examples
+docs/source/auto_examples
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -151,3 +151,12 @@ test.*
 # benchmarking files
 .benchmarks
 output.json
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+
+# local task tracking (beads) — not part of xgi
+.beads/
+.claude/

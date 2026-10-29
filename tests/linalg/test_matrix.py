@@ -1,3 +1,6 @@
+import platform
+import sys
+
 import numpy as np
 import pytest
 from scipy.linalg import eigh, eigvalsh
@@ -78,6 +81,18 @@ def test_incidence_matrix(edgelist1, edgelist3, edgelist4):
     assert I5[node_dict5[1], edge_dict5[0]] == 3
     unique_entries = np.unique(np.ravel(I5.todense())).tolist()
     assert unique_entries == [0, 3]
+
+    # non-integer weights are not truncated
+    for sparse in [True, False]:
+        I7, node_dict, edge_dict = xgi.incidence_matrix(
+            H1, sparse=sparse, index=True, weight=lambda node, edge, H: 0.5
+        )
+        if sparse:
+            I7 = I7.todense()
+        node_dict7 = {k: v for v, k in node_dict.items()}
+        edge_dict7 = {k: v for v, k in edge_dict.items()}
+        assert I7[node_dict7[1], edge_dict7[0]] == 0.5
+        assert np.unique(np.ravel(I7)).tolist() == [0, 0.5]
 
     I6, node_dict, edge_dict = xgi.incidence_matrix(H1, index=True, order=2)
     node_dict6 = {k: v for v, k in node_dict.items()}
@@ -257,6 +272,12 @@ def test_adjacency_matrix(edgelist1, edgelist4):
     assert np.all(A7 == A7_sp.todense())
 
 
+@pytest.mark.skipif(
+    sys.version_info != (3, 14) and not platform.system() == "Linux",
+    reason="only need one test",
+)
+@pytest.mark.webtest
+@pytest.mark.slow
 def test_fix_649():  # make sure diagonal is fully zero when sparse
 
     H = xgi.load_xgi_data(dataset="email-enron")
@@ -671,9 +692,9 @@ def test_fix_647():
     H = xgi.Hypergraph(el)
     L = xgi.normalized_hypergraph_laplacian(H, sparse=False)
 
-    # Eigenvalues non-negative
+    # Eigenvalues non-negative (tolerance for floating point)
     evals_mwe = eigvalsh(L)
-    assert np.all(evals_mwe >= 0)
+    assert np.all(evals_mwe >= -1e-12)
 
     # Weights error handling
     ## Default value when "weight" attribute unavailable
@@ -756,3 +777,48 @@ def test_empty():
     assert xgi.boundary_matrix(H).shape == (0, 0)
 
     assert xgi.hodge_laplacian(H).shape == (0, 0)
+
+
+def test_adjacency_tensor(edgelist1):
+    el1 = edgelist1
+    H1 = xgi.Hypergraph(el1)
+
+    A11, node_dict = xgi.adjacency_tensor(H1, order=1, index=True, normalized=False)
+    node_dict1 = {k: v for v, k in node_dict.items()}
+
+    assert type(A11) == np.ndarray
+    assert A11.shape == (8, 8)
+    assert A11.sum() == 2
+    assert list(np.unique(A11)) == [0, 1]
+    assert np.all(A11 == xgi.adjacency_matrix(H1, order=1, sparse=False))
+
+    A12 = xgi.adjacency_tensor(H1, order=2, normalized=False)
+    assert type(A12) == np.ndarray
+    assert A12.shape == (8, 8, 8)
+    assert A12.sum() == 12
+    assert list(np.unique(A12)) == [0, 1]
+
+    assert A12[node_dict1[1], node_dict1[2], node_dict1[3]] == 1
+    assert A12[node_dict1[1], node_dict1[3], node_dict1[2]] == 1
+    assert A12[node_dict1[2], node_dict1[3], node_dict1[1]] == 1
+    assert A12[node_dict1[2], node_dict1[1], node_dict1[3]] == 1
+    assert A12[node_dict1[3], node_dict1[1], node_dict1[2]] == 1
+    assert A12[node_dict1[3], node_dict1[2], node_dict1[1]] == 1
+
+    assert A12[node_dict1[6], node_dict1[7], node_dict1[8]] == 1
+    assert A12[node_dict1[6], node_dict1[8], node_dict1[7]] == 1
+    assert A12[node_dict1[7], node_dict1[8], node_dict1[6]] == 1
+    assert A12[node_dict1[7], node_dict1[6], node_dict1[8]] == 1
+    assert A12[node_dict1[8], node_dict1[6], node_dict1[7]] == 1
+    assert A12[node_dict1[8], node_dict1[7], node_dict1[6]] == 1
+
+    # normalization
+    A11_norm = xgi.adjacency_tensor(H1, order=1)
+    assert np.allclose(A11_norm, A11)
+
+    A12_norm = xgi.adjacency_tensor(H1, order=2)
+    assert np.allclose(A12_norm, A12 / 2)
+
+    A13 = xgi.adjacency_tensor(H1, order=3)
+    A13_norm = xgi.adjacency_tensor(H1, order=3)
+    assert np.allclose(A13_norm, A13 / 6)

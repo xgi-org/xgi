@@ -27,8 +27,6 @@ def read_incidence_matrix(
         Specifies the delimiter between hyperedge members
     create_using : Hypergraph constructor, optional
         The hypergraph object to add the data to, by default None
-    nodetype: type
-        type that the node labels will be cast to
     encoding: string, default: "utf-8"
         Encoding of the file
 

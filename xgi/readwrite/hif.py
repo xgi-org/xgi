@@ -8,13 +8,15 @@ import json
 from collections import defaultdict
 from os.path import dirname, join
 
+from xopen import xopen
+
 from ..convert import from_hif_dict, to_hif_dict
 from ..exception import XGIError
 
 __all__ = ["write_hif", "write_hif_collection", "read_hif", "read_hif_collection"]
 
 
-def write_hif(H, path):
+def write_hif(H, path, **kwargs):
     """
     A function to write a higher-order network according to the HIF standard.
 
@@ -26,16 +28,20 @@ def write_hif(H, path):
         The specified higher-order network
     path: string
         The path of the file to read from
+    **kwargs : keyword arguments
+        Additional keyword arguments to pass to xopen for compression options
+        (e.g., compresslevel, threads, format).
+        Ignored when writing to plain-text.
     """
-    data = to_hif_dict(H)
+    data = to_hif_dict(H, convert_nans=True)
 
     datastring = json.dumps(data, indent=2)
 
-    with open(path, "w") as output_file:
+    with xopen(path, "w", **kwargs) as output_file:
         output_file.write(datastring)
 
 
-def write_hif_collection(H, path, collection_name=""):
+def write_hif_collection(H, path, collection_name, **kwargs):
     """
     A function to write a collection of higher-order network according to the HIF standard.
 
@@ -47,6 +53,11 @@ def write_hif_collection(H, path, collection_name=""):
         The specified higher-order network
     path: string
         The path of the file to read from
+    collection_name : str
+        Name for the collection (used in file names)
+    **kwargs : keyword arguments
+        Additional keyword arguments to pass to xopen for compression options
+        (e.g., compresslevel, threads, format).
     """
     if isinstance(H, list):
         collection_data = defaultdict(dict)
@@ -55,11 +66,11 @@ def write_hif_collection(H, path, collection_name=""):
             collection_data["datasets"][i] = {
                 "relative-path": f"{collection_name}_{i}.json"
             }
-            write_hif(H, fname)
+            write_hif(H, fname, **kwargs)
         collection_data["type"] = "collection"
         datastring = json.dumps(collection_data, indent=2)
-        with open(
-            f"{path}/{collection_name}_collection_information.json", "w"
+        with xopen(
+            f"{path}/{collection_name}_collection_information.json", "w", **kwargs
         ) as output_file:
             output_file.write(datastring)
 
@@ -70,11 +81,11 @@ def write_hif_collection(H, path, collection_name=""):
             collection_data["datasets"][name] = {
                 "relative-path": f"{collection_name}_{name}.json"
             }
-            write_hif(H, fname)
+            write_hif(H, fname, **kwargs)
         collection_data["type"] = "collection"
         datastring = json.dumps(collection_data, indent=2)
-        with open(
-            f"{path}/{collection_name}_collection_information.json", "w"
+        with xopen(
+            f"{path}/{collection_name}_collection_information.json", "w", **kwargs
         ) as output_file:
             output_file.write(datastring)
 
@@ -99,7 +110,7 @@ def read_hif(path, nodetype=None, edgetype=None):
     A Hypergraph, SimplicialComplex, or DiHypergraph object
         The loaded network
     """
-    with open(path) as file:
+    with xopen(path) as file:
         data = json.loads(file.read())
 
     return from_hif_dict(data, nodetype=nodetype, edgetype=edgetype)
@@ -141,5 +152,5 @@ def read_hif_collection(path, nodetype=None, edgetype=None):
             )
             collection[name] = H
         return collection
-    except KeyError:
-        raise XGIError("Data collection is in the wrong format!")
+    except KeyError as e:
+        raise ValueError("Data collection is in the wrong format!") from e

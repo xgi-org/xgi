@@ -44,6 +44,8 @@ array([[1, 0, 0],
 
 """
 
+from itertools import permutations
+from math import factorial
 from warnings import catch_warnings, warn
 
 import numpy as np
@@ -55,6 +57,7 @@ __all__ = [
     "intersection_profile",
     "degree_matrix",
     "clique_motif_matrix",
+    "adjacency_tensor",
 ]
 
 
@@ -122,11 +125,14 @@ def incidence_matrix(
             cols.append(edge_dict[edge])
             data.append(weight(node, edge, H))
 
+    # Infer the dtype from the weights so that non-integer weights are not truncated
+    dtype = np.asarray(data).dtype if data else int
+
     # Create the incidence matrix as a CSR matrix
     if sparse:
-        I = csr_array((data, (rows, cols)), shape=(num_nodes, num_edges), dtype=int)
+        I = csr_array((data, (rows, cols)), shape=(num_nodes, num_edges), dtype=dtype)
     else:
-        I = np.zeros((num_nodes, num_edges), dtype=int)
+        I = np.zeros((num_nodes, num_edges), dtype=dtype)
         I[rows, cols] = data
 
     return (I, rowdict, coldict) if index else I
@@ -294,3 +300,71 @@ def clique_motif_matrix(H, sparse=True, index=False):
     W, rowdict = adjacency_matrix(H, sparse=sparse, weighted=True, index=True)
 
     return (W, rowdict) if index else W
+
+
+def adjacency_tensor(H, order, normalized=True, index=False):
+    """
+    Compute the order-d adjacency tensor of a hypergraph from its incidence matrix.
+
+    The order-d adjacency tensor B is defined as B[i1, i2, ..., id] = 1 if there exists
+    a hyperedge containing nodes (i1, i2, ..., id), and 0 otherwise.
+
+    Parameters
+    ----------
+    H : xgi.Hypergraph
+        The input hypergraph.
+    order : int
+        The order of interactions to consider.
+    normalized: bool, default: True
+        Specifies whether to normalize the entries in the tensor
+    index: bool, default: False
+        Specifies whether to output disctionaries mapping the node IDs to indices
+
+    Returns
+    -------
+    B : np.ndarray
+        Adjacency tensor
+
+    References
+    ----------
+    Liqun Qi and Ziyan Luo (2017)
+    "Tensor Analysis: Spectral Theory and Special Tensors"
+    Chapter 1: Introduction
+    https://doi.org/10.1137/1.9781611974751.ch1
+
+    Galuppi, F., Mulas, R., & Venturello, L. (2023).
+    "Spectral theory of weighted hypergraphs via tensors"
+    Linear and Multilinear Algebra, 71(3), 317-347.
+    https://doi.org/10.1080/03081087.2022.2030659
+    """
+
+    I, rowdict, coldict = incidence_matrix(H, order=order, sparse=False, index=True)
+
+    if I.shape == (0, 0):
+        if not rowdict:
+            B = np.empty((0,) * (order + 1))
+        if not coldict:
+            shape = (H.num_nodes,) * (order + 1)
+            B = np.zeros(shape, dtype=int)
+        return (B, {}) if index else B
+
+    # find nodes participating in each hyperedge
+    hyperedges = H.edges.filterby("order", order).members(dtype=list)
+
+    nodedict = {v: k for (k, v) in rowdict.items()}
+    N = H.num_nodes
+
+    # initialize adjacency tensor
+    dtype = float if normalized else int
+    B = np.zeros((N,) * (order + 1), dtype=dtype)
+
+    # populate adjacency tensor
+    for edge in hyperedges:
+        edge_node_ids = [nodedict[node] for node in edge]
+        for node_idx in permutations(edge_node_ids, order + 1):
+            B[node_idx] = 1
+
+    if normalized:
+        B /= factorial(order)
+
+    return (B, rowdict) if index else B

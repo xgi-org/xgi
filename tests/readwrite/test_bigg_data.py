@@ -8,7 +8,7 @@ from xgi.exception import XGIError
 
 
 @pytest.mark.skipif(
-    sys.version_info != (3, 12) and not platform.system() == "Linux",
+    sys.version_info != (3, 14) and not platform.system() == "Linux",
     reason="Only need one test!",
 )
 @pytest.mark.webtest
@@ -38,7 +38,7 @@ def test_load_bigg_data(capfd):
 
 
 @pytest.mark.skipif(
-    sys.version_info != (3, 12) and not platform.system() == "Linux",
+    sys.version_info != (3, 14) and not platform.system() == "Linux",
     reason="Only need one test!",
 )
 @pytest.mark.webtest

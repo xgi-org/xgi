@@ -1,12 +1,11 @@
 """Functional interface to hypergraph methods and assorted utilities."""
 
-from collections import Counter
-
-from scipy.special import comb
+from collections import Counter, defaultdict
 
 from ..exception import XGIError
 
 __all__ = [
+    "equal",
     "num_edges_order",
     "max_edge_order",
     "is_uniform",
@@ -18,6 +17,76 @@ __all__ = [
     "density",
     "incidence_density",
 ]
+
+
+def equal(H1, H2, compare_edge_ids=True, compare_attrs=True):
+    """Evaluates whether two networks are equal.
+
+    If `compare_edge_ids=False`, then only the edges and their
+    counts (there might be multi-edges!) are compared. Similarly,
+    when comparing edge attributes in this fashion, the sorted list
+    of edge attributes associated with each edge is compared.
+
+    Parameters
+    ----------
+    H1 : Hypergraph, DiHypergraph, or SimplicialComplex
+        Network 1
+    H2 : Hypergraph, DiHypergraph, or SimplicialComplex
+        Network 2
+    compare_edge_ids : bool, optional
+        Whether or not to compare edge IDs, by default True
+    compare_attrs : bool, optional
+        Whether or not to compare attributes, by default True.
+
+
+    Returns
+    -------
+    bool
+        Whether the two networks are equal
+    """
+    if compare_edge_ids:
+        if H1._edge != H2._edge:
+            return False
+    else:
+        edges1_with_counts = defaultdict(lambda: 0)
+        for e in H1.edges.members(dtype=list):
+            edges1_with_counts[frozenset(e)] += 1
+
+        edges2_with_counts = defaultdict(lambda: 0)
+        for e in H2.edges.members(dtype=list):
+            edges2_with_counts[frozenset(e)] += 1
+        if edges1_with_counts != edges2_with_counts:
+            return False
+
+    if compare_attrs:
+        if H1._net_attr != H2._net_attr:
+            return False
+
+        if H1._node_attr != H2._node_attr:
+            return False
+
+        if compare_edge_ids:
+            if H1._edge_attr != H2._edge_attr:
+                return False
+        else:
+            edge_attrs1 = defaultdict(list)
+            for e in H1.edges:
+                edge = H1._edge[e]
+                attr = H1._edge_attr[e]
+                edge_attrs1[frozenset(edge)].append(attr)
+
+            edge_attrs2 = defaultdict(list)
+            for e in H2.edges:
+                edge = H2._edge[e]
+                attr = H2._edge_attr[e]
+                edge_attrs2[frozenset(edge)].append(attr)
+
+            for e in edge_attrs1:
+                if sorted(edge_attrs1[e], key=lambda d: str(d)) != sorted(
+                    edge_attrs2[e], key=lambda d: str(d)
+                ):
+                    return False
+    return True
 
 
 def num_edges_order(H, d=None):
@@ -333,6 +402,8 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
         if max_order >= n:
             raise ValueError("max_order must be smaller than the number of nodes")
         numer = len(order_filter(max_order, "leq"))
+        from scipy.special import comb
+
         denom = sum(comb(n, _ord + 1, exact=True) for _ord in range(max_order + 1))
         if ignore_singletons:
             numer -= len(order_filter(0, mode="eq"))
@@ -344,6 +415,8 @@ def density(H, order=None, max_order=None, ignore_singletons=False):
         if ignore_singletons and order == 0:
             return 0.0
         numer = len(order_filter(order, mode="eq"))
+        from scipy.special import comb
+
         denom = comb(n, order + 1, exact=True)
 
     try:

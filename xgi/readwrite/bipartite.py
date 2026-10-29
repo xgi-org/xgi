@@ -1,5 +1,7 @@
 """Read from and write to bipartite formats."""
 
+from xopen import xopen
+
 from ..exception import XGIError
 from ..generators import empty_hypergraph
 
@@ -31,7 +33,7 @@ def generate_bipartite_edgelist(H, delimiter=" "):
             yield delimiter.join(map(str, [node, idx]))
 
 
-def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
+def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8", **kwargs):
     """Write a Hypergraph object to a file
     as a bipartite edgelist.
 
@@ -45,6 +47,10 @@ def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
         Specifies the delimiter between hyperedge members
     encoding: string, default: "utf-8"
         Encoding of the file
+    **kwargs : keyword arguments
+        Additional keyword arguments to pass to xopen for compression options
+        (e.g., compresslevel, threads, format).
+        Ignored when writing to plain-text.
 
     See Also
     --------
@@ -57,7 +63,7 @@ def write_bipartite_edgelist(H, path, delimiter=" ", encoding="utf-8"):
     >>> # xgi.write_bipartite_edgelist(H, "test.csv", delimiter=",")
 
     """
-    with open(path, "wb") as file:
+    with xopen(path, "wb", **kwargs) as file:
         for line in generate_bipartite_edgelist(H, delimiter):
             line += "\n"
             file.write(line.encode(encoding))
@@ -111,7 +117,7 @@ def read_bipartite_edgelist(
     >>> # H = xgi.read_bipartite_edgelist("test.csv", delimiter=",")
 
     """
-    with open(path, "rb") as file:
+    with xopen(path, "rb") as file:
         lines = (
             line if isinstance(line, str) else line.decode(encoding) for line in file
         )
@@ -157,8 +163,8 @@ def parse_bipartite_edgelist(
         type that the node labels will be cast to
     edgetype: type
         type that the edge labels will be cast to
-    data: bool, default: False
-        Specifies whether there is a dictionary of data at the end of the line.
+    dual: bool, default: False
+        Specifies whether the node and edge columns are swapped.
 
     Raises
     ------

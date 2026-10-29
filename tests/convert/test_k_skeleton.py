@@ -17,7 +17,7 @@ def test_k_skeleton(edgelist1, edgelist2):
         frozenset({8, 6}),
         frozenset({1, 3}),
     ]
-    assert set(S1.edges.members()) == set(edges_skeleton)
+    assert set(S1.edges.members(dtype=list)) == set(edges_skeleton)
 
     H = xgi.Hypergraph(edgelist2)
     with pytest.raises(XGIError):
