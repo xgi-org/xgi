@@ -1,6 +1,11 @@
 """Generate growing simplicial complexes."""
 
+from inspect import Parameter, signature
+
+import numpy as np
+
 from ..core import SimplicialComplex
+from ..utils.utilities import subfaces
 
 __all__ = [
     "pseudofractal_simplicial_complex",
@@ -187,22 +192,32 @@ def network_geometry_flavor(
     Parameters
     ----------
     order : int
-        The order of the simplices to add.
-    s : int
-        The flavor parameter (-1, 0, or 1).
+        The order d of the simplices to add. Must be at least 1.
+    s : {-1, 0, 1}
+        The flavor parameter.
     beta : float
         The inverse temperature parameter controlling randomness.
     n_iter : int
-        The total number of d-simplices to generate.
-    energy_dist : callable, optional
-        A function to sample vertex energies (default: uniform [0,10)).
-    seed : int, optional
-        Random seed for reproducibility.
+        The number of new nodes (and d-simplices) to add.
+    energy_distribution : callable, optional
+        A function that returns one node energy. It can either take a
+        :class:`numpy.random.Generator` as its only argument, e.g.
+        ``lambda rng: rng.exponential(1.0)``, in which case energies are
+        reproducible with `seed`, or take no argument, e.g.
+        ``lambda: np.random.exponential(1.0)``, in which case it handles its
+        own randomness. By default, energies are uniform in [0, 10).
+    seed : int, numpy.random.Generator, or None, optional
+        The seed for the random number generator. By default, None.
 
     Returns
     -------
     S : xgi.SimplicialComplex
         The generated NGF simplicial complex.
+
+    Raises
+    ------
+    ValueError
+        If `order` is less than 1 or `s` is not -1, 0, or 1.
 
     See also
     --------
@@ -216,72 +231,72 @@ def network_geometry_flavor(
     Physical Review E, 93(3), 032315.
     https://arxiv.org/abs/1511.04539
     """
-    if seed is not None:
-        np.random.seed(seed)
+    if order < 1:
+        raise ValueError("order must be at least 1.")
+    if s not in {-1, 0, 1}:
+        raise ValueError("s must be -1, 0, or 1.")
 
-    # initialize the hypergraph
-    S = xgi.SimplicialComplex()
+    rng = np.random.default_rng(seed)
 
-    # assign energies to vertices
     if energy_distribution is None:
-        energy_distribution = lambda: np.random.uniform(0, 9)
+        sample_energy = lambda: rng.uniform(0, 10)
+    elif _n_required_args(energy_distribution) == 0:
+        sample_energy = energy_distribution
+    else:
+        sample_energy = lambda: energy_distribution(rng)
 
-    energy_nodes = {}
+    S = SimplicialComplex()
 
     # create initial d-simplex
     initial_simplex = list(range(order + 1))
-    for node in initial_simplex:
-        energy_nodes[node] = energy_distribution()
+    energy_nodes = {node: sample_energy() for node in initial_simplex}
     S.add_simplex(initial_simplex)
 
-    # track (d-1)-simplices and their counts
+    # number of d-simplices attached to each (d-1)-simplex
     face_counts = {}
 
-    def count_face(face):
-        """Adds or updates a (d-1)-simplex count."""
-        face = tuple(sorted(face))
-        if face in face_counts:
-            face_counts[face] += 1
-        else:
-            face_counts[face] = 1
+    def count_faces(simplex):
+        for face in subfaces([simplex], order=order - 1):
+            face = tuple(sorted(face))
+            face_counts[face] = face_counts.get(face, 0) + 1
 
-    # initialize (d-1)-simplices from the first simplex
-    for face in xgi.subfaces([initial_simplex], order=order - 1):
-        count_face(face)
+    count_faces(initial_simplex)
 
-    # iterative growth
-    for it in range(order + 2, order + 2 + n_iter):
-        # compute attachment probabilities
-        Z = 0
-        probs = {}
-
+    for new_node in range(order + 1, order + 1 + n_iter):
+        # attachment weights exp(-beta * energy) * (1 + s * (count - 1)),
+        # computed in log space to avoid underflow at large beta
+        faces = []
+        log_weights = []
         for face, count in face_counts.items():
+            multiplicity = 1 + s * (count - 1)
+            if multiplicity <= 0:
+                continue  # s = -1: face already shared by two simplices
             energy = sum(energy_nodes[node] for node in face)
-            weight = np.exp(-beta * energy) * (1 + s * (count - 1))
-            if s == -1 and count >= 2:
-                weight = 0  # Prevent further attachment to these faces
-            probs[face] = weight
-            Z += weight
+            faces.append(face)
+            log_weights.append(-beta * energy + np.log(multiplicity))
 
-        # normalize probabilities
-        if Z == 0:
-            break  # no valid attachment sites left
+        log_weights = np.array(log_weights)
+        probs = np.exp(log_weights - log_weights.max())
+        probs /= probs.sum()
 
-        for face in probs:
-            probs[face] /= Z
-
-        # choose a (d-1)-simplex to attach the new simplex
-        chosen_idx = np.random.choice(len(probs), p=list(probs.values()))
-        chosen_face = list(probs.keys())[chosen_idx]
-
-        # add new node and new simplex
-        new_node = it
-        energy_nodes[new_node] = energy_distribution()
+        # attach a new node to the chosen (d-1)-simplex
+        chosen_face = faces[rng.choice(len(faces), p=probs)]
+        energy_nodes[new_node] = sample_energy()
         new_simplex = list(chosen_face) + [new_node]
         S.add_simplex(new_simplex)
-
-        # update face counts
-        for face in xgi.subfaces([new_simplex], order=order - 1):
-            count_face(face)
+        count_faces(new_simplex)
 
     return S
+
+
+def _n_required_args(func):
+    """Number of positional arguments `func` needs (0 if it cannot be inspected)."""
+    try:
+        params = signature(func).parameters.values()
+    except (TypeError, ValueError):
+        return 0
+    return sum(
+        p.default is Parameter.empty
+        and p.kind in (Parameter.POSITIONAL_ONLY, Parameter.POSITIONAL_OR_KEYWORD)
+        for p in params
+    )
