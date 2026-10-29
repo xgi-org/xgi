@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/xgi-org/xgi/main/logo/logo.svg" alt="XGI" width="35%"></img>
+<p align="center"><img src="https://raw.githubusercontent.com/xgi-org/xgi/main/logo/logo.svg" alt="XGI" width="35%"></img></p>
 
 [![PyPI](https://img.shields.io/pypi/v/xgi?color=forest)](https://pypi.org/project/xgi/) [![Python versions](https://img.shields.io/pypi/pyversions/xgi?color=forest)](https://pypi.org/project/xgi/) [![Test Status](https://github.com/xgi-org/xgi/actions/workflows/test-code.yml/badge.svg)](https://github.com/xgi-org/xgi/actions/workflows/test-code.yml) [![codecov](https://codecov.io/gh/xgi-org/xgi/branch/main/graph/badge.svg?token=BI6TX2WDSG)](https://codecov.io/gh/xgi-org/xgi) [![DOI](https://joss.theoj.org/papers/10.21105/joss.05162/status.svg)](https://doi.org/10.21105/joss.05162) [![pyOpenSci](https://tinyurl.com/y22nb8up)](https://github.com/pyOpenSci/software-review/issues/115) [![Good First Issue](https://img.shields.io/badge/contribute-Good%20First%20Issue-forest)](https://github.com/xgi-org/xgi/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22) [![Benchmarks](https://img.shields.io/badge/benchmarks-forest)](https://xgi-org.github.io/xgi/dev/bench/)
 
@@ -33,11 +33,11 @@ pos = xgi.barycenter_spring_layout(H, seed=1)
 xgi.draw(H, pos=pos)
 ```
 
-<img src="docs/source/_static/readme_example.png" alt="Drawing of the example hypergraph" width="300"></img>
+<p align="center"><img src="docs/source/_static/readme_example.png" alt="Drawing of the example hypergraph" width="300"></img></p>
 
 ## XGI-DATA
 
-[XGI-DATA](https://github.com/xgi-org/xgi-data) is a curated collection of 50+ real-world higher-order datasets (from face-to-face contacts and emails to coauthorships, legislation, and ecology), which can be loaded in one line with `xgi.load_xgi_data()`. See the [docs](https://xgi.readthedocs.io/en/stable/xgi-data.html) for more information.
+[XGI-DATA](https://xgi.readthedocs.io/en/stable/xgi-data.html) is a curated collection of 50+ real-world higher-order datasets (from face-to-face contacts and emails to coauthorships, legislation, and ecology), which can be loaded in one line with `xgi.load_xgi_data()`.
 
 ## Contribute
 
@@ -47,7 +47,7 @@ Join the community on [Zulip](https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5
 
 ## Cite
 
-We acknowledge the importance of good software to support research, and we note that research becomes more valuable when it is communicated effectively. To demonstrate the value of XGI, we ask that you cite the XGI [paper](https://doi.org/10.21105/joss.05162) in your work. You can also use the "Cite this repository" button on GitHub.
+We acknowledge the importance of good software to support research. To demonstrate the value of XGI, we ask that you cite the XGI [paper](https://doi.org/10.21105/joss.05162) in your work. You can also use the "Cite this repository" button on GitHub.
 
 > Landry, N. W., Lucas, M., Iacopini, I., Petri, G., Schwarze, A., Patania, A., & Torres, L. (2023). XGI: A Python package for higher-order interaction networks. *Journal of Open Source Software*, 8(85), 5162.
 
