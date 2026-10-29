@@ -182,12 +182,40 @@ def apollonian_complex(order, n_iter):
 def network_geometry_flavor(
     order, s, beta, n_iter, energy_distribution=None, seed=None
 ):
-    """
+    r"""
     Generate a Network Geometry with Flavor (NGF) simplicial complex.
 
-    The model grows a d-dimensional simplicial complex (where d is `order`) by iteratively attaching
-    d-simplices to existing (d-1)-simplices, with attachment probabilities controlled
-    by the flavor parameter `s` and an energy-based selection process.
+    The model grows a d-dimensional simplicial complex (d = `order`), starting
+    from a single d-simplex. At each iteration, a new node is attached to an
+    existing (d-1)-simplex :math:`\alpha`, forming a new d-simplex (with all
+    its subfaces). Which (d-1)-simplex is chosen depends on the energies of
+    its nodes and on the flavor `s`, which sets whether (d-1)-simplices
+    already shared by several d-simplices are forbidden (``s=-1``), neutral
+    (``s=0``), or favored (``s=1``).
+
+    Each node :math:`i` gets a fixed energy :math:`\epsilon_i`, drawn from
+    `energy_distribution` when it is added. The energy of a (d-1)-simplex
+    is the sum of the energies of its nodes,
+    :math:`\epsilon_\alpha = \sum_{i \in \alpha} \epsilon_i`. At each
+    iteration, :math:`\alpha` is chosen with probability
+
+    .. math::
+
+        \Pi_\alpha \propto e^{-\beta \epsilon_\alpha} (1 + s\, n_\alpha),
+
+    where :math:`n_\alpha` is the number of d-simplices containing
+    :math:`\alpha`, minus one. There is no energy threshold: lower-energy
+    (d-1)-simplices are more likely to be chosen, and `beta` sets how strongly.
+    For ``beta=0``, energies play no role.
+
+    The flavor `s` sets how the choice depends on :math:`n_\alpha`:
+
+    * ``s=-1``: only (d-1)-simplices contained in a single d-simplex can be
+      chosen, so each one ends up in at most two d-simplices. The result is a
+      discrete manifold.
+    * ``s=0``: the choice depends on the energies only.
+    * ``s=1``: (d-1)-simplices contained in many d-simplices are more likely
+      to be chosen (preferential attachment).
 
     Parameters
     ----------
@@ -196,7 +224,8 @@ def network_geometry_flavor(
     s : {-1, 0, 1}
         The flavor parameter.
     beta : float
-        The inverse temperature parameter controlling randomness.
+        The inverse temperature. Higher values favor low-energy
+        (d-1)-simplices more strongly.
     n_iter : int
         The number of new nodes (and d-simplices) to add.
     energy_distribution : callable, optional
