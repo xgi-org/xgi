@@ -10,7 +10,7 @@ def test_to_incidence_matrix(edgelist5, incidence5):
 
 def test_from_incidence_matrix(edgelist5, incidence5):
     H = xgi.from_incidence_matrix(incidence5)
-    assert H.edges.members() == edgelist5
+    assert H.edges.members(dtype=list) == edgelist5
 
 
 def test_fix_718():

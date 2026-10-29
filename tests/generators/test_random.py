@@ -163,7 +163,7 @@ def test_random_nested_hypergraph():
     assert H.num_nodes == 20
 
     # edge sizes should be between 2 and d
-    for edge in H.edges.members():
+    for edge in H.edges.members(dtype=list):
         assert 2 <= len(edge) <= 4
 
     # scalar epsilon
@@ -185,7 +185,7 @@ def test_random_nested_hypergraph():
 
     # force dense facet sampling
     H = xgi.random_nested_hypergraph(5, 9, 3, 1, seed=np.random.default_rng(1))
-    assert sum(1 for edge in H.edges.members() if len(edge) == 3) == 9
+    assert sum(1 for edge in H.edges.members(dtype=list) if len(edge) == 3) == 9
 
 
 def test_pr_655():

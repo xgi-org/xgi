@@ -656,7 +656,7 @@ class SimplicialComplex(Hypergraph):
         cannot add empty simplices; the method skips over them.
 
         """
-        ebunch_to_close = list(map(list, self.edges.members()))
+        ebunch_to_close = list(map(list, self.edges.members(dtype=list)))
         for simplex in ebunch_to_close:
             if isinstance(simplex[-1], dict):
                 dd = simplex[-1]
@@ -712,8 +712,8 @@ class SimplicialComplex(Hypergraph):
                 max_order=max_order,
                 **attr,
             )
-        except KeyError:
-            XGIError("Empty or invalid simplices specified.")
+        except (IndexError, KeyError) as e:
+            raise ValueError("Empty or invalid simplices specified.") from e
 
     def _remove_simplex_id(self, idx):
         """Helper function to remove a simplex with a given id

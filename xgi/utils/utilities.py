@@ -1,5 +1,6 @@
 """General utilities."""
 
+import time
 from collections import defaultdict
 from copy import deepcopy
 from functools import cache
@@ -9,6 +10,13 @@ from math import ceil, log
 import numpy as np
 
 from xgi.exception import IDNotFound, XGIError
+
+# Retry policy for HTTP requests against external hosts.
+# 5xx responses and connection errors retry with exponential backoff.
+# 4xx responses do not retry: those indicate a real client-side problem
+# (bad URL, missing dataset) that will not be fixed by waiting.
+_HTTP_RETRY_ATTEMPTS = 3
+_HTTP_RETRY_BACKOFF_SECONDS = (1.0, 2.0, 4.0)
 
 __all__ = [
     "IDDict",
@@ -239,100 +247,135 @@ def min_where(dicty, where):
     return min_val
 
 
-def request_from_url(url, mode="json"):
-    """HTTP request json file and return as dict.
+def _get_with_retry(url, retries=_HTTP_RETRY_ATTEMPTS, sleep=time.sleep):
+    """Issue an HTTP GET with retry on 5xx responses and connection errors.
+
+    4xx responses are not retried: a bad URL or missing dataset will not
+    heal with a wait. Connection errors and 5xx responses are retried up to
+    ``retries`` times total with exponential backoff from
+    ``_HTTP_RETRY_BACKOFF_SECONDS``. Values of ``retries`` larger than the
+    backoff schedule reuse the last entry.
+    """
+    import requests
+
+    retries = max(1, int(retries))
+    last_status = None
+    for attempt in range(retries):
+        try:
+            r = requests.get(url)
+        except requests.ConnectionError:
+            if attempt == retries - 1:
+                raise XGIError("Connection Error!")
+            sleep(_backoff_for_attempt(attempt))
+            continue
+
+        if r.ok:
+            return r
+        last_status = r.status_code
+        if 500 <= r.status_code < 600 and attempt < retries - 1:
+            sleep(_backoff_for_attempt(attempt))
+            continue
+        break
+
+    raise XGIError(f"Error: HTTP response {last_status}")
+
+
+def _backoff_for_attempt(attempt):
+    """Pick the backoff seconds for a given attempt index.
+
+    Attempts beyond the configured schedule reuse the final entry so that
+    callers who set ``retries`` higher than the default do not fall off
+    the schedule.
+    """
+    idx = min(attempt, len(_HTTP_RETRY_BACKOFF_SECONDS) - 1)
+    return _HTTP_RETRY_BACKOFF_SECONDS[idx]
+
+
+def _parse_response(r, mode):
+    match mode:
+        case "json":
+            return r.json()
+        case "raw":
+            return r.content
+        case "text":
+            return r.text
+        case _:
+            raise ValueError(
+                f"Invalid mode: {mode}. Must be 'json', 'raw', or 'text'."
+            )
+
+
+def request_from_url(url, mode="json", retries=_HTTP_RETRY_ATTEMPTS):
+    """HTTP request a URL and return its parsed content.
+
+    Retries on 5xx responses or connection errors with exponential backoff
+    to absorb transient outages.
 
     Parameters
     ----------
     url : str
-        The url where the json file is located.
+        The url to request.
     mode : str, optional
         The mode of the request. Can be "json", "raw", or "text".
-        If "json", the response is parsed as JSON and
-        returned as a dict. If "raw", the raw response
-        content is returned. If "text", the response is returned as a string.
+        If "json", the response is parsed as JSON and returned as a dict.
+        If "raw", the raw response content is returned as bytes.
+        If "text", the response is returned as a string.
         By default, "json".
+    retries : int, optional
+        Maximum number of attempts, including the first. Defaults to
+        ``_HTTP_RETRY_ATTEMPTS``. 4xx responses never retry regardless of
+        this value.
 
     Returns
     -------
-    dict
-        A dictionary of the JSON requested.
+    dict, bytes, or str
+        The parsed response in the format selected by ``mode``.
 
     Raises
     ------
     XGIError
-        If the connection fails or if there is a bad HTTP request.
+        If the connection fails after retries or if there is a bad HTTP
+        request.
     """
-
-    import requests
-
-    try:
-        r = requests.get(url)
-    except requests.ConnectionError:
-        raise XGIError("Connection Error!")
-
-    if r.ok:
-        match mode:
-            case "json":
-                return r.json()
-            case "raw":
-                return r.content
-            case "text":
-                return r.text
-            case _:
-                raise ValueError(
-                    f"Invalid mode: {mode}. Must be 'json', 'raw', or 'text'."
-                )
-    else:
-        raise XGIError(f"Error: HTTP response {r.status_code}")
+    return _parse_response(_get_with_retry(url, retries=retries), mode)
 
 
 @cache
-def request_from_url_cached(url, mode="json"):
-    """HTTP request json file and return as dict.
+def request_from_url_cached(url, mode="json", retries=_HTTP_RETRY_ATTEMPTS):
+    """HTTP request a URL and return its parsed content, cached by URL.
+
+    Retries on 5xx responses or connection errors (see
+    :func:`request_from_url` for the policy). Successful responses are
+    cached for the lifetime of the process.
 
     Parameters
     ----------
     url : str
-        The url where the json file is located.
+        The url to request.
     mode : str, optional
         The mode of the request. Can be "json", "raw", or "text".
-        If "json", the response is parsed as JSON and
-        returned as a dict. If "raw", the raw response
-        content is returned. If "text", the response is returned as a string.
+        If "json", the response is parsed as JSON and returned as a dict.
+        If "raw", the raw response content is returned as bytes.
+        If "text", the response is returned as a string.
         By default, "json".
+    retries : int, optional
+        Maximum number of attempts, including the first. Defaults to
+        ``_HTTP_RETRY_ATTEMPTS``. Note that the cache key includes
+        ``mode`` and ``retries``, so calls with different values are
+        cached separately.
 
     Returns
     -------
-    dict
-        A dictionary of the JSON requested.
+    dict, bytes, or str
+        The parsed response in the format selected by ``mode``.
 
     Raises
     ------
     XGIError
-        If the connection fails or if there is a bad HTTP request.
+        If the connection fails after retries or if there is a bad HTTP
+        request.
     """
-    import requests
-
-    try:
-        r = requests.get(url)
-    except requests.ConnectionError:
-        raise XGIError("Connection Error!")
-
-    if r.ok:
-        match mode:
-            case "json":
-                return r.json()
-            case "raw":
-                return r.content
-            case "text":
-                return r.text
-            case _:
-                raise ValueError(
-                    f"Invalid mode: {mode}. Must be 'json', 'raw', or 'text'."
-                )
-    else:
-        raise XGIError(f"Error: HTTP response {r.status_code}")
+    return _parse_response(_get_with_retry(url, retries=retries), mode)
 
 
 def subfaces(edges, order=None):

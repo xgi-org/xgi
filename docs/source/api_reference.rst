@@ -11,12 +11,16 @@ XGI is organized into the following subpackages:
 * ``xgi.convert``:  Functions to convert between different representations of the data
 * ``xgi.core``: Classes for the core datastructures and views
 * ``xgi.drawing``:  Functions for plotting
-* ``xgi.dynamics``: Functions to simulate given dynamical processes
 * ``xgi.generators``: Functions to generate higher-order networks from models
 * ``xgi.linalg``: Functions to compute matrix and tensors representations
 * ``xgi.readwrite``:  Functions to load and store higher-order networks in standard formats
 * ``xgi.stats``:  Functions to compute node and edge statistics in a single interface
 * ``xgi.utils``: Small utility functions
+
+For simulating dynamical processes on higher-order networks (Kuramoto,
+contagion, synchronization, etc.), see the
+:doc:`dynamics integrations page </dynamics_integrations>`, which lists
+maintained companion packages.
 
 
 .. note::
@@ -37,7 +41,6 @@ XGI is organized into the following subpackages:
    Convert <api/convert.rst>
    Core functionality <api/core.rst>
    Drawing <api/drawing.rst>
-   Dynamics <api/dynamics.rst>
    Generators <api/generators.rst>
    Linear Algebra <api/linalg.rst>
    I/O <api/readwrite.rst>

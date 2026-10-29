@@ -9,7 +9,7 @@ from xgi.exception import XGIError
 from xgi.utils.utilities import crest_r
 
 
-def test_draw(edgelist8):
+def test_draw(edgelist8, diedgelist2):
     H = xgi.Hypergraph(edgelist8)
 
     fig, ax = plt.subplots()
@@ -57,6 +57,22 @@ def test_draw(edgelist8):
         assert line.get_zorder() == 3
     for patch, z in zip(ax.patches, [0, 2, 2]):  # hyperedges
         assert patch.get_zorder() == z
+
+    DH = xgi.DiHypergraph(diedgelist2)
+
+    fig, ax = plt.subplots()
+    ax, collections = xgi.draw(DH, ax=ax)
+    node_collection, edge_marker_collection = collections
+
+    # number of elements
+    assert len(ax.lines) == 0
+    offsets = node_collection.get_offsets()
+    assert offsets.shape[0] == DH.num_nodes  # nodes
+
+    offsets = edge_marker_collection.get_offsets()
+    assert offsets.shape[0] == DH.num_edges  # edges
+
+    assert len(ax.collections) == 2
 
     plt.close("all")
 

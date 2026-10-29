@@ -25,6 +25,23 @@ berte_fibration_2026:
     paper: https://doi.org/10.1038/s41598-026-61679-0
     code: https://github.com/margheritaberte/Fibration_symmetries_cluster_synchronization
 
+chun_survey_2026:
+  tags:
+  - XGI
+  authors:
+  - Jaewan Chun
+  - Fanchen Bu
+  - Yeongho Kim
+  - Atsushi Miyauchi
+  - Francesco Bonchi
+  - Kijung Shin
+  title: "A Survey on Centrality and Importance Measures in Hypergraphs: Categorization and Empirical Insights"
+  year: 2026
+  reference: '*ACM Computing Surveys*, Volume 58, Issue 16, Article 414'
+  links:
+    paper: https://doi.org/10.1145/3843227
+    code: https://github.com/jaewan01/hypergraph-centrality-survey
+
 de_caro_evaluating_2026:
   tags:
   - XGI-DATA

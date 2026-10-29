@@ -45,7 +45,7 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
     H_sc = xgi.Hypergraph(SC)
 
     assert set(H_sc.nodes) == set(SC.nodes)
-    assert H_sc.edges.members() == SC.edges.members()
+    assert H_sc.edges.members(dtype=list) == SC.edges.members(dtype=list)
 
 
 def test_hypergraph_attrs():
@@ -143,6 +143,19 @@ def test_add_nodes_from(attr1, attr2, attr3):
     assert H.nodes[1]["color"] == attr2["color"]
     assert H.nodes[2]["color"] == attr3["color"]
 
+    H = xgi.Hypergraph()
+    H.add_nodes_from({0: {"color": "black"}}, weight=1, color="grey")
+    assert H.nodes[0]["color"] == "black"
+    assert H.nodes[0]["weight"] == 1
+    H.add_nodes_from({0: {"weight": 2}})
+    assert H.nodes[0]["weight"] == 2
+
+    with pytest.raises(TypeError):
+        H.add_nodes_from([(0, "not a dict"), (1, {"color": "red"})])
+
+    H.add_nodes_from([(5, None), (1, {"color": "red"})])
+    assert H.nodes[5] == {}
+
 
 def test_remove_singleton_edges(edgelist1, edgelist2):
     H1 = xgi.Hypergraph(edgelist1)
@@ -183,6 +196,12 @@ def test_memberships(edgelist1):
     with pytest.raises(IDNotFound):
         H.nodes.memberships(0)
 
+    # dtype kwarg mirrors members() (see #740)
+    assert H.nodes([1, 2, 6]).memberships(dtype=dict) == {1: {0}, 2: {0}, 6: {2, 3}}
+    assert H.nodes([1, 2, 6]).memberships(dtype=list) == [{0}, {0}, {2, 3}]
+    with pytest.raises(XGIError):
+        H.nodes.memberships(dtype=set)
+
 
 def test_add_edge():
     for edge in [[1, 2, 3], {1, 2, 3}, iter([1, 2, 3])]:
@@ -190,7 +209,7 @@ def test_add_edge():
         H.add_edge(edge)
         assert (1 in H) and (2 in H) and (3 in H)
         assert 0 in H.edges
-        assert {1, 2, 3} in H.edges.members()
+        assert {1, 2, 3} in H.edges.members(dtype=list)
         assert {1, 2, 3} == H.edges.members(0)
         assert H.edges.members(dtype=dict) == {0: {1, 2, 3}}
 
@@ -224,7 +243,7 @@ def test_add_edge_with_id():
     H.add_edge([1, 2, 3], idx="myedge")
     assert (1 in H) and (2 in H) and (3 in H)
     assert "myedge" in H.edges
-    assert {1, 2, 3} in H.edges.members()
+    assert {1, 2, 3} in H.edges.members(dtype=list)
     assert {1, 2, 3} == H.edges.members("myedge")
     assert H.edges.members(dtype=dict) == {"myedge": {1, 2, 3}}
 
@@ -234,7 +253,7 @@ def test_add_edge_with_attr():
     H.add_edge([1, 2, 3], color="red", place="peru")
     assert (1 in H) and (2 in H) and (3 in H)
     assert 0 in H.edges
-    assert {1, 2, 3} in H.edges.members()
+    assert {1, 2, 3} in H.edges.members(dtype=list)
     assert {1, 2, 3} == H.edges.members(0)
     assert H.edges.members(dtype=dict) == {0: {1, 2, 3}}
     assert H.edges[0] == {"color": "red", "place": "peru"}
@@ -290,7 +309,7 @@ def test_add_edges_from_iterable_of_members():
     edges = [{0, 1}, {1, 2}, {2, 3, 4}]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
-    assert H.edges.members() == edges
+    assert H.edges.members(dtype=list) == edges
 
     H1 = xgi.Hypergraph(edges)
     with pytest.raises(XGIError):
@@ -299,24 +318,24 @@ def test_add_edges_from_iterable_of_members():
     edges = {frozenset([0, 1]), frozenset([1, 2]), frozenset([2, 3, 4])}
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
-    assert H.edges.members() == [set(e) for e in edges]
+    assert H.edges.members(dtype=list) == [set(e) for e in edges]
 
     edges = [[0, 1], {1, 2}, (2, 3, 4)]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
-    assert H.edges.members() == [set(e) for e in edges]
+    assert H.edges.members(dtype=list) == [set(e) for e in edges]
 
     edges = [{"foo", "bar"}, {"bar", "baz"}, {"foo", "bar", "baz"}]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert set(H.nodes) == {"foo", "bar", "baz"}
-    assert H.edges.members() == edges
+    assert H.edges.members(dtype=list) == edges
 
     edges = [{"a", "b"}, {"b", "c"}, {"c", "d", "e"}]
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert set(H.nodes) == {"a", "b", "c", "d", "e"}
-    assert H.edges.members() == edges
+    assert H.edges.members(dtype=list) == edges
 
 
 def test_add_edges_from_format2():
@@ -359,7 +378,7 @@ def test_add_edges_from_format3():
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == list(range(len(edges)))
-    assert H.edges.members() == [e[0] for e in edges]
+    assert H.edges.members(dtype=list) == [e[0] for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][1]
     # check counter
@@ -376,7 +395,7 @@ def test_add_edges_from_format4():
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == [e[1] for e in edges]
-    assert H.edges.members() == [e[0] for e in edges]
+    assert H.edges.members(dtype=list) == [e[0] for e in edges]
     for idx, e in enumerate(H.edges):
         assert H.edges[e] == edges[idx][2]
     # check counter
@@ -396,7 +415,7 @@ def test_add_edges_from_dict():
     H = xgi.Hypergraph()
     H.add_edges_from(edges)
     assert list(H.edges) == ["one", "two", 2]
-    assert H.edges.members() == [set(edges[e]) for e in edges]
+    assert H.edges.members(dtype=list) == [set(edges[e]) for e in edges]
     # check counter
     H.add_edge([1, 9, 2])
     assert H.edges.members(3) == {1, 9, 2}
@@ -457,20 +476,31 @@ def test_add_edges_from_wrong_format():
         xgi.Hypergraph().add_edges_from(edges)
 
 
+def test_add_weighted_edges_from():
+    H = xgi.Hypergraph()
+    H.add_weighted_edges_from([(0, 1, 0.3), (0, 2, 0.8)])
+    assert H.edges.members() == {0: {0, 1}, 1: {0, 2}}
+    assert H.edges.attrs("weight").aslist() == [0.3, 0.8]
+
+    with pytest.raises(ValueError):
+        xgi.Hypergraph().add_weighted_edges_from([()])
+
+
 def test_repr(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     r = repr(H)
-    assert r.startswith("Hypergraph([")
+    # Repr matches the dict shape of .members() (see #764).
+    assert r.startswith("Hypergraph({")
 
     H_empty = xgi.Hypergraph()
-    assert repr(H_empty) == "Hypergraph([])"
+    assert repr(H_empty) == "Hypergraph({})"
 
 
 def test_copy_dunder(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     H["key"] = "value"
     c = copy(H)
-    assert list(c.edges.members()) == list(H.edges.members())
+    assert list(c.edges.members(dtype=list)) == list(H.edges.members(dtype=list))
     assert c._net_attr == H._net_attr
     H.add_node(99)
     assert 99 not in c.nodes
@@ -480,7 +510,7 @@ def test_deepcopy_dunder(edgelist1):
     H = xgi.Hypergraph(edgelist1)
     H["key"] = "value"
     c = deepcopy(H)
-    assert list(c.edges.members()) == list(H.edges.members())
+    assert list(c.edges.members(dtype=list)) == list(H.edges.members(dtype=list))
     assert c._net_attr == H._net_attr
     H.add_node(99)
     assert 99 not in c.nodes
@@ -492,7 +522,7 @@ def test_copy(edgelist1):
     copy = H.copy()
     assert list(copy.nodes) == list(H.nodes)
     assert list(copy.edges) == list(H.edges)
-    assert list(copy.edges.members()) == list(H.edges.members())
+    assert list(copy.edges.members(dtype=list)) == list(H.edges.members(dtype=list))
     assert H._net_attr == copy._net_attr
 
     H.add_node(10)
@@ -510,7 +540,7 @@ def test_copy(edgelist1):
     copy["key2"] = "value2"
     assert list(copy.nodes) == list(H.nodes)
     assert list(copy.edges) == list(H.edges)
-    assert list(copy.edges.members()) == list(H.edges.members())
+    assert list(copy.edges.members(dtype=list)) == list(H.edges.members(dtype=list))
     assert H._net_attr == copy._net_attr
 
     H1 = xgi.Hypergraph()
@@ -518,7 +548,7 @@ def test_copy(edgelist1):
     copy2 = H1.copy()  # does not throw error because of str id
     assert list(copy2.nodes) == list(H1.nodes)
     assert list(copy2.edges) == list(H1.edges)
-    assert list(copy2.edges.members()) == list(H1.edges.members())
+    assert list(copy2.edges.members(dtype=list)) == list(H1.edges.members(dtype=list))
     assert H1._net_attr == copy2._net_attr
 
 
@@ -538,12 +568,12 @@ def test_double_edge_swap(edgelist1):
         H.double_edge_swap(5, 6, 2, 3)
 
     H.double_edge_swap(1, 6, 0, 3)
-    assert H.edges.members() == [{2, 3, 6}, {4}, {5, 6}, {1, 7, 8}]
+    assert H.edges.members(dtype=list) == [{2, 3, 6}, {4}, {5, 6}, {1, 7, 8}]
 
     assert H._edge == dual_dict(H._node)
 
     H.double_edge_swap(3, 4, 0, 1)
-    assert H.edges.members() == [{2, 4, 6}, {3}, {5, 6}, {1, 7, 8}]
+    assert H.edges.members(dtype=list) == [{2, 4, 6}, {3}, {5, 6}, {1, 7, 8}]
     assert H._edge == dual_dict(H._node)
 
     with pytest.raises(IDNotFound):
@@ -975,7 +1005,7 @@ def test_cleanup():
     cleanH = H.cleanup(connected=False, multiedges=True, relabel=False, in_place=False)
     assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
     assert set(cleanH.edges) == {0, 1, 2}
-    edges = cleanH.edges.members()
+    edges = cleanH.edges.members(dtype=list)
     assert {"a", "b", "c"} in edges
     assert {"e", "f"} in edges
 
@@ -983,7 +1013,7 @@ def test_cleanup():
     cleanH = H.cleanup(connected=False, isolates=False, relabel=False, in_place=False)
     assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
     assert set(cleanH.edges) == {0, 2}
-    edges = cleanH.edges.members()
+    edges = cleanH.edges.members(dtype=list)
     assert {"a", "b", "c"} in edges
     assert {"e", "f"} in edges
 
@@ -996,7 +1026,7 @@ def test_cleanup():
     cleanH = H.cleanup(connected=False, in_place=False)
     assert set(cleanH.nodes) == {0, 1, 2, 3, 4}
     assert cleanH.num_edges == 2
-    edges = cleanH.edges.members()
+    edges = cleanH.edges.members(dtype=list)
     assert {0, 1, 2} in edges
     assert {3, 4} in edges
 
@@ -1008,7 +1038,7 @@ def test_cleanup():
     cleanH.cleanup(connected=False, multiedges=True, relabel=False)
     assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
     assert set(cleanH.edges) == {0, 1, 2}
-    edges = cleanH.edges.members()
+    edges = cleanH.edges.members(dtype=list)
     assert {"a", "b", "c"} in edges
     assert {"e", "f"} in edges
 
@@ -1017,7 +1047,7 @@ def test_cleanup():
     cleanH.cleanup(connected=False, isolates=False, relabel=False)
     assert set(cleanH.nodes) == {"a", "b", "c", "e", "f"}
     assert set(cleanH.edges) == {0, 2}
-    edges = cleanH.edges.members()
+    edges = cleanH.edges.members(dtype=list)
     assert {"a", "b", "c"} in edges
     assert {"e", "f"} in edges
 
@@ -1033,7 +1063,7 @@ def test_cleanup():
     cleanH.cleanup(connected=False)
     assert set(cleanH.nodes) == {0, 1, 2, 3, 4}
     assert cleanH.num_edges == 2
-    edges = cleanH.edges.members()
+    edges = cleanH.edges.members(dtype=list)
     assert {0, 1, 2} in edges
     assert {3, 4} in edges
     assert cleanH["name"] == "test"

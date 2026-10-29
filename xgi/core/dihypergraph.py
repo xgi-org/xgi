@@ -1,9 +1,4 @@
-"""Base class for directed hypergraphs.
-
-.. warning::
-    This is currently an experimental feature.
-
-"""
+"""Base class for directed hypergraphs."""
 
 from collections.abc import Hashable, Iterable
 from copy import deepcopy
@@ -19,9 +14,6 @@ __all__ = ["DiHypergraph"]
 
 class DiHypergraph:
     r"""A dihypergraph is a collection of directed interactions of arbitrary size.
-
-    .. warning::
-        This is currently an experimental feature.
 
     More formally, a directed hypergraph (dihypergraph) is a pair :math:`(V, E)`,
     where :math:`V` is a set of elements called *nodes* or *vertices*,
@@ -81,9 +73,9 @@ class DiHypergraph:
     DiNodeView((1, 2, 3, 4, 5, 6, 7, 8))
     >>> DH.edges
     DiEdgeView((0, 1))
-    >>> [[sorted(h), sorted(t)] for h, t in DH.edges.dimembers()]
+    >>> [[sorted(h), sorted(t)] for h, t in DH.edges.dimembers(dtype=list)]
     [[[1, 2, 3], [4]], [[5, 6], [6, 7, 8]]]
-    >>> [sorted(e) for e in DH.edges.members()]
+    >>> [sorted(e) for e in DH.edges.members(dtype=list)]
     [[1, 2, 3, 4], [5, 6, 7, 8]]
     """
 
@@ -265,8 +257,16 @@ class DiHypergraph:
             val = stat(*args, **kwargs).asdict()
             return val if node is None else val[node]
 
-        func.__doc__ = f"""Equivalent to DH.{word}.{attr}.asdict(). For accepted *args and
-        **kwargs, see documentation of DH.{word}.{attr}."""
+        # Standardized return contract (see #740):
+        #   DH.<stat>()  -> dict[id, T]
+        #   DH.<stat>(x) -> T
+        # For parametric stats, pass parameters as keyword arguments because
+        # the first positional argument is captured as `node`.
+        func.__doc__ = f"""Equivalent to DH.{word}.{attr}.asdict().
+
+        Standardized return shape: no-arg call returns dict[id, value]; with-id
+        call returns the value for that id. For accepted *args and **kwargs,
+        see documentation of DH.{word}.{attr}."""
 
         return func
 
@@ -356,33 +356,89 @@ class DiHypergraph:
 
         Parameters
         ----------
-        nodes_for_adding : iterable
-            An iterable of nodes (list, dict, set, etc.).
+        nodes_for_adding : iterable or dict
+            An iterable of nodes (list, set, etc.).
             OR
             An iterable of (node, attribute dict) tuples.
+            OR
+            A dict mapping node IDs to attribute dictionaries.
+
             Node attributes are updated using the attribute dict.
-        attr : keyword arguments, optional (default= no attributes)
+        attr : keyword arguments, optional (default=no attributes)
             Update attributes for all nodes in nodes.
-            Node attributes specified in nodes as a tuple take
-            precedence over attributes specified via keyword arguments.
+            Node attributes specified for individual nodes take precedence
+            over attributes specified via keyword arguments.
 
         See Also
         --------
         add_node
+        set_node_attributes
 
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.DiHypergraph()
+
+        Add nodes without attributes:
+
+        >>> H.add_nodes_from([1, 2, 3])
+
+        Add nodes with attributes shared by all nodes:
+
+        >>> H.add_nodes_from([1, 2, 3], color="red", weight=1)
+
+        Add nodes with individual attributes using (node, attribute dict)
+        tuples:
+
+        >>> H.add_nodes_from([
+        ...     (1, {"color": "red"}),
+        ...     (2, {"color": "blue"}),
+        ...     (3, {"color": "green"}),
+        ... ])
+
+        Add nodes using a dict mapping node IDs to attribute dictionaries:
+
+        >>> H.add_nodes_from({
+        ...     1: {"color": "red", "weight": 2},
+        ...     2: {"color": "blue", "weight": 5},
+        ...     3: {"color": "green"},
+        ... })
+
+        Global attributes can also be combined with individual node
+        attributes. Individual node attributes take precedence:
+
+        >>> H.add_nodes_from(
+        ...     {
+        ...         1: {"color": "red"},
+        ...         2: {"color": "blue"},
+        ...     },
+        ...     weight=1,
+        ... )
         """
+        if isinstance(nodes_for_adding, dict):
+            nodes_for_adding = nodes_for_adding.items()
+
         for n in nodes_for_adding:
-            try:
-                newnode = n not in self._node
-                newdict = attr
-            except TypeError:
-                n, ndict = n
-                newnode = n not in self._node
+            if isinstance(n, tuple) and len(n) == 2:
+                if not n[1]:  # Handles the None case
+                    n, ndict = n[0], {}
+                elif isinstance(n[1], dict):
+                    n, ndict = n
+                else:
+                    raise TypeError(
+                        "If nodes are specified as (node, attribute dict) tuples, "
+                        "the second element must be a dictionary or None."
+                    )
                 newdict = attr.copy()
                 newdict.update(ndict)
-            if newnode:
+            else:
+                newdict = attr
+
+            # Initialize new node if it doesn't already exist
+            if n not in self._node:
                 self._node[n] = {"in": set(), "out": set()}
                 self._node_attr[n] = self._node_attr_dict_factory()
+
             self._node_attr[n].update(newdict)
 
     def remove_node(self, n, strong=False, remove_empty=True):
