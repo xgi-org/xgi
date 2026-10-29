@@ -73,7 +73,7 @@ def pseudofractal_simplicial_complex(order, n_iter):
     for it in range(1, n_iter + 1):
         # Find all (order - 1)-simplices present in the complex
         nodes = S.nodes
-        subfaces = S.edges.filterby("order", order - 1).members()
+        subfaces = S.edges.filterby("order", order - 1).members(dtype=list)
         max_index = max(nodes)
         new_simplices = []
 
@@ -153,7 +153,9 @@ def apollonian_complex(order, n_iter):
     for it in range(1, n_iter + 1):
         # find all (order - 1)-simplices present in the complex
         nodes = S.nodes
-        subfaces_previous_iter = S.edges.filterby("order", order - 1).members()
+        subfaces_previous_iter = S.edges.filterby("order", order - 1).members(
+            dtype=list
+        )
 
         # keep only those attached to new nodes
         subfaces_previous_iter = [

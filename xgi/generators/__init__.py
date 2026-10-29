@@ -45,4 +45,7 @@ __all__ = [
     "uniform_erdos_renyi_hypergraph",
     "uniform_HSBM",
     "uniform_HPPM",
+    "pseudofractal_simplicial_complex",
+    "apollonian_complex",
+    "network_geometry_flavor",
 ]

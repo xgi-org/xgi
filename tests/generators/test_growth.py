@@ -8,7 +8,7 @@ def test_pseudofractal():
 
     # initial
     S0 = xgi.pseudofractal_simplicial_complex(order=2, n_iter=0)
-    triangles = set(S0.edges.filterby("order", 2).members())
+    triangles = set(S0.edges.filterby("order", 2).members(dtype=list))
 
     assert isinstance(S0, xgi.SimplicialComplex)
     assert S0.num_nodes == 3
@@ -17,7 +17,7 @@ def test_pseudofractal():
 
     # first iteration
     S1 = xgi.pseudofractal_simplicial_complex(order=2, n_iter=1)
-    triangles = set(S1.edges.filterby("order", 2).members())
+    triangles = set(S1.edges.filterby("order", 2).members(dtype=list))
 
     assert isinstance(S1, xgi.SimplicialComplex)
     assert S1.num_nodes == 6
@@ -31,7 +31,7 @@ def test_pseudofractal():
 
     # second iteration
     S2 = xgi.pseudofractal_simplicial_complex(order=2, n_iter=2)
-    triangles = set(S2.edges.filterby("order", 2).members())
+    triangles = set(S2.edges.filterby("order", 2).members(dtype=list))
 
     assert isinstance(S2, xgi.SimplicialComplex)
     assert S2.num_nodes == 15
@@ -57,7 +57,7 @@ def test_apollonian():
 
     # initial
     S0 = xgi.apollonian_complex(order=2, n_iter=0)
-    triangles = set(S0.edges.filterby("order", 2).members())
+    triangles = set(S0.edges.filterby("order", 2).members(dtype=list))
 
     assert isinstance(S0, xgi.SimplicialComplex)
     assert S0.num_nodes == 3
@@ -66,7 +66,7 @@ def test_apollonian():
 
     # first iteration
     S1 = xgi.apollonian_complex(order=2, n_iter=1)
-    triangles = set(S1.edges.filterby("order", 2).members())
+    triangles = set(S1.edges.filterby("order", 2).members(dtype=list))
 
     assert isinstance(S1, xgi.SimplicialComplex)
     assert S1.num_nodes == 6
@@ -80,7 +80,7 @@ def test_apollonian():
 
     # second iteration
     S2 = xgi.apollonian_complex(order=2, n_iter=2)
-    triangles = set(S2.edges.filterby("order", 2).members())
+    triangles = set(S2.edges.filterby("order", 2).members(dtype=list))
 
     assert isinstance(S2, xgi.SimplicialComplex)
     assert S2.num_nodes == 12
@@ -120,7 +120,7 @@ def test_network_geometry_flavor():
 
     # s = -1: each (d-1)-simplex is shared by at most two d-simplices
     S = xgi.network_geometry_flavor(order, -1, beta=1, n_iter=50, seed=1)
-    triangles = S.edges.filterby("order", order).members()
+    triangles = S.edges.filterby("order", order).members(dtype=list)
     face_counts = {}
     for face in xgi.subfaces(triangles, order=order - 1):
         face = frozenset(face)
@@ -141,8 +141,8 @@ def test_network_geometry_flavor_seed():
     S1 = xgi.network_geometry_flavor(2, 1, beta=1, n_iter=30, seed=42)
     S2 = xgi.network_geometry_flavor(2, 1, beta=1, n_iter=30, seed=42)
     S3 = xgi.network_geometry_flavor(2, 1, beta=1, n_iter=30, seed=43)
-    assert set(S1.edges.members()) == set(S2.edges.members())
-    assert set(S1.edges.members()) != set(S3.edges.members())
+    assert set(S1.edges.members(dtype=list)) == set(S2.edges.members(dtype=list))
+    assert set(S1.edges.members(dtype=list)) != set(S3.edges.members(dtype=list))
 
     # custom energy distribution
     S = xgi.network_geometry_flavor(
@@ -161,7 +161,7 @@ def test_network_geometry_flavor_seed():
 
     S1 = xgi.network_geometry_flavor(2, 1, 1, 30, energy_distribution=energy, seed=7)
     S2 = xgi.network_geometry_flavor(2, 1, 1, 30, energy_distribution=energy, seed=7)
-    assert set(S1.edges.members()) == set(S2.edges.members())
+    assert set(S1.edges.members(dtype=list)) == set(S2.edges.members(dtype=list))
 
     # energy distribution without arguments also works
     calls = []
