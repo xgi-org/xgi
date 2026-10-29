@@ -24,8 +24,8 @@ __all__ = [
     "powerset",
     "update_uid_counter",
     "find_triangles",
-    "request_json_from_url",
-    "request_json_from_url_cached",
+    "request_from_url",
+    "request_from_url_cached",
     "subfaces",
     "convert_labels_to_integers",
     "hist",
@@ -291,8 +291,22 @@ def _backoff_for_attempt(attempt):
     return _HTTP_RETRY_BACKOFF_SECONDS[idx]
 
 
-def request_json_from_url(url, retries=_HTTP_RETRY_ATTEMPTS):
-    """HTTP request json file and return as dict.
+def _parse_response(r, mode):
+    match mode:
+        case "json":
+            return r.json()
+        case "raw":
+            return r.content
+        case "text":
+            return r.text
+        case _:
+            raise ValueError(
+                f"Invalid mode: {mode}. Must be 'json', 'raw', or 'text'."
+            )
+
+
+def request_from_url(url, mode="json", retries=_HTTP_RETRY_ATTEMPTS):
+    """HTTP request a URL and return its parsed content.
 
     Retries on 5xx responses or connection errors with exponential backoff
     to absorb transient outages.
@@ -300,7 +314,13 @@ def request_json_from_url(url, retries=_HTTP_RETRY_ATTEMPTS):
     Parameters
     ----------
     url : str
-        The url where the json file is located.
+        The url to request.
+    mode : str, optional
+        The mode of the request. Can be "json", "raw", or "text".
+        If "json", the response is parsed as JSON and returned as a dict.
+        If "raw", the raw response content is returned as bytes.
+        If "text", the response is returned as a string.
+        By default, "json".
     retries : int, optional
         Maximum number of attempts, including the first. Defaults to
         ``_HTTP_RETRY_ATTEMPTS``. 4xx responses never retry regardless of
@@ -308,8 +328,8 @@ def request_json_from_url(url, retries=_HTTP_RETRY_ATTEMPTS):
 
     Returns
     -------
-    dict
-        A dictionary of the JSON requested.
+    dict, bytes, or str
+        The parsed response in the format selected by ``mode``.
 
     Raises
     ------
@@ -317,30 +337,37 @@ def request_json_from_url(url, retries=_HTTP_RETRY_ATTEMPTS):
         If the connection fails after retries or if there is a bad HTTP
         request.
     """
-    return _get_with_retry(url, retries=retries).json()
+    return _parse_response(_get_with_retry(url, retries=retries), mode)
 
 
 @cache
-def request_json_from_url_cached(url, retries=_HTTP_RETRY_ATTEMPTS):
-    """HTTP request json file and return as dict, cached by URL.
+def request_from_url_cached(url, mode="json", retries=_HTTP_RETRY_ATTEMPTS):
+    """HTTP request a URL and return its parsed content, cached by URL.
 
     Retries on 5xx responses or connection errors (see
-    :func:`request_json_from_url` for the policy). Successful responses
-    are cached for the lifetime of the process.
+    :func:`request_from_url` for the policy). Successful responses are
+    cached for the lifetime of the process.
 
     Parameters
     ----------
     url : str
-        The url where the json file is located.
+        The url to request.
+    mode : str, optional
+        The mode of the request. Can be "json", "raw", or "text".
+        If "json", the response is parsed as JSON and returned as a dict.
+        If "raw", the raw response content is returned as bytes.
+        If "text", the response is returned as a string.
+        By default, "json".
     retries : int, optional
         Maximum number of attempts, including the first. Defaults to
         ``_HTTP_RETRY_ATTEMPTS``. Note that the cache key includes
-        ``retries``, so calls with different values are cached separately.
+        ``mode`` and ``retries``, so calls with different values are
+        cached separately.
 
     Returns
     -------
-    dict
-        A dictionary of the JSON requested.
+    dict, bytes, or str
+        The parsed response in the format selected by ``mode``.
 
     Raises
     ------
@@ -348,7 +375,7 @@ def request_json_from_url_cached(url, retries=_HTTP_RETRY_ATTEMPTS):
         If the connection fails after retries or if there is a bad HTTP
         request.
     """
-    return _get_with_retry(url, retries=retries).json()
+    return _parse_response(_get_with_retry(url, retries=retries), mode)
 
 
 def subfaces(edges, order=None):

@@ -1,11 +1,14 @@
+from unittest.mock import Mock, patch
+
 import networkx as nx
 import numpy as np
 import pandas as pd
 import pytest
+import requests
 
 import xgi
 from xgi.exception import IDNotFound, XGIError
-from xgi.utils import IDDict
+from xgi.utils import IDDict, request_from_url, request_from_url_cached
 
 
 def test_iddict(edgelist1):
@@ -355,3 +358,97 @@ def test_geometric():
     assert np.isinf(xgi.geometric(0))
 
     assert xgi.geometric(1) == 1
+
+
+@pytest.fixture
+def mock_response():
+    response = Mock()
+    response.ok = True
+    response.status_code = 200
+    response.json.return_value = {"a": 1}
+    response.content = b"raw content"
+    response.text = "text content"
+    return response
+
+
+@pytest.mark.webtest
+@pytest.mark.slow
+@pytest.mark.parametrize(
+    "func,mode,expected",
+    [
+        (request_from_url, "json", {"a": 1}),
+        (request_from_url, "raw", b"raw content"),
+        (request_from_url, "text", "text content"),
+        (request_from_url_cached, "json", {"a": 1}),
+        (request_from_url_cached, "raw", b"raw content"),
+        (request_from_url_cached, "text", "text content"),
+    ],
+)
+def test_successful_requests(func, mode, expected, mock_response):
+    if hasattr(func, "cache_clear"):
+        func.cache_clear()
+
+    with patch("requests.get", return_value=mock_response):
+        result = func("https://example.com/data.json", mode=mode)
+
+    assert result == expected
+
+
+@pytest.mark.webtest
+@pytest.mark.slow
+@pytest.mark.parametrize(
+    "func",
+    [request_from_url, request_from_url_cached],
+)
+def test_invalid_mode(func, mock_response):
+    if hasattr(func, "cache_clear"):
+        func.cache_clear()
+
+    with patch("requests.get", return_value=mock_response):
+        with pytest.raises(ValueError, match="Invalid mode"):
+            func("https://example.com/data.json", mode="invalid")
+
+
+@pytest.mark.webtest
+@pytest.mark.slow
+@pytest.mark.parametrize(
+    "func",
+    [request_from_url, request_from_url_cached],
+)
+def test_connection_error(func):
+    if hasattr(func, "cache_clear"):
+        func.cache_clear()
+
+    with patch(
+        "requests.get",
+        side_effect=requests.ConnectionError,
+    ):
+        with pytest.raises(XGIError, match="Connection Error!"):
+            func("https://example.com/data.json")
+
+
+@pytest.mark.webtest
+@pytest.mark.slow
+@pytest.mark.parametrize(
+    "func,status_code",
+    [
+        (request_from_url, 404),
+        (request_from_url_cached, 404),
+        (request_from_url, 500),
+        (request_from_url_cached, 500),
+    ],
+)
+def test_http_error(func, status_code):
+    if hasattr(func, "cache_clear"):
+        func.cache_clear()
+
+    response = Mock()
+    response.ok = False
+    response.status_code = status_code
+
+    with patch("requests.get", return_value=response):
+        with pytest.raises(
+            XGIError,
+            match=f"HTTP response {status_code}",
+        ):
+            func("https://example.com/data.json")
