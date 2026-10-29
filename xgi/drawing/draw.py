@@ -1252,7 +1252,7 @@ def draw_multilayer(
     ax=None,
     node_fc="white",
     node_ec="black",
-    node_lw=1,
+    node_lw=0.5,
     node_size=0.05,
     node_fc_cmap="Reds",
     vmin=None,
@@ -1270,8 +1270,8 @@ def draw_multilayer(
     max_order=None,
     conn_lines=True,
     conn_lines_style="dotted",
-    h_angle=10,
-    v_angle=20,
+    h_angle=20,
+    v_angle=30,
     sep=0.4,
     rescale_sizes=True,
     **kwargs,
@@ -1302,7 +1302,7 @@ def draw_multilayer(
         Line width of the node borders in pixels.  If int or float, use the same width
         for all node borders.  If iterable or NodeStat, assume the widths are specified
         in the same order as the nodes are found in H.nodes. Values are clipped below
-        and above by min_node_lw and max_node_lw, respectively. By default, 1.
+        and above by min_node_lw and max_node_lw, respectively. By default, 0.5.
     node_size : int, float, iterable, or NodeStat, optional
         Radius of the nodes, in data coordinates (unlike in `draw_nodes`, where it is
         in pixels), since nodes are drawn as circles embedded in their layer. If int
@@ -1365,9 +1365,9 @@ def draw_multilayer(
     conn_lines_style : str, optional
         The linestyle of the connections between layers. Default is 'dotted'.
     h_angle : float, optional
-        The rotation angle around the horizontal axis in degrees. Default is 10.
+        The rotation angle around the horizontal axis in degrees. Default is 20.
     v_angle : float, optional
-        The rotation angle around the vertical axis in degrees. Default is 0.
+        The rotation angle around the vertical axis in degrees. Default is 30.
     sep : float, optional
         The separation between layers. Default is 0.4.
     **kwargs : optional args

@@ -454,7 +454,7 @@ def test_draw_multilayer(edgelist8):
     assert np.all(node_coll.get_edgecolor() == np.array([[0, 0, 0, 1]]))  # black
 
     # node_lw
-    assert np.all(node_coll.get_linewidth() == np.array([1]))
+    assert np.all(node_coll.get_linewidth() == np.array([0.5]))
 
     # node_size: one circle per node, per layer
     assert len(node_coll.get_paths()) == H.num_nodes * num_layers
@@ -539,7 +539,7 @@ def test_draw_multilayer(edgelist8):
     assert np.all(node_coll4.get_edgecolor() == np.array([[0, 0, 1, 1]]))  # blue
 
     # node_lw
-    assert np.all(node_coll4.get_linewidth() == np.array([1]))
+    assert np.all(node_coll4.get_linewidth() == np.array([0.5]))
 
     plt.close("all")
 
