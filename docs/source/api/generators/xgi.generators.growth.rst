@@ -1,9 +1,9 @@
-xgi.generators.iterative
-========================
+xgi.generators.growth
+=====================
 
-.. currentmodule:: xgi.generators.iterative
+.. currentmodule:: xgi.generators.growth
 
-.. automodule:: xgi.generators.iterative
+.. automodule:: xgi.generators.growth
    
    .. rubric:: Functions
    

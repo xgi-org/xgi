@@ -1,4 +1,4 @@
-"""Generate iterative hypergraphs."""
+"""Generate growing simplicial complexes."""
 
 from ..core import SimplicialComplex
 

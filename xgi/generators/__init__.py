@@ -1,6 +1,6 @@
 from . import (
     classic,
-    iterative,
+    growth,
     lattice,
     random,
     randomizing,
@@ -9,7 +9,7 @@ from . import (
     uniform,
 )
 from .classic import *
-from .iterative import *
+from .growth import *
 from .lattice import *
 from .random import *
 from .randomizing import *
