@@ -50,7 +50,7 @@ Join the community on [Zulip](https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5
 
 ## Cite
 
-We acknowledge the importance of good software to support research. To demonstrate the value of XGI, we ask that you cite the XGI [paper](https://doi.org/10.21105/joss.05162) in your work. You can also use the "Cite this repository" button on GitHub.
+We believe that quality software is important for supporting research. To demonstrate the value of XGI, we ask that you cite the XGI [paper](https://doi.org/10.21105/joss.05162) in your work. You can also use the "Cite this repository" button on GitHub.
 
 > Landry, N. W., Lucas, M., Iacopini, I., Petri, G., Schwarze, A., Patania, A., & Torres, L. (2023). XGI: A Python package for higher-order interaction networks. *Journal of Open Source Software*, 8(85), 5162.
 
