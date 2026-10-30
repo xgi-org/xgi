@@ -4,7 +4,7 @@
 
 Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for [higher-order networks](https://xgi.readthedocs.io/en/stable/higher-order.html): hypergraphs, directed hypergraphs, and simplicial complexes. It provides data structures, generative models, measures, datasets, and drawing tools.
 
-<p align="center"><a href="https://xgi.readthedocs.io">Documentation</a> · <a href="https://xgi.readthedocs.io/en/stable/user_guides.html">Tutorials</a> · <a href="https://xgi.readthedocs.io/en/stable/auto_examples/index.html">Gallery</a> · <a href="https://github.com/xgi-org/xgi-data">Datasets</a> · <a href="https://xgi.readthedocs.io/en/stable/using_xgi.html">Projects using XGI</a> · <a href="https://xgi.readthedocs.io/en/stable/contribute.html">Contribute</a></p>
+<p align="center"><a href="https://xgi.readthedocs.io">Documentation</a> · <a href="https://xgi.readthedocs.io/en/stable/user_guides.html">Tutorials</a> · <a href="https://xgi.readthedocs.io/en/stable/auto_examples/index.html">Gallery</a> · <a href="https://xgi.readthedocs.io/en/stable/xgi-data.html">Datasets</a> · <a href="https://xgi.readthedocs.io/en/stable/using_xgi.html">Projects using XGI</a> · <a href="https://xgi.readthedocs.io/en/stable/contribute.html">Contribute</a></p>
 
 ## Install
 
@@ -18,7 +18,7 @@ For other options (development version, optional dependencies), see the [install
 
 To get started, take a look at the [tutorials](https://xgi.readthedocs.io/en/stable/user_guides.html) illustrating the library's basic functionality.
 
-Quickstart example:
+An example:
 
 ```python
 import xgi
