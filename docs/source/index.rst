@@ -56,8 +56,8 @@ Higher-order networks generalize standard (pairwise) networks to interactions be
 
       BSD-licensed and developed in the open. Contributions of any size are welcome: see the `contributing guide <contribute.html>`_.
 
-Getting started
-===============
+Get started
+===========
 
 Install XGI with
 
