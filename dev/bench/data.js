@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792365423672,
+  "lastUpdate": 1793572484752,
   "repoUrl": "https://github.com/xgi-org/xgi",
   "entries": {
     "XGI Benchmarks": [
@@ -4950,6 +4950,156 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0014724298792188964",
             "extra": "mean: 30.54383750000227 msec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "maximelucas@users.noreply.github.com",
+            "name": "Maxime Lucas",
+            "username": "maximelucas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "94be5b996c28340c99d7f301e1a8a93a72838b9a",
+          "message": "Trimming README and docs landing page (#778)\n\n* docs: shorten README\n\n* docs: README tweaks\n\n* docs: add section comments to README example\n\n* Update README.md\n\n* Minor language tweak\n\n* Updated ReadTheDocs build specs\n\n* docs: address review comments on README\n\n- Keep the feature list (data structures, generative models, measures,\n  datasets, drawing tools) in the intro, framed as covering the whole workflow\n- Link OTHER_RESOURCES.md from the end of the README so it is no longer orphaned\n- Split License and Support into separate sections\n\n* docs: trim docs landing page\n\nShorter intro, feature cards, and a getting-started section with the\nsame quickstart example as the README.\n\n* docs: hide right sidebar on landing page\n\n* docs: match landing page intro to README, add feature cards\n\nUse the README's first two sentences, replace the General purpose card\n(now covered by the intro) with Easy to use, and add Built by researchers\nand Open source and community-driven cards.\n\n* docs: 3-column feature grid, collapsible quickstart example\n\n* docs: keep example drawing visible, collapse only the code\n\n* docs: rename Getting started to Get started\n\n* docs: rename How to cite to Cite\n\n* docs: restore repo link on (XGI)\n\n* Minor change to the language\n\n* Updated publications in \"Using XGI\"\n\n---------\n\nCo-authored-by: Nicholas Landry <nicholas.landry.91@gmail.com>",
+          "timestamp": "2026-11-01T17:33:35-05:00",
+          "tree_id": "bebd123a3a08ddfb7072fe44bd9f4f9b668a9ca4",
+          "url": "https://github.com/xgi-org/xgi/commit/94be5b996c28340c99d7f301e1a8a93a72838b9a"
+        },
+        "date": 1793572481755,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/algorithms.py::test_connected",
+            "value": 111.15813100052286,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002178326737248658",
+            "extra": "mean: 8.996193000000119 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/algorithms.py::test_clustering_coefficient",
+            "value": 61.67288299518872,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00018881594364417615",
+            "extra": "mean: 16.214581699999542 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgelist",
+            "value": 40.20142780677708,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0007434074500952259",
+            "extra": "mean: 24.874738399998364 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgedict",
+            "value": 19.014328399280327,
+            "unit": "iter/sec",
+            "range": "stddev: 0.05828016998957223",
+            "extra": "mean: 52.59191799999883 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_df",
+            "value": 15.324292016368391,
+            "unit": "iter/sec",
+            "range": "stddev: 0.04502292051163837",
+            "extra": "mean: 65.2558694999982 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_memberships",
+            "value": 1111.9615145668467,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00015022217833712614",
+            "extra": "mean: 899.3117000002826 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_members",
+            "value": 22.456884891954598,
+            "unit": "iter/sec",
+            "range": "stddev: 0.08029583373750177",
+            "extra": "mean: 44.529773600000055 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_attributes",
+            "value": 17082.278501844947,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000004852976082333197",
+            "extra": "mean: 58.54020000271021 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_attributes",
+            "value": 300.63896603292704,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00036857273815536556",
+            "extra": "mean: 3.326248799999121 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_degree",
+            "value": 10528.853797288879,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00001257149080244803",
+            "extra": "mean: 94.97710000090365 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_nodestats_degree",
+            "value": 9651.63392510885,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000013751100373827843",
+            "extra": "mean: 103.60939999998209 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_size",
+            "value": 259.958361429357,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00030894213762697827",
+            "extra": "mean: 3.8467699000008793 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_isolates",
+            "value": 8306.593026142335,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000009967553404818715",
+            "extra": "mean: 120.38629999722161 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_singletons",
+            "value": 187.5728310133786,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00024394781357590792",
+            "extra": "mean: 5.3312624999975355 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_copy",
+            "value": 13.9628845751215,
+            "unit": "iter/sec",
+            "range": "stddev: 0.056366833089626964",
+            "extra": "mean: 71.61843920000308 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_dual",
+            "value": 14.57209723542582,
+            "unit": "iter/sec",
+            "range": "stddev: 0.06551236409506007",
+            "extra": "mean: 68.62430189999884 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/generators.py::test_erdos_renyi",
+            "value": 11.662664184157817,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0024290841177375287",
+            "extra": "mean: 85.74370180000273 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/generators.py::test_fast_erdos_renyi",
+            "value": 32.058270343210715,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0016094683514331005",
+            "extra": "mean: 31.19319880000262 msec\nrounds: 10"
           }
         ]
       }
