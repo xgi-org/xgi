@@ -1,3 +1,5 @@
+:html_theme.sidebar_secondary.remove:
+
 .. image:: ../../logo/logo.png
   :class: only-light
   :width: 200
