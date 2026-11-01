@@ -111,12 +111,12 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
 
     Notes
     -----
-    Computing all cliques quickly becomes heavy for large networks. `flag_complex_d2`
+    Computing all cliques quickly becomes heavy for large networks. `d2_flag_complex`
     is faster to compute up to order 2.
 
     See also
     --------
-    flag_complex_d2
+    d2_flag_complex
 
     """
     # This import needs to happen when this function is called, not when it is

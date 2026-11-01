@@ -39,11 +39,11 @@ def test_flag_complex():
     assert set(S4.edges.members(dtype=list)) == set(S5.edges.members(dtype=list))
 
 
-def test_flag_complex_d2():
+def test_d2_flag_complex():
     G = nx.erdos_renyi_graph(15, 0.3, seed=3)
 
     S = xgi.flag_complex(G, max_order=2)
-    S2 = xgi.flag_complex_d2(G)
+    S2 = xgi.d2_flag_complex(G)
 
     assert set(S.edges.members(dtype=list)) == set(S2.edges.members(dtype=list))
 
