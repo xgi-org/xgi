@@ -14,10 +14,10 @@ from ..utils.utilities import find_triangles
 
 __all__ = [
     "random_simplicial_complex",
-    "random_flag_complex_d2",
+    "d2_random_flag_complex",
     "random_flag_complex",
     "flag_complex",
-    "flag_complex_d2",
+    "d2_flag_complex",
 ]
 
 
@@ -152,7 +152,7 @@ def flag_complex(G, max_order=2, ps=None, seed=None):
     return S
 
 
-def flag_complex_d2(G, p2=None, seed=None):
+def d2_flag_complex(G, p2=None, seed=None):
     """Generate a flag (or clique) complex from a
     NetworkX graph by filling all cliques up to dimension 2.
 
@@ -203,7 +203,7 @@ def flag_complex_d2(G, p2=None, seed=None):
     return S
 
 
-def random_flag_complex_d2(N, p, seed=None):
+def d2_random_flag_complex(N, p, seed=None):
     """Generate a maximal simplicial complex (up to order 2) from a :math:`G_{N,p}`
     Erdős-Rényi random graph.
 
@@ -235,12 +235,12 @@ def random_flag_complex_d2(N, p, seed=None):
 
     G = nx.fast_gnp_random_graph(N, p, seed=seed)
 
-    return flag_complex_d2(G)
+    return d2_flag_complex(G)
 
 
-def random_flag_complex(N, p, max_order=2, seed=None):
-    """Generate a flag (or clique) complex from a
-    :math:`G_{N,p}` Erdős-Rényi random graph.
+def d2_random_flag_complex(N, p, seed=None):
+    """Generate a maximal simplicial complex (up to order 2) from a :math:`G_{N,p}`
+    Erdős-Rényi random graph.
 
     This proceeds by filling all cliques up to dimension max_order.
 
@@ -274,11 +274,11 @@ def random_flag_complex(N, p, max_order=2, seed=None):
 
     nodes = G.nodes()
 
-    cliques = _cliques_to_fill(G, max_order)
+    cliques = _cliques_to_fill(G, 2)
 
     S = SimplicialComplex()
     S.add_nodes_from(nodes)
-    S.add_simplices_from(cliques, max_order=max_order)
+    S.add_simplices_from(cliques, max_order=2)
 
     return S
 
