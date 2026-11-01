@@ -97,8 +97,8 @@ Contributions of any size are welcome, and we're happy to help! To report a bug 
 
 Join the community on `Zulip <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_ and follow XGI on `Bluesky <https://bsky.app/profile/xgi.bsky.social>`_.
 
-How to cite
-===========
+Cite
+====
 
 We acknowledge the importance of good software to support research. To demonstrate the value of XGI, we ask that you cite the XGI `paper <https://doi.org/10.21105/joss.05162>`_ in your work. You can also use the "Cite this repository" button on our `GitHub page <https://github.com/xgi-org/xgi>`_.
 
