@@ -25,16 +25,16 @@
 Software for higher-order networks
 ==================================
 
-The Comple\ **X** **G**\ roup **I**\ nteractions (XGI) library provides data structures and algorithms for modeling, analyzing, and visualizing complex systems with group (higher-order) interactions: hypergraphs, directed hypergraphs, and simplicial complexes.
+Comple\ **X** **G**\ roup **I**\ nteractions (XGI) is a Python package for modeling, analyzing, and visualizing `higher-order networks <higher-order.html>`_: hypergraphs, directed hypergraphs, and simplicial complexes. It covers the whole workflow, from start to finish, with data structures, generative models, measures, datasets, and drawing tools.
 
 Higher-order networks generalize standard (pairwise) networks to interactions between any number of entities, such as collaborations between several authors or contagion in groups. For more information, see this `brief overview <higher-order.html>`_.
 
 .. grid:: 1 2 2 2
    :gutter: 3
 
-   .. grid-item-card:: General purpose
+   .. grid-item-card:: Easy to use
 
-      From building and generating higher-order networks to measuring and drawing them: XGI covers the whole workflow, for any field.
+      If you know NetworkX, you already know XGI: add nodes and edges, then query them, with a familiar API.
 
    .. grid-item-card:: Node and edge statistics
 
@@ -47,6 +47,14 @@ Higher-order networks generalize standard (pairwise) networks to interactions be
    .. grid-item-card:: Real-world data
 
       50+ curated higher-order datasets from `XGI-DATA <xgi-data.html>`_, loaded in one line with ``xgi.load_xgi_data()``.
+
+   .. grid-item-card:: Built by researchers
+
+      Designed and developed by network scientists, with the latest measures, models, and algorithms from the higher-order network literature.
+
+   .. grid-item-card:: Open source and community-driven
+
+      BSD-licensed and developed in the open. Contributions of any size are welcome: see the `contributing guide <contribute.html>`_ or join us on `Zulip <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_.
 
 Getting started
 ===============
