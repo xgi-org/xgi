@@ -2,7 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/xgi?color=forest)](https://pypi.org/project/xgi/) [![Python versions](https://img.shields.io/pypi/pyversions/xgi?color=forest)](https://pypi.org/project/xgi/) [![Test Status](https://github.com/xgi-org/xgi/actions/workflows/test-code.yml/badge.svg)](https://github.com/xgi-org/xgi/actions/workflows/test-code.yml) [![codecov](https://codecov.io/gh/xgi-org/xgi/branch/main/graph/badge.svg?token=BI6TX2WDSG)](https://codecov.io/gh/xgi-org/xgi) [![DOI](https://joss.theoj.org/papers/10.21105/joss.05162/status.svg)](https://doi.org/10.21105/joss.05162) [![pyOpenSci](https://tinyurl.com/y22nb8up)](https://github.com/pyOpenSci/software-review/issues/115) [![Good First Issue](https://img.shields.io/badge/contribute-Good%20First%20Issue-forest)](https://github.com/xgi-org/xgi/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22) [![Benchmarks](https://img.shields.io/badge/benchmarks-forest)](https://xgi-org.github.io/xgi/dev/bench/)
 
-Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for [higher-order networks](https://xgi.readthedocs.io/en/stable/higher-order.html): hypergraphs, directed hypergraphs, and simplicial complexes. It provides data structures, generative models, measures, datasets, and drawing tools.
+Comple**X** **G**roup **I**nteractions (**XGI**) is a Python package for modeling, analyzing, and visualizing [higher-order networks](https://xgi.readthedocs.io/en/stable/higher-order.html): hypergraphs, directed hypergraphs, and simplicial complexes. It covers the whole workflow, from start to finish, with data structures, generative models, measures, datasets, and drawing tools.
 
 <p align="center"><a href="https://xgi.readthedocs.io">Documentation</a> · <a href="https://xgi.readthedocs.io/en/stable/user_guides.html">Tutorials</a> · <a href="https://xgi.readthedocs.io/en/stable/auto_examples/index.html">Gallery</a> · <a href="https://xgi.readthedocs.io/en/stable/xgi-data.html">Datasets</a> · <a href="https://xgi.readthedocs.io/en/stable/using_xgi.html">Projects using XGI</a> · <a href="https://xgi.readthedocs.io/en/stable/contribute.html">Contribute</a></p>
 
@@ -74,8 +74,14 @@ We believe that quality software is important for supporting research. To demons
 ```
 </details>
 
-## License and support
+## License
 
-Released under the [3-Clause BSD license](https://github.com/xgi-org/xgi/blob/main/LICENSE.md). XGI is supported by (see [details](https://github.com/xgi-org/xgi/blob/main/SUPPORT.md)):
+Released under the [3-Clause BSD license](https://github.com/xgi-org/xgi/blob/main/LICENSE.md).
+
+## Support
 
 <a href="https://www.nsf.gov"><img src="docs/source/_static/nsf-logo.svg" alt="NSF" height=50 align="middle"></img></a> &nbsp; <a href="https://zulip.com"><img src="docs/source/_static/zulip-org-logo.svg" alt="Zulip" height=30 align="middle"></img></a>
+
+See details [here](https://github.com/xgi-org/xgi/blob/main/SUPPORT.md).
+
+Looking for something else? See this [list of other higher-order network software](https://github.com/xgi-org/xgi/blob/main/OTHER_RESOURCES.md).
