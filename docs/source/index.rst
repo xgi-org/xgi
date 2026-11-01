@@ -25,7 +25,7 @@
 Software for higher-order networks
 ==================================
 
-Comple\ **X** **G**\ roup **I**\ nteractions (XGI) is a Python package for modeling, analyzing, and visualizing `higher-order networks <higher-order.html>`_: hypergraphs, directed hypergraphs, and simplicial complexes. It covers the whole workflow, from start to finish, with data structures, generative models, measures, datasets, and drawing tools.
+Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/xgi-org/xgi>`_ is a Python package for modeling, analyzing, and visualizing `higher-order networks <higher-order.html>`_: hypergraphs, directed hypergraphs, and simplicial complexes. It covers the whole workflow, from start to finish, with data structures, generative models, measures, datasets, and drawing tools.
 
 Higher-order networks generalize standard (pairwise) networks to interactions between any number of entities, such as collaborations between several authors or contagion in groups. For more information, see this `brief overview <higher-order.html>`_.
 
