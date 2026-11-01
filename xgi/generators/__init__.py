@@ -32,7 +32,7 @@ __all__ = [
     "fast_random_hypergraph",
     "chung_lu_hypergraph",
     "simplicial_chung_lu_hypergraph",
-    "dcsbm_hypergraph",
+    "degree_corrected_sbm_hypergraph",
     "random_nested_hypergraph",
     "node_swap",
     "shuffle_hyperedges",
