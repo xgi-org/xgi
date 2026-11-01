@@ -29,7 +29,7 @@ Comple\ **X** **G**\ roup **I**\ nteractions (XGI) is a Python package for model
 
 Higher-order networks generalize standard (pairwise) networks to interactions between any number of entities, such as collaborations between several authors or contagion in groups. For more information, see this `brief overview <higher-order.html>`_.
 
-.. grid:: 1 2 2 2
+.. grid:: 1 2 3 3
    :gutter: 3
 
    .. grid-item-card:: Easy to use
@@ -67,28 +67,28 @@ Install XGI with
 
 For other options, see the `installation guide <installing.html>`_. Then, take a look at the `XGI in 1 minute <api/tutorials/getting_started_1.html>`_ tutorial or the other `tutorials <user_guides.html>`_.
 
-Quickstart example:
+.. dropdown:: Quickstart example
 
-.. code:: python
+   .. code:: python
 
-   import xgi
+      import xgi
 
-   # build
-   hyperedges = [[1, 2, 3], [3, 4, 5], [3, 6], [6, 7, 8, 9], [1, 4, 10, 11, 12], [1, 4]]
-   H = xgi.Hypergraph(hyperedges)
+      # build
+      hyperedges = [[1, 2, 3], [3, 4, 5], [3, 6], [6, 7, 8, 9], [1, 4, 10, 11, 12], [1, 4]]
+      H = xgi.Hypergraph(hyperedges)
 
-   # analyze
-   H.edges.size.asnumpy()          # array([3, 3, 2, 4, 5, 2])
-   H.nodes.filterby("degree", 3)   # nodes 1, 3, 4
+      # analyze
+      H.edges.size.asnumpy()          # array([3, 3, 2, 4, 5, 2])
+      H.nodes.filterby("degree", 3)   # nodes 1, 3, 4
 
-   # visualize
-   pos = xgi.barycenter_spring_layout(H, seed=1)
-   xgi.draw(H, pos=pos)
+      # visualize
+      pos = xgi.barycenter_spring_layout(H, seed=1)
+      xgi.draw(H, pos=pos)
 
-.. image:: _static/readme_example.png
-  :width: 300
-  :align: center
-  :alt: Drawing of the example hypergraph
+   .. image:: _static/readme_example.png
+     :width: 300
+     :align: center
+     :alt: Drawing of the example hypergraph
 
 Get involved
 ============
