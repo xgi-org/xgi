@@ -13,11 +13,11 @@ from ..core import SimplicialComplex
 from ..utils.utilities import find_triangles
 
 __all__ = [
-    "random_simplicial_complex",
+    "d2_flag_complex",
     "d2_random_flag_complex",
+    "random_simplicial_complex",
     "random_flag_complex",
     "flag_complex",
-    "d2_flag_complex",
 ]
 
 
@@ -238,9 +238,9 @@ def d2_random_flag_complex(N, p, seed=None):
     return d2_flag_complex(G)
 
 
-def d2_random_flag_complex(N, p, seed=None):
-    """Generate a maximal simplicial complex (up to order 2) from a :math:`G_{N,p}`
-    Erdős-Rényi random graph.
+def random_flag_complex(N, p, max_order=2, seed=None):
+    """Generate a flag (or clique) complex from a
+    :math:`G_{N,p}` Erdős-Rényi random graph.
 
     This proceeds by filling all cliques up to dimension max_order.
 
@@ -274,11 +274,11 @@ def d2_random_flag_complex(N, p, seed=None):
 
     nodes = G.nodes()
 
-    cliques = _cliques_to_fill(G, 2)
+    cliques = _cliques_to_fill(G, max_order)
 
     S = SimplicialComplex()
     S.add_nodes_from(nodes)
-    S.add_simplices_from(cliques, max_order=2)
+    S.add_simplices_from(cliques, max_order=max_order)
 
     return S
 
