@@ -19,7 +19,7 @@ __all__ = [
 ]
 
 
-def uniform_configuration_model(k, m, seed=None):
+def uniform_configuration_model_hypergraph(k, m, seed=None):
     """
     A function to generate an m-uniform configuration model
 
