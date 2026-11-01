@@ -12,14 +12,14 @@ from ..utils import geometric
 from .classic import complete_hypergraph, empty_hypergraph
 
 __all__ = [
-    "uniform_hypergraph_configuration_model",
-    "uniform_HSBM",
-    "uniform_HPPM",
+    "uniform_configuration_model_hypergraph",
+    "uniform_stochastic_block_model_hypergraph",
+    "uniform_planted_partition_model_hypergraph",
     "uniform_erdos_renyi_hypergraph",
 ]
 
 
-def uniform_hypergraph_configuration_model(k, m, seed=None):
+def uniform_configuration_model(k, m, seed=None):
     """
     A function to generate an m-uniform configuration model
 
@@ -65,7 +65,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     >>> n = 1000
     >>> m = 3
     >>> k = {1: 1, 2: 2, 3: 3, 4: 3}
-    >>> H = xgi.uniform_hypergraph_configuration_model(k, m)
+    >>> H = xgi.uniform_configuration_model_hypergraph(k, m)
 
     """
     rng = np.random.default_rng(seed)
@@ -104,7 +104,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     return H
 
 
-def uniform_HSBM(n, m, p, sizes, seed=None):
+def uniform_stochastic_block_model_hypergraph(n, m, p, sizes, seed=None):
     r"""Create a uniform hypergraph stochastic block model (HSBM).
 
     This uses a fast method for generating hyperedges
@@ -249,7 +249,7 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
 
     See Also
     --------
-    uniform_HSBM
+    uniform_stochastic_block_model_hypergraph
 
     Notes
     -----
@@ -288,7 +288,7 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
     p[tuple([0] * m)] = p_in
     p[tuple([1] * m)] = p_in
 
-    return uniform_HSBM(n, m, p, sizes, seed=seed)
+    return uniform_stochastic_block_model_hypergraph(n, m, p, sizes, seed=seed)
 
 
 def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, seed=None):
