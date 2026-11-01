@@ -85,21 +85,6 @@ zajdela_higher-order_2026:
     paper: https://arxiv.org/abs/2603.02571
     code: https://github.com/nwlandry/higher-order-team-formation
 
-ibrahim_elruhna_2025:
-  tags:
-  - XGI-DATA
-  authors:
-  - Cameron Ibrahim
-  - S M Ferdous
-  - Ilya Safro
-  - Marco Minutoli
-  - Mahantesh Halappanavar
-  title: 'ELRUHNA: Elimination Rule-based Hypergraph Alignment'
-  year: 2025
-  reference: 'arXiv:2506.09866'
-  links:
-    paper: https://arxiv.org/abs/2506.09866
-
 keating_approximate-master-equation_2025:
   tags:
   - XGI
