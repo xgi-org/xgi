@@ -144,7 +144,7 @@ def uniform_stochastic_block_model_hypergraph(n, m, p, sizes, seed=None):
 
     See Also
     --------
-    uniform_HPPM
+    uniform_planted_partition_model_hypergraph
 
     Notes
     -----
@@ -211,7 +211,7 @@ def uniform_stochastic_block_model_hypergraph(n, m, p, sizes, seed=None):
     return H
 
 
-def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
+def uniform_planted_partition_model_hypergraph(n, m, k, epsilon, rho=0.5, seed=None):
     r"""Construct the m-uniform hypergraph planted partition model (m-HPPM)
 
     This uses a fast method for generating hyperedges
