@@ -54,7 +54,7 @@ Higher-order networks generalize standard (pairwise) networks to interactions be
 
    .. grid-item-card:: Open source and community-driven
 
-      BSD-licensed and developed in the open. Contributions of any size are welcome: see the `contributing guide <contribute.html>`_ or join us on `Zulip <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_.
+      BSD-licensed and developed in the open. Contributions of any size are welcome: see the `contributing guide <contribute.html>`_.
 
 Getting started
 ===============
@@ -67,7 +67,7 @@ Install XGI with
 
 For other options, see the `installation guide <installing.html>`_. Then, take a look at the `XGI in 1 minute <api/tutorials/getting_started_1.html>`_ tutorial or the other `tutorials <user_guides.html>`_.
 
-.. dropdown:: Quickstart example
+.. dropdown:: An example
 
    .. code:: python
 
@@ -85,10 +85,10 @@ For other options, see the `installation guide <installing.html>`_. Then, take a
       pos = xgi.barycenter_spring_layout(H, seed=1)
       xgi.draw(H, pos=pos)
 
-   .. image:: _static/readme_example.png
-     :width: 300
-     :align: center
-     :alt: Drawing of the example hypergraph
+.. image:: _static/readme_example.png
+  :width: 300
+  :align: center
+  :alt: Drawing of the example hypergraph
 
 Get involved
 ============
