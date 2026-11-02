@@ -13,11 +13,11 @@ from ..core import SimplicialComplex
 from ..utils.utilities import find_triangles
 
 __all__ = [
-    "random_simplicial_complex",
+    "flag_complex_d2",
     "random_flag_complex_d2",
+    "random_simplicial_complex",
     "random_flag_complex",
     "flag_complex",
-    "flag_complex_d2",
 ]
 
 

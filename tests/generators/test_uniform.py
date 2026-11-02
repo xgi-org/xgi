@@ -5,10 +5,10 @@ from scipy.special import comb
 import xgi
 
 
-def test_uniform_configuration_model_hypergraph():
+def test_uniform_configuration_model():
     m = 3
     k = {1: 1, 2: 2, 3: 3, 4: 3}
-    H = xgi.uniform_hypergraph_configuration_model(k, m, seed=8)
+    H = xgi.uniform_configuration_model(k, m, seed=8)
     assert H.num_nodes == 4
     assert dict(H.degree()) == k
     assert H.num_edges == 3
@@ -16,18 +16,18 @@ def test_uniform_configuration_model_hypergraph():
     with pytest.warns(Warning):
         m = 3
         k = {1: 1, 2: 6}
-        H = xgi.uniform_hypergraph_configuration_model(k, m)
+        H = xgi.uniform_configuration_model(k, m)
     assert H.nodes.degree.asnumpy().sum() % m == 0
 
 
-def test_uniform_HSBM():
+def test_uniform_stochastic_block_model():
     # sum of sizes != n
     with pytest.raises(ValueError):
         m = 2
         n = 10
         sizes = [4, 5]
         p = np.array([[0.5, 0.1], [0.1, 0.5]])
-        xgi.uniform_HSBM(n, m, p, sizes)
+        xgi.uniform_stochastic_block_model(n, m, p, sizes)
 
     # non-square p
     with pytest.raises(ValueError):
@@ -35,7 +35,7 @@ def test_uniform_HSBM():
         n = 10
         sizes = [4, 6]
         p = np.array([[0.5, 0.1], [0.1, 0.5], [0, 1]])
-        xgi.uniform_HSBM(n, m, p, sizes)
+        xgi.uniform_stochastic_block_model(n, m, p, sizes)
 
     # length of sizes and length of p don't match
     with pytest.raises(ValueError):
@@ -43,7 +43,7 @@ def test_uniform_HSBM():
         n = 10
         sizes = [4, 5, 1]
         p = np.array([[0.5, 0.1], [0.1, 0.5]])
-        xgi.uniform_HSBM(n, m, p, sizes)
+        xgi.uniform_stochastic_block_model(n, m, p, sizes)
 
     # dim of p is not m
     # non-square p
@@ -52,7 +52,7 @@ def test_uniform_HSBM():
         n = 10
         sizes = [4, 6]
         p = np.array([[0.5, 0.1], [0.1, 0.5]])
-        xgi.uniform_HSBM(n, m, p, sizes)
+        xgi.uniform_stochastic_block_model(n, m, p, sizes)
 
     # test p < 0
     with pytest.raises(ValueError):
@@ -60,7 +60,7 @@ def test_uniform_HSBM():
         n = 10
         sizes = [4, 6]
         p = np.array([[0.5, -0.1], [0.1, 0.5]])
-        xgi.uniform_HSBM(n, m, p, sizes)
+        xgi.uniform_stochastic_block_model(n, m, p, sizes)
 
     # test p > 1
     with pytest.raises(ValueError):
@@ -68,24 +68,24 @@ def test_uniform_HSBM():
         n = 10
         sizes = [4, 6]
         p = np.array([[0.5, 1.1], [0.1, 0.5]])
-        xgi.uniform_HSBM(n, m, p, sizes)
+        xgi.uniform_stochastic_block_model(n, m, p, sizes)
 
     m = 2
     n = 10
     sizes = [4, 6]
     p = np.array([[0.5, 0.1], [0.1, 0.5]])
-    H1 = xgi.uniform_HSBM(n, m, p, sizes, seed=0)
+    H1 = xgi.uniform_stochastic_block_model(n, m, p, sizes, seed=0)
 
     assert H1.num_nodes == 10
     assert xgi.unique_edge_sizes(H1) == [2]
 
     # test that the seed works
-    H2 = xgi.uniform_HSBM(n, m, p, sizes, seed=0)
+    H2 = xgi.uniform_stochastic_block_model(n, m, p, sizes, seed=0)
 
     assert H1.edges.members(dtype=dict) == H2.edges.members(dtype=dict)
 
 
-def test_uniform_HPPM():
+def test_uniform_planted_partition_model():
     # rho < 0
     with pytest.raises(ValueError):
         m = 2
@@ -93,7 +93,7 @@ def test_uniform_HPPM():
         rho = -0.1
         k = 2
         epsilon = 0.5
-        xgi.uniform_HPPM(n, m, k, epsilon, rho)
+        xgi.uniform_planted_partition_model(n, m, k, epsilon, rho)
 
     # rho > 1
     with pytest.raises(ValueError):
@@ -102,7 +102,7 @@ def test_uniform_HPPM():
         rho = 1.1
         k = 2
         epsilon = 0.5
-        xgi.uniform_HPPM(n, m, k, epsilon, rho)
+        xgi.uniform_planted_partition_model(n, m, k, epsilon, rho)
 
     # k < 0
     with pytest.raises(ValueError):
@@ -111,7 +111,7 @@ def test_uniform_HPPM():
         rho = 0.5
         k = -2
         epsilon = 0.5
-        xgi.uniform_HPPM(n, m, k, epsilon, rho)
+        xgi.uniform_planted_partition_model(n, m, k, epsilon, rho)
 
     # epsilon < 0
     with pytest.raises(ValueError):
@@ -120,7 +120,7 @@ def test_uniform_HPPM():
         rho = 0.5
         k = 2
         epsilon = -0.1
-        xgi.uniform_HPPM(n, m, k, epsilon)
+        xgi.uniform_planted_partition_model(n, m, k, epsilon, rho)
 
     # epsilon < 0
     with pytest.raises(ValueError):
@@ -129,29 +129,29 @@ def test_uniform_HPPM():
         rho = 0.5
         k = 2
         epsilon = 1.1
-        xgi.uniform_HPPM(n, m, k, epsilon)
+        xgi.uniform_planted_partition_model(n, m, k, epsilon, rho)
 
     m = 2
     n = 10
     rho = 0.5
     k = 2
     epsilon = 0.8
-    H1 = xgi.uniform_HPPM(n, m, k, epsilon, seed=0)
+    H1 = xgi.uniform_planted_partition_model(n, m, k, epsilon, rho, seed=0)
 
     assert H1.num_nodes == 10
     assert xgi.unique_edge_sizes(H1) == [2]
 
     # test that the seed works
-    H2 = xgi.uniform_HPPM(n, m, k, epsilon, rho, seed=0)
+    H2 = xgi.uniform_planted_partition_model(n, m, k, epsilon, rho, seed=0)
 
     assert H1.edges.members(dtype=dict) == H2.edges.members(dtype=dict)
 
 
-def test_uniform_erdos_renyi_hypergraph():
+def test_uniform_erdos_renyi_model():
     m = 2
     n = 10
     p = 1
-    H1 = xgi.uniform_erdos_renyi_hypergraph(n, m, p, seed=0)
+    H1 = xgi.uniform_erdos_renyi_model(n, m, p, seed=0)
     ne1 = H1.num_edges
     H1.merge_duplicate_edges(rename="tuple")
     ne2 = H1.num_edges
@@ -161,7 +161,7 @@ def test_uniform_erdos_renyi_hypergraph():
     assert H1.num_nodes == 10
     assert xgi.unique_edge_sizes(H1) == [2]
 
-    H2 = xgi.uniform_erdos_renyi_hypergraph(n, m, p, seed=0, multiedges=True)
+    H2 = xgi.uniform_erdos_renyi_model(n, m, p, seed=0, multiedges=True)
     print(H2.edges)
     ne1 = H2.num_edges
     H2.merge_duplicate_edges()
@@ -171,8 +171,8 @@ def test_uniform_erdos_renyi_hypergraph():
 
     # test that the seed works
     p = 0.1
-    H1 = xgi.uniform_erdos_renyi_hypergraph(n, m, p, seed=0)
-    H2 = xgi.uniform_erdos_renyi_hypergraph(n, m, p, seed=0)
+    H1 = xgi.uniform_erdos_renyi_model(n, m, p, seed=0)
+    H2 = xgi.uniform_erdos_renyi_model(n, m, p, seed=0)
 
     assert H1.edges.members(dtype=dict) == H2.edges.members(dtype=dict)
 
@@ -181,25 +181,25 @@ def test_uniform_erdos_renyi_hypergraph():
         m = 2
         n = 10
         p = -0.1
-        xgi.uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob")
+        xgi.uniform_erdos_renyi_model(n, m, p, p_type="prob")
 
     # test p > 1
     with pytest.raises(ValueError):
         m = 2
         n = 10
         p = 1.1
-        xgi.uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob")
+        xgi.uniform_erdos_renyi_model(n, m, p, p_type="prob")
 
     # test wrong p_type arg
     with pytest.raises(ValueError):
         m = 2
         n = 10
         k = 2
-        xgi.uniform_erdos_renyi_hypergraph(n, m, k, p_type="test")
+        xgi.uniform_erdos_renyi_model(n, m, k, p_type="test")
 
     # test specific case that caused failure previously
     n = 200
     k = 2
     p = 0.0185
     s = 5
-    xgi.uniform_erdos_renyi_hypergraph(n, k, p, p_type="prob", seed=s)
+    xgi.uniform_erdos_renyi_model(n, k, p, p_type="prob", seed=s)

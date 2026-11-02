@@ -119,7 +119,7 @@ class TestSpectralClustering:
 
     def test_strongly_separable_sbm(self):
         p = np.array([[0.3, 0.01], [0.01, 0.3]])
-        H = xgi.uniform_HSBM(100, 2, p, [50, 50])
+        H = xgi.uniform_stochastic_block_model(100, 2, p, [50, 50])
 
         clusters = xgi.spectral_clustering(H, 2, seed=37)
 

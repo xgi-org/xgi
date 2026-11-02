@@ -18,7 +18,7 @@ __all__ = [
     "random_hypergraph",
     "chung_lu_hypergraph",
     "simplicial_chung_lu_hypergraph",
-    "dcsbm_hypergraph",
+    "degree_corrected_stochastic_block_model_hypergraph",
     "watts_strogatz_hypergraph",
     "random_nested_hypergraph",
 ]
@@ -284,7 +284,9 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     return H
 
 
-def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
+def degree_corrected_stochastic_block_model_hypergraph(
+    k1, k2, g1, g2, omega, seed=None
+):
     """A function to generate a Degree-Corrected Stochastic Block Model
     (DCSBM) hypergraph.
 
@@ -346,7 +348,7 @@ def dcsbm_hypergraph(k1, k2, g1, g2, omega, seed=None):
     >>> g1 = {i : random.choice([0, 1]) for i in range(n)}
     >>> g2 = {i : random.choice([0, 1]) for i in range(n)}
     >>> omega = np.array([[n//2, 10], [10, n//2]])
-    >>> # H = xgi.dcsbm_hypergraph(k1, k2, g1, g2, omega)
+    >>> # H = xgi.degree_corrected_stochastic_block_model_hypergraph(k1, k2, g1, g2, omega)
 
     """
     rng = np.random.default_rng(seed)

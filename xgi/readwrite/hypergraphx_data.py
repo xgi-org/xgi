@@ -63,9 +63,7 @@ def load_hypergraphx_data(
     if dataset not in index_data:
         print("Valid dataset names:")
         print(*index_data, sep="\n")
-        raise XGIError(
-            f"Dataset '{dataset}' does not exist in hypergraphx-data."
-        )
+        raise XGIError(f"Dataset '{dataset}' does not exist in hypergraphx-data.")
 
     url = f"{_BASE_URL}/{dataset}/{dataset}.json.gz"
 

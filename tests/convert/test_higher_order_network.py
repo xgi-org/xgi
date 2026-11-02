@@ -73,7 +73,12 @@ def test_convert_pandas_dataframe_to_simplicial_complex(dataframe5):
     SC = xgi.to_simplicial_complex(dataframe5)
     assert isinstance(SC, xgi.SimplicialComplex)
     assert set(SC.nodes) == set(dataframe5["col1"])
-    assert SC.edges.maximal().members(dtype=list) == [{0, 1, 2, 3}, {4}, {5, 6}, {8, 6, 7}]
+    assert SC.edges.maximal().members(dtype=list) == [
+        {0, 1, 2, 3},
+        {4},
+        {5, 6},
+        {8, 6, 7},
+    ]
 
 
 def test_cut_to_order(edgelist1, edgelist3):

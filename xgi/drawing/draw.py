@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 from matplotlib.colors import is_color_like
-from matplotlib.patches import FancyArrowPatch, Circle
+from matplotlib.patches import Circle, FancyArrowPatch
 from mpl_toolkits.mplot3d.art3d import (
     Line3DCollection,
     LineCollection,
@@ -802,7 +802,9 @@ def draw_hyperedges(
         )
 
     # convert dyad pos to format convenient for scatter
-    dyad_pos = np.asarray([(pos[list(e)[0]], pos[list(e)[1]]) for e in dyads.members(dtype=list)])
+    dyad_pos = np.asarray(
+        [(pos[list(e)[0]], pos[list(e)[1]]) for e in dyads.members(dtype=list)]
+    )
 
     # plot dyads
     if dyad_c_to_map:
