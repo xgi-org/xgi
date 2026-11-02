@@ -95,7 +95,9 @@ def test_random_flag_complex():
 
     # max_order
     S = xgi.random_flag_complex(10, 0.4, seed=2, max_order=3)
-    assert set(S.edges.members(dtype=list)) == simplices.union({frozenset({3, 6, 7, 8})})
+    assert set(S.edges.members(dtype=list)) == simplices.union(
+        {frozenset({3, 6, 7, 8})}
+    )
 
     # seed
     S1 = xgi.random_flag_complex(10, 0.1, seed=1)

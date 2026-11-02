@@ -309,7 +309,9 @@ def mean_face_edit_distance(H, min_size=2, exclude_min_size=True, normalize=True
     t.build_trie(H.edges.filterby("size", min_size, "geq").members(dtype=list))
 
     max_faces = (
-        H.edges.maximal().filterby("size", min_size + exclude_min_size, "geq").members(dtype=list)
+        H.edges.maximal()
+        .filterby("size", min_size + exclude_min_size, "geq")
+        .members(dtype=list)
     )
     avg_d = 0
     for e in max_faces:
@@ -491,7 +493,9 @@ def _count_simplices(H, min_size=2, exclude_min_size=True):
     all_edges = H.edges.members(dtype=list)
     t.build_trie(all_edges)
 
-    edges = H.edges.filterby("size", min_size + exclude_min_size, "geq").members(dtype=list)
+    edges = H.edges.filterby("size", min_size + exclude_min_size, "geq").members(
+        dtype=list
+    )
 
     # for each hyperedge, determine if it's a simplex
     count = 0

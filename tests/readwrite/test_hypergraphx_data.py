@@ -146,9 +146,7 @@ def test_parse_remote_dataset_catalog_invalid_json():
 
 def test_parse_remote_dataset_catalog_window_prefix_but_invalid_body():
     with pytest.raises(TypeError):
-        _parse_remote_dataset_catalog(
-            b"window.RELATED_DATASETS = this is not json;"
-        )
+        _parse_remote_dataset_catalog(b"window.RELATED_DATASETS = this is not json;")
 
 
 def test_parse_remote_dataset_catalog_wrong_shape():

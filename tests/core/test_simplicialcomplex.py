@@ -34,7 +34,9 @@ def test_constructor(edgelist5, dict5, incidence5, dataframe5):
 
     assert set(S_h.nodes) == set(H.nodes) == set(S_list.nodes)
     assert S_h.edges.members(dtype=list) == S_list.edges.members(dtype=list)
-    assert H.edges.members(dtype=list) <= S_h.edges.members(dtype=list)  # check it's a subset
+    assert H.edges.members(dtype=list) <= S_h.edges.members(
+        dtype=list
+    )  # check it's a subset
 
 
 def test_string():

@@ -300,9 +300,7 @@ def _parse_response(r, mode):
         case "text":
             return r.text
         case _:
-            raise ValueError(
-                f"Invalid mode: {mode}. Must be 'json', 'raw', or 'text'."
-            )
+            raise ValueError(f"Invalid mode: {mode}. Must be 'json', 'raw', or 'text'.")
 
 
 def request_from_url(url, mode="json", retries=_HTTP_RETRY_ATTEMPTS):

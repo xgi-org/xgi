@@ -355,7 +355,7 @@ def test_request_from_ahorn_data_ahorn_text_format():
         '{"name": "toy"}\n'
         '1 {"color": "red"}\n'
         '2 {"color": "blue"}\n'
-        '3 {}\n'
+        "3 {}\n"
         '1,2,3 {"weight": 4}\n'
     )
     catalog = _mock_catalog(
@@ -431,7 +431,7 @@ def test_from_ahorn_text_parses_metadata_nodes_and_edges():
     text = (
         '{"name": "toy", "note": "hello"}\n'
         '1 {"color": "red"}\n'
-        '2 {}\n'
+        "2 {}\n"
         '1,2 {"weight": 3}\n'
     )
     H = _from_ahorn_text(text)
@@ -446,14 +446,7 @@ def test_from_ahorn_text_parses_metadata_nodes_and_edges():
 
 
 def test_from_ahorn_text_skips_blank_lines():
-    text = (
-        '{}\n'
-        '\n'
-        '   \n'
-        '1 {}\n'
-        '\n'
-        '2 {}\n'
-    )
+    text = "{}\n" "\n" "   \n" "1 {}\n" "\n" "2 {}\n"
     H = _from_ahorn_text(text)
 
     assert set(H.nodes) == {1, 2}
@@ -461,12 +454,7 @@ def test_from_ahorn_text_skips_blank_lines():
 
 def test_from_ahorn_text_respects_nodetype():
     """When `nodetype` is passed, node IDs are cast to that type."""
-    text = (
-        '{}\n'
-        '1 {}\n'
-        '2 {}\n'
-        '1,2 {}\n'
-    )
+    text = "{}\n" "1 {}\n" "2 {}\n" "1,2 {}\n"
     H = _from_ahorn_text(text, nodetype=str)
 
     assert set(H.nodes) == {"1", "2"}
