@@ -21,7 +21,7 @@ from .linalg import *
 from .readwrite import *
 from .stats import *
 
-__version__ = "0.10.2"
+__version__ = "1.0.0"
 
 __all__ = (
     core.__all__
