@@ -37,9 +37,15 @@ def test_degree_corrected_stochastic_block_model_hypergraph():
     assert H.num_nodes == 50
 
     # seed
-    H1 = xgi.degree_corrected_stochastic_block_model_hypergraph(k1, k2, g1, g2, omega, seed=1)
-    H2 = xgi.degree_corrected_stochastic_block_model_hypergraph(k1, k2, g1, g2, omega, seed=2)
-    H3 = xgi.degree_corrected_stochastic_block_model_hypergraph(k1, k2, g1, g2, omega, seed=2)
+    H1 = xgi.degree_corrected_stochastic_block_model_hypergraph(
+        k1, k2, g1, g2, omega, seed=1
+    )
+    H2 = xgi.degree_corrected_stochastic_block_model_hypergraph(
+        k1, k2, g1, g2, omega, seed=2
+    )
+    H3 = xgi.degree_corrected_stochastic_block_model_hypergraph(
+        k1, k2, g1, g2, omega, seed=2
+    )
     assert H1._edge != H2._edge
     assert H2._edge == H3._edge
 

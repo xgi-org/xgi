@@ -284,7 +284,9 @@ def chung_lu_hypergraph(k1, k2, seed=None):
     return H
 
 
-def degree_corrected_stochastic_block_model_hypergraph(k1, k2, g1, g2, omega, seed=None):
+def degree_corrected_stochastic_block_model_hypergraph(
+    k1, k2, g1, g2, omega, seed=None
+):
     """A function to generate a Degree-Corrected Stochastic Block Model
     (DCSBM) hypergraph.
 
