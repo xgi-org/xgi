@@ -51,6 +51,15 @@ First stable release. The public API is now committed to semantic versioning. He
 * fix: issue #718. [#719](https://github.com/xgi-org/xgi/pull/719) (@maximelucas)
 * fix: account for `idx=0` when adding edges. [#721](https://github.com/xgi-org/xgi/pull/721) (@maximelucas)
 
+### First-time contributors
+
+Welcome and thank you to the new contributors who shipped code in this release:
+
+* @raashish1601 (#770, #771)
+* @karpovantonme (#751)
+* @DMZ22 (#747)
+* @jg-you (#683)
+
 ## v0.10.2
 
 * Feature: Added compressed file I/O. [#709](https://github.com/xgi-org/xgi/pull/709) (@kaiser-dan)
