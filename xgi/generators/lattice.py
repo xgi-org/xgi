@@ -5,6 +5,7 @@ hypergraph).
 
 """
 
+from math import cos, pi, sin
 from warnings import warn
 
 __all__ = [
@@ -12,7 +13,7 @@ __all__ = [
 ]
 
 
-def ring_lattice(n, d, k, l):
+def ring_lattice(n, d, k, l, with_positions=False):
     """A ring lattice hypergraph.
 
     A d-uniform hypergraph on n nodes where each node is part of k edges and the
@@ -28,6 +29,10 @@ def ring_lattice(n, d, k, l):
         Number of edges of which a node is a part. Should be a multiple of 2.
     l : int
         Overlap between edges
+    with_positions : bool, optional
+        If True, store each node's coordinates on a unit circle as the ``"pos"`` node
+        attribute. By default, False. Useful for plotting:
+        ``xgi.draw(H, pos=H.nodes.pos.asdict())``.
 
     Returns
     -------
@@ -63,4 +68,7 @@ def ring_lattice(n, d, k, l):
     ]
     H = Hypergraph(edges)
     H.add_nodes_from(range(n))
+    if with_positions:
+        pos = {i: (cos(2 * pi * i / n), sin(2 * pi * i / n)) for i in range(n)}
+        H.set_node_attributes(pos, name="pos")
     return H

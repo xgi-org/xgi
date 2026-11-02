@@ -41,7 +41,7 @@ def write_hif(H, path, **kwargs):
         output_file.write(datastring)
 
 
-def write_hif_collection(H, path, collection_name="", **kwargs):
+def write_hif_collection(H, path, collection_name, **kwargs):
     """
     A function to write a collection of higher-order network according to the HIF standard.
 
@@ -53,7 +53,7 @@ def write_hif_collection(H, path, collection_name="", **kwargs):
         The specified higher-order network
     path: string
         The path of the file to read from
-    collection_name : str, optional
+    collection_name : str
         Name for the collection (used in file names)
     **kwargs : keyword arguments
         Additional keyword arguments to pass to xopen for compression options
@@ -152,5 +152,5 @@ def read_hif_collection(path, nodetype=None, edgetype=None):
             )
             collection[name] = H
         return collection
-    except KeyError:
-        raise XGIError("Data collection is in the wrong format!")
+    except KeyError as e:
+        raise ValueError("Data collection is in the wrong format!") from e

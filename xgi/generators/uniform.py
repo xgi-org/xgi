@@ -12,14 +12,14 @@ from ..utils import geometric
 from .classic import complete_hypergraph, empty_hypergraph
 
 __all__ = [
-    "uniform_hypergraph_configuration_model",
-    "uniform_HSBM",
-    "uniform_HPPM",
-    "uniform_erdos_renyi_hypergraph",
+    "uniform_configuration_model",
+    "uniform_stochastic_block_model",
+    "uniform_planted_partition_model",
+    "uniform_erdos_renyi_model",
 ]
 
 
-def uniform_hypergraph_configuration_model(k, m, seed=None):
+def uniform_configuration_model(k, m, seed=None):
     """
     A function to generate an m-uniform configuration model
 
@@ -65,7 +65,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     >>> n = 1000
     >>> m = 3
     >>> k = {1: 1, 2: 2, 3: 3, 4: 3}
-    >>> H = xgi.uniform_hypergraph_configuration_model(k, m)
+    >>> H = xgi.uniform_configuration_model(k, m)
 
     """
     rng = np.random.default_rng(seed)
@@ -104,7 +104,7 @@ def uniform_hypergraph_configuration_model(k, m, seed=None):
     return H
 
 
-def uniform_HSBM(n, m, p, sizes, seed=None):
+def uniform_stochastic_block_model(n, m, p, sizes, seed=None):
     r"""Create a uniform hypergraph stochastic block model (HSBM).
 
     This uses a fast method for generating hyperedges
@@ -144,7 +144,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
 
     See Also
     --------
-    uniform_HPPM
+    uniform_planted_partition_model
 
     Notes
     -----
@@ -199,7 +199,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
             partition_sizes = [len(partition[i]) for i in block]
             max_index = reduce(operator.mul, partition_sizes, 1)
             if max_index < 0:
-                raise Exception("Index overflow error!")
+                raise OverflowError("Edge index overflowed integer range.")
             index = geometric(p[block], rng=rng) - 1
 
             while index < max_index:
@@ -211,7 +211,7 @@ def uniform_HSBM(n, m, p, sizes, seed=None):
     return H
 
 
-def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
+def uniform_planted_partition_model(n, m, k, epsilon, rho=0.5, seed=None):
     r"""Construct the m-uniform hypergraph planted partition model (m-HPPM)
 
     This uses a fast method for generating hyperedges
@@ -249,7 +249,7 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
 
     See Also
     --------
-    uniform_HSBM
+    uniform_stochastic_block_model
 
     Notes
     -----
@@ -288,10 +288,10 @@ def uniform_HPPM(n, m, k, epsilon, rho=0.5, seed=None):
     p[tuple([0] * m)] = p_in
     p[tuple([1] * m)] = p_in
 
-    return uniform_HSBM(n, m, p, sizes, seed=seed)
+    return uniform_stochastic_block_model(n, m, p, sizes, seed=seed)
 
 
-def uniform_erdos_renyi_hypergraph(n, m, p, p_type="prob", multiedges=False, seed=None):
+def uniform_erdos_renyi_model(n, m, p, p_type="prob", multiedges=False, seed=None):
     r"""Generate an m-uniform Erdős–Rényi hypergraph
 
     This creates a hypergraph with `n` nodes where
@@ -551,5 +551,5 @@ def _index_to_edge_partition(index, partition_sizes, m):
             int(index // np.prod(partition_sizes[r + 1 :]) % partition_sizes[r])
             for r in range(m)
         ]
-    except KeyError:
-        raise Exception("Invalid parameters")
+    except KeyError as e:
+        raise ValueError("Invalid parameters") from e

@@ -49,11 +49,11 @@ def equal(H1, H2, compare_edge_ids=True, compare_attrs=True):
             return False
     else:
         edges1_with_counts = defaultdict(lambda: 0)
-        for e in H1.edges.members():
+        for e in H1.edges.members(dtype=list):
             edges1_with_counts[frozenset(e)] += 1
 
         edges2_with_counts = defaultdict(lambda: 0)
-        for e in H2.edges.members():
+        for e in H2.edges.members(dtype=list):
             edges2_with_counts[frozenset(e)] += 1
         if edges1_with_counts != edges2_with_counts:
             return False

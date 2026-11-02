@@ -2,13 +2,13 @@
 
 from collections import defaultdict
 from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
-from itertools import count
+from copy import deepcopy
 from warnings import warn
 
 import numpy as np
 
 from ..exception import IDNotFound, XGIError, frozen
+from ..stats import IDStat
 from ..utils import IDDict, update_uid_counter
 from .views import EdgeView, NodeView
 
@@ -40,6 +40,8 @@ class Hypergraph:
         * Incidence matrix: numpy ndarray or scipy.sparse array
         * Hypergraph object
         * SimplicialComplex object
+        * DiHypergraph object: each directed edge (tail, head) is converted to
+          an undirected edge containing the union of its tail and head members.
 
     **attr : dict, optional
         Attributes to add to the hypergraph as key, value pairs.
@@ -132,7 +134,7 @@ class Hypergraph:
         self._edgeview = EdgeView(self)
 
     def __init__(self, incoming_data=None, **attr):
-        self._edge_uid = count()
+        self._edge_uid = 0
         self._net_attr = self._net_attr_dict_factory()
         self._node = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
@@ -244,12 +246,16 @@ class Hypergraph:
         self._net_attr[attr] = val
 
     def __getattr__(self, attr):
+        # Only proxy actual stats (NodeStat / EdgeStat).  Without the IDStat
+        # check, every IDView method (filterby, neighbors, memberships, ...)
+        # would be exposed via Hypergraph and fail with confusing errors when
+        # called.  See issue #408.
         stat = getattr(self.nodes, attr, None)
         word = "nodes"
-        if stat is None:
+        if not isinstance(stat, IDStat):
             stat = getattr(self.edges, attr, None)
             word = "edges"
-        if stat is None:
+        if not isinstance(stat, IDStat):
             word = None
             raise AttributeError(
                 f"{attr} is not a method of Hypergraph or a "
@@ -260,8 +266,17 @@ class Hypergraph:
             val = stat(*args, **kwargs).asdict()
             return val if node is None else val[node]
 
-        func.__doc__ = f"""Equivalent to H.{word}.{attr}.asdict(). For accepted *args and
-        **kwargs, see documentation of H.{word}.{attr}."""
+        # Standardized return contract (see #740):
+        #   H.<stat>()  -> dict[id, T]
+        #   H.<stat>(x) -> T
+        # For parametric stats, pass parameters as keyword arguments (e.g.
+        # H.katz_centrality(cutoff=50)) because the first positional argument
+        # is captured as `node`.
+        func.__doc__ = f"""Equivalent to H.{word}.{attr}.asdict().
+
+        Standardized return shape: no-arg call returns dict[id, value]; with-id
+        call returns the value for that id. For accepted *args and **kwargs,
+        see documentation of H.{word}.{attr}."""
 
         return func
 
@@ -300,7 +315,7 @@ class Hypergraph:
         >>> H2 = xgi.Hypergraph([[1, 3, 4]])
         >>> H = H1 << H2
         >>> H.edges.members()
-        [{1, 2}, {2, 3}, {1, 3, 4}]
+        {0: {1, 2}, 1: {2, 3}, 2: {1, 3, 4}}
         """
         tempH = Hypergraph()
 
@@ -403,33 +418,89 @@ class Hypergraph:
 
         Parameters
         ----------
-        nodes_for_adding : iterable
-            An iterable of nodes (list, dict, set, etc.).
+        nodes_for_adding : iterable or dict
+            An iterable of nodes (list, set, etc.).
             OR
             An iterable of (node, attribute dict) tuples.
+            OR
+            A dict mapping node IDs to attribute dictionaries.
+
             Node attributes are updated using the attribute dict.
-        attr : keyword arguments, optional (default= no attributes)
+        attr : keyword arguments, optional (default=no attributes)
             Update attributes for all nodes in nodes.
-            Node attributes specified in nodes as a tuple take
-            precedence over attributes specified via keyword arguments.
+            Node attributes specified for individual nodes take precedence
+            over attributes specified via keyword arguments.
 
         See Also
         --------
         add_node
         set_node_attributes
+
+        Examples
+        --------
+        >>> import xgi
+        >>> H = xgi.Hypergraph()
+
+        Add nodes without attributes:
+
+        >>> H.add_nodes_from([1, 2, 3])
+
+        Add nodes with attributes shared by all nodes:
+
+        >>> H.add_nodes_from([1, 2, 3], color="red", weight=1)
+
+        Add nodes with individual attributes using (node, attribute dict)
+        tuples:
+
+        >>> H.add_nodes_from([
+        ...     (1, {"color": "red"}),
+        ...     (2, {"color": "blue"}),
+        ...     (3, {"color": "green"}),
+        ... ])
+
+        Add nodes using a dict mapping node IDs to attribute dictionaries:
+
+        >>> H.add_nodes_from({
+        ...     1: {"color": "red", "weight": 2},
+        ...     2: {"color": "blue", "weight": 5},
+        ...     3: {"color": "green"},
+        ... })
+
+        Global attributes can also be combined with individual node
+        attributes. Individual node attributes take precedence:
+
+        >>> H.add_nodes_from(
+        ...     {
+        ...         1: {"color": "red"},
+        ...         2: {"color": "blue"},
+        ...     },
+        ...     weight=1,
+        ... )
         """
+        if isinstance(nodes_for_adding, dict):
+            nodes_for_adding = nodes_for_adding.items()
+
         for n in nodes_for_adding:
-            try:
-                newnode = n not in self._node
-                newdict = attr
-            except TypeError:
-                n, ndict = n
-                newnode = n not in self._node
+            if isinstance(n, tuple) and len(n) == 2:
+                if not n[1]:  # Handles the None case
+                    n, ndict = n[0], {}
+                elif isinstance(n[1], dict):
+                    n, ndict = n
+                else:
+                    raise TypeError(
+                        "If nodes are specified as (node, attribute dict) tuples, "
+                        "the second element must be a dictionary or None."
+                    )
                 newdict = attr.copy()
                 newdict.update(ndict)
-            if newnode:
+            else:
+                newdict = attr
+
+            # Initialize new node if it doesn't already exist
+            if n not in self._node:
                 self._node[n] = set()
                 self._node_attr[n] = self._node_attr_dict_factory()
+
             self._node_attr[n].update(newdict)
 
     def remove_node(self, n, strong=False, remove_empty=True):
@@ -614,7 +685,11 @@ class Hypergraph:
             warn(f"uid {idx} already exists, cannot add edge {members}")
             return
 
-        uid = next(self._edge_uid) if idx is None else idx
+        if idx is None:
+            uid = self._edge_uid
+            self._edge_uid += 1
+        else:
+            uid = idx
 
         self._edge[uid] = set()
         for node in members:
@@ -627,7 +702,7 @@ class Hypergraph:
         self._edge_attr[uid] = self._edge_attr_dict_factory()
         self._edge_attr[uid].update(attr)
 
-        if idx:  # set self._edge_uid correctly
+        if idx is not None:  # set self._edge_uid correctly
             update_uid_counter(self, idx)
 
     def add_edges_from(self, ebunch_to_add, **attr):
@@ -784,11 +859,13 @@ class Hypergraph:
         e = first_edge
         while True:
             if format1:
-                members, idx, eattr = e, next(self._edge_uid), {}
+                members, idx, eattr = e, self._edge_uid, {}
+                self._edge_uid += 1
             elif format2:
                 members, idx, eattr = e[0], e[1], {}
             elif format3:
-                members, idx, eattr = e[0], next(self._edge_uid), e[1]
+                members, idx, eattr = e[0], self._edge_uid, e[1]
+                self._edge_uid += 1
             elif format4:
                 members, idx, eattr = e[0], e[1], e[2]
 
@@ -857,8 +934,8 @@ class Hypergraph:
             self.add_edges_from(
                 ((edge[:-1], {weight: edge[-1]}) for edge in ebunch), **attr
             )
-        except KeyError:
-            XGIError("Empty or invalid edges specified.")
+        except (IndexError, KeyError) as e:
+            raise ValueError("Empty or invalid edges specified.") from e
 
     def set_edge_attributes(self, values, name=None):
         """Set the edge attributes from a value or a dictionary of values.
@@ -943,7 +1020,7 @@ class Hypergraph:
         >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4]])
         >>> H.double_edge_swap(1, 4, 0, 1)
         >>> H.edges.members()
-        [{2, 3, 4}, {1, 3}]
+        {0: {2, 3, 4}, 1: {1, 3}}
 
         """
         # Assign edges to modify
@@ -1029,7 +1106,7 @@ class Hypergraph:
         >>> H = xgi.Hypergraph([[1, 2, 3], [3, 4], [4, 5]])
         >>> H.random_edge_shuffle(seed=42)
         >>> H.edges.members()
-        [{2, 4, 5}, {3, 4}, {1, 3}]
+        {0: {2, 4, 5}, 1: {3, 4}, 2: {1, 3}}
 
         """
         rng = np.random.default_rng(seed)
@@ -1110,6 +1187,7 @@ class Hypergraph:
         if edge not in self._edge:
             self._edge[edge] = set()
             self._edge_attr[edge] = {}
+            update_uid_counter(self, edge)
         if node not in self._node:
             self._node[node] = set()
             self._node_attr[node] = {}
@@ -1380,7 +1458,8 @@ class Hypergraph:
                 elif rename == "tuple":
                     new_id = tuple(sorted(dup_ids))
                 elif rename == "new":
-                    new_id = next(self._edge_uid)
+                    new_id = self._edge_uid
+                    self._edge_uid += 1
                 else:
                     raise XGIError("Invalid ID renaming scheme!")
 
@@ -1439,7 +1518,7 @@ class Hypergraph:
         )
         cp._net_attr = deepcopy(self._net_attr)
 
-        cp._edge_uid = copy(self._edge_uid)
+        cp._edge_uid = self._edge_uid
 
         return cp
 

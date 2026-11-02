@@ -1,3 +1,14 @@
+nurisso_topology_2026:
+  tags:
+  - XGI-DATA
+  authors:
+  - Marco Nurisso
+  title: Topology & Dynamics in higher-order systems and neural networks
+  year: 2026
+  university: 'Politecnico di Torino'
+  links:
+    thesis: https://iris.unito.it/retrieve/handle/2318/1891873/101295/Nurisso_PhD_Thesis.pdf
+
 sampson_complex_2025:
   tags:
   - XGI
@@ -9,6 +20,7 @@ sampson_complex_2025:
   university: 'The University of Colorado at Boulder'
   links:
     thesis: https://www.proquest.com/dissertations-theses/complex-social-systems-emergent-phenomena/docview/3205556558/se-2
+
 he_methods_2024:
   tags:
   - XGI

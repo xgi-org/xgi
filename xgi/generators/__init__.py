@@ -1,5 +1,6 @@
 from . import (
     classic,
+    growth,
     lattice,
     random,
     randomizing,
@@ -8,6 +9,7 @@ from . import (
     uniform,
 )
 from .classic import *
+from .growth import *
 from .lattice import *
 from .random import *
 from .randomizing import *
@@ -29,7 +31,9 @@ __all__ = [
     "random_hypergraph",
     "fast_random_hypergraph",
     "chung_lu_hypergraph",
-    "dcsbm_hypergraph",
+    "simplicial_chung_lu_hypergraph",
+    "degree_corrected_stochastic_block_model_hypergraph",
+    "random_nested_hypergraph",
     "node_swap",
     "shuffle_hyperedges",
     "flag_complex",
@@ -37,8 +41,11 @@ __all__ = [
     "random_flag_complex",
     "random_flag_complex_d2",
     "random_simplicial_complex",
-    "uniform_hypergraph_configuration_model",
-    "uniform_erdos_renyi_hypergraph",
-    "uniform_HSBM",
-    "uniform_HPPM",
+    "uniform_configuration_model",
+    "uniform_erdos_renyi_model",
+    "uniform_stochastic_block_model",
+    "uniform_planted_partition_model",
+    "pseudofractal_simplicial_complex",
+    "apollonian_complex",
+    "network_geometry_flavor",
 ]

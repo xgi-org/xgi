@@ -304,7 +304,7 @@ def complement(H):
 
         # parsing list of edges into set of strings
         edges = set()
-        for st in H.edges.members():
+        for st in H.edges.members(dtype=list):
             lst = [node_dict[n] for n in st]  # we let go node IDs
             lst.sort()
             string = ",".join(str(idx) for idx in lst)

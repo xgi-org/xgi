@@ -8,8 +8,8 @@ Multi-simplices are not allowed.
 """
 
 from collections.abc import Hashable, Iterable
-from copy import copy, deepcopy
-from itertools import combinations, count
+from copy import deepcopy
+from itertools import combinations
 from warnings import warn
 
 from ..exception import XGIError, frozen
@@ -45,9 +45,12 @@ class SimplicialComplex(Hypergraph):
         * simplex list
         * simplex dictionary
         * 2-column Pandas dataframe (bipartite edges)
-        * Incidence matrix: numpy ndarray or scipy.sparse array
         * SimplicialComplex object
         * Hypergraph object
+
+        .. note::
+            Construction from an incidence matrix (numpy ndarray or scipy.sparse
+            array) is not yet implemented and will raise an error.
 
     **attr : dict, optional
         Attributes to add to the simplicial complex as key, value pairs.
@@ -89,7 +92,7 @@ class SimplicialComplex(Hypergraph):
     """
 
     def __init__(self, incoming_data=None, **attr):
-        self._edge_uid = count()
+        self._edge_uid = 0
         self._net_attr = self._net_attr_dict_factory()
         self._node = self._node_dict_factory()
         self._node_attr = self._node_attr_dict_factory()
@@ -238,7 +241,8 @@ class SimplicialComplex(Hypergraph):
         """Helper function to add a face to a simplicial complex, without any
         check, and without attributes. Automatically updates self._edge_uid"""
 
-        idx = next(self._edge_uid)
+        idx = self._edge_uid
+        self._edge_uid += 1
         self._edge[idx] = frozenset(members)
 
         for n in members:
@@ -305,7 +309,7 @@ class SimplicialComplex(Hypergraph):
         try:
             members = frozenset(members)
         except TypeError:
-            raise XGIError("The simplex cannot be cast to a frozenset.")
+            raise TypeError("The simplex cannot be cast to a frozenset.")
 
         if self.has_simplex(members):
             return
@@ -314,7 +318,9 @@ class SimplicialComplex(Hypergraph):
             warn(f"uid {idx} already exists, cannot add simplex {members}")
             return
 
-        idx = next(self._edge_uid) if not idx else idx
+        if idx is None:
+            idx = self._edge_uid
+            self._edge_uid += 1
 
         self._add_simplex(members, idx, **attr)
 
@@ -495,7 +501,7 @@ class SimplicialComplex(Hypergraph):
                 try:
                     _ = frozenset(members)
                 except TypeError as e:
-                    raise XGIError("Invalid ebunch format") from e
+                    raise ValueError("Invalid ebunch format") from e
 
                 self._add_simplex(frozenset(members), idx)
 
@@ -543,7 +549,7 @@ class SimplicialComplex(Hypergraph):
         if (format1 and isinstance(first_edge, str)) or (
             not format1 and isinstance(first_elem, str)
         ):
-            raise XGIError("Members cannot be specified as a string")
+            raise TypeError("Members cannot be specified as a string")
 
         faces = []
         # now we may iterate over the rest
@@ -563,7 +569,7 @@ class SimplicialComplex(Hypergraph):
             try:
                 _ = iter(members)
             except TypeError as e:
-                raise XGIError("Invalid ebunch format") from e
+                raise ValueError("Invalid ebunch format") from e
 
             # check that it does not exist yet (based on members, not ID)
             if not members or self.has_simplex(members):
@@ -577,7 +583,8 @@ class SimplicialComplex(Hypergraph):
             # needs to go after the check for existence, otherwise
             # we're skipping ID numbers when edges already exist
             if format1 or format3:
-                idx = next(self._edge_uid)
+                idx = self._edge_uid
+                self._edge_uid += 1
 
             if max_order is not None:
                 if len(members) > max_order + 1:
@@ -604,7 +611,7 @@ class SimplicialComplex(Hypergraph):
             try:
                 self._edge[idx] = frozenset(members)
             except TypeError as e:
-                raise XGIError("Invalid ebunch format") from e
+                raise ValueError("Invalid ebunch format") from e
 
             for n in members:
                 if n not in self._node:
@@ -649,7 +656,7 @@ class SimplicialComplex(Hypergraph):
         cannot add empty simplices; the method skips over them.
 
         """
-        ebunch_to_close = list(map(list, self.edges.members()))
+        ebunch_to_close = list(map(list, self.edges.members(dtype=list)))
         for simplex in ebunch_to_close:
             if isinstance(simplex[-1], dict):
                 dd = simplex[-1]
@@ -705,8 +712,8 @@ class SimplicialComplex(Hypergraph):
                 max_order=max_order,
                 **attr,
             )
-        except KeyError:
-            XGIError("Empty or invalid simplices specified.")
+        except (IndexError, KeyError) as e:
+            raise ValueError("Empty or invalid simplices specified.") from e
 
     def _remove_simplex_id(self, idx):
         """Helper function to remove a simplex with a given id
@@ -827,7 +834,7 @@ class SimplicialComplex(Hypergraph):
         )
         cp._net_attr = deepcopy(self._net_attr)
 
-        cp._edge_uid = copy(self._edge_uid)
+        cp._edge_uid = self._edge_uid
 
         return cp
 

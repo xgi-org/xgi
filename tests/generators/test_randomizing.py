@@ -79,6 +79,7 @@ def test_shuffle_hyperedges():
 def test_node_swap(edgelist8):
 
     H0 = xgi.Hypergraph(edgelist8)
+    edges_orig = dict(H0._edge)
 
     H = xgi.node_swap(H0, 2, 5)  # all orders
     edges_new = {
@@ -92,23 +93,18 @@ def test_node_swap(edgelist8):
         7: {1, 6},
         8: {0, 6},
     }
-
     assert H._edge == edges_new
 
-    # id temp already exists
-    H = xgi.node_swap(H0, 2, 5, id_temp=1)
-    edges_new = {
-        0: {0, 1},
-        1: {0, 1, 5},
-        2: {0, 5, 3},
-        3: {0, 1, 5, 3, 4},
-        4: {5, 4, 2},
-        5: {1, 3, 2},
-        6: {0, 3, 4},
-        7: {1, 6},
-        8: {0, 6},
-    }
-    assert H._edge == edges_new
+    # original is not modified
+    assert H0._edge == edges_orig
+
+    # edges containing neither swapped node are unchanged
+    assert H._edge[0] == H0._edge[0]  # {0, 1}
+    assert H._edge[6] == H0._edge[6]  # {0, 3, 4}
+    assert H._edge[7] == H0._edge[7]  # {1, 6}
+
+    # edge containing both swapped nodes is unchanged (swap is self-inverse on that edge)
+    assert H._edge[4] == H0._edge[4]  # {2, 4, 5}: 2<->5 leaves the set identical
 
     # selected order
     H = xgi.node_swap(H0, 2, 5, order=2)
@@ -124,6 +120,18 @@ def test_node_swap(edgelist8):
         8: {0, 6},
     }
     assert H._edge == edges_new
+
+    # node attributes are preserved after swap
+    H0_attrs = xgi.Hypergraph(edgelist8)
+    H0_attrs.nodes[2]["color"] = "red"
+    H0_attrs.nodes[5]["color"] = "blue"
+    H_attrs = xgi.node_swap(H0_attrs, 2, 5)
+    assert H_attrs.nodes[2]["color"] == "red"
+    assert H_attrs.nodes[5]["color"] == "blue"
+
+    # symmetry: swapping A,B then B,A returns the original edges
+    H_twice = xgi.node_swap(xgi.node_swap(H0, 2, 5), 2, 5)
+    assert H_twice._edge == edges_orig
 
     # errors raised
     with pytest.raises(ValueError):

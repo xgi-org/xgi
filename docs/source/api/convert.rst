@@ -14,7 +14,6 @@ convert package
    ~xgi.convert.hif_dict
    ~xgi.convert.higher_order_network
    ~xgi.convert.hyperedges
-   ~xgi.convert.hypergraph_dict
    ~xgi.convert.incidence
    ~xgi.convert.line_graph
    ~xgi.convert.pandas

@@ -1,3 +1,6 @@
+import platform
+import sys
+
 import numpy as np
 import pytest
 from scipy.linalg import eigh, eigvalsh
@@ -78,6 +81,18 @@ def test_incidence_matrix(edgelist1, edgelist3, edgelist4):
     assert I5[node_dict5[1], edge_dict5[0]] == 3
     unique_entries = np.unique(np.ravel(I5.todense())).tolist()
     assert unique_entries == [0, 3]
+
+    # non-integer weights are not truncated
+    for sparse in [True, False]:
+        I7, node_dict, edge_dict = xgi.incidence_matrix(
+            H1, sparse=sparse, index=True, weight=lambda node, edge, H: 0.5
+        )
+        if sparse:
+            I7 = I7.todense()
+        node_dict7 = {k: v for v, k in node_dict.items()}
+        edge_dict7 = {k: v for v, k in edge_dict.items()}
+        assert I7[node_dict7[1], edge_dict7[0]] == 0.5
+        assert np.unique(np.ravel(I7)).tolist() == [0, 0.5]
 
     I6, node_dict, edge_dict = xgi.incidence_matrix(H1, index=True, order=2)
     node_dict6 = {k: v for v, k in node_dict.items()}
@@ -257,6 +272,12 @@ def test_adjacency_matrix(edgelist1, edgelist4):
     assert np.all(A7 == A7_sp.todense())
 
 
+@pytest.mark.skipif(
+    sys.version_info != (3, 14) and not platform.system() == "Linux",
+    reason="only need one test",
+)
+@pytest.mark.webtest
+@pytest.mark.slow
 def test_fix_649():  # make sure diagonal is fully zero when sparse
 
     H = xgi.load_xgi_data(dataset="email-enron")

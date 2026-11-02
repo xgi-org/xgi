@@ -1,11 +1,11 @@
 """Load a data set from the xgi-data repository or a local file."""
 
-from os.path import dirname, exists, join
-from warnings import warn
+from os.path import dirname, join
 
-from ..convert import cut_to_order, from_hif_dict, from_hypergraph_dict
+from ..convert import cut_to_order, from_hif_dict
 from ..exception import XGIError
-from ..utils import request_json_from_url, request_json_from_url_cached
+from ..utils import request_from_url, request_from_url_cached
+from .hif import write_hif, write_hif_collection
 
 __all__ = ["load_xgi_data", "download_xgi_data"]
 
@@ -30,11 +30,11 @@ def load_xgi_data(
     cache : bool, optional
         Whether to cache the input data, by default True.
     read : bool, optional
-        If read==True, search for a local copy of the data set. Use the local
+        DEPRECATED: If read==True, search for a local copy of the data set. Use the local
         copy if it exists, otherwise use the xgi-data repository.
         By default, False.
     path : str, optional
-        Path to a local copy of the data set
+        DEPRECATED: Path to a local copy of the data set
     nodetype : type, optional
         Type to cast the node ID to, by default None.
     edgetype : type, optional
@@ -53,23 +53,18 @@ def load_xgi_data(
     XGIError
        The specified dataset does not exist.
     """
+    if read:
+        raise XGIError(
+            "The `read` argument is deprecated. Use `download_xgi_data` to download a local copy of the dataset."
+        )
+    if path:
+        raise XGIError(
+            "The `path` argument is deprecated. Use `download_xgi_data` to download a local copy of the dataset."
+        )
     index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
 
-    if read:
-        cfp = join(path, dataset + ".json")
-        if exists(cfp):
-            from ..readwrite import read_json
-
-            return read_json(cfp, nodetype=nodetype, edgetype=edgetype)
-        else:
-            warn(
-                f"No local copy was found at {cfp}. The data is requested "
-                "from the xgi-data repository instead. To download a local "
-                "copy, use `download_xgi_data`."
-            )
-
     # If no dataset is specified, print a list of the available datasets.
-    index_data = request_json_from_url(index_url)
+    index_data = request_from_url(index_url)
     if dataset is None:
         print("Available datasets are the following:")
         print(*index_data, sep="\n")
@@ -108,10 +103,8 @@ def download_xgi_data(dataset, path="", collection_name=""):
         The name of the collection of data (if any). If `dataset` is not
         a collection, this argument is unused.
     """
-    from ..readwrite import write_json
-
     index_url = "https://raw.githubusercontent.com/xgi-org/xgi-data/main/index.json"
-    index_data = request_json_from_url(index_url)
+    index_data = request_from_url(index_url)
 
     key = dataset.lower()
     if key not in index_data:
@@ -125,10 +118,10 @@ def download_xgi_data(dataset, path="", collection_name=""):
         url, nodetype=None, edgetype=None, max_order=None, cache=True
     )
     if isinstance(H, dict):
-        write_json(H, path, collection_name=collection_name)
+        write_hif_collection(H, path, collection_name or key)
     else:
         filename = join(path, key + ".json")
-        write_json(H, filename)
+        write_hif(H, filename)
 
 
 def _request_from_xgi_data(
@@ -138,10 +131,8 @@ def _request_from_xgi_data(
 
     Parameters
     ----------
-    dataset : str, optional
-        Dataset name. Valid options are the top-level tags of the
-        index.json file in the xgi-data repository. If None, prints
-        the list of available datasets.
+    url : str
+        Address of the dataset in the xgi-data repository.
     cache : bool, optional
         Whether or not to cache the output
 
@@ -160,9 +151,9 @@ def _request_from_xgi_data(
     load_xgi_data
     """
     if cache:
-        jsondata = request_json_from_url_cached(url)
+        jsondata = request_from_url_cached(url)
     else:
-        jsondata = request_json_from_url(url)
+        jsondata = request_from_url(url)
 
     if "incidences" in jsondata:
         H = from_hif_dict(jsondata, nodetype=nodetype, edgetype=edgetype)
@@ -183,7 +174,3 @@ def _request_from_xgi_data(
             )
             collection[name] = H
         return collection
-
-    return from_hypergraph_dict(
-        jsondata, nodetype=nodetype, edgetype=edgetype, max_order=max_order
-    )

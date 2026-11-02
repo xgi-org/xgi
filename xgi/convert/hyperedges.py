@@ -109,4 +109,4 @@ def to_hyperedge_list(H):
     to_hyperedge_dict
     from_hyperedge_dict
     """
-    return H.edges.members()
+    return H.edges.members(dtype=list)

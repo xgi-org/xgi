@@ -1,5 +1,65 @@
 # Changelog
 
+## v1.0.0
+
+First stable release. The public API is now committed to semantic versioning. Headline items: stabilized core (reprs, view returns, exceptions, copy / deepcopy / pickle, equality), new I/O (compressed HIF, AHORN, Hypergraphx-Data), nested generators, consistent generator naming, embedded nodes in multilayer plots, local RNG state, discoverable stats, and a shipped `xgi.skill` package for AI pair programming.
+
+* Consistent naming across generators. [#780](https://github.com/xgi-org/xgi/pull/780) (@nwlandry)
+* Trimming README and docs landing page. [#778](https://github.com/xgi-org/xgi/pull/778) (@maximelucas)
+* New iterative generators. [#661](https://github.com/xgi-org/xgi/pull/661) (@maximelucas)
+* chore: cap supported Python at <3.15. [#777](https://github.com/xgi-org/xgi/pull/777) (@leotrs)
+* New integrations with AHORN and Hypergraphx-Data. [#759](https://github.com/xgi-org/xgi/pull/759) (@nwlandry)
+* Embedded nodes in draw_multilayer. [#753](https://github.com/xgi-org/xgi/pull/753) (@thomasrobiglio)
+* docs: complete available-stats lists and reference from filterby. [#776](https://github.com/xgi-org/xgi/pull/776) (@leotrs)
+* docs: add AI-coding-assistant pointer to AGENTS.md. [#775](https://github.com/xgi-org/xgi/pull/775) (@leotrs)
+* test, fix: harden against transient xgi-data outages. [#772](https://github.com/xgi-org/xgi/pull/772) (@leotrs)
+* fix: raise on empty input in add_weighted_edges_from and add_weighted_simplices_from. [#771](https://github.com/xgi-org/xgi/pull/771) (@raashish1601)
+* fix: keep non-integer weights in incidence_matrix. [#770](https://github.com/xgi-org/xgi/pull/770) (@raashish1601)
+* Drop support for Python 3.10 and update benchmark workflow. [#769](https://github.com/xgi-org/xgi/pull/769) (@nwlandry)
+* feat!: `__repr__` matches the dict shape of `members()`. [#768](https://github.com/xgi-org/xgi/pull/768) (@leotrs)
+* feat!: deprecate `DiEdgeView.sources` / `targets`. [#767](https://github.com/xgi-org/xgi/pull/767) (@leotrs)
+* Finish to-do list for stable DiHypergraph. [#763](https://github.com/xgi-org/xgi/pull/763) (@nwlandry)
+* Add nodes from dict. [#762](https://github.com/xgi-org/xgi/pull/762) (@nwlandry)
+* feat!: standardize view-method return shapes. [#766](https://github.com/xgi-org/xgi/pull/766) (@leotrs)
+* feat!: remove `xgi.dynamics` module. [#750](https://github.com/xgi-org/xgi/pull/750) (@leotrs)
+* BREAKING: remove support for bespoke XGI json format. [#757](https://github.com/xgi-org/xgi/pull/757) (@nwlandry)
+* Remove unused Claude files. [#758](https://github.com/xgi-org/xgi/pull/758) (@nwlandry)
+* feat: add `IDView.duplicate_groups()`. [#755](https://github.com/xgi-org/xgi/pull/755) (@leotrs)
+* docs: release how-to. [#723](https://github.com/xgi-org/xgi/pull/723) (@kaiser-dan)
+* refactor: mark `read_json` / `write_json` as internal helpers. [#738](https://github.com/xgi-org/xgi/pull/738) (@leotrs)
+* feat: add `H.nodes.pos` stat accessor for node positions. [#728](https://github.com/xgi-org/xgi/pull/728) (@leotrs)
+* feat: add `with_positions` option to `ring_lattice`. [#729](https://github.com/xgi-org/xgi/pull/729) (@leotrs)
+* Update pubs. [#754](https://github.com/xgi-org/xgi/pull/754) (@nwlandry)
+* docs: add Randomness page explaining seed semantics. [#737](https://github.com/xgi-org/xgi/pull/737) (@leotrs)
+* refactor: standardize exception types across public API. [#739](https://github.com/xgi-org/xgi/pull/739) (@leotrs)
+* fix: correct docstring parameters that do not match the signature. [#751](https://github.com/xgi-org/xgi/pull/751) (@karpovantonme)
+* Make networks copyable and picklable on Python 3.14. [#747](https://github.com/xgi-org/xgi/pull/747) (@DMZ22)
+* Integrate optional plotting capabilities into `ashist()`. [#636](https://github.com/xgi-org/xgi/pull/636) (@willcollins10)
+* docs: document dev-vs-main PR workflow in CLAUDE.md. [#734](https://github.com/xgi-org/xgi/pull/734) (@leotrs)
+* fix: only proxy actual stats through `Hypergraph.__getattr__`. [#736](https://github.com/xgi-org/xgi/pull/736) (@leotrs)
+* feat: ship an agent skill alongside the xgi package. [#741](https://github.com/xgi-org/xgi/pull/741) (@leotrs)
+* Docs: fix match between accepted formats and docs. [#733](https://github.com/xgi-org/xgi/pull/733) (@maximelucas)
+* Optimize `node_swap`. [#735](https://github.com/xgi-org/xgi/pull/735) (@maximelucas)
+* feat: add nested hypergraph generators (Kim et al. 2023, Barrett et al. 2025). [#683](https://github.com/xgi-org/xgi/pull/683) (@jg-you)
+* Fix kwarg validation bugs in `draw()` reported in #730 and #731. [#732](https://github.com/xgi-org/xgi/pull/732) (@maximelucas)
+* fix: accept `np.random.Generator` as seed in spring layouts. [#724](https://github.com/xgi-org/xgi/pull/724) (@leotrs)
+* Add algorithms to Gallery. [#714](https://github.com/xgi-org/xgi/pull/714) (@maximelucas)
+* docs: clarify that `H.edges[idx]` returns attributes, not members. [#727](https://github.com/xgi-org/xgi/pull/727) (@leotrs)
+* docs: deduplicate stats docstrings and link to algorithms. [#726](https://github.com/xgi-org/xgi/pull/726) (@leotrs)
+* feat: add `empties` option to cleanup methods. [#725](https://github.com/xgi-org/xgi/pull/725) (@leotrs)
+* Update issue templates. [#722](https://github.com/xgi-org/xgi/pull/722) (@kaiser-dan)
+* fix: issue #718. [#719](https://github.com/xgi-org/xgi/pull/719) (@maximelucas)
+* fix: account for `idx=0` when adding edges. [#721](https://github.com/xgi-org/xgi/pull/721) (@maximelucas)
+
+### First-time contributors
+
+Welcome and thank you to the new contributors who shipped code in this release:
+
+* @raashish1601 (#770, #771)
+* @karpovantonme (#751)
+* @DMZ22 (#747)
+* @jg-you (#683)
+
 ## v0.10.2
 
 * Feature: Added compressed file I/O. [#709](https://github.com/xgi-org/xgi/pull/709) (@kaiser-dan)

@@ -26,30 +26,64 @@ Software Packages (8 total)
 1. `simplicial-kuramoto <https://arnaudon.github.io/simplicial-kuramoto>`_
 
 
-Published Work (35 total)
+Published Work (42 total)
 =========================
 
 2026
 ----
 
-35. [XGI] Cosimo Agostinelli, Marco Mancastroppa, and Alain Barrat, "Higher-order dissimilarity measures for hypergraph comparison", *Journal of Complex Networks*, Volume 14, Issue 1, cnaf048 (2026).
+42. [XGI] Cosimo Agostinelli, Marco Mancastroppa, and Alain Barrat, "Higher-order dissimilarity measures for hypergraph comparison", *Journal of Complex Networks*, Volume 14, Issue 1, cnaf048 (2026).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1093/comnet/cnaf048>`
 :bdg-link-primary-line:`Code <https://github.com/cosimoagostinelli/Hor_dissimilarity_measures>`
 
-34. [XGI-DATA] Antonio De Caro, Dario De Maio, Francesco Monzillo, Alessia Antelmi, and Biagio Cosenza, "Evaluating Portable Programming Models for Hypergraph Label Propagation on GPUs", *Proceedings of PDP 2026: 34th Euromicro International Conference on Parallel, Distributed, and Network-Based Processing* (2026).
+41. [XGI-DATA] Margherita Bertè and Tommaso Gili, "Fibration Symmetries and Cluster Synchronization in Multi-Body Systems", *Scientific Reports* **16**, 32628 (2026).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41598-026-61679-0>`
+:bdg-link-primary-line:`Code <https://github.com/margheritaberte/Fibration_symmetries_cluster_synchronization>`
+
+40. [XGI-DATA] Fabian Brandt-Tumescheit and Henning Meyerhenke, "Parameter-light algorithms for improving hypermodularity-based community detection", *Social Network Analysis and Mining* **16**, 82 (2026).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1007/s13278-026-01638-9>`
+:bdg-link-primary-line:`Code <https://github.com/KIT-EAE/parameter-light-hyperleiden>`
+
+39. [XGI-DATA] Antonio De Caro, Dario De Maio, Francesco Monzillo, Alessia Antelmi, and Biagio Cosenza, "Evaluating Portable Programming Models for Hypergraph Label Propagation on GPUs", *Proceedings of PDP 2026: 34th Euromicro International Conference on Parallel, Distributed, and Network-Based Processing* (2026).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1109/PDP55228.2026.00024>`
 
-33. [XGI, XGI-DATA] Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Domenico, "Functional reducibility of higher-order networks", *Nature Communications* **17**, 1551 (2026).
+38. [XGI] Jaewan Chun, Fanchen Bu, Yeongho Kim, Atsushi Miyauchi, Francesco Bonchi, and Kijung Shin, "A Survey on Centrality and Importance Measures in Hypergraphs: Categorization and Empirical Insights", *ACM Computing Surveys*, Volume 58, Issue 16, Article 414 (2026).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1145/3843227>`
+:bdg-link-primary-line:`Code <https://github.com/jaewan01/hypergraph-centrality-survey>`
+
+37. [XGI-DATA] Cameron Ibrahim, S M Ferdous, Ilya Safro, Marco Minutoli, and Mahantesh Halappanavar, "ELRUHNA: Elimination Rule-based Hypergraph Alignment", Social Networks Analysis and Mining. ASONAM 2025. Lecture Notes in Computer Science, vol 16322. Springer, Cham. (2026).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1007/978-3-032-13513-1_6>`
+:bdg-link-primary-line:`Code <https://github.com/cameton/ASONAM_ELRUHNA>`
+
+36. [XGI, XGI-DATA] Maxime Lucas, Luca Gallo, Arsham Ghavasieh, Federico Battiston, and Manlio De Domenico, "Reducibility of higher-order networks from dynamics", *Nature Communications* **17**, 1551 (2026).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41467-025-68273-4>`
 :bdg-link-primary-line:`Code <https://github.com/maximelucas/hypergraph_reducibility>`
 
-32. [XGI] Alyssa Smith, Ilya Amburg, Sagar Kumar, Brooke Foucault Welles, and Nicholas W. Landry, "A Blue Start: A large-scale pairwise and higher-order social network dataset", *Scientific Data* **13**, 585 (2026).
+35. [XGI, XGI-DATA] Hugo P. Maia, Wesley Cota, Yamir Moreno, and Silvio C. Ferreira, "Efficient Gillespie algorithms for spreading phenomena in large and heterogeneous higher-order networks", *Nature Communications* **17**, 8665 (2026).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41467-026-75402-0>`
+:bdg-link-primary-line:`Code <https://github.com/gisc-ufv/hyperSIS>`
+
+34. [XGI] Andrea Santoro, Matteo Neri, Simone Poetto, Davide Orsenigo, Matteo Diano, Marilyn Gatica, and Giovanni Petri, "Charting higher-order models of brain function beyond pairwise interactions", *Nature Communications* **17**, 9207 (2026).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41467-026-75959-w>`
+:bdg-link-primary-line:`Code <https://github.com/nplresearch/HOI_lenses_analysis>`
+
+33. [XGI] Alyssa Smith, Ilya Amburg, Sagar Kumar, Brooke Foucault Welles, and Nicholas W. Landry, "A Blue Start: A large-scale pairwise and higher-order social network dataset", *Scientific Data* **13**, 585 (2026).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.1038/s41597-026-06920-1>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/a-blue-start>`
+
+32. [XGI] Bin Tang, Hanqiang Deng, Yuxian Duan, Heng Zhang, Jian Huang, and Jiarui Zhang, "Deep learning-based hypernetwork dismantling for effectively hindering structural recovery", *Information Processing & Management*, Volume 63, Issue 3, 104551 (2026).
+
+:bdg-link-primary-line:`Paper <https://doi.org/10.1016/j.ipm.2025.104551>`
 
 2025
 ----
@@ -218,11 +252,24 @@ Preprints (9 total)
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.36227/techrxiv.177223104.47525491/v1>`
 
-8. [XGI-DATA] Hugo P. Maia, Guilherme Ferraz de Arruda, Silvio C. Ferreira, and Yamir Moreno, "Nesting Controls Phase Transitions in Higher-Order Contagion", arXiv:2604.23337 (2026).
+8. [XGI] Timothy LaRock, Yanting Zhang, Jean-Gabriel Young, Nicole Eikmeier, Renaud Lambiotte, and Nicholas W. Landry, "The nestedness of higher-order networks", arXiv:2605.18420 (2026).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2605.18420>`
+:bdg-link-primary-line:`Code <https://github.com/tlarock/hypergraph-nestedness>`
+
+7. [XGI-DATA] Hugo P. Maia, Guilherme Ferraz de Arruda, Silvio C. Ferreira, and Yamir Moreno, "Nesting Controls Phase Transitions in Higher-Order Contagion", arXiv:2604.23337 (2026).
 
 :bdg-link-primary-line:`Paper <https://doi.org/10.48550/arXiv.2604.23337>`
 
-7. [XGI] Emma Zajdela and Nicholas W. Landry, "Higher-order interactions at scientific conferences influence team formation", arXiv:2603.02571 (2026).
+6. [XGI] Violet Ross, Francis Cataldo, and Philip S. Chodrow, "Growing Hypergraphs with Homophily", arXiv:2607.16046 (2026).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2607.16046>`
+
+5. [XGI-DATA] Jason P. Smith, Celia Hacker, Jānis Lazovskis, Florian Unger, Keith M. Smith, and Daniela Egas Santander, "Higher-order rich clubs and configuration models on general directed hypergraphs", arXiv:2609.01624 (2026).
+
+:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2609.01624>`
+
+4. [XGI] Emma Zajdela and Nicholas W. Landry, "Higher-order interactions at scientific conferences influence team formation", arXiv:2603.02571 (2026).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2603.02571>`
 :bdg-link-primary-line:`Code <https://github.com/nwlandry/higher-order-team-formation>`
@@ -230,29 +277,15 @@ Preprints (9 total)
 2025
 ----
 
-6. [XGI-DATA] Margherita Bertè and Tommaso Gili, "Fibration Symmetries and Cluster Synchronization in Multi-Body Systems", arXiv:2510.11207 (2025).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2510.11207>`
-:bdg-link-primary-line:`Code <https://github.com/margheritaberte/Fibration_symmetries_cluster_synchronization>`
-
-5. [XGI-DATA] Cameron Ibrahim, S M Ferdous, Ilya Safro, Marco Minutoli, and Mahantesh Halappanavar, "ELRUHNA: Elimination Rule-based Hypergraph Alignment", arXiv:2506.09866 (2025).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2506.09866>`
-
-4. [XGI] Leah A. Keating, Kwang-Il Goh, and Mason A. Porter, "An Approximate-Master-Equation Formulation of the Watts Threshold Model on Hypergraphs", arXiv:2503.04020 (2025).
+3. [XGI] Leah A. Keating, Kwang-Il Goh, and Mason A. Porter, "An Approximate-Master-Equation Formulation of the Watts Threshold Model on Hypergraphs", arXiv:2503.04020 (2025).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2503.04020>`
 :bdg-link-primary-line:`Code <https://github.com/leahkeating/threshold_AME>`
 
-3. [XGI] Timothy LaRock and Renaud Lambiotte, "Exploring the Non-uniqueness of Node Co-occurrence Matrices of Hypergraphs", arXiv:2506.01479 (2025).
+2. [XGI] Timothy LaRock and Renaud Lambiotte, "Exploring the Non-uniqueness of Node Co-occurrence Matrices of Hypergraphs", arXiv:2506.01479 (2025).
 
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2506.01479>`
 :bdg-link-primary-line:`Code <https://github.com/tlarock/twin_search/>`
-
-2. [XGI, XGI-DATA] Hugo P. Maia, Wesley Cota, Yamir Moreno, and Silvio C. Ferreira, "Efficient Gillespie algorithms for spreading phenomena in large and heterogeneous higher-order networks", arXiv:2509.20174 (2025).
-
-:bdg-link-primary-line:`Paper <https://arxiv.org/abs/2509.20174>`
-:bdg-link-primary-line:`Code <https://github.com/gisc-ufv/hyperSIS>`
 
 2024
 ----
@@ -262,8 +295,15 @@ Preprints (9 total)
 :bdg-link-primary-line:`Paper <https://arxiv.org/abs/2407.12728>`
 
 
-Theses (6 total)
+Theses (7 total)
 ================
+
+2026
+----
+
+7. [XGI-DATA] Marco Nurisso, "Topology & Dynamics in higher-order systems and neural networks", Politecnico di Torino (2026).
+
+:bdg-link-primary-line:`Thesis <https://iris.unito.it/retrieve/handle/2318/1891873/101295/Nurisso_PhD_Thesis.pdf>`
 
 2025
 ----

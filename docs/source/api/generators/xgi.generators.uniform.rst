@@ -7,7 +7,7 @@ xgi.generators.uniform
    
    .. rubric:: Functions
    
-   .. autofunction:: uniform_hypergraph_configuration_model
-   .. autofunction:: uniform_erdos_renyi_hypergraph
-   .. autofunction:: uniform_HSBM
-   .. autofunction:: uniform_HPPM
+   .. autofunction:: uniform_configuration_model
+   .. autofunction:: uniform_erdos_renyi_model
+   .. autofunction:: uniform_stochastic_block_model
+   .. autofunction:: uniform_planted_partition_model

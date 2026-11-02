@@ -8,6 +8,6 @@
    .. rubric:: Functions
 
    .. autofunction:: attrs
+   .. autofunction:: node_edge_centrality
    .. autofunction:: order
    .. autofunction:: size
-   .. autofunction:: node_edge_centrality

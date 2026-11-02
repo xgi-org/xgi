@@ -34,6 +34,7 @@ __all__ = [
     "z_eigenvector_centrality",
     "node_edge_centrality",
     "katz_centrality",
+    "pos",
 ]
 
 
@@ -115,6 +116,46 @@ def attrs(net, bunch, attr=None, missing=None):
         return {n: net._node_attr[n] for n in bunch}
     else:
         raise ValueError('"attr" must be str or None')
+
+
+def pos(net, bunch):
+    """Node positions.
+
+    Convenience accessor for the ``"pos"`` node attribute, which xgi's drawing
+    functions use as node coordinates. Equivalent to ``attrs(net, bunch, "pos")``.
+
+    Parameters
+    ----------
+    net : xgi.Hypergraph
+        The network.
+    bunch : Iterable
+        Nodes in `net`.
+
+    Returns
+    -------
+    dict
+        Maps node id to its ``"pos"`` attribute. Nodes without a ``"pos"``
+        attribute map to ``None``.
+
+    See Also
+    --------
+    attrs
+    ~xgi.drawing.draw : Accepts the result of this stat as the ``pos`` argument.
+
+    Examples
+    --------
+    >>> import xgi
+    >>> H = xgi.Hypergraph([[1, 2, 3]])
+    >>> H.set_node_attributes({1: (0, 0), 2: (1, 0), 3: (0.5, 1)}, name="pos")
+    >>> H.nodes.pos.asdict()
+    {1: (0, 0), 2: (1, 0), 3: (0.5, 1)}
+
+    Pass directly to ``xgi.draw``:
+
+    >>> xgi.draw(H, pos=H.nodes.pos.asdict())  # doctest: +SKIP
+
+    """
+    return attrs(net, bunch, attr="pos")
 
 
 def degree(net, bunch, order=None, weight=None):

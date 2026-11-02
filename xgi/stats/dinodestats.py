@@ -23,6 +23,7 @@ __all__ = [
     "degree",
     "in_degree",
     "out_degree",
+    "pos",
 ]
 
 
@@ -275,3 +276,30 @@ def out_degree(net, bunch, order=None, weight=None):
             )
             for n in bunch
         }
+
+
+def pos(net, bunch):
+    """Node positions.
+
+    Convenience accessor for the ``"pos"`` node attribute, which xgi's drawing
+    functions use as node coordinates. Equivalent to ``attrs(net, bunch, "pos")``.
+
+    Parameters
+    ----------
+    net : xgi.DiHypergraph
+        The network.
+    bunch : Iterable
+        Nodes in `net`.
+
+    Returns
+    -------
+    dict
+        Maps node id to its ``"pos"`` attribute. Nodes without a ``"pos"``
+        attribute map to ``None``.
+
+    See Also
+    --------
+    attrs
+
+    """
+    return attrs(net, bunch, attr="pos")
