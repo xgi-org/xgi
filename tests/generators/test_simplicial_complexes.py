@@ -39,11 +39,11 @@ def test_flag_complex():
     assert set(S4.edges.members(dtype=list)) == set(S5.edges.members(dtype=list))
 
 
-def test_d2_flag_complex():
+def test_flag_complex_d2():
     G = nx.erdos_renyi_graph(15, 0.3, seed=3)
 
     S = xgi.flag_complex(G, max_order=2)
-    S2 = xgi.d2_flag_complex(G)
+    S2 = xgi.flag_complex_d2(G)
 
     assert set(S.edges.members(dtype=list)) == set(S2.edges.members(dtype=list))
 
@@ -114,9 +114,9 @@ def test_random_flag_complex():
         S1 = xgi.random_flag_complex(10, -2)
 
 
-def test_d2_random_flag_complex():
+def test_random_flag_complex_d2():
 
-    S = xgi.d2_random_flag_complex(10, 0.4, seed=2)
+    S = xgi.random_flag_complex_d2(10, 0.4, seed=2)
     simplices = {
         frozenset({0, 4}),
         frozenset({0, 7}),
@@ -145,19 +145,19 @@ def test_d2_random_flag_complex():
 
     # consistency with other function
     S = xgi.random_flag_complex(10, 0.4, seed=3, max_order=2)
-    S0 = xgi.d2_random_flag_complex(10, 0.4, seed=3)
+    S0 = xgi.random_flag_complex_d2(10, 0.4, seed=3)
     assert set(S.edges.members(dtype=list)) == set(S0.edges.members(dtype=list))
 
     # seed
-    S1 = xgi.d2_random_flag_complex(10, 0.1, seed=1)
-    S2 = xgi.d2_random_flag_complex(10, 0.1, seed=2)
-    S3 = xgi.d2_random_flag_complex(10, 0.1, seed=2)
+    S1 = xgi.random_flag_complex_d2(10, 0.1, seed=1)
+    S2 = xgi.random_flag_complex_d2(10, 0.1, seed=2)
+    S3 = xgi.random_flag_complex_d2(10, 0.1, seed=2)
 
     assert S1._edge != S2._edge
     assert S2._edge == S3._edge
 
     # wrong input
     with pytest.raises(ValueError):
-        S1 = xgi.d2_random_flag_complex(10, 1.1)
+        S1 = xgi.random_flag_complex_d2(10, 1.1)
     with pytest.raises(ValueError):
-        S1 = xgi.d2_random_flag_complex(10, -2)
+        S1 = xgi.random_flag_complex_d2(10, -2)

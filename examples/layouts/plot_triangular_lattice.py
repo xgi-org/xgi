@@ -22,7 +22,7 @@ mapping = {i: list(G.nodes)[i] for i in range(0, len(list(G.nodes)))}
 inv_mapping = {v: k for k, v in mapping.items()}
 
 G_aux = nx.relabel_nodes(G, inv_mapping)
-S = xgi.d2_flag_complex(G_aux, p2=p)
+S = xgi.flag_complex_d2(G_aux, p2=p)
 
 # draw lattice
 pos = {inv_mapping[k]: v for k, v in pos.items()}

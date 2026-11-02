@@ -18,7 +18,7 @@ def test_random_layout():
     assert len(pos1) == H.num_nodes
 
     # simplicial complex
-    S = xgi.d2_random_flag_complex(10, 0.2)
+    S = xgi.random_flag_complex_d2(10, 0.2)
     pos = xgi.random_layout(S)
     assert len(pos) == S.num_nodes
 
@@ -38,7 +38,7 @@ def test_pairwise_spring_layout_hypergraph():
 
 
 def test_pairwise_spring_layout_simplicial_complex():
-    S = xgi.d2_random_flag_complex(10, 0.2, seed=1)
+    S = xgi.random_flag_complex_d2(10, 0.2, seed=1)
 
     pos1 = xgi.pairwise_spring_layout(S, seed=1)
     pos2 = xgi.pairwise_spring_layout(S, seed=2)
@@ -70,7 +70,7 @@ def test_barycenter_spring_layout(hypergraph1):
     assert np.allclose(list(pos4.values()), list(pos5.values()))
 
     # simplicial complex
-    S = xgi.d2_random_flag_complex(10, 0.2)
+    S = xgi.random_flag_complex_d2(10, 0.2)
     pos = xgi.barycenter_spring_layout(S)
     assert len(pos) == S.num_nodes
 
@@ -107,7 +107,7 @@ def test_weighted_barycenter_spring_layout(hypergraph1):
     assert np.allclose(list(pos4.values()), list(pos5.values()))
 
     # simplicial complex
-    S = xgi.d2_random_flag_complex(10, 0.2)
+    S = xgi.random_flag_complex_d2(10, 0.2)
     pos = xgi.weighted_barycenter_spring_layout(S)
     assert len(pos) == S.num_nodes
 
@@ -177,7 +177,7 @@ def test_circular_layout():
         assert np.round(np.sqrt(pos[i][0] ** 2 + pos[i][1] ** 2), 1) == 2.0
 
     # simplicial complex
-    S = xgi.d2_random_flag_complex(10, 0.2)
+    S = xgi.random_flag_complex_d2(10, 0.2)
     pos = xgi.circular_layout(S)
     assert len(pos) == S.num_nodes
 
@@ -202,7 +202,7 @@ def test_spiral_layout():
     assert pos[0] == [1, 1]
 
     # simplicial complex
-    S = xgi.d2_random_flag_complex(10, 0.2)
+    S = xgi.random_flag_complex_d2(10, 0.2)
     pos = xgi.spiral_layout(S)
     assert len(pos) == S.num_nodes
 
@@ -220,7 +220,7 @@ def test_barycenter_kamada_kawai_layout(hypergraph1):
     assert np.allclose(list(pos3.values()), list(pos3.values()))
 
     # simplicial complex
-    S = xgi.d2_random_flag_complex(10, 0.2)
+    S = xgi.random_flag_complex_d2(10, 0.2)
     pos = xgi.barycenter_kamada_kawai_layout(H)
     assert len(pos) == S.num_nodes
 

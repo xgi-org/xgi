@@ -24,7 +24,7 @@ def test_chung_lu_hypergraph():
         _ = xgi.chung_lu_hypergraph({1: 1, 2: 2}, {1: 2, 2: 2})
 
 
-def test_degree_corrected_sbm_hypergraph():
+def test_degree_corrected_stochastic_block_model_hypergraph():
     n = 50
     k1 = {i: random.randint(1, n) for i in range(n)}
     k2 = {i: sorted(k1.values())[i] for i in range(n)}
@@ -32,14 +32,14 @@ def test_degree_corrected_sbm_hypergraph():
     g2 = {i: random.choice([0, 1]) for i in range(n)}
     omega = np.array([[n // 2, 10], [10, n // 2]])
 
-    H = xgi.degree_corrected_sbm_hypergraph(k1, k2, g1, g2, omega)
+    H = xgi.degree_corrected_stochastic_block_model_hypergraph(k1, k2, g1, g2, omega)
 
     assert H.num_nodes == 50
 
     # seed
-    H1 = xgi.degree_corrected_sbm_hypergraph(k1, k2, g1, g2, omega, seed=1)
-    H2 = xgi.degree_corrected_sbm_hypergraph(k1, k2, g1, g2, omega, seed=2)
-    H3 = xgi.degree_corrected_sbm_hypergraph(k1, k2, g1, g2, omega, seed=2)
+    H1 = xgi.degree_corrected_stochastic_block_model_hypergraph(k1, k2, g1, g2, omega, seed=1)
+    H2 = xgi.degree_corrected_stochastic_block_model_hypergraph(k1, k2, g1, g2, omega, seed=2)
+    H3 = xgi.degree_corrected_stochastic_block_model_hypergraph(k1, k2, g1, g2, omega, seed=2)
     assert H1._edge != H2._edge
     assert H2._edge == H3._edge
 

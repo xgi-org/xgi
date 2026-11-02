@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 import xgi
 
 # generate clustered hypergraph
-H1 = xgi.uniform_planted_partition_model_hypergraph(100, 2, 3, 0.9, seed=0)
-H2 = xgi.uniform_planted_partition_model_hypergraph(100, 3, 2, 0.9, seed=0)
+H1 = xgi.uniform_planted_partition_model(100, 2, 3, 0.9, seed=0)
+H2 = xgi.uniform_planted_partition_model(100, 3, 2, 0.9, seed=0)
 H = H1 << H2
 H.cleanup()
 
