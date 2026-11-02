@@ -1,3 +1,4 @@
+:html_theme.sidebar_secondary.remove:
 
 .. image:: ../../logo/logo.png
   :class: only-light
@@ -24,91 +25,107 @@
 Software for higher-order networks
 ==================================
 
-The Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/xgi-org/xgi>`_
-library provides data structures and algorithms for modeling, analyzing, and visualizing complex systems
-with group (higher-order) interactions. It provides tools to:
+Comple\ **X** **G**\ roup **I**\ nteractions `(XGI) <https://github.com/xgi-org/xgi>`_ is a Python package for modeling, analyzing, and visualizing `higher-order networks <higher-order.html>`_: hypergraphs, directed hypergraphs, and simplicial complexes. It covers the whole workflow, from start to finish, with data structures, generative models, measures, datasets, and drawing tools.
 
-* load and store higher-order networks in standard formats
-* generate many random and non-random higher-order networks from models
-* analyze the structure of higher-order networks with metrics and algorithms
-* compute nodes and edge statistics in a unified interface
-* draw higher-order networks
-* manipulate hypergraphs (undirected and directed) and simplicial complexes
+Higher-order networks generalize standard (pairwise) networks to interactions between any number of entities, such as collaborations between several authors or contagion in groups. For more information, see this `brief overview <higher-order.html>`_.
 
+.. grid:: 1 2 3 3
+   :gutter: 3
 
-Higher-order networks generalize standard (pairwise) networks by allowing to encode higher-order interactions, 
-that is, interactions between any number of entities. Collaborations and contagion processes are typical
-examples where these higher-order interactions are crucial.
-For more information about what higher-order
-interactions are, see a `brief overview <higher-order.html>`_.
+   .. grid-item-card:: Easy to use
 
-XGI is implemented in pure Python and is designed to seamlessly interoperate with the
-rest of the Python scientific stack (numpy, scipy, pandas, matplotlib, etc).  XGI is
-designed and developed by network scientists with the needs of network scientists in
-mind. Browse the `list of projects using XGI <using_xgi.html>`_ to get an idea of what XGI can do and how it is being used by other people.
+      If you know NetworkX, you already know XGI: add nodes and edges, then query them, with a familiar API.
 
-Get started immediately by `installing XGI <installing.html>`_ and checking the `XGI in 1 minute <api/tutorials/getting_started_1.html>`_ tutorial.
+   .. grid-item-card:: Node and edge statistics
 
+      Compute, filter, and combine node and edge statistics in one line, e.g., ``H.nodes.degree.asnumpy()`` or ``H.nodes.filterby("degree", 3)``. See the `cheatsheet <stats_cheatsheet.html>`_.
 
-Corresponding Data
-==================
+   .. grid-item-card:: Scientific Python
 
-A number of higher-order datasets are available in the `XGI-DATA repository <https://github.com/xgi-org/xgi-data>`_ and can be easily accessed with the ``load_xgi_data()`` function.
-More information about the datasets and how to load them is in the `XGI-DATA menu <xgi-data.html>`_.
+      Built on NumPy, SciPy, pandas, NetworkX, and matplotlib. Convert to and from matrices, dataframes, and graphs to use XGI with the rest of your tools.
 
+   .. grid-item-card:: Real-world data
+
+      50+ curated higher-order datasets from `XGI-DATA <xgi-data.html>`_, loaded in one line with ``xgi.load_xgi_data()``.
+
+   .. grid-item-card:: Built by researchers
+
+      Designed and developed by network scientists, with the latest measures, models, and algorithms from the higher-order network literature.
+
+   .. grid-item-card:: Open source and community-driven
+
+      BSD-licensed and developed in the open. Contributions of any size are welcome: see the `contributing guide <contribute.html>`_.
+
+Get started
+===========
+
+Install XGI with
+
+.. code:: bash
+
+   pip install xgi
+
+For other options, see the `installation guide <installing.html>`_. Then, take a look at the `XGI in 1 minute <api/tutorials/getting_started_1.html>`_ tutorial or the other `tutorials <user_guides.html>`_.
+
+.. dropdown:: An example
+
+   .. code:: python
+
+      import xgi
+
+      # build
+      hyperedges = [[1, 2, 3], [3, 4, 5], [3, 6], [6, 7, 8, 9], [1, 4, 10, 11, 12], [1, 4]]
+      H = xgi.Hypergraph(hyperedges)
+
+      # analyze
+      H.edges.size.asnumpy()          # array([3, 3, 2, 4, 5, 2])
+      H.nodes.filterby("degree", 3)   # nodes 1, 3, 4
+
+      # visualize
+      pos = xgi.barycenter_spring_layout(H, seed=1)
+      xgi.draw(H, pos=pos)
+
+.. image:: _static/readme_example.png
+  :width: 300
+  :align: center
+  :alt: Drawing of the example hypergraph
 
 Get involved
 ============
 
-To simply getting news and updates, you can sign up for our `mailing list <http://eepurl.com/igE6ez>`_ and follow XGI on `Twitter <https://twitter.com/xginets>`_!
+Contributions of any size are welcome, and we're happy to help! To report a bug or request a feature, `open an issue <https://github.com/xgi-org/xgi/issues/new>`_. For more, see the `contributing guide <contribute.html>`_. Browse the `projects using XGI <using_xgi.html>`_ to see how others use it, and add yours!
 
-If you want to contribute, even better! The XGI community always welcomes contributions, no matter how small.
-For more information, see our `contribution guide <contribute.html>`_.
+Join the community on `Zulip <https://xgi.zulipchat.com/join/7agfwo7dh7jo56ppnk5kc23r/>`_ and follow XGI on `Bluesky <https://bsky.app/profile/xgi.bsky.social>`_.
 
+Cite
+====
 
+We believe that quality software is important for supporting research. To demonstrate the value of XGI, we ask that you cite the XGI `paper <https://doi.org/10.21105/joss.05162>`_ in your work. You can also use the "Cite this repository" button on our `GitHub page <https://github.com/xgi-org/xgi>`_.
 
-How to Cite
-===========
-We acknowledge the importance of good software to support research, and we note
-that research becomes more valuable when it is communicated effectively. To
-demonstrate the value of XGI, we ask that you cite the XGI
-`paper <https://doi.org/10.21105/joss.05162>`_ in your work.
-You can cite XGI either by going to our repository page
-`repository page <https://github.com/xgi-org/xgi>`_ and
-clicking the "cite this repository" button on the right sidebar (which will generate
-a citation in your preferred format) or by copying the following BibTeX entry:
+   Landry, N. W., Lucas, M., Iacopini, I., Petri, G., Schwarze, A., Patania, A., & Torres, L. (2023). XGI: A Python package for higher-order interaction networks. *Journal of Open Source Software*, 8(85), 5162.
 
-.. code:: text
+.. dropdown:: BibTeX
 
-  @article{Landry_XGI_2023,
-  author = {Landry, Nicholas W. and Lucas, Maxime and Iacopini, Iacopo and Petri, Giovanni and Schwarze, Alice and Patania, Alice and Torres, Leo},
-  title = {{XGI: A Python package for higher-order interaction networks}},
-  doi = {10.21105/joss.05162},
-  journal = {Journal of Open Source Software},
-  publisher = {The Open Journal},
-  year = {2023},
-  month = may,
-  volume = {8},
-  number = {85},
-  pages = {5162},
-  url = {https://doi.org/10.21105/joss.05162},
-  }
+   .. code:: text
 
+      @article{Landry_XGI_2023,
+          author = {Landry, Nicholas W. and Lucas, Maxime and Iacopini, Iacopo and Petri, Giovanni and Schwarze, Alice and Patania, Alice and Torres, Leo},
+          title = {{XGI: A Python package for higher-order interaction networks}},
+          doi = {10.21105/joss.05162},
+          journal = {Journal of Open Source Software},
+          publisher = {The Open Journal},
+          year = {2023},
+          month = may,
+          volume = {8},
+          number = {85},
+          pages = {5162},
+          url = {https://doi.org/10.21105/joss.05162},
+      }
 
-Academic References
-===================
+License
+=======
 
-* `The Why, How, and When of Representations for Complex Systems
-  <https://doi.org/10.1137/20M1355896>`_, Torres, L., Blevins, A.S., Bassett, D. and Eliassi-Rad, T., 2021. SIAM Review, 63(3), pp.435-485.
-
-* `Networks beyond pairwise interactions: Structure and dynamics
-  <https://doi.org/10.1016/j.physrep.2020.05.004>`_, Battiston, F., Cencetti, G., Iacopini, I., Latora, V., Lucas, M., Patania, A., Young, J.G. and Petri, G., 2020. Physics reports, 874, pp.1-92.
-
-* `What are higher-order networks? <https://arxiv.org/abs/2104.11329>`_, Bick, C., Gross, E., Harrington, H.A. and Schaub, M.T., 2023. SIAM Review, 65(3), pp.686-731.
-
-* `From networks to optimal higher-order models of complex systems
-  <https://www.nature.com/articles/s41567-019-0459-y>`_, Lambiotte, R., Rosvall, M. and Scholtes, I., 2019. Nature physics, 15(4), pp.313-320.
-
+Released under the `3-Clause BSD license <https://github.com/xgi-org/xgi/blob/main/LICENSE.md>`_.
 
 Support
 =======
@@ -119,16 +136,8 @@ Support
   :target: https://www.nsf.gov
 
 .. image:: _static/zulip-org-logo.svg
-  :height: 50
+  :height: 30
   :alt: Zulip
   :target: https://zulip.com
 
-
 See details `here <https://github.com/xgi-org/xgi/blob/main/SUPPORT.md>`_.
-
-License
-=======
-
-This project is licensed under the `BSD 3-Clause License
-<https://github.com/xgi-org/xgi/blob/main/LICENSE.md>`_.
-

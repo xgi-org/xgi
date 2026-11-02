@@ -1,3 +1,6 @@
+import platform
+import sys
+
 import numpy as np
 import pytest
 from numpy.linalg import norm
@@ -112,6 +115,14 @@ def test_node_edge_centrality():
     c = H.edges.node_edge_centrality.asnumpy()
     assert abs(c[0] - c[1]) < 1e-6
 
+
+@pytest.mark.skipif(
+    sys.version_info != (3, 14) and not platform.system() == "Linux",
+    reason="only need one test",
+)
+@pytest.mark.webtest
+@pytest.mark.slow
+def test_node_edge_centrality_xgi_data():
     H = xgi.load_xgi_data("email-enron").cleanup()
     c = xgi.node_edge_centrality(H)
     assert len(c[0]) == H.num_nodes
@@ -223,6 +234,14 @@ def test_h_eigenvector_centrality():
     for i in c:
         assert np.allclose(c[i], true_c[i])
 
+
+@pytest.mark.skipif(
+    sys.version_info != (3, 14) and not platform.system() == "Linux",
+    reason="only need one test",
+)
+@pytest.mark.webtest
+@pytest.mark.slow
+def test_h_eigenvector_centrality_xgi_data():
     H = xgi.load_xgi_data("email-enron")
     H.cleanup(relabel=False)
     c = xgi.h_eigenvector_centrality(H)

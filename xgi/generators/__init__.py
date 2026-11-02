@@ -1,5 +1,6 @@
 from . import (
     classic,
+    growth,
     lattice,
     random,
     randomizing,
@@ -8,6 +9,7 @@ from . import (
     uniform,
 )
 from .classic import *
+from .growth import *
 from .lattice import *
 from .random import *
 from .randomizing import *
@@ -43,4 +45,7 @@ __all__ = [
     "uniform_erdos_renyi_hypergraph",
     "uniform_HSBM",
     "uniform_HPPM",
+    "pseudofractal_simplicial_complex",
+    "apollonian_complex",
+    "network_geometry_flavor",
 ]

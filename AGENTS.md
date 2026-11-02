@@ -1,5 +1,25 @@
 # Agent Instructions
 
+## Writing code that *uses* XGI
+
+If you are an AI coding assistant helping someone write code with XGI
+(not editing XGI itself), read [`xgi/skill/SKILL.md`](xgi/skill/SKILL.md)
+end to end before you start. It covers the stats interface (XGI's
+most-missed feature), idiomatic patterns, and the common mistakes agents
+make when they treat XGI like NetworkX. The same skill ships inside the
+installed package and is discoverable at runtime:
+
+```python
+from xgi.skill import SKILL_FILE  # path to SKILL.md on disk
+```
+
+The rest of this file (below) is for agents that are *contributing to
+XGI itself*.
+
+---
+
+## Contributing to XGI
+
 This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
 
 ## Quick Reference

@@ -218,10 +218,15 @@ class IDView(Mapping, Set):
     def filterby(self, stat, val, mode="eq"):
         """Filter the IDs in this view by a statistic.
 
+        For the complete list of built-in statistics that can be passed by name
+        as ``stat``, see the "Available statistics" admonition on the
+        :doc:`stats package page </api/stats>`.
+
         Parameters
         ----------
         stat : str or :class:`xgi.stats.NodeStat`/:class:`xgi.stats.EdgeStat`
             `NodeStat`/`EdgeStat` object, or name of a `NodeStat`/`EdgeStat`.
+            See :doc:`/api/stats` for the complete list of available names.
         val : Any
             Value of the statistic.  Usually a single numeric value.  When mode is
             'between', must be a tuple of exactly two values.
