@@ -232,3 +232,13 @@ def test_watts_strogatz_hypergraph():
     for seed in range(20):
         H = xgi.watts_strogatz_hypergraph(n, d, k, l, 1, seed=seed)
         assert min(H.nodes.degree.asdict().values()) >= k // 2
+
+    # only the farthest node of each edge is rewired, and never to a node
+    # already in the edge
+    lattice_edges = xgi.generators.lattice._ring_lattice_edges(n, d, k, l)
+    for seed in range(20):
+        H = xgi.watts_strogatz_hypergraph(n, d, k, l, 1, seed=seed)
+        for e, members in enumerate(lattice_edges):
+            new = H.edges.members(e)
+            assert set(members[:-1]) <= new
+            assert len(new) == d

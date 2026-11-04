@@ -446,31 +446,39 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
     xgi.Hypergraph
         The Watts-Strogatz hypergraph
 
+    Notes
+    -----
+    Following [1]_, the hypergraph starts as a ring lattice. Each edge is then
+    visited in turn and, with probability p, its farthest node from the
+    originating node is replaced by a node chosen uniformly at random among the
+    nodes not connected to the originating node. Edge sizes are preserved. An edge
+    is left unchanged if no such node exists.
+
     See Also
     --------
     ~lattice.ring_lattice
 
     References
     ----------
-    Tanu Raghav, Stefano Boccaletti, and Sarika Jalan,
-    Smallworldness in hypergraphs,
-    https://doi.org/10.1088/2632-072X/acf430
+    .. [1] Tanu Raghav, Stefano Boccaletti, and Sarika Jalan,
+       Smallworldness in hypergraphs,
+       https://doi.org/10.1088/2632-072X/acf430
     """
     rng = np.random.default_rng(seed)
     H = ring_lattice(n, d, k, l)
     # edge IDs of the ring lattice follow the order of these lists
     lattice_edges = _ring_lattice_edges(n, d, k, l)
-    to_remove = []
-    to_add = []
-    for e in H.edges:
+    nodes = set(H.nodes)
+    for e, members in enumerate(lattice_edges):
         if rng.random() < p:
-            to_remove.append(e)
-            node = lattice_edges[e][0]  # originating node
-            others = [v for v in H.nodes if v != node]
-            neighbors = rng.choice(others, size=d - 1, replace=False)
-            to_add.append([node] + [int(v) for v in neighbors])
-    H.remove_edges_from(to_remove)
-    H.add_edges_from(to_add)
+            node = members[0]  # originating node
+            # replace the farthest node by one not yet connected to node
+            candidates = sorted(nodes - H.nodes.neighbors(node) - {node})
+            if not candidates:
+                continue
+            z = int(rng.choice(candidates))
+            H.remove_edge(e)
+            H.add_edge(members[:-1] + [z], idx=e)
     return H
 
 
