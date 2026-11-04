@@ -468,15 +468,24 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
     H = ring_lattice(n, d, k, l)
     # edge IDs of the ring lattice follow the order of these lists
     lattice_edges = _ring_lattice_edges(n, d, k, l)
-    nodes = set(H.nodes)
+    nodes = list(H.nodes)
     for e, members in enumerate(lattice_edges):
         if rng.random() < p:
             node = members[0]  # originating node
             # replace the farthest node by one not yet connected to node
-            candidates = sorted(nodes - H.nodes.neighbors(node) - {node})
-            if not candidates:
+            neighbors = H.nodes.neighbors(node)
+            num_candidates = len(nodes) - len(neighbors) - 1
+            if num_candidates == 0:
                 continue
-            z = int(rng.choice(candidates))
+            if 2 * num_candidates >= len(nodes):
+                # sparse: rejection sampling, at most 2 draws on average
+                z = node
+                while z == node or z in neighbors:
+                    z = nodes[rng.integers(len(nodes))]
+            else:
+                # dense: sample from the explicit list of candidates
+                candidates = sorted(set(nodes) - neighbors - {node})
+                z = int(rng.choice(candidates))
             H.remove_edge(e)
             H.add_edge(members[:-1] + [z], idx=e)
     return H
