@@ -442,7 +442,7 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
     Returns
     -------
     xgi.Hypergraph
-        THe Watts-Strogatz hypergraph
+        The Watts-Strogatz hypergraph
 
     See Also
     --------
@@ -462,8 +462,9 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
         if rng.random() < p:
             to_remove.append(e)
             node = min(H.edges.members(e))
-            neighbors = rng.choice(H.nodes, size=d - 1)
-            to_add.append(np.append(neighbors, node))
+            others = [v for v in H.nodes if v != node]
+            neighbors = rng.choice(others, size=d - 1, replace=False)
+            to_add.append([node] + [int(v) for v in neighbors])
     H.remove_edges_from(to_remove)
     H.add_edges_from(to_add)
     return H

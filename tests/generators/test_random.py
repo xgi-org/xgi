@@ -201,3 +201,27 @@ def test_pr_655():
         warnings.simplefilter("error")
         # if this throws an error, then PR 655 doesn't fix the issue
         xgi.fast_random_hypergraph(100, [0.1, 0.001], seed=2)
+
+
+def test_watts_strogatz_hypergraph():
+    n, d, k, l = 20, 3, 4, 2
+    lattice = xgi.ring_lattice(n, d, k, l)
+
+    # p=0 leaves the ring lattice untouched
+    H = xgi.watts_strogatz_hypergraph(n, d, k, l, 0, seed=0)
+    assert H.edges.members() == lattice.edges.members()
+
+    for p in [0.2, 0.5, 1]:
+        for seed in range(20):
+            H = xgi.watts_strogatz_hypergraph(n, d, k, l, p, seed=seed)
+            assert H.num_nodes == n
+            assert H.num_edges == lattice.num_edges
+            # rewiring preserves edge size (issue #782)
+            assert xgi.unique_edge_sizes(H) == [d]
+            # node IDs stay plain ints (issue #782)
+            assert all(type(v) is int for e in H.edges.members().values() for v in e)
+
+    # seeding is reproducible
+    H1 = xgi.watts_strogatz_hypergraph(n, d, k, l, 0.5, seed=1)
+    H2 = xgi.watts_strogatz_hypergraph(n, d, k, l, 0.5, seed=1)
+    assert H1.edges.members() == H2.edges.members()
