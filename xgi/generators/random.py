@@ -431,9 +431,11 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
     d : int
         Edge size
     k : int
-        Number of edges of which a node is a part. Should be a multiple of 2.
+        Twice the number of edges originating at each node. Should be a multiple
+        of 2. See :func:`~xgi.generators.lattice.ring_lattice`.
     l : int
-        Overlap between edges
+        Offset of the clockwise block of each edge from its originating node.
+        See :func:`~xgi.generators.lattice.ring_lattice`.
     p : float
         The rewiring probability
     seed : int, numpy.random.Generator, or None, optional
