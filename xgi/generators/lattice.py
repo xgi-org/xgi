@@ -65,14 +65,22 @@ def ring_lattice(n, d, k, l, with_positions=False):
     if k % 2 != 0:
         warn("k is not divisible by 2")
 
-    edges = [
-        [node] + [(start + l + i) % n for i in range(d - 1)]
-        for node in range(n)
-        for start in range(node + 1, node + k // 2 + 1)
-    ]
-    H = Hypergraph(edges)
+    H = Hypergraph(_ring_lattice_edges(n, d, k, l))
     H.add_nodes_from(range(n))
     if with_positions:
         pos = {i: (cos(2 * pi * i / n), sin(2 * pi * i / n)) for i in range(n)}
         H.set_node_attributes(pos, name="pos")
     return H
+
+
+def _ring_lattice_edges(n, d, k, l):
+    """Edges of ``ring_lattice(n, d, k, l)``, in order, as lists.
+
+    Each list starts with the originating node, followed by the clockwise block
+    of d-1 nodes, nearest first. Edge IDs in ``ring_lattice`` follow this order.
+    """
+    return [
+        [node] + [(start + l + i) % n for i in range(d - 1)]
+        for node in range(n)
+        for start in range(node + 1, node + k // 2 + 1)
+    ]

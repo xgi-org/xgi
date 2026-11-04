@@ -225,3 +225,10 @@ def test_watts_strogatz_hypergraph():
     H1 = xgi.watts_strogatz_hypergraph(n, d, k, l, 0.5, seed=1)
     H2 = xgi.watts_strogatz_hypergraph(n, d, k, l, 0.5, seed=1)
     assert H1.edges.members() == H2.edges.members()
+
+    # each rewired edge keeps its originating node, including edges that wrap
+    # around the ring (e.g. [18, 1, 2] for n=20, l=2, where min() would be 1).
+    # With p=1, every node is then still in the k//2 edges it originated.
+    for seed in range(20):
+        H = xgi.watts_strogatz_hypergraph(n, d, k, l, 1, seed=seed)
+        assert min(H.nodes.degree.asdict().values()) >= k // 2

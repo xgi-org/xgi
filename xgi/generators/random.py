@@ -10,7 +10,7 @@ from scipy.special import comb
 
 from ..utils import geometric, powerset
 from .classic import empty_hypergraph
-from .lattice import ring_lattice
+from .lattice import _ring_lattice_edges, ring_lattice
 from .uniform import _index_to_edge_comb
 
 __all__ = [
@@ -456,12 +456,14 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
     """
     rng = np.random.default_rng(seed)
     H = ring_lattice(n, d, k, l)
+    # edge IDs of the ring lattice follow the order of these lists
+    lattice_edges = _ring_lattice_edges(n, d, k, l)
     to_remove = []
     to_add = []
     for e in H.edges:
         if rng.random() < p:
             to_remove.append(e)
-            node = min(H.edges.members(e))
+            node = lattice_edges[e][0]  # originating node
             others = [v for v in H.nodes if v != node]
             neighbors = rng.choice(others, size=d - 1, replace=False)
             to_add.append([node] + [int(v) for v in neighbors])
