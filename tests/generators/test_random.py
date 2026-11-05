@@ -201,3 +201,44 @@ def test_pr_655():
         warnings.simplefilter("error")
         # if this throws an error, then PR 655 doesn't fix the issue
         xgi.fast_random_hypergraph(100, [0.1, 0.001], seed=2)
+
+
+def test_watts_strogatz_hypergraph():
+    n, d, k, l = 20, 3, 4, 2
+    lattice = xgi.ring_lattice(n, d, k, l)
+
+    # p=0 leaves the ring lattice untouched
+    H = xgi.watts_strogatz_hypergraph(n, d, k, l, 0, seed=0)
+    assert H.edges.members() == lattice.edges.members()
+
+    for p in [0.2, 0.5, 1]:
+        for seed in range(20):
+            H = xgi.watts_strogatz_hypergraph(n, d, k, l, p, seed=seed)
+            assert H.num_nodes == n
+            assert H.num_edges == lattice.num_edges
+            # rewiring preserves edge size (issue #782)
+            assert xgi.unique_edge_sizes(H) == [d]
+            # node IDs stay plain ints (issue #782)
+            assert all(type(v) is int for e in H.edges.members().values() for v in e)
+
+    # seeding is reproducible
+    H1 = xgi.watts_strogatz_hypergraph(n, d, k, l, 0.5, seed=1)
+    H2 = xgi.watts_strogatz_hypergraph(n, d, k, l, 0.5, seed=1)
+    assert H1.edges.members() == H2.edges.members()
+
+    # each rewired edge keeps its originating node, including edges that wrap
+    # around the ring (e.g. [18, 1, 2] for n=20, l=2, where min() would be 1).
+    # With p=1, every node is then still in the k//2 edges it originated.
+    for seed in range(20):
+        H = xgi.watts_strogatz_hypergraph(n, d, k, l, 1, seed=seed)
+        assert min(H.nodes.degree.asdict().values()) >= k // 2
+
+    # only the farthest node of each edge is rewired, and never to a node
+    # already in the edge
+    lattice_edges = xgi.generators.lattice._ring_lattice_edges(n, d, k, l)
+    for seed in range(20):
+        H = xgi.watts_strogatz_hypergraph(n, d, k, l, 1, seed=seed)
+        for e, members in enumerate(lattice_edges):
+            new = H.edges.members(e)
+            assert set(members[:-1]) <= new
+            assert len(new) == d
