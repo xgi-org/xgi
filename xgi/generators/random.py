@@ -472,7 +472,9 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
     for e, members in enumerate(lattice_edges):
         if rng.random() < p:
             node = members[0]  # originating node
-            # replace the farthest node by one not yet connected to node
+            # replace the farthest node by one not yet connected to node.
+            # Neighbors are read from the current, partly rewired H on purpose:
+            # this also excludes earlier rewirings, so no duplicate edge forms.
             neighbors = H.nodes.neighbors(node)
             num_candidates = len(nodes) - len(neighbors) - 1
             if num_candidates == 0:
@@ -486,6 +488,7 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
                 # dense: sample from the explicit list of candidates
                 candidates = sorted(set(nodes) - neighbors - {node})
                 z = int(rng.choice(candidates))
+            # reuse the ID, so edge e still comes from lattice edge e
             H.remove_edge(e)
             H.add_edge(members[:-1] + [z], idx=e)
     return H
