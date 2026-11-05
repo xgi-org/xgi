@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793624746776,
+  "lastUpdate": 1793888677913,
   "repoUrl": "https://github.com/xgi-org/xgi",
   "entries": {
     "XGI Benchmarks": [
@@ -5850,6 +5850,156 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0007136590532118127",
             "extra": "mean: 13.53543170000222 msec\nrounds: 10"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "maximelucas@users.noreply.github.com",
+            "name": "Maxime Lucas",
+            "username": "maximelucas"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e1dba3a300b3b61b8a96a47c5c3fac891c3c4cbc",
+          "message": "Fix watts strogatz (#783)\n\n* docs: fix k and l descriptions in ring_lattice docstring\n\nl is an offset of the clockwise block, not an overlap: edges originating\nat the same node always overlap in d-1 nodes. Each node originates k//2\nedges and has degree k*d/2, not k.\n\n* fix: watts_strogatz_hypergraph produced edges of wrong size (#782)\n\nReplacement nodes were drawn with replacement and could include the\nkept node, so rewired edges could collapse to a smaller size. They are\nnow drawn without replacement from the other nodes, and returned as\nplain ints instead of np.int64.\n\n* fix: watts_strogatz_hypergraph keeps the originating node when rewiring\n\nThe kept node was min(members), which is not the originating node for\nedges that wrap around the ring (e.g. [18, 1, 2] for n=20, l=2). Nodes\nnear the end of the ring could then lose all their edges at p=1.\n\nThe edge lists are factored out of ring_lattice into a private helper so\nboth functions share them.\n\n* docs: fix k and l descriptions in watts_strogatz_hypergraph docstring\n\n* feat: watts_strogatz_hypergraph follows the rewiring rule of Raghav et al.\n\nPreviously all nodes but one were replaced when rewiring an edge, which\nrandomizes the hypergraph much faster than the model cited in the\ndocstring. Following the paper, only the farthest node from the\noriginating node is replaced, by a node drawn uniformly among nodes not\nconnected to the originating node. Edges are rewired in place and keep\ntheir IDs.\n\n* perf: rejection sampling for rewiring in watts_strogatz_hypergraph\n\nBuilding the full candidate list costs O(n) per rewired edge, so the\ngenerator was quadratic in n. When at least half of the nodes are valid\ncandidates, draw uniformly and reject instead (at most 2 draws on\naverage); otherwise fall back to the explicit list, so dense lattices\nare no slower. n=5000, d=3, k=8, p=0.3: 1.5s -> 0.1s.\n\n* docs: comment edge ID reuse and neighbor re-reading in watts_strogatz_hypergraph\n\nAddresses review comments on #783.\n\n* docs: shorten edge ID reuse comment\n\n* docs: clarify edge ID reuse comment\n\n* Revert \"docs: clarify edge ID reuse comment\"\n\nThis reverts commit f4c583c398ed5e0ad32fbdc531e7be5b39da2566.",
+          "timestamp": "2026-11-05T15:23:25+01:00",
+          "tree_id": "5b42c24863135e4c282bb3fb1c77a597ea545b82",
+          "url": "https://github.com/xgi-org/xgi/commit/e1dba3a300b3b61b8a96a47c5c3fac891c3c4cbc"
+        },
+        "date": 1793888671684,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "benchmarks/algorithms.py::test_connected",
+            "value": 109.27975006232668,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002518991944223841",
+            "extra": "mean: 9.150826200001916 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/algorithms.py::test_clustering_coefficient",
+            "value": 62.40004955062207,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001754306358212044",
+            "extra": "mean: 16.02562830000238 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgelist",
+            "value": 40.81485886159609,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0007779502124403068",
+            "extra": "mean: 24.500881000005847 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_edgedict",
+            "value": 19.8752539227669,
+            "unit": "iter/sec",
+            "range": "stddev: 0.053803184681965925",
+            "extra": "mean: 50.31382259999759 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_construct_from_df",
+            "value": 16.737775347765236,
+            "unit": "iter/sec",
+            "range": "stddev: 0.03870810221160475",
+            "extra": "mean: 59.7450963 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_memberships",
+            "value": 1216.2484961165758,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00015549850132851942",
+            "extra": "mean: 822.2003999946992 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_members",
+            "value": 40.3341952670239,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0590182816137071",
+            "extra": "mean: 24.792858599997203 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_node_attributes",
+            "value": 18376.171250655458,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0000028429527388773788",
+            "extra": "mean: 54.41830000165737 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_attributes",
+            "value": 318.6554575146916,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00021453960605923614",
+            "extra": "mean: 3.1381857000013724 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_degree",
+            "value": 11215.301259784073,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000008272477353129484",
+            "extra": "mean: 89.16390000024421 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_nodestats_degree",
+            "value": 10297.844558127415,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000004277364975808156",
+            "extra": "mean: 97.10770000026514 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_edge_size",
+            "value": 277.81909565101233,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0002793022814969437",
+            "extra": "mean: 3.5994646000006014 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_isolates",
+            "value": 8915.127098949946,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000014367376726779363",
+            "extra": "mean: 112.16889999445812 usec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_singletons",
+            "value": 201.7449241281798,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0003776105022425556",
+            "extra": "mean: 4.956754199994862 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_copy",
+            "value": 14.122030809658206,
+            "unit": "iter/sec",
+            "range": "stddev: 0.058723251703801486",
+            "extra": "mean: 70.81134530000384 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/core.py::test_dual",
+            "value": 15.598855830164599,
+            "unit": "iter/sec",
+            "range": "stddev: 0.06028722413163082",
+            "extra": "mean: 64.10726599999919 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/generators.py::test_erdos_renyi",
+            "value": 12.767110306003337,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0010453318958975248",
+            "extra": "mean: 78.3262599000011 msec\nrounds: 10"
+          },
+          {
+            "name": "benchmarks/generators.py::test_fast_erdos_renyi",
+            "value": 31.09652726826185,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0008188280893369375",
+            "extra": "mean: 32.15793170000154 msec\nrounds: 10"
           }
         ]
       }
