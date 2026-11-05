@@ -489,7 +489,7 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
                 candidates = sorted(set(nodes) - neighbors - {node})
                 z = int(rng.choice(candidates))
             H.remove_edge(e)
-            H.add_edge(members[:-1] + [z], idx=e)  # reuse ID of rewired edge
+            H.add_edge(members[:-1] + [z], idx=e)  # reuse ID of rewired edge so edge order is preserved
     return H
 
 
