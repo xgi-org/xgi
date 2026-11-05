@@ -488,9 +488,8 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
                 # dense: sample from the explicit list of candidates
                 candidates = sorted(set(nodes) - neighbors - {node})
                 z = int(rng.choice(candidates))
-            # reuse the ID, so edge e still comes from lattice edge e
             H.remove_edge(e)
-            H.add_edge(members[:-1] + [z], idx=e)
+            H.add_edge(members[:-1] + [z], idx=e)  # reuse ID of rewired edge
     return H
 
 
