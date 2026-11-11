@@ -116,86 +116,10 @@ Contributors
 
 .. raw:: html
 
-    <p>
-        <img src="https://github.com/acombretrenouard.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/acombretrenouard">@acombretrenouard</a>
-    </p>
+    <div id="github-contributors"></div>
 
-    <p>
-        <img src="https://github.com/aleable.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/aleable">@aleable</a>
-    </p>
+    <script src="_static/contributors.js"></script>
 
-    <p>
-        <img src="https://github.com/arnaudon.png"
-                width="50" height="50" hspace="5"
-                style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/arnaudon">@arnaudon</a>
-    </p>
-
-    <p>
-        <img src="https://github.com/colltoaction.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/colltoaction">@colltoaction</a>
-    </p>
-
-    <p>
-        <img src="https://github.com/doabell.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/doabell">@doabell</a>
-    </p>
-
-    <p>
-        <img src="https://github.com/goznalo-git.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/goznalo-git">@goznalo-git</a>
-    </p>
-
-    <p>
-        <img src="https://github.com/kaiser-dan.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/kaiser-dan">@kaiser-dan</a>
-    </p>
-
-    <p>
-        <img src="https://github.com/marconurisso.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/marconurisso">@marconurisso</a>
-    </p>
-
-    <p>
-        <img src="https://github.com/pgberlureau.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/pgberlureau">@pgberlureau</a>
-    </p>
-
-    <p>
-        <img src="https://github.com/pietrotraversa.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/pietrotraversa">@pietrotraversa</a>
-    </p>
-
-    <p>
-        <img src="https://github.com/saad1282.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/saad1282">@saad1282</a>
-    </p>
-
-    <p>
-        <img src="https://github.com/willcollins10.png"
-            width="50" height="50" hspace="5"
-            style="border-radius: 50%; vertical-align: middle;"/>
-        <a href="https://github.com/willcollins10">@willcollins10</a>
-    </p>
+    <script type="text/javascript">
+        display_contributors();
+    </script>
