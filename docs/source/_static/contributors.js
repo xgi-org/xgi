@@ -4,6 +4,7 @@ const CORE_TEAM = [
     "alpatania",
     "iaciac",
     "leotrs",
+    "kaiser-dan",
     "lordgrilo",
     "maximelucas",
     "nwlandry",
