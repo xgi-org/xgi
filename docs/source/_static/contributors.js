@@ -40,7 +40,38 @@ async function get_github_contributors() {
         page++;
     }
 
-    return contributors.filter(
+    while (true) {
+        const response = await fetch(
+            `https://api.github.com/repos/xgi-org/xgi-data/contributors?per_page=100&page=${page}`
+        );
+
+        if (!response.ok) {
+            throw new Error(`GitHub API error: ${response.status}`);
+        }
+
+        const results = await response.json();
+
+        contributors.push(...results);
+
+        if (results.length < 100) break;
+
+        page++;
+    }
+
+    // remove duplicates based on login
+    const unique_contributors = [];
+    const seen_logins = new Set();
+
+    for (const contributor of contributors) {
+        if (!seen_logins.has(contributor.login)) {
+            seen_logins.add(contributor.login);
+            unique_contributors.push(contributor);
+        }
+    }
+    // sort unique contributors by login
+    unique_contributors.sort((a, b) => a.login.localeCompare(b.login));
+    
+    return unique_contributors.filter(
         contributor =>
             contributor.login &&
             !contributor.login.endsWith("[bot]")
