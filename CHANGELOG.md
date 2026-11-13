@@ -1,5 +1,7 @@
 # Changelog
 
+## v1.1
+
 * Automated the generation of the contributor list on ReadTheDocs. (Closes Issue [#785](https://github.com/xgi-org/xgi/issues/785)) #786 (@nwlandry)
 * Added support for Python 3.15. #773 (@nwlandry)
 * Docs: Added API pages for AHORN and hypergraphx-data loaders. #784 (@leotrs)
