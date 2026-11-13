@@ -1,5 +1,10 @@
 # Changelog
 
+* Automated the generation of the contributor list on ReadTheDocs. (Closes Issue [#785](https://github.com/xgi-org/xgi/issues/785)) #786 (@nwlandry)
+* Added support for Python 3.15. #773 (@nwlandry)
+* Docs: Added API pages for AHORN and hypergraphx-data loaders. #784 (@leotrs)
+* Fixed the `watts_strogatz` method. (Closes Issue [#782](https://github.com/xgi-org/xgi/issues/782)) #783 (@maximelucas)
+
 ## v1.0.0
 
 First stable release. The public API is now committed to semantic versioning. Headline items: stabilized core (reprs, view returns, exceptions, copy / deepcopy / pickle, equality), new I/O (compressed HIF, AHORN, Hypergraphx-Data), nested generators, consistent generator naming, embedded nodes in multilayer plots, local RNG state, discoverable stats, and a shipped `xgi.skill` package for AI pair programming.
