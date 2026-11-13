@@ -10,7 +10,7 @@ from scipy.special import comb
 
 from ..utils import geometric, powerset
 from .classic import empty_hypergraph
-from .lattice import ring_lattice
+from .lattice import _ring_lattice_edges, ring_lattice
 from .uniform import _index_to_edge_comb
 
 __all__ = [
@@ -431,9 +431,11 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
     d : int
         Edge size
     k : int
-        Number of edges of which a node is a part. Should be a multiple of 2.
+        Twice the number of edges originating at each node. Should be a multiple
+        of 2. See :func:`~xgi.generators.lattice.ring_lattice`.
     l : int
-        Overlap between edges
+        Offset of the clockwise block of each edge from its originating node.
+        See :func:`~xgi.generators.lattice.ring_lattice`.
     p : float
         The rewiring probability
     seed : int, numpy.random.Generator, or None, optional
@@ -442,7 +444,15 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
     Returns
     -------
     xgi.Hypergraph
-        THe Watts-Strogatz hypergraph
+        The Watts-Strogatz hypergraph
+
+    Notes
+    -----
+    Following [1]_, the hypergraph starts as a ring lattice. Each edge is then
+    visited in turn and, with probability p, its farthest node from the
+    originating node is replaced by a node chosen uniformly at random among the
+    nodes not connected to the originating node. Edge sizes are preserved. An edge
+    is left unchanged if no such node exists.
 
     See Also
     --------
@@ -450,22 +460,36 @@ def watts_strogatz_hypergraph(n, d, k, l, p, seed=None):
 
     References
     ----------
-    Tanu Raghav, Stefano Boccaletti, and Sarika Jalan,
-    Smallworldness in hypergraphs,
-    https://doi.org/10.1088/2632-072X/acf430
+    .. [1] Tanu Raghav, Stefano Boccaletti, and Sarika Jalan,
+       Smallworldness in hypergraphs,
+       https://doi.org/10.1088/2632-072X/acf430
     """
     rng = np.random.default_rng(seed)
     H = ring_lattice(n, d, k, l)
-    to_remove = []
-    to_add = []
-    for e in H.edges:
+    # edge IDs of the ring lattice follow the order of these lists
+    lattice_edges = _ring_lattice_edges(n, d, k, l)
+    nodes = list(H.nodes)
+    for e, members in enumerate(lattice_edges):
         if rng.random() < p:
-            to_remove.append(e)
-            node = min(H.edges.members(e))
-            neighbors = rng.choice(H.nodes, size=d - 1)
-            to_add.append(np.append(neighbors, node))
-    H.remove_edges_from(to_remove)
-    H.add_edges_from(to_add)
+            node = members[0]  # originating node
+            # replace the farthest node by one not yet connected to node.
+            # Neighbors are read from the current, partly rewired H on purpose:
+            # this also excludes earlier rewirings, so no duplicate edge forms.
+            neighbors = H.nodes.neighbors(node)
+            num_candidates = len(nodes) - len(neighbors) - 1
+            if num_candidates == 0:
+                continue
+            if 2 * num_candidates >= len(nodes):
+                # sparse: rejection sampling, at most 2 draws on average
+                z = node
+                while z == node or z in neighbors:
+                    z = nodes[rng.integers(len(nodes))]
+            else:
+                # dense: sample from the explicit list of candidates
+                candidates = sorted(set(nodes) - neighbors - {node})
+                z = int(rng.choice(candidates))
+            H.remove_edge(e)
+            H.add_edge(members[:-1] + [z], idx=e)  # reuse ID of rewired edge
     return H
 
 

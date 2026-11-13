@@ -27,6 +27,28 @@ The directed hypergraph datasets from the Biochemical, Genetic and Genomic (BIGG
 
 See the `load_bigg_data() documentation <api/readwrite/xgi.readwrite.bigg_data.html>`_ for a complete description of the function.
 
+The hypergraph datasets from the `AHORN <https://ahorn.rwth-aachen.de/>`_ collection can also be loaded with:
+
+
+.. code-block:: python
+
+   import xgi
+   H = xgi.load_ahorn_data("<dataset_name>")
+
+
+See the `load_ahorn_data() documentation <api/readwrite/xgi.readwrite.ahorn_data.html>`_ for a complete description of the function.
+
+The hypergraph datasets from the `Hypergraphx-Data <https://hgx-team.github.io/hypergraphx-data/>`_ collection can also be loaded with:
+
+
+.. code-block:: python
+
+   import xgi
+   H = xgi.load_hypergraphx_data("<dataset_name>")
+
+
+See the `load_hypergraphx_data() documentation <api/readwrite/xgi.readwrite.hypergraphx_data.html>`_ for a complete description of the function.
+
 Dataset format
 --------------
 

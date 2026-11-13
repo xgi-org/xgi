@@ -16,8 +16,9 @@ __all__ = [
 def ring_lattice(n, d, k, l, with_positions=False):
     """A ring lattice hypergraph.
 
-    A d-uniform hypergraph on n nodes where each node is part of k edges and the
-    overlap between consecutive edges is d-l.
+    A d-uniform hypergraph on n nodes arranged on a ring. Each node i originates
+    k//2 edges, made of i and d-1 consecutive nodes going clockwise:
+    ``[i, s+l, ..., s+l+d-2]`` for ``s = i+1, ..., i+k//2`` (modulo n).
 
     Parameters
     ----------
@@ -26,9 +27,12 @@ def ring_lattice(n, d, k, l, with_positions=False):
     d : int
         Edge size
     k : int
-        Number of edges of which a node is a part. Should be a multiple of 2.
+        Twice the number of edges originating at each node. Should be a multiple
+        of 2. Each node is then part of k*d/2 edges on average (k for d=2).
     l : int
-        Overlap between edges
+        Offset of the d-1 consecutive nodes from the originating node: the block
+        starts l nodes after the nearest possible position. With l=0, the first
+        edge of node i is ``[i, i+1, ..., i+d-1]``.
     with_positions : bool, optional
         If True, store each node's coordinates on a unit circle as the ``"pos"`` node
         attribute. By default, False. Useful for plotting:
@@ -61,14 +65,22 @@ def ring_lattice(n, d, k, l, with_positions=False):
     if k % 2 != 0:
         warn("k is not divisible by 2")
 
-    edges = [
-        [node] + [(start + l + i) % n for i in range(d - 1)]
-        for node in range(n)
-        for start in range(node + 1, node + k // 2 + 1)
-    ]
-    H = Hypergraph(edges)
+    H = Hypergraph(_ring_lattice_edges(n, d, k, l))
     H.add_nodes_from(range(n))
     if with_positions:
         pos = {i: (cos(2 * pi * i / n), sin(2 * pi * i / n)) for i in range(n)}
         H.set_node_attributes(pos, name="pos")
     return H
+
+
+def _ring_lattice_edges(n, d, k, l):
+    """Edges of ``ring_lattice(n, d, k, l)``, in order, as lists.
+
+    Each list starts with the originating node, followed by the clockwise block
+    of d-1 nodes, nearest first. Edge IDs in ``ring_lattice`` follow this order.
+    """
+    return [
+        [node] + [(start + l + i) % n for i in range(d - 1)]
+        for node in range(n)
+        for start in range(node + 1, node + k // 2 + 1)
+    ]
