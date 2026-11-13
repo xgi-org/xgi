@@ -52,7 +52,7 @@ Once you have a content on `dev` that you wish to include into a release, do the
 3. Await approval for the PR.
 4. Once the PR is approved, the approving/merging maintainer must bump the version number. Increase the version number in [\_\_init\_\_.py](xgi/__init__.py.py) to the new version. Commit these changes with the commit message "bump: v[last release] -> v[proposed release]". No new approval is needed for this tiny change.
 5. Merge the PR.
-6. Create a new release on GitHub by selecting "Releases", then clicking "Draft a new release". Click "Choose a tag" and type "v" followed by the version number and then click "Create new tag". The release title will be this same string. Paste the contents of the CHANGELOG into the "Describe this release" field. Click "Publish release". This will trigger a GitHub action that will publish the new version on PyPI.
+6. Create a new release on GitHub by selecting "Releases", then clicking "Draft a new release". Click "Choose a tag" and type "v" followed by the version number and then click "Create new tag". The release title will be this same string. Set the target branch to `main`. Paste the contents of the CHANGELOG into the "Describe this release" field. Click "Publish release". This will trigger a GitHub action that will publish the new version on PyPI.
 
 The new version is now on PyPI! Make sure to update wherever you use XGI :)
 
