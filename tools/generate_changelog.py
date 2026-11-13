@@ -136,7 +136,7 @@ from datetime import datetime, timedelta
 
 import requests
 
-DEFAULT_BRANCH = "main"
+DEFAULT_BRANCH = "dev"
 PUBLIC_GITHUB_URL = "https://github.com"
 PUBLIC_GITHUB_API_URL = "https://api.github.com"
 GitHubConfig = namedtuple("GitHubConfig", ["base_url", "api_url", "headers"])
